@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>समुदाय — Connect Maratha</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- Website Top Announcement & Utility Bar -->
+<div class="site-topbar">
+  <div class="site-topbar-inner">
+    <div class="left-info">
+      <span>🚩 <strong>जय जिजाऊ · जय शिवराय · जय शंभूराजे</strong></span>
+      <span style="opacity:0.6;">|</span>
+      <span>अखंड हिंदुस्थानचे प्रेरणास्थान — हिंदवी स्वराज्य</span>
+    </div>
+    <div class="right-info">
+      <span>📞 समाज हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
+      <span style="opacity:0.6;">|</span>
+      <span>📅 <strong>शिवराज्याभिषेक शक ३५१</strong></span>
+      <span style="opacity:0.6;">|</span>
+      <a href="cm-contact.html" style="color:var(--gold-400); text-decoration:underline;">संपर्क व मदत</a>
+    </div>
+  </div>
+</div>
+
+<!-- Main Desktop Website Header & Mega Navbar -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="index.html" class="brand-desktop">
+      <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" class="brand-logo">
+      <div class="brand-titles">
+        <div class="brand-main">
+          <span class="en">CONNECT</span>
+          <span class="mr">मराठा</span>
+        </div>
+        <span class="brand-sub">अखिल भारतीय मराठा डिजिटल महासंघ</span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation Menu -->
+    <nav class="desktop-nav">
+      <a href="index.html" >🏠 मुखपृष्ठ</a>
+      <a href="cm-history.html" >⚔️ मराठा इतिहास</a>
+      <a href="cm-forts-map.html" >🏰 ३५०+ गड-किल्ले</a>
+      <a href="cm-warriors.html" >🛡️ अमर शिलेदार</a>
+      <a href="cm-services.html" >🛠️ सेवा व उद्योग</a>
+      <a href="cm-directory-people.html" class="active">👥 समुदाय</a>
+      <a href="cm-events.html" >📅 उपक्रम</a>
+      <a href="cm-more.html" >📂 अधिक विभाग ▾</a>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <a href="cm-login.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
+      <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
+    </div>
+  </div>
+</header>
+
+
+<div class="hero short" style="min-height:260px;">
+  <img src="assets/images/real-raigad-panoramic.jpg" alt="सह्याद्रीचे अभेद्य गडकोट" class="hero-bg-img">
+  <div class="hero-overlay"></div>
+  <div class="wrap hero-content" style="max-width:1320px; width:100%; padding:30px 24px;">
+    <div class="eyebrow">समुदाय</div>
+    <h1>मराठा बांधवांशी जोडा, समाज सशक्त करा</h1>
+    <p>शहर, व्यवसाय, कौशल्य किंवा आवडीनुसार समाज बांधवांचा शोध घ्या आणि नवीन नाती जोडा.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <section>
+    <div class="search-row">
+      <input type="text" data-search="#peopleGrid" placeholder="उदा. Pune मधील Web Developer शोधा">
+      <button>शोधा</button>
+    </div>
+    <div class="tabs" data-tabs="#peopleGrid">
+      <button class="tab active" data-filter="all">सर्व</button>
+      <button class="tab" data-filter="pune">पुणे Connect</button>
+      <button class="tab" data-filter="mumbai">मुंबई Connect</button>
+      <button class="tab" data-filter="nashik">नाशिक Connect</button>
+      <button class="tab" data-filter="outside">महाराष्ट्राबाहेरील</button>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>समाज गट</h2><a class="see-all" href="cm-groups.html">सर्व गट →</a></div>
+    <div class="grid grid-4">
+      <div class="feature-card"><div class="media">⛰️</div><div class="body"><strong>गड-किल्ले भटकंती</strong><div class="d">4,200+ सदस्य</div></div></div>
+      <div class="feature-card"><div class="media">📚</div><div class="body"><strong>इतिहास अभ्यासक</strong><div class="d">2,850+ सदस्य</div></div></div>
+      <div class="feature-card"><div class="media">💼</div><div class="body"><strong>मराठी उद्योजक</strong><div class="d">3,600+ सदस्य</div></div></div>
+      <div class="feature-card"><div class="media">🩸</div><div class="body"><strong>रक्तदान समूह</strong><div class="d">5,100+ सदस्य</div></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>सदस्य</h2></div>
+    <div class="grid grid-4" id="peopleGrid">
+      <div class="profile-card" data-cat="pune" data-name="अमोल जाधव"><div class="avatar">अ</div><div class="name">अमोल जाधव</div><div class="role">Web Developer · पुणे</div><span class="cta">Connect करा</span></div>
+      <div class="profile-card" data-cat="mumbai" data-name="प्रिया देशमुख"><div class="avatar">प्र</div><div class="name">प्रिया देशमुख</div><div class="role">CA · मुंबई</div><span class="cta">Connect करा</span></div>
+      <div class="profile-card" data-cat="nashik" data-name="रोहित मोरे"><div class="avatar">रो</div><div class="name">रोहित मोरे</div><div class="role">ट्रेकिंग ग्रुप लीड · नाशिक</div><span class="cta">Connect करा</span></div>
+      <div class="profile-card" data-cat="pune" data-name="स्वाती पाटील"><div class="avatar">स्वा</div><div class="name">स्वाती पाटील</div><div class="role">शिक्षिका · पुणे</div><span class="cta">Connect करा</span></div>
+      <div class="profile-card" data-cat="outside" data-name="निखिल शिंदे"><div class="avatar">नि</div><div class="name">निखिल शिंदे</div><div class="role">IT प्रोफेशनल · बेंगळुरू</div><span class="cta">Connect करा</span></div>
+      <div class="profile-card" data-cat="mumbai" data-name="संकेत भोसले"><div class="avatar">सं</div><div class="name">संकेत भोसले</div><div class="role">विद्यार्थी · मुंबई</div><span class="cta">Connect करा</span></div>
+      <div class="profile-card" data-cat="nashik" data-name="मयुरी कदम"><div class="avatar">म</div><div class="name">मयुरी कदम</div><div class="role">समाजसेविका · नाशिक</div><span class="cta">Connect करा</span></div>
+      <div class="profile-card" data-cat="pune" data-name="विकास गायकवाड"><div class="avatar">वि</div><div class="name">विकास गायकवाड</div><div class="role">उद्योजक · पुणे</div><span class="cta">Connect करा</span></div>
+    </div>
+  </section>
+
+  <div class="notice">
+    🛡️ Connect Maratha सदस्यत्व स्वयं-ओळखीवर व समाईक मराठी संस्कृतीच्या आवडीवर आधारित आहे. सदस्यत्वासाठी जात प्रमाणपत्र किंवा कोणतीही ओळख-पडताळणी कागदपत्रे अनिवार्य नाहीत.
+  </div>
+</div>
+
+<!-- Grand Desktop Website Mega-Footer -->
+<footer class="website-footer">
+  <div class="footer-grid">
+    <!-- Column 1: Brand & Mission -->
+    <div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+        <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
+        <span style="font-family:'Baloo 2', sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold-400);">CONNECT मराठा</span>
+      </div>
+      <p style="font-size:0.86rem; line-height:1.6; color:rgba(251,243,227,0.8); margin-bottom:16px;">
+        अखिल भारतीय मराठा समाजाला संस्कृती, इतिहास, रोजगार, सामाजिक एकता आणि आर्थिक स्वावलंबनाच्या धाग्यात बांधणारे अधिकृत व सुरक्षित डिजिटल व्यासपीठ.
+      </p>
+      <div style="font-size:0.8rem; color:var(--gold-300);">
+        📍 मुख्य कार्यालय: शनिवार वाडा परिसर, पुणे / दुर्गराज रायगड परिसर<br>
+        📧 संपर्क: contact@connectmaratha.org
+      </div>
+    </div>
+
+    <!-- Column 2: इतिहास व संशोधन दालन -->
+    <div>
+      <h3>इतिहास व संशोधन</h3>
+      <ul>
+        <li><a href="cm-shivaji-maharaj.html">🚩 छत्रपती शिवाजी महाराज</a></li>
+        <li><a href="cm-sambhaji-maharaj.html">⚔️ छत्रपती संभाजी महाराज</a></li>
+        <li><a href="cm-bajirao-peshwa.html">🐎 श्रीमंत बाजीराव पेशवे</a></li>
+        <li><a href="cm-warriors.html">🛡️ अमर वीर व वीरांगना</a></li>
+        <li><a href="cm-forts-map.html">🏰 महाराष्ट्रातील ३५०+ किल्ले</a></li>
+        <li><a href="cm-history.html">📖 मराठा साम्राज्य कालपट</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 3: सेवा व उपक्रम -->
+    <div>
+      <h3>सेवा व उपक्रम</h3>
+      <ul>
+        <li><a href="cm-services.html">🛠️ अधिकृत सेवा निर्देशिका</a></li>
+        <li><a href="cm-business-directory.html">💼 मराठा उद्योग व व्यवसाय</a></li>
+        <li><a href="cm-jobs.html">🤝 रोजगार व करिअर मार्गदर्शन</a></li>
+        <li><a href="cm-education.html">🎓 शिक्षण व स्पर्धा परीक्षा</a></li>
+        <li><a href="cm-donation.html">❤️ गड संवर्धन व आरोग्य निधी</a></li>
+        <li><a href="cm-events.html">📅 आगामी कार्यक्रम व शिबिरे</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 4: मदत व सुरक्षितता -->
+    <div>
+      <h3>मदत व सुरक्षितता</h3>
+      <ul>
+        <li><a href="cm-login.html">👤 सदस्य लॉगिन</a></li>
+        <li><a href="cm-register.html">📝 नवीन सदस्य नोंदणी</a></li>
+        <li><a href="cm-membership.html">⭐ सदस्यत्व श्रेणी (Tiers)</a></li>
+        <li><a href="cm-community-safety.html">🚨 आपत्कालीन सुरक्षा कक्ष</a></li>
+        <li><a href="cm-contact.html">☎️ संपर्क व तक्रार निवारण</a></li>
+      </ul>
+      <div style="margin-top:16px; padding:10px; background:rgba(0,0,0,0.3); border-radius:6px; border:1px solid rgba(233,196,106,0.3); font-size:0.78rem;">
+        🔒 <strong>सुरक्षित व्यासपीठ:</strong> डेटा एन्क्रिप्शन व १००% गोपनीयता.
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© २०२६ Connect Maratha (कनेक्ट मराठा) · सर्व हक्क सुरक्षित · नोंदणीकृत सामाजिक व्यासपीठ</p>
+    <p style="margin-top:4px; color:var(--gold-400); font-weight:600;">॥ जय भवानी, जय शिवाजी ॥ अखंड मराठा साम्राज्य की जय!</p>
+  </div>
+</footer>
+
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>
+

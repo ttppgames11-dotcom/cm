@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>वीर योद्धे — Connect Maratha</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#0d0607;
+  --paper:#FBF3E3;
+  --paper-2:#F3E7CC;
+  --paper-3:#ECDBB4;
+  --maroon-950:#260507;
+  --maroon-900:#4E0F13;
+  --maroon-800:#6E1519;
+  --maroon-700:#8A1E22;
+  --ink:#1E1410;
+  --ink-soft:#4A382C;
+  --gold-300:#F1D9A8;
+  --gold-400:#E9C46A;
+  --gold-600:#C79A3E;
+  --saffron-600:#E2591B;
+  --muted:#8A7767;
+  --line:#E7D6B0;
+  --success:#2F6B4F;
+  --shadow-lg:0 24px 60px rgba(38,5,7,0.18);
+  --shadow-sm:0 8px 20px rgba(38,5,7,0.10);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.6;padding-bottom:76px;}
+h1,h2,h3,h4{font-family:'Baloo 2',sans-serif;margin:0;color:var(--ink);}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+button{font-family:inherit;cursor:pointer;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px;}
+.serif-italic{font-family:'Cormorant Garamond',serif;font-style:italic;}
+
+/* ---------- Emblem / brandmark ---------- */
+.emblem{width:38px;height:38px;flex-shrink:0;}
+.brandmark{display:flex;align-items:center;gap:10px;justify-content:center;}
+.brandmark .logo-text{font-family:'Baloo 2';font-weight:800;font-size:1.25rem;line-height:1;text-align:left;}
+.brandmark .logo-text .connect{display:block;font-size:0.56em;letter-spacing:1.5px;color:var(--maroon-800);}
+.brandmark .logo-text .maratha{display:block;background:linear-gradient(90deg,var(--saffron-600),var(--gold-600));-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+/* ---------- App bar ---------- */
+.appbar{background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:60;}
+.appbar-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;max-width:1180px;margin:0 auto;gap:14px;}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:1rem;position:relative;color:var(--ink);}
+.icon-btn .badge{position:absolute;top:-4px;right:-4px;background:var(--maroon-800);color:#fff;font-size:0.6rem;font-weight:700;padding:1px 5px;border-radius:8px;}
+.appbar-actions{display:flex;gap:8px;align-items:center;}
+
+/* ---------- Jali ornamental divider ---------- */
+.jali{
+  height:18px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='18'%3E%3Cpath d='M11 1 L20 9 L11 17 L2 9 Z' fill='none' stroke='%23C79A3E' stroke-width='1.3' opacity='0.55'/%3E%3C/svg%3E");
+  background-repeat:repeat-x; background-position:center;
+}
+.jali.dark{opacity:0.9;}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;overflow:hidden;color:var(--paper);min-height:640px;display:flex;align-items:flex-end;background:radial-gradient(ellipse 900px 500px at 78% 15%, rgba(233,196,106,0.16), transparent 60%),linear-gradient(180deg,#200506 0%,#3a0d10 45%,#1c0608 100%);}
+.hero.short{min-height:360px;}
+.hero-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:brightness(0.85) contrast(1.12);animation:heroKenBurns 24s infinite alternate ease-in-out;z-index:1;}
+@keyframes heroKenBurns{0%{transform:scale(1.02) translateY(0);}100%{transform:scale(1.10) translateY(-14px);}}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,4,6,0.52) 0%,rgba(35,8,12,0.42) 32%,rgba(18,3,5,0.94) 85%,#140305 100%),radial-gradient(ellipse at 25% 75%,rgba(226,88,34,0.28) 0%,transparent 65%),radial-gradient(ellipse at 85% 25%,rgba(243,197,108,0.3) 0%,transparent 55%);z-index:2;pointer-events:none;}
+.hero-scene{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.hero-content{position:relative;z-index:3;padding:56px 24px 54px;max-width:680px;}
+.hero .eyebrow{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;color:var(--gold-400);margin-bottom:10px;}
+.hero h1{font-family:'Baloo 2';font-size:clamp(2.1rem,5vw,3.4rem);line-height:1.08;background:linear-gradient(180deg,#FBF3E3 0%,#F1D9A8 55%,#C79A3E 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 rgba(0,0,0,0.35));}
+.hero .rule{width:90px;height:3px;margin:16px 0;background:linear-gradient(90deg,var(--gold-400),transparent);position:relative;}
+.hero .rule::after{content:"◆";position:absolute;left:98px;top:-8px;color:var(--gold-400);font-size:0.65rem;}
+.hero p.tagline{font-size:1.02rem;max-width:48ch;opacity:0.92;margin:0 0 22px;}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:26px;}
+.btn-glass{background:rgba(255,255,255,0.08);backdrop-filter:blur(8px);border:1px solid rgba(233,196,106,0.4);color:var(--paper);padding:11px 22px;border-radius:10px;font-weight:600;font-size:0.9rem;}
+.stats-glass{display:flex;gap:12px;flex-wrap:wrap;}
+.stat-glass{background:rgba(255,255,255,0.07);backdrop-filter:blur(10px);border:1px solid rgba(233,196,106,0.28);border-radius:14px;padding:14px 20px;min-width:104px;}
+.stat-glass b{display:block;font-family:'Baloo 2';font-size:1.4rem;color:var(--gold-400);}
+.stat-glass span{font-size:0.7rem;opacity:0.85;}
+
+/* ---------- Sections ---------- */
+section{padding:44px 0;}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;gap:10px;}
+.section-head .eyebrow-sm{font-family:'Cormorant Garamond';font-style:italic;color:var(--gold-600);font-size:1.02rem;display:block;margin-bottom:4px;}
+.section-head h2{font-size:1.5rem;}
+.see-all{font-size:0.82rem;font-weight:700;color:var(--maroon-800);white-space:nowrap;border-bottom:1.5px solid var(--gold-600);padding-bottom:2px;}
+
+/* ---------- Today strip ---------- */
+.today-strip{background:linear-gradient(90deg,var(--maroon-950),var(--maroon-800));color:var(--paper);padding:14px 0;}
+.today-inner{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.today-tag{background:var(--gold-500,#C79A3E);color:var(--ink);padding:5px 14px;border-radius:3px;font-weight:700;font-size:0.78rem;white-space:nowrap;}
+.today-text{font-size:0.92rem;opacity:0.95;}
+
+/* ---------- Ornate portrait card (figure profiles) ---------- */
+.portrait-card{background:var(--paper);border:1px solid var(--line);border-radius:4px 4px 60px 60px/4px 4px 30px 30px;overflow:hidden;text-align:center;box-shadow:var(--shadow-sm);transition:transform .2s, box-shadow .2s;}
+.portrait-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);}
+.portrait-frame{
+  height:190px;position:relative;overflow:hidden;
+  background:linear-gradient(160deg,var(--maroon-800),var(--maroon-950));
+  display:flex;align-items:center;justify-content:center;
+  border-radius:4px 4px 90px 90px/4px 4px 46px 46px;
+  margin:10px 10px 0;
+}
+.portrait-frame .initial{font-family:'Baloo 2';font-size:2.6rem;color:var(--gold-400);}
+.portrait-frame::after{content:"";position:absolute;inset:6px;border:1.5px solid rgba(233,196,106,0.55);border-radius:inherit;pointer-events:none;}
+.portrait-card .pname{font-weight:700;font-size:0.98rem;margin-top:14px;font-family:'Baloo 2';}
+.portrait-card .prole{font-size:0.78rem;color:var(--muted);margin:4px 14px 16px;line-height:1.4;}
+
+/* ---------- Stat strip (maroon banner variant) ---------- */
+.stat-strip{display:flex;background:var(--maroon-950);color:var(--paper);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);}
+.stat-strip .cell{flex:1;text-align:center;padding:22px 8px;border-right:1px solid rgba(233,196,106,0.16);}
+.stat-strip .cell:last-child{border-right:none;}
+.stat-strip .num{font-family:'Baloo 2';font-size:1.5rem;color:var(--gold-400);font-weight:700;}
+.stat-strip .lbl{font-size:0.72rem;opacity:0.85;margin-top:3px;}
+
+/* ---------- Cards / grid ---------- */
+.grid{display:grid;gap:18px;}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+@media(max-width:900px){.grid-4{grid-template-columns:repeat(2,1fr);}.grid-3{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr 1fr;}}
+
+.feature-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm);transition:transform .2s,box-shadow .2s;}
+.feature-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+.feature-card .media{height:150px;position:relative;background:linear-gradient(150deg,var(--maroon-700),var(--maroon-950));display:flex;align-items:flex-end;padding:14px;color:var(--paper);font-family:'Baloo 2';font-size:1.1rem;}
+.feature-card .media::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:linear-gradient(90deg,var(--gold-400),var(--saffron-600));}
+.feature-card .body{padding:14px 16px;}
+.feature-card .body .d{font-size:0.78rem;color:var(--muted);margin-top:3px;}
+
+.list-row{display:flex;gap:14px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px;align-items:center;box-shadow:var(--shadow-sm);}
+.list-row .thumb{width:60px;height:60px;border-radius:10px;background:linear-gradient(150deg,var(--maroon-700),var(--maroon-950));flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--gold-400);font-family:'Baloo 2';font-size:1.2rem;text-align:center;line-height:1.1;}
+.list-row h4{font-size:0.95rem;}
+.list-row .meta{font-size:0.78rem;color:var(--muted);margin-top:3px;}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 24px;border-radius:10px;font-weight:700;font-size:0.9rem;border:none;}
+.btn-primary{background:linear-gradient(90deg,var(--saffron-600),var(--gold-600));color:#2A1200;box-shadow:0 8px 18px rgba(199,154,62,0.35);}
+.btn-maroon{background:var(--maroon-800);color:var(--paper);}
+.btn-outline{background:transparent;border:1.5px solid var(--maroon-800);color:var(--maroon-800);}
+.btn-block{width:100%;}
+
+/* ---------- Video feature ---------- */
+.video-feature{position:relative;border-radius:18px;overflow:hidden;box-shadow:var(--shadow-lg);border:6px solid var(--paper);outline:1px solid var(--line);}
+.video-feature .frame{position:relative;padding-top:56.25%;background:#000;}
+.video-feature iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+.video-caption{display:flex;justify-content:space-between;align-items:center;padding:14px 4px 0;font-size:0.82rem;color:var(--muted);flex-wrap:wrap;gap:8px;}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:18px;}
+.tab{border:1px solid var(--line);background:var(--paper);padding:9px 17px;border-radius:20px;font-size:0.85rem;font-weight:600;white-space:nowrap;color:var(--ink-soft);}
+.tab.active{background:var(--maroon-800);color:var(--paper);border-color:var(--maroon-800);}
+
+/* ---------- Search ---------- */
+.search-row{display:flex;gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:var(--shadow-sm);}
+.search-row input{flex:1;border:none;background:transparent;padding:11px 12px;font-size:0.92rem;font-family:inherit;}
+.search-row input:focus{outline:2px solid var(--gold-600);outline-offset:-2px;border-radius:6px;}
+.search-row button{background:var(--maroon-800);color:var(--paper);border:none;padding:0 20px;border-radius:8px;font-weight:600;font-size:0.88rem;}
+
+/* ---------- Quote / marquee banner ---------- */
+.quote-banner{background:linear-gradient(120deg,var(--maroon-950),var(--maroon-800));color:var(--paper);text-align:center;padding:30px 22px;border-radius:16px;position:relative;}
+.quote-banner .mark{font-family:'Cormorant Garamond';font-style:italic;font-size:1.3rem;color:var(--gold-300);line-height:1.5;}
+.quote-banner span{display:block;font-size:0.78rem;opacity:0.75;margin-top:10px;font-family:'Inter';}
+
+/* ---------- Notice ---------- */
+.notice{background:#FBEFD9;border:1px solid var(--gold-600);border-radius:10px;padding:14px 16px;font-size:0.82rem;color:var(--ink-soft);display:flex;gap:10px;align-items:flex-start;}
+.notice.safe{background:#EAF4EE;border-color:#BFE0CB;}
+
+/* ---------- Bottom nav ---------- */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--paper);border-top:1px solid var(--line);display:flex;z-index:70;box-shadow:0 -6px 18px rgba(0,0,0,0.06);}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 8px;font-size:0.64rem;color:var(--muted);font-weight:600;}
+.bottom-nav a.active{color:var(--maroon-800);}
+.bottom-nav a .fab{width:44px;height:44px;border-radius:50%;background:linear-gradient(150deg,var(--gold-400),var(--maroon-800));color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-top:-22px;border:4px solid var(--paper);}
+
+/* ---------- Timeline ---------- */
+.timeline{display:flex;overflow-x:auto;gap:0;padding:18px 4px;}
+.tnode{min-width:150px;padding:0 18px;border-right:1px dashed var(--line);position:relative;}
+.tnode:first-child{padding-left:0;}
+.tyear{font-family:'Baloo 2';color:var(--maroon-800);font-weight:700;font-size:1.05rem;}
+.tdesc{font-size:0.78rem;color:var(--ink-soft);margin-top:5px;}
+
+/* ---------- District panel (forts) ---------- */
+.district-panel{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow-sm);}
+.district-panel .stats{display:flex;gap:20px;margin-top:12px;flex-wrap:wrap;}
+.district-panel .stats div{font-size:0.8rem;color:var(--muted);}
+.district-panel .stats b{display:block;font-family:'Baloo 2';color:var(--maroon-800);font-size:1.15rem;}
+.district-chip{display:inline-block;padding:7px 15px;border:1px solid var(--line);border-radius:16px;font-size:0.8rem;margin:4px 6px 0 0;background:var(--paper);font-weight:600;}
+.district-chip.active{background:var(--maroon-800);color:var(--paper);border-color:var(--maroon-800);}
+
+/* ---------- Warrior bio card ---------- */
+.wcard{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px;box-shadow:var(--shadow-sm);scroll-margin-top:80px;}
+.wcard .whead{display:flex;align-items:center;gap:16px;margin-bottom:12px;}
+.wcard .avatar-lg{width:58px;height:58px;border-radius:50%;background:linear-gradient(150deg,var(--maroon-700),var(--maroon-950));color:var(--gold-400);display:flex;align-items:center;justify-content:center;font-family:'Baloo 2';font-size:1.3rem;flex-shrink:0;border:2px solid var(--gold-600);}
+.wcard h3{font-size:1.1rem;font-family:'Baloo 2';}
+.wcard .role{font-size:0.8rem;color:var(--maroon-800);font-weight:700;}
+.wcard p{color:var(--ink-soft);font-size:0.92rem;margin:0;}
+
+/* ---------- Bio content (figure pages) ---------- */
+.bio{max-width:74ch;}
+.bio h3{margin:30px 0 12px;font-size:1.2rem;font-family:'Baloo 2';padding-bottom:10px;border-bottom:2px solid var(--line);}
+.bio p{color:var(--ink-soft);margin:0 0 15px;font-size:0.97rem;}
+.pull{border-left:4px solid var(--gold-600);background:var(--paper-2);padding:14px 18px;font-style:italic;font-family:'Cormorant Garamond';font-size:1.05rem;margin:18px 0;color:var(--ink-soft);border-radius:0 8px 8px 0;}
+
+footer.site-footer{background:var(--maroon-950);color:var(--paper);padding:34px 0;text-align:center;font-size:0.8rem;opacity:0.85;margin-top:10px;}
+.muted{color:var(--muted);}
+</style>
+</head>
+<body>
+
+<!-- Website Top Announcement & Utility Bar -->
+<div class="site-topbar">
+  <div class="site-topbar-inner">
+    <div class="left-info">
+      <span>🚩 <strong>जय जिजाऊ · जय शिवराय · जय शंभूराजे</strong></span>
+      <span style="opacity:0.6;">|</span>
+      <span>अखंड हिंदुस्थानचे प्रेरणास्थान — हिंदवी स्वराज्य</span>
+    </div>
+    <div class="right-info">
+      <span>📞 समाज हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
+      <span style="opacity:0.6;">|</span>
+      <span>📅 <strong>शिवराज्याभिषेक शक ३५१</strong></span>
+      <span style="opacity:0.6;">|</span>
+      <a href="cm-contact.html" style="color:var(--gold-400); text-decoration:underline;">संपर्क व मदत</a>
+    </div>
+  </div>
+</div>
+
+<!-- Main Desktop Website Header & Mega Navbar -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="index.html" class="brand-desktop">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
+      <div class="brand-titles">
+        <div class="brand-main">
+          <span class="en">CONNECT</span>
+          <span class="mr">मराठा</span>
+        </div>
+        <span class="brand-sub">अखिल भारतीय मराठा डिजिटल महासंघ</span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation Menu -->
+    <nav class="desktop-nav">
+      <a href="index.html" >🏠 मुखपृष्ठ</a>
+      <a href="cm-history.html" >⚔️ मराठा इतिहास</a>
+      <a href="cm-forts-map.html" >🏰 ३५०+ गड-किल्ले</a>
+      <a href="cm-warriors.html" class="active">🛡️ अमर शिलेदार</a>
+      <a href="cm-services.html" >🛠️ सेवा व उद्योग</a>
+      <a href="cm-directory-people.html" >👥 समुदाय</a>
+      <a href="cm-events.html" >📅 उपक्रम</a>
+      <a href="cm-more.html" >📂 अधिक विभाग ▾</a>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <a href="cm-login.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
+      <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
+    </div>
+  </div>
+</header>
+
+
+<div class="hero short">
+  <img src="maratha-hero.jpg" alt="मराठा साम्राज्य - छत्रपती शिवाजी महाराज व मराठा सैन्य" class="hero-bg-img">
+  <div class="hero-overlay"></div>
+  <div class="wrap hero-content">
+    <div class="eyebrow">वीर योद्धे</div>
+    <h1>स्वराज्यासाठी बलिदान देणारे<br>वीर आणि वीरांगना</h1>
+    <div class="rule"></div>
+    <p class="tagline">छत्रपतींच्या पाठीशी खंबीरपणे उभे राहून स्वराज्यासाठी प्राणांची बाजी लावणाऱ्या योद्ध्यांचा आणि वीरांगनांचा गौरवशाली इतिहास.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <section>
+    <div class="wcard" id="jijau">
+      <div class="whead"><div class="avatar-lg">जि</div><div><h3>जिजाऊ माँसाहेब</h3><div class="role">स्वराज्य संकल्पनेच्या मार्गदर्शक</div></div></div>
+      <p>शिवाजी महाराजांच्या जडणघडणीत निर्णायक भूमिका बजावणाऱ्या जिजाऊंनी बालपणापासूनच त्यांच्यात स्वाभिमान, न्यायबुद्धी आणि स्वराज्याचे स्वप्न रुजवले. पतीच्या निधनानंतर आणि शिवाजी महाराजांच्या मोहिमांदरम्यान त्यांनी स्वतः राज्यकारभार सांभाळत खंबीर नेतृत्व दिले.</p>
+    </div>
+    <div class="wcard" id="tarabai">
+      <div class="whead"><div class="avatar-lg">ता</div><div><h3>महाराणी ताराबाई</h3><div class="role">स्वराज्याचे नेतृत्व करणारी योद्धा राणी</div></div></div>
+      <p>राजाराम महाराजांच्या निधनानंतर, मुघल सत्तेच्या सर्वात कठीण काळात, ताराबाईंनी स्वतः सैन्याचे नेतृत्व करत स्वराज्य टिकवून ठेवले. त्यांच्या धाडसी नेतृत्वामुळे स्वराज्याचा अंधकारमय काळ पार करून पुन्हा उभारी मिळाली.</p>
+    </div>
+    <div class="wcard" id="rajaram">
+      <div class="whead"><div class="avatar-lg">रा</div><div><h3>छत्रपती राजाराम महाराज</h3><div class="role">संकटकाळात स्वराज्य सांभाळणारे छत्रपती</div></div></div>
+      <p>संभाजी महाराजांच्या बलिदानानंतर अत्यंत बिकट परिस्थितीत छत्रपतीपद स्वीकारून राजाराम महाराजांनी जिंजीपर्यंत प्रवास करत स्वराज्याचा कारभार अखंड सुरू ठेवला.</p>
+    </div>
+    <div class="wcard" id="tanaji">
+      <div class="whead"><div class="avatar-lg">ता</div><div><h3>तानाजी मालुसरे</h3><div class="role">सिंहगडावरील अतुलनीय शौर्य</div></div></div>
+      <p>"गड आला पण सिंह गेला" — कोंढाणा किल्ल्यावर रात्रीच्या वेळी काही मोजक्या मावळ्यांसह चढाई करत, तानाजी मालुसरेंनी अखेरच्या श्वासापर्यंत झुंज देत किल्ला जिंकला. त्यांच्या बलिदानानंतर किल्ल्याचे नाव सिंहगड ठेवण्यात आले.</p>
+    </div>
+    <div class="wcard" id="bajiprabhu">
+      <div class="whead"><div class="avatar-lg">बा</div><div><h3>बाजी प्रभू देशपांडे</h3><div class="role">पावनखिंडीतील अंतिम झुंज</div></div></div>
+      <p>पन्हाळगडावरून शिवाजी महाराज सुखरूप विशाळगडावर पोहोचावेत यासाठी, बाजी प्रभू देशपांडेंनी घोडखिंडीत काही मूठभर मावळ्यांसह प्रचंड मुघल सैन्याला रोखून धरले. महाराज सुखरूप पोहोचल्याची तोफांची सलामी ऐकूनच त्यांनी प्राण सोडले — या घोडखिंडीला नंतर "पावनखिंड" असे नाव मिळाले.</p>
+    </div>
+    <div class="wcard" id="murarbaji">
+      <div class="whead"><div class="avatar-lg">मु</div><div><h3>मुरारबाजी देशपांडे</h3><div class="role">पुरंदरच्या रक्षणार्थ बलिदान</div></div></div>
+      <p>मुघल सरदार दिलेरखानाच्या प्रचंड फौजेसमोर, मुरारबाजींनी अवघ्या काही मावळ्यांसह पुरंदर किल्ल्याचे शर्थीने रक्षण केले. त्यांच्या असामान्य शौर्याने स्वतः दिलेरखानही थक्क झाला होता.</p>
+    </div>
+    <div class="wcard" id="prataprao">
+      <div class="whead"><div class="avatar-lg">प्र</div><div><h3>सेनापती प्रतापराव गुजर</h3><div class="role">नेसरीतील धाडसी घोडदौड</div></div></div>
+      <p>बहलोलखानाच्या सैन्याला रोखण्यासाठी प्रतापराव गुजरांनी अवघ्या सहा स्वारांसह शत्रूच्या तळावर थेट हल्ला चढवला — शौर्य आणि निर्भयतेचे एक अजरामर उदाहरण.</p>
+    </div>
+    <div class="wcard" id="kanhoji">
+      <div class="whead"><div class="avatar-lg">कां</div><div><h3>सरखेल कान्होजी आंग्रे</h3><div class="role">मराठा आरमाराचे सेनापती</div></div></div>
+      <p>शिवाजी महाराजांनी उभारलेल्या आरमाराला नव्या उंचीवर नेत, कान्होजी आंग्रेंनी कोकण किनारपट्टीवर परकीय सत्तांच्या नौदलांना सातत्याने आव्हान दिले आणि मराठा आरमाराचा दबदबा निर्माण केला.</p>
+    </div>
+  </section>
+
+  <div class="notice">📖 वरील माहिती मान्यताप्राप्त ऐतिहासिक संदर्भांवर आधारित आहे. दुरुस्ती सुचवायची असल्यास <a href="cm-contact.html" style="font-weight:700;color:var(--maroon-800);">येथे संपर्क करा</a>.</div>
+</div>
+
+<!-- Grand Desktop Website Mega-Footer -->
+<footer class="website-footer">
+  <div class="footer-grid">
+    <!-- Column 1: Brand & Mission -->
+    <div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+        <img src="assets/images/logo.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
+        <span style="font-family:'Baloo 2', sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold-400);">CONNECT मराठा</span>
+      </div>
+      <p style="font-size:0.86rem; line-height:1.6; color:rgba(251,243,227,0.8); margin-bottom:16px;">
+        अखिल भारतीय मराठा समाजाला संस्कृती, इतिहास, रोजगार, सामाजिक एकता आणि आर्थिक स्वावलंबनाच्या धाग्यात बांधणारे अधिकृत व सुरक्षित डिजिटल व्यासपीठ.
+      </p>
+      <div style="font-size:0.8rem; color:var(--gold-300);">
+        📍 मुख्य कार्यालय: शनिवार वाडा परिसर, पुणे / दुर्गराज रायगड परिसर<br>
+        📧 संपर्क: contact@connectmaratha.org
+      </div>
+    </div>
+
+    <!-- Column 2: इतिहास व संशोधन दालन -->
+    <div>
+      <h3>इतिहास व संशोधन</h3>
+      <ul>
+        <li><a href="cm-shivaji-maharaj.html">🚩 छत्रपती शिवाजी महाराज</a></li>
+        <li><a href="cm-sambhaji-maharaj.html">⚔️ छत्रपती संभाजी महाराज</a></li>
+        <li><a href="cm-bajirao-peshwa.html">🐎 श्रीमंत बाजीराव पेशवे</a></li>
+        <li><a href="cm-warriors.html">🛡️ अमर वीर व वीरांगना</a></li>
+        <li><a href="cm-forts-map.html">🏰 महाराष्ट्रातील ३५०+ किल्ले</a></li>
+        <li><a href="cm-history.html">📖 मराठा साम्राज्य कालपट</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 3: सेवा व उपक्रम -->
+    <div>
+      <h3>सेवा व उपक्रम</h3>
+      <ul>
+        <li><a href="cm-services.html">🛠️ अधिकृत सेवा निर्देशिका</a></li>
+        <li><a href="cm-business-directory.html">💼 मराठा उद्योग व व्यवसाय</a></li>
+        <li><a href="cm-jobs.html">🤝 रोजगार व करिअर मार्गदर्शन</a></li>
+        <li><a href="cm-education.html">🎓 शिक्षण व स्पर्धा परीक्षा</a></li>
+        <li><a href="cm-donation.html">❤️ गड संवर्धन व आरोग्य निधी</a></li>
+        <li><a href="cm-events.html">📅 आगामी कार्यक्रम व शिबिरे</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 4: मदत व सुरक्षितता -->
+    <div>
+      <h3>मदत व सुरक्षितता</h3>
+      <ul>
+        <li><a href="cm-login.html">👤 सदस्य लॉगिन</a></li>
+        <li><a href="cm-register.html">📝 नवीन सदस्य नोंदणी</a></li>
+        <li><a href="cm-membership.html">⭐ सदस्यत्व श्रेणी (Tiers)</a></li>
+        <li><a href="cm-community-safety.html">🚨 आपत्कालीन सुरक्षा कक्ष</a></li>
+        <li><a href="cm-contact.html">☎️ संपर्क व तक्रार निवारण</a></li>
+      </ul>
+      <div style="margin-top:16px; padding:10px; background:rgba(0,0,0,0.3); border-radius:6px; border:1px solid rgba(233,196,106,0.3); font-size:0.78rem;">
+        🔒 <strong>सुरक्षित व्यासपीठ:</strong> डेटा एन्क्रिप्शन व १००% गोपनीयता.
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© २०२६ Connect Maratha (कनेक्ट मराठा) · सर्व हक्क सुरक्षित · नोंदणीकृत सामाजिक व्यासपीठ</p>
+    <p style="margin-top:4px; color:var(--gold-400); font-weight:600;">॥ जय भवानी, जय शिवाजी ॥ अखंड मराठा साम्राज्य की जय!</p>
+  </div>
+</footer>
+
+
+<script>document.addEventListener('DOMContentLoaded', () => {
+
+  document.querySelectorAll('[data-tabs]').forEach(group => {
+    const tabs = group.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const targetGrid = document.querySelector(group.dataset.tabs);
+        const filter = tab.dataset.filter;
+        if (targetGrid) {
+          targetGrid.querySelectorAll('[data-cat]').forEach(card => {
+            card.style.display = (filter === 'all' || card.dataset.cat === filter) ? '' : 'none';
+          });
+        }
+      });
+    });
+  });
+
+  document.querySelectorAll('[data-search]').forEach(input => {
+    input.addEventListener('input', () => {
+      const grid = document.querySelector(input.dataset.search);
+      const q = input.value.trim().toLowerCase();
+      if (!grid) return;
+      grid.querySelectorAll('[data-name]').forEach(card => {
+        card.style.display = card.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+  });
+
+  document.querySelectorAll('.step-form').forEach(form => {
+    const steps = Array.from(form.querySelectorAll('.step'));
+    const panels = Array.from(form.querySelectorAll('.step-panel'));
+    let current = 0;
+    function render() {
+      steps.forEach((s, i) => { s.classList.toggle('active', i === current); s.classList.toggle('done', i < current); });
+      panels.forEach((p, i) => p.classList.toggle('active', i === current));
+    }
+    form.querySelectorAll('[data-next]').forEach(btn => btn.addEventListener('click', () => {
+      if (current < panels.length - 1) { current++; render(); window.scrollTo({top: form.offsetTop - 80, behavior:'smooth'}); }
+    }));
+    form.querySelectorAll('[data-back]').forEach(btn => btn.addEventListener('click', () => {
+      if (current > 0) { current--; render(); }
+    }));
+    render();
+  });
+
+  // Count-up animation for stat numbers: <b data-countup="350">350+</b>
+  const countEls = document.querySelectorAll('[data-countup]');
+  if (countEls.length && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = parseInt(el.dataset.countup, 10);
+        const suffix = el.dataset.suffix || '';
+        const duration = 1100;
+        const start = performance.now();
+        function tick(now) {
+          const p = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(eased * target).toLocaleString('en-IN') + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        io.unobserve(el);
+      });
+    }, { threshold: 0.4 });
+    countEls.forEach(el => io.observe(el));
+  }
+});
+</script>
+</body>
+</html>
