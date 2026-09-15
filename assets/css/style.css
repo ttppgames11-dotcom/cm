@@ -3085,15 +3085,15 @@ section {
 }
 
 .header-actions .btn-outline {
-  color: #FFF7ED;
-  border-color: rgba(255, 184, 102, 0.75);
-  background: rgba(255,69,0,0.08);
+  color: #3D0B0E;
+  border-color: #5A1116;
+  background: rgba(233, 196, 106, 0.2);
 }
 
 .header-actions .btn-outline:hover {
-  color: #FFFFFF;
-  border-color: var(--gold-500);
-  background: rgba(255,69,0,0.18);
+  color: #FFD54F;
+  border-color: #3D0B0E;
+  background: #3D0B0E;
 }
 
 /* Breadcrumbs Bar */
