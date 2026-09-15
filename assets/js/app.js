@@ -26,7 +26,278 @@ function showToast(message, type = 'success') {
   }, 3500);
 }
 
+function initOnlineCardImages() {
+  const imageSets = {
+    restaurant: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=640&q=82',
+    it: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=640&q=82',
+    realestate: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=640&q=82',
+    manufacturer: 'https://images.unsplash.com/photo-1565793298595-6a879b1d9492?auto=format&fit=crop&w=640&q=82',
+    travel: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=640&q=82',
+    seva: 'https://images.unsplash.com/photo-1615461066841-6116e61058f4?auto=format&fit=crop&w=640&q=82',
+    trek: 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=640&q=82',
+    career: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=640&q=82',
+    culture: 'https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=640&q=82'
+  };
+  const generalImages = [
+    {
+      terms: ['रक्तदान', 'आरोग्य', 'वैद्यकीय', 'रुग्णालय', 'health'],
+      url: 'https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=900&q=82'
+    },
+    {
+      terms: ['गड', 'किल्ला', 'दुर्ग', 'शिवजयंती', 'वारसा', 'heritage'],
+      url: 'assets/images/real-raigad-panoramic.jpg'
+    },
+    {
+      terms: ['नोकरी', 'करिअर', 'रोजगार', 'मुलाखत', 'career'],
+      url: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=82'
+    },
+    {
+      terms: ['शिक्षण', 'विद्यार्थी', 'महाविद्यालय', 'विद्यापीठ', 'education'],
+      url: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=900&q=82'
+    },
+    {
+      terms: ['व्यवसाय', 'उद्योग', 'बुकिंग', 'business'],
+      url: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=900&q=82'
+    },
+    {
+      terms: ['समुदाय', 'समाज', 'मदत', 'सुरक्षा', 'community'],
+      url: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=900&q=82'
+    }
+  ];
+
+  const getContextImage = element => {
+    const text = (element.textContent || '').toLowerCase();
+    return generalImages.find(item => item.terms.some(term => text.includes(term.toLowerCase())))?.url || null;
+  };
+
+  const addImage = (container, source, alt, className = 'cm-card-image') => {
+    if (!container || container.querySelector(`.${className}`)) return;
+    const image = document.createElement('img');
+    image.className = className;
+    image.src = source;
+    image.alt = alt || 'Connect Maratha';
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    image.addEventListener('error', () => {
+      image.remove();
+      container.classList.add('cm-image-fallback');
+    }, { once: true });
+    container.appendChild(image);
+  };
+
+  document.querySelectorAll('.profile-card[data-cat]').forEach(card => {
+    const avatar = card.querySelector('.avatar');
+    const source = imageSets[card.dataset.cat];
+    if (!avatar || !source || card.querySelector('.cm-card-image')) return;
+    avatar.replaceChildren();
+    addImage(avatar, source, card.dataset.name || 'Connect Maratha business');
+  });
+
+  document.querySelectorAll('.list-row[data-cat]').forEach(card => {
+    const thumb = card.querySelector('.thumb');
+    const source = imageSets[card.dataset.cat];
+    if (!thumb || !source || card.querySelector('.cm-card-image')) return;
+    const date = thumb.textContent.trim();
+    thumb.replaceChildren();
+    addImage(thumb, source, card.querySelector('h4')?.textContent.trim() || 'Connect Maratha event');
+    const dateLabel = document.createElement('span');
+    dateLabel.className = 'cm-card-date';
+    dateLabel.textContent = date;
+    thumb.appendChild(dateLabel);
+  });
+
+  const featureImages = [
+    {
+      terms: ['विद्यापीठ', 'महाविद्यालय', 'कॉलेज', 'शिक्षण'],
+      url: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=900&q=82'
+    },
+    {
+      terms: ['व्यवसाय', 'उद्योग', 'व्यावसायिक', 'निर्माता'],
+      url: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=900&q=82'
+    },
+    {
+      terms: ['गड', 'किल्ला', 'दुर्ग'],
+      url: 'assets/images/real-raigad-panoramic.jpg'
+    },
+    {
+      terms: ['नोकरी', 'करिअर', 'रोजगार'],
+      url: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=82'
+    },
+    {
+      terms: ['दान', 'आरोग्य', 'समाज'],
+      url: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=900&q=82'
+    }
+  ];
+
+  document.querySelectorAll('.feature-card .media').forEach(media => {
+    if (media.style.backgroundImage && media.style.backgroundImage !== 'none') return;
+    const text = media.parentElement.textContent.toLowerCase();
+    const match = featureImages.find(item => item.terms.some(term => text.includes(term)));
+    if (match) {
+      media.style.backgroundImage = `url("${match.url}")`;
+      media.classList.add('has-image');
+    }
+  });
+
+  document.querySelectorAll('.thumb').forEach(thumb => {
+    if (thumb.querySelector('img')) return;
+    const card = thumb.closest('.list-row, .feature-card, .card, .form-card, section > div');
+    if (!card) return;
+    const source = getContextImage(card);
+    if (!source) return;
+    const date = thumb.textContent.trim();
+    thumb.replaceChildren();
+    addImage(thumb, source, card.querySelector('h3, h4, strong')?.textContent.trim() || 'Connect Maratha update');
+    if (date) {
+      const dateLabel = document.createElement('span');
+      dateLabel.className = 'cm-card-date';
+      dateLabel.textContent = date;
+      thumb.appendChild(dateLabel);
+    }
+  });
+
+  document.querySelectorAll('.service-card, .battle-card').forEach(card => {
+    if (card.querySelector('.cm-card-cover, img')) return;
+    const source = card.matches('.battle-card')
+      ? 'assets/images/real-maratha-army-panoramic.jpg'
+      : getContextImage(card) || generalImages.find(item => item.terms.includes('business')).url;
+    if (!source) return;
+    const cover = document.createElement('div');
+    cover.className = 'cm-card-cover';
+    card.prepend(cover);
+    addImage(cover, source, card.querySelector('h3, h4, strong')?.textContent.trim() || 'Connect Maratha information');
+  });
+
+  const historianImages = [
+    {
+      terms: ['बाबासाहेब पुरंदरे'],
+      url: 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Babasahebwikismall.jpg',
+      alt: 'शिवशाहीर बाबासाहेब पुरंदरे'
+    },
+    {
+      terms: ['निनाद बेडेकर'],
+      url: 'https://upload.wikimedia.org/wikipedia/commons/2/20/Ninad_Bedekar.jpeg',
+      alt: 'इतिहास संशोधक निनाद बेडेकर'
+    },
+    {
+      terms: ['वि. का. राजवाडे', 'राजवाडे'],
+      url: 'https://upload.wikimedia.org/wikipedia/commons/6/67/Vishwanath_Kashinath_Rajwade_2003_stamp_of_India.jpg',
+      alt: 'इतिहासाचार्य वि. का. राजवाडे'
+    }
+  ];
+
+  document.querySelectorAll('.researcher-card').forEach(card => {
+    if (card.querySelector('.cm-researcher-image')) return;
+    const text = (card.textContent || '').toLowerCase();
+    const match = historianImages.find(item => item.terms.some(term => text.includes(term.toLowerCase())));
+    if (!match) return;
+    const imageWrap = document.createElement('div');
+    imageWrap.className = 'cm-researcher-image';
+    card.prepend(imageWrap);
+    addImage(imageWrap, match.url, match.alt, 'cm-researcher-photo');
+  });
+}
+
+function initLegalLinks() {
+  const footer = document.querySelector('.website-footer') || document.querySelector('.footer-bottom');
+  if (!footer || footer.querySelector('.cm-legal-links')) return;
+  const links = document.createElement('div');
+  links.className = 'cm-legal-links';
+  links.innerHTML = `
+    <a href="cm-vision.html">आमची दृष्टी</a>
+    <a href="cm-terms.html">अटी व नियम</a>
+    <a href="cm-privacy-policy.html">गोपनीयता धोरण</a>
+  `;
+  footer.appendChild(links);
+}
+
+async function initAchieverImages() {
+  const cards = document.querySelectorAll('.achiever-card[data-wiki]');
+  for (const card of cards) {
+    const photo = card.querySelector('.achiever-photo');
+    if (!photo || photo.querySelector('img')) continue;
+    try {
+      const endpoint = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(card.dataset.wiki)}`;
+      let response = await fetch(endpoint);
+      if (response.status === 429) {
+        await new Promise(resolve => setTimeout(resolve, 1200));
+        response = await fetch(endpoint);
+      }
+      if (!response.ok) throw new Error(`Wikipedia image request failed: ${response.status}`);
+      const profile = await response.json();
+      const source = profile.thumbnail?.source || profile.originalimage?.source;
+      if (!source) throw new Error(`No public portrait available for ${card.dataset.wiki}`);
+      const image = document.createElement('img');
+      image.src = source;
+      image.alt = card.querySelector('h3')?.textContent.trim() || 'कर्तृत्ववान व्यक्तिमत्त्व';
+      image.loading = 'lazy';
+      image.decoding = 'async';
+      image.addEventListener('error', () => {
+        photo.classList.add('cm-image-fallback');
+      }, { once: true });
+      photo.appendChild(image);
+    } catch (error) {
+      photo.classList.add('cm-image-fallback');
+      console.warn('Unable to load achiever portrait', card.dataset.wiki, error);
+    }
+    await new Promise(resolve => setTimeout(resolve, 180));
+  }
+}
+
+function initAchieverDirectoryCapacity() {
+  const grid = document.querySelector('#achieversGrid');
+  if (!grid || grid.dataset.capacityInitialized) return;
+  const verifiedCount = grid.querySelectorAll('.achiever-card:not([data-cat="pending"])').length;
+  const slotCount = Math.max(0, 1000 - verifiedCount);
+  const renderSlots = (start, count) => {
+    const fragment = document.createDocumentFragment();
+    for (let index = start; index < Math.min(start + count, slotCount); index += 1) {
+    const card = document.createElement('article');
+    const number = String(index).padStart(4, '0');
+    card.className = 'achiever-card achiever-pending';
+    card.dataset.cat = 'pending';
+    card.dataset.name = `profile slot ${number}`;
+    card.innerHTML = `
+      <div class="achiever-photo pending-photo" aria-hidden="true">＋</div>
+      <div class="achiever-body">
+        <span class="achiever-field">पडताळणीसाठी उपलब्ध स्लॉट</span>
+        <h3>समुदाय प्रोफाइल स्लॉट ${number}</h3>
+        <p>या जागेवर NGO, समाजसेवक, डॉक्टर, शिक्षक, उद्योजक, कलाकार, क्रीडापटू किंवा इतर क्षेत्रातील सत्यापित व्यक्तीची माहिती प्रकाशित केली जाईल.</p>
+        <span class="achiever-journey">नाव, जीवनप्रवास, अधिकृत स्रोत आणि वापराची परवानगी तपासल्यानंतरच हा स्लॉट सार्वजनिक प्रोफाइलमध्ये रूपांतरित होईल.</span>
+        <a class="achiever-source" href="cm-register.html">प्रोफाइल सुचवा →</a>
+      </div>
+    `;
+    fragment.appendChild(card);
+    }
+    grid.appendChild(fragment);
+  };
+  renderSlots(1, 24);
+  if (slotCount > 24) {
+    const loadMore = document.createElement('button');
+    loadMore.type = 'button';
+    loadMore.className = 'btn btn-outline achiever-load-more';
+    loadMore.textContent = `आणखी 24 पडताळणी स्लॉट दाखवा (${slotCount - 24} बाकी)`;
+    loadMore.addEventListener('click', () => {
+      const current = grid.querySelectorAll('.achiever-pending').length;
+      const remaining = slotCount - current;
+      renderSlots(current + 1, Math.min(24, remaining));
+      const left = slotCount - grid.querySelectorAll('.achiever-pending').length;
+      if (left <= 0) {
+        loadMore.remove();
+      } else {
+        loadMore.textContent = `आणखी 24 पडताळणी स्लॉट दाखवा (${left} बाकी)`;
+      }
+    });
+    grid.parentElement.appendChild(loadMore);
+  }
+  grid.dataset.capacityInitialized = 'true';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  initOnlineCardImages();
+  initLegalLinks();
+  initAchieverImages();
+  initAchieverDirectoryCapacity();
 
   // 1. Universal Bottom Navigation Highlighting & Link Binding
   document.querySelectorAll('.bottom-nav').forEach(nav => {
@@ -1046,7 +1317,7 @@ function initHeritageLightbox() {
           <button type="button" class="lightbox-close-btn" aria-label="बंद करा">✕</button>
         </div>
         <div class="lightbox-img-box">
-          <img id="lightboxImg" src="" alt="Historical Heritage Artifact">
+          <img id="lightboxImg" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Historical Heritage Artifact">
         </div>
         <div class="lightbox-footer-caption" id="lightboxCaption"></div>
       </div>
@@ -1732,4 +2003,3 @@ document.addEventListener('DOMContentLoaded', () => {
     window.switchHeroView('hero');
   }
 });
-

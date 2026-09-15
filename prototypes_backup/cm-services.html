@@ -14,22 +14,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Tiro+Devanagari+Marathi:ital@0;1&family=Inter:wght@400;500;600;700&display=swap');
 
 :root{
-  --bg:#FFF8EC;
+  --bg:#fff7f2;
   --surface:#FFFFFF;
-  --surface-2:#FBEFDC;
-  --maroon-900:#4E0F13;
-  --maroon-800:#6E1519;
-  --maroon-700:#8A1E22;
-  --saffron-600:#E2591B;
-  --saffron-500:#F0821C;
-  --gold-600:#B9862E;
-  --ink-900:#2A1B12;
-  --ink-700:#4A382C;
-  --muted:#8A7767;
-  --line:#EBDCC4;
-  --success:#2F6B4F;
+  --surface-2:#fff7f2;
+  --maroon-900:#FF4500;
+  --maroon-800:#FF4500;
+  --maroon-700:#FF4500;
+  --saffron-600:#FF4500;
+  --saffron-500:#FF4500;
+  --gold-600:#FF4500;
+  --ink-900:#32150c;
+  --ink-700:#6b2d18;
+  --muted:#7c3f28;
+  --line:#ffd8c2;
+  --success:#FF4500;
   --radius:14px;
-  --shadow:0 10px 24px rgba(78,15,19,0.08);
+  --shadow:0 10px 24px rgba(255,69,0,0.08);
 }
 *{box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -49,7 +49,7 @@ button{font-family:inherit; cursor:pointer;}
 .brandmark .logo-text{font-family:'Baloo 2'; font-weight:800; font-size:1.5rem; line-height:1; text-align:center;}
 .brandmark .logo-text .connect{
   display:block; font-size:0.62em; letter-spacing:1px;
-  background:linear-gradient(180deg,#C81E1E,#7A0F12);
+  background:linear-gradient(180deg,#FF4500,#FF4500);
   -webkit-background-clip:text; background-clip:text; color:transparent;
 }
 .brandmark .logo-text .maratha{
@@ -83,8 +83,8 @@ button{font-family:inherit; cursor:pointer;}
 .hero-band{
   position:relative; overflow:hidden; color:#fff; padding:34px 20px 30px;
   background:
-    linear-gradient(100deg, rgba(78,15,19,0.92) 0%, rgba(138,30,34,0.75) 45%, rgba(226,89,27,0.55) 100%),
-    linear-gradient(150deg,#3a0d10,#1e0709);
+    linear-gradient(100deg, rgba(12,2,4,0.92) 0%, rgba(138,30,34,0.75) 45%, rgba(226,89,27,0.55) 100%),
+    linear-gradient(150deg,#FF4500,#FF4500);
 }
 .hero-band.wide{border-radius:0 0 20px 20px;}
 .hero-band .rider-img{
@@ -168,7 +168,7 @@ section{padding:22px 0;}
 /* ---------- Fort / feature card (image-forward) ---------- */
 .feature-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
 .feature-card .media{
-  height:140px; background:linear-gradient(135deg,#5a3b1f,#2a1b10);
+  height:140px; background:linear-gradient(135deg,#7c3f28,#32150c);
   display:flex; align-items:flex-end; padding:12px; color:#fff; font-family:'Baloo 2'; font-size:1.05rem;
 }
 .feature-card .body{padding:12px 14px;}
@@ -250,8 +250,8 @@ section{padding:22px 0;}
 .price-card ul{list-style:none; padding:0; margin:14px 0; text-align:left; font-size:0.85rem; display:flex; flex-direction:column; gap:8px;}
 
 /* ---------- Notice / disclaimer ---------- */
-.notice{background:#FDEEDC; border:1px solid #EFC98C; border-radius:10px; padding:14px 16px; font-size:0.82rem; color:var(--ink-700); display:flex; gap:10px; align-items:flex-start;}
-.notice.safe{background:#EAF4EE; border-color:#BFE0CB;}
+.notice{background:#fff7f2; border:1px solid #FFB08a; border-radius:10px; padding:14px 16px; font-size:0.82rem; color:var(--ink-700); display:flex; gap:10px; align-items:flex-start;}
+.notice.safe{background:#fff7f2; border-color:#32150c;}
 
 /* ---------- Bottom mobile nav ---------- */
 .bottom-nav{
@@ -514,5 +514,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 </script>
+
 </body>
 </html>
