@@ -26,11 +26,11 @@
   padding: 16px 24px 16px 52px;
   border-radius: 40px;
   border: 2px solid var(--gold-500);
-  background: #FFFDF8;
+  background: #FFFFFFFFFFFFDF8;
   font-size: 1.05rem;
   color: var(--maroon-950);
   outline: none;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 24px rgba(199,56,0,0.2);
 }
 .search-icon-inside {
   position: absolute;
@@ -69,11 +69,11 @@
   margin-top: 24px;
 }
 .result-card {
-  background: #fff;
+  background: #FFFFFFFFFFFFFFF;
   border-radius: 14px;
   padding: 20px;
   border: 1px solid #EFE4D2;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 16px rgba(199,56,0,0.05);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .result-card:hover {
@@ -137,7 +137,7 @@
   <!-- Global Search Hero -->
   <div class="search-hero-box">
     <span class="card-tag">Section 36 • Global Multi-Entity Search</span>
-    <h1 style="font-size: clamp(2rem, 3.8vw, 3rem); color:#fff; margin:10px 0 6px;">
+    <h1 style="font-size: clamp(2rem, 3.8vw, 3rem); color:#FFFFFFFFFFFFFFF; margin:10px 0 6px;">
       एकच शोध — <span style="color:var(--gold-400);">अखंड संदर्भ संबंध</span>
     </h1>
     <p style="font-size:0.95rem; color:rgba(255,248,231,0.88); max-width:60ch; margin:0 auto;">
@@ -282,7 +282,7 @@ function executeGlobalSearch() {
 
   if (results.length === 0) {
     grid.innerHTML = `
-      <div style="grid-column: 1 / -1; background:#fff; padding:32px; border-radius:14px; text-align:center; border:1px solid #F0E6D8;">
+      <div style="grid-column: 1 / -1; background:#FFFFFFFFFFFFFFF; padding:32px; border-radius:14px; text-align:center; border:1px solid #F0E6D8;">
         <h4>'${query}' या शब्दासाठी थेट संदर्भ आढळला नाही</h4>
         <p style="font-size:0.86rem; color:var(--muted); margin-top:6px;">कृपया इतर शब्द (उदा. रायगड, संभाजी, बाजीराव, पानिपत, AI, मोर्चे) वापरून पहा किंवा खालील समुदाय शोध वापरा.</p>
       </div>`;

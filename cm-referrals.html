@@ -77,7 +77,7 @@
           <button class="btn btn-outline" onclick="filterReferrals('lost')">अपूर्ण (Lost)</button>
         </div>
         <div>
-          <input type="text" id="refSearchInput" placeholder="संदर्भ शोध करा..." style="padding: 8px 14px; border-radius: 6px; border: 1px solid #ccc; width: 220px;" onkeyup="renderReferralList()">
+          <input type="text" id="refSearchInput" placeholder="संदर्भ शोध करा..." style="padding: 8px 14px; border-radius: 6px; border: 1px solid #FFFFFFFFFFFFFFF; width: 220px;" onkeyup="renderReferralList()">
         </div>
       </div>
     </div>
@@ -151,7 +151,7 @@
             <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
               <div>
                 <span class="badge ${statusBadge}">${r.status}</span>
-                <span class="badge" style="background:#e0e0e0; color:#333; margin-left:6px;">${r.category}</span>
+                <span class="badge" style="background:#e0e0e0; color:#C73800; margin-left:6px;">${r.category}</span>
                 <h3 style="margin-top:8px; margin-bottom:4px; color:var(--maroon-900);">${r.prospect}</h3>
                 <p style="color:#555; font-size:0.95rem; margin-bottom:8px;">${r.requirement}</p>
                 <div style="font-size:0.85rem; color:#777;">
@@ -159,7 +159,7 @@
                 </div>
               </div>
               <div style="text-align:right;">
-                <div style="font-size:0.85rem; color:#666;">अंदाजित मूल्य (Value)</div>
+                <div style="font-size:0.85rem; color:#D84315;">अंदाजित मूल्य (Value)</div>
                 <div style="font-size:1.4rem; font-weight:700; color:var(--maroon-900);">₹${(r.actualValue || r.estimatedValue || 0).toLocaleString('en-IN')}</div>
                 <a href="cm-referral-detail.html?id=${r.id}" class="btn btn-outline btn-sm mt-2">सविस्तर ट्रॅक पहा →</a>
               </div>
