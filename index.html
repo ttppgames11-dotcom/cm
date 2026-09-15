@@ -138,7 +138,7 @@ a{text-decoration:none;color:inherit;}
 @media(prefers-reduced-motion:reduce){.hero-bg-layer{animation:none;opacity:0;}.hero-bg-layer:nth-child(1){opacity:1;}}
 .hero-overlay{
   position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(230,81,0,.5) 0%,rgba(230,81,0,.88) 100%);
+  background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.75) 100%);
 }
 .hero-content{
   position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:60px 24px;
@@ -243,7 +243,7 @@ a{text-decoration:none;color:inherit;}
 }
 .card-bg::before{
   content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(230,81,0,.05) 0%,rgba(230,81,0,.7) 50%,rgba(230,81,0,.95) 100%);
+  background:linear-gradient(180deg,rgba(0,0,0,0) 25%,rgba(0,0,0,.82) 100%);
 }
 .card-bg:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(199,56,0,.35);}
 .card-bg-body{position:relative;z-index:2;padding:24px;width:100%;}
@@ -292,7 +292,7 @@ a{text-decoration:none;color:inherit;}
 }
 .quick-card::after{
   content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(230,81,0,.1),rgba(230,81,0,.9));
+  background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.85));
 }
 .quick-card > *{position:relative;z-index:2;}
 .quick-card:hover{transform:scale(1.02);}
@@ -313,7 +313,7 @@ a{text-decoration:none;color:inherit;}
 }
 .portrait-card::before{
   content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(230,81,0,0) 42%,rgba(230,81,0,.94) 100%);
+  background:linear-gradient(180deg,rgba(0,0,0,0) 42%,rgba(0,0,0,.85) 100%);
 }
 .portrait-card:hover{transform:translateY(-8px) rotate(-1deg);box-shadow:0 24px 48px rgba(199,56,0,.4);}
 .portrait-card .portrait-body{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:16px;}
@@ -622,7 +622,7 @@ tr:hover td{background:#FFFFFF;}
       </div>
     </div>
     <div class="portrait-strip">
-      <div class="portrait-card" style="background-image:url('https://wallpapercave.com/wp/wp4518353.jpg');">
+      <div class="portrait-card"><img src="https://wallpapercave.com/wp/wp4518353.jpg" alt="छत्रपती शिवाजी महाराज" style="width:100%;height:100%;object-fit:cover;display:block;">
         <div class="portrait-body"><h4>छत्रपती शिवाजी महाराज</h4><span>हिंदवी स्वराज्य संस्थापक</span></div>
       </div>
       <div class="portrait-card" style="background-image:url('assets/images/real-sambhaji-portrait.png');">
@@ -755,7 +755,7 @@ tr:hover td{background:#FFFFFF;}
           <p>घोडदळ (पागा), तोफखाना, पायदळ आणि भगवा ध्वज घेऊन रणांगणात उतरणाऱ्या मराठा सैन्याचे ऐतिहासिक समकालीन भित्तीचित्र.</p>
         </div>
       </div>
-      <div class="card-bg" style="background-image:url('https://wallpapercave.com/wp/wp4518353.jpg');">
+      <div class="card-bg" style="position:relative;overflow:hidden;"><img src="https://wallpapercave.com/wp/wp4518353.jpg" alt="छत्रपती शिवाजी महाराज" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
         <div class="card-bg-body">
           <span class="card-tag">६ जून १६७४</span>
           <h4>शिवराज्याभिषेक सोहळा (Coronation)</h4>
@@ -1098,7 +1098,7 @@ tr:hover td{background:#FFFFFF;}
       <a href="cm-history.html" class="more-link">सर्व इतिहास पाहा →</a>
     </div>
     <div class="grid-3">
-      <a href="cm-shivaji-maharaj.html" class="card-bg" style="background-image:url('https://wallpapercave.com/wp/wp4518353.jpg');min-height:320px;">
+      <a href="cm-shivaji-maharaj.html" class="card-bg" style="position:relative;overflow:hidden;min-height:320px;"><img src="https://wallpapercave.com/wp/wp4518353.jpg" alt="छत्रपती शिवाजी महाराज" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
         <div class="card-bg-body">
           <span class="card-tag">हिंदवी स्वराज्य संस्थापक</span>
           <h4>छत्रपती शिवाजी महाराज</h4>
