@@ -146,7 +146,7 @@ input, select, textarea {
 
 /* ---------- Royal Shivrajmudra (शिवराजमुद्रा) Component ---------- */
 .rajmudra-container {
-  background: radial-gradient(circle at center, rgba(122, 45, 0, 0.95), rgba(30, 12, 2, 0.98));
+  background: radial-gradient(circle at center, rgba(230,81,0, 0.95), rgba(230,81,0, 0.98));
   border: 2px solid var(--gold-400);
   border-radius: 20px;
   padding: 32px 24px;
@@ -253,7 +253,7 @@ input, select, textarea {
 
 .hd-feature-card:hover {
   transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 16px 40px rgba(122, 45, 0, 0.35);
+  box-shadow: 0 16px 40px rgba(230,81,0, 0.35);
   border-color: var(--gold-400);
 }
 
@@ -272,7 +272,7 @@ input, select, textarea {
 .hd-feature-card .hd-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(30, 12, 2, 0.15) 0%, rgba(30, 12, 2, 0.6) 50%, rgba(30, 12, 2, 0.95) 100%);
+  background: linear-gradient(180deg, rgba(230,81,0, 0.15) 0%, rgba(230,81,0, 0.6) 50%, rgba(230,81,0, 0.95) 100%);
 }
 
 .hd-feature-card .hd-content {
@@ -287,7 +287,7 @@ input, select, textarea {
   top: 12px;
   left: 12px;
   z-index: 2;
-  background: rgba(122, 45, 0, 0.85);
+  background: rgba(230,81,0, 0.85);
   border: 1px solid var(--gold-400);
   color: var(--gold-300);
   font-size: 0.72rem;
@@ -444,7 +444,7 @@ input, select, textarea {
   position: absolute;
   inset: 0;
   background: 
-    linear-gradient(180deg, rgba(31, 13, 2, 0.52) 0%, rgba(53, 20, 5, 0.42) 32%, rgba(28, 11, 2, 0.94) 85%, #C73800 100%),
+    linear-gradient(180deg, rgba(230,81,0, 0.52) 0%, rgba(230,81,0, 0.42) 32%, rgba(230,81,0, 0.94) 85%, #C73800 100%),
     radial-gradient(ellipse at 25% 75%, rgba(226, 88, 34, 0.28) 0%, transparent 65%),
     radial-gradient(ellipse at 85% 25%, rgba(243, 197, 108, 0.3) 0%, transparent 55%);
   z-index: 2;
@@ -487,7 +487,7 @@ input, select, textarea {
 
 .hero-home-overlay {
   background:
-    linear-gradient(120deg, rgba(29, 12, 3, 0.78) 0%, rgba(65, 29, 2, 0.62) 32%, rgba(27, 11, 3, 0.82) 100%),
+    linear-gradient(120deg, rgba(230,81,0, 0.78) 0%, rgba(230,81,0, 0.62) 32%, rgba(230,81,0, 0.82) 100%),
     radial-gradient(circle at 18% 28%, rgba(255,69,0,0.30), transparent 40%),
     radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.14), transparent 30%);
 }
@@ -534,7 +534,7 @@ input, select, textarea {
 .hero-feature-card {
   border-color: rgba(255,69,0,0.55);
   background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(255,247,237,0.98));
-  box-shadow: 0 24px 60px rgba(20, 10, 3, 0.28);
+  box-shadow: 0 24px 60px rgba(230,81,0, 0.28);
 }
 
 .hero-feature-card .card-body {
@@ -2093,7 +2093,7 @@ section {
 }
 
 .hero-real-card {
-  background: rgba(31, 13, 2, 0.72);
+  background: rgba(230,81,0, 0.72);
   backdrop-filter: blur(14px);
   border: 2px solid rgba(233, 196, 106, 0.45);
   border-radius: var(--radius-lg);
@@ -2632,7 +2632,7 @@ section {
 .cm-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(30, 12, 2, 0.75);
+  background: rgba(230,81,0, 0.75);
   backdrop-filter: blur(4px);
   z-index: 1000;
   display: flex;
@@ -3145,7 +3145,7 @@ section {
 }
 
 .hero-real-card {
-  background: rgba(31, 13, 2, 0.88);
+  background: rgba(230,81,0, 0.88);
   backdrop-filter: blur(12px);
   border: 2px solid var(--gold-400);
   border-radius: 16px;
@@ -3999,7 +3999,7 @@ section {
   position: fixed;
   inset: 0;
   z-index: 99999;
-  background: rgba(15, 6, 2, 0.94);
+  background: rgba(230,81,0, 0.94);
   backdrop-filter: blur(16px);
   display: flex;
   align-items: center;
@@ -4093,7 +4093,7 @@ section {
 
 .lightbox-footer-caption {
   padding: 18px 24px;
-  background: rgba(28, 11, 2, 0.85);
+  background: rgba(230,81,0, 0.85);
   border-top: 1px solid rgba(233, 196, 106, 0.2);
   color: #FFF8F2;
   font-size: 0.88rem;
@@ -4132,7 +4132,7 @@ section {
 
 .researcher-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 16px 36px rgba(53, 20, 5, 0.16);
+  box-shadow: 0 16px 36px rgba(230,81,0, 0.16);
   border-color: var(--gold-400);
 }
 
@@ -4334,7 +4334,7 @@ section {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(20, 8, 2, 0.78);
+  background: rgba(230,81,0, 0.78);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 99998;
@@ -4636,7 +4636,7 @@ section {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(20, 8, 2, 0.82);
+  background: rgba(230,81,0, 0.82);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 100000;
@@ -5124,7 +5124,7 @@ body { animation: pageFadeIn 0.6s ease both; }
   position: absolute;
   left: 0; right: 0; bottom: 0;
   padding: 14px 14px 12px;
-  background: linear-gradient(0deg, rgba(31,13,2,0.92) 0%, rgba(31,13,2,0.35) 60%, transparent 100%);
+  background: linear-gradient(0deg, rgba(230,81,0,0.92) 0%, rgba(230,81,0,0.35) 60%, transparent 100%);
   color: #FFFFFF;
   font-size: 0.86rem;
   font-weight: 700;
@@ -5215,7 +5215,7 @@ body { animation: pageFadeIn 0.6s ease both; }
   position: absolute;
   inset: auto 0 0 0;
   padding: 24px 28px;
-  background: linear-gradient(0deg, rgba(31,13,2,0.9) 0%, transparent 100%);
+  background: linear-gradient(0deg, rgba(230,81,0,0.9) 0%, transparent 100%);
   color: #FFFFFF;
 }
 .panoramic-banner .panoramic-caption h3 {
