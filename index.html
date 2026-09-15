@@ -16,6 +16,8 @@
   --gold-400:#FFD54F;
   --gold-500:#E9C46A;
   --gold-300:#FFE082;
+  --gold-600:#C79A3E;
+  --gold-700:#B9862E;
   --saffron-500:#FF8C42;
   --saffron-600:#F4711F;
   --paper:#FFF8E7;
@@ -57,35 +59,41 @@ a{text-decoration:none;color:inherit;}
 
 /* ---------- HEADER ---------- */
 .site-header{
-  background:rgba(255,248,231,.95);
+  background:rgba(255,248,231,.98);
   backdrop-filter:blur(12px);
   border-bottom:1px solid rgba(233,196,106,.4);
   position:sticky;top:0;z-index:100;
   box-shadow:0 4px 20px rgba(0,0,0,.12);
 }
 .site-header-inner{
-  max-width:1400px;margin:0 auto;padding:12px 24px;
-  display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+  max-width:1440px;margin:0 auto;padding:10px 20px;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  flex-wrap:nowrap;
 }
-.brand-desktop{display:flex;align-items:center;gap:12px;}
-.brand-logo{width:48px;height:48px;object-fit:contain;}
-.brand-titles .brand-main{font-size:1.5rem;font-weight:800;line-height:1.1;}
+.brand-desktop{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.brand-logo{width:44px;height:44px;object-fit:contain;}
+.brand-titles .brand-main{font-size:1.35rem;font-weight:800;line-height:1.1;display:flex;align-items:baseline;gap:4px;}
 .brand-titles .brand-main .en{color:var(--maroon-900);}
-.brand-titles .brand-main .mr{color:var(--gold-500);}
-.brand-titles .brand-sub{font-size:.72rem;color:var(--muted);display:block;}
-.desktop-nav{display:flex;gap:6px;flex-wrap:wrap;}
+.brand-titles .brand-main .mr{
+  color:#E65100;
+  background:linear-gradient(90deg, #F4711F, #E65100);
+  -webkit-background-clip:text;
+  background-clip:text;
+}
+.brand-titles .brand-sub{font-size:.68rem;color:var(--muted);display:block;white-space:nowrap;}
+.desktop-nav{display:flex;gap:4px;flex-wrap:nowrap;align-items:center;white-space:nowrap;}
 .desktop-nav a{
-  padding:8px 14px;border-radius:40px;font-size:.88rem;font-weight:600;
-  color:var(--maroon-900);transition:.2s;
+  padding:6px 11px;border-radius:40px;font-size:.83rem;font-weight:700;
+  color:var(--maroon-900);transition:.2s;white-space:nowrap;
 }
 .desktop-nav a:hover,.desktop-nav a.active{
   background:var(--maroon-900);color:var(--gold-400);
 }
-.header-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.header-actions{display:flex;gap:6px;flex-wrap:nowrap;align-items:center;flex-shrink:0;}
 .btn{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:10px 20px;border-radius:40px;font-weight:700;font-size:.88rem;
-  border:2px solid transparent;transition:.2s;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;
+  padding:7px 14px;border-radius:40px;font-weight:700;font-size:.82rem;
+  border:2px solid transparent;transition:.2s;cursor:pointer;white-space:nowrap;
 }
 .btn-primary{
   background:linear-gradient(135deg,var(--saffron-600),var(--maroon-800));
@@ -420,13 +428,12 @@ tr:hover td{background:#FFF9F0;}
     </a>
     <nav class="desktop-nav">
       <a href="index.html" class="active">🏠 मुखपृष्ठ</a>
-      <a href="cm-history.html">⚔️ मराठा इतिहास</a>
+      <a href="cm-history.html">⚔️ इतिहास</a>
       <a href="cm-balidan-maas.html">🕯️ बलिदान मास</a>
-      <a href="cm-movements.html">🚩 मोर्चे व चळवळी</a>
-      <a href="cm-historical-dates.html">📅 दिनविशेष</a>
+      <a href="cm-movements.html">🚩 मोर्चे</a>
       <a href="cm-granthalaya.html">📚 ग्रंथालय</a>
       <a href="cm-achievers.html">🌟 गौरव</a>
-      <a href="cm-more.html">📂 अधिक विभाग ▾</a>
+      <a href="cm-more.html">📂 अधिक ▾</a>
     </nav>
     <div class="header-actions">
       <a href="cm-search.html" class="btn btn-outline">🔎 शोध</a>
