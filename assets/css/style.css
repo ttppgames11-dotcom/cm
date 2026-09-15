@@ -5,14 +5,14 @@
   --paper: #FFFFFF;
   --paper-2: #FFF8F2;
   --paper-3: #FFF3E0;
-  --maroon-950: #3D0B0E;
-  --maroon-900: #5A0B0D;
-  --maroon-800: #800000;
-  --maroon-700: #D84315;
-  --ink: #3D0B0E;
-  --ink-soft: #5A0B0D;
-  --ink-2: #6C1D10;
-  --text-sec: #5A0B0D;
+  --maroon-950: #C73800;
+  --maroon-900: #D84315;
+  --maroon-800: #E65100;
+  --maroon-700: #F4511E;
+  --ink: #E65100;
+  --ink-soft: #D84315;
+  --ink-2: #C73800;
+  --text-sec: #D84315;
   --gold-300: #FFFFFF;
   --gold-400: #FFFFFF;
   --gold-500: #F4511E;
@@ -24,10 +24,10 @@
   --saffron-500: #F4511E;
   --saffron-600: #E65100;
   --saffron-700: #BF360C;
-  --muted: #7C2D12;
+  --muted: #D84315;
   --line: #FFCC80;
   --success: #E65100;
-  --danger: #BF360C;
+  --danger: #E65100;
   --shadow-lg: 0 24px 60px rgba(244,81,30,0.16);
   --shadow-md: 0 14px 32px rgba(244,81,30,0.12);
   --shadow-sm: 0 8px 20px rgba(244,81,30,0.08);
@@ -3086,15 +3086,15 @@ section {
 }
 
 .header-actions .btn-outline {
-  color: #3D0B0E;
-  border-color: #5A1116;
-  background: rgba(233, 196, 106, 0.2);
+  color: #E65100;
+  border-color: #F4511E;
+  background: #FFF3E0;
 }
 
 .header-actions .btn-outline:hover {
-  color: #FFD54F;
-  border-color: #3D0B0E;
-  background: #3D0B0E;
+  color: #FFFFFF;
+  border-color: #F4511E;
+  background: #F4511E;
 }
 
 /* Breadcrumbs Bar */
