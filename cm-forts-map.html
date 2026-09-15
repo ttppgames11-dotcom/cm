@@ -30,7 +30,7 @@
 <header class="site-header">
   <div class="site-header-inner">
     <a href="index.html" class="brand-desktop">
-      <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" class="brand-logo">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
       <div class="brand-titles">
         <div class="brand-main">
           <span class="en">CONNECT</span>
@@ -54,6 +54,7 @@
 
     <!-- Header Actions -->
     <div class="header-actions">
+      <a href="cm-search.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🔎 शोध</a>
       <a href="cm-login.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
       <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
     </div>
@@ -144,6 +145,14 @@
     </div>
   </section>
 
+  <!-- Heritage Trails Highlight -->
+  <section style="margin-bottom:32px;">
+    <div class="notice safe" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;">
+      <span>🥾 <strong>बहु-किल्ले वारसा भ्रमंती मार्ग:</strong> शिवनेरी → जुन्नर → पुणे, तोरणा → राजगड → रायगड आणि इतर पूर्वनियोजित ट्रेल्स एकाच ठिकाणी पाहा.</span>
+      <a href="cm-heritage-trails.html" class="btn btn-primary" style="padding:10px 20px; font-size:0.9rem; white-space:nowrap;">वारसा भ्रमंती मार्ग पाहा →</a>
+    </div>
+  </section>
+
   <!-- Filter Tabs -->
   <section style="margin-bottom:32px;">
     <div class="tabs" data-tabs="#fortGrid" style="display:flex; flex-wrap:wrap; gap:8px;">
@@ -155,10 +164,10 @@
     </div>
 
     <!-- Fort Cards Grid with 100% REAL Authentic Photographs -->
-    <div class="grid grid-3" id="fortGrid" style="margin-top:24px;">
+    <div class="grid grid-3" data-reveal-group id="fortGrid" style="margin-top:24px;">
 
       <!-- 1. Raigad Fort -->
-      <div class="hd-feature-card" data-cat="giridurg unesco" data-name="रायगड किल्ला पुणे कोकण महाड राजधानी">
+      <a class="hd-feature-card" href="cm-raigad-fort.html" data-cat="giridurg unesco" data-name="रायगड किल्ला पुणे कोकण महाड राजधानी">
         <div class="hd-bg" style="background-image:url('assets/images/real-raigad-panoramic.jpg');"></div>
         <div class="hd-overlay"></div>
         <span class="hd-badge">राजधानी · २,७०० फूट · UNESCO</span>
@@ -166,10 +175,10 @@
           <strong style="font-size:1.3rem;">दुर्गराज रायगड</strong>
           <div class="d">रायगड जिल्हा · राज्याभिषेक सोहळा, होळीचा माळ, नगारखाना व छत्रपती शिवरायांची समाधी</div>
         </div>
-      </div>
+      </a>
 
       <!-- 2. Pratapgad Fort -->
-      <div class="hd-feature-card" data-cat="giridurg unesco" data-name="प्रतापगड सातारा महाबळेश्वर जावळी अफझलखान">
+      <a class="hd-feature-card" href="cm-pratapgad-fort.html" data-cat="giridurg unesco" data-name="प्रतापगड सातारा महाबळेश्वर जावळी अफझलखान">
         <div class="hd-bg" style="background-image:url('assets/images/real-pratapgad-fort.jpg');"></div>
         <div class="hd-overlay"></div>
         <span class="hd-badge">शौर्यपीठ · ३,५४० फूट · UNESCO</span>
@@ -177,7 +186,7 @@
           <strong style="font-size:1.3rem;">किल्ले प्रतापगड</strong>
           <div class="d">सातारा जिल्हा · अफझलखान वधाची ऐतिहासिक रणभूमी, भवानी माता मंदिर व बालेकिल्ला</div>
         </div>
-      </div>
+      </a>
 
       <!-- 3. Sinhagad Fort -->
       <div class="hd-feature-card" data-cat="giridurg unesco" data-name="सिंहगड कोंढाणा पुणे तानाजी मालुसरे कल्याण दरवाजा">
@@ -202,7 +211,7 @@
       </div>
 
       <!-- 5. Panhala Fort -->
-      <div class="hd-feature-card" data-cat="giridurg unesco" data-name="पन्हाळा कोल्हापूर पावनखिंड बाजीप्रभू तीन दरवाजा">
+      <a class="hd-feature-card" href="cm-panhala-pavankhind.html" data-cat="giridurg unesco" data-name="पन्हाळा कोल्हापूर पावनखिंड बाजीप्रभू तीन दरवाजा">
         <div class="hd-bg" style="background-image:url('assets/images/real-panhala-fort.jpg');"></div>
         <div class="hd-overlay"></div>
         <span class="hd-badge">पन्हाळगड · २,७५६ फूट · UNESCO</span>
@@ -210,10 +219,10 @@
           <strong style="font-size:1.3rem;">किल्ले पन्हाळा</strong>
           <div class="d">कोल्हापूर जिल्हा · पावनखिंड मोहीम प्रारंभ, तीन दरवाजा, सज्जा कोठी व अंबरखाना</div>
         </div>
-      </div>
+      </a>
 
       <!-- 6. Raigad Mahadarwaja Bastions -->
-      <div class="hd-feature-card" data-cat="giridurg" data-name="रायगड तटबंदी बुरुज टकमक टोक हिरकणी बुरुज">
+      <a class="hd-feature-card" href="cm-raigad-fort.html" data-cat="giridurg" data-name="रायगड तटबंदी बुरुज टकमक टोक हिरकणी बुरुज">
         <div class="hd-bg" style="background-image:url('assets/images/real-raigad-bastions.jpg');"></div>
         <div class="hd-overlay"></div>
         <span class="hd-badge">तटबंदी व बुरुज रचना</span>
@@ -221,7 +230,7 @@
           <strong style="font-size:1.3rem;">रायगड — तटबंदी व टकमक टोक</strong>
           <div class="d">सह्याद्रीचे ताशीव कडे, हिरकणी बुरुज आणि अभेद्य नैसर्गिक संरक्षण प्रणाली</div>
         </div>
-      </div>
+      </a>
 
       <!-- 7. Shaniwar Wada Pune -->
       <div class="hd-feature-card" data-cat="bhuikot" data-name="शनिवार वाडा पुणे पेशवे बाजीराव दिल्ली दरवाजा">
@@ -235,7 +244,7 @@
       </div>
 
       <!-- 8. Shivneri Fort -->
-      <div class="hd-feature-card" data-cat="giridurg unesco" data-name="शिवनेरी जुन्नर पुणे जन्मस्थान जिजाऊ शिवाई देवी">
+      <a class="hd-feature-card" href="cm-shivneri-fort.html" data-cat="giridurg unesco" data-name="शिवनेरी जुन्नर पुणे जन्मस्थान जिजाऊ शिवाई देवी">
         <div class="hd-bg" style="background-image:url('assets/images/real-raigad-panoramic.jpg');"></div>
         <div class="hd-overlay"></div>
         <span class="hd-badge">जन्मस्थान · ३,५०० फूट · UNESCO</span>
@@ -243,10 +252,10 @@
           <strong style="font-size:1.3rem;">किल्ले शिवनेरी</strong>
           <div class="d">जुन्नर, पुणे · छत्रपती शिवाजी महाराजांचे पवित्र जन्मस्थळ, शिवाई देवी मंदिर व बादशाही तलाव</div>
         </div>
-      </div>
+      </a>
 
       <!-- 9. Rajgad Fort -->
-      <div class="hd-feature-card" data-cat="giridurg unesco" data-name="राजगड पहिली राजधानी पुणे गुंजवणे बालेकिल्ला सुवेळा माची">
+      <a class="hd-feature-card" href="cm-rajgad-fort.html" data-cat="giridurg unesco" data-name="राजगड पहिली राजधानी पुणे गुंजवणे बालेकिल्ला सुवेळा माची">
         <div class="hd-bg" style="background-image:url('assets/images/real-raigad-bastions.jpg');"></div>
         <div class="hd-overlay"></div>
         <span class="hd-badge">पहिली राजधानी · ४,५१४ फूट · UNESCO</span>
@@ -254,14 +263,25 @@
           <strong style="font-size:1.3rem;">किल्ले राजगड</strong>
           <div class="d">पुणे जिल्हा · २५ वर्षे स्वराज्याची पहिली राजधानी, बालेकिल्ला, सुवेळा, संजीवनी व पद्मावती माची</div>
         </div>
-      </div>
+      </a>
+
+      <!-- 10. Torna Fort -->
+      <a class="hd-feature-card" href="cm-torna-fort.html" data-cat="giridurg" data-name="तोरणा प्रचंडगड पुणे वेल्हे पहिला विजय">
+        <div class="hd-bg" style="background-image:url('assets/images/real-raigad-bastions.jpg');"></div>
+        <div class="hd-overlay"></div>
+        <span class="hd-badge">पहिली मोठी पायरी · ४,६०३ फूट</span>
+        <div class="hd-content">
+          <strong style="font-size:1.3rem;">किल्ले तोरणा (प्रचंडगड)</strong>
+          <div class="d">पुणे जिल्हा (वेल्हे) · शिवरायांनी वयाच्या १६ व्या वर्षी जिंकलेला स्वराज्याचा पहिला किल्ला</div>
+        </div>
+      </a>
 
     </div>
   </section>
 
   <!-- DEEP DATA SECTION: UNESCO MARATHA MILITARY LANDSCAPES -->
   <section style="margin-top:48px; margin-bottom:48px;">
-    <div class="section-head">
+    <div class="section-head" data-reveal>
       <div>
         <span class="eyebrow-sm">जागतिक गौरव</span>
         <h2>युनेस्को जागतिक वारसा — 'मराठा लष्करी वास्तुरचना' (Maratha Military Landscapes)</h2>
@@ -375,14 +395,14 @@
 
   <!-- DEEP DATA SECTION: TREKKING SAFETY & CODE OF ETHICS -->
   <section style="margin-bottom:48px;">
-    <div class="section-head">
+    <div class="section-head" data-reveal>
       <div>
         <span class="eyebrow-sm">गड संवर्धन आचारसंहिता</span>
         <h2>किल्ले भ्रमंती नियमावली व पर्यावरण रक्षण आचारसंहिता</h2>
       </div>
     </div>
 
-    <div class="info-cards-grid">
+    <div class="info-cards-grid" data-reveal-group>
       <div class="info-box-card">
         <h4>🚫 कचरा व प्लास्टिक बंदी</h4>
         <p>
@@ -429,7 +449,7 @@
     <!-- Column 1: Brand & Mission -->
     <div>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-        <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
+        <img src="assets/images/logo.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
         <span style="font-family:'Baloo 2', sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold-400);">CONNECT मराठा</span>
       </div>
       <p style="font-size:0.86rem; line-height:1.6; color:rgba(251,243,227,0.8); margin-bottom:16px;">
@@ -448,6 +468,10 @@
         <li><a href="cm-shivaji-maharaj.html">🚩 छत्रपती शिवाजी महाराज</a></li>
         <li><a href="cm-sambhaji-maharaj.html">⚔️ छत्रपती संभाजी महाराज</a></li>
         <li><a href="cm-bajirao-peshwa.html">🐎 श्रीमंत बाजीराव पेशवे</a></li>
+        <li><a href="cm-rajmata-jijau.html">🙏 राजमाता जिजाऊ</a></li>
+        <li><a href="cm-rajaram-maharaj.html">🛡️ छत्रपती राजाराम महाराज</a></li>
+        <li><a href="cm-tarabai.html">👑 महाराणी ताराबाई</a></li>
+        <li><a href="cm-shahu-maharaj.html">📜 छत्रपती शाहू महाराज</a></li>
         <li><a href="cm-warriors.html">🛡️ अमर वीर व वीरांगना</a></li>
         <li><a href="cm-forts-map.html">🏰 महाराष्ट्रातील ३५०+ किल्ले</a></li>
         <li><a href="cm-history.html">📖 मराठा साम्राज्य कालपट</a></li>
@@ -490,6 +514,8 @@
 </footer>
 
 <!-- Centralized Javascript Engine -->
+<script src="assets/js/cm-data.js"></script>
+<script src="assets/js/cm-connect.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

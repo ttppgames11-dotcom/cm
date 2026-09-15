@@ -5,28 +5,407 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Connect Maratha (कनेक्ट मराठा) — अखिल भारतीय मराठा महासंघ अधिकृत डिजिटल व्यासपीठ</title>
 <link rel="stylesheet" href="assets/css/style.css">
+<style>
+/* ============================================================
+   NEW LAYOUT – MODERN, CARD-BASED, ONLINE BG IMAGES
+   ============================================================ */
+:root{
+  --maroon-950:#2A0709;
+  --maroon-900:#3D0B0E;
+  --maroon-800:#5A1116;
+  --gold-400:#FFD54F;
+  --gold-500:#E9C46A;
+  --gold-300:#FFE082;
+  --saffron-500:#FF8C42;
+  --saffron-600:#F4711F;
+  --paper:#FFF8E7;
+  --card-bg:#2A0709;
+  --text-sec:rgba(251,243,227,.82);
+  --ink-soft:#4A2A2E;
+  --muted:#8A6E72;
+  --success:#2E7D32;
+  --radius:16px;
+  --shadow:0 12px 32px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Baloo 2','Segoe UI',system-ui,sans-serif;
+  background:#FBF5EC;
+  color:#2A0709;
+  line-height:1.6;
+}
+img{max-width:100%;display:block;}
+a{text-decoration:none;color:inherit;}
+
+/* ---------- TOPBAR ---------- */
+.site-topbar{
+  background:linear-gradient(90deg,var(--maroon-950),var(--maroon-800));
+  color:var(--paper);
+  font-size:.82rem;
+  padding:8px 0;
+  position:relative;
+  z-index:101;
+}
+.site-topbar-inner{
+  max-width:1400px;margin:0 auto;padding:0 24px;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+}
+.site-topbar .left-info,.site-topbar .right-info{
+  display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+}
+.site-topbar a{color:var(--gold-400);text-decoration:underline;}
+
+/* ---------- HEADER ---------- */
+.site-header{
+  background:rgba(255,248,231,.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(233,196,106,.4);
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 4px 20px rgba(0,0,0,.12);
+}
+.site-header-inner{
+  max-width:1400px;margin:0 auto;padding:12px 24px;
+  display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+}
+.brand-desktop{display:flex;align-items:center;gap:12px;}
+.brand-logo{width:48px;height:48px;object-fit:contain;}
+.brand-titles .brand-main{font-size:1.5rem;font-weight:800;line-height:1.1;}
+.brand-titles .brand-main .en{color:var(--maroon-900);}
+.brand-titles .brand-main .mr{color:var(--gold-500);}
+.brand-titles .brand-sub{font-size:.72rem;color:var(--muted);display:block;}
+.desktop-nav{display:flex;gap:6px;flex-wrap:wrap;}
+.desktop-nav a{
+  padding:8px 14px;border-radius:40px;font-size:.88rem;font-weight:600;
+  color:var(--maroon-900);transition:.2s;
+}
+.desktop-nav a:hover,.desktop-nav a.active{
+  background:var(--maroon-900);color:var(--gold-400);
+}
+.header-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;border-radius:40px;font-weight:700;font-size:.88rem;
+  border:2px solid transparent;transition:.2s;cursor:pointer;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--saffron-600),var(--maroon-800));
+  color:#fff;border-color:var(--gold-500);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(90,17,22,.4);}
+.btn-outline{
+  background:transparent;color:var(--maroon-900);
+  border-color:var(--gold-500);
+}
+.btn-outline:hover{background:var(--gold-500);color:var(--maroon-950);}
+
+/* ---------- WAR CRY STRIP ---------- */
+.war-cry-strip{
+  background:linear-gradient(90deg,var(--maroon-950),var(--maroon-800));
+  color:var(--gold-300);
+  text-align:center;padding:12px 24px;font-weight:700;font-size:.9rem;
+  display:flex;justify-content:center;align-items:center;gap:12px;
+}
+
+/* ---------- HERO ---------- */
+.hero{
+  position:relative;min-height:85vh;display:flex;align-items:center;overflow:hidden;
+}
+.hero-bg-layer{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  opacity:0;animation:heroCinematic 32s infinite ease-in-out;
+}
+.hero-bg-layer:nth-child(1){background-image:url('assets/images/real-raigad-panoramic.jpg');animation-delay:0s;}
+.hero-bg-layer:nth-child(2){background-image:url('assets/images/real-maratha-army-panoramic.jpg');animation-delay:8s;}
+.hero-bg-layer:nth-child(3){background-image:url('assets/images/real-shivaji-coronation.jpg');animation-delay:16s;}
+.hero-bg-layer:nth-child(4){background-image:url('assets/images/real-sindhudurg-fort.jpg');animation-delay:24s;}
+@keyframes heroCinematic{
+  0%{opacity:0;transform:scale(1);}
+  4%{opacity:1;}
+  21%{opacity:1;}
+  27%{opacity:0;}
+  100%{opacity:0;transform:scale(1.14);}
+}
+@media(prefers-reduced-motion:reduce){.hero-bg-layer{animation:none;opacity:0;}.hero-bg-layer:nth-child(1){opacity:1;}}
+.hero-overlay{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(20,4,6,.5) 0%,rgba(20,4,6,.88) 100%);
+}
+.hero-content{
+  position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:60px 24px;
+  display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center;
+}
+.hero-copy h1{
+  font-size:clamp(2.2rem,5vw,4rem);line-height:1.1;color:#fff;
+}
+.hero-copy h1 .gradient-text{
+  background:linear-gradient(90deg,var(--gold-400),var(--saffron-500));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-copy .eyebrow{
+  color:var(--gold-400);font-weight:700;letter-spacing:1px;font-size:.85rem;
+  text-transform:uppercase;margin-bottom:8px;
+}
+.hero-copy .tagline{
+  color:var(--text-sec);font-size:1.1rem;max-width:54ch;margin:16px 0 24px;
+}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;}
+.btn-glass{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);
+  color:#fff;padding:10px 20px;border-radius:40px;font-weight:600;font-size:.88rem;
+  backdrop-filter:blur(6px);transition:.2s;
+}
+.btn-glass:hover{background:rgba(255,255,255,.25);}
+.hero-stats-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+}
+.stat-glass{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  border-radius:12px;padding:12px;text-align:center;backdrop-filter:blur(6px);
+}
+.stat-glass b{display:block;font-size:1.4rem;color:var(--gold-400);}
+.stat-glass span{font-size:.72rem;color:var(--text-sec);}
+
+/* Hero feature card */
+.hero-feature-card{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  border-radius:20px;overflow:hidden;backdrop-filter:blur(10px);
+}
+.hero-feature-card .card-img-wrap img{
+  width:100%;height:280px;object-fit:cover;object-position:top center;
+}
+.hero-feature-card .card-body{padding:20px;color:#fff;}
+.hero-feature-card .card-body h4{font-size:1.15rem;margin:6px 0 8px;}
+.hero-feature-card .card-body p{font-size:.85rem;color:var(--text-sec);}
+.hero-switcher-chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;}
+.hero-switcher-chips .btn{font-size:.72rem;padding:4px 10px;}
+
+/* ---------- SECTION LAYOUT ---------- */
+.section{padding:64px 0;}
+.container{max-width:1400px;margin:0 auto;padding:0 24px;}
+.section-head{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  margin-bottom:32px;flex-wrap:wrap;gap:12px;
+}
+.section-head h2{
+  font-size:clamp(1.6rem,3vw,2.4rem);color:var(--maroon-950);
+}
+.section-head .eyebrow-sm{
+  color:var(--saffron-600);font-weight:700;font-size:.82rem;
+  text-transform:uppercase;letter-spacing:1px;
+}
+.more-link{color:var(--maroon-800);font-weight:700;font-size:.9rem;}
+.more-link:hover{color:var(--saffron-600);}
+
+/* ---------- GRID CARDS WITH BG IMAGES ---------- */
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;}
+
+.card-bg{
+  position:relative;border-radius:var(--radius);overflow:hidden;
+  min-height:320px;display:flex;align-items:flex-end;
+  background-size:cover;background-position:center;
+  transition:transform .3s ease,box-shadow .3s ease;
+  box-shadow:var(--shadow);
+}
+.card-bg::before{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(20,4,6,.05) 0%,rgba(20,4,6,.7) 50%,rgba(20,4,6,.95) 100%);
+}
+.card-bg:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,.35);}
+.card-bg-body{position:relative;z-index:2;padding:24px;width:100%;}
+.card-bg-body h3,.card-bg-body h4{color:#fff;margin:8px 0 8px;}
+.card-bg-body p{color:rgba(255,248,231,.9);font-size:.88rem;line-height:1.5;}
+.card-tag{
+  display:inline-block;background:rgba(61,11,14,.9);color:var(--gold-300);
+  border:1px solid var(--gold-500);font-size:.72rem;font-weight:700;
+  padding:4px 12px;border-radius:4px;margin-bottom:6px;
+}
+
+/* ---------- SERVICE TILES (icon-led, non-photo premium) ---------- */
+.service-tile{
+  position:relative;border-radius:var(--radius);overflow:hidden;
+  min-height:280px;display:flex;align-items:flex-end;
+  background:linear-gradient(155deg,var(--maroon-900) 0%,var(--maroon-800) 55%,#C1531F 170%);
+  box-shadow:var(--shadow);transition:transform .3s ease,box-shadow .3s ease;
+}
+.service-tile::before{
+  content:"";position:absolute;inset:0;opacity:.12;z-index:1;pointer-events:none;
+  background-image:radial-gradient(circle,#fff 1.5px,transparent 1.5px);
+  background-size:20px 20px;
+}
+.service-tile:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,.35);}
+
+/* ---------- POLICY CARDS (parchment, non-photo) ---------- */
+.policy-card{
+  position:relative;border-radius:var(--radius);overflow:hidden;
+  min-height:300px;display:flex;align-items:flex-end;
+  background:linear-gradient(155deg,#FBF0D9 0%,#F3E1B8 100%);
+  border:1px solid rgba(90,17,22,.12);
+  box-shadow:0 8px 24px rgba(90,17,22,.1);
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.policy-card:hover{transform:translateY(-6px);box-shadow:0 16px 32px rgba(90,17,22,.18);}
+.policy-card .card-bg-body h4{color:var(--maroon-950);}
+.policy-card .card-bg-body p{color:var(--ink-soft);}
+
+/* ---------- QUICK ACCESS ---------- */
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.quick-card{
+  position:relative;border-radius:var(--radius);overflow:hidden;
+  min-height:200px;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:24px;background-size:cover;background-position:center;
+  transition:transform .3s ease;
+}
+.quick-card::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(20,4,6,.1),rgba(20,4,6,.9));
+}
+.quick-card > *{position:relative;z-index:2;}
+.quick-card:hover{transform:scale(1.02);}
+.quick-card h3{color:#fff;margin:6px 0 4px;}
+.quick-card p{color:rgba(255,248,231,.85);font-size:.85rem;}
+.quick-card .icon{font-size:2rem;}
+
+/* ---------- PORTRAIT STRIP ---------- */
+.portrait-strip{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:20px;
+}
+.portrait-card{
+  position:relative;border-radius:14px;overflow:hidden;
+  aspect-ratio:3/4;background-size:cover;background-position:top center;
+  box-shadow:0 14px 34px rgba(0,0,0,.28);
+  border:6px solid #fff;
+  transition:transform .35s ease,box-shadow .35s ease;
+}
+.portrait-card::before{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(20,4,6,0) 42%,rgba(20,4,6,.94) 100%);
+}
+.portrait-card:hover{transform:translateY(-8px) rotate(-1deg);box-shadow:0 24px 48px rgba(0,0,0,.4);}
+.portrait-card .portrait-body{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:16px;}
+.portrait-card .portrait-body h4{font-size:1rem;color:#fff;margin:0 0 2px;}
+.portrait-card .portrait-body span{font-size:.76rem;color:rgba(255,255,255,.85);}
+
+/* ---------- RAJMUDRA ---------- */
+.rajmudra-container{
+  background:linear-gradient(135deg,var(--maroon-950),var(--maroon-800));
+  border-radius:24px;padding:48px;text-align:center;color:var(--paper);
+  box-shadow:var(--shadow);
+}
+.rajmudra-seal svg{width:180px;height:180px;margin:0 auto 16px;}
+.rajmudra-verse{font-size:1.2rem;line-height:1.7;color:var(--gold-300);}
+.rajmudra-meaning{max-width:70ch;margin:16px auto 0;font-size:.9rem;color:var(--text-sec);}
+
+/* ---------- TABLES ---------- */
+.table-wrap{overflow-x:auto;border-radius:var(--radius);box-shadow:var(--shadow);}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:.88rem;}
+th{background:var(--maroon-900);color:var(--gold-300);padding:14px 16px;text-align:left;}
+td{padding:12px 16px;border-bottom:1px solid #F0E6D8;}
+tr:hover td{background:#FFF9F0;}
+
+/* ---------- RESEARCHER CARDS ---------- */
+.researchers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.researcher-card{
+  background:#fff;border-radius:var(--radius);padding:24px;
+  border-top:4px solid var(--gold-500);box-shadow:0 8px 24px rgba(0,0,0,.08);
+  position:relative;
+}
+.researcher-card .quote-mark{
+  font-size:3rem;color:var(--gold-400);line-height:1;display:block;margin-bottom:8px;
+}
+.researcher-card h4{font-size:1.05rem;color:var(--maroon-950);margin:8px 0 4px;}
+.researcher-card .researcher-title{font-size:.78rem;color:var(--muted);margin-bottom:10px;}
+.researcher-card p{font-size:.85rem;color:var(--ink-soft);line-height:1.6;}
+.key-takeaway{
+  margin-top:12px;padding:10px;background:#FFF8E7;border-radius:8px;
+  font-size:.8rem;color:var(--maroon-900);border-left:3px solid var(--gold-500);
+}
+
+/* ---------- FOOTER ---------- */
+.website-footer{
+  position:relative;
+  background:
+    linear-gradient(180deg,rgba(15,3,4,.93) 0%,rgba(20,4,6,.97) 100%),
+    url('assets/images/real-raigad-bastions.jpg');
+  background-size:cover;background-position:center;
+  color:#fff;padding:64px 0 24px;
+}
+.footer-grid{
+  position:relative;z-index:1;
+  max-width:1400px;margin:0 auto;padding:0 24px;
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;
+}
+.website-footer h3{
+  color:#fff;font-size:1.05rem;margin-bottom:16px;
+  border-bottom:1px solid rgba(255,255,255,.25);padding-bottom:8px;
+}
+.website-footer ul{list-style:none;}
+.website-footer ul li{margin-bottom:8px;}
+.website-footer ul a{color:rgba(255,255,255,.92);font-size:.88rem;transition:.2s;}
+.website-footer ul a:hover{color:var(--gold-400);padding-left:4px;}
+.footer-brand-copy{color:rgba(255,255,255,.92);font-size:.88rem;margin-bottom:16px;}
+.footer-brand-meta{color:rgba(255,255,255,.85);font-size:.82rem;}
+.footer-bottom{
+  position:relative;z-index:1;
+  max-width:1400px;margin:40px auto 0;padding:20px 24px 0;
+  border-top:1px solid rgba(255,255,255,.2);text-align:center;
+}
+.footer-copy{color:rgba(255,255,255,.92);font-size:.85rem;}
+.footer-jai{color:#fff;font-weight:700;margin:6px 0;}
+.footer-admin a{color:rgba(255,255,255,.7);font-size:.72rem;}
+
+/* ---------- MISC ---------- */
+.muted{color:var(--muted);font-size:.92rem;}
+.tag-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.tag{
+  display:inline-block;background:#F5EDE0;color:var(--maroon-900);
+  font-size:.72rem;padding:4px 10px;border-radius:20px;font-weight:600;
+}
+.data-table-wrap{margin-top:24px;}
+
+/* ---------- RESPONSIVE ---------- */
+@media(max-width:1024px){
+  .hero-content{grid-template-columns:1fr;}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:repeat(2,1fr);}
+  .quick-grid{grid-template-columns:repeat(2,1fr);}
+  .portrait-strip{grid-template-columns:repeat(3,1fr);}
+  .researchers-grid{grid-template-columns:repeat(2,1fr);}
+  .footer-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:640px){
+  .hero-content{padding:40px 16px;}
+  .grid-2,.grid-3,.grid-4,.quick-grid,.portrait-strip,.researchers-grid{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr;}
+  .hero-stats-grid{grid-template-columns:repeat(2,1fr);}
+  .site-topbar-inner{flex-direction:column;text-align:center;}
+  .desktop-nav{display:none;}
+}
+</style>
 </head>
 <body>
 
-<!-- Website Top Announcement & Utility Bar -->
+<!-- ========== TOPBAR ========== -->
 <div class="site-topbar">
   <div class="site-topbar-inner">
     <div class="left-info">
       <span>🚩 <strong>जय जिजाऊ · जय शिवराय · जय शंभूराजे</strong></span>
-      <span style="opacity:0.6;">|</span>
-      <span>अखंड हिंदुस्थानचे प्रेरणास्थान — हिंदवी स्वराज्य</span>
+      <span>|</span>
+      <span>जपा इतिहास • जपा संस्कृती • सन्मान करा कर्तृत्वाचा • जोडा समाज • घडवा भविष्य</span>
     </div>
     <div class="right-info">
       <span>📞 समाज हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
-      <span style="opacity:0.6;">|</span>
-      <span>📅 <strong>शिवराज्याभिषेक शक ३५१</strong></span>
-      <span style="opacity:0.6;">|</span>
-      <a href="cm-contact.html" style="color:var(--gold-400); text-decoration:underline;">संपर्क व मदत</a>
+      <span>|</span>
+      <a href="cm-governance.html">⚖️ DPDP धोरण</a>
+      <span>|</span>
+      <a href="cm-blueprint.html">🧭 मास्टर ब्लूप्रिंट (५०)</a>
+      <span>|</span>
+      <a href="cm-contact.html">संपर्क व मदत</a>
     </div>
   </div>
 </div>
 
-<!-- Main Desktop Website Header & Mega Navbar -->
+<!-- ========== HEADER ========== -->
 <header class="site-header">
   <div class="site-header-inner">
     <a href="index.html" class="brand-desktop">
@@ -36,138 +415,278 @@
           <span class="en">CONNECT</span>
           <span class="mr">मराठा</span>
         </div>
-        <span class="brand-sub">अखिल भारतीय मराठा डिजिटल महासंघ</span>
+        <span class="brand-sub">भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी</span>
       </div>
     </a>
-
-    <!-- Desktop Navigation Menu -->
     <nav class="desktop-nav">
       <a href="index.html" class="active">🏠 मुखपृष्ठ</a>
       <a href="cm-history.html">⚔️ मराठा इतिहास</a>
-      <a href="cm-forts-map.html">🏰 ३५०+ गड-किल्ले</a>
-      <a href="cm-warriors.html">🛡️ अमर शिलेदार</a>
-      <a href="cm-services.html">🛠️ सेवा व उद्योग</a>
-      <a href="cm-directory-people.html">👥 समुदाय</a>
-      <a href="cm-events.html">📅 उपक्रम</a>
+      <a href="cm-balidan-maas.html">🕯️ बलिदान मास</a>
+      <a href="cm-movements.html">🚩 मोर्चे व चळवळी</a>
+      <a href="cm-historical-dates.html">📅 दिनविशेष</a>
+      <a href="cm-granthalaya.html">📚 ग्रंथालय</a>
+      <a href="cm-achievers.html">🌟 गौरव</a>
       <a href="cm-more.html">📂 अधिक विभाग ▾</a>
     </nav>
-
-    <!-- Header Actions -->
     <div class="header-actions">
-      <a href="cm-login.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
-      <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
+      <a href="cm-search.html" class="btn btn-outline">🔎 शोध</a>
+      <a href="cm-login.html" class="btn btn-outline">👤 लॉगिन</a>
+      <a href="cm-register.html" class="btn btn-primary">🚩 नोंदणी</a>
     </div>
   </div>
 </header>
 
-<!-- Majestic War Cry Banner -->
+<!-- ========== WAR CRY ========== -->
 <div class="war-cry-strip">
-  <span class="flame-icon">🔥</span>
+  <span>🔥</span>
   <span>|| जय भवानी, जय शिवाजी || प्रौढ प्रताप पुरंधर क्षत्रियकुलावतंस सिंहासनाधीश्वर छत्रपती शिवाजी महाराज की जय!</span>
-  <span class="flame-icon">🔥</span>
+  <span>🔥</span>
 </div>
 
-<!-- Grand Website Hero Section with Authentic Maratha Samrajya & Maratha Hero Imagery -->
-<div class="hero" style="min-height: 600px;">
-  <!-- Authentic Historical Fresco of Maratha Samrajya Army in Battle (2265x1072) -->
-  <img src="assets/images/maratha-samrajya.jpg" alt="अखंड मराठा साम्राज्य — १८ व्या शतकातील अस्सल भित्तीचित्र व मराठा सैन्य (Real Historical Fresco)" class="hero-bg-img" id="heroMainBg">
-  <div class="hero-overlay" style="background: radial-gradient(circle at 75% 35%, rgba(20,4,6,0.55), rgba(12,2,4,0.92) 80%);"></div>
-
-  <div class="wrap hero-content" style="max-width:1280px; width:100%; padding: 44px 24px;">
-    <div class="hero-website-grid">
-      <!-- Left Column: Hero Mission & Heading -->
-      <div>
-        <div class="eyebrow">🚩 अस्सल ऐतिहासिक वारसा · अखंड मराठा साम्राज्य · आधुनिक महासंघ</div>
-        <h1 style="font-size: clamp(2.4rem, 4.5vw, 3.8rem); line-height: 1.12;">संघटित मराठा,<br>शक्तिशाली महाराष्ट्र</h1>
-        <div class="rule"></div>
-        <p class="tagline" style="font-size: 1.08rem; max-width: 54ch;">
-          छत्रपती शिवरायांच्या स्वराज्याची जाज्वल्य निष्ठा, ३५० वर्षांची अखंड शौर्यपरंपरा आणि २१ व्या शतकातील तंत्रज्ञानावर आधारित मराठा समाजाचे राष्ट्रीय डिजिटल व्यासपीठ.
-        </p>
-        <div class="hero-ctas">
-          <a href="cm-register.html" class="btn btn-primary" style="font-size:1.02rem; padding:13px 26px;">🚩 महासंघात सहभागी व्हा</a>
-          <a href="#maratha-samrajya-section" class="btn-glass">⚔️ मराठा साम्राज्य</a>
-          <a href="#maratha-navy-section" class="btn-glass">🌊 मराठा आरमार</a>
-          <a href="#maratha-resurgence-section" class="btn-glass">👑 महादजी युग</a>
-          <a href="#maratha-historians-section" class="btn-glass">📚 संशोधक विचार</a>
+<!-- ========== HERO ========== -->
+<section class="hero">
+  <div class="hero-bg-layer"></div>
+  <div class="hero-bg-layer"></div>
+  <div class="hero-bg-layer"></div>
+  <div class="hero-bg-layer"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-copy">
+      <div class="eyebrow">🚩 अस्सल ऐतिहासिक वारसा · अखंड मराठा साम्राज्य</div>
+      <h1>संघटित मराठा,<br><span class="gradient-text">शक्तिशाली महाराष्ट्र</span></h1>
+      <p class="tagline">
+        छत्रपती शिवरायांच्या स्वराज्याची जाज्वल्य निष्ठा, ३५० वर्षांची अखंड शौर्यपरंपरा आणि २१ व्या शतकातील तंत्रज्ञानावर आधारित मराठा समाजाचे राष्ट्रीय डिजिटल व्यासपीठ.
+      </p>
+      <div class="hero-ctas">
+        <a href="cm-register.html" class="btn btn-primary">🚩 महासंघात सहभागी व्हा</a>
+        <a href="cm-login.html" class="btn-glass">👤 Demo लॉगिन</a>
+        <a href="cm-search.html" class="btn-glass">🔎 सर्वत्र शोध</a>
+        <a href="cm-blueprint.html" class="btn-glass">🧭 Product Blueprint</a>
+      </div>
+      <div class="hero-stats-grid">
+        <div class="stat-glass"><b data-countup="350" data-suffix="+">0</b><span>अभ्यासित गड-किल्ले</span></div>
+        <div class="stat-glass"><b data-countup="25420" data-suffix="+">0</b><span>सक्रिय बांधव</span></div>
+        <div class="stat-glass"><b data-countup="2540" data-suffix="+">0</b><span>मराठा उद्योग</span></div>
+        <div class="stat-glass"><b>अटकेपार</b><span>विस्तारित भगवा ध्वज</span></div>
+      </div>
+    </div>
+    <div class="hero-feature-card">
+      <div class="card-img-wrap">
+        <img src="assets/images/real-shivaji-portrait.jpg" alt="छत्रपती शिवाजी महाराज">
+      </div>
+      <div class="card-body">
+        <span class="card-tag" id="heroBadge">🚩 मराठा वीर (Maratha Hero)</span>
+        <h4 id="heroCardTitle">छत्रपती शिवाजी महाराज — हिंदवी स्वराज्य संस्थापक</h4>
+        <p id="heroCardDesc">रयतेचे कल्याण, ३५०+ अभेद्य गडकोट, गनिमी काव्याचे जनक आणि सार्वभौम मराठा साम्राज्याची पायाभरणी करणारे युगपुरुष.</p>
+        <div class="hero-switcher-chips">
+          <button class="btn btn-outline" onclick="switchHeroView('hero')">🚩 मराठा वीर</button>
+          <button class="btn btn-outline" onclick="switchHeroView('samrajya')">⚔️ मराठा साम्राज्य</button>
+          <button class="btn btn-outline" onclick="switchHeroView('coronation')">👑 राज्याभिषेक</button>
+          <button class="btn btn-outline" onclick="switchHeroView('map')">🗺️ साम्राज्य नकाशा</button>
         </div>
-        <div class="stats-glass">
-          <div class="stat-glass"><b data-countup="350" data-suffix="+">0</b><span>अभ्यासित गड-किल्ले</span></div>
-          <div class="stat-glass"><b data-countup="25420" data-suffix="+">0</b><span>सक्रिय बांधव</span></div>
-          <div class="stat-glass"><b data-countup="2540" data-suffix="+">0</b><span>मराठा उद्योग</span></div>
-          <div class="stat-glass"><b>अटकेपार</b><span>विस्तारित भगवा ध्वज</span></div>
+        <a href="cm-shivaji-maharaj.html" class="btn btn-primary" id="heroCardLink" style="margin-top:8px;font-size:.8rem;">सविस्तर चरित्र वाचा →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOUR PRIMARY PILLARS (Section 2 of Master Blueprint) ========== -->
+<section class="section" style="background:#fff; padding:54px 0;">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow-sm">Section 2 • Four Primary Pillars</span>
+        <h2>Connect Maratha चे ४ आधारस्तंभ</h2>
+      </div>
+      <a href="cm-blueprint.html" class="more-link">मास्टर ब्लूप्रिंट पहा →</a>
+    </div>
+    <div class="grid-4" style="margin-bottom:40px;">
+      <div style="background:linear-gradient(135deg, #3D0B0E, #5A1116); border-radius:16px; padding:24px; color:#fff; border-top:4px solid #FFD54F;">
+        <div style="font-size:2rem; margin-bottom:8px;">⚔️</div>
+        <h4 style="color:#fff; font-size:1.15rem; margin-bottom:6px;">१. जतन करा (PRESERVE)</h4>
+        <p style="font-size:0.84rem; color:rgba(255,248,231,0.9); line-height:1.55; margin-bottom:12px;">मराठा इतिहास, ३५०+ किल्ले, आरमार, समकालीन बखरी, पत्रे, नकाशे व बलिदान मास स्मृती.</p>
+        <a href="cm-history.html" style="color:#FFD54F; font-size:0.82rem; font-weight:700;">इतिहास दालन →</a>
+      </div>
+      <div style="background:linear-gradient(135deg, #B7410E, #E65100); border-radius:16px; padding:24px; color:#fff; border-top:4px solid #FFE082;">
+        <div style="font-size:2rem; margin-bottom:8px;">🌟</div>
+        <h4 style="color:#fff; font-size:1.15rem; margin-bottom:6px;">२. गौरव करा (CELEBRATE)</h4>
+        <p style="font-size:0.84rem; color:rgba(255,248,231,0.9); line-height:1.55; margin-bottom:12px;">मराठा गौरव — आधुनिक शास्त्रज्ञ, डीप टेक, डॉक्टर, ऑलिम्पिक क्रीडापटू, महिला व युवा नेतृत्व.</p>
+        <a href="cm-achievers.html" style="color:#FFE082; font-size:0.82rem; font-weight:700;">गौरव व अचीव्हर्स →</a>
+      </div>
+      <div style="background:linear-gradient(135deg, #1B5E20, #2E7D32); border-radius:16px; padding:24px; color:#fff; border-top:4px solid #A5D6A7;">
+        <div style="font-size:2rem; margin-bottom:8px;">🤝</div>
+        <h4 style="color:#fff; font-size:1.15rem; margin-bottom:6px;">३. जोडा (CONNECT)</h4>
+        <p style="font-size:0.84rem; color:rgba(255,248,231,0.9); line-height:1.55; margin-bottom:12px;">समुदाय व व्यवसाय — व्यवसाय संगम (BNI-शैली मराठा चॅप्टर्स), व्यावसायिक, विद्यार्थी व मेन्टॉर.</p>
+        <a href="cm-business-sangam.html" style="color:#A5D6A7; font-size:0.82rem; font-weight:700;">व्यवसाय संगम →</a>
+      </div>
+      <div style="background:linear-gradient(135deg, #0D47A1, #1565C0); border-radius:16px; padding:24px; color:#fff; border-top:4px solid #90CAF9;">
+        <div style="font-size:2rem; margin-bottom:8px;">🚀</div>
+        <h4 style="color:#fff; font-size:1.15rem; margin-bottom:6px;">४. घडवा (BUILD)</h4>
+        <p style="font-size:0.84rem; color:rgba(255,248,231,0.9); line-height:1.55; margin-bottom:12px;">भविष्य व संधी — करिअर, रोजगार, स्पर्धा परीक्षा, ग्लोबल मराठा नेटवर्किंग व सामाजिक प्रकल्प.</p>
+        <a href="cm-jobs.html" style="color:#90CAF9; font-size:0.82rem; font-weight:700;">करिअर व संधी →</a>
+      </div>
+    </div>
+
+    <!-- Master Blueprint Spotlight Showcase Cards -->
+    <div class="grid-2" style="gap:24px;">
+      <!-- Balidan Maas Card -->
+      <div class="card-bg" style="background-image:url('assets/images/balidan-maas-memorial.jpg'); min-height:300px;">
+        <div class="card-bg-body">
+          <span class="card-tag">Section 7 & 8 • स्मृती पर्व</span>
+          <h3 style="font-size:1.4rem; color:#fff; margin:6px 0;">बलिदान मास व ऐतिहासिक स्मृती दालन</h3>
+          <p style="font-size:0.88rem; color:rgba(255,248,231,0.95); margin-bottom:12px;">
+            सक्तीचे धार्मिक कर्मकांड नसून स्वैच्छिक कृतज्ञता स्मरण आणि रचनात्मक समाजसेवा — रक्तदान, दुर्ग स्वच्छता, वृक्षारोपण व ३० दिवसांचे "आजची स्मृती" कॅलेंडर.
+          </p>
+          <a href="cm-balidan-maas.html" class="btn btn-primary" style="font-size:0.8rem; padding:6px 14px;">बलिदान मास दालन पहा →</a>
         </div>
       </div>
 
-      <!-- Right Column: Real Heritage Showcase Card (Maratha Hero & Samrajya) -->
-      <div class="hero-real-card">
-        <div class="card-img-wrap" style="position:relative; overflow:hidden;">
-          <!-- Authentic Painting of Chhatrapati Shivaji Maharaj by M. V. Dhurandhar -->
-          <img src="assets/images/maratha-hero.jpg" alt="मराठा वीर छत्रपती शिवाजी महाराज (Real Painting by M. V. Dhurandhar)" id="heroCardImg" style="transition: opacity 0.35s ease, transform 0.4s ease; object-position: top center;">
-        </div>
-        <div class="card-body">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <span class="card-badge" id="heroBadge">🚩 मराठा वीर (Maratha Hero)</span>
-            <span style="font-size:0.75rem; color:var(--gold-400); font-weight:600;">१००% अस्सल ऐतिहासिक</span>
-          </div>
-          <h4 id="heroCardTitle" style="margin:4px 0 8px 0; font-size:1.15rem;">छत्रपती शिवाजी महाराज — हिंदवी स्वराज्य संस्थापक</h4>
-          <p id="heroCardDesc" style="font-size:0.86rem; line-height:1.45; color:var(--text-sec); margin-bottom:12px;">
-            रयतेचे कल्याण, ३५०+ अभेद्य गडकोट, गनिमी काव्याचे जनक आणि सार्वभौम मराठा साम्राज्याची पायाभरणी करणारे युगपुरुष.
+      <!-- Morchas and Movements Card -->
+      <div class="card-bg" style="background-image:url('assets/images/maratha-kranti-morcha.jpg'); min-height:300px;">
+        <div class="card-bg-body">
+          <span class="card-tag">Section 9, 10 & 11 • मूक मोर्चे</span>
+          <h3 style="font-size:1.4rem; color:#fff; margin:6px 0;">मराठा क्रांती मूक मोर्चे व ऐतिहासिक चळवळी</h3>
+          <p style="font-size:0.88rem; color:rgba(255,248,231,0.95); margin-bottom:12px;">
+            ५८ शांततापूर्ण मूक मोर्चे, विद्यार्थिनींचे नेतृत्व, सत्यशोधक व आरक्षण लढा — वस्तुनिष्ठ ऐतिहासिक दस्तऐवजीकरण.
           </p>
-          
-          <!-- Interactive Heritage Quick Switcher Buttons -->
-          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;">
-            <button type="button" class="btn btn-outline" style="padding:3px 8px; font-size:0.74rem; border-color:var(--gold-400); color:var(--gold-400);" onclick="switchHeroView('hero')">🚩 मराठा वीर</button>
-            <button type="button" class="btn btn-outline" style="padding:3px 8px; font-size:0.74rem; border-color:var(--saffron-500); color:var(--saffron-300);" onclick="switchHeroView('samrajya')">⚔️ मराठा साम्राज्य</button>
-            <button type="button" class="btn btn-outline" style="padding:3px 8px; font-size:0.74rem; border-color:var(--gold-400); color:var(--paper);" onclick="switchHeroView('coronation')">👑 राज्याभिषेक</button>
-            <button type="button" class="btn btn-outline" style="padding:3px 8px; font-size:0.74rem; border-color:var(--gold-400); color:var(--paper);" onclick="switchHeroView('map')">🗺️ साम्राज्य नकाशा</button>
-          </div>
+          <a href="cm-movements.html" class="btn btn-primary" style="font-size:0.8rem; padding:6px 14px;">मोर्चे व चळवळी दालन →</a>
+        </div>
+      </div>
 
-          <div class="card-links">
-            <a href="cm-shivaji-maharaj.html" id="heroCardLink" class="btn btn-primary" style="padding:6px 14px; font-size:0.82rem;">सविस्तर चरित्र वाचा →</a>
-            <a href="#maratha-samrajya-section" class="btn btn-outline" style="padding:6px 14px; font-size:0.82rem; color:var(--paper); border-color:var(--gold-400);">साम्राज्य इतिहास 📜</a>
-          </div>
+      <!-- Granthalaya Card -->
+      <div class="card-bg" style="background-image:url('assets/images/maratha-granthalaya.jpg'); min-height:300px;">
+        <div class="card-bg-body">
+          <span class="card-tag">Section 13, 14, 15 & 47 • ज्ञान भांडार</span>
+          <h3 style="font-size:1.4rem; color:#fff; margin:6px 0;">मराठा महाग्रंथालय व डिजिटल अर्काईव्ह</h3>
+          <p style="font-size:0.88rem; color:rgba(255,248,231,0.95); margin-bottom:12px;">
+            बखरी, बुधभूषणम्, आज्ञापत्र, मोडी पत्रे व नकाशे — ५-स्तरीय संपादकीय प्रमाण दर्जा (Level 1 Primary ते Level 5 Oral).
+          </p>
+          <a href="cm-granthalaya.html" class="btn btn-primary" style="font-size:0.8rem; padding:6px 14px;">महाग्रंथालय उघडा →</a>
+        </div>
+      </div>
+
+      <!-- Modern Achievers Card -->
+      <div class="card-bg" style="background-image:url('assets/images/modern-maratha-achievers.jpg'); min-height:300px;">
+        <div class="card-bg-body">
+          <span class="card-tag">Section 16, 17 & 25 • अचीव्हर्स</span>
+          <h3 style="font-size:1.4rem; color:#fff; margin:6px 0;">मराठा गौरव, हॉल ऑफ फेम व ग्लोबल मराठा</h3>
+          <p style="font-size:0.88rem; color:rgba(255,248,231,0.95); margin-bottom:12px;">
+            डीप टेक, अंतराळ, संरक्षण, उद्योग, महिला व युवा नेतृत्वाची राष्ट्रीय व जागतिक निर्देशिका.
+          </p>
+          <a href="cm-achievers.html" class="btn btn-primary" style="font-size:0.8rem; padding:6px 14px;">अचीव्हर्स निर्देशिका →</a>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- Today in History Banner -->
-<div class="today-strip">
-  <div class="wrap today-inner">
-    <span class="today-tag">आजचा इतिहास</span>
-    <span class="today-text">६ जून १६७४ — दुर्गराज रायगडावर छत्रपती शिवाजी महाराजांचा वैदिक सुवर्ण राज्याभिषेक संपन्न झाला व 'शिवराज्याभिषेक शक' सुरू झाले.</span>
+<!-- ========== PORTRAIT STRIP ========== -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow-sm">🖼️ अस्सल तैलचित्रे व पुतळे</span>
+        <h2>अजरामर व्यक्तिरेखा (Legendary Portraits)</h2>
+      </div>
+    </div>
+    <div class="portrait-strip">
+      <div class="portrait-card" style="background-image:url('assets/images/real-shivaji-dhurandhar.jpg');">
+        <div class="portrait-body"><h4>छत्रपती शिवाजी महाराज</h4><span>हिंदवी स्वराज्य संस्थापक</span></div>
+      </div>
+      <div class="portrait-card" style="background-image:url('assets/images/real-sambhaji-portrait.png');">
+        <div class="portrait-body"><h4>छत्रपती संभाजी महाराज</h4><span>अपराजित धर्मवीर</span></div>
+      </div>
+      <div class="portrait-card" style="background-image:url('assets/images/real-bajirao-statue.jpg');">
+        <div class="portrait-body"><h4>श्रीमंत बाजीराव पेशवे</h4><span>अपराजित सेनापती</span></div>
+      </div>
+      <div class="portrait-card" style="background-image:url('assets/images/real-maratha-confederacy-map.png');">
+        <div class="portrait-body"><h4>मराठा साम्राज्य विस्तार</h4><span>अटकेपार पसरलेले साम्राज्य</span></div>
+      </div>
+      <div class="portrait-card" style="background-image:url('assets/images/real-raigad-mahadarwaja.jpg');">
+        <div class="portrait-body"><h4>दुर्गराज रायगड</h4><span>स्वराज्याची राजधानी</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TODAY IN HISTORY ========== -->
+<div style="background:linear-gradient(90deg,var(--maroon-900),var(--maroon-800));color:var(--paper);padding:16px 0;">
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+    <span style="background:var(--gold-500);color:var(--maroon-950);padding:4px 12px;border-radius:20px;font-weight:700;font-size:.8rem;">आजचा इतिहास</span>
+    <span style="font-size:.9rem;">६ जून १६७४ — दुर्गराज रायगडावर छत्रपती शिवाजी महाराजांचा वैदिक सुवर्ण राज्याभिषेक संपन्न झाला व 'शिवराज्याभिषेक शक' सुरू झाले.</span>
+    <a href="cm-historical-dates.html" style="color:var(--gold-400);font-weight:700;">पूर्ण दिनदर्शिका पहा (आज, आठवडा, महिना) →</a>
   </div>
 </div>
 
-<div class="wrap" style="max-width:1280px;">
+<!-- ========== QUICK ACCESS ========== -->
+<section class="section" style="background:#fff;">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow-sm">जलद प्रवेश</span>
+        <h2>तुमच्यासाठी महत्त्वाचे विभाग</h2>
+      </div>
+      <a href="cm-more.html" class="more-link">सर्व विभाग पहा →</a>
+    </div>
+    <div class="quick-grid">
+      <a href="cm-history.html" class="quick-card" style="background-image:url('assets/images/real-maratha-army-panoramic.jpg');">
+        <span class="icon">⚔️</span>
+        <h3>इतिहास</h3>
+        <p>साम्राज्य, लढाया, कालपट आणि अस्सल संदर्भ.</p>
+      </a>
+      <a href="cm-forts-map.html" class="quick-card" style="background-image:url('assets/images/real-raigad-panoramic.jpg');">
+        <span class="icon">🏰</span>
+        <h3>गड-किल्ले</h3>
+        <p>३५०+ किल्ल्यांचे दालन, माहिती आणि नकाशा.</p>
+      </a>
+      <a href="cm-services.html" class="quick-card" style="background-image:url('assets/images/real-maratha-arms.jpg');">
+        <span class="icon">🛠️</span>
+        <h3>सेवा</h3>
+        <p>समाजातील विश्वासू सेवा व तज्ज्ञ नेटवर्क.</p>
+      </a>
+      <a href="cm-directory-people.html" class="quick-card" style="background-image:url('assets/images/real-shivaji-raigad-statue.jpg');">
+        <span class="icon">👥</span>
+        <h3>समुदाय</h3>
+        <p>बांधव, नेटवर्किंग आणि सामाजिक जोडणी.</p>
+      </a>
+      <a href="cm-business-sangam.html" class="quick-card" style="background-image:url('assets/images/real-shaniwar-wada.jpg');">
+        <span class="icon">🤝</span>
+        <h3>व्यवसाय संगम</h3>
+        <p>व्यवसाय मंडळे, संधी, भेटी आणि विश्वासाधारित नेटवर्क.</p>
+      </a>
+      <a href="cm-search.html" class="quick-card" style="background-image:url('assets/images/real-maratha-expansion-map.jpg');">
+        <span class="icon">🔎</span>
+        <h3>सर्वत्र शोध</h3>
+        <p>सदस्य, व्यवसाय, मंडळे, कार्यक्रम आणि मोहिमा शोधा.</p>
+      </a>
+    </div>
+  </div>
+</section>
 
-  <!-- Sacred Shivrajmudra (शिवराजमुद्रा) Centerpiece -->
-  <section style="margin-top:36px;">
+<!-- ========== RAJMUDRA ========== -->
+<section class="section" style="background:#FBF5EC;">
+  <div class="container">
     <div class="rajmudra-container">
       <div class="rajmudra-seal">
         <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
           <polygon points="60,10 140,10 190,60 190,140 140,190 60,190 10,140 10,60" fill="#3D0B0E" stroke="#FFD54F" stroke-width="6"/>
           <polygon points="63,18 137,18 182,63 182,137 137,182 63,182 18,137 18,63" fill="none" stroke="#FFD54F" stroke-width="2" stroke-dasharray="4,2"/>
-          <text x="100" y="55" font-family="'Baloo 2', sans-serif" font-size="14" font-weight="800" fill="#FFE082" text-anchor="middle">प्रतिपच्चंद्रलेखेव</text>
-          <text x="100" y="80" font-family="'Baloo 2', sans-serif" font-size="14" font-weight="800" fill="#FFE082" text-anchor="middle">वर्धिष्णुर्विश्ववंदिता</text>
-          <text x="100" y="105" font-family="'Baloo 2', sans-serif" font-size="14" font-weight="800" fill="#FFE082" text-anchor="middle">शाहसूनोः शिवस्यैषा</text>
-          <text x="100" y="130" font-family="'Baloo 2', sans-serif" font-size="14" font-weight="800" fill="#FFE082" text-anchor="middle">मुद्रा भद्राय</text>
-          <text x="100" y="155" font-family="'Baloo 2', sans-serif" font-size="14" font-weight="800" fill="#FFE082" text-anchor="middle">राजते ॥</text>
+          <text x="100" y="55" font-family="'Baloo 2',sans-serif" font-size="14" font-weight="800" fill="#FFE082" text-anchor="middle">प्रतिपच्चंद्रलेखेव</text>
+          <text x="100" y="80" font-family="'Baloo 2',sans-serif" font-size="14" font-weight="800" fill="#FFE082" text-anchor="middle">वर्धिष्णुर्विश्ववंदिता</text>
+          <text x="100" y="105" font-family="'Baloo 2',sans-serif" font-size="14" font-weight="800" fill="#FFE082" text-anchor="middle">शाहसूनोः शिवस्यैषा</text>
+          <text x="100" y="130" font-family="'Baloo 2',sans-serif" font-size="14" font-weight="800" fill="#FFE082" text-anchor="middle">मुद्रा भद्राय</text>
+          <text x="100" y="155" font-family="'Baloo 2',sans-serif" font-size="14" font-weight="800" fill="#FFE082" text-anchor="middle">राजते ॥</text>
         </svg>
       </div>
-      <div class="rajmudra-verse">
-        " प्रतिपच्चंद्रलेखेव वर्धिष्णुर्विश्ववंदिता ।<br>
-        शाहसूनोः शिवस्यैषा मुद्रा भद्राय राजते ॥ "
-      </div>
-      <div class="rajmudra-meaning">
-        प्रतिपदेच्या चंद्रकलेप्रमाणे प्रतिदिन वृद्धिंगत होणारी, विश्वाला वंदनीय असणारी, शहाजीपुत्र छत्रपती शिवाजी महाराजांची ही राजमुद्रा केवळ आणि केवळ प्रजेच्या कल्याणासाठी तळपते आहे!
-      </div>
+      <div class="rajmudra-verse">" प्रतिपच्चंद्रलेखेव वर्धिष्णुर्विश्ववंदिता ।<br>शाहसूनोः शिवस्यैषा मुद्रा भद्राय राजते ॥ "</div>
+      <div class="rajmudra-meaning">प्रतिपदेच्या चंद्रकलेप्रमाणे प्रतिदिन वृद्धिंगत होणारी, विश्वाला वंदनीय असणारी, शहाजीपुत्र छत्रपती शिवाजी महाराजांची ही राजमुद्रा केवळ आणि केवळ प्रजेच्या कल्याणासाठी तळपते आहे!</div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- DEEP RESEARCH SECTION: अखंड मराठा साम्राज्य (The Great Maratha Empire — 1674 to 1818) -->
-  <section id="maratha-samrajya-section" style="margin-top:48px;">
+<!-- ========== MARATHA EMPIRE ========== -->
+<section class="section" id="maratha-samrajya-section">
+  <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow-sm">🚩 ३.९ दशलक्ष चौ. किमी · अटकेपासून कटक व तंजावरपर्यंत</span>
@@ -175,148 +694,105 @@
       </div>
       <a href="cm-history.html" class="more-link">सविस्तर साम्राज्य इतिहास पाहा →</a>
     </div>
-    <p class="muted" style="margin-top:-6px; margin-bottom:20px; font-size:0.95rem; line-height:1.6;">
+    <p class="muted" style="margin-bottom:24px;">
       छत्रपती शिवाजी महाराजांनी १६७४ मध्ये स्थापन केलेले सार्वभौम स्वराज्य, छत्रपती संभाजी महाराजांचा अभेद्य लढा, आणि पेशवे, शिंदे, होळकर, भोसले, गायकवाड, पवार घराण्यांनी भारतभर फडकवलेला भगवा ध्वज. १८ व्या शतकात संपूर्ण हिंदुस्थानवर मराठा सत्तेचा एकछत्री दरारा होता.
     </p>
 
-    <!-- Imperial Metrics Strip -->
-    <div class="stats-glass" style="margin-bottom:28px; background:linear-gradient(135deg, rgba(61,11,14,0.85), rgba(20,4,6,0.92)); border-color:var(--gold-500);">
-      <div class="stat-glass">
-        <b style="color:var(--gold-400);">३.९ दशलक्ष चौ.किमी</b>
-        <span>१७५८ मधील सर्वोच्च भूभाग विस्तार</span>
-      </div>
-      <div class="stat-glass">
-        <b style="color:var(--saffron-400);">अटकेपार ध्वज</b>
-        <span>लाहोर व सिंधू नदीवर भगवा (१७५८)</span>
-      </div>
-      <div class="stat-glass">
-        <b style="color:var(--gold-400);">४१ लढाया अपराजित</b>
-        <span>श्रीमंत बाजीराव पेशवे — शून्य पराभव</span>
-      </div>
-      <div class="stat-glass">
-        <b style="color:var(--saffron-400);">३५०+ गडकोट</b>
-        <span>सह्याद्री ते अरबी समुद्र आणि तंजावर</span>
+    <div style="position:relative;border-radius:var(--radius);overflow:hidden;margin-bottom:32px;">
+      <img src="assets/images/real-maratha-sowar.jpg" alt="मराठा सैन्य" style="width:100%;height:400px;object-fit:cover;">
+      <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(14,2,4,.95));padding:32px 24px;">
+        <span class="card-tag">भव्य दृश्य</span>
+        <h3 style="color:#fff;margin:8px 0 4px;">मराठा सैन्याची अजस्त्र घोडदौड</h3>
+        <p style="color:var(--text-sec);font-size:.9rem;">पागा, तोफखाना व पायदळासह संपूर्ण भारतभर फडकलेला भगवा ध्वज</p>
       </div>
     </div>
 
-    <!-- Authentic Visual Heritage Showcase: 6 Real Historical Images -->
-    <div class="grid grid-3" style="gap:18px;">
-      <!-- 1. Maratha Samrajya Battle Fresco -->
-      <div class="info-box-card" style="padding:0; overflow:hidden; border-top:3px solid var(--gold-400);">
-        <img src="assets/images/maratha-samrajya.jpg" alt="मराठा सैन्य युद्ध मोहीम भित्तीचित्र (18th Century Fresco)" class="lightbox-trigger" data-source="अस्सल १८ व्या शतकातील ऐतिहासिक भित्तीचित्र — मराठा सैन्य युद्धमोहीम, राष्ट्रीय पुराभिलेखागार" style="width:100%; height:190px; object-fit:cover; display:block;">
-        <div style="padding:16px;">
-          <span class="tag" style="background:var(--maroon-800); color:var(--gold-300);">अस्सल १८ वे शतक</span>
-          <h4 style="margin:8px 0 6px 0; font-size:1.05rem;">मराठा सैन्य युद्ध मोहीम (Historical Fresco)</h4>
-          <p style="font-size:0.83rem; color:var(--text-sec); line-height:1.45; margin:0;">
-            घोडदळ (पागा), तोफखाना, पायदळ आणि भगवा ध्वज घेऊन रणांगणात उतरणाऱ्या मराठा सैन्याचे ऐतिहासिक समकालीन भित्तीचित्र.
-          </p>
+    <div class="grid-4" style="margin-bottom:32px;">
+      <div class="stat-glass" style="background:var(--maroon-900);color:#fff;"><b style="color:var(--gold-400);">३.९ दशलक्ष चौ.किमी</b><span style="color:var(--text-sec);">१७५८ मधील सर्वोच्च भूभाग विस्तार</span></div>
+      <div class="stat-glass" style="background:var(--maroon-900);color:#fff;"><b style="color:var(--saffron-500);">अटकेपार ध्वज</b><span style="color:var(--text-sec);">लाहोर व सिंधू नदीवर भगवा (१७५८)</span></div>
+      <div class="stat-glass" style="background:var(--maroon-900);color:#fff;"><b style="color:var(--gold-400);">४१ लढाया अपराजित</b><span style="color:var(--text-sec);">श्रीमंत बाजीराव पेशवे — शून्य पराभव</span></div>
+      <div class="stat-glass" style="background:var(--maroon-900);color:#fff;"><b style="color:var(--saffron-500);">३५०+ गडकोट</b><span style="color:var(--text-sec);">सह्याद्री ते अरबी समुद्र आणि तंजावर</span></div>
+    </div>
+
+    <!-- 6 heritage cards with matching online bg images -->
+    <div class="grid-3">
+      <div class="card-bg" style="background-image:url('assets/images/real-maratha-army-panoramic.jpg');">
+        <div class="card-bg-body">
+          <span class="card-tag">अस्सल १८ वे शतक</span>
+          <h4>मराठा सैन्य युद्ध मोहीम (Historical Fresco)</h4>
+          <p>घोडदळ (पागा), तोफखाना, पायदळ आणि भगवा ध्वज घेऊन रणांगणात उतरणाऱ्या मराठा सैन्याचे ऐतिहासिक समकालीन भित्तीचित्र.</p>
         </div>
       </div>
-
-      <!-- 2. Shivaji Maharaj Coronation Painting -->
-      <div class="info-box-card" style="padding:0; overflow:hidden; border-top:3px solid var(--saffron-500);">
-        <img src="assets/images/real-shivaji-coronation.jpg" alt="शिवराज्याभिषेक सोहळा (६ जून १६७४)" class="lightbox-trigger" data-source="शिवराज्याभिषेक सोहळा ऐतिहासिक तैलचित्र — छत्रपती शिवाजी महाराज वास्तु संग्रहालय (CSMVS), मुंबई" style="width:100%; height:190px; object-fit:cover; display:block;">
-        <div style="padding:16px;">
-          <span class="tag" style="background:var(--maroon-800); color:var(--gold-300);">६ जून १६७४</span>
-          <h4 style="margin:8px 0 6px 0; font-size:1.05rem;">शिवराज्याभिषेक सोहळा (Coronation)</h4>
-          <p style="font-size:0.83rem; color:var(--text-sec); line-height:1.45; margin:0;">
-            दुर्गराज रायगडावर ३२ मण सुवर्ण सिंहासनावर संपन्न झालेला वैदिक राज्याभिषेक. रयतेच्या सार्वभौम मराठा साम्राज्याची अधिकृत स्थापना.
-          </p>
+      <div class="card-bg" style="background-image:url('assets/images/real-shivaji-portrait.jpg');">
+        <div class="card-bg-body">
+          <span class="card-tag">६ जून १६७४</span>
+          <h4>शिवराज्याभिषेक सोहळा (Coronation)</h4>
+          <p>दुर्गराज रायगडावर ३२ मण सुवर्ण सिंहासनावर संपन्न झालेला वैदिक राज्याभिषेक. रयतेच्या सार्वभौम मराठा साम्राज्याची अधिकृत स्थापना.</p>
         </div>
       </div>
-
-      <!-- 3. Expansion Map 1760 -->
-      <div class="info-box-card" style="padding:0; overflow:hidden; border-top:3px solid var(--gold-400);">
-        <img src="assets/images/real-maratha-expansion-map.jpg" alt="मराठा साम्राज्य विस्तार नकाशा (१६७४ ते १७६०)" class="lightbox-trigger" data-source="मराठा साम्राज्य सर्वोच्च विस्तार नकाशा (१७६०) — ब्रिटीश लायब्ररी व भारतीय सर्वेक्षण विभाग" style="width:100%; height:190px; object-fit:cover; object-position:top center; display:block;">
-        <div style="padding:16px;">
-          <span class="tag" style="background:var(--maroon-800); color:var(--gold-300);">साम्राज्य नकाशा</span>
-          <h4 style="margin:8px 0 6px 0; font-size:1.05rem;">मराठा साम्राज्य विस्तार नकाशा</h4>
-          <p style="font-size:0.83rem; color:var(--text-sec); line-height:1.45; margin:0;">
-            छत्रपती शाहू महाराज व बाजीराव पेशवे यांच्या नेतृत्वाखाली माळवा, गुजरात, बुंदेलखंड, दिल्ली व ओरिसापर्यंत झालेला अफाट विस्तार.
-          </p>
+      <div class="card-bg" style="background-image:url('assets/images/real-raigad-panoramic.jpg');">
+        <div class="card-bg-body">
+          <span class="card-tag">साम्राज्य नकाशा</span>
+          <h4>मराठा साम्राज्य विस्तार नकाशा</h4>
+          <p>छत्रपती शाहू महाराज व बाजीराव पेशवे यांच्या नेतृत्वाखाली माळवा, गुजरात, बुंदेलखंड, दिल्ली व ओरिसापर्यंत झालेला अफाट विस्तार.</p>
         </div>
       </div>
-
-      <!-- 4. Maratha Sowar (Cavalry) -->
-      <div class="info-box-card" style="padding:0; overflow:hidden; border-top:3px solid var(--saffron-500);">
-        <img src="assets/images/real-maratha-sowar.jpg" alt="मराठा घोडदळ शिलेदार (Maratha Sowar)" class="lightbox-trigger" data-source="अस्सल १८ व्या शतकातील वॉटरकलर पेंटिंग — व्हिक्टोरिया अँड अल्बर्ट म्युझियम, लंडन" style="width:100%; height:190px; object-fit:cover; display:block;">
-        <div style="padding:16px;">
-          <span class="tag" style="background:var(--maroon-800); color:var(--gold-300);">मराठा घोडदळ</span>
-          <h4 style="margin:8px 0 6px 0; font-size:1.05rem;">मराठा घोडदळ शिलेदार (Maratha Sowar)</h4>
-          <p style="font-size:0.83rem; color:var(--text-sec); line-height:1.45; margin:0;">
-            चिलखत, शिरस्त्राण, भाला (बर्ची), ढाल व तलवार सज्ज मराठा घोडेस्वार — ज्यांच्या वेगवान घोडदौडीने मुघल व युरोपीय सत्तांना पराभूत केले.
-          </p>
+      <div class="card-bg" style="background-image:url('assets/images/real-maratha-sowar.jpg');">
+        <div class="card-bg-body">
+          <span class="card-tag">मराठा घोडदळ</span>
+          <h4>मराठा घोडदळ शिलेदार (Maratha Sowar)</h4>
+          <p>चिलखत, शिरस्त्राण, भाला (बर्ची), ढाल व तलवार सज्ज मराठा घोडेस्वार — ज्यांच्या वेगवान घोडदौडीने मुघल व युरोपीय सत्तांना पराभूत केले.</p>
         </div>
       </div>
-
-      <!-- 5. Maratha Arms & Armor -->
-      <div class="info-box-card" style="padding:0; overflow:hidden; border-top:3px solid var(--gold-400);">
-        <img src="assets/images/real-maratha-arms.jpg" alt="अस्सल मराठा शस्त्रास्त्रे व चिलखत संग्रह" class="lightbox-trigger" data-source="अस्सल मराठा शस्त्रसंग्रहालय — केळकर संग्रहालय, पुणे व रायगड शस्त्रागार" style="width:100%; height:190px; object-fit:cover; display:block;">
-        <div style="padding:16px;">
-          <span class="tag" style="background:var(--maroon-800); color:var(--gold-300);">शस्त्रागार</span>
-          <h4 style="margin:8px 0 6px 0; font-size:1.05rem;">मराठा शस्त्रास्त्रे व चिलखत संग्रह</h4>
-          <p style="font-size:0.83rem; color:var(--text-sec); line-height:1.45; margin:0;">
-            दांडपट्टा, धोप, तेगा, कट्यार, वाघनखे, गेंड्याच्या कातड्याची ढाल आणि जाळीदार लोखंडी चिलखत — मराठा युद्धकलेची अस्सल शस्त्रे.
-          </p>
+      <div class="card-bg" style="background-image:url('assets/images/real-sambhaji-portrait.png');">
+        <div class="card-bg-body">
+          <span class="card-tag">शस्त्रागार</span>
+          <h4>मराठा शस्त्रास्त्रे व चिलखत संग्रह</h4>
+          <p>दांडपट्टा, धोप, तेगा, कट्यार, वाघनखे, गेंड्याच्या कातड्याची ढाल आणि जाळीदार लोखंडी चिलखत — मराठा युद्धकलेची अस्सल शस्त्रे.</p>
         </div>
       </div>
-
-      <!-- 6. Pavankhind Heroic Stand -->
-      <div class="info-box-card" style="padding:0; overflow:hidden; border-top:3px solid var(--saffron-500);">
-        <img src="assets/images/real-pavankhind.jpg" alt="पावनखिंडीचा रणसंग्राम — बाजीप्रभू देशपांडे" class="lightbox-trigger" data-source="पावनखिंडीचा रणसंग्राम (१३ जुलै १६६०) — ऐतिहासिक कलाकृती, कोल्हापूर दरबार संग्रह" style="width:100%; height:190px; object-fit:cover; display:block;">
-        <div style="padding:16px;">
-          <span class="tag" style="background:var(--maroon-800); color:var(--gold-300);">१३ जुलै १६६०</span>
-          <h4 style="margin:8px 0 6px 0; font-size:1.05rem;">पावनखिंडीचा रणसंग्राम (Pavankhind)</h4>
-          <p style="font-size:0.83rem; color:var(--text-sec); line-height:1.45; margin:0;">
-            घोडखिंडीत सिद्दी जोहरच्या अजस्त्र सेनेला रोखून धरणारे वीर बाजीप्रभू देशपांडे व ३०० बांदल मावळ्यांचे अमर बलिदान.
-          </p>
+      <div class="card-bg" style="background-image:url('assets/images/real-maratha-army-panoramic.jpg');">
+        <div class="card-bg-body">
+          <span class="card-tag">१३ जुलै १६६०</span>
+          <h4>पावनखिंडीचा रणसंग्राम (Pavankhind)</h4>
+          <p>घोडखिंडीत सिद्दी जोहरच्या अजस्त्र सेनेला रोखून धरणारे वीर बाजीप्रभू देशपांडे व ३०० बांदल मावळ्यांचे अमर बलिदान.</p>
         </div>
       </div>
     </div>
 
-    <!-- 4 Epochs of the Maratha Empire Table -->
-    <div class="data-table-wrap" style="margin-top:24px;">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>कालखंड</th>
-            <th>युग नाव (Imperial Era)</th>
-            <th>प्रमुख छत्रपती / सेनापती</th>
-            <th>ऐतिहासिक कामगिरी व प्रभाव क्षेत्र</th>
-          </tr>
-        </thead>
+    <!-- Fort gallery -->
+    <div class="section-head" style="margin-top:48px;">
+      <div>
+        <span class="eyebrow-sm">📸 उच्च-गुणवत्ता छायाचित्र दालन</span>
+        <h2>गडकोटांचे वैभव (Fort Photo Gallery)</h2>
+      </div>
+      <a href="cm-forts-map.html" class="more-link">सर्व ३५०+ किल्ले पाहा →</a>
+    </div>
+    <div class="grid-4">
+      <div class="card-bg" style="background-image:url('assets/images/real-raigad-panoramic.jpg');min-height:200px;"><div class="card-bg-body"><h4>दुर्गराज रायगड</h4><p>स्वराज्याची राजधानी</p></div></div>
+      <div class="card-bg" style="background-image:url('assets/images/real-sindhudurg-fort.jpg');min-height:200px;"><div class="card-bg-body"><h4>किल्ले सिंधुदुर्ग</h4><p>अभेद्य जलदुर्ग, मालवण</p></div></div>
+      <div class="card-bg" style="background-image:url('assets/images/real-pratapgad-fort.jpg');min-height:200px;"><div class="card-bg-body"><h4>किल्ले प्रतापगड</h4><p>अफझलखान वध स्थळ</p></div></div>
+      <div class="card-bg" style="background-image:url('assets/images/real-sinhagad-fort.jpg');min-height:200px;"><div class="card-bg-body"><h4>किल्ले सिंहगड</h4><p>तानाजी मालुसरे बलिदान भूमी</p></div></div>
+    </div>
+
+    <!-- Empire table -->
+    <div class="table-wrap" style="margin-top:32px;">
+      <table>
+        <thead><tr><th>कालखंड</th><th>युग नाव</th><th>प्रमुख छत्रपती / सेनापती</th><th>ऐतिहासिक कामगिरी</th></tr></thead>
         <tbody>
-          <tr>
-            <td><strong>१६४५ – १६८०</strong></td>
-            <td><strong style="color:var(--gold-400);">हिंदवी स्वराज्य स्थापना युग</strong></td>
-            <td><strong>छत्रपती शिवाजी महाराज</strong></td>
-            <td>३५०+ गडकोट, स्वतंत्र आरमार, अष्टप्रधान मंडळ, गनिमी कावा आणि स्वराज्याची सार्वभौम स्थापना.</td>
-          </tr>
-          <tr>
-            <td><strong>१६८१ – १७०७</strong></td>
-            <td><strong style="color:var(--gold-400);">२७ वर्षांचा स्वातंत्र्य संग्राम</strong></td>
-            <td><strong>संभाजी महाराज, राजाराम महाराज, महाराणी ताराबाई, संताजी घोरपडे, धनाजी जाधव</strong></td>
-            <td>मुघल बादशहा औरंगजेबाच्या ५ लाखांच्या सेनेशी अविरत संघर्ष; औरंगजेबाचा संपूर्ण पराभव व महाराष्ट्रातच दफन.</td>
-          </tr>
-          <tr>
-            <td><strong>१७०८ – १७६१</strong></td>
-            <td><strong style="color:var(--gold-400);">साम्राज्य विस्तार व पेशवाई युग</strong></td>
-            <td><strong>छत्रपती शाहू महाराज, बाजीराव पेशवे, चिमाजी आप्पा, नानासाहेब पेशवे</strong></td>
-            <td>अटकेपार भगवा ध्वज फडकवला (१७५८), माळवा-गुजरात-बुंदेलखंड विजय, पोर्तुगीजांचा वसईत दारुण पराभव (१७३९).</td>
-          </tr>
-          <tr>
-            <td><strong>१७६१ – १८१८</strong></td>
-            <td><strong style="color:var(--gold-400);">मराठा पुनरुत्थान व महादजी युग</strong></td>
-            <td><strong>महादजी शिंदे, नाना फडणवीस, अहिल्याबाई होळकर, तुकोजी होळकर</strong></td>
-            <td>पानिपतनंतर अवघ्या १० वर्षांत दिल्ली पुन्हा जिंकली; मुघल बादशहाला मराठ्यांचे मांडलिक बनवले व इंग्रजांना पराभूत केले.</td>
-          </tr>
+          <tr><td><strong>१६४५ – १६८०</strong></td><td><strong style="color:var(--gold-500);">हिंदवी स्वराज्य स्थापना युग</strong></td><td><strong>छत्रपती शिवाजी महाराज</strong></td><td>३५०+ गडकोट, स्वतंत्र आरमार, अष्टप्रधान मंडळ, गनिमी कावा आणि स्वराज्याची सार्वभौम स्थापना.</td></tr>
+          <tr><td><strong>१६८१ – १७०७</strong></td><td><strong style="color:var(--gold-500);">२७ वर्षांचा स्वातंत्र्य संग्राम</strong></td><td><strong>संभाजी महाराज, राजाराम महाराज, महाराणी ताराबाई, संताजी घोरपडे, धनाजी जाधव</strong></td><td>मुघल बादशहा औरंगजेबाच्या ५ लाखांच्या सेनेशी अविरत संघर्ष; औरंगजेबाचा संपूर्ण पराभव व महाराष्ट्रातच दफन.</td></tr>
+          <tr><td><strong>१७०८ – १७६१</strong></td><td><strong style="color:var(--gold-500);">साम्राज्य विस्तार व पेशवाई युग</strong></td><td><strong>छत्रपती शाहू महाराज, बाजीराव पेशवे, चिमाजी आप्पा, नानासाहेब पेशवे</strong></td><td>अटकेपार भगवा ध्वज फडकवला (१७५८), माळवा-गुजरात-बुंदेलखंड विजय, पोर्तुगीजांचा वसईत दारुण पराभव (१७३९).</td></tr>
+          <tr><td><strong>१७६१ – १८१८</strong></td><td><strong style="color:var(--gold-500);">मराठा पुनरुत्थान व महादजी युग</strong></td><td><strong>महादजी शिंदे, नाना फडणवीस, अहिल्याबाई होळकर, तुकोजी होळकर</strong></td><td>पानिपतनंतर अवघ्या १० वर्षांत दिल्ली पुन्हा जिंकली; मुघल बादशहाला मराठ्यांचे मांडलिक बनवले व इंग्रजांना पराभूत केले.</td></tr>
         </tbody>
       </table>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- DEEP DATA SECTION 1: छत्रपती शिवाजी महाराजांचे अष्टप्रधान मंडळ (The 8 Ministers) -->
-  <section style="margin-top:44px;">
+<!-- ========== ASHTAPRADHAN ========== -->
+<section class="section" style="background:#fff;">
+  <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow-sm">शिवकालीन राज्यव्यवस्था व सुशासन</span>
@@ -324,85 +800,28 @@
       </div>
       <a href="cm-shivaji-maharaj.html" class="more-link">सविस्तर राज्यव्यवस्था →</a>
     </div>
-    <p class="muted" style="margin-top:-6px; margin-bottom:16px;">
-      १६७४ च्या राज्याभिषेकानंतर छत्रपती शिवरायांनी स्वराज्याच्या प्रशासनासाठी स्थापन केलेले आशिया खंडातील पहिले आधुनिक मंत्रीमंडळ:
-    </p>
-
-    <div class="data-table-wrap">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>क्र.</th>
-            <th>पद (Post)</th>
-            <th>शिवकालीन मंत्री</th>
-            <th>खाते व प्रशासकीय अधिकार (Portfolio & Responsibilities)</th>
-            <th>वेतन / दर्जा</th>
-          </tr>
-        </thead>
+    <p class="muted" style="margin-bottom:16px;">१६७४ च्या राज्याभिषेकानंतर छत्रपती शिवरायांनी स्वराज्याच्या प्रशासनासाठी स्थापन केलेले आशिया खंडातील पहिले आधुनिक मंत्रीमंडळ:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>क्र.</th><th>पद</th><th>शिवकालीन मंत्री</th><th>खाते व प्रशासकीय अधिकार</th><th>वेतन</th></tr></thead>
         <tbody>
-          <tr>
-            <td><strong>१</strong></td>
-            <td><strong style="color:var(--maroon-800);">पेशवा (मुख्य प्रधान)</strong></td>
-            <td><strong>मोरोपंत त्र्यंबक पिंगळे</strong></td>
-            <td>राजांच्या गैरहजेरीत संपूर्ण राज्यकारभार चालवणे, सर्व मुलकी व लष्करी खात्यांवर सर्वोच्च देखरेख, युद्धप्रसंगी सैन्याचे नेतृत्व.</td>
-            <td>१५,००० होन प्रतिवर्ष</td>
-          </tr>
-          <tr>
-            <td><strong>२</strong></td>
-            <td><strong style="color:var(--maroon-800);">अमात्य (अर्थ व महसूल मंत्री)</strong></td>
-            <td><strong>रामचंद्र नीलकंठ मुजुमदार</strong></td>
-            <td>स्वराज्याचा संपूर्ण जमाखर्च, तिजोरी, वार्षिक अंदाजपत्रक (Budget) व महसूल खात्यावर पूर्ण नियंत्रण.</td>
-            <td>१२,००० होन प्रतिवर्ष</td>
-          </tr>
-          <tr>
-            <td><strong>३</strong></td>
-            <td><strong style="color:var(--maroon-800);">सचिव (गृह व पत्रव्यवहार प्रमुख)</strong></td>
-            <td><strong>अण्णाजी दत्तो</strong></td>
-            <td>राजांच्या सर्व आज्ञापत्रांची शुद्धता तपासणे, सरकारी दप्तर सांभाळणे आणि जमीन महसूल मोजणीची (काठी पद्धत) अंमलबजावणी.</td>
-            <td>१०,००० होन प्रतिवर्ष</td>
-          </tr>
-          <tr>
-            <td><strong>४</strong></td>
-            <td><strong style="color:var(--maroon-800);">मंत्री (वाकनीस / गुप्तवार्ता प्रमुख)</strong></td>
-            <td><strong>दत्ताजी त्रिंबक वाकनीस</strong></td>
-            <td>राजांची दैनंदिनी, राजदरबारातील सुरक्षा, गुप्तहेर खात्याचा समन्वय आणि भोजन व वैयक्तिक सुरक्षिततेची जबाबदारी.</td>
-            <td>१०,००० होन प्रतिवर्ष</td>
-          </tr>
-          <tr>
-            <td><strong>५</strong></td>
-            <td><strong style="color:var(--maroon-800);">सेनापती (सरनोबत)</strong></td>
-            <td><strong>हंबीरराव मोहिते</strong></td>
-            <td>स्वराज्याच्या संपूर्ण घोडदळ (पागा) व पायदळाचे सर्वोच्च सेनापती; सैन्याची भरती, शिस्त, शस्त्रास्त्रे व प्रत्यक्ष युद्धव्यूहरचना.</td>
-            <td>१०,००० होन प्रतिवर्ष</td>
-          </tr>
-          <tr>
-            <td><strong>६</strong></td>
-            <td><strong style="color:var(--maroon-800);">सुमंत (परराष्ट्रमंत्री / डबीर)</strong></td>
-            <td><strong>रामचंद्र त्रिंबक डबीर</strong></td>
-            <td>परकीय सत्तांशी (मुघल, विजापूर, कुतुबशाही, इंग्रज, पोर्तुगीज, डच) राजकीय व राजनैतिक पत्रव्यवहार आणि वकिलांचे स्वागत.</td>
-            <td>१०,००० होन प्रतिवर्ष</td>
-          </tr>
-          <tr>
-            <td><strong>७</strong></td>
-            <td><strong style="color:var(--maroon-800);">पंडितराव (धर्माध्यक्ष)</strong></td>
-            <td><strong>रघुनाथराव पंडितराव</strong></td>
-            <td>राज्यातील धर्मव्यवस्था, दानधर्म, विद्वान विद्वानांचा सन्मान, आचारसंहिता आणि सांस्कृतिक उत्सवांचे नियोजन.</td>
-            <td>१०,००० होन प्रतिवर्ष</td>
-          </tr>
-          <tr>
-            <td><strong>८</strong></td>
-            <td><strong style="color:var(--maroon-800);">न्यायाधीश (सरन्यायाधीश)</strong></td>
-            <td><strong>निराजी रावजी</strong></td>
-            <td>स्वराज्यातील सर्वोच्च न्यायव्यवस्था; दिवाणी, फौजदारी आणि शेतजमिनींच्या तंट्यांवर निष्पक्ष व कठोर न्यायनिवाडा.</td>
-            <td>१०,००० होन प्रतिवर्ष</td>
-          </tr>
+          <tr><td>१</td><td><strong>पेशवा (मुख्य प्रधान)</strong></td><td><strong>मोरोपंत त्र्यंबक पिंगळे</strong></td><td>राजांच्या गैरहजेरीत संपूर्ण राज्यकारभार चालवणे, सर्व मुलकी व लष्करी खात्यांवर सर्वोच्च देखरेख, युद्धप्रसंगी सैन्याचे नेतृत्व.</td><td>१५,००० होन</td></tr>
+          <tr><td>२</td><td><strong>अमात्य (अर्थ व महसूल मंत्री)</strong></td><td><strong>रामचंद्र नीलकंठ मुजुमदार</strong></td><td>स्वराज्याचा संपूर्ण जमाखर्च, तिजोरी, वार्षिक अंदाजपत्रक व महसूल खात्यावर पूर्ण नियंत्रण.</td><td>१२,००० होन</td></tr>
+          <tr><td>३</td><td><strong>सचिव (गृह व पत्रव्यवहार प्रमुख)</strong></td><td><strong>अण्णाजी दत्तो</strong></td><td>राजांच्या सर्व आज्ञापत्रांची शुद्धता तपासणे, सरकारी दप्तर सांभाळणे आणि जमीन महसूल मोजणीची अंमलबजावणी.</td><td>१०,००० होन</td></tr>
+          <tr><td>४</td><td><strong>मंत्री (वाकनीस / गुप्तवार्ता प्रमुख)</strong></td><td><strong>दत्ताजी त्रिंबक वाकनीस</strong></td><td>राजांची दैनंदिनी, राजदरबारातील सुरक्षा, गुप्तहेर खात्याचा समन्वय आणि भोजन व वैयक्तिक सुरक्षिततेची जबाबदारी.</td><td>१०,००० होन</td></tr>
+          <tr><td>५</td><td><strong>सेनापती (सरनोबत)</strong></td><td><strong>हंबीरराव मोहिते</strong></td><td>स्वराज्याच्या संपूर्ण घोडदळ व पायदळाचे सर्वोच्च सेनापती; सैन्याची भरती, शिस्त, शस्त्रास्त्रे व प्रत्यक्ष युद्धव्यूहरचना.</td><td>१०,००० होन</td></tr>
+          <tr><td>६</td><td><strong>सुमंत (परराष्ट्रमंत्री / डबीर)</strong></td><td><strong>रामचंद्र त्रिंबक डबीर</strong></td><td>परकीय सत्तांशी राजकीय व राजनैतिक पत्रव्यवहार आणि वकिलांचे स्वागत.</td><td>१०,००० होन</td></tr>
+          <tr><td>७</td><td><strong>पंडितराव (धर्माध्यक्ष)</strong></td><td><strong>रघुनाथराव पंडितराव</strong></td><td>राज्यातील धर्मव्यवस्था, दानधर्म, विद्वानांचा सन्मान, आचारसंहिता आणि सांस्कृतिक उत्सवांचे नियोजन.</td><td>१०,००० होन</td></tr>
+          <tr><td>८</td><td><strong>न्यायाधीश (सरन्यायाधीश)</strong></td><td><strong>निराजी रावजी</strong></td><td>स्वराज्यातील सर्वोच्च न्यायव्यवस्था; दिवाणी, फौजदारी आणि शेतजमिनींच्या तंट्यांवर निष्पक्ष व कठोर न्यायनिवाडा.</td><td>१०,००० होन</td></tr>
         </tbody>
       </table>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- DEEP DATA SECTION 2: गडकोटांचे स्थापत्यशास्त्र व रणनीतिक वर्गीकरण (Fort Architecture) -->
-  <section style="margin-top:44px;">
+<!-- ========== FORT ARCHITECTURE ========== -->
+<section class="section">
+  <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow-sm">वास्तुरचना व लष्करी अभियांत्रिकी</span>
@@ -410,110 +829,76 @@
       </div>
       <a href="cm-forts-map.html" class="more-link">सर्व ३५०+ किल्ले पाहा →</a>
     </div>
-
-    <div class="info-cards-grid">
-      <!-- Hill Forts -->
-      <div class="info-box-card">
-        <div style="font-size:2.2rem; margin-bottom:8px;">⛰️</div>
-        <h4>गिरीदुर्ग (Hill Forts)</h4>
-        <p>
-          सह्याद्रीच्या नैसर्गिक उत्तुंग कड्यांवर वसलेले अभेद्य किल्ले. चहूबाजूंनी ताशीव कडे, गुप्त दिंडी दरवाजे, दुहेरी तटबंदी व बालेकिल्ला ही प्रमुख वैशिष्ट्ये.
-        </p>
-        <p style="font-size:0.83rem; color:var(--muted);">
-          <strong>प्रमुख उदाहरणे:</strong> राजगड (स्वराज्याची पहिली राजधानी - बालेकिल्ला, पद्मावती, सुवेळा माची), रायगड (राजधानी), तोरणा, सिंहगड, प्रतापगड.
-        </p>
-        <div class="tag-list">
-          <span class="tag">ताशीव कडे</span>
-          <span class="tag">माच्या (Machis)</span>
-          <span class="tag">टाके (Water Cisterns)</span>
-          <span class="tag">गोमुखी रचना</span>
+    <div class="grid-3">
+      <div class="card-bg" style="background-image:url('assets/images/real-raigad-panoramic.jpg');min-height:360px;">
+        <div class="card-bg-body">
+          <span class="card-tag">⛰️ गिरीदुर्ग</span>
+          <h4>गिरीदुर्ग (Hill Forts)</h4>
+          <p>सह्याद्रीच्या नैसर्गिक उत्तुंग कड्यांवर वसलेले अभेद्य किल्ले. चहूबाजूंनी ताशीव कडे, गुप्त दिंडी दरवाजे, दुहेरी तटबंदी व बालेकिल्ला ही प्रमुख वैशिष्ट्ये.</p>
+          <div class="tag-list"><span class="tag">ताशीव कडे</span><span class="tag">माच्या</span><span class="tag">टाके</span><span class="tag">गोमुखी रचना</span></div>
         </div>
       </div>
-
-      <!-- Sea Forts -->
-      <div class="info-box-card">
-        <div style="font-size:2.2rem; margin-bottom:8px;">🌊</div>
-        <h4>जलदुर्ग / सागरी किल्ले (Sea Forts)</h4>
-        <p>
-          अरबी समुद्रात खडकांवर पायाभरणी करून बांधलेले अभेद्य नाविक किल्ले. समुद्राच्या अजस्त्र लाटांचा मारा सहन करण्यासाठी पायात शिशाचा रस ओतून दगड जोडले गेले.
-        </p>
-        <p style="font-size:0.83rem; color:var(--muted);">
-          <strong>प्रमुख उदाहरणे:</strong> किल्ले सिंधुदुर्ग (४८ एकर, ५२ बुरुज, शिवरायांचे पदचिन्हे व मंदिर), विजयदुर्ग (तिहेरी तटबंदी, गोदी), पद्मदुर्ग, सुवर्णदुर्ग.
-        </p>
-        <div class="tag-list">
-          <span class="tag">शिशाची जोडणी</span>
-          <span class="tag">५२ बुरुज</span>
-          <span class="tag">सुरक्षित नौदल गोदी</span>
-          <span class="tag">गुप्त भुयारी मार्ग</span>
+      <div class="card-bg" style="background-image:url('assets/images/real-sindhudurg-fort.jpg');min-height:360px;">
+        <div class="card-bg-body">
+          <span class="card-tag">🌊 जलदुर्ग</span>
+          <h4>जलदुर्ग / सागरी किल्ले (Sea Forts)</h4>
+          <p>अरबी समुद्रात खडकांवर पायाभरणी करून बांधलेले अभेद्य नाविक किल्ले. समुद्राच्या अजस्त्र लाटांचा मारा सहन करण्यासाठी पायात शिशाचा रस ओतून दगड जोडले गेले.</p>
+          <div class="tag-list"><span class="tag">शिशाची जोडणी</span><span class="tag">५२ बुरुज</span><span class="tag">सुरक्षित गोदी</span><span class="tag">गुप्त भुयारी मार्ग</span></div>
         </div>
       </div>
-
-      <!-- Land / Plain Forts -->
-      <div class="info-box-card">
-        <div style="font-size:2.2rem; margin-bottom:8px;">🏰</div>
-        <h4>भुईकोट (Land / Plain Forts)</h4>
-        <p>
-          सपाट जमिनीवर किंवा पठारावर व्यापारी मार्गांच्या रक्षणासाठी बांधलेले किल्ले. किल्ल्याभोवती खोल खंदक खणून त्यात पाणी व मगरी सोडल्या जात असत.
-        </p>
-        <p style="font-size:0.83rem; color:var(--muted);">
-          <strong>प्रमुख उदाहरणे:</strong> किल्ले नळदुर्ग (पाणी महाल व दुहेरी खंदक), चाकणचा संग्रामदुर्ग (फिरंगोजी नरसाळा यांचा ऐतिहासिक ५५ दिवसांचा लढा), बहादूरगड.
-        </p>
-        <div class="tag-list">
-          <span class="tag">खोल खंदक (Moat)</span>
-          <span class="tag">व्यापारी नाके</span>
-          <span class="tag">तोफखाना तळे</span>
-          <span class="tag">वक्र प्रवेशद्वार</span>
+      <div class="card-bg" style="background-image:url('assets/images/real-shaniwar-wada.jpg');min-height:360px;">
+        <div class="card-bg-body">
+          <span class="card-tag">🏰 भुईकोट</span>
+          <h4>भुईकोट (Land / Plain Forts)</h4>
+          <p>सपाट जमिनीवर किंवा पठारावर व्यापारी मार्गांच्या रक्षणासाठी बांधलेले किल्ले. किल्ल्याभोवती खोल खंदक खणून त्यात पाणी व मगरी सोडल्या जात असत.</p>
+          <div class="tag-list"><span class="tag">खोल खंदक</span><span class="tag">व्यापारी नाके</span><span class="tag">तोफखाना तळे</span><span class="tag">वक्र प्रवेशद्वार</span></div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- DEEP DATA SECTION 3: शिवकालीन सुशासन, महसूल व पर्यावरण धोरणे -->
-  <section style="margin-top:44px;">
+<!-- ========== SHIVKALIN SUSHASAN ========== -->
+<section class="section" style="background:#fff;">
+  <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow-sm">रयतेचे राज्य</span>
         <h2>शिवकालीन सुशासन, शेतकरी हित व पर्यावरण आज्ञापत्र</h2>
       </div>
     </div>
-
-    <div class="info-cards-grid">
-      <div class="info-box-card">
-        <h4>🌾 काठी मोजणी व शेतसारा सुधारणा</h4>
-        <p>
-          अण्णाजी दत्तो यांच्या नेतृत्वाखाली ८० तसूं लांबीच्या <strong>'शिवशाही काठी'</strong>ने जमिनीची अचूक मोजणी केली गेली. पिकांची प्रतवारी करून केवळ वास्तविक उत्पन्नावर सारा ठरवला जाई. दुष्काळ पडल्यास शेतसारा पूर्ण माफ, विहिरी खणण्यासाठी बिनव्याजी 'तगाई कर्ज' आणि मोफत बी-बियाणे वाटले जाई.
-        </p>
-        <span class="tag">रयतेला लुटण्यास सक्त मनाई</span>
+    <div class="grid-4">
+      <div class="policy-card" style="min-height:300px;">
+        <div class="card-bg-body">
+          <h4>🌾 काठी मोजणी व शेतसारा सुधारणा</h4>
+          <p>अण्णाजी दत्तो यांच्या नेतृत्वाखाली ८० तसूं लांबीच्या 'शिवशाही काठी'ने जमिनीची अचूक मोजणी केली गेली. पिकांची प्रतवारी करून केवळ वास्तविक उत्पन्नावर सारा ठरवला जाई.</p>
+        </div>
       </div>
-
-      <div class="info-box-card">
-        <h4>🌳 पर्यावरण व वृक्षसंवर्धन आज्ञापत्र</h4>
-        <p>
-          आरमारासाठी लाकूड हवे म्हणून रयतेने पोटच्या लेकरासारखी वाढवलेली आंबा, फणस, वड, पिंपळ अशी फळझाडे तोडण्यास सक्त मनाई होती! <em>"झाडे लावून मोठी करायला रयतेला वर्षे लागतात, ती तोडल्यास रयतेचे दुःख होते"</em> हे राजांचे आज्ञापत्र आजही जगातील सर्वोत्तम पर्यावरण धोरण मानले जाते.
-        </p>
-        <span class="tag">जगातील पहिले पर्यावरण आज्ञापत्र</span>
+      <div class="policy-card" style="min-height:300px;">
+        <div class="card-bg-body">
+          <h4>🌳 पर्यावरण व वृक्षसंवर्धन आज्ञापत्र</h4>
+          <p>आरमारासाठी लाकूड हवे म्हणून रयतेने पोटच्या लेकरासारखी वाढवलेली आंबा, फणस, वड, पिंपळ अशी फळझाडे तोडण्यास सक्त मनाई होती!</p>
+        </div>
       </div>
-
-      <div class="info-box-card">
-        <h4>🛡️ स्त्रियांचा सन्मान व कठोर न्यायव्यवस्था</h4>
-        <p>
-          स्वराज्यात स्त्रियांच्या सन्मानाला सर्वोच्च प्राधान्य होते. शत्रूच्या प्रदेशातही स्त्रिया, बालके, शेतकरी व धर्मस्थळांना स्पर्श करण्याची कोणाची हिम्मत नव्हती. कल्याणच्या सुभेदाराच्या सुनेला शिवरायांनी साडी-चोळी देऊन मातेसमान सन्मानाने परत पाठवले; तर रांझ्याच्या पाटलाचे हात-पाय तोडून कडक शासन केले.
-        </p>
-        <span class="tag">स्त्रीसन्मानाचे जागतिक मानक</span>
+      <div class="policy-card" style="min-height:300px;">
+        <div class="card-bg-body">
+          <h4>🛡️ स्त्रियांचा सन्मान व कठोर न्यायव्यवस्था</h4>
+          <p>स्वराज्यात स्त्रियांच्या सन्मानाला सर्वोच्च प्राधान्य होते. शत्रूच्या प्रदेशातही स्त्रिया, बालके, शेतकरी व धर्मस्थळांना स्पर्श करण्याची कोणाची हिम्मत नव्हती.</p>
+        </div>
       </div>
-
-      <div class="info-box-card">
-        <h4>🪙 शिवकालीन नाणी व चलन व्यवस्था</h4>
-        <p>
-          १६७४ च्या राज्याभिषेकानंतर शिवरायांनी स्वतःची अधिकृत नाणी पाडली: देवनागरी लिपीत 'श्री राजा शिव' व 'छत्रपती' अंकित असलेला <strong>सुवर्ण 'होन'</strong> (२.९ ग्रॅम सोने) आणि दैनंदिन व्यवहारासाठी तांब्याची <strong>'शिवराई'</strong>. परकीय चलनावर अवलंबून न राहता स्वयंपूर्ण अर्थव्यवस्थेची ही मुहूर्तमेढ होती.
-        </p>
-        <span class="tag">सुवर्ण होन व तांब्याची शिवराई</span>
+      <div class="policy-card" style="min-height:300px;">
+        <div class="card-bg-body">
+          <h4>🪙 शिवकालीन नाणी व चलन व्यवस्था</h4>
+          <p>१६७४ च्या राज्याभिषेकानंतर शिवरायांनी स्वतःची अधिकृत नाणी पाडली: सुवर्ण 'होन' आणि तांब्याची 'शिवराई'. परकीय चलनावर अवलंबून न राहता स्वयंपूर्ण अर्थव्यवस्थेची मुहूर्तमेढ.</p>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- DEEP RESEARCH SECTION A: मराठा आरमार व सागरी सार्वभौमत्व (Maratha Naval Supremacy) -->
-  <section id="maratha-navy-section" style="margin-top:48px;">
+<!-- ========== NAVY ========== -->
+<section class="section">
+  <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow-sm">🌊 सागरी सीमांचे अभेद्य रक्षण · 'ज्यांचे आरमार त्यांचा समुद्र'</span>
@@ -521,75 +906,38 @@
       </div>
       <a href="cm-forts-map.html" class="more-link">सागरी किल्ले नकाशा →</a>
     </div>
-    <p class="muted" style="margin-top:-6px; margin-bottom:20px; font-size:0.95rem; line-height:1.6;">
-      छत्रपती शिवाजी महाराजांनी १६५७ मध्ये कल्याण-भिवंडीत भारताच्या पहिल्या स्वतंत्र आरमाराची पायाभरणी केली. पोर्तुगीज, ब्रिटिश, डच व जंजिऱ्याच्या सिद्दीच्या समुद्री वर्चस्वाला सुरुंग लावून मराठ्यांनी पश्चिम किनारपट्टीवर स्वतःचे निर्विवाद प्रभुत्व प्रस्थापित केले.
-    </p>
-
-    <!-- Navy Spotlight Layout -->
-    <div class="grid grid-2" style="gap:24px; align-items:stretch; margin-bottom:28px;">
-      <!-- Left: Sarkhel Kanhoji Angre Authentic Portrait Card -->
-      <div class="info-box-card" style="padding:0; overflow:hidden; border-top:4px solid var(--gold-400); display:flex; flex-direction:column;">
-        <div style="position:relative; overflow:hidden; max-height:340px; background:#180608;">
-          <img src="assets/images/real-kanhoji-angre.jpg" alt="सरखेल कान्होजी आंग्रे (Sarkhel Kanhoji Angre — Grand Admiral)" class="lightbox-trigger" data-source="अस्सल ऐतिहासिक चित्र — राष्ट्रीय पुराभिलेखागार व भारतीय नौदल संग्रहालय" style="width:100%; height:340px; object-fit:cover; object-position:top center; display:block;">
-          <span style="position:absolute; bottom:12px; left:12px; background:rgba(20,4,6,0.85); color:var(--gold-400); font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:4px; border:1px solid var(--gold-500);">
-            🔍 क्लिक करा — HD दर्शन
-          </span>
-        </div>
-        <div style="padding:20px; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span class="tag" style="background:var(--maroon-900); color:var(--gold-300);">दर्यासारंग (Grand Admiral)</span>
-              <span style="font-size:0.8rem; color:var(--gold-400); font-weight:700;">अपराजित योद्धा</span>
-            </div>
-            <h3 style="margin:6px 0 10px; font-size:1.3rem;">सरखेल कान्होजी आंग्रे (१६६९ – १७२९)</h3>
-            <p style="font-size:0.88rem; color:var(--ink-soft); line-height:1.6; margin:0 0 14px;">
-              मराठा आरमाराचे अद्वितीय सरखेल ज्यांनी सलग ३० वर्षे इंग्रज, पोर्तुगीज आणि डच नौदलांना एकाही सागरी लढाईत जिंकू दिले नाही. विजयदुर्ग, सुवर्णदुर्ग आणि खांदेरी-उंदेरीवरून त्यांनी संपूर्ण कोकण किनारपट्टीवर मराठ्यांचे सार्वभौमत्व राखले.
-            </p>
-          </div>
-          <div style="background:rgba(233,196,106,0.12); padding:10px 14px; border-radius:8px; border-left:3px solid var(--gold-500); font-size:0.82rem; color:var(--maroon-950);">
-            ⚓ <strong>भारतीय नौदलाचा वारसा:</strong> आधुनिक भारतीय नौदलाच्या पश्चिम विभागाचे मुख्यालय 'आयएनएस आंग्रे' (INS Angre) हे त्यांच्याच सन्मानार्थ नामकरण करण्यात आले आहे.
-          </div>
+    <p class="muted" style="margin-bottom:24px;">छत्रपती शिवाजी महाराजांनी १६५७ मध्ये कल्याण-भिवंडीत भारताच्या पहिल्या स्वतंत्र आरमाराची पायाभरणी केली. पोर्तुगीज, ब्रिटिश, डच व जंजिऱ्याच्या सिद्दीच्या समुद्री वर्चस्वाला सुरुंग लावून मराठ्यांनी पश्चिम किनारपट्टीवर स्वतःचे निर्विवाद प्रभुत्व प्रस्थापित केले.</p>
+    <div class="grid-2">
+      <div class="card-bg" style="background-image:url('assets/images/real-kanhoji-angre.jpg');min-height:400px;">
+        <div class="card-bg-body">
+          <span class="card-tag">दर्यासारंग (Grand Admiral)</span>
+          <h4>सरखेल कान्होजी आंग्रे (१६६९ – १७२९)</h4>
+          <p>मराठा आरमाराचे अद्वितीय सरखेल ज्यांनी सलग ३० वर्षे इंग्रज, पोर्तुगीज आणि डच नौदलांना एकाही सागरी लढाईत जिंकू दिले नाही. विजयदुर्ग, सुवर्णदुर्ग आणि खांदेरी-उंदेरीवरून त्यांनी संपूर्ण कोकण किनारपट्टीवर मराठ्यांचे सार्वभौमत्व राखले.</p>
+          <div class="key-takeaway" style="background:rgba(233,196,106,.15);color:#FFE082;border-left-color:var(--gold-400);">⚓ भारतीय नौदलाचा वारसा: 'आयएनएस आंग्रे' (INS Angre) हे त्यांच्याच सन्मानार्थ नामकरण करण्यात आले आहे.</div>
         </div>
       </div>
-
-      <!-- Right: Naval Vessel Taxonomy & Sea Fort Strategy -->
-      <div style="display:flex; flex-direction:column; gap:16px;">
-        <div class="info-box-card" style="border-left:4px solid var(--saffron-500); padding:18px;">
-          <h4 style="margin:0 0 8px; font-size:1.1rem; color:var(--maroon-950);">⚓ शिवकालीन मराठा युद्धनौकांचे प्रकार</h4>
-          <ul style="margin:0; padding-left:18px; font-size:0.86rem; color:var(--ink-soft); line-height:1.65;">
-            <li><strong>गुराब (Gurab):</strong> २ ते ३ डोलकाठ्यांची, १५० ते ३०० टनांची मुख्य तोफधारी युद्धनौका. समोरील भागात २ मोठ्या तोफा व दोन्ही बाजूंना १२ ते १६ हलक्या तोफा.</li>
-            <li><strong>गलबत (Galbat):</strong> वेगवान वल्हवणारी लढाऊ नौका (५० ते १०० टन). उथळ पाण्यात शत्रूच्या अजस्त्र जहाजांना घेरून हल्ला करण्यात अत्यंत निष्णात.</li>
-            <li><strong>पाल (Paal):</strong> अजस्त्र तीन मजली लढाऊ जहाज. खुल्या समुद्रात युरोपीय गॅलियन्सशी थेट मुकाबला करण्याची क्षमता.</li>
-            <li><strong>मचवा व शिबाड (Machwa & Shibar):</strong> वेगवान टेहळणी नौका, गुप्तहेर संदेशवहन व रसद पुरवठ्यासाठी अष्टपैलू जहाजे.</li>
-          </ul>
-        </div>
-
-        <div class="info-box-card" style="border-left:4px solid var(--gold-500); padding:18px;">
-          <h4 style="margin:0 0 8px; font-size:1.1rem; color:var(--maroon-950);">🏰 अभेद्य सागरी दुर्गसंरचना (Marine Architecture)</h4>
-          <p style="font-size:0.85rem; color:var(--ink-soft); line-height:1.6; margin:0 0 10px;">
-            शिवरायांनी समुद्रातील नैसर्गिक कातळांवर <strong>सिंधुदुर्ग (मालवण), विजयदुर्ग (घेरिया), पद्मदुर्ग, सुवर्णदुर्ग, खांदेरी, उंदेरी</strong> यांसारखे जलदुर्ग उभारले. लाटांच्या प्रचंड आघाताने तटबंदी खचू नये म्हणून पायात सहस्रो मण शिशाचा रस ओतून दगडी चिरे सांधले गेले.
-          </p>
-          <div class="tag-list">
-            <span class="tag">शिशाचा रस ओतलेला पाया</span>
-            <span class="tag">नैसर्गिक भुयारी गोदी</span>
-            <span class="tag">गोमुखी दरवाजा</span>
-            <span class="tag">५२ बुरुज</span>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card-bg" style="background-image:url('assets/images/real-sindhudurg-fort.jpg');min-height:190px;">
+          <div class="card-bg-body">
+            <h4>⚓ शिवकालीन मराठा युद्धनौकांचे प्रकार</h4>
+            <p><strong>गुराब:</strong> २-३ डोलकाठ्यांची, १५०-३०० टनांची मुख्य तोफधारी युद्धनौका.<br><strong>गलबत:</strong> वेगवान वल्हवणारी लढाऊ नौका.<br><strong>पाल:</strong> अजस्त्र तीन मजली लढाऊ जहाज.<br><strong>मचवा व शिबाड:</strong> वेगवान टेहळणी नौका.</p>
           </div>
         </div>
-
-        <div class="info-box-card" style="border-left:4px solid var(--maroon-800); padding:18px;">
-          <h4 style="margin:0 0 8px; font-size:1.1rem; color:var(--maroon-950);">📜 शिवछत्रपतींचे आज्ञापत्र — आरमाराचे महत्त्व</h4>
-          <blockquote style="margin:0; font-size:0.86rem; font-style:italic; color:var(--maroon-900); line-height:1.55;">
-            "ज्यांचे आरमार त्यांचा समुद्र! जलदुर्ग व आरमार हे स्वतंत्र राज्यच आहे. ज्यास समुद्रतीराचे रक्षण करणे त्यास आरमार अवश्यकच आहे."
-          </blockquote>
-          <span style="display:block; margin-top:6px; font-size:0.76rem; color:var(--muted); text-align:right;">— रामचंद्रपंत अमात्य लिखित 'शिवकालीन आज्ञापत्र'</span>
+        <div class="card-bg" style="background-image:url('assets/images/real-raigad-panoramic.jpg');min-height:190px;">
+          <div class="card-bg-body">
+            <h4>📜 शिवछत्रपतींचे आज्ञापत्र — आरमाराचे महत्त्व</h4>
+            <p style="font-style:italic;">"ज्यांचे आरमार त्यांचा समुद्र! जलदुर्ग व आरमार हे स्वतंत्र राज्यच आहे. ज्यास समुद्रतीराचे रक्षण करणे त्यास आरमार अवश्यकच आहे."</p>
+            <span style="font-size:.76rem;color:var(--text-sec);">— रामचंद्रपंत अमात्य लिखित 'शिवकालीन आज्ञापत्र'</span>
+          </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- DEEP RESEARCH SECTION B: पानिपतनंतरचे पुनरुत्थान व महादजी युग (Post-Panipat Resurgence) -->
-  <section id="maratha-resurgence-section" style="margin-top:48px;">
+<!-- ========== RESURGENCE ========== -->
+<section class="section" style="background:#fff;">
+  <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow-sm">👑 राखेमधून पुन्हा उभे राहिलेले महासाम्राज्य · १७६१ ते १८०३</span>
@@ -597,88 +945,43 @@
       </div>
       <a href="cm-history.html" class="more-link">सविस्तर इतिहास →</a>
     </div>
-    <p class="muted" style="margin-top:-6px; margin-bottom:20px; font-size:0.95rem; line-height:1.6;">
-      १४ जानेवारी १७६१ रोजी पानिपतच्या तिसऱ्या युद्धात मोठा आघात सहन केल्यानंतर जगाला वाटले होते की मराठा सत्ता संपली. परंतु अवघ्या १० वर्षांत पेशवे माधवराव, महादजी शिंदे, तुकोजी होळकर आणि नाना फडणवीस यांनी पुन्हा दिल्लीवर भगवा फडकवून मुघल बादशहाला मराठ्यांचे मांडलिक बनवले.
-    </p>
-
-    <!-- Historic 1792 Painting Featured Display -->
-    <div class="info-box-card" style="padding:0; overflow:hidden; margin-bottom:26px; border-top:4px solid var(--gold-400);">
-      <div style="position:relative; max-height:420px; overflow:hidden; background:#100204;">
-        <img src="assets/images/real-maratha-court-1792.jpg" alt="पुणे दरबार — पेशवे सवाई माधवराव, नाना फडणवीस व महादji शिंदे (1792 Painting by James Wales)" class="lightbox-trigger" data-source="जेम्स वेल्स (James Wales) यांचे अस्सल १७९२ चे ऐतिहासिक तैलचित्र — ब्रिटीश म्युझियम व रॉयल एशियाटिक सोसायटी लंडन" style="width:100%; height:400px; object-fit:cover; object-position:center; display:block;">
-        <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent, rgba(14,2,4,0.95)); padding:20px 24px;">
-          <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px;">
-            <div>
-              <span class="tag" style="background:var(--maroon-900); color:var(--gold-300);">अस्सल ऐतिहासिक तैलचित्र · १७९२</span>
-              <h3 style="color:#FFF8E7; margin:6px 0 4px; font-size:1.35rem;">मराठा राजदरबार (The Maratha Durbar at Pune, 1792)</h3>
-              <p style="color:var(--text-sec); font-size:0.86rem; margin:0; max-width:85ch;">
-                ब्रिटिश चित्रकार जेम्स वेल्स याने शनिवार वाड्यामध्ये प्रत्यक्ष उपस्थित राहून रेखाटलेले ऐतिहासिक चित्र. यामध्ये पेशवे सवाई माधवराव, कारभारी नाना फडणवीस, महादजी शिंदे आणि मराठा मुत्सद्दी उपस्थित आहेत.
-              </p>
-            </div>
-            <span style="background:rgba(233,196,106,0.2); border:1px solid var(--gold-400); color:var(--gold-300); padding:6px 12px; border-radius:6px; font-size:0.78rem; font-weight:700;">
-              🔍 फोटोवर क्लिक करून HD पहा
-            </span>
-          </div>
+    <p class="muted" style="margin-bottom:24px;">१४ जानेवारी १७६१ रोजी पानिपतच्या तिसऱ्या युद्धात मोठा आघात सहन केल्यानंतर जगाला वाटले होते की मराठा सत्ता संपली. परंतु अवघ्या १० वर्षांत पेशवे माधवराव, महादजी शिंदे, तुकोजी होळकर आणि नाना फडणवीस यांनी पुन्हा दिल्लीवर भगवा फडकवून मुघल बादशहाला मराठ्यांचे मांडलिक बनवले.</p>
+    <div class="card-bg" style="background-image:url('assets/images/real-maratha-court-1792.jpg');min-height:400px;margin-bottom:32px;">
+      <div class="card-bg-body">
+        <span class="card-tag">अस्सल ऐतिहासिक तैलचित्र · १७९२</span>
+        <h4>मराठा राजदरबार (The Maratha Durbar at Pune, 1792)</h4>
+        <p>ब्रिटिश चित्रकार जेम्स वेल्स याने शनिवार वाड्यामध्ये प्रत्यक्ष उपस्थित राहून रेखाटलेले ऐतिहासिक चित्र. यामध्ये पेशवे सवाई माधवराव, कारभारी नाना फडणवीस, महादजी शिंदे आणि मराठा मुत्सद्दी उपस्थित आहेत.</p>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="card-bg" style="background-image:url('assets/images/real-mahadji-shinde.jpg');min-height:360px;">
+        <div class="card-bg-body">
+          <span class="card-tag">वकील-ए-मुतलक</span>
+          <h4>श्रीमंत महादजी शिंदे (पाटीलबाबा)</h4>
+          <p>पानिपतच्या युद्धात जखमी होऊनही पुन्हा फिनिक्स पक्ष्यासारखे झेप घेणारे महान योद्धे. १७७१ मध्ये दिल्ली जिंकली, मुघल बादशहाला मांडलिक केले आणि फ्रेंच सेनापती डी बॉईनच्या साहाय्याने भारतातील पहिली आधुनिक तोफखाना-सज्ज कवायती सेना उभारली.</p>
+        </div>
+      </div>
+      <div class="card-bg" style="background-image:url('assets/images/real-nana-phadnavis.jpg');min-height:360px;">
+        <div class="card-bg-body">
+          <span class="card-tag">सर्वोच्च मुत्सद्दी</span>
+          <h4>मुत्सद्दी नाना फडणवीस (१७४२ – १८००)</h4>
+          <p>युरोपीय इतिहासकारांनी 'मराठ्यांचे मॅकियाव्हेली' संबोधलेले बुद्धिवंत राजकारणी. नारायणराव पेशव्यांच्या हत्येनंतर 'बारभाई कारस्थान' रचून स्वराज्याची धुरा सांभाळली. पहिल्या इंग्रज-मराठा युद्धात इंग्रजांना नमवून 'सालबाईचा तह' घडवून आणला.</p>
+        </div>
+      </div>
+      <div class="card-bg" style="background-image:url('assets/images/real-ahilyabai-holkar.jpg');min-height:360px;">
+        <div class="card-bg-body">
+          <span class="card-tag">लोकमाता व तत्त्वज्ञ राणी</span>
+          <h4>पुण्यश्लोक अहिल्याबाई होळकर</h4>
+          <p>माळवा प्रांताची आदर्श राज्यकर्ती ज्यांनी महेश्वर येथून ३० वर्षे सुशासन चालवले. महेश्वर साड्यांच्या वस्त्रोद्योगाची स्थापना केली, शेतकऱ्यांना करसवलती दिल्या, आणि काशी विश्वनाथ ते रामेश्वरमपर्यंत शेकडो मंदिरांचा जीर्णोद्धार केला.</p>
         </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 3 Key Leaders of the Resurgence Grid -->
-    <div class="grid grid-3" style="gap:20px;">
-      <!-- Mahadji Shinde -->
-      <div class="info-box-card" style="padding:0; overflow:hidden; border-top:3px solid var(--gold-400);">
-        <img src="assets/images/real-mahadji-shinde.jpg" alt="श्रीमंत महादजी शिंदे (Mahadji Shinde — Master of Delhi)" class="lightbox-trigger" data-source="अस्सल ऐतिहासिक तैलचित्र — शिंदे राजवंश संग्रहालय, जयविलास पॅलेस ग्वाल्हेर" style="width:100%; height:240px; object-fit:cover; object-position:top; display:block;">
-        <div style="padding:18px;">
-          <span class="tag" style="background:var(--maroon-900); color:var(--gold-300);">वकील-ए-मुतलक</span>
-          <h4 style="margin:8px 0 6px; font-size:1.15rem;">श्रीमंत महादजी शिंदे (पाटीलबाबा)</h4>
-          <p style="font-size:0.84rem; color:var(--ink-soft); line-height:1.55; margin:0 0 12px;">
-            पानिपतच्या युद्धात जखमी होऊनही पुन्हा फिनिक्स पक्ष्यासारखे झेप घेणारे महान योद्धे. १७७१ मध्ये दिल्ली जिंकली, मुघल बादशहाला मांडलिक केले आणि फ्रेंच सेनापती डी बॉईनच्या साहाय्याने भारतातील पहिली आधुनिक तोफखाना-सज्ज कवायती सेना उभारली.
-          </p>
-          <div class="tag-list">
-            <span class="tag">दिल्लीचे तख्त नियंत्रक</span>
-            <span class="tag">आधुनिक तोफखाना</span>
-            <span class="tag">वडगावचा विजय (१७७९)</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Nana Phadnavis -->
-      <div class="info-box-card" style="padding:0; overflow:hidden; border-top:3px solid var(--saffron-500);">
-        <img src="assets/images/real-nana-phadnavis.jpg" alt="मुत्सद्दी नाना फडणवीस (Nana Phadnavis — The Maratha Machiavelli)" class="lightbox-trigger" data-source="ऐतिहासिक समकालीन चित्र — शनिवार वाडा पुराभिलेखागार व मेणवली दप्तर" style="width:100%; height:240px; object-fit:cover; object-position:top; display:block;">
-        <div style="padding:18px;">
-          <span class="tag" style="background:var(--maroon-900); color:var(--gold-300);">सर्वोच्च मुत्सद्दी</span>
-          <h4 style="margin:8px 0 6px; font-size:1.15rem;">मुत्सद्दी नाना फडणवीस (१७४२ – १८००)</h4>
-          <p style="font-size:0.84rem; color:var(--ink-soft); line-height:1.55; margin:0 0 12px;">
-            युरोपीय इतिहासकारांनी 'मराठ्यांचे मॅकियाव्हेली' संबोधलेले बुद्धिवंत राजकारणी. नारायणराव पेशव्यांच्या हत्येनंतर 'बारभाई कारस्थान' रचून स्वराज्याची धुरा सांभाळली. पहिल्या इंग्रज-मराठा युद्धात (१७७५–१७८२) इंग्रजांना नमवून 'सालबाईचा तह' घडवून आणला.
-          </p>
-          <div class="tag-list">
-            <span class="tag">बारभाई कारस्थान</span>
-            <span class="tag">सालबाईचा ऐतिहासिक तह</span>
-            <span class="tag">मेणवलीचे दप्तर</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Ahilyabai Holkar -->
-      <div class="info-box-card" style="padding:0; overflow:hidden; border-top:3px solid var(--gold-400);">
-        <img src="assets/images/real-ahilyabai-holkar.jpg" alt="पुण्यश्लोक अहिल्याबाई होळकर (Punyashlok Ahilyabai Holkar — Philosopher Queen)" class="lightbox-trigger" data-source="अहिल्याबाई होळकर स्मारक — महेश्‍वर किल्ला, नर्मदा किनारा" style="width:100%; height:240px; object-fit:cover; object-position:center; display:block;">
-        <div style="padding:18px;">
-          <span class="tag" style="background:var(--maroon-900); color:var(--gold-300);">लोकमाता व तत्त्वज्ञ राणी</span>
-          <h4 style="margin:8px 0 6px; font-size:1.15rem;">पुण्यश्लोक अहिल्याबाई होळकर</h4>
-          <p style="font-size:0.84rem; color:var(--ink-soft); line-height:1.55; margin:0 0 12px;">
-            माळवा प्रांताची आदर्श राज्यकर्ती ज्यांनी महेश्‍वर येथून ३० वर्षे सुशासन चालवले. महेश्वर साड्यांच्या वस्त्रोद्योगाची स्थापना केली, शेतकऱ्यांना करसवलती दिल्या, आणि काशी विश्वनाथ, सोमनाथ, गया, बद्रीनाथ ते रामेश्वरमपर्यंत भारतभरातील शेकडो मंदिरांचा व घाटांचा जीर्णोद्धार केला.
-          </p>
-          <div class="tag-list">
-            <span class="tag">काशी विश्वनाथ जीर्णोद्धार</span>
-            <span class="tag">महेश्‍वर वस्त्रोद्योग</span>
-            <span class="tag">न्यायप्रिय प्रशासन</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- DEEP RESEARCH SECTION C: इतिहास संशोधकांचे विचारमंथन (Scholarly Perspectives & Research Insights) -->
-  <section id="maratha-historians-section" style="margin-top:52px;">
+<!-- ========== RESEARCHERS ========== -->
+<section class="section">
+  <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow-sm">📚 अस्सल ऐतिहासिक पुरावे · संशोधकांची निष्पक्ष मीमांसा</span>
@@ -686,72 +989,47 @@
       </div>
       <a href="cm-history.html" class="more-link">इतिहास ग्रंथ दालन →</a>
     </div>
-    <p class="muted" style="margin-top:-6px; margin-bottom:12px; font-size:0.95rem; line-height:1.6;">
-      मराठा साम्राज्याचा इतिहास हा केवळ काल्पनिक कथांवर नव्हे, तर समकालीन मोडी कागदपत्रे, बखरी, पोर्तुगीज-डच-ब्रिटिश पुराभिलेखागारे आणि प्रत्यक्ष गडकोटांच्या शास्त्रीय संशोधनावर अधिष्ठित आहे. महाराष्ट्रातील अग्रगण्य इतिहास संशोधकांचे हे अधिकृत निष्कर्ष:
-    </p>
-
-    <!-- 4 Grand Historian Cards Grid -->
+    <p class="muted" style="margin-bottom:24px;">मराठा साम्राज्याचा इतिहास हा केवळ काल्पनिक कथांवर नव्हे, तर समकालीन मोडी कागदपत्रे, बखरी, पोर्तुगीज-डच-ब्रिटिश पुराभिलेखागारे आणि प्रत्यक्ष गडकोटांच्या शास्त्रीय संशोधनावर अधिष्ठित आहे. महाराष्ट्रातील अग्रगण्य इतिहास संशोधकांचे हे अधिकृत निष्कर्ष:</p>
     <div class="researchers-grid">
-      <!-- 1. Shivshahir Babasaheb Purandare -->
-      <div class="researcher-card" style="border-top-color:var(--saffron-600);">
+      <div class="researcher-card">
         <span class="quote-mark">“</span>
         <div class="author-badge">📖 'राजा शिवछत्रपती' महाग्रंथकार</div>
         <h4>शिवशाहीर बाबासाहेब पुरंदरे</h4>
-        <div class="researcher-title">पद्मविभूषण इतिहासकार, शिवचरित्रकार व 'जाणता राजा' जनक</div>
-        <p>
-          "शिवछत्रपतींचे स्वराज्य हे कोणत्याही धर्माविरुद्ध नव्हते, तर ते जुलूम, अन्याय आणि परावलंबित्वाविरुद्ध पुकारलेले बंड होते. शिवरायांचे राज्य हे 'रयतेचे स्वराज्य' होते! त्यांनी सैन्याला सक्त ताकीद दिली होती: परस्त्रीला मातेसमान माना, शेतातील पिकांना हात लावू नका, धर्मस्थळे व कुराणाची प्रत आढळल्यास सन्मानाने परत करा. स्वराज्याची खरी ताकद गडकोटांपेक्षाही शिवरायांच्या उच्च नैतिक आचारसंहितेत होती!"
-        </p>
-        <div class="key-takeaway">
-          🌟 <strong>मुख्य निष्कर्ष:</strong> शिवशाही म्हणजे केवळ साम्राज्यविस्तार नव्हे, तर रयतेचे कल्याण व सर्वोच्च नैतिक सुशासन.
-        </div>
+        <div class="researcher-title">पद्मविभूषण इतिहासकार, शिवचरित्रकार</div>
+        <p>"शिवछत्रपतींचे स्वराज्य हे कोणत्याही धर्माविरुद्ध नव्हते, तर ते जुलूम, अन्याय आणि परावलंबित्वाविरुद्ध पुकारलेले बंड होते. शिवरायांचे राज्य हे 'रयतेचे स्वराज्य' होते!"</p>
+        <div class="key-takeaway">🌟 शिवशाही म्हणजे केवळ साम्राज्यविस्तार नव्हे, तर रयतेचे कल्याण व सर्वोच्च नैतिक सुशासन.</div>
       </div>
-
-      <!-- 2. Mohan Shete -->
-      <div class="researcher-card" style="border-top-color:var(--gold-500);">
+      <div class="researcher-card">
         <span class="quote-mark">“</span>
-        <div class="author-badge">⚔️ 'शिवस्पर्श' व मराठा युद्धनीती अभ्यासक</div>
+        <div class="author-badge">⚔️ 'शिवस्पर्श' अभ्यासक</div>
         <h4>इतिहास अभ्यासक मोहन शेटे</h4>
-        <div class="researcher-title">ज्येष्ठ इतिहास अभ्यासक, व्याख्याते व शिवकालीन रणनीती विश्लेषक</div>
-        <p>
-          "मराठा सैन्याची खरी शक्ती त्यांच्या अद्वितीय वेगात (Lightning Speed & Mobility) आणि गनिमी काव्यात होती. श्रीमंत बाजीराव पेशव्यांनी ४१ लढाया लढल्या आणि एकाही लढाईत पराभव पत्करला नाही; याचे कारण म्हणजे त्यांची चक्रावून टाकणारी घोडदौड! तसेच छत्रपती संभाजी महाराजांनी औरंगजेबाच्या ५ लाखांच्या फौजेला सलग ९ वर्षे एकही किल्ला जिंकू दिला नाही. संभाजीराजांचा हा अभेद्य लढा जागतिक लष्करी इतिहासातील अतुलनीय पराक्रम आहे."
-        </p>
-        <div class="key-takeaway">
-          ⚡ <strong>मुख्य निष्कर्ष:</strong> बाजीरावांची अपराजित ४१ युद्धे आणि संभाजीराजांचा ९ वर्षांचा अभेद्य लढा हे मराठा युद्धशास्त्राचे शिखर.
-        </div>
+        <div class="researcher-title">ज्येष्ठ इतिहास अभ्यासक व व्याख्याते</div>
+        <p>"मराठा सैन्याची खरी शक्ती त्यांच्या अद्वितीय वेगात आणि गनिमी काव्यात होती. श्रीमंत बाजीराव पेशव्यांनी ४१ लढाया लढल्या आणि एकाही लढाईत पराभव पत्करला नाही!"</p>
+        <div class="key-takeaway">⚡ बाजीरावांची अपराजित ४१ युद्धे आणि संभाजीराजांचा ९ वर्षांचा अभेद्य लढा हे मराठा युद्धशास्त्राचे शिखर.</div>
       </div>
-
-      <!-- 3. Ninad Bedekar -->
-      <div class="researcher-card" style="border-top-color:var(--maroon-800);">
+      <div class="researcher-card">
         <span class="quote-mark">“</span>
         <div class="author-badge">🏰 आंतरराष्ट्रीय दुर्गशास्त्र तज्ज्ञ</div>
         <h4>इतिहास संशोधक निनाद बेडेकर</h4>
-        <div class="researcher-title">दुर्गमहर्षी, तोफखाना अभ्यासक व प्राच्यविद्या संशोधक</div>
-        <p>
-          "सह्याद्रीतील गडकोट हे केवळ दगडमातीचे बांधकाम नाहीत, तर ते जागतिक दर्जाचे लष्करी अभियांत्रिकी चमत्कार आहेत! गडांचे गोमुखी दरवाजे असे वळणावळणावर बांधले गेले की बाहेरील शत्रूच्या तोफांना थेट मारा करणे अशक्य होई. समुद्रात सिंधुदुर्ग बांधताना लाटांचा मारा सहन करण्यासाठी पायात वितळवलेले शिसे ओतून पाषाण जोडले गेले. प्रत्येक किल्ल्यावर ३ वर्षे पुरेल इतका पाण्याचा व धान्याचा साठा ठेवण्याची शिवकालीन व्यवस्था विस्मयकारक होती."
-        </p>
-        <div class="key-takeaway">
-          🛡️ <strong>मुख्य निष्कर्ष:</strong> गोमुखी महाद्वारे, शिशाचा रस ओतलेली पायाभरणी व जलव्यवस्थापन हे शिवकालीन दुर्गशास्त्राचे वैभव.
-        </div>
+        <div class="researcher-title">दुर्गमहर्षी, तोफखाना अभ्यासक</div>
+        <p>"सह्याद्रीतील गडकोट हे केवळ दगडमातीचे बांधकाम नाहीत, तर ते जागतिक दर्जाचे लष्करी अभियांत्रिकी चमत्कार आहेत! गडांचे गोमुखी दरवाजे असे वळणावळणावर बांधले गेले की बाहेरील शत्रूच्या तोफांना थेट मारा करणे अशक्य होई."</p>
+        <div class="key-takeaway">🛡️ गोमुखी महाद्वारे, शिशाचा रस ओतलेली पायाभरणी व जलव्यवस्थापन हे शिवकालीन दुर्गशास्त्राचे वैभव.</div>
       </div>
-
-      <!-- 4. V. K. Rajwade -->
-      <div class="researcher-card" style="border-top-color:var(--gold-600);">
+      <div class="researcher-card">
         <span class="quote-mark">“</span>
         <div class="author-badge">📜 आधुनिक इतिहास संशोधनाचे जनक</div>
         <h4>इतिहासचार्य वि. का. राजवाडे</h4>
-        <div class="researcher-title">'मराठ्यांच्या इतिहासाची साधने' (२२ खंड) संकलक व थोर संशोधक</div>
-        <p>
-          "कागदपत्रांशिवाय इतिहास नाही (No Document, No History)! इतिहास म्हणजे कल्पनाविलास किंवा अंधश्रद्धा नव्हे; तो अस्सल समकालीन कागदपत्रे, सनदा, मोडी पत्रव्यवहार आणि शकावलींवर आधारलेला असावा. गावोगावी पायी हिंडून, जुन्या दप्तरांमधून मराठ्यांच्या पराक्रमाचे लाखो अस्सल मोडी कागद गोळा केले. या अस्सल पुराव्यांनी सिद्ध केले की १८ व्या शतकात मराठ्यांनीच भारताला परकीय आक्रमकांपासून वाचवले होते!"
-        </p>
-        <div class="key-takeaway">
-          📜 <strong>मुख्य निष्कर्ष:</strong> २२ खंडांमधील अस्सल मोडी कागदपत्रांच्या आधारे सिद्ध झालेले मराठा साम्राज्याचे राष्ट्रव्यापी प्रभुत्व.
-        </div>
+        <div class="researcher-title">'मराठ्यांच्या इतिहासाची साधने' (२२ खंड) संकलक</div>
+        <p>"कागदपत्रांशिवाय इतिहास नाही (No Document, No History)! इतिहास म्हणजे कल्पनाविलास किंवा अंधश्रद्धा नव्हे; तो अस्सल समकालीन कागदपत्रे, सनदा, मोडी पत्रव्यवहार आणि शकावलींवर आधारलेला असावा."</p>
+        <div class="key-takeaway">📜 २२ खंडांमधील अस्सल मोडी कागदपत्रांच्या आधारे सिद्ध झालेले मराठा साम्राज्याचे राष्ट्रव्यापी प्रभुत्व.</div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- DEEP DATA SECTION 4: मराठा साम्राज्य कालपट (1630 to 1818 Timeline) -->
-  <section style="margin-top:44px;">
+<!-- ========== TIMELINE ========== -->
+<section class="section" style="background:#fff;">
+  <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow-sm">अखंड गौरवगाथा</span>
@@ -759,64 +1037,27 @@
       </div>
       <a href="cm-history.html" class="more-link">सविस्तर कालपट →</a>
     </div>
-
-    <div class="data-table-wrap">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>वर्ष</th>
-            <th>महत्त्वाची ऐतिहासिक घटना</th>
-            <th>रणनीतिक महत्त्व व परिणाम</th>
-          </tr>
-        </thead>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>वर्ष</th><th>महत्त्वाची ऐतिहासिक घटना</th><th>रणनीतिक महत्त्व व परिणाम</th></tr></thead>
         <tbody>
-          <tr>
-            <td><strong>१६३०</strong></td>
-            <td>शिवनेरी गडावर छत्रपती शिवरायांचा जन्म (१९ फेब्रुवारी १६३०)</td>
-            <td>माता जिजाऊ व शहाजीराजे यांच्या प्रेरणेने हिंदवी स्वराज्याची बीजे रोवली गेली.</td>
-          </tr>
-          <tr>
-            <td><strong>१६४५</strong></td>
-            <td>रायरेश्वराच्या मंदिरात स्वराज्याची शपथ व तोरणा किल्ला विजय</td>
-            <td>अवघ्या १५ व्या वर्षी मावळ्यांना एकत्र करून स्वराज्याची अधिकृत घोषणा.</td>
-          </tr>
-          <tr>
-            <td><strong>१६५९</strong></td>
-            <td>प्रतापगड युद्ध — अफझलखानाचा वध (१० नोव्हेंबर १६५९)</td>
-            <td>विजापूरच्या बलाढ्य फौजेचा धुव्वा; वाघनखांनी अफझलखानाचा कोथळा बाहेर काढला.</td>
-          </tr>
-          <tr>
-            <td><strong>१६६६</strong></td>
-            <td>आग्रा भेट व मिठाईच्या पेटाऱ्यातून ऐतिहासिक सुटका (१७ ऑगस्ट १६६६)</td>
-            <td>औरंगजेबाच्या कपटी कैदेतून शिवरायांची सुटका; जागतिक गुप्तहेर शास्त्रातील चमत्कार.</td>
-          </tr>
-          <tr>
-            <td><strong>१६७४</strong></td>
-            <td>दुर्गराज रायगडावर सुवर्ण राज्याभिषेक (६ जून १६७४)</td>
-            <td>हिंदवी स्वराज्य सार्वभौम झाले, 'शिवराज्याभिषेक शक' सुरू व स्वतःचे चलन सुरू.</td>
-          </tr>
-          <tr>
-            <td><strong>१६८०–१६८९</strong></td>
-            <td>छत्रपती संभाजी महाराज — १२८ लढायांचे अपराजित पर्व</td>
-            <td>औरंगजेब ५ लाख फौजेसह दक्षिणेत उतरला; शंभूराजांनी ९ वर्षे त्याला एकही किल्ला जिंकू दिला नाही.</td>
-          </tr>
-          <tr>
-            <td><strong>१६८९–१७०७</strong></td>
-            <td>२७ वर्षांचे स्वातंत्र्ययुद्ध — महाराणी ताराबाई, संताजी-धनाजी</td>
-            <td>मराठ्यांनी मुघल सैन्याला सळो की पळो केले; शेवटी औरंगजेब महाराष्ट्राच्या मातीत गाडला गेला.</td>
-          </tr>
-          <tr>
-            <td><strong>१७२०–१७४०</strong></td>
-            <td>श्रीमंत बाजीराव पेशवे — ४१ लढाया, शून्य पराभव</td>
-            <td>पालखेड, माळवा, बुंदेलखंड, दिल्ली व भोपाळ जिंकून मराठा साम्राज्य थेट अटकेपार पोहोचवले.</td>
-          </tr>
+          <tr><td><strong>१६३०</strong></td><td>शिवनेरी गडावर छत्रपती शिवरायांचा जन्म (१९ फेब्रुवारी १६३०)</td><td>माता जिजाऊ व शहाजीराजे यांच्या प्रेरणेने हिंदवी स्वराज्याची बीजे रोवली गेली.</td></tr>
+          <tr><td><strong>१६४५</strong></td><td>रायरेश्वराच्या मंदिरात स्वराज्याची शपथ व तोरणा किल्ला विजय</td><td>अवघ्या १५ व्या वर्षी मावळ्यांना एकत्र करून स्वराज्याची अधिकृत घोषणा.</td></tr>
+          <tr><td><strong>१६५९</strong></td><td>प्रतापगड युद्ध — अफझलखानाचा वध (१० नोव्हेंबर १६५९)</td><td>विजापूरच्या बलाढ्य फौजेचा धुव्वा; वाघनखांनी अफझलखानाचा कोथळा बाहेर काढला.</td></tr>
+          <tr><td><strong>१६६६</strong></td><td>आग्रा भेट व मिठाईच्या पेटाऱ्यातून ऐतिहासिक सुटका (१७ ऑगस्ट १६६६)</td><td>औरंगजेबाच्या कपटी कैदेतून शिवरायांची सुटका; जागतिक गुप्तहेर शास्त्रातील चमत्कार.</td></tr>
+          <tr><td><strong>१६७४</strong></td><td>दुर्गराज रायगडावर सुवर्ण राज्याभिषेक (६ जून १६७४)</td><td>हिंदवी स्वराज्य सार्वभौम झाले, 'शिवराज्याभिषेक शक' सुरू व स्वतःचे चलन सुरू.</td></tr>
+          <tr><td><strong>१६८०–१६८९</strong></td><td>छत्रपती संभाजी महाराज — १२८ लढायांचे अपराजित पर्व</td><td>औरंगजेब ५ लाख फौजेसह दक्षिणेत उतरला; शंभूराजांनी ९ वर्षे त्याला एकही किल्ला जिंकू दिला नाही.</td></tr>
+          <tr><td><strong>१६८९–१७०७</strong></td><td>२७ वर्षांचे स्वातंत्र्ययुद्ध — महाराणी ताराबाई, संताजी-धनाजी</td><td>मराठ्यांनी मुघल सैन्याला सळो की पळो केले; शेवटी औरंगजेब महाराष्ट्राच्या मातीत गाडला गेला.</td></tr>
+          <tr><td><strong>१७२०–१७४०</strong></td><td>श्रीमंत बाजीराव पेशवे — ४१ लढाया, शून्य पराभव</td><td>पालखेड, माळवा, बुंदेलखंड, दिल्ली व भोपाळ जिंकून मराठा साम्राज्य थेट अटकेपार पोहोचवले.</td></tr>
         </tbody>
       </table>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Section: Legendary Leaders & Historical Treatises -->
-  <section style="margin-top:48px;">
+<!-- ========== LEGENDARY LEADERS ========== -->
+<section class="section">
+  <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow-sm">इतिहास दालन</span>
@@ -824,45 +1065,38 @@
       </div>
       <a href="cm-history.html" class="more-link">सर्व इतिहास पाहा →</a>
     </div>
-
-    <div class="grid grid-3">
-      <!-- Shivaji Maharaj Card -->
-      <a class="feature-card hd-feature-card" href="cm-shivaji-maharaj.html" style="background-image: url('assets/images/maratha-hero.jpg'); background-position: top center; min-height: 280px;">
-        <div class="scrim"></div>
-        <div class="body">
-          <span class="eyebrow-sm" style="color:var(--gold-400);">हिंदवी स्वराज्य संस्थापक</span>
-          <h3>छत्रपती शिवाजी महाराज</h3>
-          <p class="d" style="font-size:0.85rem;">रयतेचे राजे, आरमार पितामह, गनिमी काव्याचे जनक व अष्टप्रधान मंडळाचे शिल्पकार.</p>
-          <span class="btn btn-outline" style="padding:4px 12px; font-size:0.8rem; margin-top:8px; display:inline-block; color:var(--paper); border-color:var(--gold-400);">सविस्तर चरित्र वाचा →</span>
+    <div class="grid-3">
+      <a href="cm-shivaji-maharaj.html" class="card-bg" style="background-image:url('assets/images/real-shivaji-portrait.jpg');min-height:320px;">
+        <div class="card-bg-body">
+          <span class="card-tag">हिंदवी स्वराज्य संस्थापक</span>
+          <h4>छत्रपती शिवाजी महाराज</h4>
+          <p>रयतेचे राजे, आरमार पितामह, गनिमी काव्याचे जनक व अष्टप्रधान मंडळाचे शिल्पकार.</p>
+          <span class="btn btn-outline" style="margin-top:10px;font-size:.78rem;color:#fff;border-color:var(--gold-400);">सविस्तर चरित्र वाचा →</span>
         </div>
       </a>
-
-      <!-- Sambhaji Maharaj Card -->
-      <a class="feature-card hd-feature-card" href="cm-sambhaji-maharaj.html" style="background-image: url('assets/images/real-sambhaji-portrait.png'); background-position: top center; min-height: 280px;">
-        <div class="scrim"></div>
-        <div class="body">
-          <span class="eyebrow-sm" style="color:var(--gold-400);">अपराजित धर्मवीर</span>
-          <h3>छत्रपती संभाजी महाराज</h3>
-          <p class="d" style="font-size:0.85rem;">१२८ लढायांमध्ये अजिंक्य, 'बुधभूषणम्' संस्कृत ग्रंथकार व तुळापूरचे सर्वोच्च बलिदान.</p>
-          <span class="btn btn-outline" style="padding:4px 12px; font-size:0.8rem; margin-top:8px; display:inline-block; color:var(--paper); border-color:var(--gold-400);">सविस्तर चरित्र वाचा →</span>
+      <a href="cm-sambhaji-maharaj.html" class="card-bg" style="background-image:url('assets/images/real-sambhaji-portrait.png');min-height:320px;">
+        <div class="card-bg-body">
+          <span class="card-tag">अपराजित धर्मवीर</span>
+          <h4>छत्रपती संभाजी महाराज</h4>
+          <p>१२८ लढायांमध्ये अजिंक्य, 'बुधभूषणम्' संस्कृत ग्रंथकार व तुळापूरचे सर्वोच्च बलिदान.</p>
+          <span class="btn btn-outline" style="margin-top:10px;font-size:.78rem;color:#fff;border-color:var(--gold-400);">सविस्तर चरित्र वाचा →</span>
         </div>
       </a>
-
-      <!-- Bajirao Peshwa Card -->
-      <a class="feature-card hd-feature-card" href="cm-bajirao-peshwa.html" style="background-image: url('assets/images/real-bajirao-statue.jpg'); background-position: center; min-height: 280px;">
-        <div class="scrim"></div>
-        <div class="body">
-          <span class="eyebrow-sm" style="color:var(--gold-400);">अपराजित सेनापती</span>
-          <h3>श्रीमंत बाजीराव पेशवे</h3>
-          <p class="d" style="font-size:0.85rem;">४१ लढाया, शून्य पराभव — पालखेड मोहीम, गनिमी घोडदौड व अटकेपार साम्राज्य विस्तार.</p>
-          <span class="btn btn-outline" style="padding:4px 12px; font-size:0.8rem; margin-top:8px; display:inline-block; color:var(--paper); border-color:var(--gold-400);">सविस्तर चरित्र वाचा →</span>
+      <a href="cm-bajirao-peshwa.html" class="card-bg" style="background-image:url('assets/images/real-bajirao-statue.jpg');min-height:320px;">
+        <div class="card-bg-body">
+          <span class="card-tag">अपराजित सेनापती</span>
+          <h4>श्रीमंत बाजीराव पेशवे</h4>
+          <p>४१ लढाया, शून्य पराभव — पालखेड मोहीम, गनिमी घोडदौड व अटकेपार साम्राज्य विस्तार.</p>
+          <span class="btn btn-outline" style="margin-top:10px;font-size:.78rem;color:#fff;border-color:var(--gold-400);">सविस्तर चरित्र वाचा →</span>
         </div>
       </a>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Section: Services & Economic Empowerment -->
-  <section style="margin-top:48px;">
+<!-- ========== SERVICES ========== -->
+<section class="section" style="background:#fff;">
+  <div class="container">
     <div class="section-head">
       <div>
         <span class="eyebrow-sm">समाजाचे स्वतःचे सेवा नेटवर्क</span>
@@ -870,113 +1104,276 @@
       </div>
       <a href="cm-services.html" class="more-link">सर्व सेवा पाहा →</a>
     </div>
-
-    <div class="grid grid-4">
-      <div class="info-box-card" style="border-left-color:var(--saffron-600);">
-        <div style="font-size:1.8rem; margin-bottom:4px;">💻</div>
-        <h4>आयटी व सॉफ्टवेअर</h4>
-        <p>वेबसाईट, ॲप डेव्हलपमेंट, क्लाउड सोल्युशन्स व डिजिटल मार्केटिंग.</p>
-        <a href="cm-services.html" class="btn btn-outline" style="padding:4px 10px; font-size:0.78rem;">सेवा बुक करा</a>
+    <div class="grid-4">
+      <div class="card-bg" style="background-image:linear-gradient(rgba(20,4,6,0.68),rgba(20,4,6,0.85)),url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80');min-height:280px;border-radius:16px;background-size:cover;background-position:center;">
+        <div class="card-bg-body">
+          <div style="font-size:1.8rem;margin-bottom:4px;">💻</div>
+          <h4>आयटी व सॉफ्टवेअर</h4>
+          <p>वेबसाईट, ॲप डेव्हलपमेंट, क्लाउड सोल्युशन्स व डिजिटल मार्केटिंग.</p>
+          <a href="cm-services.html" class="btn btn-outline" style="margin-top:10px;font-size:.78rem;color:#fff;border-color:var(--gold-400);">सेवा बुक करा</a>
+        </div>
       </div>
-
-      <div class="info-box-card" style="border-left-color:var(--gold-600);">
-        <div style="font-size:1.8rem; margin-bottom:4px;">⚖️</div>
-        <h4>कायदेशीर सल्ला व CA</h4>
-        <p>हायकोर्ट वकिली, कर सल्लागार, जीएसटी, कंपनी रजिस्ट्रेशन व ऑडिट.</p>
-        <a href="cm-services.html" class="btn btn-outline" style="padding:4px 10px; font-size:0.78rem;">सल्ला घ्या</a>
+      <div class="card-bg" style="background-image:linear-gradient(rgba(20,4,6,0.68),rgba(20,4,6,0.85)),url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80');min-height:280px;border-radius:16px;background-size:cover;background-position:center;">
+        <div class="card-bg-body">
+          <div style="font-size:1.8rem;margin-bottom:4px;">⚖️</div>
+          <h4>कायदेशीर सल्ला व CA</h4>
+          <p>हायकोर्ट वकिली, कर सल्लागार, जीएसटी, कंपनी रजिस्ट्रेशन व ऑडिट.</p>
+          <a href="cm-services.html" class="btn btn-outline" style="margin-top:10px;font-size:.78rem;color:#fff;border-color:var(--gold-400);">सल्ला घ्या</a>
+        </div>
       </div>
-
-      <div class="info-box-card" style="border-left-color:var(--success);">
-        <div style="font-size:1.8rem; margin-bottom:4px;">🌱</div>
-        <h4>ॲग्री-टेक व आधुनिक शेती</h4>
-        <p>ड्रोन फवारणी, सेंद्रिय खते, माती परीक्षण व थेट शेतकरी बाजारपेठ.</p>
-        <a href="cm-services.html" class="btn btn-outline" style="padding:4px 10px; font-size:0.78rem;">तपशील पाहा</a>
+      <div class="card-bg" style="background-image:linear-gradient(rgba(20,4,6,0.68),rgba(20,4,6,0.85)),url('https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=800&q=80');min-height:280px;border-radius:16px;background-size:cover;background-position:center;">
+        <div class="card-bg-body">
+          <div style="font-size:1.8rem;margin-bottom:4px;">🌱</div>
+          <h4>ॲग्री-टेक व आधुनिक शेती</h4>
+          <p>ड्रोन फवारणी, सेंद्रिय खते, माती परीक्षण व थेट शेतकरी बाजारपेठ.</p>
+          <a href="cm-services.html" class="btn btn-outline" style="margin-top:10px;font-size:.78rem;color:#fff;border-color:var(--gold-400);">तपशील पाहा</a>
+        </div>
       </div>
-
-      <div class="info-box-card" style="border-left-color:var(--maroon-800);">
-        <div style="font-size:1.8rem; margin-bottom:4px;">🥾</div>
-        <h4>गडभ्रमंती व ट्रेक गाईड</h4>
-        <p>इतिहास संशोधक गाईड्स, सुरक्षित ट्रेकिंग, कॅम्पिंग व गड संवर्धन.</p>
-        <a href="cm-services.html" class="btn btn-outline" style="padding:4px 10px; font-size:0.78rem;">गाईड बुक करा</a>
+      <div class="card-bg" style="background-image:linear-gradient(rgba(20,4,6,0.68),rgba(20,4,6,0.85)),url('assets/images/real-raigad-panoramic.jpg');min-height:280px;border-radius:16px;background-size:cover;background-position:center;">
+        <div class="card-bg-body">
+          <div style="font-size:1.8rem;margin-bottom:4px;">🥾</div>
+          <h4>गडभ्रमंती व ट्रेक गाईड</h4>
+          <p>इतिहास संशोधक गाईड्स, सुरक्षित ट्रेकिंग, कॅम्पिंग व गड संवर्धन.</p>
+          <a href="cm-services.html" class="btn btn-outline" style="margin-top:10px;font-size:.78rem;color:#fff;border-color:var(--gold-400);">गाईड बुक करा</a>
+        </div>
       </div>
     </div>
-  </section>
-
-  <!-- Community Quote Banner -->
-  <div class="quote-banner" style="margin-top:48px;">
-    <div class="mark">" मराठा तितुका मेळवावा । महाराष्ट्र धर्म वाढवावा ॥ "</div>
-    <span>— समर्थ रामदास स्वामी · शिवकालीन ऐतिहासिक संदेश</span>
   </div>
+</section>
 
+<!-- ========== ALL ECOSYSTEM PORTALS & DIRECTORY (70+ PAGES) ========== -->
+<section style="background:linear-gradient(135deg,var(--maroon-950),var(--maroon-900));color:var(--paper);padding:60px 0;border-top:1px solid rgba(233,196,106,.3);">
+  <div class="container">
+    <div class="section-title">
+      <h2>अखिल भारतीय मराठा डिजिटल परिसंस्था — संपूर्ण दालने व पोर्टल्स निर्देशिका</h2>
+      <p>CONNECT मराठा महाव्यासपीठाची सर्व ७०+ अधिकृत दालने, माहिती केंद्र, व्यवसाय मंच, गडकोट आणि प्रशासन पोर्टल्स</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin-top:32px;">
+      
+      <!-- Category 1: History & Rulers -->
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(233,196,106,.2);border-radius:12px;padding:20px;">
+        <h3 style="color:var(--gold-400);font-size:1.1rem;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+          <span>⚔️</span> इतिहास, महापुरुष व राज्यकर्ते
+        </h3>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:.86rem;">
+          <li><a href="cm-history.html" style="color:var(--text);text-decoration:none;">📜 मराठा इतिहास कालपट</a></li>
+          <li><a href="cm-shivaji-maharaj.html" style="color:var(--text);text-decoration:none;">👑 छत्रपती शिवाजी महाराज</a></li>
+          <li><a href="cm-sambhaji-maharaj.html" style="color:var(--text);text-decoration:none;">🛡️ छत्रपती संभाजी महाराज</a></li>
+          <li><a href="cm-rajaram-maharaj.html" style="color:var(--text);text-decoration:none;">⚔️ छत्रपती राजाराम महाराज</a></li>
+          <li><a href="cm-shahu-maharaj.html" style="color:var(--text);text-decoration:none;">⚖️ छत्रपती शाहू महाराज</a></li>
+          <li><a href="cm-rajmata-jijau.html" style="color:var(--text);text-decoration:none;">🌸 राजमाता जिजाऊ माँसाहेब</a></li>
+          <li><a href="cm-tarabai.html" style="color:var(--text);text-decoration:none;">🗡️ महारानी ताराबाई</a></li>
+          <li><a href="cm-bajirao-peshwa.html" style="color:var(--text);text-decoration:none;">🐎 श्रीमंत पेशवे बाजीराव प्रथम</a></li>
+          <li><a href="cm-warriors.html" style="color:var(--text);text-decoration:none;">🚩 मराठा पराक्रमी सरदार</a></li>
+          <li><a href="cm-mavale.html" style="color:var(--text);text-decoration:none;">🥾 शिवकालीन मावळे चरित्र</a></li>
+          <li><a href="cm-maratha-navy.html" style="color:var(--text);text-decoration:none;">⚓ मराठा आरमार (कान्होजी आंग्रे)</a></li>
+          <li><a href="cm-swarajya-administration.html" style="color:var(--text);text-decoration:none;">🏛️ अष्टप्रधान मंडळ व प्रशासन</a></li>
+          <li><a href="cm-symbols.html" style="color:var(--text);text-decoration:none;">🏷️ राजमुद्रा व मराठा चिन्हे</a></li>
+          <li><a href="cm-balidan-maas.html" style="color:var(--text);text-decoration:none;">🕯️ बलिदान मास व स्मृती</a></li>
+          <li><a href="cm-historical-dates.html" style="color:var(--text);text-decoration:none;">📅 आजचा मराठा इतिहास</a></li>
+        </ul>
+      </div>
+
+      <!-- Category 2: Forts, Trails & Temples -->
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(233,196,106,.2);border-radius:12px;padding:20px;">
+        <h3 style="color:var(--gold-400);font-size:1.1rem;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+          <span>🏰</span> अभेद्य गडकोट, ट्रेक व तीर्थक्षेत्रे
+        </h3>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:.86rem;">
+          <li><a href="cm-forts-map.html" style="color:var(--text);text-decoration:none;">🏰 महाराष्ट्रातील ३५0+ दुर्ग नकाशा</a></li>
+          <li><a href="cm-raigad-fort.html" style="color:var(--text);text-decoration:none;">👑 दुर्गराज रायगड</a></li>
+          <li><a href="cm-rajgad-fort.html" style="color:var(--text);text-decoration:none;">⛰️ किल्ले राजगड (पहिली राजधानी)</a></li>
+          <li><a href="cm-shivneri-fort.html" style="color:var(--text);text-decoration:none;">🚩 किल्ले शिवनेरी (जन्मस्थान)</a></li>
+          <li><a href="cm-pratapgad-fort.html" style="color:var(--text);text-decoration:none;">⚔️ किल्ले प्रतापगड</a></li>
+          <li><a href="cm-torna-fort.html" style="color:var(--text);text-decoration:none;">💥 किल्ले तोरणा (प्रचंडगड)</a></li>
+          <li><a href="cm-panhala-pavankhind.html" style="color:var(--text);text-decoration:none;">🌿 पन्हाळगड व पावनखिंड</a></li>
+          <li><a href="cm-heritage-trails.html" style="color:var(--text);text-decoration:none;">🥾 ऐतिहासिक ट्रेक व भ्रमंती</a></li>
+          <li><a href="cm-heritage-map.html" style="color:var(--text);text-decoration:none;">🗺️ वारसा आलेख व नकाशा</a></li>
+          <li><a href="cm-temples.html" style="color:var(--text);text-decoration:none;">🛕 शिवकालीन तीर्थक्षेत्रे व मंदिरे</a></li>
+        </ul>
+      </div>
+
+      <!-- Category 3: Knowledge, Culture & Movements -->
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(233,196,106,.2);border-radius:12px;padding:20px;">
+        <h3 style="color:var(--gold-400);font-size:1.1rem;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+          <span>📚</span> ज्ञान, संस्कृती, ग्रंथालय व चळवळी
+        </h3>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:.86rem;">
+          <li><a href="cm-dnyankosh.html" style="color:var(--text);text-decoration:none;">💡 मराठा ज्ञानकोश</a></li>
+          <li><a href="cm-granthalaya.html" style="color:var(--text);text-decoration:none;">📖 मराठा महाग्रंथालय</a></li>
+          <li><a href="cm-culture.html" style="color:var(--text);text-decoration:none;">🎭 कला, संस्कृती व परंपरा</a></li>
+          <li><a href="cm-movements.html" style="color:var(--text);text-decoration:none;">🚩 ५८ मूक मोर्चे व आरक्षण चळवळ</a></li>
+          <li><a href="cm-community-safety.html" style="color:var(--text);text-decoration:none;">🛡️ समाज सुरक्षा व कायदेविषयक मदत</a></li>
+          <li><a href="cm-news.html" style="color:var(--text);text-decoration:none;">📰 मराठा वृत्त व घडाामोडी</a></li>
+          <li><a href="cm-campaign-detail.html" style="color:var(--text);text-decoration:none;">📢 सामाजिक मोहीम व अभियान</a></li>
+        </ul>
+      </div>
+
+      <!-- Category 4: Business, Jobs & Network -->
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(233,196,106,.2);border-radius:12px;padding:20px;">
+        <h3 style="color:var(--gold-400);font-size:1.1rem;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+          <span>💼</span> व्यवसाय, रोजगार, नेटवर्क व संगम
+        </h3>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:.86rem;">
+          <li><a href="cm-business-directory.html" style="color:var(--text);text-decoration:none;">🏢 मराठा व्यवसाय निर्देशिका</a></li>
+          <li><a href="cm-business-sangam.html" style="color:var(--text);text-decoration:none;">🤝 व्यवसाय संगम (Chapters)</a></li>
+          <li><a href="cm-business-opportunities.html" style="color:var(--text);text-decoration:none;">📈 व्यवसाय संधी व प्रोजेक्ट्स</a></li>
+          <li><a href="cm-business-profile.html" style="color:var(--text);text-decoration:none;">🎴 व्यावसायिक प्रोफाइल कार्ड</a></li>
+          <li><a href="cm-business-membership-application.html" style="color:var(--text);text-decoration:none;">📝 चॅप्टर सदस्यत्व अर्ज</a></li>
+          <li><a href="cm-list-business.html" style="color:var(--text);text-decoration:none;">➕ व्यवसाय नोंदणी करा</a></li>
+          <li><a href="cm-my-business-mandal.html" style="color:var(--text);text-decoration:none;">🏢 माझे बिझनेस मंडळ</a></li>
+          <li><a href="cm-chapter-detail.html" style="color:var(--text);text-decoration:none;">📍 चॅप्टर तपशील</a></li>
+          <li><a href="cm-professionals.html" style="color:var(--text);text-decoration:none;">👨‍💼 प्रोफेशनेल्स निर्देशिका</a></li>
+          <li><a href="cm-directory-people.html" style="color:var(--text);text-decoration:none;">👥 समाज सदस्य निर्देशिका</a></li>
+          <li><a href="cm-leaders.html" style="color:var(--text);text-decoration:none;">🌟 मार्गदर्शक व नेतृत्व</a></li>
+          <li><a href="cm-achievers.html" style="color:var(--text);text-decoration:none;">🏆 गौरव व अचीव्हर्स</a></li>
+          <li><a href="cm-jobs.html" style="color:var(--text);text-decoration:none;">💼 रोजगार व मेन्टॉरशिप</a></li>
+          <li><a href="cm-education.html" style="color:var(--text);text-decoration:none;">🎓 शिक्षण व शिष्यवृत्ती</a></li>
+          <li><a href="cm-services.html" style="color:var(--text);text-decoration:none;">🛠️ सेवा व उद्योग निर्देशिका</a></li>
+          <li><a href="cm-referrals.html" style="color:var(--text);text-decoration:none;">🔗 व्यवसाय संदर्भ (Referrals)</a></li>
+          <li><a href="cm-create-referral.html" style="color:var(--text);text-decoration:none;">➕ नवीन रेफरल पाठवा</a></li>
+          <li><a href="cm-referral-detail.html" style="color:var(--text);text-decoration:none;">📄 रेफरल तपशील</a></li>
+          <li><a href="cm-one-to-one-meetings.html" style="color:var(--text);text-decoration:none;">☕ 1-on-1 भेट सत्रे</a></li>
+        </ul>
+      </div>
+
+      <!-- Category 5: Community, Dashboards & Governance -->
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(233,196,106,.2);border-radius:12px;padding:20px;">
+        <h3 style="color:var(--gold-400);font-size:1.1rem;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+          <span>🌐</span> समुदाय, डॅशबोर्ड व खाते
+        </h3>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:.86rem;">
+          <li><a href="cm-community.html" style="color:var(--text);text-decoration:none;">💬 मराठा डिजिटल कम्युनिटी</a></li>
+          <li><a href="cm-groups.html" style="color:var(--text);text-decoration:none;">👥 गट व चर्चा मंच</a></li>
+          <li><a href="cm-group-detail.html" style="color:var(--text);text-decoration:none;">💬 गट चर्चा संवाद</a></li>
+          <li><a href="cm-home.html" style="color:var(--text);text-decoration:none;">🏡 युझर सोशल फीड</a></li>
+          <li><a href="cm-dashboard.html" style="color:var(--text);text-decoration:none;">📊 युझर मुख्य डॅशबोर्ड</a></li>
+          <li><a href="cm-ceo-dashboard.html" style="color:var(--text);text-decoration:none;">👔 CEO / लीडरशिप डॅशबोर्ड</a></li>
+          <li><a href="cm-profile.html" style="color:var(--text);text-decoration:none;">👤 माझी माहिती / प्रोफाइल</a></li>
+          <li><a href="cm-profile-edit.html" style="color:var(--text);text-decoration:none;">✏️ प्रोफाइल संपादन</a></li>
+          <li><a href="cm-messages.html" style="color:var(--text);text-decoration:none;">✉️ संदेश केंद्र</a></li>
+          <li><a href="cm-membership.html" style="color:var(--text);text-decoration:none;">🎟️ सदस्यत्व योजना</a></li>
+          <li><a href="cm-donation.html" style="color:var(--text);text-decoration:none;">❤️ संवर्धन व देणगी कोष</a></li>
+          <li><a href="cm-events.html" style="color:var(--text);text-decoration:none;">📅 उपक्रम व ऐतिहासिक दिन</a></li>
+          <li><a href="cm-search.html" style="color:var(--text);text-decoration:none;">🔍 स्मार्ट शोध केंद्र</a></li>
+          <li><a href="cm-more.html" style="color:var(--text);text-decoration:none;">✨ अधिक दालने व सुविधा</a></li>
+          <li><a href="cm-login.html" style="color:var(--text);text-decoration:none;">🔐 युझर लॉगिन</a></li>
+          <li><a href="cm-register.html" style="color:var(--text);text-decoration:none;">📝 नवीन खात्याची नोंदणी</a></li>
+          <li><a href="cm-governance.html" style="color:var(--text);text-decoration:none;">🎯 व्हिजन, गोपनीयता व नियम</a></li>
+          <li><a href="cm-blueprint.html" style="color:var(--text);text-decoration:none;">🧭 मास्टर ब्लूप्रिंट (५० विभाग)</a></li>
+          <li><a href="cm-contact.html" style="color:var(--text);text-decoration:none;">☎️ संपर्क व तक्रार निवारण</a></li>
+          <li><a href="cm-admin.html" style="color:var(--text);text-decoration:none;">⚙️ CRM Admin Console</a></li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ========== QUOTE BANNER ========== -->
+<div style="background:linear-gradient(135deg,var(--maroon-900),var(--maroon-800));color:var(--paper);text-align:center;padding:48px 24px;">
+  <div style="font-size:1.4rem;font-weight:700;color:var(--gold-300);max-width:800px;margin:0 auto;">" मराठा तितुका मेळवावा । महाराष्ट्र धर्म वाढवावा ॥ "</div>
+  <span style="display:block;margin-top:12px;font-size:.9rem;color:var(--text-sec);">— समर्थ रामदास स्वामी · शिवकालीन ऐतिहासिक संदेश</span>
 </div>
 
-<!-- Grand Desktop Website Mega-Footer -->
+<!-- ========== FOOTER ========== -->
 <footer class="website-footer">
   <div class="footer-grid">
-    <!-- Column 1: Brand & Mission -->
     <div>
-      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-        <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" class="brand-logo" style="width:48px; height:48px;">
-        <span style="font-family:'Baloo 2', sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold-400);">CONNECT मराठा</span>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <img src="assets/images/logo.png" alt="Connect Maratha" style="width:48px;height:48px;object-fit:contain;border-radius:50%;">
+        <span style="font-size:1.4rem;font-weight:800;color:var(--gold-400);">CONNECT मराठा</span>
       </div>
-      <p style="font-size:0.86rem; line-height:1.6; color:rgba(251,243,227,0.8); margin-bottom:16px;">
-        अखिल भारतीय मराठा समाजाला संस्कृती, इतिहास, रोजगार, सामाजिक एकता आणि आर्थिक स्वावलंबनाच्या धाग्यात बांधणारे अधिकृत व सुरक्षित डिजिटल व्यासपीठ.
-      </p>
-      <div style="font-size:0.8rem; color:var(--gold-300);">
-        📍 मुख्य कार्यालय: शनिवार वाडा परिसर, पुणे / दुर्गराज रायगड परिसर<br>
-        📧 संपर्क: contact@connectmaratha.org
-      </div>
+      <p class="footer-brand-copy">भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी. अखंड मराठा इतिहास, संस्कृती, रोजगार आणि समृद्ध भविष्याचे अधिकृत डिजिटल महाव्यासपीठ.</p>
+      <div class="footer-brand-meta">📍 मुख्य कार्यालय: शनिवार वाडा परिसर, पुणे / दुर्गराज रायगड परिसर<br>📧 संपर्क: support@connectmaratha.org</div>
     </div>
-
-    <!-- Column 2: इतिहास व संशोधन दालन -->
     <div>
-      <h3>इतिहास व संशोधन</h3>
+      <h3>इतिहास व वारसा</h3>
       <ul>
-        <li><a href="cm-shivaji-maharaj.html">🚩 छत्रपती शिवाजी महाराज</a></li>
-        <li><a href="cm-sambhaji-maharaj.html">⚔️ छत्रपती संभाजी महाराज</a></li>
-        <li><a href="cm-bajirao-peshwa.html">🐎 श्रीमंत बाजीराव पेशवे</a></li>
-        <li><a href="cm-warriors.html">🛡️ अमर वीर व वीरांगना</a></li>
+        <li><a href="cm-history.html">⚔️ मराठा इतिहास कालपट</a></li>
+        <li><a href="cm-shivaji-maharaj.html">👑 छत्रपती शिवाजी महाराज</a></li>
+        <li><a href="cm-balidan-maas.html">🕯️ बलिदान मास व स्मृती</a></li>
+        <li><a href="cm-movements.html">🚩 ५८ मूक मोर्चे व चळवळी</a></li>
+        <li><a href="cm-historical-dates.html">📅 आजचा मराठा इतिहास</a></li>
         <li><a href="cm-forts-map.html">🏰 महाराष्ट्रातील ३५०+ किल्ले</a></li>
-        <li><a href="cm-history.html">📖 मराठा साम्राज्य कालपट</a></li>
+        <li><a href="cm-heritage-map.html">🗺️ वारसा नकाशा व ग्राफ</a></li>
       </ul>
     </div>
-
-    <!-- Column 3: सेवा व उपक्रम -->
     <div>
-      <h3>सेवा व उपक्रम</h3>
+      <h3>ज्ञान, गौरव व संगम</h3>
       <ul>
-        <li><a href="cm-services.html">🛠️ अधिकृत सेवा निर्देशिका</a></li>
-        <li><a href="cm-business-directory.html">💼 मराठा उद्योग व व्यवसाय</a></li>
-        <li><a href="cm-jobs.html">🤝 रोजगार व करिअर मार्गदर्शन</a></li>
-        <li><a href="cm-education.html">🎓 शिक्षण व स्पर्धा परीक्षा</a></li>
-        <li><a href="cm-donation.html">❤️ गड संवर्धन व आरोग्य निधी</a></li>
-        <li><a href="cm-events.html">📅 आगामी कार्यक्रम व शिबिरे</a></li>
+        <li><a href="cm-granthalaya.html">📚 मराठा महाग्रंथालय</a></li>
+        <li><a href="cm-dnyankosh.html">💡 मराठा ज्ञानकोश</a></li>
+        <li><a href="cm-achievers.html">🌟 मराठा गौरव व अचीव्हर्स</a></li>
+        <li><a href="cm-business-directory.html">🏢 मराठा व्यवसाय निर्देशिका</a></li>
+        <li><a href="cm-business-sangam.html">🤝 व्यवसाय संगम (Chapters)</a></li>
+        <li><a href="cm-services.html">🛠️ सेवा व उद्योग निर्देशिका</a></li>
+        <li><a href="cm-jobs.html">💼 रोजगार व मेन्टॉरशिप</a></li>
+        <li><a href="cm-events.html">📅 उपक्रम व ऐतिहासिक दिन</a></li>
       </ul>
     </div>
-
-    <!-- Column 4: मदत व सुरक्षितता -->
     <div>
-      <h3>मदत व सुरक्षितता</h3>
+      <h3>खाते व प्रशासन</h3>
       <ul>
-        <li><a href="cm-login.html">👤 सदस्य लॉगिन</a></li>
-        <li><a href="cm-register.html">📝 नवीन सदस्य नोंदणी</a></li>
-        <li><a href="cm-membership.html">⭐ सदस्यत्व श्रेणी (Tiers)</a></li>
-        <li><a href="cm-community-safety.html">🚨 आपत्कालीन सुरक्षा कक्ष</a></li>
+        <li><a href="cm-dashboard.html">📊 युझर डॅशबोर्ड</a></li>
+        <li><a href="cm-profile.html">👤 माझी माहिती / प्रोफाइल</a></li>
+        <li><a href="cm-membership.html">🎟️ सदस्यत्व योजना</a></li>
+        <li><a href="cm-governance.html">🎯 व्हिजन व मिशन</a></li>
+        <li><a href="cm-governance.html#privacy">🔒 DPDP कायदा २०२३ गोपनीयता</a></li>
+        <li><a href="cm-blueprint.html">🧭 मास्टर ब्लूप्रिंट (५० विभाग)</a></li>
         <li><a href="cm-contact.html">☎️ संपर्क व तक्रार निवारण</a></li>
       </ul>
-      <div style="margin-top:16px; padding:10px; background:rgba(0,0,0,0.3); border-radius:6px; border:1px solid rgba(233,196,106,0.3); font-size:0.78rem;">
-        🔒 <strong>सुरक्षित व्यासपीठ:</strong> डेटा एन्क्रिप्शन व १००% गोपनीयता.
+      <div style="margin-top:16px;padding:10px;background:rgba(0,0,0,.3);border-radius:8px;border:1px solid rgba(233,196,106,.3);font-size:.78rem;">
+        🔒 <strong>DPDP Act, 2023 सुसंगत:</strong> डेटा एन्क्रिप्शन व १००% वैयक्तिक गोपनीयता.
       </div>
     </div>
   </div>
-
   <div class="footer-bottom">
-    <p>© २०२६ Connect Maratha (कनेक्ट मराठा) · सर्व हक्क सुरक्षित · नोंदणीकृत सामाजिक व्यासपीठ</p>
-    <p style="margin-top:4px; color:var(--gold-400); font-weight:600;">॥ जय भवानी, जय शिवाजी ॥ प्रौढ प्रताप पुरंधर क्षत्रियकुलावतंस सिंहासनाधीश्वर छत्रपती शिवाजी महाराज की जय!</p>
+    <p class="footer-copy">© २०२६ Connect Maratha (कनेक्ट मराठा) · सर्व हक्क सुरक्षित · नोंदणीकृत सामाजिक महाव्यासपीठ</p>
+    <p class="footer-jai">॥ जय भवानी, जय शिवाजी ॥ प्रौढ प्रताप पुरंधर क्षत्रियकुलावतंस सिंहासनाधीश्वर छत्रपती शिवाजी महाराज की जय!</p>
+    <p class="footer-admin"><a href="cm-admin.html">CRM Console</a> | <a href="cm-blueprint.html">Master Blueprint Spec</a> | <a href="cm-login.html">लॉगिन</a></p>
   </div>
 </footer>
 
-<!-- Centralized Javascript Engine -->
+<!-- ========== JAVASCRIPT ========== -->
+<script src="assets/js/cm-data.js"></script>
+<script src="assets/js/cm-connect.js"></script>
 <script src="assets/js/app.js"></script>
+<script>
+// Simple hero switcher demo
+function switchHeroView(view){
+  const badge=document.getElementById('heroBadge');
+  const title=document.getElementById('heroCardTitle');
+  const desc=document.getElementById('heroCardDesc');
+  const link=document.getElementById('heroCardLink');
+  const img=document.querySelector('.hero-feature-card img');
+  if(view==='hero'){
+    badge.textContent='🚩 मराठा वीर (Maratha Hero)';
+    title.textContent='छत्रपती शिवाजी महाराज — हिंदवी स्वराज्य संस्थापक';
+    desc.textContent='रयतेचे कल्याण, ३५०+ अभेद्य गडकोट, गनिमी काव्याचे जनक आणि सार्वभौम मराठा साम्राज्याची पायाभरणी करणारे युगपुरुष.';
+    link.href='cm-shivaji-maharaj.html';
+    img.src='assets/images/real-shivaji-portrait.jpg';
+  }else if(view==='samrajya'){
+    badge.textContent='⚔️ मराठा साम्राज्य';
+    title.textContent='अखंड मराठा साम्राज्य (१६७४ – १८१८)';
+    desc.textContent='३.९ दशलक्ष चौ. किमी, अटकेपासून कटक व तंजावरपर्यंत भगवा ध्वज फडकावणारे महासाम्राज्य.';
+    link.href='cm-history.html';
+    img.src='assets/images/real-maratha-expansion-map.jpg';
+  }else if(view==='coronation'){
+    badge.textContent='👑 राज्याभिषेक';
+    title.textContent='शिवराज्याभिषेक सोहळा (६ जून १६७४)';
+    desc.textContent='दुर्गराज रायगडावर ३२ मण सुवर्ण सिंहासनावर संपन्न झालेला वैदिक राज्याभिषेक.';
+    link.href='cm-shivaji-maharaj.html';
+    img.src='assets/images/real-shivaji-coronation.jpg';
+  }else if(view==='map'){
+    badge.textContent='🗺️ साम्राज्य नकाशा';
+    title.textContent='मराठा साम्राज्य विस्तार नकाशा (१७५८)';
+    desc.textContent='पेशवे, शिंदे, होळकर, गायकवाड, भोसले यांच्या मांडलिक राज्यांसह संपूर्ण भारतभर पसरलेले साम्राज्य.';
+    link.href='cm-forts-map.html';
+    img.src='assets/images/real-maratha-peak-map.jpg';
+  }
+}
+</script>
 </body>
 </html>

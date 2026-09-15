@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>कार्याध्यक्ष डॅशबोर्ड (Executive CEO Dashboard) — Connect Maratha</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/app.js" defer></script>
+  <script src="assets/js/cm-data.js" defer></script>
+  <script src="assets/js/cm-connect.js" defer></script>
+</head>
+<body style="background:#f4f6f9;">
+  <header class="navbar container" style="background:#1a237e; color:white;">
+    <div class="logo">
+      <a href="cm-home.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:8px;">
+        <span class="flag">🚩</span>
+        <span style="color:white; font-weight:800;">कनेक्ट मराठा — CEO EAGLE-EYE CONTROL</span>
+      </a>
+    </div>
+    <nav class="nav-links">
+      <a href="cm-home.html" style="color:white;">मुख्य पृष्ठ</a>
+      <a href="cm-admin.html" style="color:white;">Admin CRM</a>
+      <a href="cm-referrals.html" style="color:white;">संदर्भ ट्रॅकर</a>
+      <a href="cm-ceo-dashboard.html" class="active" style="color:#ffd54f; font-weight:700;">CEO डॅशबोर्ड</a>
+    </nav>
+    <div class="user-actions">
+      <a href="cm-dashboard.html" class="btn btn-outline" style="color:white; border-color:white;">माझे प्रोफाइल</a>
+    </div>
+  </header>
+
+  <main class="container py-4">
+    <!-- Macro Summary Cards Header -->
+    <div style="background: linear-gradient(135deg, #1a237e, #0d47a1); color: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div>
+          <span class="badge" style="background:#ffd54f; color:#000; font-weight:700;">EXECUTIVE OVERVIEW</span>
+          <h1 style="color:white; margin-top:8px; margin-bottom:4px;">📊 मराठा समाज व व्यवसाय संगम महासंघ — CEO Dashboard</h1>
+          <p style="opacity:0.85;">एकूण आर्थिक घडामोड, मंडळ कामगिरी व भौगोलिक विस्तार नियंत्रण केंद्र</p>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.9rem; opacity:0.8;">राज्यस्तरीय एकूण जनरेट झालेला व्यवसाय</div>
+          <div style="font-size:2.2rem; font-weight:900; color:#ffd54f;">₹ १८४.६ कोटी (Cr)</div>
+        </div>
+      </div>
+
+      <!-- 8 Top Macro Metrics Grid -->
+      <div class="grid grid-4" data-reveal-group style="gap:16px; margin-top:24px;">
+        <div style="background:rgba(255,255,255,0.12); padding:16px; border-radius:8px;">
+          <div style="font-size:0.85rem; opacity:0.8;">एकूण नोंदणीकृत सदस्य</div>
+          <div style="font-size:1.6rem; font-weight:800; margin-top:4px;">२४,८२०</div>
+          <small style="color:#81c784;">↑ १२% या महिन्यात</small>
+        </div>
+        <div style="background:rgba(255,255,255,0.12); padding:16px; border-radius:8px;">
+          <div style="font-size:0.85rem; opacity:0.8;">नोंदणीकृत व्यवसाय (Businesses)</div>
+          <div style="font-size:1.6rem; font-weight:800; margin-top:4px;">८,४२१</div>
+          <small style="color:#81c784;">↑ ९% वाढ</small>
+        </div>
+        <div style="background:rgba(255,255,255,0.12); padding:16px; border-radius:8px;">
+          <div style="font-size:0.85rem; opacity:0.8;">सक्रिय व्यवसाय मंडळे (Mandals)</div>
+          <div style="font-size:1.6rem; font-weight:800; margin-top:4px;">१८४</div>
+          <small style="color:#81c784;">३६ जिल्ह्यांमध्ये</small>
+        </div>
+        <div style="background:rgba(255,255,255,0.12); padding:16px; border-radius:8px;">
+          <div style="font-size:0.85rem; opacity:0.8;">सक्रिय सदस्य (Active Network)</div>
+          <div style="font-size:1.6rem; font-weight:800; margin-top:4px;">१७,४२०</div>
+          <small style="color:#81c784;">७०% सहभाग दर</small>
+        </div>
+        <div style="background:rgba(255,255,255,0.12); padding:16px; border-radius:8px;">
+          <div style="font-size:0.85rem; opacity:0.8;">एकूण दिलेले संदर्भ (Referrals)</div>
+          <div style="font-size:1.6rem; font-weight:800; margin-top:4px;">३२,८४१</div>
+          <small style="color:#81c784;">८८% यश दर</small>
+        </div>
+        <div style="background:rgba(255,255,255,0.12); padding:16px; border-radius:8px;">
+          <div style="font-size:0.85rem; opacity:0.8;">उपलब्ध रोजगार संधी (Jobs)</div>
+          <div style="font-size:1.6rem; font-weight:800; margin-top:4px;">४,२८०</div>
+          <small style="color:#81c784;">३,१२० भरती पूर्ण</small>
+        </div>
+        <div style="background:rgba(255,255,255,0.12); padding:16px; border-radius:8px;">
+          <div style="font-size:0.85rem; opacity:0.8;">आयोजित कार्यक्रम (Events)</div>
+          <div style="font-size:1.6rem; font-weight:800; margin-top:4px;">३२८</div>
+          <small style="color:#81c784;">९५,०००+ उपस्थिती</small>
+        </div>
+        <div style="background:rgba(255,255,255,0.12); padding:16px; border-radius:8px;">
+          <div style="font-size:0.85rem; opacity:0.8;">दुर्ग संवर्धन निधी (Heritage)</div>
+          <div style="font-size:1.6rem; font-weight:800; margin-top:4px;">₹६७.२ लाख</div>
+          <small style="color:#81c784;">३,२४० देणगीदार</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Geographic Drilldown Tree (Eagle-Eye View) -->
+    <div class="form-card" style="margin-bottom:24px;">
+      <h3 style="color:#1a237e; margin-bottom:16px;">🌐 भौगोलिक विभाग व जिल्हास्तरीय कामगिरी (Geographical Drilldown)</h3>
+      <p style="color:#666; margin-bottom:20px;">महाराष्ट्र राज्यातील जिल्हा, व्यवसाय मंडळे, सदस्य व व्युत्पन्न महसूल रचना:</p>
+
+      <div id="districtHierarchyContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- Chapter Performance Table -->
+    <div class="form-card">
+      <h3 style="color:#1a237e; margin-bottom:16px;">🏆 अग्रगण्य ५ व्यवसाय मंडळे (Top Performing Business Mandals)</h3>
+      <div style="overflow-x:auto;">
+        <table class="table" style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr style="background:#e8eaf6; text-align:left;">
+              <th style="padding:12px;">मंडळाचे नाव</th>
+              <th style="padding:12px;">जिल्हा</th>
+              <th style="padding:12px;">सदस्य संख्या</th>
+              <th style="padding:12px;">संदर्भ संख्या</th>
+              <th style="padding:12px;">व्युत्पन्न महसूल (Revenue)</th>
+              <th style="padding:12px;">कामगिरी ग्रेड</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:12px; font-weight:700;">पुणे – शिवनेरी व्यवसाय मंडळ</td>
+              <td style="padding:12px;">पुणे</td>
+              <td style="padding:12px;">४८</td>
+              <td style="padding:12px;">१,४२०</td>
+              <td style="padding:12px; font-weight:700; color:#2e7d32;">₹८.४ कोटी</td>
+              <td style="padding:12px;"><span class="badge badge-success">A+ Elite</span></td>
+            </tr>
+            <tr>
+              <td style="padding:12px; font-weight:700;">मुंबई – दादर व्यवसाय मंडळ</td>
+              <td style="padding:12px;">मुंबई उपनगर</td>
+              <td style="padding:12px;">४५</td>
+              <td style="padding:12px;">१,२९०</td>
+              <td style="padding:12px; font-weight:700; color:#2e7d32;">₹९.१ कोटी</td>
+              <td style="padding:12px;"><span class="badge badge-success">A+ Elite</span></td>
+            </tr>
+            <tr>
+              <td style="padding:12px; font-weight:700;">पिंपरी-चिंचवड औद्योगिक मंडळ</td>
+              <td style="padding:12px;">पुणे</td>
+              <td style="padding:12px;">५५</td>
+              <td style="padding:12px;">१,८९०</td>
+              <td style="padding:12px; font-weight:700; color:#2e7d32;">₹१२.५ कोटी</td>
+              <td style="padding:12px;"><span class="badge badge-success">A+ Platinum</span></td>
+            </tr>
+            <tr>
+              <td style="padding:12px; font-weight:700;">ठाणे – आनंद दिघे व्यापार संगम</td>
+              <td style="padding:12px;">ठाणे</td>
+              <td style="padding:12px;">५०</td>
+              <td style="padding:12px;">१,५४०</td>
+              <td style="padding:12px; font-weight:700; color:#2e7d32;">₹१०.८ कोटी</td>
+              <td style="padding:12px;"><span class="badge badge-success">A+ Platinum</span></td>
+            </tr>
+            <tr>
+              <td style="padding:12px; font-weight:700;">कोल्हापूर – शाहू महाराज व्यापार मंडळ</td>
+              <td style="padding:12px;">कोल्हापूर</td>
+              <td style="padding:12px;">४६</td>
+              <td style="padding:12px;">१,३५०</td>
+              <td style="padding:12px; font-weight:700; color:#2e7d32;">₹८.९ कोटी</td>
+              <td style="padding:12px;"><span class="badge badge-primary">A Grade</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer mt-5 text-center py-3" style="background:#1a237e; color:white;">
+    <p>© २०२६ कनेक्ट मराठा महासंघ — Executive Eagle-Eye Control Panel</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const metrics = CMDB.getCeoMetrics();
+      const container = document.getElementById('districtHierarchyContainer');
+
+      container.innerHTML = metrics.districtHierarchy.map(d => `
+        <div style="border: 1px solid #ddd; border-radius: 8px; margin-bottom: 16px; overflow: hidden;">
+          <div style="background: #e8eaf6; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+            <div>
+              <strong style="font-size: 1.1rem; color: #1a237e;">📍 जिला: ${d.district}</strong>
+              <span style="font-size: 0.85rem; color: #555; margin-left: 12px;">(${d.mandalsCount} मंडळे | ${d.membersCount.toLocaleString('en-IN')} सदस्य)</span>
+            </div>
+            <div>
+              <span style="font-weight: 700; color: #2e7d32; font-size: 1.1rem;">₹${(d.businessGenerated / 10000000).toFixed(1)} कोटी</span>
+            </div>
+          </div>
+          <div style="padding: 16px; background: white;">
+            <div class="grid grid-3" data-reveal-group style="gap: 12px;">
+              ${d.mandals.map(m => `
+                <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 4px solid #1a237e;">
+                  <div style="font-weight: 700; font-size: 0.95rem; color: #333;">${m.name}</div>
+                  <div style="font-size: 0.85rem; color: #666; margin-top: 4px;">
+                    सदस्य: ${m.members} | संदर्भ: ${m.referrals}
+                  </div>
+                  <div style="font-size: 0.9rem; font-weight: 700; color: #2e7d32; margin-top: 4px;">
+                    व्यवसाय: ₹${(m.business / 100000).toFixed(1)} लाख
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    });
+  </script>
+</body>
+</html>

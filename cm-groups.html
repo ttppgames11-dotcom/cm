@@ -30,7 +30,7 @@
 <header class="site-header">
   <div class="site-header-inner">
     <a href="index.html" class="brand-desktop">
-      <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" class="brand-logo">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
       <div class="brand-titles">
         <div class="brand-main">
           <span class="en">CONNECT</span>
@@ -73,22 +73,12 @@
 
 <div class="wrap">
   <section>
-    <div class="section-head"><h2>📍 शहरनिहाय गट</h2></div>
-    <div class="grid grid-4">
-      <div class="feature-card"><div class="media">🏙️</div><div class="body"><strong>पुणे Connect</strong><div class="d">8,200+ सदस्य</div></div></div>
-      <div class="feature-card"><div class="media">🏙️</div><div class="body"><strong>मुंबई Connect</strong><div class="d">9,600+ सदस्य</div></div></div>
-      <div class="feature-card"><div class="media">🏙️</div><div class="body"><strong>नाशिक Connect</strong><div class="d">4,100+ सदस्य</div></div></div>
-      <div class="feature-card"><div class="media">🏙️</div><div class="body"><strong>महाराष्ट्राबाहेरील मराठी</strong><div class="d">3,050+ सदस्य</div></div></div>
-    </div>
+    <div class="section-head" data-reveal><h2>📍 शहरनिहाय गट (Location Groups)</h2></div>
+    <div class="grid grid-4" data-reveal-group id="cmGroupGridLocation" data-type="location"></div>
   </section>
   <section>
-    <div class="section-head"><h2>🎯 आवडीनिहाय गट</h2></div>
-    <div class="grid grid-4">
-      <div class="feature-card"><div class="media">⛰️</div><div class="body"><strong>गड-किल्ले भटकंती</strong><div class="d">4,200+ सदस्य</div></div></div>
-      <div class="feature-card"><div class="media">💼</div><div class="body"><strong>मराठी उद्योजक</strong><div class="d">3,600+ सदस्य</div></div></div>
-      <div class="feature-card"><div class="media">👩</div><div class="body"><strong>महिला समुदाय</strong><div class="d">5,400+ सदस्य</div></div></div>
-      <div class="feature-card"><div class="media">🎨</div><div class="body"><strong>मराठी कलाकार</strong><div class="d">1,800+ सदस्य</div></div></div>
-    </div>
+    <div class="section-head" data-reveal><h2>🎯 आवडीनिहाय गट (Interest Groups)</h2></div>
+    <div class="grid grid-4" data-reveal-group id="cmGroupGridInterest" data-type="interest"></div>
   </section>
   <a href="#" class="btn btn-primary btn-block" style="margin:20px 0;">+ नवीन गट तयार करा</a>
 </div>
@@ -99,7 +89,7 @@
     <!-- Column 1: Brand & Mission -->
     <div>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-        <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
+        <img src="assets/images/logo.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
         <span style="font-family:'Baloo 2', sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold-400);">CONNECT मराठा</span>
       </div>
       <p style="font-size:0.86rem; line-height:1.6; color:rgba(251,243,227,0.8); margin-bottom:16px;">
@@ -118,6 +108,10 @@
         <li><a href="cm-shivaji-maharaj.html">🚩 छत्रपती शिवाजी महाराज</a></li>
         <li><a href="cm-sambhaji-maharaj.html">⚔️ छत्रपती संभाजी महाराज</a></li>
         <li><a href="cm-bajirao-peshwa.html">🐎 श्रीमंत बाजीराव पेशवे</a></li>
+        <li><a href="cm-rajmata-jijau.html">🙏 राजमाता जिजाऊ</a></li>
+        <li><a href="cm-rajaram-maharaj.html">🛡️ छत्रपती राजाराम महाराज</a></li>
+        <li><a href="cm-tarabai.html">👑 महाराणी ताराबाई</a></li>
+        <li><a href="cm-shahu-maharaj.html">📜 छत्रपती शाहू महाराज</a></li>
         <li><a href="cm-warriors.html">🛡️ अमर वीर व वीरांगना</a></li>
         <li><a href="cm-forts-map.html">🏰 महाराष्ट्रातील ३५०+ किल्ले</a></li>
         <li><a href="cm-history.html">📖 मराठा साम्राज्य कालपट</a></li>
@@ -160,6 +154,8 @@
 </footer>
 
 
+<script src="assets/js/cm-data.js"></script>
+<script src="assets/js/cm-connect.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

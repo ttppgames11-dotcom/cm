@@ -31,7 +31,7 @@
 <header class="site-header">
   <div class="site-header-inner">
     <a href="index.html" class="brand-desktop">
-      <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" class="brand-logo">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
       <div class="brand-titles">
         <div class="brand-main">
           <span class="en">CONNECT</span>
@@ -55,6 +55,7 @@
 
     <!-- Header Actions -->
     <div class="header-actions">
+      <a href="cm-search.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🔎 शोध</a>
       <a href="cm-login.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
       <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
     </div>
@@ -77,7 +78,7 @@
     <div class="step-panel active">
       <div class="form-card">
         <h3 style="margin-bottom:18px;">नोंदणी करा</h3>
-        <div class="field"><label>पूर्ण नाव</label><input type="text" placeholder="तुमचे पूर्ण नाव"></div>
+        <div class="field"><label>पूर्ण नाव</label><input type="text" id="regFullName" placeholder="तुमचे पूर्ण नाव"></div>
         <div class="field"><label>मोबाईल नंबर</label><input type="tel" placeholder="+91 XXXXX XXXXX"></div>
         <div class="field"><label>ईमेल (ऐच्छिक)</label><input type="email" placeholder="you@example.com"></div>
         <div class="field"><label>पासवर्ड सेट करा</label><input type="password" placeholder="किमान ८ अक्षरे"></div>
@@ -92,12 +93,18 @@
     <div class="step-panel">
       <div class="form-card">
         <h3 style="margin-bottom:18px;">प्रोफाईल माहिती</h3>
-        <div class="field"><label>शहर / जिल्हा</label><input type="text" placeholder="उदा. पुणे"></div>
-        <div class="field"><label>व्यवसाय / व्यावसायिक क्षेत्र</label><input type="text" placeholder="उदा. शिक्षक, व्यापारी, विद्यार्थी"></div>
-        <div class="field"><label>आवडीचे विषय</label>
-          <select><option>गड-किल्ले भटकंती</option><option>इतिहास अभ्यास</option><option>समाजसेवा</option><option>व्यवसाय नेटवर्किंग</option></select>
+        <div class="field"><label>शहर / जिल्हा</label><input type="text" id="regCity" placeholder="उदा. पुणे"></div>
+        <div class="field"><label>व्यवसाय / व्यावसायिक क्षेत्र (Profession)</label><input type="text" id="regProfession" placeholder="उदा. शिक्षक, व्यापारी, विद्यार्थी"></div>
+        <div class="field"><label>व्यवसायाचे नाव (Business, असल्यास)</label><input type="text" id="regBusiness" placeholder="उदा. सह्याद्री टेक"></div>
+        <div class="field"><label>कौशल्ये (Skills, स्वल्पविरामाने)</label><input type="text" id="regSkills" placeholder="उदा. Web Development, Marketing"></div>
+        <div class="field"><label>शिक्षण (Education)</label><input type="text" id="regEducation" placeholder="उदा. B.E., B.Com, 12वी"></div>
+        <div class="field"><label>आवडीचे विषय (Interests)</label>
+          <select id="regInterests"><option>गड-किल्ले भटकंती</option><option>इतिहास अभ्यास</option><option>समाजसेवा</option><option>व्यवसाय नेटवर्किंग</option><option>शिक्षण</option><option>रक्तदान</option></select>
         </div>
+        <div class="field"><label>स्वयंसेवा आवड (Volunteer Interests, स्वल्पविरामाने)</label><input type="text" id="regVolunteer" placeholder="उदा. रक्तदान, शिक्षण, गड संवर्धन"></div>
+        <div class="field"><label>माझ्याबद्दल (About Me)</label><textarea id="regAbout" rows="2" placeholder="स्वतःबद्दल थोडक्यात लिहा..."></textarea></div>
         <div class="field"><label>प्रोफाईल फोटो</label><input type="file"></div>
+        <div class="notice safe" style="margin-bottom:16px;">🛡️ सदस्यत्व पूर्णतः स्वयं-ओळखीवर आधारित आहे. जात प्रमाणपत्र किंवा कोणतीही ओळख-पडताळणी कागदपत्रे अनिवार्य नाहीत.</div>
         <div style="display:flex; gap:10px;">
           <button class="btn btn-outline" data-back>← मागे</button>
           <button class="btn btn-primary" style="flex:1;" data-next>पुढे जा →</button>
@@ -147,6 +154,8 @@
 
 </div>
 
+<script src="assets/js/cm-data.js"></script>
+<script src="assets/js/cm-connect.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

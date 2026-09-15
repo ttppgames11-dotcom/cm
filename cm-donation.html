@@ -30,7 +30,7 @@
 <header class="site-header">
   <div class="site-header-inner">
     <a href="index.html" class="brand-desktop">
-      <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" class="brand-logo">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
       <div class="brand-titles">
         <div class="brand-main">
           <span class="en">CONNECT</span>
@@ -54,6 +54,7 @@
 
     <!-- Header Actions -->
     <div class="header-actions">
+      <a href="cm-search.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🔎 शोध</a>
       <a href="cm-login.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
       <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
     </div>
@@ -82,38 +83,10 @@
     </div>
   </section>
 
-  <section id="campGrid">
-    <div class="feature-card" data-cat="fort" style="height:auto; margin-bottom:16px; display:flex; flex-wrap:wrap;">
-      <div class="media" style="flex:1; min-width:200px; height:160px;">🏰 रायगड संवर्धन</div>
-      <div class="body" style="flex:2; min-width:240px; padding:18px;">
-        <strong style="font-size:1.05rem;">रायगड संवर्धन अभियान</strong>
-        <div class="progress-track"><div class="progress-fill" style="width:67%"></div></div>
-        <div class="campaign-meta"><span>₹6,72,450 जमा · 3,240 देणगीदार</span><span>लक्ष्य ₹10,00,000</span></div>
-        <button class="btn btn-primary" style="margin-top:14px;">Donate Now</button>
-      </div>
-    </div>
-    <div class="feature-card" data-cat="edu" style="height:auto; margin-bottom:16px; display:flex; flex-wrap:wrap;">
-      <div class="media" style="flex:1; min-width:200px; height:160px;">🎓 शिक्षण सहाय्य</div>
-      <div class="body" style="flex:2; min-width:240px; padding:18px;">
-        <strong style="font-size:1.05rem;">विद्यार्थी शिक्षण सहाय्य निधी</strong>
-        <div class="progress-track"><div class="progress-fill" style="width:40%"></div></div>
-        <div class="campaign-meta"><span>₹2,00,000 जमा · 890 देणगीदार</span><span>लक्ष्य ₹5,00,000</span></div>
-        <button class="btn btn-primary" style="margin-top:14px;">Donate Now</button>
-      </div>
-    </div>
-    <div class="feature-card" data-cat="health" style="height:auto; margin-bottom:16px; display:flex; flex-wrap:wrap;">
-      <div class="media" style="flex:1; min-width:200px; height:160px;">🩸 रक्तदान निधी</div>
-      <div class="body" style="flex:2; min-width:240px; padding:18px;">
-        <strong style="font-size:1.05rem;">रक्तदान अभियान निधी</strong>
-        <div class="progress-track"><div class="progress-fill" style="width:82%"></div></div>
-        <div class="campaign-meta"><span>₹82,000 जमा · 410 देणगीदार</span><span>लक्ष्य ₹1,00,000</span></div>
-        <button class="btn btn-primary" style="margin-top:14px;">Donate Now</button>
-      </div>
-    </div>
-  </section>
+  <section id="campGrid" data-dynamic="true"></section>
 
   <section>
-    <div class="section-head"><h2>पारदर्शकता अहवाल</h2></div>
+    <div class="section-head" data-reveal><h2>पारदर्शकता अहवाल</h2></div>
     <div class="stat-strip">
       <div class="cell"><div class="num">₹82,45,000</div><div class="lbl">एकूण संकलित</div></div>
       <div class="cell"><div class="num">₹76,10,000</div><div class="lbl">वितरित निधी</div></div>
@@ -132,7 +105,7 @@
     <!-- Column 1: Brand & Mission -->
     <div>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-        <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
+        <img src="assets/images/logo.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
         <span style="font-family:'Baloo 2', sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold-400);">CONNECT मराठा</span>
       </div>
       <p style="font-size:0.86rem; line-height:1.6; color:rgba(251,243,227,0.8); margin-bottom:16px;">
@@ -151,6 +124,10 @@
         <li><a href="cm-shivaji-maharaj.html">🚩 छत्रपती शिवाजी महाराज</a></li>
         <li><a href="cm-sambhaji-maharaj.html">⚔️ छत्रपती संभाजी महाराज</a></li>
         <li><a href="cm-bajirao-peshwa.html">🐎 श्रीमंत बाजीराव पेशवे</a></li>
+        <li><a href="cm-rajmata-jijau.html">🙏 राजमाता जिजाऊ</a></li>
+        <li><a href="cm-rajaram-maharaj.html">🛡️ छत्रपती राजाराम महाराज</a></li>
+        <li><a href="cm-tarabai.html">👑 महाराणी ताराबाई</a></li>
+        <li><a href="cm-shahu-maharaj.html">📜 छत्रपती शाहू महाराज</a></li>
         <li><a href="cm-warriors.html">🛡️ अमर वीर व वीरांगना</a></li>
         <li><a href="cm-forts-map.html">🏰 महाराष्ट्रातील ३५०+ किल्ले</a></li>
         <li><a href="cm-history.html">📖 मराठा साम्राज्य कालपट</a></li>
@@ -193,6 +170,8 @@
 </footer>
 
 
+<script src="assets/js/cm-data.js"></script>
+<script src="assets/js/cm-connect.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

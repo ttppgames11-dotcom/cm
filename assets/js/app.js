@@ -28,6 +28,115 @@ function showToast(message, type = 'success') {
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  function initMobileDrawer() {
+    const siteHeaderInner = document.querySelector('.site-header .site-header-inner');
+    if (!siteHeaderInner || document.querySelector('.mobile-menu-btn')) return;
+
+    const currentFile = window.location.pathname.split('/').pop() || 'index.html';
+    const actionContainer = siteHeaderInner.querySelector('.header-actions');
+    const menuBtn = document.createElement('button');
+    menuBtn.type = 'button';
+    menuBtn.className = 'mobile-menu-btn';
+    menuBtn.setAttribute('aria-label', 'मोबाइल मेनू उघडा');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.innerHTML = '<span></span><span></span><span></span>';
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'mobile-nav-backdrop';
+
+    const drawer = document.createElement('aside');
+    drawer.className = 'mobile-nav-drawer';
+    drawer.setAttribute('aria-hidden', 'true');
+    drawer.innerHTML = `
+      <div class="mobile-drawer-header">
+        <a href="index.html" class="mobile-drawer-brand">
+          <img src="assets/images/logo.png" alt="Connect Maratha Logo">
+          <span>CONNECT मराठा</span>
+        </a>
+        <button type="button" class="mobile-drawer-close" aria-label="मेनू बंद करा">✕</button>
+      </div>
+      <nav class="mobile-drawer-nav">
+        <div class="drawer-section-title">मुख्य विभाग</div>
+        <a href="index.html">🏠 मुखपृष्ठ</a>
+        <a href="cm-search.html">🔎 सर्वत्र शोध</a>
+        <a href="cm-history.html">⚔️ मराठा इतिहास</a>
+        <a href="cm-forts-map.html">🏰 गड-किल्ले</a>
+        <a href="cm-warriors.html">🛡️ अमर शिलेदार</a>
+        <a href="cm-directory-people.html">👥 समुदाय</a>
+        <a href="cm-business-sangam.html">🤝 व्यवसाय संगम</a>
+        <a href="cm-business-directory.html">🏢 व्यवसाय निर्देशिका</a>
+        <a href="cm-services.html">🛠️ सेवा</a>
+        <a href="cm-events.html">📅 कार्यक्रम</a>
+        <a href="cm-donation.html">❤️ दान व निधी</a>
+        <a href="cm-more.html">📂 अधिक विभाग</a>
+        <div class="drawer-section-title">सदस्य क्षेत्र</div>
+        <a href="cm-dashboard.html">📊 डॅशबोर्ड</a>
+        <a href="cm-profile.html">👤 प्रोफाईल</a>
+        <a href="cm-messages.html">💬 मेसेजेस</a>
+        <a href="cm-login.html">🔐 लॉगिन</a>
+        <a href="cm-register.html">🚩 नोंदणी</a>
+      </nav>
+      <div class="mobile-drawer-footer">
+        <a href="cm-contact.html" class="btn btn-outline" style="width:100%; justify-content:center;">☎️ संपर्क व मदत</a>
+      </div>
+    `;
+
+    document.body.appendChild(backdrop);
+    document.body.appendChild(drawer);
+
+    if (actionContainer) {
+      actionContainer.appendChild(menuBtn);
+    } else {
+      siteHeaderInner.appendChild(menuBtn);
+    }
+
+    drawer.querySelectorAll('a').forEach(link => {
+      const href = link.getAttribute('href') || '';
+      if (href.split('/').pop() === currentFile) {
+        link.classList.add('active');
+      }
+    });
+
+    const closeBtn = drawer.querySelector('.mobile-drawer-close');
+
+    function openDrawer() {
+      menuBtn.classList.add('active');
+      menuBtn.setAttribute('aria-expanded', 'true');
+      backdrop.classList.add('open');
+      drawer.classList.add('open');
+      drawer.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      menuBtn.classList.remove('active');
+      menuBtn.setAttribute('aria-expanded', 'false');
+      backdrop.classList.remove('open');
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    menuBtn.addEventListener('click', () => {
+      if (drawer.classList.contains('open')) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
+    });
+
+    closeBtn.addEventListener('click', closeDrawer);
+    backdrop.addEventListener('click', closeDrawer);
+    drawer.querySelectorAll('a').forEach(link => link.addEventListener('click', closeDrawer));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && drawer.classList.contains('open')) {
+        closeDrawer();
+      }
+    });
+  }
+
+  initMobileDrawer();
+
   // 1. Universal Bottom Navigation Highlighting & Link Binding
   document.querySelectorAll('.bottom-nav').forEach(nav => {
     const currentFile = window.location.pathname.split('/').pop() || 'index.html';
@@ -152,6 +261,16 @@ document.addEventListener('DOMContentLoaded', () => {
           if (current === panels.length - 1) {
             const userName = localStorage.getItem('cm_user_name') || 'राहुल तानाजी भोसले';
             const randomId = 'CM' + Math.floor(10000000 + Math.random() * 90000000);
+
+            // Bug fix: migrate the in-progress CMDB member (built up under the
+            // pre-registration 'ME' id during steps 1-4) onto the new permanent
+            // member ID, so profile data entered during registration is not lost.
+            if (window.CMDB) {
+              const inProgress = CMDB.currentMember();
+              inProgress.id = randomId;
+              CMDB.persist();
+            }
+
             localStorage.setItem('cm_user_id', randomId);
             localStorage.setItem('cm_user_registered', 'true');
 
@@ -202,58 +321,9 @@ document.addEventListener('DOMContentLoaded', () => {
     countEls.forEach(el => io.observe(el));
   }
 
-  // 7. Business Listing Storage (cm-list-business.html -> cm-business-directory.html)
-  const listBizBtn = document.querySelector('#submitBizBtn, .form-card button.btn-primary');
-  if (listBizBtn && window.location.pathname.includes('cm-list-business')) {
-    listBizBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const inputs = document.querySelectorAll('.form-card input, .form-card select');
-      const bizName = inputs[0] ? inputs[0].value.trim() : '';
-      const ownerName = inputs[1] ? inputs[1].value.trim() : '';
-      const bizType = inputs[2] ? inputs[2].value : 'restaurant';
-      const city = inputs[3] ? inputs[3].value.trim() : 'पुणे';
-
-      if (!bizName || !ownerName) {
-        alert('कृपया व्यवसायाचे नाव आणि मालकाचे नाव भरा!');
-        return;
-      }
-
-      const newBiz = {
-        name: bizName,
-        owner: ownerName,
-        cat: bizType.toLowerCase(),
-        city: city
-      };
-
-      const existing = JSON.parse(localStorage.getItem('cm_custom_businesses') || '[]');
-      existing.unshift(newBiz);
-      localStorage.setItem('cm_custom_businesses', JSON.stringify(existing));
-
-      alert('व्यवसाय यशस्वीरीत्या नोंदवला गेला आहे! आता तो सूचीमध्ये दिसेल.');
-      window.location.href = 'cm-business-directory.html';
-    });
-  }
-
-  // 8. Inject Custom Businesses into Business Directory (cm-business-directory.html)
-  const bizGrid = document.querySelector('#bizGrid');
-  if (bizGrid) {
-    const customList = JSON.parse(localStorage.getItem('cm_custom_businesses') || '[]');
-    customList.forEach(biz => {
-      const card = document.createElement('div');
-      card.className = 'profile-card';
-      card.dataset.cat = biz.cat || 'restaurant';
-      card.dataset.name = biz.name;
-      card.innerHTML = `
-        <div class="avatar">🏢</div>
-        <div class="name">${biz.name}</div>
-        <div class="role">${biz.owner} · ${biz.city} <span style="display:block; color:var(--success); font-size:0.75rem;">✓ नवीन नोंदणी</span></div>
-        <span class="cta">प्रोफाईल पहा</span>
-      `;
-      bizGrid.prepend(card);
-    });
-  }
-
-  // 9. Interactive Donation Workflow (cm-donation.html)
+  // 9. Interactive Donation Workflow (cm-donation.html) — legacy fallback,
+  // only used on pages where the campaign grid is NOT rendered dynamically
+  // by cm-connect.js (i.e. no [data-dynamic] campaign grid present).
   function openDonationModal(campTitle, card) {
     let modal = document.getElementById('donationModal');
     if (!modal) {
@@ -333,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  document.querySelectorAll('#campGrid .btn-primary').forEach(btn => {
+  document.querySelectorAll('#campGrid:not([data-dynamic]) .btn-primary').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const card = btn.closest('.feature-card');
@@ -342,9 +412,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 10. Event / Blood Donation RSVP (cm-events.html)
-  const rsvpBtn = document.querySelector('.form-card.narrow button.btn-primary');
-  if (rsvpBtn && window.location.pathname.includes('cm-events')) {
+  // 10. Event / Blood Donation RSVP (cm-events.html) — legacy fallback,
+  // superseded by the QR-ticket flow in cm-connect.js (#cmEventRegForm)
+  const rsvpBtn = document.querySelector('.form-card.narrow button.btn-primary:not(#cmEventRegForm button)');
+  if (rsvpBtn && window.location.pathname.includes('cm-events') && !document.querySelector('#cmEventRegForm')) {
     rsvpBtn.addEventListener('click', (e) => {
       e.preventDefault();
       const nameInput = document.querySelector('.form-card.narrow input[type="text"]');
@@ -466,7 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const savedName = localStorage.getItem('cm_user_name');
     if (savedName) {
-      const welcomeH2 = document.querySelector('.wrap h2');
+      const welcomeH2 = document.querySelector('.wrap h2') || document.querySelector('.wrap h1');
       if (welcomeH2) welcomeH2.textContent = `नमस्कार, ${savedName.split(' ')[0]}! 👋`;
       const idName = document.querySelector('.id-card .name');
       if (idName) idName.textContent = savedName;
@@ -659,6 +730,21 @@ document.addEventListener('DOMContentLoaded', () => {
           existingBookings.unshift(newBooking);
           localStorage.setItem('cm_booked_services', JSON.stringify(existingBookings));
 
+          if (window.CMDB && typeof CMDB.createServiceEnquiry === 'function') {
+            CMDB.createServiceEnquiry({
+              memberId: localStorage.getItem('cm_user_id') || 'ME',
+              service: title,
+              provider: provider,
+              price: price,
+              requirement: title,
+              budget: price,
+              location: clientCity,
+              preferredDate: bookDate,
+              preferredTime: bookTime,
+              status: 'Booked'
+            });
+          }
+
           closeModal();
           showToast(`बुकिंग निश्चित झाले! टोकन क्रमांक: ${tokenId}`, 'success');
 
@@ -801,15 +887,31 @@ document.addEventListener('DOMContentLoaded', () => {
         clientCity: city,
         date: 'लवकरच',
         time: 'संपर्क केला जाईल',
-        notes: desc,
-        status: 'प्रलंबित (In Review)',
-        bookedOn: new Date().toLocaleDateString('mr-IN')
+        status: 'विनंती नोंदवली',
+        bookedOn: new Date().toLocaleDateString('mr-IN'),
+        notes: desc
       };
 
       const existingBookings = JSON.parse(localStorage.getItem('cm_booked_services') || '[]');
       existingBookings.unshift(customBooking);
       localStorage.setItem('cm_booked_services', JSON.stringify(existingBookings));
 
+      if (window.CMDB && typeof CMDB.createServiceEnquiry === 'function') {
+        CMDB.createServiceEnquiry({
+          memberId: localStorage.getItem('cm_user_id') || 'ME',
+          service: `${cat} (थेट मागणी)`,
+          provider: 'समन्वयक नियुक्त होत आहे',
+          price: 'कोटेशन प्रतीक्षेत',
+          requirement: desc,
+          budget: document.querySelector('#custBudget') ? document.querySelector('#custBudget').value.trim() : '',
+          location: city,
+          preferredDate: document.querySelector('#custDate') ? document.querySelector('#custDate').value : '',
+          preferredTime: 'संपर्क केला जाईल',
+          status: 'Enquiry'
+        });
+      }
+
+      showToast(`तुमची सेवा मागणी यशस्वीरित्या नोंदवली गेली! टोकन: ${tokenId}`, 'success');
       showToast(`मागणी नोंदवली गेली! विनंती क्र: ${tokenId}`, 'success');
       alert(`धन्यवाद ${name}!\nतुमची सेवेची मागणी नोंदवली गेली आहे.\nटोकन क्र: ${tokenId}\nआमचे समन्वयक लवकरच आपल्याशी संपर्क करतील.`);
       customServiceForm.reset();
@@ -1094,9 +1196,9 @@ function initHeritageLightbox() {
     const imgEl = e.target.tagName === 'IMG' ? e.target : null;
     const card = e.target.closest('.info-box-card, .hero-real-card, .heritage-photo-card, .hd-feature-card, .battle-card, .portrait-card, .fort-detail-header, .feature-card, .researcher-card');
 
-    if (trigger || (card && imgEl && !imgEl.classList.contains('brand-logo') && !imgEl.src.includes('logo.png'))) {
+    if (trigger || (card && imgEl && !imgEl.classList.contains('brand-logo') && !imgEl.src.includes('logo.png') && !imgEl.src.includes('logo_original_uncropped.png'))) {
       const img = imgEl || trigger?.querySelector('img') || card?.querySelector('img');
-      if (img && img.src && !img.classList.contains('brand-logo') && !img.src.includes('logo.png')) {
+      if (img && img.src && !img.classList.contains('brand-logo') && !img.src.includes('logo.png') && !img.src.includes('logo_original_uncropped.png')) {
         const title = img.getAttribute('alt') || trigger?.getAttribute('data-title') || card?.querySelector('h4, h3, h2')?.textContent || 'अस्सल ऐतिहासिक वारसा';
         const desc = trigger?.getAttribute('data-desc') || card?.querySelector('p')?.textContent || '';
         const source = trigger?.getAttribute('data-source') || card?.dataset?.source || 'राष्ट्रीय व आंतरराष्ट्रीय ऐतिहासिक पुराभिलेखागार';
@@ -1183,8 +1285,13 @@ function initMobileNavigation() {
         <a href="cm-jobs.html" class="drawer-nav-link">🤝 रोजगार व करिअर संधी</a>
         <a href="cm-professionals.html" class="drawer-nav-link">👨‍⚖️ व्यावसायिक तज्ज्ञ व CA</a>
 
-        <span class="drawer-section-title">समुदाय व कल्याण</span>
+        <span class="drawer-section-title">Connect & Communication</span>
+        <a href="cm-community.html" class="drawer-nav-link">💬 समाज फीड</a>
         <a href="cm-directory-people.html" class="drawer-nav-link">👥 समुदाय डिरेक्टरी</a>
+        <a href="cm-groups.html" class="drawer-nav-link">🧑‍🤝‍🧑 समुदाय गट</a>
+        <a href="cm-messages.html" class="drawer-nav-link">✉️ मेसेजेस</a>
+
+        <span class="drawer-section-title">समुदाय व कल्याण</span>
         <a href="cm-education.html" class="drawer-nav-link">🎓 शैक्षणिक मदत व स्पर्धा परीक्षा</a>
         <a href="cm-donation.html" class="drawer-nav-link">❤️ दान व गड संवर्धन निधी</a>
         <a href="cm-events.html" class="drawer-nav-link">📅 कार्यक्रम व उपक्रम</a>
@@ -1279,10 +1386,13 @@ function initDropdownMenus() {
         <a href="cm-business-directory.html">🏢 व्यवसाय निर्देशिका</a>
         <a href="cm-jobs.html">🤝 रोजगार व करिअर संधी</a>
         <a href="cm-professionals.html">👨‍⚖️ व्यावसायिक तज्ज्ञ व CA</a>
+        <span class="dropdown-cat-title">💬 Connect & Communication</span>
+        <a href="cm-community.html">📝 समाज फीड</a>
+        <a href="cm-groups.html">👥 समुदाय गट</a>
+        <a href="cm-messages.html">✉️ मेसेजेस</a>
         <span class="dropdown-cat-title">🤝 समाज व कल्याण</span>
         <a href="cm-education.html">🎓 शैक्षणिक मदत व स्पर्धा परीक्षा</a>
         <a href="cm-donation.html">❤️ दान व गड संवर्धन निधी</a>
-        <a href="cm-groups.html">👥 समुदाय गट</a>
         <a href="cm-community-safety.html">🚨 आपत्कालीन सुरक्षा</a>
         <a href="cm-dashboard.html">📊 माझे डॅशबोर्ड</a>
       `;
@@ -1660,7 +1770,7 @@ function initUniversalModals() {
     } else if (txt === '+ नवीन गट तयार करा') {
       e.preventDefault();
       openGroupCreateModal();
-    } else if (txt.includes('मेसेजेस')) {
+    } else if (txt.includes('मेसेजेस') && a.getAttribute('href') === '#') {
       e.preventDefault();
       openMessagesModal();
     } else if (txt.includes('सेटिंग्स')) {
@@ -1719,6 +1829,58 @@ function initUniversalModals() {
   }
 }
 
+// ==========================================================================
+// Scroll-Reveal Motion Engine — powers [data-reveal] and [data-reveal-group]
+// ==========================================================================
+function initScrollReveal() {
+  const targets = document.querySelectorAll('[data-reveal], [data-reveal-group]');
+  if (!targets.length) return;
+
+  if (!('IntersectionObserver' in window)) {
+    targets.forEach(el => el.classList.add('is-visible'));
+    return;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+  targets.forEach(el => io.observe(el));
+
+  // Fail-safe: never leave content permanently invisible if the observer
+  // misses an element (fast resizes, print/screenshot capture, edge cases).
+  setTimeout(() => {
+    targets.forEach(el => el.classList.add('is-visible'));
+  }, 2500);
+}
+
+// ==========================================================================
+// Cursor Glow — soft saffron light following the pointer (desktop only)
+// ==========================================================================
+function initCursorGlow() {
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const glow = document.createElement('div');
+  glow.className = 'cursor-glow';
+  document.body.appendChild(glow);
+
+  let raf = null;
+  document.addEventListener('mousemove', (e) => {
+    glow.classList.add('active');
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+      raf = null;
+    });
+  });
+  document.addEventListener('mouseleave', () => glow.classList.remove('active'));
+}
+
 // Run dynamic modules after DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   initEmberCanvas();
@@ -1727,6 +1889,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileNavigation();
   initDropdownMenus();
   initUniversalModals();
+  initScrollReveal();
+  initCursorGlow();
 
   if (typeof window.switchHeroView === 'function' && document.getElementById('heroCardImg')) {
     window.switchHeroView('hero');

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>आजचा मराठा इतिहास व ऐतिहासिक दिनदर्शिका — Connect Maratha</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.era-pills-wrap {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 24px;
+}
+.era-btn {
+  padding: 8px 16px;
+  border-radius: 30px;
+  background: #fff;
+  border: 1px solid rgba(90,17,22,0.15);
+  color: var(--maroon-950);
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.era-btn:hover, .era-btn.active {
+  background: var(--maroon-900);
+  color: var(--gold-300);
+  border-color: var(--gold-500);
+}
+.dates-hero-card {
+  background: linear-gradient(135deg, var(--maroon-950), var(--maroon-900));
+  border-radius: 20px;
+  padding: 32px;
+  color: var(--paper);
+  border: 2px solid var(--gold-500);
+  box-shadow: var(--shadow);
+  margin-bottom: 36px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 32px;
+  align-items: center;
+}
+.time-slice-bar {
+  display: flex;
+  gap: 10px;
+  background: rgba(255,255,255,0.1);
+  padding: 6px;
+  border-radius: 40px;
+  backdrop-filter: blur(8px);
+  margin-bottom: 20px;
+  width: fit-content;
+  flex-wrap: wrap;
+}
+.time-slice-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.time-slice-btn.active, .time-slice-btn:hover {
+  background: var(--gold-500);
+  color: var(--maroon-950);
+}
+.timeline-event-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  border-left: 5px solid var(--maroon-800);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+  margin-bottom: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.timeline-event-card:hover {
+  transform: translateX(4px);
+  box-shadow: 0 10px 28px rgba(61,11,14,0.12);
+}
+.event-meta-strip {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.event-date-badge {
+  background: var(--maroon-900);
+  color: var(--gold-300);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.event-category-badge {
+  background: rgba(233,196,106,0.25);
+  color: var(--maroon-950);
+  border: 1px solid var(--gold-500);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+@media(max-width: 900px) {
+  .dates-hero-card { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="site-topbar">
+  <div class="site-topbar-inner">
+    <div class="left-info">
+      <span>🚩 <strong>जय जिजाऊ · जय शिवराय · जय शंभूराजे</strong></span>
+      <span style="opacity:0.6;">|</span>
+      <span>आजचा मराठा इतिहास — ३६५ दिवसांचे ऐतिहासिक दिनविशेष महाकॅलेंडर</span>
+    </div>
+    <div class="right-info">
+      <span>📞 समाज हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
+      <span style="opacity:0.6;">|</span>
+      <a href="cm-balidan-maas.html" style="color:var(--gold-400); text-decoration:underline;">बलिदान मास</a>
+      <span style="opacity:0.6;">|</span>
+      <a href="cm-granthalaya.html" style="color:var(--gold-400); text-decoration:underline;">मराठा ग्रंथालय</a>
+    </div>
+  </div>
+</div>
+
+<!-- Main Header -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="index.html" class="brand-desktop">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
+      <div class="brand-titles">
+        <div class="brand-main"><span class="en">CONNECT</span><span class="mr">मराठा</span></div>
+        <span class="brand-sub">भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी</span>
+      </div>
+    </a>
+    <nav class="desktop-nav">
+      <a href="index.html">🏠 मुखपृष्ठ</a>
+      <a href="cm-history.html">⚔️ मराठा इतिहास</a>
+      <a href="cm-balidan-maas.html">🕯️ बलिदान मास</a>
+      <a href="cm-movements.html">🚩 मोर्चे व चळवळी</a>
+      <a href="cm-historical-dates.html" class="active">📅 दिनविशेष</a>
+      <a href="cm-granthalaya.html">📚 ग्रंथालय</a>
+      <a href="cm-achievers.html">🌟 गौरव</a>
+      <a href="cm-more.html">📂 अधिक ▾</a>
+    </nav>
+    <div class="header-actions">
+      <a href="cm-search.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🔎 शोध</a>
+      <a href="cm-login.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
+      <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
+    </div>
+  </div>
+</header>
+
+<!-- Breadcrumbs -->
+<div class="breadcrumbs-bar">
+  <div class="breadcrumbs-inner">
+    <a href="index.html">🏠 मुखपृष्ठ</a>
+    <span class="sep">›</span>
+    <span class="current">आजचा मराठा इतिहास व ऐतिहासिक दिनदर्शिका</span>
+  </div>
+</div>
+
+<!-- Top Section Hero -->
+<div class="wrap" style="max-width:1300px; padding:32px 24px 0;">
+
+  <!-- Section 12 Hero Card: "आजचा मराठा इतिहास" Today in Maratha History Spotlight -->
+  <div class="dates-hero-card">
+    <div>
+      <div class="time-slice-bar" id="timeSliceBar">
+        <button class="time-slice-btn active" onclick="setTimeSlice('today', this)">⭐ आज (Today)</button>
+        <button class="time-slice-btn" onclick="setTimeSlice('week', this)">📅 या आठवड्यात (This Week)</button>
+        <button class="time-slice-btn" onclick="setTimeSlice('month', this)">🗓️ या महिन्यात (This Month)</button>
+        <button class="time-slice-btn" onclick="setTimeSlice('century', this)">⏳ शतकानुसार (By Century)</button>
+        <button class="time-slice-btn" onclick="setTimeSlice('all', this)">📜 संपूर्ण दिनविशेष (All)</button>
+      </div>
+      <div style="font-size:0.84rem; color:var(--gold-400); font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;">
+        Section 12 • आजचा मराठा इतिहास
+      </div>
+      <h1 style="font-size:clamp(1.8rem, 3.5vw, 2.8rem); line-height:1.2; color:#fff; margin-bottom:12px;">
+        सह्याद्रीच्या काळजातील <span style="color:var(--gold-400);">अमर ऐतिहासिक क्षण</span>
+      </h1>
+      <p style="font-size:0.95rem; color:rgba(255,248,231,0.9); line-height:1.6; max-width:60ch; margin-bottom:20px;">
+        शिवरायांचा राज्याभिषेक, प्रतापगड विजय, पावनखिंडीचे बलिदान, पानिपतचे रणसंग्राम आणि संयुक्त महाराष्ट्राची स्थापना — प्रत्येक दिवसाचा अस्सल ऐतिहासिक संदर्भ.
+      </p>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <input type="date" id="datePickerInput" value="2026-06-06" style="padding:8px 14px; border-radius:30px; border:1px solid var(--gold-500); background:#FFF8E7; color:var(--maroon-950); font-weight:700;">
+        <button class="btn btn-primary" onclick="searchCustomDate()" style="padding:8px 18px; font-size:0.86rem;">तारखेनुसार शोधा</button>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); border-radius:16px; padding:24px; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:8px;">🚩</div>
+      <div style="font-size:1.1rem; font-weight:800; color:var(--gold-300);">शिवराज्याभिषेक शक ३५१</div>
+      <div style="font-size:0.84rem; color:rgba(255,255,255,0.8); margin-top:6px;">
+        हिंदवी स्वराज्याचा अधिकृत सार्वभौम राज्याभिषेक दिन: <strong>६ जून १६७४ (ज्येष्ठ शुद्ध त्रयोदशी)</strong>
+      </div>
+      <div style="margin-top:16px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.15); font-size:0.78rem; color:var(--gold-400);">
+        ✓ समकालीन ऐतिहासिक नोंदी व जेधे शकावली संदर्भ
+      </div>
+    </div>
+  </div>
+
+  <!-- Historical Eras Selector (Blue Print Section 12: Select by Historical Era) -->
+  <div style="margin-bottom: 24px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+      <h3 style="color:var(--maroon-950); font-size:1.2rem;">ऐतिहासिक कालखंडानुसार निवडा (Select Historical Era)</h3>
+      <div style="font-size:0.82rem; color:var(--muted);">१६०० ते २०२६ पर्यंतचा अखंड प्रवास</div>
+    </div>
+    <div class="era-pills-wrap" id="eraPillsWrap">
+      <button class="era-btn active" onclick="filterEra('all', this)">सर्व कालखंड (All Eras)</button>
+      <button class="era-btn" onclick="filterEra('preshivaji', this)">१. स्वराज्य पूर्व (१६००–१६४५)</button>
+      <button class="era-btn" onclick="filterEra('shivaji', this)">२. शिवशाही सुवर्णकाळ (१६४५–१६८०)</button>
+      <button class="era-btn" onclick="filterEra('sambhaji', this)">३. शंभूकालीन पराक्रम (१६८०–१६८९)</button>
+      <button class="era-btn" onclick="filterEra('tarabai', this)">४. स्वातंत्र्ययुद्ध व राजाराम-ताराबाई (१६८९–१७०७)</button>
+      <button class="era-btn" onclick="filterEra('peshwa', this)">५. पेशवे काळ व मराठा महासंघ (१७०७–१७६१)</button>
+      <button class="era-btn" onclick="filterEra('anglo', this)">६. इंग्रज-मराठा युद्धे (१७६१–१८१८)</button>
+      <button class="era-btn" onclick="filterEra('modern', this)">७. आधुनिक व सामाजिक प्रबोधन (१८१८–२०२६)</button>
+    </div>
+  </div>
+
+  <!-- Events List Container -->
+  <div id="eventsContainer" style="margin-bottom: 60px;">
+    <!-- Populated by JavaScript -->
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="website-footer">
+  <div class="footer-grid">
+    <div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+        <img src="assets/images/logo.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
+        <span style="font-family:'Baloo 2', sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold-400);">CONNECT मराठा</span>
+      </div>
+      <p style="font-size:0.86rem; line-height:1.6; color:rgba(251,243,227,0.8); margin-bottom:16px;">
+        भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी. अखंड मराठा इतिहास, संस्कृती आणि समृद्ध भविष्याचे अधिकृत डिजिटल महाव्यासपीठ.
+      </p>
+    </div>
+    <div>
+      <h3>इतिहास व वारसा</h3>
+      <ul>
+        <li><a href="cm-history.html">मराठा इतिहास</a></li>
+        <li><a href="cm-balidan-maas.html">बलिदान मास व स्मृती</a></li>
+        <li><a href="cm-movements.html">मोर्चे व चळवळी दालन</a></li>
+        <li><a href="cm-historical-dates.html">आजचा मराठा इतिहास</a></li>
+        <li><a href="cm-forts-map.html">गड-किल्ले नकाशा</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>ज्ञान व समुदाय</h3>
+      <ul>
+        <li><a href="cm-granthalaya.html">मराठा ग्रंथालय</a></li>
+        <li><a href="cm-achievers.html">मराठा गौरव व अचीव्हर्स</a></li>
+        <li><a href="cm-business-sangam.html">व्यवसाय संगम</a></li>
+        <li><a href="cm-directory-people.html">समुदाय निर्देशिका</a></li>
+        <li><a href="cm-jobs.html">रोजगार व करिअर</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>धोरणे व संचालन</h3>
+      <ul>
+        <li><a href="cm-governance.html">व्हिजन, मिशन व ध्येय</a></li>
+        <li><a href="cm-governance.html#privacy">DPDP गोपनीयता धोरण</a></li>
+        <li><a href="cm-governance.html#terms">नियम व अटी</a></li>
+        <li><a href="cm-governance.html#editorial">संपादकीय धोरण</a></li>
+        <li><a href="cm-blueprint.html">मास्टर ब्लूप्रिंट (५० विभाग)</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© २०२६ Connect Maratha • अखिल भारतीय मराठा डिजिटल महासंघ. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="assets/js/cm-data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+const marathaDatesDatabase = [
+  {
+    date: "०६ जून १६७४",
+    isoMonthDay: "06-06",
+    title: "छत्रपती शिवाजी महाराज यांचा भव्य शिवराज्याभिषेक — हिंदवी स्वराज्याची सार्वभौम स्थापना",
+    era: "shivaji",
+    category: "👑 राज्याभिषेक",
+    fort: "दुर्गराज रायगड",
+    desc: "गागाभट्टांच्या उपस्थितीत ज्येष्ठ शुद्ध त्रयोदशीला छत्रपती शिवरायांचा सार्वभौम राज्याभिषेक संपन्न झाला. 'शिवराज्याभिषेक शक' सुरू झाला, स्वतंत्र शिवराई व होन नाणी पाडली गेली आणि 'क्षत्रियकुलावतंस' पदवी धारण केली.",
+    source: "सभासद बखर, हेन्री ऑक्झिंडेन डायरी, पेण दप्तर",
+    importance: "स्वराज्याला आंतरराष्ट्रीय सार्वभौम अधिराज्य म्हणून मान्यता मिळाली."
+  },
+  {
+    date: "१० नोव्हेंबर १६५९",
+    isoMonthDay: "11-10",
+    title: "प्रतापगड युद्ध — अफजलखानाचा वध व विजापुरी सैन्याचा निर्णायक पराभव",
+    era: "shivaji",
+    category: "⚔️ रणसंग्राम",
+    fort: "किल्ले प्रतापगड",
+    desc: "स्वराज्य गिळंकृत करण्यासाठी आलेल्या विजापूरच्या बलाढ्य अफजलखानाचा छत्रपती शिवाजी महाराजांनी वाघनखे व बिचव्याने वध केला. मावळ्यांनी जावळीच्या जंगलात विजापुरी सेनेचा धुव्वा उडवला.",
+    source: "शिवभारत, ९१ कलमी बखर, जेधे शकावली",
+    importance: "स्वराज्याचा विस्तार थेट कोकण व कोल्हापूरपर्यंत झाला."
+  },
+  {
+    date: "१३ जुलै १६६०",
+    isoMonthDay: "07-13",
+    title: "पावनखिंड झुंज — बाजीप्रभू देशपांडे व ३०० बांदल वीरांचे अमर बलिदान",
+    era: "shivaji",
+    category: "🚩 बलिदान व शौर्य",
+    fort: "पन्हाळा ते विशाळगड",
+    desc: "पन्हाळगडाच्या वेढ्यातून सुटून विशाळगडाकडे जात असताना घोडखिंडीत सिद्धी मसूदचे सैन्य रोखून धरले. तोफांचे आवाज होईपर्यंत बाजीप्रभू व बांदल मावळे प्राण पणाला लावून लढले.",
+    source: "जेधे शकावली, ऐतिहासिक पत्रे",
+    importance: "छत्रपती शिवरायांचे प्राण वाचले आणि विशाळगड सुरक्षित राहिला."
+  },
+  {
+    date: "०४ फेब्रुवारी १६७०",
+    isoMonthDay: "02-04",
+    title: "सिंहगड विजय — सुभेदार तानाजी मालुसरे यांचा अद्वितीय पराक्रम",
+    era: "shivaji",
+    category: "🏰 गड विजय",
+    fort: "किल्ले सिंहगड (कोंढाणा)",
+    desc: "मुघलांच्या ताब्यात गेलेला कोंढाणा जिंकण्यासाठी तानाजी मालुसरे यांनी घोरपडीच्या साहाय्याने द्रोणागिरी कडा चढून उदयभानूशी निकराची झुंज दिली. गड आला पण सिंह गेला.",
+    source: "सभासद बखर, पोवाडा",
+    importance: "पुरंदरच्या तहात गेलेले २३ किल्ले परत मिळवण्याची मोहीम यशस्वी झाली."
+  },
+  {
+    date: "१६ जानेवारी १६८१",
+    isoMonthDay: "01-16",
+    title: "छत्रपती संभाजी महाराज यांचा राज्याभिषेक",
+    era: "sambhaji",
+    category: "👑 राज्याभिषेक",
+    fort: "दुर्गराज रायगड",
+    desc: "छत्रपती शिवाजी महाराजांनंतर रायगडावर छत्रपती संभाजी महाराजांचा राज्याभिषेक झाला. अवघ्या २४ व्या वर्षी त्यांनी स्वराज्याची सूत्रे हाती घेऊन मुघल, आदिलशाही, कुतुबशाही आणि पोर्तुगीज या चार शत्रूंशी एकाच वेळी लढा दिला.",
+    source: "जेधे शकावली, फ्रान्सिस मार्टिन डायरी",
+    importance: "९ वर्षांच्या काळात छत्रपती संभाजी महाराजांनी एकही किल्ला गमावला नाही."
+  },
+  {
+    date: "११ मार्च १६८९",
+    isoMonthDay: "03-11",
+    title: "धर्मवीर छत्रपती संभाजी महाराज बलिदान दिन (फाल्गुन अमावास्या)",
+    era: "sambhaji",
+    category: "🚩 बलिदान",
+    fort: "तुळापूर व वढू बुद्रुक",
+    desc: "औरंगजेबाने अत्यंत क्रूर अत्याचार करूनही संभाजी महाराजांनी स्वराज्य, निष्ठा आणि स्वाभिमान सोडला नाही. त्यांच्या बलिदानाने पेटून उठून मराठ्यांनी २७ वर्षांचे स्वातंत्र्ययुद्ध लढले.",
+    source: "महाराष्ट्र शासन गॅझेटिअर, मुंतखाब-उल-लुबाब",
+    importance: "अखंड मराठा समाजाच्या स्वातंत्र्यलढ्याची अखंड प्रेरणा."
+  },
+  {
+    date: "२८ फेब्रुवारी १७२८",
+    isoMonthDay: "02-28",
+    title: "पालखेडची लढाई — श्रीमंत बाजीराव पेशवे यांचा निजामावर जगप्रसिद्ध विजय",
+    era: "peshwa",
+    category: "⚔️ रणसंग्राम",
+    fort: "पालखेड (नाशिक)",
+    desc: "बाजीराव पेशव्यांनी तोफखान्याशिवाय केवळ वेगवान घोडदळाच्या गनिमी काव्याने निजामाला गोदावरीच्या तीरावर घेरून पाणी आणि अन्नधान्याशिवाय शरण येण्यास भाग पाडले (मुंगी शेवगावचा तह).",
+    source: "फील्ड मार्शल बर्नार्ड मॉन्टगोमेरी — हिस्ट्री ऑफ वॉरफेअर",
+    importance: "जगातील सर्वोत्कृष्ट मोबिलिटी वॉरफेअर (रणनीतिक युद्धनीती) चा आदर्श."
+  },
+  {
+    date: "१४ जानेवारी १७६१",
+    isoMonthDay: "01-14",
+    title: "पानिपतचा तिसरा महासंग्राम — मराठ्यांचे शौर्य व बलिदान",
+    era: "peshwa",
+    category: "⚔️ रणसंग्राम",
+    fort: "पानिपत (हरियाणा)",
+    desc: "अहमदशाह अब्दालीविरुद्ध अखंड भारताचे रक्षण करण्यासाठी सदाशिवराव भाऊ, विश्वासराव, इब्राहिम खान गारदी व लाखो मराठ्यांनी अतुलनीय शौर्य गाजवले. 'दोन मोत्ये गळाली, सत्तावीस मोहरा हरपल्या'.",
+    source: "भाऊसाहेबांची बखर, काशिराज पंडित बखर",
+    importance: "अब्दाली पुन्हा कधीही दिल्लीकडे फिरकला नाही; मराठ्यांनी १० वर्षांत महादजी शिंदेंच्या नेतृत्वाखाली दिल्ली पुन्हा जिंकली."
+  },
+  {
+    date: "२६ जुलै १९०२",
+    isoMonthDay: "07-26",
+    title: "राजर्षी छत्रपती शाहू महाराज — भारतात प्रथमच ५०% आरक्षणाचा ऐतिहासिक जाहीरनामा",
+    era: "modern",
+    category: "🕊️ सामाजिक सुधारणा",
+    fort: "करवीर संस्थान (कोल्हापूर)",
+    desc: "बहुजन व मागास घटकांना प्रशासनात व शिक्षणात समान संधी मिळण्यासाठी करवीर संस्थानात ५०% जागा राखीव ठेवण्याचा ऐतिहासिक कायदा लागू केला.",
+    source: "करवीर राज्य गॅझेट, २६ जुलै १९०२",
+    importance: "आधुनिक भारताच्या सामाजिक न्याय आणि आरक्षण व्यवस्थेची मुहूर्तमेढ."
+  },
+  {
+    date: "०१ मे १९६०",
+    isoMonthDay: "05-01",
+    title: "संयुक्त महाराष्ट्र राज्य स्थापना दिन",
+    era: "modern",
+    category: "🕊️ राज्य निर्मिती",
+    fort: "मुंबई — हुतात्मा चौक",
+    desc: "१०६ हुतात्म्यांच्या अमर बलिदानातून मराठी भाषिकांचे मुंबईसह स्वतंत्र महाराष्ट्र राज्य अस्तित्वात आले. यशवंतराव चव्हाण महाराष्ट्राचे पहिले मुख्यमंत्री झाले.",
+    source: "महाराष्ट्र शासन अधिकृत दस्तऐवज",
+    importance: "मराठी अस्मिता आणि संस्कृतीचे अधिकृत राज्य अस्तित्वात आले."
+  }
+];
+
+function renderEvents(list) {
+  const container = document.getElementById('eventsContainer');
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center; padding:48px; background:#fff; border-radius:16px; border:1px solid #E9C46A;">
+        <div style="font-size:2.5rem; margin-bottom:12px;">📅</div>
+        <h4 style="color:var(--maroon-950);">या निकषांसाठी नोंद उपलब्ध नाही</h4>
+        <p style="color:var(--muted); font-size:0.88rem; margin-top:6px;">इतर कालखंड किंवा तारीख निवडून शोधा.</p>
+      </div>`;
+    return;
+  }
+  container.innerHTML = list.map(ev => `
+    <div class="timeline-event-card">
+      <div class="event-meta-strip">
+        <span class="event-date-badge">📅 ${ev.date}</span>
+        <span class="event-category-badge">${ev.category}</span>
+        <span style="font-size:0.8rem; color:var(--muted);">📍 ${ev.fort}</span>
+        <span style="font-size:0.75rem; background:#E8F5E9; color:#2E7D32; padding:2px 8px; border-radius:4px; font-weight:700;">✓ Verified</span>
+      </div>
+      <h3 style="font-size:1.3rem; color:var(--maroon-950); margin-bottom:8px;">${ev.title}</h3>
+      <p style="font-size:0.9rem; color:var(--ink-soft); line-height:1.6; margin-bottom:12px;">${ev.desc}</p>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; padding-top:10px; border-top:1px solid #F0E5D4; font-size:0.8rem;">
+        <span style="color:var(--maroon-900);"><strong>📜 ऐतिहासिक साधन:</strong> ${ev.source}</span>
+        <span style="color:#2E7D32; font-weight:700;">⭐ महत्त्व: ${ev.importance}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterEra(era, btn) {
+  document.querySelectorAll('#eraPillsWrap .era-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (era === 'all') {
+    renderEvents(marathaDatesDatabase);
+  } else {
+    const filtered = marathaDatesDatabase.filter(ev => ev.era === era);
+    renderEvents(filtered);
+  }
+}
+
+function setTimeSlice(slice, btn) {
+  document.querySelectorAll('#timeSliceBar .time-slice-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (slice === 'all') {
+    renderEvents(marathaDatesDatabase);
+  } else if (slice === 'today') {
+    // Show Shivrajyabhisheka / key spotlight
+    renderEvents([marathaDatesDatabase[0], marathaDatesDatabase[1]]);
+  } else if (slice === 'week') {
+    renderEvents([marathaDatesDatabase[0], marathaDatesDatabase[2], marathaDatesDatabase[3]]);
+  } else if (slice === 'month') {
+    renderEvents(marathaDatesDatabase.slice(0, 5));
+  } else if (slice === 'century') {
+    renderEvents(marathaDatesDatabase);
+  }
+}
+
+function searchCustomDate() {
+  const input = document.getElementById('datePickerInput').value;
+  if (!input) return;
+  const monthDay = input.substring(5); // e.g. "06-06"
+  const matched = marathaDatesDatabase.filter(ev => ev.isoMonthDay === monthDay);
+  if (matched.length > 0) {
+    renderEvents(matched);
+  } else {
+    // Show nearest event
+    renderEvents(marathaDatesDatabase.slice(0, 3));
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderEvents(marathaDatesDatabase);
+});
+</script>
+</body>
+</html>

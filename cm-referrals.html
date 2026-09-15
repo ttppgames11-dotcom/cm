@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>व्यवसाय संदर्भ ट्रॅकर (Referral Engine) — Connect Maratha</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/app.js" defer></script>
+  <script src="assets/js/cm-data.js" defer></script>
+  <script src="assets/js/cm-connect.js" defer></script>
+</head>
+<body>
+  <!-- Header Navigation -->
+  <header class="navbar container">
+    <div class="logo">
+      <a href="cm-home.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:8px;">
+        <span class="flag">🚩</span>
+        <span>कनेक्ट मराठा</span>
+      </a>
+    </div>
+    <nav class="nav-links">
+      <a href="cm-home.html">मुख्य पृष्ठ</a>
+      <a href="cm-business-directory.html">व्यवसाय</a>
+      <a href="cm-business-sangam.html">व्यवसाय संगम</a>
+      <a href="cm-referrals.html" class="active">संदर्भ (Referrals)</a>
+      <a href="cm-events.html">कार्यक्रम</a>
+      <a href="cm-more.html">अधिक ☰</a>
+    </nav>
+    <div class="user-actions">
+      <a href="cm-create-referral.html" class="btn btn-primary">+ संदर्भ द्या (Give Referral)</a>
+      <a href="cm-dashboard.html" class="btn btn-outline">डॅशबोर्ड</a>
+    </div>
+  </header>
+
+  <main class="container py-4">
+    <!-- Hero Banner & Stats -->
+    <div class="form-card" style="background: linear-gradient(135deg, var(--maroon-900), var(--saffron-600)); color: white; border: none; margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <h1 style="color: white; margin-bottom: 6px;">💼 व्यवसाय संदर्भ ट्रॅकर (Referral Engine)</h1>
+          <p style="opacity: 0.9;">व्यापार वाढीसाठी बांधवांनी बांधवांना दिलेले व्यावसायिक संदर्भ व पारदर्शक CRM पाइपलाइन</p>
+        </div>
+        <div>
+          <a href="cm-create-referral.html" class="btn" style="background: white; color: var(--maroon-900); font-weight: 700;">+ नवीन संदर्भ नोंदवा</a>
+        </div>
+      </div>
+
+      <!-- Overview KPI Grid -->
+      <div class="grid grid-4" data-reveal-group style="margin-top: 24px; gap: 16px;">
+        <div style="background: rgba(255,255,255,0.15); padding: 16px; border-radius: 8px; backdrop-filter: blur(4px);">
+          <div style="font-size: 0.9rem; opacity: 0.85;">एकूण दिलेले संदर्भ</div>
+          <div id="statTotalGiven" style="font-size: 1.8rem; font-weight: 800; margin-top: 4px;">१४</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); padding: 16px; border-radius: 8px; backdrop-filter: blur(4px);">
+          <div style="font-size: 0.9rem; opacity: 0.85;">प्राप्त झालेली चौकशी</div>
+          <div id="statTotalReceived" style="font-size: 1.8rem; font-weight: 800; margin-top: 4px;">८</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); padding: 16px; border-radius: 8px; backdrop-filter: blur(4px);">
+          <div style="font-size: 0.9rem; opacity: 0.85;">यशस्वी बंद झालेले सौदे (Won)</div>
+          <div id="statTotalWon" style="font-size: 1.8rem; font-weight: 800; margin-top: 4px;">६</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); padding: 16px; border-radius: 8px; backdrop-filter: blur(4px);">
+          <div style="font-size: 0.9rem; opacity: 0.85;">एकूण व्युत्पन्न महसूल (Revenue)</div>
+          <div id="statTotalRevenue" style="font-size: 1.6rem; font-weight: 800; color: #ffeb3b; margin-top: 4px;">₹२८,४५,०००</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Referral Pipeline Controls -->
+    <div class="form-card" style="margin-bottom: 24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; gap:8px;" id="pipelineTabs">
+          <button class="btn btn-primary" onclick="filterReferrals('all')">सर्व (All)</button>
+          <button class="btn btn-outline" onclick="filterReferrals('new')">नवीन (New)</button>
+          <button class="btn btn-outline" onclick="filterReferrals('proposal')">प्रस्ताव (Proposal)</button>
+          <button class="btn btn-outline" onclick="filterReferrals('won')">यशस्वी (Won)</button>
+          <button class="btn btn-outline" onclick="filterReferrals('lost')">अपूर्ण (Lost)</button>
+        </div>
+        <div>
+          <input type="text" id="refSearchInput" placeholder="संदर्भ शोध करा..." style="padding: 8px 14px; border-radius: 6px; border: 1px solid #ccc; width: 220px;" onkeyup="renderReferralList()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Referrals List / Pipeline Grid -->
+    <div id="referralsContainer" class="grid grid-1" style="gap: 16px;">
+      <!-- Dynamic list rendered via JS -->
+    </div>
+  </main>
+
+  <footer class="footer mt-5">
+    <div class="container text-center py-3">
+      <p>© २०२६ कनेक्ट मराठा — व्यवसाय संगम व संदर्भ इंजिन. सर्वाधिकार सुरक्षित.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderReferralList();
+    });
+
+    let currentFilter = 'all';
+
+    function filterReferrals(status) {
+      currentFilter = status;
+      document.querySelectorAll('#pipelineTabs button').forEach(b => {
+        b.className = 'btn btn-outline';
+      });
+      event.target.className = 'btn btn-primary';
+      renderReferralList();
+    }
+
+    function renderReferralList() {
+      const container = document.getElementById('referralsContainer');
+      const search = (document.getElementById('refSearchInput').value || '').toLowerCase();
+      let referrals = CMDB.listReferrals();
+
+      if (currentFilter !== 'all') {
+        referrals = referrals.filter(r => r.status.toLowerCase() === currentFilter);
+      }
+
+      if (search) {
+        referrals = referrals.filter(r => 
+          (r.prospect || '').toLowerCase().includes(search) || 
+          (r.requirement || '').toLowerCase().includes(search) ||
+          (r.category || '').toLowerCase().includes(search)
+        );
+      }
+
+      if (referrals.length === 0) {
+        container.innerHTML = `
+          <div class="form-card text-center py-5">
+            <h3>कोणतेही संदर्भ सापडले नाहीत</h3>
+            <p>नवीन व्यवसाय संदर्भ जोडण्यासाठी '+ नवीन संदर्भ नोंदवा' बटणावर क्लिक करा.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = referrals.map(r => {
+        const creator = CMDB.getMember(r.creator) || { name: 'सदस्य', business: '' };
+        const recipient = CMDB.getMember(r.recipient) || { name: 'उद्योजक', business: '' };
+        
+        let statusBadge = 'badge-primary';
+        if (r.status === 'Won') statusBadge = 'badge-success';
+        if (r.status === 'Lost') statusBadge = 'badge-danger';
+        if (r.status === 'Proposal') statusBadge = 'badge-warning';
+
+        return `
+          <div class="form-card" style="border-left: 5px solid var(--maroon-700);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+              <div>
+                <span class="badge ${statusBadge}">${r.status}</span>
+                <span class="badge" style="background:#e0e0e0; color:#333; margin-left:6px;">${r.category}</span>
+                <h3 style="margin-top:8px; margin-bottom:4px; color:var(--maroon-900);">${r.prospect}</h3>
+                <p style="color:#555; font-size:0.95rem; margin-bottom:8px;">${r.requirement}</p>
+                <div style="font-size:0.85rem; color:#777;">
+                  📍 ${r.location} | 📅 नोंदणी तारीख: ${r.followUpDate || '२०२६-०९-१२'}
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:0.85rem; color:#666;">अंदाजित मूल्य (Value)</div>
+                <div style="font-size:1.4rem; font-weight:700; color:var(--maroon-900);">₹${(r.actualValue || r.estimatedValue || 0).toLocaleString('en-IN')}</div>
+                <a href="cm-referral-detail.html?id=${r.id}" class="btn btn-outline btn-sm mt-2">सविस्तर ट्रॅक पहा →</a>
+              </div>
+            </div>
+
+            <hr style="margin: 12px 0; border:0; border-top:1px solid #eee;">
+
+            <div style="display:flex; justify-content:space-between; align-size:center; font-size:0.88rem; color:#444;">
+              <div><strong>संदर्भ देणारे:</strong> ${creator.name} (${creator.business || creator.profession || 'सदस्य'})</div>
+              <div><strong>संदर्भ प्राप्तकर्ते:</strong> ${recipient.name} (${recipient.business || recipient.profession || 'उद्योजक'})</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>

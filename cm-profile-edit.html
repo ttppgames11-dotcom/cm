@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>प्रोफाईल संपादित करा — Connect Maratha</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="site-topbar">
+  <div class="site-topbar-inner">
+    <div class="left-info">
+      <span>🚩 <strong>जय जिजाऊ · जय शिवराय · जय शंभूराजे</strong></span>
+    </div>
+    <div class="right-info">
+      <a href="cm-contact.html" style="color:var(--gold-400); text-decoration:underline;">संपर्क व मदत</a>
+    </div>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="index.html" class="brand-desktop">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
+      <div class="brand-titles">
+        <div class="brand-main"><span class="en">CONNECT</span><span class="mr">मराठा</span></div>
+        <span class="brand-sub">अखिल भारतीय मराठा डिजिटल महासंघ</span>
+      </div>
+    </a>
+    <nav class="desktop-nav">
+      <a href="index.html">🏠 मुखपृष्ठ</a>
+      <a href="cm-directory-people.html">👥 समुदाय</a>
+      <a href="cm-dashboard.html">📊 डॅशबोर्ड</a>
+    </nav>
+    <div class="header-actions">
+      <a href="cm-profile.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem;">← माझी प्रोफाईल</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap" style="padding-top:24px; max-width:720px;">
+  <h2 style="margin-bottom:6px;">प्रोफाईल संपादित करा</h2>
+  <p class="muted" style="margin-bottom:20px;">तुमची Connect Maratha प्रोफाईल पूर्ण करा — समाज बांधवांना तुमच्याशी जोडणे सोपे होईल. जात/ओळखपत्र कागदपत्रे आवश्यक नाहीत, फक्त स्वयं-ओळख पुरेशी आहे.</p>
+
+  <form id="cmProfileEditForm" class="form-card">
+    <div class="grid grid-2">
+      <div class="field"><label>पूर्ण नाव</label><input type="text" id="peName" required></div>
+      <div class="field"><label>प्रोफाईल फोटो</label><input type="file"></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="field"><label>शहर</label><input type="text" id="peCity"></div>
+      <div class="field"><label>जिल्हा</label><input type="text" id="peDistrict"></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="field"><label>राज्य</label><input type="text" id="peState"></div>
+      <div class="field"><label>देश</label><input type="text" id="peCountry"></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="field"><label>मराठी भाषा प्राधान्य</label>
+        <select id="peLang"><option>मराठी</option><option>हिंदी</option><option>इंग्रजी</option></select>
+      </div>
+      <div class="field"><label>व्यवसाय / नोकरी (Profession)</label><input type="text" id="peProfession"></div>
+    </div>
+    <div class="field"><label>व्यवसायाचे नाव (असल्यास)</label><input type="text" id="peBusiness"></div>
+    <div class="field"><label>कौशल्ये (स्वल्पविरामाने वेगळी करा)</label><input type="text" id="peSkills" placeholder="उदा. Web Development, Marketing"></div>
+    <div class="field"><label>शिक्षण</label><input type="text" id="peEducation"></div>
+    <div class="field"><label>आवडीचे विषय (स्वल्पविरामाने)</label><input type="text" id="peInterests" placeholder="उदा. गड-किल्ले भटकंती, समाजसेवा"></div>
+    <div class="field"><label>माझ्याबद्दल (About Me)</label><textarea id="peAbout" rows="3"></textarea></div>
+    <div class="field"><label>सोशल लिंक्स (स्वल्पविरामाने)</label><input type="text" id="peSocial" placeholder="LinkedIn, Instagram लिंक्स"></div>
+    <div class="field"><label>स्वयंसेवा आवड (स्वल्पविरामाने)</label><input type="text" id="peVolunteer" placeholder="उदा. रक्तदान, शिक्षण"></div>
+
+    <div class="notice safe" style="margin:14px 0;">🛡️ Connect Maratha सदस्यत्व पूर्णतः स्वयं-ओळखीवर आधारित आहे. जात प्रमाणपत्र किंवा कोणतीही ओळख-पडताळणी कागदपत्रे अनिवार्य नाहीत.</div>
+
+    <button type="submit" class="btn btn-primary btn-block" style="padding:12px;">✓ प्रोफाईल जतन करा</button>
+  </form>
+</div>
+
+<script src="assets/js/cm-data.js"></script>
+<script src="assets/js/cm-connect.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

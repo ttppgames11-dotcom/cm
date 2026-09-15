@@ -30,7 +30,7 @@
 <header class="site-header">
   <div class="site-header-inner">
     <a href="index.html" class="brand-desktop">
-      <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" class="brand-logo">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
       <div class="brand-titles">
         <div class="brand-main">
           <span class="en">CONNECT</span>
@@ -54,6 +54,7 @@
 
     <!-- Header Actions -->
     <div class="header-actions">
+      <a href="cm-search.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🔎 शोध</a>
       <a href="cm-login.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
       <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
     </div>
@@ -83,7 +84,7 @@
   </section>
 
   <section>
-    <div class="grid grid-3" id="eventGrid">
+    <div class="grid grid-3" data-reveal-group id="eventGrid">
       <div class="list-row" data-cat="seva"><div class="thumb">15<br>SEP</div><div class="content"><h4>रक्तदान शिबिर</h4><div class="meta">📍 पुणे</div></div></div>
       <div class="list-row" data-cat="trek"><div class="thumb">22<br>SEP</div><div class="content"><h4>गड संवर्धन मोहीम</h4><div class="meta">📍 रायगड</div></div></div>
       <div class="list-row" data-cat="career"><div class="thumb">28<br>SEP</div><div class="content"><h4>विद्यार्थी मार्गदर्शन सत्र</h4><div class="meta">📍 मुंबई</div></div></div>
@@ -94,13 +95,15 @@
   </section>
 
   <section>
-    <div class="form-card narrow">
-      <h3 style="margin-bottom:16px;">रक्तदान शिबिर — नोंदणी</h3>
-      <div class="field"><label>पूर्ण नाव</label><input type="text" placeholder="तुमचे नाव"></div>
-      <div class="field"><label>मोबाईल नंबर</label><input type="tel" placeholder="+91"></div>
-      <div class="field"><label>शहर</label><input type="text" placeholder="तुमचे शहर"></div>
-      <button class="btn btn-primary btn-block">नोंदणी करा — QR तिकीट मिळवा</button>
-    </div>
+    <form id="cmEventRegForm" class="form-card narrow">
+      <h3 style="margin-bottom:16px;">कार्यक्रम नोंदणी — QR ई-तिकीट मिळवा</h3>
+      <div class="field"><label>कार्यक्रम निवडा</label><select id="cmEventSelect"></select></div>
+      <div class="field"><label>पूर्ण नाव</label><input type="text" id="cmEventName" placeholder="तुमचे नाव" required></div>
+      <div class="field"><label>मोबाईल नंबर</label><input type="tel" id="cmEventPhone" placeholder="+91" required></div>
+      <div class="field"><label>शहर</label><input type="text" id="cmEventCity" placeholder="तुमचे शहर"></div>
+      <button type="submit" class="btn btn-primary btn-block">नोंदणी करा — QR तिकीट मिळवा</button>
+    </form>
+    <div id="cmTicketBox" style="display:none;"></div>
   </section>
 </div>
 
@@ -110,7 +113,7 @@
     <!-- Column 1: Brand & Mission -->
     <div>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-        <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
+        <img src="assets/images/logo.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
         <span style="font-family:'Baloo 2', sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold-400);">CONNECT मराठा</span>
       </div>
       <p style="font-size:0.86rem; line-height:1.6; color:rgba(251,243,227,0.8); margin-bottom:16px;">
@@ -129,6 +132,10 @@
         <li><a href="cm-shivaji-maharaj.html">🚩 छत्रपती शिवाजी महाराज</a></li>
         <li><a href="cm-sambhaji-maharaj.html">⚔️ छत्रपती संभाजी महाराज</a></li>
         <li><a href="cm-bajirao-peshwa.html">🐎 श्रीमंत बाजीराव पेशवे</a></li>
+        <li><a href="cm-rajmata-jijau.html">🙏 राजमाता जिजाऊ</a></li>
+        <li><a href="cm-rajaram-maharaj.html">🛡️ छत्रपती राजाराम महाराज</a></li>
+        <li><a href="cm-tarabai.html">👑 महाराणी ताराबाई</a></li>
+        <li><a href="cm-shahu-maharaj.html">📜 छत्रपती शाहू महाराज</a></li>
         <li><a href="cm-warriors.html">🛡️ अमर वीर व वीरांगना</a></li>
         <li><a href="cm-forts-map.html">🏰 महाराष्ट्रातील ३५०+ किल्ले</a></li>
         <li><a href="cm-history.html">📖 मराठा साम्राज्य कालपट</a></li>
@@ -171,6 +178,8 @@
 </footer>
 
 
+<script src="assets/js/cm-data.js"></script>
+<script src="assets/js/cm-connect.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

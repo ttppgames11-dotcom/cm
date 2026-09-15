@@ -30,7 +30,7 @@
 <header class="site-header">
   <div class="site-header-inner">
     <a href="index.html" class="brand-desktop">
-      <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" class="brand-logo">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
       <div class="brand-titles">
         <div class="brand-main">
           <span class="en">CONNECT</span>
@@ -65,17 +65,26 @@
   <h2>तुमचा व्यवसाय निर्देशिकेत नोंदवा</h2>
   <p class="muted" style="margin:8px 0 20px;">समाजातील हजारो सदस्यांपर्यंत तुमचा व्यवसाय पोहोचवा.</p>
 
-  <div class="form-card">
-    <div class="field"><label>व्यवसायाचे नाव</label><input type="text" placeholder="उदा. सह्याद्री टेक"></div>
-    <div class="field"><label>मालकाचे नाव</label><input type="text" placeholder="तुमचे नाव"></div>
+  <form id="cmListBizForm" class="form-card">
+    <div class="field"><label>व्यवसायाचे नाव</label><input type="text" id="lbName" placeholder="उदा. सह्याद्री टेक" required></div>
+    <div class="field"><label>मालकाचे नाव</label><input type="text" id="lbOwner" placeholder="तुमचे नाव" required></div>
     <div class="field"><label>व्यवसाय प्रकार</label>
-      <select><option>Restaurant</option><option>IT / Developer</option><option>Real Estate</option><option>Manufacturer</option><option>Travel</option><option>इतर</option></select>
+      <select id="lbCat">
+        <option value="restaurant">Restaurant / Hotel</option>
+        <option value="it">IT / Developer</option>
+        <option value="realestate">Real Estate</option>
+        <option value="manufacturer">Manufacturer</option>
+        <option value="travel">Travel / Trek Organizer</option>
+        <option value="legal">Doctor / Lawyer / CA</option>
+        <option value="education">Education / Coaching</option>
+        <option value="other">इतर</option>
+      </select>
     </div>
-    <div class="field"><label>शहर</label><input type="text" placeholder="शहर"></div>
-    <div class="field"><label>मोबाईल / WhatsApp</label><input type="tel" placeholder="+91"></div>
+    <div class="field"><label>शहर</label><input type="text" id="lbCity" placeholder="शहर" required></div>
+    <div class="field"><label>मोबाईल / WhatsApp</label><input type="tel" id="lbPhone" placeholder="+91" required></div>
     <div class="field"><label>व्यवसाय फोटो</label><input type="file"></div>
-    <button class="btn btn-primary btn-block">नोंदणीसाठी सबमिट करा</button>
-  </div>
+    <button type="submit" class="btn btn-primary btn-block">नोंदणीसाठी सबमिट करा</button>
+  </form>
 
   <div class="notice" style="margin-top:16px;">✅ सबमिट केलेल्या सर्व व्यवसाय नोंदी प्रकाशित होण्यापूर्वी संक्षिप्त पडताळणीतून जातील.</div>
 </div>
@@ -86,7 +95,7 @@
     <!-- Column 1: Brand & Mission -->
     <div>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-        <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
+        <img src="assets/images/logo.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
         <span style="font-family:'Baloo 2', sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold-400);">CONNECT मराठा</span>
       </div>
       <p style="font-size:0.86rem; line-height:1.6; color:rgba(251,243,227,0.8); margin-bottom:16px;">
@@ -105,6 +114,10 @@
         <li><a href="cm-shivaji-maharaj.html">🚩 छत्रपती शिवाजी महाराज</a></li>
         <li><a href="cm-sambhaji-maharaj.html">⚔️ छत्रपती संभाजी महाराज</a></li>
         <li><a href="cm-bajirao-peshwa.html">🐎 श्रीमंत बाजीराव पेशवे</a></li>
+        <li><a href="cm-rajmata-jijau.html">🙏 राजमाता जिजाऊ</a></li>
+        <li><a href="cm-rajaram-maharaj.html">🛡️ छत्रपती राजाराम महाराज</a></li>
+        <li><a href="cm-tarabai.html">👑 महाराणी ताराबाई</a></li>
+        <li><a href="cm-shahu-maharaj.html">📜 छत्रपती शाहू महाराज</a></li>
         <li><a href="cm-warriors.html">🛡️ अमर वीर व वीरांगना</a></li>
         <li><a href="cm-forts-map.html">🏰 महाराष्ट्रातील ३५०+ किल्ले</a></li>
         <li><a href="cm-history.html">📖 मराठा साम्राज्य कालपट</a></li>
@@ -147,6 +160,8 @@
 </footer>
 
 
+<script src="assets/js/cm-data.js"></script>
+<script src="assets/js/cm-connect.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

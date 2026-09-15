@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin CRM — Connect Maratha</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  body.admin-body { padding-bottom: 0; background: var(--paper-2); }
+  .admin-shell { display: flex; min-height: 100vh; }
+  .admin-sidebar {
+    width: 240px; flex-shrink: 0; background: var(--maroon-950); color: #FBF3E3;
+    padding: 18px 0; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .admin-sidebar .brand { padding: 0 18px 16px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1.15rem; color:#fff; border-bottom:1px solid rgba(255,255,255,0.15); margin-bottom:10px; }
+  .admin-sidebar .brand small { display:block; font-weight:500; font-size:0.72rem; color: var(--gold-300); margin-top:2px; }
+  .admin-nav-group { margin-bottom: 6px; }
+  .admin-nav-group h6 { padding: 10px 18px 4px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gold-300); opacity: 0.85; }
+  .admin-nav-item {
+    display: block; padding: 9px 18px; font-size: 0.9rem; color: #FBF3E3; cursor: pointer;
+    border-left: 3px solid transparent; text-decoration: none;
+  }
+  .admin-nav-item:hover { background: rgba(255,255,255,0.08); }
+  .admin-nav-item.active { background: rgba(255,69,0,0.18); border-left-color: var(--gold-500); font-weight: 700; color: #fff; }
+  .admin-main { flex: 1; min-width: 0; padding: 20px 26px 60px; }
+  .admin-banner {
+    background: linear-gradient(90deg, var(--gold-500), var(--saffron-700)); color: #fff; font-weight: 700;
+    padding: 10px 18px; border-radius: var(--radius-sm); margin-bottom: 18px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+  }
+  .admin-view { display: none; }
+  .admin-view.active { display: block; }
+  .admin-view h2 { margin-bottom: 4px; }
+  .admin-view .sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 18px; }
+  .stat-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .stat-tile { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow-sm); }
+  .stat-tile .n { font-family:'Baloo 2',sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--maroon-950); }
+  .stat-tile .l { font-size: 0.78rem; color: var(--muted); font-weight: 600; margin-top: 2px; }
+  .admin-toolbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+  .admin-toolbar input[type="text"], .admin-toolbar input[type="search"] { padding:8px 12px; border:1px solid var(--line); border-radius:var(--radius-sm); font-size:0.86rem; min-width:220px; }
+  .admin-table-wrap { overflow-x: auto; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+  table.admin-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 640px; }
+  table.admin-table th { text-align: left; padding: 10px 12px; background: var(--paper-3); color: var(--maroon-950); font-weight: 700; white-space: nowrap; border-bottom: 1px solid var(--line); }
+  table.admin-table td { padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  table.admin-table tr:last-child td { border-bottom: none; }
+  table.admin-table tr.clickable { cursor: pointer; }
+  table.admin-table tr.clickable:hover { background: var(--paper-2); }
+  .admin-select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 0.8rem; }
+  .admin-panel { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; margin-top: 16px; box-shadow: var(--shadow-sm); }
+  .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .admin-form-grid label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px; }
+  .admin-form-grid input, .admin-form-grid select, .admin-form-grid textarea {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--radius-sm); font-size: 0.86rem; font-family: inherit;
+  }
+  .admin-badge { display:inline-block; padding:2px 9px; border-radius:20px; font-size:0.72rem; font-weight:700; background: var(--paper-3); color: var(--maroon-900); }
+  .admin-badge.ok { background: #e5f4ec; color: var(--success); }
+  .admin-badge.warn { background: #fdeee0; color: var(--saffron-700); }
+  .admin-badge.danger { background: #fbe2e2; color: var(--danger); }
+  .admin-close-x { cursor:pointer; font-weight:700; color:var(--muted); }
+  .audit-row { padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 0.84rem; }
+  .audit-row:last-child { border-bottom: none; }
+  .mini-btn { padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; }
+  @media (max-width: 860px) {
+    .admin-shell { flex-direction: column; }
+    .admin-sidebar { width: 100%; height: auto; position: relative; display:flex; flex-wrap:wrap; align-items:center; }
+    .admin-sidebar .brand { width:100%; border-bottom:none; }
+    .admin-nav-group { display:flex; flex-wrap:wrap; }
+    .admin-nav-group h6 { display:none; }
+    .admin-nav-item { padding: 7px 12px; border-left:none; border-bottom:2px solid transparent; }
+    .admin-nav-item.active { border-left:none; border-bottom-color: var(--gold-500); }
+  }
+</style>
+</head>
+<body class="admin-body">
+
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="brand">
+      CONNECT मराठा
+      <small>Community + Business + Services + Seva + Funds + CRM</small>
+    </div>
+
+    <div class="admin-nav-group">
+      <h6>मुख्य</h6>
+      <a class="admin-nav-item" data-view="dashboard" href="#dashboard">📊 Dashboard</a>
+      <a class="admin-nav-item" href="cm-ceo-dashboard.html" style="color:var(--gold-300); font-weight:700;">🦅 CEO Dashboard (Cr)</a>
+      <a class="admin-nav-item" href="cm-referrals.html" style="color:var(--gold-300); font-weight:700;">💼 Referral Engine</a>
+    </div>
+    <div class="admin-nav-group">
+      <h6>Community</h6>
+      <a class="admin-nav-item" data-view="members" href="#members">👥 Members</a>
+      <a class="admin-nav-item" data-view="groups" href="#groups">🧑‍🤝‍🧑 Groups</a>
+    </div>
+    <div class="admin-nav-group">
+      <h6>Business</h6>
+      <a class="admin-nav-item" data-view="businesses" href="#businesses">🏢 Businesses</a>
+      <a class="admin-nav-item" data-view="chapters" href="#chapters">🏛️ व्यवसाय मंडळे</a>
+      <a class="admin-nav-item" data-view="opportunities" href="#opportunities">💼 व्यवसाय संधी</a>
+      <a class="admin-nav-item" data-view="meetings" href="#meetings">👥 1-to-1 भेटी</a>
+      <a class="admin-nav-item" data-view="applications" href="#applications">📝 Membership अर्ज</a>
+    </div>
+    <div class="admin-nav-group">
+      <h6>CRM</h6>
+      <a class="admin-nav-item" data-view="leads" href="#leads">🎯 Leads</a>
+      <a class="admin-nav-item" data-view="followups" href="#followups">📞 Follow-ups</a>
+      <a class="admin-nav-item" data-view="service-enquiries" href="#service-enquiries">🛠️ Service Enquiries</a>
+      <a class="admin-nav-item" data-view="service-bookings" href="#service-bookings">📦 Service Bookings</a>
+    </div>
+    <div class="admin-nav-group">
+      <h6>Content</h6>
+      <a class="admin-nav-item" data-view="heritage-cms" href="#heritage-cms">🏛️ Heritage CMS</a>
+    </div>
+    <div class="admin-nav-group">
+      <h6>Marketing</h6>
+      <a class="admin-nav-item" data-view="marketing-crm" href="#marketing-crm">📣 Marketing CRM</a>
+    </div>
+    <div class="admin-nav-group">
+      <h6>Seva</h6>
+      <a class="admin-nav-item" data-view="seva" href="#seva">🙏 Help Requests</a>
+      <a class="admin-nav-item" data-view="volunteers" href="#volunteers">🤝 Volunteers</a>
+      <a class="admin-nav-item" data-view="blood-connect" href="#blood-connect">🩸 Blood Connect</a>
+    </div>
+    <div class="admin-nav-group">
+      <h6>Subscriptions</h6>
+      <a class="admin-nav-item" data-view="subscriptions" href="#subscriptions">💳 Subscription Revenue</a>
+    </div>
+    <div class="admin-nav-group">
+      <h6>Funds</h6>
+      <a class="admin-nav-item" data-view="campaigns" href="#campaigns">❤️ Campaigns</a>
+      <a class="admin-nav-item" data-view="receipts" href="#receipts">🧾 Receipts</a>
+      <a class="admin-nav-item" data-view="funds" href="#funds">🏦 Fund Dashboard</a>
+      <a class="admin-nav-item" data-view="donations" href="#donations">🎁 Donation Control</a>
+    </div>
+    <div class="admin-nav-group">
+      <h6>Finance</h6>
+      <a class="admin-nav-item" data-view="finance" href="#finance">📒 Transaction Ledger</a>
+      <a class="admin-nav-item" data-view="income" href="#income">📈 Income</a>
+      <a class="admin-nav-item" data-view="expenses" href="#expenses">💸 Expenses</a>
+      <a class="admin-nav-item" data-view="commissions" href="#commissions">💼 Commission Center</a>
+      <a class="admin-nav-item" data-view="approvals" href="#approvals">✅ Approval Workflow</a>
+    </div>
+    <div class="admin-nav-group">
+      <h6>Events</h6>
+      <a class="admin-nav-item" data-view="events" href="#events">📅 Events</a>
+    </div>
+    <div class="admin-nav-group">
+      <h6>Analytics</h6>
+      <a class="admin-nav-item" data-view="member-intelligence" href="#member-intelligence">🧠 Member Intelligence</a>
+      <a class="admin-nav-item" data-view="analytics" href="#analytics">🌍 Location Analytics</a>
+      <a class="admin-nav-item" data-view="saved-filters" href="#saved-filters">💾 Saved Filters</a>
+    </div>
+    <div class="admin-nav-group">
+      <h6>Moderation</h6>
+      <a class="admin-nav-item" data-view="reports" href="#reports">🚩 Reports</a>
+    </div>
+    <div class="admin-nav-group">
+      <h6>System</h6>
+      <a class="admin-nav-item" data-view="audit" href="#audit">🗂️ Audit Log</a>
+      <a class="admin-nav-item" href="index.html">🏠 साइटवर परत जा</a>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-banner">
+      <span>⚠️ Admin Mode — Demo (कोणतेही लॉगिन आवश्यक नाही, ही सिम्युलेटेड ERP कन्सोल आहे — सर्व डेटा तुमच्या ब्राउझरमध्ये localStorage मध्ये साठवला जातो)</span>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <select id="adminRoleMode" class="admin-select" style="background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.5); color:#fff; min-width:220px;">
+          <option value="super-admin">Super Admin</option>
+          <option value="finance-admin">Finance Admin</option>
+          <option value="finance-head">Finance Head</option>
+          <option value="audit-officer">Audit Officer</option>
+          <option value="business-admin">Business Admin</option>
+        </select>
+        <button type="button" class="btn btn-outline mini-btn" id="adminRefreshBtn" style="background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.5); color:#fff;">🔄 Refresh</button>
+      </div>
+    </div>
+
+    <!-- ================= DASHBOARD ================= -->
+    <section class="admin-view" id="view-dashboard" data-view="dashboard">
+      <h2>📊 Admin Dashboard</h2>
+      <div class="sub">Connect Maratha समुदाय, व्यवसाय व CRM चे संपूर्ण चित्र — लाईव्ह आकडेवारी.</div>
+      <div class="stat-tiles" id="dashStats"></div>
+      <div class="admin-panel" id="adminRoleSummary" style="margin-top:0; margin-bottom:16px;"></div>
+      <div class="admin-panel">
+        <h3 style="margin-bottom:10px;">⚡ Quick Actions</h3>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a href="#leads" class="btn btn-primary admin-nav-item" data-view="leads">+ नवीन Lead</a>
+          <a href="#opportunities" class="btn btn-outline admin-nav-item" data-view="opportunities">+ व्यवसाय संधी</a>
+          <a href="#seva" class="btn btn-outline admin-nav-item" data-view="seva">🙏 Help Requests पाहा</a>
+          <a href="#finance" class="btn btn-outline admin-nav-item" data-view="finance">📒 Finance Ledger</a>
+          <a href="#member-intelligence" class="btn btn-outline admin-nav-item" data-view="member-intelligence">🧠 Member Intelligence</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= MEMBERS ================= -->
+    <section class="admin-view" id="view-members" data-view="members">
+      <h2>👥 Members</h2>
+      <div class="sub">समाज सदस्यांची यादी — शोधा, sort करा व सदस्य 360° प्रोफाइल पाहा.</div>
+      <div class="admin-toolbar">
+        <input type="text" id="memberSearch" placeholder="नाव / शहर / व्यवसायाने शोधा...">
+        <select class="admin-select" id="memberSort">
+          <option value="name">नावाने Sort</option>
+          <option value="city">शहराने Sort</option>
+          <option value="tier">Tier ने Sort</option>
+        </select>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>नाव</th><th>शहर</th><th>व्यवसाय / Profession</th><th>Tier</th><th>Verified</th></tr></thead>
+          <tbody id="membersTbody"></tbody>
+        </table>
+      </div>
+      <div id="memberDetailPanel"></div>
+    </section>
+
+    <!-- ================= GROUPS ================= -->
+    <section class="admin-view" id="view-groups" data-view="groups">
+      <h2>🧑‍🤝‍🧑 Groups</h2>
+      <div class="sub">सर्व स्थान व आवड-आधारित गट.</div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>गट</th><th>प्रकार</th><th>जिल्हा</th><th>सदस्य संख्या</th></tr></thead>
+          <tbody id="groupsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= BUSINESSES ================= -->
+    <section class="admin-view" id="view-businesses" data-view="businesses">
+      <h2>🏢 Businesses</h2>
+      <div class="sub">व्यवसाय निर्देशिका — verify / feature टॉगल करा.</div>
+      <div class="admin-toolbar">
+        <input type="text" id="bizSearch" placeholder="नाव / शहर / मालकाने शोधा...">
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>व्यवसाय</th><th>मालक</th><th>शहर</th><th>Category</th><th>Rating</th><th>Verified</th><th></th></tr></thead>
+          <tbody id="bizTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= CHAPTERS ================= -->
+    <section class="admin-view" id="view-chapters" data-view="chapters">
+      <h2>🏛️ व्यवसाय मंडळे</h2>
+      <div class="sub">सर्व व्यवसाय मंडळे, open seats, monthly performance आणि leadership overview.</div>
+      <div class="admin-toolbar">
+        <input type="text" id="chapterSearch" placeholder="मंडळ / शहर शोधा...">
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>मंडळ</th><th>शहर</th><th>सभा</th><th>Members</th><th>Open Seats</th><th>Monthly Business</th></tr></thead>
+          <tbody id="chaptersTbody"></tbody>
+        </table>
+      </div>
+      <div id="chapterDetailPanel"></div>
+    </section>
+
+    <!-- ================= OPPORTUNITIES ================= -->
+    <section class="admin-view" id="view-opportunities" data-view="opportunities">
+      <h2>💼 व्यवसाय संधी (Opportunities)</h2>
+      <div class="sub">समाजातील व्यवसाय संधींचा मागोवा.</div>
+      <div class="admin-toolbar">
+        <input type="text" id="oppSearch" placeholder="श्रेणी / गरज / शहर शोधा...">
+        <select class="admin-select" id="oppStatusFilter">
+          <option value="">सर्व Status</option>
+          <option>New</option><option>Contacted</option><option>Qualified</option><option>Discussion</option><option>Proposal</option><option>Negotiation</option><option>Won</option><option>Completed</option><option>Lost</option>
+        </select>
+      </div>
+      <div class="admin-panel">
+        <h3 style="margin-bottom:10px;">+ नवीन संधी नोंदवा</h3>
+        <form id="oppForm" class="admin-form-grid">
+          <div><label>Category</label><input type="text" name="category" required placeholder="उदा. IT, Manufacturing"></div>
+          <div><label>Requirement</label><input type="text" name="requirement" required placeholder="गरज / आवश्यकता"></div>
+          <div><label>Location</label><input type="text" name="location" placeholder="शहर"></div>
+          <div><label>Estimated Value (₹)</label><input type="number" name="estimatedValue" value="0"></div>
+          <div><label>Priority</label>
+            <select name="priority"><option>Low</option><option selected>Medium</option><option>High</option></select>
+          </div>
+          <div style="align-self:end;"><button type="submit" class="btn btn-primary" style="width:100%;">+ जोडा</button></div>
+        </form>
+      </div>
+      <div class="admin-table-wrap" style="margin-top:14px;">
+        <table class="admin-table">
+          <thead><tr><th>Category</th><th>Requirement</th><th>Location</th><th>अंदाजे मूल्य</th><th>Priority</th><th>Status</th><th></th></tr></thead>
+          <tbody id="oppTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= MEETINGS ================= -->
+    <section class="admin-view" id="view-meetings" data-view="meetings">
+      <h2>👥 एक-ते-एक व्यवसाय भेटी</h2>
+      <div class="sub">Scheduled, requested आणि completed collaboration meetings.</div>
+      <div class="admin-toolbar">
+        <input type="text" id="meetingSearch" placeholder="Member / purpose शोधा...">
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>From</th><th>To</th><th>Date</th><th>Mode</th><th>Purpose</th><th>Status</th></tr></thead>
+          <tbody id="meetingsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= APPLICATIONS ================= -->
+    <section class="admin-view" id="view-applications" data-view="applications">
+      <h2>📝 व्यवसाय सदस्यत्व अर्ज</h2>
+      <div class="sub">Application → verification → approval workflow demo.</div>
+      <div class="admin-toolbar">
+        <input type="text" id="applicationSearch" placeholder="Applicant / business / category शोधा...">
+        <select class="admin-select" id="applicationStatusFilter">
+          <option value="">सर्व Status</option>
+          <option>submitted</option>
+          <option>under-review</option>
+          <option>approved</option>
+          <option>rejected</option>
+        </select>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Applicant</th><th>Business</th><th>Category</th><th>Chapter</th><th>Status</th><th>Submitted</th><th>Actions</th></tr></thead>
+          <tbody id="applicationsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= LEADS ================= -->
+    <section class="admin-view" id="view-leads" data-view="leads">
+      <h2>🎯 Leads</h2>
+      <div class="sub">CRM Leads — status pipeline व follow-up track करा.</div>
+      <div class="admin-panel">
+        <h3 style="margin-bottom:10px;">+ नवीन Lead</h3>
+        <form id="leadForm" class="admin-form-grid">
+          <div><label>नाव</label><input type="text" name="name" required></div>
+          <div><label>मोबाईल</label><input type="text" name="mobile"></div>
+          <div><label>Email</label><input type="email" name="email"></div>
+          <div><label>Location</label><input type="text" name="location"></div>
+          <div><label>Type</label>
+            <select name="type"><option>सदस्य</option><option>व्यवसाय</option><option>Seva</option><option>Event</option></select>
+          </div>
+          <div><label>Category</label><input type="text" name="category" placeholder="उदा. Membership, Business"></div>
+          <div><label>Requirement</label><input type="text" name="requirement"></div>
+          <div><label>Assigned To</label><input type="text" name="assignedTo" placeholder="टीम सदस्य"></div>
+          <div><label>Priority</label>
+            <select name="priority"><option>Low</option><option selected>Medium</option><option>High</option></select>
+          </div>
+          <div><label>Expected Value (₹)</label><input type="number" name="expectedValue" value="0"></div>
+          <div><label>Follow-up Date</label><input type="date" name="followUpDate"></div>
+          <div style="align-self:end;"><button type="submit" class="btn btn-primary" style="width:100%;">+ Lead जोडा</button></div>
+        </form>
+      </div>
+      <div class="admin-table-wrap" style="margin-top:14px;">
+        <table class="admin-table">
+          <thead><tr><th>नाव</th><th>Type</th><th>Location</th><th>Assigned</th><th>Priority</th><th>Expected ₹</th><th>Status</th><th></th></tr></thead>
+          <tbody id="leadsTbody"></tbody>
+        </table>
+      </div>
+      <div id="leadDetailPanel"></div>
+    </section>
+
+    <!-- ================= FOLLOWUPS ================= -->
+    <section class="admin-view" id="view-followups" data-view="followups">
+      <h2>📞 Follow-ups</h2>
+      <div class="sub">सर्व Leads साठीचे follow-up वेळापत्रक.</div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Lead</th><th>तारीख</th><th>Purpose</th><th>Outcome</th><th>Assigned</th><th>Status</th></tr></thead>
+          <tbody id="followupsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= SERVICE ENQUIRIES ================= -->
+    <section class="admin-view" id="view-service-enquiries" data-view="service-enquiries">
+      <h2>🛠️ Service Enquiries</h2>
+      <div class="sub">सेवा चौकशा, बजेट आणि preferred schedule.</div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Service</th><th>Provider</th><th>Location</th><th>Budget</th><th>Date/Time</th><th>Status</th></tr></thead>
+          <tbody id="serviceEnquiriesTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= SERVICE BOOKINGS ================= -->
+    <section class="admin-view" id="view-service-bookings" data-view="service-bookings">
+      <h2>📦 Service Bookings</h2>
+      <div class="sub">Booked requests with admin status control.</div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Service</th><th>Provider</th><th>Date/Time</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="serviceBookingsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= SEVA ================= -->
+    <section class="admin-view" id="view-seva" data-view="seva">
+      <h2>🙏 Help Requests (सेवा विनंती)</h2>
+      <div class="sub">समाज सेवा विनंत्या — workflow नुसार status अपडेट करा.</div>
+      <div class="admin-panel">
+        <h3 style="margin-bottom:10px;">+ नवीन सेवा विनंती</h3>
+        <form id="sevaForm" class="admin-form-grid">
+          <div><label>Category</label><input type="text" name="category" required placeholder="उदा. आरोग्य, शिक्षण"></div>
+          <div><label>विनंती करणारे</label><input type="text" name="requesterName" required></div>
+          <div><label>Location</label><input type="text" name="location"></div>
+          <div><label>वर्णन</label><input type="text" name="description"></div>
+          <div style="align-self:end;"><button type="submit" class="btn btn-primary" style="width:100%;">+ नोंदवा</button></div>
+        </form>
+      </div>
+      <div class="admin-table-wrap" style="margin-top:14px;">
+        <table class="admin-table">
+          <thead><tr><th>विनंती करणारे</th><th>Category</th><th>Location</th><th>वर्णन</th><th>Volunteer</th><th>Status</th><th>पुढील पायरी</th></tr></thead>
+          <tbody id="sevaTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= VOLUNTEERS ================= -->
+    <section class="admin-view" id="view-volunteers" data-view="volunteers">
+      <h2>🤝 Volunteers</h2>
+      <div class="sub">स्वयंसेवक नोंदी — कौशल्य व उपलब्धता.</div>
+      <div class="admin-panel">
+        <h3 style="margin-bottom:10px;">+ नवीन स्वयंसेवक</h3>
+        <form id="volForm" class="admin-form-grid">
+          <div><label>Member ID (पर्यायी)</label><input type="text" name="memberId" placeholder="उदा. M1001"></div>
+          <div><label>नाव / Skills</label><input type="text" name="skills" placeholder="उदा. Medical, Teaching (comma separated)"></div>
+          <div><label>शहर</label><input type="text" name="city"></div>
+          <div><label>उपलब्धता</label><input type="text" name="availability" placeholder="उदा. Weekends"></div>
+          <div style="align-self:end;"><button type="submit" class="btn btn-primary" style="width:100%;">+ जोडा</button></div>
+        </form>
+      </div>
+      <div class="admin-table-wrap" style="margin-top:14px;">
+        <table class="admin-table">
+          <thead><tr><th>Member ID</th><th>Skills</th><th>शहर</th><th>उपलब्धता</th><th>पूर्ण कामे</th></tr></thead>
+          <tbody id="volTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= HERITAGE CMS ================= -->
+    <section class="admin-view" id="view-heritage-cms" data-view="heritage-cms">
+      <h2>🏛️ Heritage CMS</h2>
+      <div class="sub">Historical content, sources, claims validation and editorial workflow for the Maratha heritage archive.</div>
+      <div class="stat-tiles" id="heritageCmsStats"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+        <h3 style="margin:0;">📝 Editorial queue</h3>
+        <button type="button" class="btn btn-primary mini-btn" id="addHeritageCmsBtn">+ Add item</button>
+      </div>
+      <div id="heritageCmsEditor"></div>
+      <div class="admin-panel" style="margin-bottom:16px;">
+        <div class="admin-form-grid">
+          <div><label>Search article</label><input type="text" placeholder="शिवाजी, रायगड, राजगड..."></div>
+          <div><label>Review status</label><select class="admin-select"><option>All status</option><option>Draft</option><option>Pending review</option><option>Approved</option><option>Needs source check</option></select></div>
+          <div><label>Content type</label><select class="admin-select"><option>All content</option><option>Figure profile</option><option>Fort article</option><option>Timeline</option><option>Gallery</option></select></div>
+          <div style="align-self:end;"><button class="btn btn-primary" type="button">Apply filters</button></div>
+        </div>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Title</th><th>Type</th><th>Author</th><th>Updated</th><th>Review</th><th>Sources</th><th>Action</th></tr></thead>
+          <tbody id="heritageCmsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= MARKETING CRM ================= -->
+    <section class="admin-view" id="view-marketing-crm" data-view="marketing-crm">
+      <h2>📣 Marketing CRM + Audience Segments</h2>
+      <div class="sub">Campaign performance, segments, acquisition channels and community conversion funnel.</div>
+      <div class="stat-tiles" id="marketingCrmStats"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+        <h3 style="margin:0;">🎯 Audience segments</h3>
+        <button type="button" class="btn btn-primary mini-btn" id="addMarketingSegmentBtn">+ Add segment</button>
+      </div>
+      <div id="marketingEditor"></div>
+      <div class="admin-panel" style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+          <h3 style="margin:0;">📊 Segment snapshot</h3>
+          <button type="button" class="btn btn-primary mini-btn" id="addMarketingSegmentBtnSecondary">+ Add segment</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Segment</th><th>Members</th><th>Engagement</th><th>Primary channel</th><th>Priority</th><th>Conversion</th><th>Action</th></tr></thead>
+            <tbody id="marketingSegmentsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="admin-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+          <h3 style="margin:0;">📈 Campaign pipeline</h3>
+          <button type="button" class="btn btn-primary mini-btn" id="addMarketingCampaignBtn">+ Add campaign</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Campaign</th><th>Reach</th><th>Clicks</th><th>Leads</th><th>CTR</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="marketingCampaignsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= BLOOD CONNECT ================= -->
+    <section class="admin-view" id="view-blood-connect" data-view="blood-connect">
+      <h2>🩸 Blood Connect + Volunteer Impact</h2>
+      <div class="sub">Emergency blood support, donor readiness and volunteer response impact across districts.</div>
+      <div class="stat-tiles" id="bloodConnectStats"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+        <h3 style="margin:0;">🩺 Emergency blood requests</h3>
+        <button type="button" class="btn btn-primary mini-btn" id="addBloodRequestBtn">+ Add request</button>
+      </div>
+      <div id="bloodEditor"></div>
+      <div class="admin-panel" style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+          <h3 style="margin:0;">🩺 Blood support queue</h3>
+          <button type="button" class="btn btn-primary mini-btn" id="addBloodRequestBtnSecondary">+ Add request</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Request</th><th>District</th><th>Blood group</th><th>Needed by</th><th>Volunteers</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="bloodRequestsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="admin-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+          <h3 style="margin:0;">🤝 Volunteer impact</h3>
+          <button type="button" class="btn btn-primary mini-btn" id="addVolunteerImpactBtn">+ Add impact</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Volunteer</th><th>City</th><th>Hours</th><th>Campaigns</th><th>Donations</th><th>Impact score</th><th>Action</th></tr></thead>
+            <tbody id="volunteerImpactTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CAMPAIGNS ================= -->
+    <section class="admin-view" id="view-campaigns" data-view="campaigns">
+      <h2>❤️ Campaigns (निधी मोहीम)</h2>
+      <div class="sub">देणगी मोहिमांची स्थिती.</div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>मोहीम</th><th>Target ₹</th><th>Collected ₹</th><th>% पूर्ण</th><th>देणगीदार</th></tr></thead>
+          <tbody id="campTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= RECEIPTS ================= -->
+    <section class="admin-view" id="view-receipts" data-view="receipts">
+      <h2>🧾 Receipts</h2>
+      <div class="sub">सर्व मोहिमांमधील देणगी पावत्या.</div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Receipt ID</th><th>मोहीम</th><th>देणगीदार</th><th>रक्कम ₹</th><th>तारीख</th></tr></thead>
+          <tbody id="receiptsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= SUBSCRIPTIONS ================= -->
+    <section class="admin-view" id="view-subscriptions" data-view="subscriptions">
+      <h2>💳 Subscription Revenue</h2>
+      <div class="sub">Membership, business and professional subscription revenue dashboard.</div>
+      <div class="admin-toolbar">
+        <input type="search" id="subscriptionSearch" placeholder="Search member / plan / city">
+        <select class="admin-select" id="subscriptionStatusFilter"><option value="">All Status</option><option>Active</option><option>Pending</option><option>Expired</option><option>Cancelled</option></select>
+        <select class="admin-select" id="subscriptionTypeFilter"><option value="">All Types</option><option>Membership</option><option>Business</option><option>Professional</option></select>
+      </div>
+      <div class="stat-tiles" id="subscriptionStats"></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>ID</th><th>Member</th><th>Plan</th><th>Type</th><th>City</th><th>Amount</th><th>Status</th><th>Expiry</th></tr></thead>
+          <tbody id="subscriptionTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= FUNDS ================= -->
+    <section class="admin-view" id="view-funds" data-view="funds">
+      <h2>🏦 Fund Dashboard</h2>
+      <div class="sub">Fund-wise balances, approvals, spending and available balance.</div>
+      <div class="stat-tiles" id="fundStats"></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Fund</th><th>Opening</th><th>Received</th><th>Approved</th><th>Spent</th><th>Refunds</th><th>Pending</th><th>Available</th></tr></thead>
+          <tbody id="fundsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= DONATIONS ================= -->
+    <section class="admin-view" id="view-donations" data-view="donations">
+      <h2>🎁 Donation & Fund Control Center</h2>
+      <div class="sub">Campaign-wise donation control, utilization and settlement visibility.</div>
+      <div class="admin-toolbar">
+        <input type="search" id="donationSearch" placeholder="Search donor / campaign / city">
+        <select class="admin-select" id="donationCityFilter"><option value="">All Cities</option></select>
+      </div>
+      <div class="stat-tiles" id="donationStats"></div>
+      <div class="admin-table-wrap" style="margin-bottom:16px;">
+        <table class="admin-table">
+          <thead><tr><th>Campaign</th><th>Collected</th><th>Donors</th><th>Utilized</th><th>Unutilized</th></tr></thead>
+          <tbody id="donationCampaignTbody"></tbody>
+        </table>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Txn ID</th><th>Donor</th><th>Campaign</th><th>City</th><th>Amount</th><th>Status</th><th>Settlement</th></tr></thead>
+          <tbody id="donationTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= FINANCE ================= -->
+    <section class="admin-view" id="view-finance" data-view="finance">
+      <h2>📒 Finance & Funds Administrator</h2>
+      <div class="sub">Track → Verify → Reconcile → Categorize → Approve → Report → Audit</div>
+      <div class="admin-panel" style="margin-bottom:16px;">
+        <div class="admin-form-grid">
+          <div><label>Search</label><input type="search" id="financeSearch" placeholder="Txn / payer / city / module"></div>
+          <div><label>Quick Date</label><select id="financeQuick" class="admin-select"><option value="">All</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="7d">7 Days</option><option value="30d">30 Days</option><option value="thisMonth">This Month</option><option value="lastMonth">Last Month</option><option value="thisYear">This Year</option><option value="lastYear">Last Year</option></select></div>
+          <div><label>Month</label><select id="financeMonth" class="admin-select"><option value="">All</option><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select></div>
+          <div><label>Year</label><select id="financeYear" class="admin-select"><option value="">All</option></select></div>
+          <div><label>State</label><select id="financeState" class="admin-select"><option value="">All</option><option>महाराष्ट्र</option><option>कर्नाटक</option></select></div>
+          <div><label>City</label><select id="financeCity" class="admin-select"><option value="">All</option></select></div>
+          <div><label>Direction</label><select id="financeDirection" class="admin-select"><option value="">All</option><option>Income</option><option>Expense</option></select></div>
+          <div><label>Type</label><select id="financeType" class="admin-select"><option value="">All</option><option>Donation</option><option>Membership Subscription</option><option>Service Revenue</option><option>Opportunity Commission</option><option>Event Revenue</option><option>Sponsorship</option><option>Advertisement</option><option>Chapter Fees</option><option>Expense</option><option>Service Refund</option></select></div>
+          <div><label>Status</label><select id="financePaymentStatus" class="admin-select"><option value="">All</option><option>Initiated</option><option>Pending</option><option>Payment Received</option><option>Payment Verified</option><option>Settlement Pending</option><option>Settled</option><option>Reconciled</option><option>Failed</option><option>Cancelled</option><option>Refunded</option></select></div>
+          <div><label>Amount</label><select id="financeAmountRange" class="admin-select"><option value="">All</option><option value="0-1000">₹0–₹1,000</option><option value="1000-5000">₹1,000–₹5,000</option><option value="5000-10000">₹5,000–₹10,000</option><option value="10000-50000">₹10,000–₹50,000</option><option value="50000+">₹50,000+</option></select></div>
+          <div style="align-self:end; display:flex; gap:8px; flex-wrap:wrap;"><button type="button" class="btn btn-primary" id="financeApplyBtn">Apply Filters</button><button type="button" class="btn btn-outline" id="financeClearBtn">Clear</button><button type="button" class="btn btn-outline" id="financeSaveFilterBtn">Save Filter</button></div>
+        </div>
+      </div>
+      <div class="stat-tiles" id="financeStats"></div>
+      <div class="admin-panel" id="financeRolePanel" style="margin-top:0; margin-bottom:16px;"></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Txn ID</th><th>Date</th><th>Type</th><th>Payer / Receiver</th><th>Module</th><th>Amount</th><th>Net</th><th>Status</th><th>Settlement</th><th>Reconciliation</th></tr></thead>
+          <tbody id="financeTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= INCOME ================= -->
+    <section class="admin-view" id="view-income" data-view="income">
+      <h2>📈 Income Management</h2>
+      <div class="sub">Subscription, donation, service, commission, event, sponsorship and other income sources.</div>
+      <div class="stat-tiles" id="incomeStats"></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Source</th><th>Transactions</th><th>Gross</th><th>Net</th><th>Gateway</th></tr></thead>
+          <tbody id="incomeTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= EXPENSES ================= -->
+    <section class="admin-view" id="view-expenses" data-view="expenses">
+      <h2>💸 Expense Management</h2>
+      <div class="sub">Office, technology, events, seva, marketing and campaign expenses.</div>
+      <div class="admin-toolbar">
+        <input type="search" id="expenseSearch" placeholder="Search expense / vendor / category">
+        <select class="admin-select" id="expenseCategoryFilter"><option value="">All Categories</option><option>Technology</option><option>Marketing</option><option>Campaign expenses</option><option>Employee expenses</option></select>
+      </div>
+      <div class="stat-tiles" id="expenseStats"></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Expense ID</th><th>Date</th><th>Category</th><th>Vendor</th><th>City</th><th>Total</th><th>Status</th><th>Reconciliation</th></tr></thead>
+          <tbody id="expenseTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= COMMISSIONS ================= -->
+    <section class="admin-view" id="view-commissions" data-view="commissions">
+      <h2>💼 Commission Center</h2>
+      <div class="sub">Track service, opportunity, referral and other configured commission sources.</div>
+      <div class="admin-toolbar">
+        <input type="search" id="commissionSearch" placeholder="Search source / record / city">
+        <select class="admin-select" id="commissionStatusFilter"><option value="">All Status</option><option>Pending</option><option>Settled</option><option>Reconciled</option></select>
+      </div>
+      <div class="stat-tiles" id="commissionStats"></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Commission ID</th><th>Source</th><th>Record</th><th>Gross</th><th>Commission %</th><th>Commission</th><th>Net</th><th>Status</th></tr></thead>
+          <tbody id="commissionTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= APPROVALS ================= -->
+    <section class="admin-view" id="view-approvals" data-view="approvals">
+      <h2>✅ Financial Approval Workflow</h2>
+      <div class="sub">Configurable approval levels and pending approvals snapshot.</div>
+      <div class="admin-panel" id="approvalRulesPanel" style="margin-bottom:16px;"></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>ID</th><th>Module</th><th>Record</th><th>Amount</th><th>Requested By</th><th>Required Approval</th><th>Status</th><th>Approved By</th></tr></thead>
+          <tbody id="approvalTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= MEMBER INTELLIGENCE ================= -->
+    <section class="admin-view" id="view-member-intelligence" data-view="member-intelligence">
+      <h2>🧠 Member Intelligence</h2>
+      <div class="sub">Member → Location → Interests → Profession → Revenue → Engagement 360°.</div>
+      <div class="admin-panel" style="margin-bottom:16px;">
+        <div class="admin-form-grid">
+          <div><label>Search</label><input type="search" id="intelSearch" placeholder="Name / Member ID / profession / business"></div>
+          <div><label>State</label><select id="intelState" class="admin-select"><option value="">All</option><option>महाराष्ट्र</option><option>कर्नाटक</option></select></div>
+          <div><label>District</label><select id="intelDistrict" class="admin-select"><option value="">All</option></select></div>
+          <div><label>City</label><select id="intelCity" class="admin-select"><option value="">All</option></select></div>
+          <div><label>Interest</label><select id="intelInterest" class="admin-select"><option value="">All</option></select></div>
+          <div><label>Profession</label><select id="intelProfession" class="admin-select"><option value="">All</option></select></div>
+        </div>
+      </div>
+      <div class="stat-tiles" id="intelStats"></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Member</th><th>Location</th><th>Profession</th><th>Interest</th><th>Subscription</th><th>Total Paid</th><th>Donations</th><th>Services</th><th>Opportunities</th></tr></thead>
+          <tbody id="intelTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= LOCATION ANALYTICS ================= -->
+    <section class="admin-view" id="view-analytics" data-view="analytics">
+      <h2>🌍 Geographic Analytics</h2>
+      <div class="sub">Country → State → District → City financial drill-down.</div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Location</th><th>Members</th><th>Subscription</th><th>Services</th><th>Commission</th><th>Donations</th><th>Expenses</th><th>Net</th></tr></thead>
+          <tbody id="analyticsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= SAVED FILTERS ================= -->
+    <section class="admin-view" id="view-saved-filters" data-view="saved-filters">
+      <h2>💾 Saved Filters</h2>
+      <div class="sub">Reusable member, finance and subscription filter presets.</div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Name</th><th>Module</th><th>Conditions</th></tr></thead>
+          <tbody id="savedFiltersTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= EVENTS ================= -->
+    <section class="admin-view" id="view-events" data-view="events">
+      <h2>📅 Events</h2>
+      <div class="sub">उपक्रम व नोंदणी संख्या — क्लिक करून नोंदणीकृत यादी पाहा.</div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>कार्यक्रम</th><th>तारीख</th><th>ठिकाण</th><th>नोंदणी संख्या</th></tr></thead>
+          <tbody id="eventsTbody"></tbody>
+        </table>
+      </div>
+      <div id="eventDetailPanel"></div>
+    </section>
+
+    <!-- ================= REPORTS / MODERATION ================= -->
+    <section class="admin-view" id="view-reports" data-view="reports">
+      <h2>🚩 Reports (Moderation)</h2>
+      <div class="sub">तक्रारी व moderation queue.</div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Type</th><th>Target</th><th>कारण</th><th>Status</th><th>कृती</th></tr></thead>
+          <tbody id="reportsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= AUDIT LOG ================= -->
+    <section class="admin-view" id="view-audit" data-view="audit">
+      <h2>🗂️ Audit Log</h2>
+      <div class="sub">सर्व CRM/Admin कृतींचा उलट-कालानुक्रमे इतिहास.</div>
+      <div class="admin-panel" id="auditList" style="padding:0;"></div>
+    </section>
+
+  </main>
+</div>
+
+<script src="assets/js/cm-data.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/cm-admin.js"></script>
+</body>
+</html>

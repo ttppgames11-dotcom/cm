@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="mr">
 <head>
 <meta charset="UTF-8">
@@ -30,7 +30,7 @@
 <header class="site-header">
   <div class="site-header-inner">
     <a href="index.html" class="brand-desktop">
-      <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" class="brand-logo">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
       <div class="brand-titles">
         <div class="brand-main">
           <span class="en">CONNECT</span>
@@ -54,6 +54,7 @@
 
     <!-- Header Actions -->
     <div class="header-actions">
+      <a href="cm-search.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🔎 शोध</a>
       <a href="cm-login.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
       <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
     </div>
@@ -74,8 +75,8 @@
 <div class="wrap">
   <section>
     <div class="search-row">
-      <input type="text" data-search="#peopleGrid" placeholder="उदा. Pune मधील Web Developer शोधा">
-      <button>शोधा</button>
+      <input type="text" id="cmPeopleSearch" placeholder="उदा. Pune मधील Web Developer शोधा">
+      <button id="cmPeopleSearchBtn">शोधा</button>
     </div>
     <div class="tabs" data-tabs="#peopleGrid">
       <button class="tab active" data-filter="all">सर्व</button>
@@ -87,27 +88,18 @@
   </section>
 
   <section>
-    <div class="section-head"><h2>समाज गट</h2><a class="see-all" href="cm-groups.html">सर्व गट →</a></div>
-    <div class="grid grid-4">
-      <div class="feature-card"><div class="media">⛰️</div><div class="body"><strong>गड-किल्ले भटकंती</strong><div class="d">4,200+ सदस्य</div></div></div>
-      <div class="feature-card"><div class="media">📚</div><div class="body"><strong>इतिहास अभ्यासक</strong><div class="d">2,850+ सदस्य</div></div></div>
-      <div class="feature-card"><div class="media">💼</div><div class="body"><strong>मराठी उद्योजक</strong><div class="d">3,600+ सदस्य</div></div></div>
-      <div class="feature-card"><div class="media">🩸</div><div class="body"><strong>रक्तदान समूह</strong><div class="d">5,100+ सदस्य</div></div></div>
-    </div>
+    <div class="section-head" data-reveal><h2>💬 समाज फीड</h2><a class="see-all" href="cm-community.html">फीड पहा →</a></div>
+    <div class="notice safe" style="margin-bottom:0;">नवीन! समाज बांधवांशी पोस्ट, कमेंट्स व लाईक्सद्वारे जोडा — <a href="cm-community.html" style="font-weight:700; color:var(--saffron-700);">समाज फीड उघडा</a>, किंवा <a href="cm-messages.html" style="font-weight:700; color:var(--saffron-700);">थेट मेसेज पाठवा</a>.</div>
   </section>
 
   <section>
-    <div class="section-head"><h2>सदस्य</h2></div>
-    <div class="grid grid-4" id="peopleGrid">
-      <div class="profile-card" data-cat="pune" data-name="अमोल जाधव"><div class="avatar">अ</div><div class="name">अमोल जाधव</div><div class="role">Web Developer · पुणे</div><span class="cta">Connect करा</span></div>
-      <div class="profile-card" data-cat="mumbai" data-name="प्रिया देशमुख"><div class="avatar">प्र</div><div class="name">प्रिया देशमुख</div><div class="role">CA · मुंबई</div><span class="cta">Connect करा</span></div>
-      <div class="profile-card" data-cat="nashik" data-name="रोहित मोरे"><div class="avatar">रो</div><div class="name">रोहित मोरे</div><div class="role">ट्रेकिंग ग्रुप लीड · नाशिक</div><span class="cta">Connect करा</span></div>
-      <div class="profile-card" data-cat="pune" data-name="स्वाती पाटील"><div class="avatar">स्वा</div><div class="name">स्वाती पाटील</div><div class="role">शिक्षिका · पुणे</div><span class="cta">Connect करा</span></div>
-      <div class="profile-card" data-cat="outside" data-name="निखिल शिंदे"><div class="avatar">नि</div><div class="name">निखिल शिंदे</div><div class="role">IT प्रोफेशनल · बेंगळुरू</div><span class="cta">Connect करा</span></div>
-      <div class="profile-card" data-cat="mumbai" data-name="संकेत भोसले"><div class="avatar">सं</div><div class="name">संकेत भोसले</div><div class="role">विद्यार्थी · मुंबई</div><span class="cta">Connect करा</span></div>
-      <div class="profile-card" data-cat="nashik" data-name="मयुरी कदम"><div class="avatar">म</div><div class="name">मयुरी कदम</div><div class="role">समाजसेविका · नाशिक</div><span class="cta">Connect करा</span></div>
-      <div class="profile-card" data-cat="pune" data-name="विकास गायकवाड"><div class="avatar">वि</div><div class="name">विकास गायकवाड</div><div class="role">उद्योजक · पुणे</div><span class="cta">Connect करा</span></div>
-    </div>
+    <div class="section-head" data-reveal><h2>समाज गट</h2><a class="see-all" href="cm-groups.html">सर्व गट →</a></div>
+    <div class="grid grid-4" data-reveal-group id="cmGroupGridPeople" data-type="interest"></div>
+  </section>
+
+  <section>
+    <div class="section-head" data-reveal><h2>सदस्य</h2></div>
+    <div class="grid grid-4" data-reveal-group id="peopleGrid"></div>
   </section>
 
   <div class="notice">
@@ -121,7 +113,7 @@
     <!-- Column 1: Brand & Mission -->
     <div>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-        <img src="assets/images/logo_original_uncropped.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
+        <img src="assets/images/logo.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
         <span style="font-family:'Baloo 2', sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold-400);">CONNECT मराठा</span>
       </div>
       <p style="font-size:0.86rem; line-height:1.6; color:rgba(251,243,227,0.8); margin-bottom:16px;">
@@ -140,6 +132,10 @@
         <li><a href="cm-shivaji-maharaj.html">🚩 छत्रपती शिवाजी महाराज</a></li>
         <li><a href="cm-sambhaji-maharaj.html">⚔️ छत्रपती संभाजी महाराज</a></li>
         <li><a href="cm-bajirao-peshwa.html">🐎 श्रीमंत बाजीराव पेशवे</a></li>
+        <li><a href="cm-rajmata-jijau.html">🙏 राजमाता जिजाऊ</a></li>
+        <li><a href="cm-rajaram-maharaj.html">🛡️ छत्रपती राजाराम महाराज</a></li>
+        <li><a href="cm-tarabai.html">👑 महाराणी ताराबाई</a></li>
+        <li><a href="cm-shahu-maharaj.html">📜 छत्रपती शाहू महाराज</a></li>
         <li><a href="cm-warriors.html">🛡️ अमर वीर व वीरांगना</a></li>
         <li><a href="cm-forts-map.html">🏰 महाराष्ट्रातील ३५०+ किल्ले</a></li>
         <li><a href="cm-history.html">📖 मराठा साम्राज्य कालपट</a></li>
@@ -182,6 +178,8 @@
 </footer>
 
 
+<script src="assets/js/cm-data.js"></script>
+<script src="assets/js/cm-connect.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

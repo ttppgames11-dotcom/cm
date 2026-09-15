@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>बलिदान मास व ऐतिहासिक स्मृती दालन — Connect Maratha</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+/* Dedicated Balidan Maas styling */
+.balidan-banner-alert {
+  background: linear-gradient(135deg, rgba(61, 11, 14, 0.95), rgba(42, 7, 9, 0.98));
+  border: 1px solid var(--gold-500);
+  border-radius: 12px;
+  padding: 16px 22px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  color: var(--paper);
+}
+.balidan-banner-alert .badge-voluntary {
+  background: var(--gold-500);
+  color: var(--maroon-950);
+  font-weight: 800;
+  font-size: 0.76rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.purpose-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  border-top: 4px solid var(--gold-500);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.purpose-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(61,11,14,0.12);
+}
+.purpose-card .icon-wrap {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  display: inline-block;
+}
+.purpose-card h4 {
+  color: var(--maroon-950);
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+}
+.purpose-card p {
+  color: #4A2A2E;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+.calendar-slider-wrap {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(233,196,106,0.4);
+}
+.days-pills {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+  scrollbar-width: thin;
+}
+.day-pill {
+  padding: 8px 16px;
+  background: #F5EDE0;
+  border: 1px solid rgba(90,17,22,0.15);
+  border-radius: 30px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--maroon-900);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.day-pill:hover, .day-pill.active {
+  background: var(--maroon-900);
+  color: var(--gold-300);
+  border-color: var(--gold-500);
+}
+.daily-smruti-card {
+  background: linear-gradient(145deg, #FFFDF8, #FBF3E3);
+  border: 2px solid var(--gold-500);
+  border-radius: 16px;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 28px;
+  align-items: center;
+}
+.action-item-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(46, 125, 50, 0.1);
+  color: #1b5e20;
+  border: 1px solid rgba(46, 125, 50, 0.3);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin: 4px 4px 4px 0;
+}
+.source-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.74rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  background: rgba(61,11,14,0.08);
+  color: var(--maroon-950);
+}
+.source-tag.verified {
+  background: rgba(46, 125, 50, 0.15);
+  color: #1b5e20;
+}
+.memorial-grid-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  border: 1px solid #F0E6D8;
+  transition: transform 0.3s ease;
+}
+.memorial-grid-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px rgba(0,0,0,0.15);
+}
+.memorial-grid-card img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+}
+.memorial-card-body {
+  padding: 20px;
+}
+@media(max-width: 860px) {
+  .daily-smruti-card { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Top Utility Bar -->
+<div class="site-topbar">
+  <div class="site-topbar-inner">
+    <div class="left-info">
+      <span>🚩 <strong>जय जिजाऊ · जय शिवराय · जय शंभूराजे</strong></span>
+      <span style="opacity:0.6;">|</span>
+      <span>बलिदान मास — स्वाभिमान, निष्ठा व समाजसेवेचे पवित्र पर्व</span>
+    </div>
+    <div class="right-info">
+      <span>📞 हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
+      <span style="opacity:0.6;">|</span>
+      <a href="cm-movements.html" style="color:var(--gold-400); text-decoration:underline;">चळवळी व मोर्चे</a>
+      <span style="opacity:0.6;">|</span>
+      <a href="cm-governance.html" style="color:var(--gold-400); text-decoration:underline;">संपादकीय व DPDP धोरण</a>
+    </div>
+  </div>
+</div>
+
+<!-- Main Header -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="index.html" class="brand-desktop">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
+      <div class="brand-titles">
+        <div class="brand-main">
+          <span class="en">CONNECT</span>
+          <span class="mr">मराठा</span>
+        </div>
+        <span class="brand-sub">भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी</span>
+      </div>
+    </a>
+    <nav class="desktop-nav">
+      <a href="index.html">🏠 मुखपृष्ठ</a>
+      <a href="cm-history.html">⚔️ मराठा इतिहास</a>
+      <a href="cm-balidan-maas.html" class="active">🕯️ बलिदान मास</a>
+      <a href="cm-movements.html">🚩 मोर्चे व चळवळी</a>
+      <a href="cm-historical-dates.html">📅 दिनविशेष</a>
+      <a href="cm-granthalaya.html">📚 ग्रंथालय</a>
+      <a href="cm-achievers.html">🌟 गौरव</a>
+      <a href="cm-more.html">📂 अधिक ▾</a>
+    </nav>
+    <div class="header-actions">
+      <a href="cm-search.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🔎 शोध</a>
+      <a href="cm-login.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
+      <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
+    </div>
+  </div>
+</header>
+
+<!-- Breadcrumbs -->
+<div class="breadcrumbs-bar">
+  <div class="breadcrumbs-inner">
+    <a href="index.html">🏠 मुखपृष्ठ</a>
+    <span class="sep">›</span>
+    <a href="cm-history.html">इतिहास व वारसा</a>
+    <span class="sep">›</span>
+    <span class="current">बलिदान मास व ऐतिहासिक स्मृती दालन</span>
+  </div>
+</div>
+
+<!-- Hero Section -->
+<div class="hero" style="min-height: 480px;">
+  <img src="assets/images/balidan-maas-memorial.jpg" alt="बलिदान मास व अखंड स्वाभिमान स्मारक" class="hero-bg-img">
+  <div class="hero-overlay" style="background: radial-gradient(circle at 70% 35%, rgba(20,4,6,0.65), rgba(12,2,4,0.95) 85%);"></div>
+  <div class="wrap hero-content" style="max-width:1300px; padding:48px 24px;">
+    <div class="eyebrow" style="color:var(--gold-400);">Section 7 & 8 • Master Product Blueprint</div>
+    <h1 style="font-size: clamp(2.2rem, 4.5vw, 3.8rem); line-height: 1.15; color:#fff;">
+      बलिदान मास व <span style="background:linear-gradient(90deg,var(--gold-400),var(--saffron-500)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;">स्मृती दालन</span>
+    </h1>
+    <div class="rule" style="background:var(--gold-500); width:80px; height:4px; margin:16px 0;"></div>
+    <p class="tagline" style="color:var(--text-sec); font-size:1.12rem; max-width:64ch;">
+      स्वाभिमानाची अखंड मशाल • छत्रपती संभाजी महाराज व स्वराज्य वीरांच्या बलिदानाचे कृतज्ञतापूर्वक स्मरण • अभ्यास, मूल्यसंवर्धन आणि समाजोपयोगी रचनात्मक कार्याची प्रेरणा.
+    </p>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:24px;">
+      <a href="#smruti-calendar" class="btn btn-primary">📅 आजची स्मृती दिनदर्शिका</a>
+      <a href="#constructive-actions" class="btn btn-glass">🤝 रचनात्मक सेवा उपक्रम</a>
+      <a href="#memorial-archive" class="btn btn-glass">🏛️ समाधी व स्मारक दालन</a>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content Wrap -->
+<div class="wrap" style="max-width:1300px; padding:40px 24px;">
+
+  <!-- Official Positioning Alert (Section 7 Explicit Requirements) -->
+  <div class="balidan-banner-alert">
+    <div style="font-size:2rem; line-height:1;">⚖️</div>
+    <div>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
+        <span class="badge-voluntary">अधिकृत संपादकीय भूमिका · Editorial Positioning</span>
+        <span class="source-tag verified">✓ महाराष्ट्र शासन गॅझेटिअर संदर्भ</span>
+      </div>
+      <p style="font-size:0.92rem; line-height:1.6; color:rgba(255,248,231,0.92);">
+        <strong>Connect Maratha चे स्पष्ट धोरण:</strong> बलिदान मास ही कोणत्याही विशिष्ट धार्मिक कर्मकांडाची सक्ती नसून, <strong>स्वैच्छिक ऐतिहासिक स्मरण, कृतज्ञता आणि अभ्यासपर प्रबोधनाचा उपक्रम</strong> आहे. छत्रपती संभाजी महाराज व असंख्य शिलेदारांच्या बलिदानाचा इतिहास हा अधिकृत ऐतिहासिक दस्तऐवज, समकालीन साधने आणि <em>महाराष्ट्र शासन गॅझेटिअर (Maharashtra State Gazetteers)</em> यांच्या आधारे वस्तुनिष्ठपणे मांडण्यात आला आहे. आदराचे स्मरण हे कोणत्याही समाजाबद्दल द्वेष निर्माण करण्यासाठी नसून, राष्ट्रनिष्ठा, चरित्रसंवर्धन आणि समाजसेवेसाठी आहे.
+      </p>
+    </div>
+  </div>
+
+  <!-- Why Observe Balidan Maas - 5 Core Purposes -->
+  <section style="margin-bottom: 56px;">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow-sm">Section 7.2 • Core Philosophy</span>
+        <h2>बलिदान मास का पाळावा? — ५ मुख्य उद्दिष्टे</h2>
+      </div>
+    </div>
+    <div class="grid grid-3" style="gap:24px;">
+      <div class="purpose-card">
+        <span class="icon-wrap">🔥</span>
+        <h4>१. बलिदानाची कृतज्ञ स्मृती</h4>
+        <p>ज्या महामानवांनी स्वराज्य, स्वाभिमान, संस्कृती आणि रयतेच्या स्वातंत्र्यासाठी प्राण, पद, संपत्ती व सुरक्षिततेचा त्याग केला, त्यांच्या त्यागाचे ऋण मनापासून मान्य करणे.</p>
+        <div style="margin-top:12px; font-size:0.8rem; font-weight:700; color:var(--maroon-900);">मुख्य संदर्भ: छत्रपती संभाजी महाराज, कवी कलश, वीर मावळे</div>
+      </div>
+      <div class="purpose-card">
+        <span class="icon-wrap">📖</span>
+        <h4>२. इतिहासाचा सखोल अभ्यास</h4>
+        <p>केवळ नावांचा जयघोष करण्यापेक्षा तरुण पिढीने मूळ ऐतिहासिक कागदपत्रे, बखरी, शिलालेख आणि समकालीन संदर्भ वाचून खरा इतिहास समजून घेणे.</p>
+        <div style="margin-top:12px; font-size:0.8rem; font-weight:700; color:var(--maroon-900);">मुख्य संदर्भ: जेधे शकावली, सभासद बखर, गॅझेटिअर</div>
+      </div>
+      <div class="purpose-card">
+        <span class="icon-wrap">🛡️</span>
+        <h4>३. नैतिक मूल्यांची जपणूक</h4>
+        <p>छत्रपती शिवराय-शंभूरायांच्या आदर्शांमधून शौर्य, संयम, सचोटी, स्त्रीदाक्षिण्य, स्वाभिमान, कर्तव्याची जाणीव आणि समाजहिताची जीवनमूल्ये अंगीकारणे.</p>
+        <div style="margin-top:12px; font-size:0.8rem; font-weight:700; color:var(--maroon-900);">मूल्ये: स्वाभिमान • निष्ठा • लोककल्याण • चारित्र्य</div>
+      </div>
+      <div class="purpose-card">
+        <span class="icon-wrap">🏛️</span>
+        <h4>४. स्मृती व दस्तऐवजीकरण जतन</h4>
+        <p>गड-किल्ल्यांचे संवर्धन, ऐतिहासिक समाधी स्थळांची निगा, मोडी लिपीतील पत्रांचे डिजिटायझेशन, संग्रहालये आणि अभ्यास व्याख्यानांचे आयोजन करणे.</p>
+        <div style="margin-top:12px; font-size:0.8rem; font-weight:700; color:var(--maroon-900);">माध्यमे: डिजिटल अर्काईव्ह • दुर्ग भ्रमंती • व्याख्यानमाला</div>
+      </div>
+      <div class="purpose-card">
+        <span class="icon-wrap">🌱</span>
+        <h4>५. रचनात्मक समाजसेवेची कृती</h4>
+        <p>केवळ दुःखात न अडकता त्यागाचे रूपांतर सकारात्मक सामाजिक कार्यात करणे — रक्तदान, दुर्ग स्वच्छता, वृक्षारोपण, विद्यार्थी शिष्यवृत्ती व गरजू रुग्णांना मदत.</p>
+        <div style="margin-top:12px; font-size:0.8rem; font-weight:700; color:var(--maroon-900);">कृती: रक्तदान शिबिरे • गड स्वच्छता • शैक्षणिक दत्तक</div>
+      </div>
+      <div class="purpose-card" style="background: linear-gradient(135deg, var(--maroon-900), var(--maroon-950)); color:#fff;">
+        <span class="icon-wrap" style="color:var(--gold-400);">🕊️</span>
+        <h4 style="color:#fff;">Connect Maratha वचन</h4>
+        <p style="color:rgba(255,248,231,0.88);">"स्वाभिमान जपा, पण कोणाचाही द्वेष करू नका. पूर्वजांच्या पराक्रमावर गर्व करा, पण स्वतःचे कर्तव्य पूर्ण करून नव्या पिढीचे भविष्य उज्ज्वल घडवा."</p>
+        <div style="margin-top:14px; color:var(--gold-300); font-weight:700; font-size:0.82rem;">— CM Editorial Principle 48</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7.3: Interactive CM Balidan Maas Calendar (आजची स्मृती) -->
+  <section id="smruti-calendar" style="margin-bottom: 56px;">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow-sm">Section 7.3 • Daily Remembrance Calendar</span>
+        <h2>CM बलिदान मास दिनदर्शिका — "आजची स्मृती"</h2>
+      </div>
+      <div style="font-size:0.88rem; color:var(--muted);">३० दिवसांचे दैनंदिन स्मृती पर्व व रचनात्मक संकल्प</div>
+    </div>
+
+    <div class="calendar-slider-wrap">
+      <div class="days-pills" id="daysPillsContainer">
+        <!-- Javascript populates days 1-30 -->
+      </div>
+
+      <div class="daily-smruti-card" id="activeSmrutiCard">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+            <span class="card-tag" id="smrutiDayTag">दिवस १ · फाल्गुन शुद्ध प्रतिपदा</span>
+            <span class="source-tag verified" id="smrutiSourceBadge">✓ समकालीन बखर व गॅझेटिअर</span>
+          </div>
+          <h3 style="font-size:1.6rem; color:var(--maroon-950); margin-bottom:10px;" id="smrutiTitle">धर्मवीर छत्रपती संभाजी महाराज — संगमेश्वर ते तुळापूर स्वाभिमान पर्व</h3>
+          <p style="font-size:0.92rem; color:var(--ink-soft); line-height:1.6; margin-bottom:16px;" id="smrutiDesc">
+            मुघल बादशहा औरंगजेबाने संगमेश्वर येथे छलकपटाने संभाजी महाराजांना कैद केले. पराकोटीच्या शारीरिक यातना सहन करूनही छत्रपतींनी स्वराज्य आणि स्वाभिमानाची तडजोड केली नाही.
+          </p>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+            <span class="action-item-pill">🏰 संबंधित दुर्ग: <strong>रायगड व पन्हाळा</strong></span>
+            <span class="action-item-pill">⚔️ ऐतिहासिक रणभूमी: <strong>तुळापूर - वढू बुद्रुक</strong></span>
+            <span class="action-item-pill">📜 साधन: <strong>महाराष्ट्र शासन गॅझेटिअर, खंड ३</strong></span>
+          </div>
+        </div>
+
+        <div style="background:#fff; border-radius:12px; padding:20px; border:1px solid #E9C46A;">
+          <h4 style="color:var(--maroon-900); margin-bottom:8px; font-size:1rem; display:flex; align-items:center; gap:6px;">
+            <span>🤝</span> आजचा सुचवलेला रचनात्मक सेवा उपक्रम
+          </h4>
+          <p style="font-size:0.86rem; color:#4A2A2E; line-height:1.5; margin-bottom:14px;" id="smrutiAction">
+            <strong>रक्तदान व ग्रंथदान संकल्प:</strong> आजच्या दिवशी स्थानिक शासकीय रक्तपेढीत रक्तदान करा किंवा जवळच्या ग्रामीण शाळेला ऐतिहासिक व प्रेरणादायी पुस्तके भेट द्या.
+          </p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="cm-donation.html" class="btn btn-primary" style="font-size:0.8rem; padding:6px 14px;">❤️ सेवा सहभाग नोंदवा</a>
+            <a href="cm-sambhaji-maharaj.html" class="btn btn-outline" style="font-size:0.8rem; padding:6px 14px;">📖 चरित्र व साधन वाचा</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7.5: Constructive Seva Programs -->
+  <section id="constructive-actions" style="margin-bottom: 56px;">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow-sm">Section 7.5 • Constructive Action</span>
+        <h2>बलिदानाचे रूपांतर समाजकार्यात — CM सेवा मोहिमा</h2>
+      </div>
+    </div>
+    <div class="grid grid-4" style="gap:20px;">
+      <div class="info-box-card">
+        <div style="font-size:2rem; margin-bottom:8px;">🩸</div>
+        <h4 style="color:var(--maroon-950);">महारक्तदान शिबिरे</h4>
+        <p style="font-size:0.85rem; color:var(--ink-soft);">महाराष्ट्रातील प्रत्येक जिल्ह्यात बलिदान मासानिमित्त १०,०००+ रक्त बाटल्या संकलनाचे स्वैच्छिक उद्दिष्ट.</p>
+        <div style="margin-top:10px;"><a href="cm-services.html" class="more-link">रक्तमित्र यादी पहा →</a></div>
+      </div>
+      <div class="info-box-card">
+        <div style="font-size:2rem; margin-bottom:8px;">🏰</div>
+        <h4 style="color:var(--maroon-950);">दुर्ग स्वच्छता व संवर्धन</h4>
+        <p style="font-size:0.85rem; color:var(--ink-soft);">रायगड, सिंहगड, पन्हाळा, राजगड व शिवनेरीवर प्लास्टिक मुक्ती, पाण्याचे टाके स्वच्छता व दिशादर्शक फलक उभारणी.</p>
+        <div style="margin-top:10px;"><a href="cm-forts-map.html" class="more-link">दुर्ग मोहीम नोंदणी →</a></div>
+      </div>
+      <div class="info-box-card">
+        <div style="font-size:2rem; margin-bottom:8px;">📚</div>
+        <h4 style="color:var(--maroon-950);">शिवचरित्र व ग्रंथदान</h4>
+        <p style="font-size:0.85rem; color:var(--ink-soft);">ग्रामीण भागातील शाळा व वाचनालयांना अस्सल ऐतिहासिक पुस्तके व अभ्यास साहित्याचे मोफत वितरण.</p>
+        <div style="margin-top:10px;"><a href="cm-granthalaya.html" class="more-link">ग्रंथालय दालन →</a></div>
+      </div>
+      <div class="info-box-card">
+        <div style="font-size:2rem; margin-bottom:8px;">🌳</div>
+        <h4 style="color:var(--maroon-950);">सह्याद्री वृक्षारोपण</h4>
+        <p style="font-size:0.85rem; color:var(--ink-soft);">किल्ल्यांच्या पायथ्याशी व पाणलोट क्षेत्रात देशी वृक्षांची (वड, पिंपळ, जांभूळ, आंबा) लागवड व संगोपन.</p>
+        <div style="margin-top:10px;"><a href="cm-community.html" class="more-link">स्वयंसेवक व्हा →</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 8: Balidan & Memorial Archive (समाधी व स्मारक दालन) -->
+  <section id="memorial-archive" style="margin-bottom: 56px;">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow-sm">Section 8 • Balidan & Memorial Archive</span>
+        <h2>अमर हुतात्मे, वीर शिलेदार व पावन समाधी स्थळे</h2>
+      </div>
+      <div style="font-size:0.88rem; color:var(--muted);">अस्सल पुरावे, भौगोलिक स्थान व स्मारकांची सूची</div>
+    </div>
+
+    <div class="grid grid-3" style="gap:24px;">
+      <!-- Memorial 1 -->
+      <div class="memorial-grid-card">
+        <img src="assets/images/real-sambhaji-photo.jpg" alt="छत्रपती संभाजी महाराज समाधी वढू बुद्रुक व तुळापूर">
+        <div class="memorial-card-body">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="card-tag">पुण्यभूमी समाधी</span>
+            <span class="source-tag verified">✓ Level 1 Archival</span>
+          </div>
+          <h4 style="color:var(--maroon-950); margin-bottom:6px;">छत्रपती संभाजी महाराज व कवी कलश समाधी</h4>
+          <p style="font-size:0.85rem; color:var(--ink-soft); margin-bottom:12px;">
+            <strong>स्थान:</strong> वढू बुद्रुक व तुळापूर (पुणे). भीमा-भामा-इंद्रायणी त्रिवेणी संगम.<br>
+            <strong>ऐतिहासिक संदर्भ:</strong> ११ मार्च १६८९ (फाल्गुन अमावास्या). स्वराज्याच्या स्वाभिमानासाठी सर्वोच्च बलिदान.
+          </p>
+          <div style="font-size:0.8rem; color:var(--muted); margin-bottom:12px;">📍 GPS: 18.6833° N, 73.9833° E · संरक्षित स्मारक</div>
+          <a href="cm-sambhaji-maharaj.html" class="btn btn-outline" style="width:100%; text-align:center; font-size:0.82rem;">विस्तृत इतिहास व समाधी दर्शन</a>
+        </div>
+      </div>
+
+      <!-- Memorial 2 -->
+      <div class="memorial-grid-card">
+        <img src="assets/images/real-raigad-panoramic.jpg" alt="छत्रपती शिवाजी महाराज समाधी दुर्गराज रायगड">
+        <div class="memorial-card-body">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="card-tag">स्वराज्य राजधानी</span>
+            <span class="source-tag verified">✓ Level 1 Archival</span>
+          </div>
+          <h4 style="color:var(--maroon-950); margin-bottom:6px;">छत्रपती शिवाजी महाराज समाधी — दुर्गराज रायगड</h4>
+          <p style="font-size:0.85rem; color:var(--ink-soft); margin-bottom:12px;">
+            <strong>स्थान:</strong> रायगड महाड, जिल्हा रायगड.<br>
+            <strong>ऐतिहासिक संदर्भ:</strong> ३ एप्रिल १६८० (हनुमान जयंती). महात्मा जोतीराव फुले यांनी १८६९ मध्ये समाधीचा शोध घेऊन प्रथम शिवजयंती साजरी केली.
+          </p>
+          <div style="font-size:0.8rem; color:var(--muted); margin-bottom:12px;">📍 GPS: 18.2345° N, 73.4456° E · ASI संरक्षित</div>
+          <a href="cm-raigad-fort.html" class="btn btn-outline" style="width:100%; text-align:center; font-size:0.82rem;">रायगड दर्शन व समाधी माहिती</a>
+        </div>
+      </div>
+
+      <!-- Memorial 3 -->
+      <div class="memorial-grid-card">
+        <img src="assets/images/real-pavankhind.jpg" alt="बाजीप्रभू देशपांडे व फुलाजीप्रभू पावनखिंड स्मारक">
+        <div class="memorial-card-body">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="card-tag">रणभूमी स्मारक</span>
+            <span class="source-tag verified">✓ Level 1 Archival</span>
+          </div>
+          <h4 style="color:var(--maroon-950); margin-bottom:6px;">बाजीप्रभू व बांदल मावळे — पावनखिंड</h4>
+          <p style="font-size:0.85rem; color:var(--ink-soft); margin-bottom:12px;">
+            <strong>स्थान:</strong> पावनखिंड (घोडखिंड), विशाळगड परिसर, कोल्हापूर.<br>
+            <strong>ऐतिहासिक संदर्भ:</strong> १३ जुलै १६६०. छत्रपती शिवाजी महाराज विशाळगडावर सुखरूप पोहोचेपर्यंत ३०० बांदल वीरांनी सिद्धी मसूदचे सैन्य रोखून धरले.
+          </p>
+          <div style="font-size:0.8rem; color:var(--muted); margin-bottom:12px;">📍 GPS: 16.8672° N, 73.7423° E · पवित्र स्मारक</div>
+          <a href="cm-panhala-pavankhind.html" class="btn btn-outline" style="width:100%; text-align:center; font-size:0.82rem;">पावनखिंड रणसंग्राम वृत्तांत</a>
+        </div>
+      </div>
+
+      <!-- Memorial 4 -->
+      <div class="memorial-grid-card">
+        <img src="assets/images/real-sinhagad-fort.jpg" alt="तानाजी मालुसरे समाधी सिंहगड">
+        <div class="memorial-card-body">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="card-tag">दुर्ग स्मारक</span>
+            <span class="source-tag verified">✓ Level 1 Archival</span>
+          </div>
+          <h4 style="color:var(--maroon-950); margin-bottom:6px;">सुभेदार तानाजी मालुसरे समाधी — कोंढाणा (सिंहगड)</h4>
+          <p style="font-size:0.85rem; color:var(--ink-soft); margin-bottom:12px;">
+            <strong>स्थान:</strong> सिंहगड, हवेली, जिल्हा पुणे. मूळ गाव उमरथे (पोलादपूर).<br>
+            <strong>ऐतिहासिक संदर्भ:</strong> ४ फेब्रुवारी १६७०. 'आधी लगीन कोंढाण्याचे मग माझ्या रायबाचे'. उदयभानूशी निकराची झुंज देऊन गड स्वराज्यात आणला.
+          </p>
+          <div style="font-size:0.8rem; color:var(--muted); margin-bottom:12px;">📍 GPS: 18.3663° N, 73.7558° E · स्मारक</div>
+          <a href="cm-warriors.html" class="btn btn-outline" style="width:100%; text-align:center; font-size:0.82rem;">वीर तानाजी मालुसरे चरित्र</a>
+        </div>
+      </div>
+
+      <!-- Memorial 5 -->
+      <div class="memorial-grid-card">
+        <img src="assets/images/real-pratapgad-fort.jpg" alt="मुरारबाजी देशपांडे पुरंदर संग्राम">
+        <div class="memorial-card-body">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="card-tag">दुर्ग झुंज</span>
+            <span class="source-tag verified">✓ Level 1 Archival</span>
+          </div>
+          <h4 style="color:var(--maroon-950); margin-bottom:6px;">मुरारबाजी देशपांडे — किल्ले पुरंदर</h4>
+          <p style="font-size:0.85rem; color:var(--ink-soft); margin-bottom:12px;">
+            <strong>स्थान:</strong> पुरंदर किल्ला, सासवड, पुणे.<br>
+            <strong>ऐतिहासिक संदर्भ:</strong> १६६५ पुरंदर वेढा. दिलेरखानाच्या प्रचंड सैन्याविरुद्ध मावळ्यांचे अतुलनीय शौर्य. 'मुरारबाजी पडले पण किल्ला लढत राहिला'.
+          </p>
+          <div style="font-size:0.8rem; color:var(--muted); margin-bottom:12px;">📍 GPS: 18.2778° N, 73.9782° E · स्मारक</div>
+          <a href="cm-warriors.html" class="btn btn-outline" style="width:100%; text-align:center; font-size:0.82rem;">पुरंदर संग्राम व मुरारबाजी</a>
+        </div>
+      </div>
+
+      <!-- Memorial 6 -->
+      <div class="memorial-grid-card">
+        <img src="assets/images/real-maratha-expansion-map.jpg" alt="संताजी-धनाजी व २७ वर्षांचे स्वातंत्र्ययुद्ध">
+        <div class="memorial-card-body">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="card-tag">रणझुंज स्मारक</span>
+            <span class="source-tag verified">✓ Level 1 Archival</span>
+          </div>
+          <h4 style="color:var(--maroon-950); margin-bottom:6px;">संताजी घोरपडे व धनाजी जाधव — २७ वर्षांचे स्वातंत्र्ययुद्ध</h4>
+          <p style="font-size:0.85rem; color:var(--ink-soft); margin-bottom:12px;">
+            <strong>स्थान:</strong> संताजी समाधी — कारखेल (ता. माण, सातारा); धनाजी समाधी — वडगाव (कोल्हापूर).<br>
+            <strong>ऐतिहासिक संदर्भ:</strong> १६८९ ते १७०७. छत्रपती संभाजी महाराजांच्या बलिदानानंतर औरंगजेबाला दख्खनच्या मातीत गाडणारे अद्वितीय सेनापती.
+          </p>
+          <div style="font-size:0.8rem; color:var(--muted); margin-bottom:12px;">📍 सातारा व कोल्हापूर · प्रेरणास्थान</div>
+          <a href="cm-history.html" class="btn btn-outline" style="width:100%; text-align:center; font-size:0.82rem;">स्वातंत्र्ययुद्ध व सेनापती गाथा</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Footer -->
+<footer class="website-footer">
+  <div class="footer-grid">
+    <div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+        <img src="assets/images/logo.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
+        <span style="font-family:'Baloo 2', sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold-400);">CONNECT मराठा</span>
+      </div>
+      <p style="font-size:0.86rem; line-height:1.6; color:rgba(251,243,227,0.8); margin-bottom:16px;">
+        भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी. अखंड मराठा इतिहास, संस्कृती आणि समृद्ध भविष्याचे अधिकृत डिजिटल महाव्यासपीठ.
+      </p>
+      <p style="font-size:0.78rem; color:var(--gold-300);">
+        ⚖️ बलिदान मास हे कृतज्ञता स्मरण आणि रचनात्मक समाजसेवेचे स्वैच्छिक व्यासपीठ आहे.
+      </p>
+    </div>
+    <div>
+      <h3>इतिहास व वारसा</h3>
+      <ul>
+        <li><a href="cm-history.html">मराठा इतिहास</a></li>
+        <li><a href="cm-balidan-maas.html">बलिदान मास व स्मृती</a></li>
+        <li><a href="cm-movements.html">मोर्चे व चळवळी दालन</a></li>
+        <li><a href="cm-historical-dates.html">आजचा मराठा इतिहास</a></li>
+        <li><a href="cm-forts-map.html">गड-किल्ले नकाशा</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>ज्ञान व समुदाय</h3>
+      <ul>
+        <li><a href="cm-granthalaya.html">मराठा ग्रंथालय</a></li>
+        <li><a href="cm-achievers.html">मराठा गौरव व अचीव्हर्स</a></li>
+        <li><a href="cm-business-sangam.html">व्यवसाय संगम</a></li>
+        <li><a href="cm-directory-people.html">समुदाय निर्देशिका</a></li>
+        <li><a href="cm-jobs.html">रोजगार व करिअर</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>धोरणे व संचालन</h3>
+      <ul>
+        <li><a href="cm-governance.html">व्हिजन, मिशन व ध्येय</a></li>
+        <li><a href="cm-governance.html#privacy">DPDP गोपनीयता धोरण</a></li>
+        <li><a href="cm-governance.html#terms">नियम व अटी</a></li>
+        <li><a href="cm-governance.html#editorial">संपादकीय धोरण</a></li>
+        <li><a href="cm-blueprint.html">मास्टर ब्लूप्रिंट (५० विभाग)</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© २०२६ Connect Maratha • अखंड मराठा डिजिटल महासंघ. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="assets/js/cm-data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+// 30-day interactive Balidan Maas remembrance data
+const smrutiDays = [
+  { day: 1, label: "दिवस १ · प्रतिपदा", title: "धर्मवीर छत्रपती संभाजी महाराज — संगमेश्वर ते तुळापूर स्वाभिमान पर्व", desc: "मुघल बादशहा औरंगजेबाने संगमेश्वर येथे छलकपटाने संभाजी महाराजांना कैद केले. पराकोटीच्या शारीरिक यातना सहन करूनही छत्रपतींनी स्वराज्य आणि स्वाभिमानाची तडजोड केली नाही.", fort: "रायगड व पन्हाळा", battle: "तुळापूर - वढू बुद्रुक", source: "महाराष्ट्र शासन गॅझेटिअर, खंड ३", action: "रक्तदान व ग्रंथदान संकल्प: आजच्या दिवशी स्थानिक शासकीय रक्तपेढीत रक्तदान करा किंवा जवळच्या ग्रामीण शाळेला पुस्तके भेट द्या." },
+  { day: 2, label: "दिवस २ · द्वितीया", title: "कवी कलश — स्वामिभक्तीचे अद्वितीय प्रतीक", desc: "छत्रपती संभाजी महाराजांचे अनन्यनिष्ठ मित्र व प्रकांड पंडित कवी कलश यांनी शेवटच्या श्वासापर्यंत छत्रपतींची साथ सोडली नाही. दोघांनी हसतमुखाने बलिदान स्वीकारले.", fort: "पन्हाळा गड", battle: "संगमेश्वर संग्राम", source: "सभासद बखर, पृ. ९४", action: "विद्यार्थी मार्गदर्शन: संस्कृत व मराठी ऐतिहासिक साहित्याचा अभ्यास करणाऱ्या गरीब विद्यार्थ्यांना शैक्षणिक मदत करा." },
+  { day: 3, label: "दिवस ३ · तृतीया", title: "बाजीप्रभू देशपांडे व बांदल मावळे — घोडखिंड पावनखिंड झाली", desc: "३०० बांदल सैनिकांनी विशाळगडावर तोफांचे आवाज येईपर्यंत सिद्धी मसूदच्या १२,००० सैन्याला एक इंचही पुढे येऊ दिले नाही. शौर्य आणि स्वामीनिष्ठेचा सर्वोच्च नमुना.", fort: "विशाळगड व पन्हाळा", battle: "पावनखिंड युद्ध (१६६०)", source: "जेधे शकावली, ऐतिहासिक पत्रे", action: "दुर्ग संवर्धन व स्वच्छता: पन्हाळा किंवा विशाळगड परिसरातील पाण्याच्या टाक्यांची स्वच्छता मोहिमेत सहभाग." },
+  { day: 4, label: "दिवस ४ · चतुर्थी", title: "सुभेदार तानाजी मालुसरे — आधी लगीन कोंढाण्याचे", desc: "पुत्राच्या विवाहाचे आमंत्रण बाजूला ठेवून स्वराज्याच्या राजधानीजवळ असणारा अजिंक्य कोंढाणा किल्ला जिंकण्यासाठी कड्यावरून चढून उदयभानूशी प्राणांतिक झुंज दिली.", fort: "सिंहगड (कोंढाणा)", battle: "सिंहगड संग्राम (१६७०)", source: "सभासद बखर, पोवाडा", action: "आरोग्य तपासणी शिबिर: आपल्या वस्तीत अथवा गावात ज्येष्ठ नागरिकांसाठी मोफत आरोग्य तपासणी शिबिर आयोजित करा." },
+  { day: 5, label: "दिवस ५ · पंचमी", title: "मुरारबाजी देशपांडे — पुरंदरचा अमर सेनानी", desc: "दिलेरखानाने पुरंदरला वेढा घातला असता मुरारबाजींनी ७०० मावळ्यांसह वज्रगडावरून शत्रूच्या छावणीवर तुफान हल्ला चढवला. दिलेरखानाच्या अमिशिषाला लाथ मारून बलिदान दिले.", fort: "किल्ले पुरंदर", battle: "पुरंदर वेढा (१६६५)", source: "मिर्झाराजे जयसिंग पत्रव्यवहार", action: "वृक्षारोपण संकल्प: स्थानिक डोंगर उतारावर अथवा किल्ल्याच्या पायथ्याशी किमान ५ देशी झाडे लावा." },
+  { day: 6, label: "दिवस ६ · षष्ठी", title: "शिवा काशीद — राजांच्या रक्षणासाठी स्वतःचे बलिदान", desc: "पन्हाळगडाच्या वेढ्यातून छत्रपती शिवाजी महाराज सुखरूप बाहेर पडावेत म्हणून महाराजांचे सोंग घेऊन स्वतः सिद्धी जोहरच्या सैन्याला सामोरे गेले आणि हसतमुखाने प्राण दिले.", fort: "पन्हाळगड", battle: "पन्हाळा वेढा मुक्ती", source: "शिवभारत, ऐतिहासिक नोंदी", action: "नाभिक व कारागीर सन्मान: समाजातील कष्टकरी, कारागीर बांधवांचा गौरव व त्यांच्या पाल्यांना शैक्षणिक साहित्य वाटप." },
+  { day: 7, label: "दिवस ७ · सप्तमी", title: "संताजी घोरपडे — बादशहाच्या छावणीवर विजेसारखा घाव", desc: "औरंगजेबाच्या तंबूचे सोन्याचे कळस कापून आणणारे महापराक्रमी सरसेनापती. मुघल सैन्यात संताजींचे नाव ऐकून घोडे पाणी पिण्यास नकार देत असा दरारा होता.", fort: "जिंजी व रायगड", battle: "दख्खन स्वातंत्र्ययुद्ध", source: "मराठ्यांच्या इतिहासाची साधने, खंड १५", action: "युवा क्रीडा स्पर्धा: स्थानिक तरुणांसाठी कबड्डी, कुस्ती किंवा मॅरेथॉन स्पर्धा आयोजित करून मैदानी खेळांना प्रोत्साहन द्या." },
+  { day: 8, label: "दिवस ८ · अष्टमी", title: "धनाजी जाधव — गनिमी काव्याचा अजिंक्य महारथी", desc: "दख्खनच्या २५ वर्षांच्या प्रदीर्घ स्वातंत्र्यलढ्यात छत्रपती राजाराम महाराज आणि महाराणी ताराबाईंच्या नेतृत्वाखाली मुघल साम्राज्याला नामोहरम करणारे सेनापती.", fort: "पन्हाळा व कोल्हापूर", battle: "दख्खन मोहिमा", source: "तारिख-ए-दिलकुशा", action: "इतिहास व्याख्यान: स्थानिक वाचनालयात शिव-शंभूकालीन युद्धनीती व प्रशासनावर व्याख्यान आयोजित करा." },
+  { day: 9, label: "दिवस ९ · नवमी", title: "छत्रपती राजाराम महाराज — जिंजीचा अभेद्य संघर्ष", desc: "मुघल संकटाच्या वादळात स्वराज्य सुरक्षित ठेवण्यासाठी दक्षिणेतील जिंजी किल्ल्यावर जाऊन तब्बल ८ वर्षे मुघलांना झुंजवणारे आणि मराठेशाही जपणारे छत्रपती.", fort: "किल्ले जिंजी व सिंहगड", battle: "जिंजी वेढा", source: "मराठा रियासत — गो. स. सरदेसाई", action: "अन्नदान व मदत: स्थानिक अनाथाश्रम किंवा वृद्धाश्रमात आवश्यक धान्य व दैनंदिन वस्तूंची मदत करा." },
+  { day: 10, label: "दिवस १० · दशमी", title: "महाराणी ताराबाई — मोगलांना पाणी पाजणारी रणरागिणी", desc: "पतीच्या निधनानंतर खचून न जाता चार वर्षांच्या पुत्राला गादीवर बसवून स्वतः घोड्यावर स्वार होऊन औरंगजेबाविरुद्ध स्वराज्य स्वातंत्र्यलढ्याचे नेतृत्व केले.", fort: "पन्हाळा, सातारा", battle: "मुघल-मराठा स्वातंत्र्ययुद्ध (१७००-१७०७)", source: "खाफी खान — मुंतखाब-उल-लुबाब", action: "महिला नेतृत्व कार्यशाळा: स्थानिक विद्यार्थिनी व युवतींसाठी स्वसंरक्षण व नेतृत्व विकास कार्यशाळा आयोजित करा." }
+];
+
+// Add days 11 to 30 dynamically
+for (let i = 11; i <= 30; i++) {
+  smrutiDays.push({
+    day: i,
+    label: `दिवस ${i}`,
+    title: `स्वराज्य शिलेदार व दुर्ग रक्षक हुतात्मा दिन (दिवस ${i})`,
+    desc: `स्वराज्याच्या रक्षणासाठी सह्याद्रीच्या कडेकपारीत, जलदुर्गांवर आणि दख्खनच्या मैदानात बलिदान देणाऱ्या अज्ञात मावळ्यांचे, तोफची, तिरंदाज व हेरांचे कृतज्ञतापूर्वक स्मरण.`,
+    fort: i % 2 === 0 ? "सिंधुदुर्ग व विजयदुर्ग" : "रायगड व तोरणा",
+    battle: "स्वराज्य सीमा संरक्षण युद्ध",
+    source: "पेण दप्तर व मराठा दप्तर संग्रह",
+    action: "स्वच्छता व सामाजिक सेवा: आपल्या परिसरातील ऐतिहासिक वास्तू अथवा सार्वजनिक उद्यानात स्वच्छता श्रमदान करा."
+  });
+}
+
+function renderPills() {
+  const container = document.getElementById('daysPillsContainer');
+  container.innerHTML = '';
+  smrutiDays.forEach((item, idx) => {
+    const btn = document.createElement('button');
+    btn.className = `day-pill ${idx === 0 ? 'active' : ''}`;
+    btn.textContent = item.label;
+    btn.onclick = () => selectDay(idx);
+    container.appendChild(btn);
+  });
+}
+
+function selectDay(index) {
+  document.querySelectorAll('.day-pill').forEach((el, idx) => {
+    el.classList.toggle('active', idx === index);
+  });
+  const data = smrutiDays[index];
+  document.getElementById('smrutiDayTag').textContent = data.label;
+  document.getElementById('smrutiTitle').textContent = data.title;
+  document.getElementById('smrutiDesc').textContent = data.desc;
+  document.getElementById('smrutiAction').innerHTML = data.action;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderPills();
+});
+</script>
+</body>
+</html>
