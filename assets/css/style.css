@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&family=Tiro+Devanagari+Marathi:ital@0;1&family=Cinzel:wght@500;600;700;800&family=Cinzel+Decorative:wght@700;900&display=swap');
 
 :root {
-  --bg: #FFFFFFFFFFFFFFF;
-  --paper: #FFFFFFFFFFFFFFF;
-  --paper-2: #FFFFFFFFFFFF8F2;
-  --paper-3: #FFFFFFFFFFFF3E0;
+  --bg: #FFFFFF;
+  --paper: #FFFFFF;
+  --paper-2: #FFFFFF;
+  --paper-3: #FFF3E0;
   --maroon-950: #C73800;
   --maroon-900: #D84315;
   --maroon-800: #E65100;
@@ -13,12 +13,12 @@
   --ink-soft: #D84315;
   --ink-2: #C73800;
   --text-sec: #D84315;
-  --gold-300: #FFFFFFFFFFFFFFF;
-  --gold-400: #FFFFFFFFFFFFFFF;
+  --gold-300: #FFFFFF;
+  --gold-400: #FFFFFF;
   --gold-500: #F4511E;
   --gold-600: #E65100;
   --gold-700: #BF360C;
-  --saffron-50: #FFFFFFFFFFFF5EC;
+  --saffron-50: #FFFFFF;
   --saffron-100: #FFE0B2;
   --saffron-400: #FF7043;
   --saffron-500: #F4511E;
@@ -210,7 +210,7 @@ input, select, textarea {
 
 /* War Cry & Goosebump Banners */
 .war-cry-strip {
-  background: linear-gradient(90deg, #FFFFFFFFFFFF7ED 0%, #FFFFFFFFFFFFFFF 50%, #FFFFFFFFFFFF7ED 100%);
+  background: linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 50%, #FFFFFF 100%);
   color: var(--saffron-500);
   border-top: 1.5px solid var(--saffron-500);
   border-bottom: 1.5px solid var(--saffron-500);
@@ -279,7 +279,7 @@ input, select, textarea {
   position: relative;
   z-index: 2;
   padding: 16px;
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
 }
 
 .hd-feature-card .hd-badge {
@@ -301,7 +301,7 @@ input, select, textarea {
   display: block;
   font-family: 'Baloo 2', sans-serif;
   font-size: 1.15rem;
-  color: #FFFFFFFFFFFF;
+  color: #FFFFFF;
   text-shadow: 0 2px 4px rgba(199, 56, 0, 0.8);
 }
 
@@ -380,7 +380,7 @@ input, select, textarea {
   top: -4px;
   right: -4px;
   background: var(--maroon-800);
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   font-size: 0.6rem;
   font-weight: 700;
   padding: 1px 5px;
@@ -517,7 +517,7 @@ input, select, textarea {
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.24);
   background: rgba(255, 255, 255, 0.10);
-  color: #FFFFFFFFFFFF7ED;
+  color: #FFFFFF;
   backdrop-filter: blur(10px);
   box-shadow: 0 12px 30px rgba(199, 56, 0, 0.16);
   font-size: 0.82rem;
@@ -577,7 +577,7 @@ input, select, textarea {
   align-items: flex-start;
   padding: 22px 20px;
   border-radius: 20px;
-  background: linear-gradient(180deg, #FFFFFFFFFFFFFFF, #FFFFFFFFFFFF7ED);
+  background: linear-gradient(180deg, #FFFFFF, #FFFFFF);
   border: 1px solid rgba(255,69,0,0.18);
   box-shadow: 0 18px 44px rgba(255,69,0,0.10);
 }
@@ -590,7 +590,7 @@ input, select, textarea {
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #FF4500, #FF7A4D);
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   font-size: 1.35rem;
   flex-shrink: 0;
   box-shadow: 0 10px 24px rgba(255,69,0,0.22);
@@ -613,7 +613,7 @@ input, select, textarea {
   font-family: 'Baloo 2', sans-serif;
   font-size: clamp(2.1rem, 5vw, 3.4rem);
   line-height: 1.08;
-  background: linear-gradient(180deg, #FFF8F2 0%, #FFFFFFFFFFFF3E0 55%, #E65100 100%);
+  background: linear-gradient(180deg, #FFF8F2 0%, #FFF3E0 55%, #E65100 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -655,7 +655,7 @@ input, select, textarea {
   background: rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 184, 102, 0.45);
-  color: #FFFFFFFFFFFF7ED;
+  color: #FFFFFF;
   padding: 11px 22px;
   border-radius: 10px;
   font-weight: 600;
@@ -702,7 +702,7 @@ input, select, textarea {
 
 /* ---------- Hero Band (Secondary Pages) ---------- */
 .hero-band {
-  background: linear-gradient(135deg, #FFFFFFFFFFFF7ED, #FFFFFFFFFFFFFFF);
+  background: linear-gradient(135deg, #FFFFFF, #FFFFFF);
   color: var(--ink);
   padding: 36px 0 32px;
   position: relative;
@@ -793,14 +793,14 @@ section {
 
 /* ---------- Today strip ---------- */
 .today-strip {
-  background: linear-gradient(90deg, #FFFFFFFFFFFF7ED 0%, #FFFFFFFFFFFFFFF 50%, #FFFFFFFFFFFF7ED 100%);
+  background: linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 50%, #FFFFFF 100%);
   color: var(--ink);
   padding: 14px 0;
   border-bottom: 1px solid rgba(255,69,0,0.18);
 }
 
 .today-strip-premium {
-  background: linear-gradient(90deg, #FFFFFFFFFFFF7ED 0%, #FFFFFFFFFFFFFFF 50%, #FFFFFFFFFFFF7ED 100%);
+  background: linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 50%, #FFFFFF 100%);
   color: var(--ink);
   border-top: 1px solid rgba(255,69,0,0.16);
   border-bottom: 1px solid rgba(255,69,0,0.16);
@@ -859,7 +859,7 @@ section {
   display: block;
   padding: 22px 20px;
   border-radius: 20px;
-  background: linear-gradient(180deg, #FFFFFFFFFFFFFFF, #FFFFFFFFFFFF7ED);
+  background: linear-gradient(180deg, #FFFFFF, #FFFFFF);
   border: 1px solid rgba(255,69,0,0.16);
   box-shadow: 0 16px 36px rgba(255,69,0,0.08);
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
@@ -879,7 +879,7 @@ section {
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #FF4500, #FF4500);
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   font-size: 1.35rem;
   margin-bottom: 14px;
   box-shadow: 0 10px 24px rgba(255,69,0,0.22);
@@ -1425,7 +1425,7 @@ section {
 
 .notice.safe {
   background: #FFF3E0;
-  border-color: #FFFFFFFFFFFF3E0;
+  border-color: #FFF3E0;
 }
 
 .notice.alert {
@@ -1457,7 +1457,7 @@ section {
 /* ---------- Digital ID card ---------- */
 .id-card {
   background: linear-gradient(135deg, var(--maroon-950), var(--maroon-800) 60%, var(--saffron-600));
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   border-radius: 18px;
   padding: 22px;
   position: relative;
@@ -1475,7 +1475,7 @@ section {
 .id-card .qr {
   width: 64px;
   height: 64px;
-  background: #FFFFFFFFFFFFFFF;
+  background: #FFFFFF;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -1533,7 +1533,7 @@ section {
   left: 50%;
   transform: translateX(-50%);
   background: var(--saffron-600);
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   font-size: 0.68rem;
   font-weight: 700;
   padding: 2px 10px;
@@ -1585,7 +1585,7 @@ section {
   border-radius: 8px;
   font-family: inherit;
   font-size: 0.92rem;
-  background: #FFFFFFFFFFFFFFFdf8;
+  background: #FFFFFF;
 }
 
 .field input:focus, .field select:focus, .field textarea:focus {
@@ -1638,13 +1638,13 @@ section {
 .step.active .dot {
   background: var(--saffron-600);
   border-color: var(--saffron-600);
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
 }
 
 .step.done .dot {
   background: var(--success);
   border-color: var(--success);
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
 }
 
 .step .lbl {
@@ -1899,7 +1899,7 @@ section {
   height: 44px;
   border-radius: 50%;
   background: linear-gradient(150deg, var(--gold-400), var(--maroon-800));
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1912,7 +1912,7 @@ section {
 /* ---------- Website Topbar & Desktop Mega Navbar ---------- */
 .site-topbar {
   background: linear-gradient(90deg, #FF4500 0%, #FF6A3C 100%);
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   font-size: 0.78rem;
   border-bottom: 1px solid rgba(255,69,0,0.25);
   padding: 6px 0;
@@ -1933,7 +1933,7 @@ section {
   display: flex;
   align-items: center;
   gap: 14px;
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
 }
 
 .site-topbar .right-info {
@@ -1941,7 +1941,7 @@ section {
   align-items: center;
   gap: 16px;
   opacity: 1;
-  color: #FFFFFFFFFFFF7ED;
+  color: #FFFFFF;
 }
 
 .site-header {
@@ -2055,7 +2055,7 @@ section {
   }
 
   .desktop-nav a.active {
-    color: #FFFFFFFFFFFFFFF;
+    color: #FFFFFF;
     background: linear-gradient(135deg, var(--maroon-950), var(--maroon-900));
     box-shadow: 0 4px 12px rgba(179, 71, 0, 0.28);
     font-weight: 700;
@@ -2130,7 +2130,7 @@ section {
   align-items: center;
   gap: 5px;
   background: var(--saffron-600);
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   font-size: 0.72rem;
   font-weight: 700;
   padding: 4px 10px;
@@ -2160,7 +2160,7 @@ section {
 
 /* ---------- Website Grand Mega Footer ---------- */
 .website-footer {
-  background: linear-gradient(180deg, #FFFFFFFFFFFF8EF 0%, #FFFFFFFFFFFFFFF 100%);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%);
   color: var(--ink);
   border-top: 3px solid var(--gold-500);
   padding: 60px 0 28px;
@@ -2403,7 +2403,7 @@ section {
 }
 
 .website-footer {
-  background: linear-gradient(180deg, #FFFFFFFFFFFF7ED 0%, #FFFFFFFFFFFFFFF 100%);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%);
   color: var(--ink);
   border-top: 3px solid var(--gold-500);
 }
@@ -2454,7 +2454,7 @@ section {
 }
 
 .kpi-card {
-  background: linear-gradient(180deg, #FFFFFFFFFFFFFFF, #FFFFFFFFFFFFFFF7ed);
+  background: linear-gradient(180deg, #FFFFFF, #FFFFFF);
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 16px;
@@ -2478,7 +2478,7 @@ section {
 .data-table-wrap {
   width: 100%;
   overflow-x: auto;
-  background: #FFFFFFFFFFFFFFF;
+  background: #FFFFFF;
   border-radius: var(--radius);
   border: 1px solid var(--line);
   box-shadow: var(--shadow-sm);
@@ -2524,7 +2524,7 @@ section {
 }
 
 .info-box-card {
-  background: #FFFFFFFFFFFFFFF;
+  background: #FFFFFF;
   border: 1px solid var(--line);
   border-left: 5px solid var(--maroon-800);
   border-radius: var(--radius);
@@ -2580,7 +2580,7 @@ section {
   height: 64px;
   border-radius: 50%;
   background: var(--success);
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   font-size: 1.8rem;
   display: flex;
   align-items: center;
@@ -2732,7 +2732,7 @@ section {
 .badge-verified {
   background: #FFF3E0;
   color: #E65100;
-  border: 1px solid #FFFFFFFFFFFF3E0;
+  border: 1px solid #FFF3E0;
   font-size: 0.7rem;
   font-weight: 700;
   padding: 2px 8px;
@@ -2780,7 +2780,7 @@ section {
 .status-confirmed {
   background: #FFF3E0;
   color: #E65100;
-  border: 1px solid #FFFFFFFFFFFF3E0;
+  border: 1px solid #FFF3E0;
 }
 .status-pending {
   background: #FFF8F2;
@@ -2788,9 +2788,9 @@ section {
   border: 1px solid #FFFFFF;
 }
 .status-completed {
-  background: #FFFFFFFFFFFF3E0;
+  background: #FFF3E0;
   color: #E65100;
-  border: 1px solid #FFFFFFFFFFFF3E0;
+  border: 1px solid #FFF3E0;
 }
 
 /* ---------- Deep Historical Treatise Styles ---------- */
@@ -2898,7 +2898,7 @@ section {
 
 .source-citation {
   background: #FFF8F2;
-  border: 1px solid #FFFFFFFFFFFF3E0;
+  border: 1px solid #FFF3E0;
   border-radius: 8px;
   padding: 14px 18px;
   font-size: 0.84rem;
@@ -3058,13 +3058,13 @@ section {
 
 .desktop-nav a:hover {
   background: rgba(255,69,0,0.18);
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   transform: translateY(-1px);
 }
 
 .desktop-nav a.active {
   background: linear-gradient(135deg, var(--saffron-600), var(--saffron-700));
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   font-weight: 700;
   box-shadow: 0 2px 10px rgba(230, 81, 0, 0.45);
 }
@@ -3088,11 +3088,11 @@ section {
 .header-actions .btn-outline {
   color: #E65100;
   border-color: #F4511E;
-  background: #FFFFFFFFFFFF3E0;
+  background: #FFF3E0;
 }
 
 .header-actions .btn-outline:hover {
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   border-color: #F4511E;
   background: #F4511E;
 }
@@ -3184,7 +3184,7 @@ section {
 .hero-real-card .card-badge {
   display: inline-block;
   background: linear-gradient(135deg, var(--saffron-600), var(--saffron-700));
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   font-size: 0.76rem;
   font-weight: 700;
   padding: 3px 10px;
@@ -3362,7 +3362,7 @@ section {
 
 /* 4-Column Desktop Mega-Footer */
 .website-footer {
-  background: linear-gradient(180deg, #FFFFFFFFFFFF7ED 0%, #FFFFFFFFFFFFFFF 100%);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%);
   color: var(--ink);
   border-top: 3px solid var(--gold-500);
   padding: 56px 24px 28px;
@@ -3980,7 +3980,7 @@ section {
 
 /* Gold Shimmer & Metallic Luster */
 .gold-shimmer {
-  background: linear-gradient(90deg, #F4511E 0%, #FFFFFFFFFFFF5D0 30%, #F4511E 60%, #F4511E 100%);
+  background: linear-gradient(90deg, #F4511E 0%, #FFFFFF 30%, #F4511E 60%, #F4511E 100%);
   background-size: 200% auto;
   color: transparent !important;
   -webkit-background-clip: text;
@@ -4119,7 +4119,7 @@ section {
 }
 
 .researcher-card {
-  background: linear-gradient(145deg, #FFFFFFFFFFFFFFF, #FFF8F2);
+  background: linear-gradient(145deg, #FFFFFF, #FFF8F2);
   border: 1px solid var(--line);
   border-top: 4px solid var(--gold-500);
   border-radius: 14px;
@@ -4466,7 +4466,7 @@ section {
 
 .mobile-drawer-nav a.active {
   background: linear-gradient(135deg, var(--saffron-600), var(--saffron-700));
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
 }
 
 .mobile-drawer-footer {
@@ -4655,7 +4655,7 @@ section {
 }
 
 .cm-modal-box {
-  background: linear-gradient(160deg, #FFFFFFFFFFFFFFF 0%, #FFF8F2 100%);
+  background: linear-gradient(160deg, #FFFFFF 0%, #FFF8F2 100%);
   border: 2px solid var(--gold-500);
   border-radius: 16px;
   width: 100%;
@@ -4735,7 +4735,7 @@ section {
   border-radius: 8px;
   font-family: inherit;
   font-size: 0.92rem;
-  background: #FFFFFFFFFFFFFFF;
+  background: #FFFFFF;
   color: var(--ink);
   box-sizing: border-box;
 }
@@ -4791,7 +4791,7 @@ section {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: #FFFFFFFFFFFF2DE;
+  background: #FFFFFF;
   color: var(--ink-soft);
   border: 1px dashed var(--gold-500);
   font-size: 0.75rem;
@@ -4816,13 +4816,13 @@ section {
 .cred-tag.cred-record {
   background: #FFF3E0;
   color: #E65100;
-  border-color: #FFFFFFFFFFFF3E0;
+  border-color: #FFF3E0;
 }
 
 .cred-tag.cred-analysis {
-  background: #FFFFFFFFFFFF3E0;
+  background: #FFF3E0;
   color: #F4511E;
-  border-color: #FFFFFFFFFFFF3E0;
+  border-color: #FFF3E0;
 }
 
 .cred-tag.cred-tradition {
@@ -5125,7 +5125,7 @@ body { animation: pageFadeIn 0.6s ease both; }
   left: 0; right: 0; bottom: 0;
   padding: 14px 14px 12px;
   background: linear-gradient(0deg, rgba(31,13,2,0.92) 0%, rgba(31,13,2,0.35) 60%, transparent 100%);
-  color: #FFFFFFFFFFFF7ED;
+  color: #FFFFFF;
   font-size: 0.86rem;
   font-weight: 700;
   transform: translateY(8px);
@@ -5216,10 +5216,10 @@ body { animation: pageFadeIn 0.6s ease both; }
   inset: auto 0 0 0;
   padding: 24px 28px;
   background: linear-gradient(0deg, rgba(31,13,2,0.9) 0%, transparent 100%);
-  color: #FFFFFFFFFFFF7ED;
+  color: #FFFFFF;
 }
 .panoramic-banner .panoramic-caption h3 {
-  color: #FFFFFFFFFFFF7ED;
+  color: #FFFFFF;
   font-size: 1.4rem;
   margin-bottom: 4px;
 }
@@ -5405,7 +5405,7 @@ body { animation: pageFadeIn 0.6s ease both; }
 }
 .profile-card .cta.done {
   background: var(--success);
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   border-color: var(--success);
 }
 

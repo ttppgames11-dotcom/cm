@@ -16,7 +16,7 @@
 .era-btn {
   padding: 8px 16px;
   border-radius: 30px;
-  background: #FFFFFFFFFFFFFFF;
+  background: #FFFFFF;
   border: 1px solid rgba(90,17,22,0.15);
   color: var(--maroon-950);
   font-size: 0.84rem;
@@ -57,7 +57,7 @@
 .time-slice-btn {
   background: transparent;
   border: none;
-  color: #FFFFFFFFFFFFFFF;
+  color: #FFFFFF;
   padding: 6px 16px;
   border-radius: 30px;
   font-size: 0.82rem;
@@ -70,7 +70,7 @@
   color: var(--maroon-950);
 }
 .timeline-event-card {
-  background: #FFFFFFFFFFFFFFF;
+  background: #FFFFFF;
   border-radius: 16px;
   padding: 24px;
   border-left: 5px solid var(--maroon-800);
@@ -184,14 +184,14 @@
       <div style="font-size:0.84rem; color:var(--gold-400); font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;">
         Section 12 • आजचा मराठा इतिहास
       </div>
-      <h1 style="font-size:clamp(1.8rem, 3.5vw, 2.8rem); line-height:1.2; color:#FFFFFFFFFFFFFFF; margin-bottom:12px;">
+      <h1 style="font-size:clamp(1.8rem, 3.5vw, 2.8rem); line-height:1.2; color:#FFFFFF; margin-bottom:12px;">
         सह्याद्रीच्या काळजातील <span style="color:var(--gold-400);">अमर ऐतिहासिक क्षण</span>
       </h1>
       <p style="font-size:0.95rem; color:rgba(255,248,231,0.9); line-height:1.6; max-width:60ch; margin-bottom:20px;">
         शिवरायांचा राज्याभिषेक, प्रतापगड विजय, पावनखिंडीचे बलिदान, पानिपतचे रणसंग्राम आणि संयुक्त महाराष्ट्राची स्थापना — प्रत्येक दिवसाचा अस्सल ऐतिहासिक संदर्भ.
       </p>
       <div style="display:flex; gap:12px; flex-wrap:wrap;">
-        <input type="date" id="datePickerInput" value="2026-06-06" style="padding:8px 14px; border-radius:30px; border:1px solid var(--gold-500); background:#FFFFFFFFFFFF8E7; color:var(--maroon-950); font-weight:700;">
+        <input type="date" id="datePickerInput" value="2026-06-06" style="padding:8px 14px; border-radius:30px; border:1px solid var(--gold-500); background:#FFF8E7; color:var(--maroon-950); font-weight:700;">
         <button class="btn btn-primary" onclick="searchCustomDate()" style="padding:8px 18px; font-size:0.86rem;">तारखेनुसार शोधा</button>
       </div>
     </div>
@@ -400,7 +400,7 @@ function renderEvents(list) {
   const container = document.getElementById('eventsContainer');
   if (list.length === 0) {
     container.innerHTML = `
-      <div style="text-align:center; padding:48px; background:#FFFFFFFFFFFFFFF; border-radius:16px; border:1px solid #F4511E;">
+      <div style="text-align:center; padding:48px; background:#FFFFFF; border-radius:16px; border:1px solid #F4511E;">
         <div style="font-size:2.5rem; margin-bottom:12px;">📅</div>
         <h4 style="color:var(--maroon-950);">या निकषांसाठी नोंद उपलब्ध नाही</h4>
         <p style="color:var(--muted); font-size:0.88rem; margin-top:6px;">इतर कालखंड किंवा तारीख निवडून शोधा.</p>
