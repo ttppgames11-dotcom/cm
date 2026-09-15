@@ -10,24 +10,24 @@
    NEW LAYOUT – MODERN, CARD-BASED, ONLINE BG IMAGES
    ============================================================ */
 :root{
-  --maroon-950:#2A0709;
-  --maroon-900:#3D0B0E;
-  --maroon-800:#5A1116;
-  --gold-400:#FFD54F;
-  --gold-500:#E9C46A;
-  --gold-300:#FFE082;
-  --gold-600:#C79A3E;
-  --gold-700:#B9862E;
-  --saffron-500:#FF8C42;
-  --saffron-600:#F4711F;
-  --paper:#FFF8E7;
-  --card-bg:#2A0709;
-  --text-sec:rgba(251,243,227,.82);
-  --ink-soft:#4A2A2E;
-  --muted:#8A6E72;
-  --success:#2E7D32;
+  --maroon-950:#3D0B0E;
+  --maroon-900:#5A0B0D;
+  --maroon-800:#800000;
+  --gold-400:#FFFFFF;
+  --gold-500:#F4511E;
+  --gold-300:#FFFFFF;
+  --gold-600:#E65100;
+  --gold-700:#BF360C;
+  --saffron-500:#F4511E;
+  --saffron-600:#E65100;
+  --paper:#FFFFFF;
+  --card-bg:#3D0B0E;
+  --text-sec:rgba(255,255,255,.92);
+  --ink-soft:#5A0B0D;
+  --muted:#7C2D12;
+  --success:#E65100;
   --radius:16px;
-  --shadow:0 12px 32px rgba(0,0,0,.25);
+  --shadow:0 12px 32px rgba(244,81,30,.2);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{
@@ -59,11 +59,11 @@ a{text-decoration:none;color:inherit;}
 
 /* ---------- HEADER ---------- */
 .site-header{
-  background:rgba(255,248,231,.98);
+  background:rgba(255,255,255,.98);
   backdrop-filter:blur(12px);
-  border-bottom:1px solid rgba(233,196,106,.4);
+  border-bottom:1.5px solid #FFCC80;
   position:sticky;top:0;z-index:100;
-  box-shadow:0 4px 20px rgba(0,0,0,.12);
+  box-shadow:0 4px 20px rgba(244,81,30,.12);
 }
 .site-header-inner{
   max-width:1440px;margin:0 auto;padding:10px 20px;
@@ -73,21 +73,21 @@ a{text-decoration:none;color:inherit;}
 .brand-desktop{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .brand-logo{width:44px;height:44px;object-fit:contain;}
 .brand-titles .brand-main{font-size:1.35rem;font-weight:800;line-height:1.1;display:flex;align-items:baseline;gap:4px;}
-.brand-titles .brand-main .en{color:var(--maroon-900);}
+.brand-titles .brand-main .en{color:#3D0B0E;}
 .brand-titles .brand-main .mr{
-  color:#E65100;
-  background:linear-gradient(90deg, #F4711F, #E65100);
+  color:#F4511E;
+  background:linear-gradient(90deg, #FF5500, #D84315);
   -webkit-background-clip:text;
   background-clip:text;
 }
-.brand-titles .brand-sub{font-size:.68rem;color:var(--muted);display:block;white-space:nowrap;}
+.brand-titles .brand-sub{font-size:.68rem;color:#7C2D12;display:block;white-space:nowrap;}
 .desktop-nav{display:flex;gap:4px;flex-wrap:nowrap;align-items:center;white-space:nowrap;}
 .desktop-nav a{
   padding:6px 11px;border-radius:40px;font-size:.83rem;font-weight:700;
   color:#3D0B0E !important;transition:.2s;white-space:nowrap;
 }
 .desktop-nav a:hover,.desktop-nav a.active{
-  background:#3D0B0E !important;color:#FFD54F !important;
+  background:#F4511E !important;color:#FFFFFF !important;
 }
 .header-actions{display:flex;gap:6px;flex-wrap:nowrap;align-items:center;flex-shrink:0;}
 .btn{
@@ -96,22 +96,22 @@ a{text-decoration:none;color:inherit;}
   border:1.5px solid transparent;transition:.2s;cursor:pointer;white-space:nowrap;
 }
 .btn-primary{
-  background:linear-gradient(135deg, #F4711F, #5A1116) !important;
-  color:#FFFFFF !important;border-color:#FFD54F !important;
-  box-shadow:0 4px 12px rgba(90,17,22,.35);
+  background:linear-gradient(135deg, #FF5500, #800000) !important;
+  color:#FFFFFF !important;border:1.5px solid #FFFFFF !important;
+  box-shadow:0 4px 12px rgba(244,81,30,.35);
 }
-.btn-primary:hover{background:#3D0B0E !important;color:#FFD54F !important;}
+.btn-primary:hover{background:#3D0B0E !important;color:#FFFFFF !important;}
 .btn-outline{
-  background:rgba(233,196,106,.2) !important;
-  color:#3D0B0E !important;
-  border-color:#5A1116 !important;
+  background:#FFF3E0 !important;
+  color:#800000 !important;
+  border:1.5px solid #F4511E !important;
 }
-.btn-outline:hover{background:#3D0B0E !important;color:#FFD54F !important;border-color:#3D0B0E !important;}
+.btn-outline:hover{background:#F4511E !important;color:#FFFFFF !important;border-color:#F4511E !important;}
 
 /* ---------- WAR CRY STRIP ---------- */
 .war-cry-strip{
-  background:linear-gradient(90deg,var(--maroon-950),var(--maroon-800));
-  color:var(--gold-300);
+  background:linear-gradient(90deg,#F4511E,#800000);
+  color:#FFFFFF;
   text-align:center;padding:12px 24px;font-weight:700;font-size:.9rem;
   display:flex;justify-content:center;align-items:center;gap:12px;
 }
@@ -510,29 +510,29 @@ tr:hover td{background:#FFF9F0;}
       <a href="cm-blueprint.html" class="more-link">मास्टर ब्लूप्रिंट पहा →</a>
     </div>
     <div class="grid-4" style="margin-bottom:40px;">
-      <div style="background:linear-gradient(135deg, #3D0B0E, #5A1116); border-radius:16px; padding:24px; color:#fff; border-top:4px solid #FFD54F;">
+      <div style="background:linear-gradient(135deg, #5A0B0D, #800000); border-radius:16px; padding:24px; color:#fff; border-top:4px solid #FF5500;">
         <div style="font-size:2rem; margin-bottom:8px;">⚔️</div>
         <h4 style="color:#fff; font-size:1.15rem; margin-bottom:6px;">१. जतन करा (PRESERVE)</h4>
-        <p style="font-size:0.84rem; color:rgba(255,248,231,0.9); line-height:1.55; margin-bottom:12px;">मराठा इतिहास, ३५०+ किल्ले, आरमार, समकालीन बखरी, पत्रे, नकाशे व बलिदान मास स्मृती.</p>
-        <a href="cm-history.html" style="color:#FFD54F; font-size:0.82rem; font-weight:700;">इतिहास दालन →</a>
+        <p style="font-size:0.84rem; color:rgba(255,255,255,0.92); line-height:1.55; margin-bottom:12px;">मराठा इतिहास, ३५०+ किल्ले, आरमार, समकालीन बखरी, पत्रे, नकाशे व बलिदान मास स्मृती.</p>
+        <a href="cm-history.html" style="color:#FFFFFF; font-size:0.82rem; font-weight:700;">इतिहास दालन →</a>
       </div>
-      <div style="background:linear-gradient(135deg, #B7410E, #E65100); border-radius:16px; padding:24px; color:#fff; border-top:4px solid #FFE082;">
+      <div style="background:linear-gradient(135deg, #E65100, #F4511E); border-radius:16px; padding:24px; color:#fff; border-top:4px solid #FFFFFF;">
         <div style="font-size:2rem; margin-bottom:8px;">🌟</div>
         <h4 style="color:#fff; font-size:1.15rem; margin-bottom:6px;">२. गौरव करा (CELEBRATE)</h4>
-        <p style="font-size:0.84rem; color:rgba(255,248,231,0.9); line-height:1.55; margin-bottom:12px;">मराठा गौरव — आधुनिक शास्त्रज्ञ, डीप टेक, डॉक्टर, ऑलिम्पिक क्रीडापटू, महिला व युवा नेतृत्व.</p>
-        <a href="cm-achievers.html" style="color:#FFE082; font-size:0.82rem; font-weight:700;">गौरव व अचीव्हर्स →</a>
+        <p style="font-size:0.84rem; color:rgba(255,255,255,0.92); line-height:1.55; margin-bottom:12px;">मराठा गौरव — आधुनिक शास्त्रज्ञ, डीप टेक, डॉक्टर, ऑलिम्पिक क्रीडापटू, महिला व युवा नेतृत्व.</p>
+        <a href="cm-achievers.html" style="color:#FFFFFF; font-size:0.82rem; font-weight:700;">गौरव व अचीव्हर्स →</a>
       </div>
-      <div style="background:linear-gradient(135deg, #1B5E20, #2E7D32); border-radius:16px; padding:24px; color:#fff; border-top:4px solid #A5D6A7;">
+      <div style="background:linear-gradient(135deg, #D84315, #5A0B0D); border-radius:16px; padding:24px; color:#fff; border-top:4px solid #FF5500;">
         <div style="font-size:2rem; margin-bottom:8px;">🤝</div>
         <h4 style="color:#fff; font-size:1.15rem; margin-bottom:6px;">३. जोडा (CONNECT)</h4>
-        <p style="font-size:0.84rem; color:rgba(255,248,231,0.9); line-height:1.55; margin-bottom:12px;">समुदाय व व्यवसाय — व्यवसाय संगम (BNI-शैली मराठा चॅप्टर्स), व्यावसायिक, विद्यार्थी व मेन्टॉर.</p>
-        <a href="cm-business-sangam.html" style="color:#A5D6A7; font-size:0.82rem; font-weight:700;">व्यवसाय संगम →</a>
+        <p style="font-size:0.84rem; color:rgba(255,255,255,0.92); line-height:1.55; margin-bottom:12px;">समुदाय व व्यवसाय — व्यवसाय संगम (BNI-शैली मराठा चॅप्टर्स), व्यावसायिक, विद्यार्थी व मेन्टॉर.</p>
+        <a href="cm-business-sangam.html" style="color:#FFFFFF; font-size:0.82rem; font-weight:700;">व्यवसाय संगम →</a>
       </div>
-      <div style="background:linear-gradient(135deg, #0D47A1, #1565C0); border-radius:16px; padding:24px; color:#fff; border-top:4px solid #90CAF9;">
+      <div style="background:linear-gradient(135deg, #F4511E, #800000); border-radius:16px; padding:24px; color:#fff; border-top:4px solid #FFFFFF;">
         <div style="font-size:2rem; margin-bottom:8px;">🚀</div>
         <h4 style="color:#fff; font-size:1.15rem; margin-bottom:6px;">४. घडवा (BUILD)</h4>
-        <p style="font-size:0.84rem; color:rgba(255,248,231,0.9); line-height:1.55; margin-bottom:12px;">भविष्य व संधी — करिअर, रोजगार, स्पर्धा परीक्षा, ग्लोबल मराठा नेटवर्किंग व सामाजिक प्रकल्प.</p>
-        <a href="cm-jobs.html" style="color:#90CAF9; font-size:0.82rem; font-weight:700;">करिअर व संधी →</a>
+        <p style="font-size:0.84rem; color:rgba(255,255,255,0.92); line-height:1.55; margin-bottom:12px;">भविष्य व संधी — करिअर, रोजगार, स्पर्धा परीक्षा, ग्लोबल मराठा नेटवर्किंग व सामाजिक प्रकल्प.</p>
+        <a href="cm-jobs.html" style="color:#FFFFFF; font-size:0.82rem; font-weight:700;">करिअर व संधी →</a>
       </div>
     </div>
 
