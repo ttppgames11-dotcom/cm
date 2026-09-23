@@ -8,6 +8,8 @@ const QUICK_ACTIONS = [
   { label: 'नोकरी पोस्ट करा', en: 'Post Job', icon: '💼', path: '/jobs', color: '#6366f1' },
   { label: 'कार्यक्रम जोडा', en: 'Create Event', icon: '📅', path: '/events', color: '#ec4899' },
   { label: 'संस्था नोंदवा', en: 'Add Organization', icon: '🤝', path: '/organizations', color: '#8b5cf6' },
+  { label: 'वारसा नकाशा', en: 'Heritage Map', icon: '🗺️', path: '/culture/heritage-map', color: '#c2410c' },
+  { label: 'मौखिक इतिहास नोंदवा', en: 'Oral History', icon: '📜', path: '/community/oral-history', color: '#8b5cf6' },
   { label: 'तातडीने रक्त मागा', en: 'Blood Request', icon: '🩸', path: '/blood', color: '#ef4444' },
   { label: 'रक्तदान नोंदणी', en: 'Register Donor', icon: '💉', path: '/blood', color: '#059669' },
   { label: 'घोषणा / बातमी द्या', en: 'Announcement', icon: '📢', path: '/news', color: '#ea580c' }

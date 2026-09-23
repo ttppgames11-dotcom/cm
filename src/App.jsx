@@ -85,6 +85,15 @@ import SocialWorkersPage from './pages/community/SocialWorkersPage';
 import BloodHelpPortalPage from './pages/community/BloodHelpPortalPage';
 import MatrimonyPortalPage from './pages/community/MatrimonyPortalPage';
 
+// Maharashtra Culture & Heritage Knowledge Graph (8 Major Pillars)
+import MaharashtraCultureHubPage from './pages/culture/MaharashtraCultureHubPage';
+import MarathiDialectsArchivePage from './pages/culture/MarathiDialectsArchivePage';
+import MaharashtraFoodCulturePage from './pages/culture/MaharashtraFoodCulturePage';
+import GramdevatJatraPage from './pages/culture/GramdevatJatraPage';
+import InteractiveHeritageMapPage from './pages/culture/InteractiveHeritageMapPage';
+import KnowledgeGraphExplorerPage from './pages/history/KnowledgeGraphExplorerPage';
+import CommunityOralHistoryPage from './pages/community/CommunityOralHistoryPage';
+
 
 // Complete 100% Mapping for Every Legacy .html File (All 81 Files Covered)
 const legacyRedirects = [
@@ -289,9 +298,27 @@ export default function App() {
             <Route path="/services/booking" element={<ServiceBookingPage />} />
             <Route path="/service-booking" element={<ServiceBookingPage />} />
 
-            {/* Culture, Symbols, Temples & Gallery */}
+            {/* Maharashtra Culture & Heritage Knowledge Graph */}
+            <Route path="/culture" element={<MaharashtraCultureHubPage />} />
+            <Route path="/culture/diversity" element={<MaharashtraCultureHubPage />} />
+            <Route path="/culture/dialects" element={<MarathiDialectsArchivePage />} />
+            <Route path="/dialects" element={<MarathiDialectsArchivePage />} />
+            <Route path="/culture/food" element={<MaharashtraFoodCulturePage />} />
+            <Route path="/food" element={<MaharashtraFoodCulturePage />} />
+            <Route path="/culture/gramdevat-jatra" element={<GramdevatJatraPage />} />
+            <Route path="/culture/gramdevat" element={<GramdevatJatraPage />} />
+            <Route path="/gramdevat" element={<GramdevatJatraPage />} />
+            <Route path="/jatra" element={<GramdevatJatraPage />} />
+            <Route path="/culture/heritage-map" element={<InteractiveHeritageMapPage />} />
+            <Route path="/heritage-map" element={<InteractiveHeritageMapPage />} />
+            <Route path="/history/knowledge-graph" element={<KnowledgeGraphExplorerPage />} />
+            <Route path="/knowledge-graph" element={<KnowledgeGraphExplorerPage />} />
+            <Route path="/community/oral-history" element={<CommunityOralHistoryPage />} />
+            <Route path="/oral-history" element={<CommunityOralHistoryPage />} />
+
+            {/* Gallery, Symbols, Temples */}
             <Route path="/gallery" element={<PhotoGalleryPage />} />
-            <Route path="/culture" element={<PhotoGalleryPage />} />
+            <Route path="/culture/gallery" element={<PhotoGalleryPage />} />
             <Route path="/culture/symbols" element={<SymbolsPage />} />
             <Route path="/symbols" element={<SymbolsPage />} />
             <Route path="/culture/temples" element={<TemplesPage />} />

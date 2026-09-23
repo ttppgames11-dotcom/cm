@@ -39,11 +39,14 @@ export default function SiteFooter() {
             </h3>
             <ul style={{ listStyle: 'none', padding: 0 }}>
               <li style={{ marginBottom: '8px' }}><Link to="/history" style={{ color: '#FFFFFF', textDecoration: 'none' }}>📜 मराठा इतिहास कालपट</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/history/battles" style={{ color: '#FFFFFF', textDecoration: 'none' }}>⚔️ प्रमुख ७ रणांगणे व व्यूहरचना</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/forts" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🏰 महाराष्ट्रातील ३५०+ किल्ले नकाशा</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/history/balidan-maas" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🕯️ धर्मवीर बलिदान मास स्मरण</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/history/granthalaya" style={{ color: '#FFFFFF', textDecoration: 'none' }}>📚 मराठा महाग्रंथालय व बखरी</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/gallery" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🖼️ आपुला महाराष्ट्र छायाचित्र दालन</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/culture" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🌍 ८ प्रादेशिक सांस्कृतिक प्रोफाइल</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/culture/dialects" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🗣️ महाराष्ट्राच्या बोली व उच्चार</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/culture/food" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🍲 खाद्यसंस्कृती व उगम इतिहास</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/culture/gramdevat-jatra" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🛕 ग्रामदैवत, जत्रा व पारंपरिक खेळ</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/culture/heritage-map" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🗺️ परस्परसंवादी वारसा नकाशा</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/history/knowledge-graph" style={{ color: '#FFFFFF', textDecoration: 'none' }}>⚡ घटना ↔ स्थळे नॉलेज ग्राफ</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/community/oral-history" style={{ color: '#FFFFFF', textDecoration: 'none' }}>✍️ मौखिक इतिहास संकलन (Tier 4)</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/forts" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🏰 सह्याद्रीचे ३५०+ गडकिल्ले</Link></li>
             </ul>
           </div>
 

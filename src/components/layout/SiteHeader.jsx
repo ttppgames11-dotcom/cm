@@ -85,6 +85,43 @@ export default function SiteHeader({ onOpenSearch }) {
               </div>
             </div>
 
+            {/* Pillar: संस्कृती व वारसा ज्ञानकोश */}
+            <div className="nav-item-has-mega">
+              <Link to="/culture" onClick={handleLinkClick}>🏛️ संस्कृती व ज्ञानकोश ▾</Link>
+              <div className="mega-menu">
+                <div className="mega-menu-grid">
+                  <div className="mega-col">
+                    <div className="mega-col-title">🌍 सांस्कृतिक विविधता व बोली</div>
+                    <Link to="/culture" onClick={handleLinkClick}>🗺️ ८ प्रादेशिक सांस्कृतिक प्रोफाइल</Link>
+                    <Link to="/culture/dialects" onClick={handleLinkClick}>🗣️ महाराष्ट्राच्या बोली व उच्चार</Link>
+                    <Link to="/culture/food" onClick={handleLinkClick}>🍲 खाद्यसंस्कृती व उगम इतिहास</Link>
+                    <Link to="/culture/symbols" onClick={handleLinkClick}>🏷️ राजमुद्रा व मराठा चिन्हे</Link>
+                  </div>
+                  <div className="mega-col">
+                    <div className="mega-col-title">🛕 ग्रामदैवत, जत्रा व लोककला</div>
+                    <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🛕 ग्रामदैवत व कुलदैवत ज्ञानकार्ड</Link>
+                    <Link to="/jatra" onClick={handleLinkClick}>🎪 जत्रा व वार्षिक यात्रा दिनदर्शिका</Link>
+                    <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🎭 दशावतार, तमाशा व पोवाडा</Link>
+                    <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🏏 विटी-दांडू व पारंपरिक खेळ</Link>
+                  </div>
+                  <div className="mega-col">
+                    <div className="mega-col-title">🗺️ वारसा नकाशा व नॉलेज ग्राफ</div>
+                    <Link to="/culture/heritage-map" onClick={handleLinkClick}>🗺️ बहुस्तरीय परस्परसंवादी नकाशा</Link>
+                    <Link to="/history/knowledge-graph" onClick={handleLinkClick}>⚡ घटना ↔ स्थळे नॉलेज ग्राफ</Link>
+                    <Link to="/temples" onClick={handleLinkClick}>🛕 प्रमुख मंदिरे व शक्तिपीठे</Link>
+                    <Link to="/forts" onClick={handleLinkClick}>🏰 सह्याद्रीचे ३५०+ गडकिल्ले</Link>
+                  </div>
+                  <div className="mega-col">
+                    <div className="mega-col-title">📚 संदर्भ चौकट व समुदाय</div>
+                    <Link to="/community/oral-history" onClick={handleLinkClick}>✍️ मौखिक इतिहास संकलन (Tier 4)</Link>
+                    <Link to="/history/granthalaya" onClick={handleLinkClick}>📚 पुराभिलेख व ऐतिहासिक ग्रंथालय</Link>
+                    <Link to="/history/dates" onClick={handleLinkClick}>📅 ऐतिहासिक दिनविशेष</Link>
+                    <Link to="/gallery" onClick={handleLinkClick}>🖼️ आपुला महाराष्ट्र छायाचित्र दालन</Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Pillar 2: व्यवसाय व संधी */}
             <div className="nav-item-has-mega">
               <Link to="/sangam" onClick={handleLinkClick}>💼 व्यवसाय व संधी ▾</Link>
