@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"cyan,magenta\" \"npm run server\" \"npm run client\"",
     "client": "vite",
-    "server": "node server/server.js",
+    "server": "node --watch server/server.js",
     "server:seed": "node server/db/seed.js",
     "build": "vite build",
     "preview": "vite preview"
