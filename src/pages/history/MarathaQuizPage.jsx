@@ -500,33 +500,47 @@ export default function MarathaQuizPage() {
                 <label style={{ display: 'block', fontWeight: 700, fontSize: '0.9rem', color: 'var(--ink)', marginBottom: '8px' }}>
                   ऐतिहासिक दालन (Category):
                 </label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', maxHeight: '220px', overflowY: 'auto', paddingRight: '4px' }}>
-                  {OFFICIAL_CATEGORIES.map((cat, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => setSelectedCategory(cat.id)}
-                      style={{
-                        padding: '7px 12px',
-                        borderRadius: '20px',
-                        border: selectedCategory === cat.id ? '2px solid var(--maroon-800)' : '1px solid #E5E7EB',
-                        background: selectedCategory === cat.id ? '#FFF3E0' : '#FFFFFF',
-                        color: selectedCategory === cat.id ? 'var(--maroon-900)' : '#4B5563',
-                        fontWeight: selectedCategory === cat.id ? 700 : 500,
-                        fontSize: '0.82rem',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px'
-                      }}
-                    >
-                      <span>{cat.label}</span>
-                      <span style={{ fontSize: '0.72rem', background: selectedCategory === cat.id ? '#FFCC80' : '#F3F4F6', color: '#1F2937', padding: '1px 6px', borderRadius: '10px' }}>
-                        {cat.count}
-                      </span>
-                    </button>
-                  ))}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '8px' }}>
+                  {OFFICIAL_CATEGORIES.map((cat, i) => {
+                    const isSelected = selectedCategory === cat.id;
+                    return (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setSelectedCategory(cat.id)}
+                        style={{
+                          padding: '9px 12px',
+                          borderRadius: '12px',
+                          border: isSelected ? '2px solid var(--maroon-800)' : '1px solid #E5E7EB',
+                          background: isSelected ? '#FFF3E0' : '#FFFFFF',
+                          color: isSelected ? 'var(--maroon-900)' : '#374151',
+                          fontWeight: isSelected ? 800 : 500,
+                          fontSize: '0.84rem',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '6px',
+                          boxShadow: isSelected ? '0 2px 10px rgba(230,81,0,0.15)' : 'none',
+                          textAlign: 'left'
+                        }}
+                      >
+                        <span style={{ lineHeight: 1.2 }}>{cat.label}</span>
+                        <span style={{
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          background: isSelected ? 'var(--maroon-800)' : '#F3F4F6',
+                          color: isSelected ? '#FFFFFF' : '#4B5563',
+                          padding: '2px 6px',
+                          borderRadius: '8px',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {cat.count}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
