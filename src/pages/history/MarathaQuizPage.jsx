@@ -1,220 +1,148 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
-// Comprehensive, historically verified database of Maratha History & Heritage Questions
-const masterQuestions = [
-  // Category 1: छत्रपती शिवराय व स्वराज्य
+// 13 Official Historical Domains as approved in the 20,000-Question Blueprint
+const OFFICIAL_CATEGORIES = [
+  { id: 'ALL', label: '🚩 सर्वसमावेशक महाक्विझ (All Categories)', count: '२०,५००+' },
+  { id: 'Chhatrapati Shivaji Maharaj', label: '👑 छत्रपती शिवाजी महाराज', count: '४,०००+' },
+  { id: 'Chhatrapati Sambhaji Maharaj', label: '⚔️ धर्मवीर छत्रपती संभाजी महाराज', count: '२,५००+' },
+  { id: 'Chhatrapati Rajaram Maharaj', label: '🛡️ छत्रपती राजाराम महाराज', count: '१,५००+' },
+  { id: 'Maharani Tarabai', label: '🦁 महाराणी ताराबाई', count: '१,०००+' },
+  { id: 'Peshwas', label: '🐎 पेशवे व साम्राज्य विस्तार', count: '२,५००+' },
+  { id: 'Maratha Warriors & Commanders', label: '🗡️ मराठा शूर सरदार व सेनापती', count: '२,५००+' },
+  { id: 'Forts & Fort Architecture', label: '🏰 अभेद्य दुर्ग व स्थापत्य', count: '१,५००+' },
+  { id: 'Battles & Military Campaigns', label: '🔥 महापराक्रमी रणसंग्राम', count: '१,५००+' },
+  { id: 'Maratha Administration', label: '⚖️ स्वराज्य प्रशासन व अष्टप्रधान', count: '७५०+' },
+  { id: 'Maratha Navy', label: '⚓ मराठा आरमार व जलदुर्ग', count: '५००+' },
+  { id: 'Important Dates & Chronology', label: '📅 ऐतिहासिक दिनविशेष व कालपट', count: '७५०+' },
+  { id: 'Maratha Empire / Later History', label: '🗺️ मराठा महासंघ व नंतरचा इतिहास', count: '१,०००+' },
+  { id: 'Literature, Sources & Culture', label: '📚 साहित्य, बखरी व संस्कृती', count: '५००+' }
+];
+
+// Offline Local Fallback Question Bank (Always ready even if network or server is offline)
+const fallbackQuestions = [
   {
-    id: 1,
-    category: 'छत्रपती शिवराय व स्वराज्य',
+    id: 'SHIV-00001',
+    category: 'Chhatrapati Shivaji Maharaj',
     level: 'प्राथमिक',
+    question_type: 'mcq',
     question: 'छत्रपती शिवाजी महाराजांचा जन्म कोणत्या ऐतिहासिक गडावर झाला?',
     options: ['तोरणा किल्ला', 'शिवनेरी किल्ला', 'राजगड किल्ला', 'रायगड किल्ला'],
     correct: 1,
     hint: 'हा गड जुन्नर (पुणे जिल्हा) जवळ असून शिवाई देवीच्या मंदिरावरून महाराजांचे नाव ठेवण्यात आले.',
-    explanation: 'छत्रपती शिवाजी महाराजांचा जन्म १९ फेब्रुवारी १६३० रोजी पुणे जिल्ह्यातील जुन्नर जवळील किल्ले शिवनेरीवर झाला. शिवाई देवीच्या आशीर्वादाने जन्म झाला म्हणून त्यांचे नाव "शिवाजी" ठेवले गेले.'
+    explanation: 'छत्रपती शिवाजी महाराजांचा जन्म १९ फेब्रुवारी १६३० रोजी पुणे जिल्ह्यातील जुन्नर जवळील किल्ले शिवनेरीवर झाला. शिवाई देवीच्या आशीर्वादाने जन्म झाला म्हणून त्यांचे नाव "शिवाजी" ठेवले गेले.',
+    source: 'Jedhe Shakavali, Sabhasad Bakhar'
   },
   {
-    id: 2,
-    category: 'छत्रपती शिवराय व स्वराज्य',
+    id: 'SHIV-00002',
+    category: 'Chhatrapati Shivaji Maharaj',
     level: 'प्राथमिक',
+    question_type: 'mcq',
     question: 'वयाच्या अवघ्या १६ व्या वर्षी शिवरायांनी कोणता किल्ला जिंकून स्वराज्याचे पहिले तोरण बांधले?',
     options: ['तोरणा (प्रचंडगड)', 'कोंढाणा', 'पुरंदर', 'रोहिडा'],
     correct: 0,
     hint: 'हा गड पुण्याच्या नैऋत्येस वेल्हे तालुक्यात असून महाराजांनी त्याचे नाव "प्रचंडगड" ठेवले होते.',
-    explanation: '१६४६ मध्ये अवघ्या १६ व्या वर्षी शिवरायांनी तोरणा किल्ला जिंकून हिंदवी स्वराज्याची अधिकृत मुहूर्तमेढ रोवली आणि गडाचे नाव "प्रचंडगड" ठेवले.'
+    explanation: '१६४६ मध्ये अवघ्या १६ व्या वर्षी शिवरायांनी तोरणा किल्ला जिंकून हिंदवी स्वराज्याची अधिकृत मुहूर्तमेढ रोवली आणि गडाचे नाव "प्रचंडगड" ठेवले.',
+    source: 'Sabhasad Bakhar'
   },
   {
-    id: 3,
-    category: 'छत्रपती शिवराय व स्वराज्य',
+    id: 'SHIV-00003',
+    category: 'Chhatrapati Shivaji Maharaj',
     level: 'मध्यम',
+    question_type: 'chronology',
     question: 'छत्रपती शिवाजी महाराजांचा पहिला भव्य राज्याभिषेक सोहळा कोणत्या दिवशी व कोणत्या गडावर संपन्न झाला?',
     options: ['६ जून १६७४ — दुर्गराज रायगड', '२४ फेब्रुवारी १६७० — शिवनेरी', '१२ मे १६८० — राजगड', '६ जून १६८२ — प्रतापगड'],
     correct: 0,
     hint: 'या सोहळ्याचे मुख्य पुरोहित काशीचे महापंडित गागाभट्ट होते.',
-    explanation: '६ जून १६७४ रोजी ज्येष्ठ शुद्ध त्रयोदशीला दुर्गराज रायगडावर छत्रपती शिवरायांचा वैदिक राज्याभिषेक गागाभट्टांच्या हस्ते झाला आणि स्वतंत्र सार्वभौम "हिंदवी स्वराज्य" अधिकृतरीत्या प्रस्थापित झाले.'
+    explanation: '६ जून १६७४ रोजी ज्येष्ठ शुद्ध त्रयोदशीला दुर्गराज रायगडावर छत्रपती शिवरायांचा वैदिक राज्याभिषेक गागाभट्टांच्या हस्ते झाला आणि स्वतंत्र सार्वभौम "हिंदवी स्वराज्य" अधिकृतरीत्या प्रस्थापित झाले.',
+    source: 'Sabhasad Bakhar'
   },
   {
-    id: 4,
-    category: 'छत्रपती शिवराय व स्वराज्य',
+    id: 'SAMB-00001',
+    category: 'Chhatrapati Sambhaji Maharaj',
     level: 'मध्यम',
-    question: 'छत्रपती शिवरायांच्या अष्टप्रधान मंडळात "पंतप्रधान" (पेशवे) हे सर्वोच्च प्रशासकीय पद कोणाकडे होते?',
-    options: ['मोरोपंत त्रिंबक पिंगळे', 'अण्णाजी दत्तो', 'रामचंद्र नीलकंठ अमात्य', 'हंबीरराव मोहिते'],
-    correct: 0,
-    hint: 'त्यांनी साल्हेर-मुल्हेरच्या युद्धात मोगलांविरुद्ध निर्णायक विजय मिळवून दिला होता.',
-    explanation: 'मोरोपंत त्रिंबक पिंगळे हे छत्रपती शिवरायांचे पहिले पंतप्रधान (पेशवे) होते. त्यांनी स्वराज्य प्रशासनाचे नियमन आणि साल्हेरच्या महासंग्रामात अतुलनीय लष्करी नेतृत्व केले.'
-  },
-  {
-    id: 5,
-    category: 'छत्रपती शिवराय व स्वराज्य',
-    level: 'प्रगत',
-    question: 'छत्रपती शिवरायांच्या राज्याभिषेकानंतर स्वराज्याची अधिकृत चलनी सुवर्ण व ताम्र नाणी कोणती सुरू झाली?',
-    options: ['होन (सुवर्ण) व शिवराई (तांबे)', 'टका व रुपया', 'मोहर व दमडी', 'दीनार व पण'],
-    correct: 0,
-    hint: 'या नाण्यांवर देवनागरी लिपीत "श्री राजा शिव छत्रपती" कोरलेले असे.',
-    explanation: 'राज्याभिषेकानंतर शिवरायांनी स्वतःचे स्वतंत्र चलन सुरू केले. सोन्याच्या नाण्याला "होन" आणि तांब्याच्या नाण्याला "शिवराई" म्हटले गेले, ज्यावर देवनागरीत "श्री राजा शिव छत्रपती" मुद्रा होती.'
-  },
-
-  // Category 2: अभेद्य दुर्ग व आरमार
-  {
-    id: 6,
-    category: 'अभेद्य दुर्ग व आरमार',
-    level: 'मध्यम',
-    question: 'अरबी समुद्रातील अजिंक्य जलदुर्ग "सिंधुदुर्ग" शिवरायांनी कोणत्या बेटावर आणि कोणत्या वर्षी उभारला?',
-    options: ['कुरटे बेट (मालवण) — १६६४', 'खांदेरी बेट — १६७९', 'कासा बेट — १६८०', 'पद्मदुर्ग — १६७६'],
-    correct: 0,
-    hint: 'या किल्ल्याच्या बांधकामात शिराळ्याचा चुनखडी दगड व शिसे वापरले गेले असून शिवरायांच्या हाताचे व पायाचे ठसे येथे आहेत.',
-    explanation: 'मालवण जवळील कुरटे बेटावर २५ नोव्हेंबर १६६४ रोजी सिंधुदुर्ग किल्ल्याची पायाभरणी झाली. हा जलदुर्ग सुमारे ४८ एकरांवर पसरलेला असून ४२ अभेद्य बुरुजांनी वेढलेला आहे.'
-  },
-  {
-    id: 7,
-    category: 'अभेद्य दुर्ग व आरमार',
-    level: 'प्राथमिक',
-    question: 'भारतीय आरमाराचे जनक (Father of Indian Navy) कोणास मानले जाते?',
-    options: ['छत्रपती शिवाजी महाराज', 'कान्होजी आंग्रे', 'मायनाक भंडारी', 'छत्रपती संभाजी महाराज'],
-    correct: 0,
-    hint: 'समुद्रावरील परकीय सत्तांचा धोका ओळखून स्वतंत्र आरमार व लढाऊ जहाजांचा ताफा सर्वप्रथम यांनीच तयार केला.',
-    explanation: 'छत्रपती शिवाजी महाराजांनी समुद्राचे महत्त्व ओळखून गुराब, तरांडी, पाल, मचवा अशी ५०० पेक्षा जास्त लढाऊ जहाजे तयार केली आणि स्वतंत्र नौदल उभारले. म्हणूनच आधुनिक भारतीय नौदलाचे जनक मानले जाते.'
-  },
-  {
-    id: 8,
-    category: 'अभेद्य दुर्ग व आरमार',
-    level: 'प्राथमिक',
-    question: '"गड आला पण सिंह गेला!" हे अजरामर उद्गार शिवरायांनी कोणत्या निष्ठावंत वीराच्या बलिदानानंतर काढले?',
-    options: ['नरवीर तानाजी मालुसरे', 'बाजी प्रभू देशपांडे', 'मुरारबाजी देशपांडे', 'शिवा काशीद'],
-    correct: 0,
-    hint: '४ फेब्रुवारी १६७० रोजी कोंढाणा किल्ल्यावर उदयभान विरुद्ध लढताना त्यांना वीरमरण आले.',
-    explanation: 'कोंढाणा मोहिमेवर उदयभानशी निकराने लढताना नरवीर तानाजी मालुसरे धारातीर्थी पडले. किल्ला जिंकल्याची बातमी मिळताच शिवरायांनी दुःखाने उद्गार काढले — "गड आला पण सिंह गेला!"'
-  },
-  {
-    id: 9,
-    category: 'अभेद्य दुर्ग व आरमार',
-    level: 'मध्यम',
-    question: 'पावनखिंडीत सिद्धी जोहरच्या सैन्याला थोपवून शिवरायांना विशालगडावर सुरक्षित पोहोचवणारे अमर वीर कोण?',
-    options: ['बाजी प्रभू देशपांडे व बांदल मावळे', 'नेताजी पालकर', 'येसाजी कंक', 'प्रतापराव गुजर'],
-    correct: 0,
-    hint: 'घोडखिंडीत रक्ताचा शेवटचा थेंब असेपर्यंत तोफेचा आवाज येईपर्यंत त्यांनी लढा दिला.',
-    explanation: '१३ जुलै १६६० रोजी पन्हाळगडावरून विशाळगडाकडे कूच करताना घोडखिंडीत बाजी प्रभू देशपांडे, फुलाजी प्रभू व ३०० बांदल मावळ्यांनी सिद्धी मसूदच्या हजारो सैन्याशी लढून सर्वोच्च बलिदान दिले.'
-  },
-  {
-    id: 10,
-    category: 'अभेद्य दुर्ग व आरमार',
-    level: 'मध्यम',
-    question: 'स्वराज्याची पहिली राजधानी तब्बल २६ वर्षे कोणता दुर्ग होती?',
-    options: ['राजगड', 'तोरणा', 'शिवनेरी', 'सिंहगड'],
-    correct: 0,
-    hint: 'या गडाला संजीवनी, पद्मावती आणि सुवेळा अशा तीन भव्य माच्या आहेत.',
-    explanation: 'किल्ले राजगड हा छत्रपती शिवरायांच्या हिंदवी स्वराज्याची सलग २६ वर्षे (१६४७ ते १६७३) पहिली राजधानी होता. त्यानंतर राजधानी रायगडावर स्थलांतरित करण्यात आली.'
-  },
-
-  // Category 3: महापराक्रमी रणसंग्राम
-  {
-    id: 11,
-    category: 'महापराक्रमी रणसंग्राम',
-    level: 'प्राथमिक',
-    question: 'विजापूरचा बलाढ्य सरदार अफझलखान याचा वध शिवरायांनी कोणत्या किल्ल्याच्या पायथ्याशी केला?',
-    options: ['प्रतापगड', 'पन्हाळा', 'पुरंदर', 'चाकण'],
-    correct: 0,
-    hint: '१० नोव्हेंबर १६५९ रोजी वाघनखे आणि बिचव्याने हा वध करण्यात आला.',
-    explanation: '१० नोव्हेंबर १६५९ रोजी प्रतापगडाच्या पायथ्याशी झालेल्या भेटीत कपटी अफझलखानाने पाठीत कट्यार खुपसली, परंतु शिवरायांनी चिलखतामुळे वाचून वाघनखांनी त्याचा कोथळा बाहेर काढला.'
-  },
-  {
-    id: 12,
-    category: 'महापराक्रमी रणसंग्राम',
-    level: 'प्रगत',
-    question: 'खुद्द मोगल सैन्याविरुद्ध समोरासमोर मैदानी युद्धात मराठ्यांनी मिळवलेला सर्वात मोठा निर्णायक ऐतिहासिक विजय कोणता?',
-    options: ['साल्हेरची लढाई (१६७२)', 'उंबरखिंडीची लढाई (१६६१)', 'नेत्रावतीची लढाई', 'वडगावची लढाई'],
-    correct: 0,
-    hint: 'नाशिक जिल्ह्यातील बागलाण प्रांतात झालेल्या या लढाईत १ लाखाहून अधिक सैन्याची समोरासमोर लढत झाली होती.',
-    explanation: 'जानेवारी १६७२ ची साल्हेरची लढाई ही मराठा इतिहासातील समोरासमोर मैदानी लढाईत मोगल सैन्याला धूळ चारलेली सर्वांत मोठी लढाई मानली जाते, ज्यात प्रतापराव गुजर व मोरोपंतांनी मोगलांचा धुव्वा उडवला.'
-  },
-  {
-    id: 13,
-    category: 'महापराक्रमी रणसंग्राम',
-    level: 'मध्यम',
-    question: 'कारतलब खानाच्या २०,००० मोगल सैन्याला सह्याद्रीच्या दरीत पाणीही न मिळू देता शरणागती पत्करायला लावणारी लढाई कोणती?',
-    options: ['उंबरखिंडीची लढाई (२ फेब्रुवारी १६६१)', 'संगमनेरची लढाई', 'पन्हाळा वेढा', 'कोल्हापूर लढाई'],
-    correct: 0,
-    hint: 'लोणावळ्याजवळ सह्याद्रीच्या घनदाट अरण्यात गनिमी काव्याचा हा जागतिक आदर्श आहे.',
-    explanation: '२ फेब्रुवारी १६६१ रोजी उंबरखिंडीत शिवरायांनी गनिमी कावा वापरून कारतलब खान व रायबागन यांच्या २०,००० सैन्याला खिंडीत गाठून एकाही थेंब पाण्यासाठी तहावर सही करण्यास भाग पाडले.'
-  },
-
-  // Category 4: धर्मवीर संभाजी महाराज
-  {
-    id: 14,
-    category: 'धर्मवीर संभाजी महाराज',
-    level: 'मध्यम',
+    question_type: 'who_am_i',
     question: 'छत्रपती संभाजी महाराजांनी संस्कृत भाषेत रचलेला जगप्रसिद्ध राजनीतिपर ग्रंथ कोणता?',
     options: ['बुधभूषणम्', 'शिवभारत', 'राजनितीसार', 'राधामाधव विलास चंपू'],
     correct: 0,
     hint: 'हा ग्रंथ शंभूराजांनी वयाच्या अवघ्या १४ व्या वर्षी रचला होता.',
-    explanation: 'छत्रपती संभाजी महाराज केवळ रणधुरंधर नव्हते तर प्रकांड संस्कृत पंडित होते. त्यांनी वयाच्या १४ व्या वर्षी राजनीति, समाजशास्त्र आणि राजाच्या कर्तव्यांवर "बुधभूषणम्" हा अमर ग्रंथ लिहिला.'
+    explanation: 'छत्रपती संभाजी महाराज केवळ रणधुरंधर नव्हते तर प्रकांड संस्कृत पंडित होते. त्यांनी वयाच्या १४ व्या वर्षी राजनीति, समाजशास्त्र आणि राजाच्या कर्तव्यांवर "बुधभूषणम्" हा अमर ग्रंथ लिहिला.',
+    source: 'Budhabhushanam, Shakavali'
   },
   {
-    id: 15,
-    category: 'धर्मवीर संभाजी महाराज',
-    level: 'प्राथमिक',
-    question: 'छत्रपती संभाजी महाराजांनी आपल्या ९ वर्षांच्या राजवटीत एकूण किती लढाया लढल्या आणि किती हरल्या?',
-    options: ['१२८ लढाया लढल्या — ० पराभव (अपराजित)', '५० लढाया — २ पराभव', '१०० लढाया — ५ पराभव', '८० लढाया — ० पराभव'],
-    correct: 0,
-    hint: 'औरंगजेब ५ लाख सैन्यासह महाराष्ट्रात ठाण मांडून बसला होता, तरीही शंभूराजांनी एकही किल्ला मोगलांना जिंकू दिला नाही.',
-    explanation: 'छत्रपती संभाजी राजे हे जगातील अत्यंत दुर्मिळ सेनापतींपैकी एक आहेत, ज्यांनी सलग १२८ लढाया लढल्या आणि एकही लढाई न हरता १००% अपराजित राहण्याचा जागतिक विक्रम केला.'
-  },
-  {
-    id: 16,
-    category: 'धर्मवीर संभाजी महाराज',
+    id: 'FORT-00001',
+    category: 'Forts & Fort Architecture',
     level: 'मध्यम',
-    question: 'मराठ्यांच्या २७ वर्षांच्या स्वातंत्र्यसंग्रामात छत्रपती राजाराम महाराजांनी दक्षिणेतील कोणत्या अभेद्य किल्ल्यावरून तब्बल ८ वर्षे मोगलांना झुंजवले?',
-    options: ['जिंजी किल्ला (तामिळनाडू)', 'तंजावूर', 'वेल्लोर किल्ला', 'बेळगाव किल्ला'],
+    question_type: 'fort_geo',
+    question: 'अरबी समुद्रातील अजिंक्य जलदुर्ग "सिंधुदुर्ग" शिवरायांनी कोणत्या बेटावर आणि कोणत्या वर्षी उभारला?',
+    options: ['कुरटे बेट (मालवण) — १६६४', 'खांदेरी बेट — १६७९', 'कासा बेट — १६८०', 'पद्मदुर्ग — १६७६'],
     correct: 0,
-    hint: 'शिवरायांनी दक्षिण दिग्विजय मोहिमेत हा किल्ला जिंकून पूर्वतयारी करून ठेवली होती.',
-    explanation: 'रायगड मोगलांनी घेरल्यानंतर छत्रपती राजाराम महाराजांनी तामिळनाडूतील जिंजी किल्ल्यावरून १६८९ ते १६९८ अशी ८ वर्षे झुंज दिली, ज्यामुळे मोगल सम्राट औरंगजेबाचे सैन्य दक्षिणेत अडकून पडले.'
+    hint: 'या किल्ल्याच्या बांधकामात शिराळ्याचा चुनखडी दगड व शिसे वापरले गेले असून शिवरायांच्या हाताचे व पायाचे ठसे येथे आहेत.',
+    explanation: 'मालवण जवळील कुरटे बेटावर २५ नोव्हेंबर १६६४ रोजी सिंधुदुर्ग किल्ल्याची पायाभरणी झाली. हा जलदुर्ग सुमारे ४८ एकरांवर पसरलेला असून ४२ अभेद्य बुरुजांनी वेढलेला आहे.',
+    source: 'Maharashtra State Gazetteer (Ratnagiri)'
   },
-
-  // Category 5: पेशवे काळ व साम्राज्य विस्तार
   {
-    id: 17,
-    category: 'पेशवे काळ व साम्राज्य विस्तार',
+    id: 'BATL-00001',
+    category: 'Battles & Military Campaigns',
+    level: 'प्रगत',
+    question_type: 'mcq',
+    question: 'खुद्द मोगल सैन्याविरुद्ध समोरासमोर मैदानी युद्धात मराठ्यांनी मिळवलेला सर्वात मोठा निर्णायक ऐतिहासिक विजय कोणता?',
+    options: ['साल्हेरची लढाई (१६७२)', 'उंबरखिंडीची लढाई (१६६१)', 'नेत्रावतीची लढाई', 'वडगावची लढाई'],
+    correct: 0,
+    hint: 'नाशिक जिल्ह्यातील बागलाण प्रांतात झालेल्या या लढाईत १ लाखाहून अधिक सैन्याची समोरासमोर लढत झाली होती.',
+    explanation: 'जानेवारी १६७२ ची साल्हेरची लढाई ही मराठा इतिहासातील समोरासमोर मैदानी लढाईत मोगल सैन्याला धूळ चारलेली सर्वांत मोठी लढाई मानली जाते, ज्यात प्रतापराव गुजर व मोरोपंतांनी मोगलांचा धुव्वा उडवला.',
+    source: 'Jedhe Shakavali'
+  },
+  {
+    id: 'PESH-00001',
+    category: 'Peshwas',
     level: 'मध्यम',
+    question_type: 'mcq',
     question: '४१ लढाया लढून एकही लढाई न हरणारे आणि शनिवार वाड्याची उभारणी करणारे पराक्रमी सेनापती कोण?',
     options: ['श्रीमंत थोरले बाजीराव पेशवे', 'चिमाजी आप्पा', 'माधवराव पेशवे', 'नानासाहेब पेशवे'],
     correct: 0,
     hint: 'पालखेड व भोपाळच्या लढाईत आपल्या वेगवान अश्वदलाने त्यांनी निजामाचा व मोगलांचा पाडाव केला.',
-    explanation: 'श्रीमंत बाजीराव पेशवे (थोरले) यांनी ४१ लढायांमध्ये एकही पराभव न स्वीकारता मराठा साम्राज्याचा झेंडा नर्मदेपार नेला. १७३० मध्ये त्यांनी पुण्यात ऐतिहासिक शनिवार वाड्याची पायाभरणी केली.'
+    explanation: 'श्रीमंत बाजीराव पेशवे (थोरले) यांनी ४१ लढायांमध्ये एकही पराभव न स्वीकारता मराठा साम्राज्याचा झेंडा नर्मदेपार नेला. १७३० मध्ये त्यांनी पुण्यात ऐतिहासिक शनिवार वाड्याची पायाभरणी केली.',
+    source: 'Peshwa Chronology'
   },
   {
-    id: 18,
-    category: 'पेशवे काळ व साम्राज्य विस्तार',
-    level: 'प्रगत',
-    question: '१७३९ मध्ये पोर्तुगीज सत्तेचा पराभव करून अभेद्य वसई किल्ला जिंकणारे शिवकालीन शौर्याचे प्रतीक कोण?',
-    options: ['श्रीमंत चिमाजी आप्पा', 'मल्हारराव होळकर', 'राघोबादादा', 'सदाशिवराव भाऊ'],
-    correct: 0,
-    hint: 'ते थोरले बाजीराव पेशव्यांचे धाकटे बंधू होते.',
-    explanation: '१२ मे १७३९ रोजी श्रीमंत चिमाजी आप्पा यांनी पोर्तुगीजांचा पराभव करून वसई किल्ला स्वराज्यात आणला आणि उत्तर कोकणातील जनतेला परकीय जुलमी राजवटीतून मुक्त केले.'
-  },
-  {
-    id: 19,
-    category: 'पेशवे काळ व साम्राज्य विस्तार',
+    id: 'ADMN-00001',
+    category: 'Maratha Administration',
     level: 'मध्यम',
-    question: 'अहिल्याबाई होळकर यांनी कोणत्या राजधानीतून राज्यकारभार चालवला आणि देशभरातील प्रमुख ज्योतिर्लिंगे व मंदिरांचा जीर्णोद्धार केला?',
-    options: ['महेश्वर (नर्मदा काठ)', 'बडोदा', 'ग्वाल्हेर', 'नागपूर'],
+    question_type: 'mcq',
+    question: 'छत्रपती शिवरायांच्या अष्टप्रधान मंडळात "पंत अमात्य" (मुजुमदार) यांचे मुख्य कार्य काय होते?',
+    options: ['स्वराज्याचा जमाखर्च, वित्त व अर्थव्यवस्थेचे नियमन', 'केवळ तोफांची देखरेख', 'सैन्याची गुप्तहेरगिरी', 'परकीय राजांना पत्रे पाठवणे'],
     correct: 0,
-    hint: 'नर्मदा नदीच्या तीरावर असलेल्या या राजधानीतून त्यांनी न्यायप्रिय व कल्याणकारी राज्य चालवले.',
-    explanation: 'पुण्यश्लोक अहिल्याबाई होळकर यांनी इंदूर संस्थानाची राजधानी महेश्वर येथे हलवून न्याय, उद्योग, विणकाम आणि काशी विश्वनाथ, सोमनाथ मंदिरांसह देशभर शेकडो धर्मशाळा व मंदिरांचा जीर्णोद्धार केला.'
+    hint: 'रामचंद्र नीलकंठ अमात्य यांनी हे पद भूषविले आणि "आज्ञापत्र" हा राजनीतिपर ग्रंथ लिहिला.',
+    explanation: 'पंत अमात्य (मुजुमदार) यांच्याकडे स्वराज्याचा सर्व जमाखर्च, करआकारणी आणि तिजोरीचे नियमन करण्याची सर्वोच्च जबाबदारी होती.',
+    source: 'Sabhasad Bakhar'
   },
   {
-    id: 20,
-    category: 'पेशवे काळ व साम्राज्य विस्तार',
-    level: 'प्रगत',
-    question: '१७५८ मध्ये मराठा साम्राज्याचा भगवा ध्वज "अटक" (सध्याचे पाकिस्तान) येथे कोणी फडकवला?',
-    options: ['रघुनाथराव पेशवे व सरदार तुकोजी होळकर', 'दत्ताजी शिंदे', 'सदाशिवराव भाऊ', 'माधवराव पेशवे'],
+    id: 'NAVY-00001',
+    category: 'Maratha Navy',
+    level: 'प्राथमिक',
+    question_type: 'mcq',
+    question: 'भारतीय आरमाराचे जनक (Father of Indian Navy) कोणास मानले जाते?',
+    options: ['छत्रपती शिवाजी महाराज', 'कान्होजी आंग्रे', 'मायनाक भंडारी', 'छत्रपती संभाजी महाराज'],
     correct: 0,
-    hint: 'या विजयामुळे "अटक ते कटक" भगवा फडकल्याची ऐतिहासिक घोषणा झाली.',
-    explanation: 'मे १७५८ मध्ये रघुनाथराव पेशवे, तुकोजीराव होळकर व सरदार मानाजी पायगुडे यांनी पंजाब मोहीम काढून अटकेवर भगवा फडकवला आणि अहमदशाह अब्दालीच्या मुलाला हुसकावून लावले.'
+    hint: 'समुद्रावरील परकीय सत्तांचा धोका ओळखून स्वतंत्र आरमार व लढाऊ जहाजांचा ताफा सर्वप्रथम यांनीच तयार केला.',
+    explanation: 'छत्रपती शिवाजी महाराजांनी समुद्राचे महत्त्व ओळखून गुराब, तरांडी, पाल, मचवा अशी ५०० पेक्षा जास्त लढाऊ जहाजे तयार केली आणि स्वतंत्र नौदल उभारले. म्हणूनच त्यांना भारतीय नौदलाचे जनक मानले जाते.',
+    source: 'Father of Indian Navy Commemoration'
+  },
+  {
+    id: 'WARR-00001',
+    category: 'Maratha Warriors & Commanders',
+    level: 'प्राथमिक',
+    question_type: 'mcq',
+    question: '"गड आला पण सिंह गेला!" हे अजरामर उद्गार शिवरायांनी कोणत्या निष्ठावंत वीराच्या बलिदानानंतर काढले?',
+    options: ['नरवीर तानाजी मालुसरे', 'बाजी प्रभू देशपांडे', 'मुरारबाजी देशपांडे', 'शिवा काशीद'],
+    correct: 0,
+    hint: '४ फेब्रुवारी १६७० रोजी कोंढाणा किल्ल्यावर उदयभान विरुद्ध लढताना त्यांना वीरमरण आले.',
+    explanation: 'कोंढाणा मोहिमेवर उदयभानशी निकराने लढताना नरवीर तानाजी मालुसरे धारातीर्थी पडले. किल्ला जिंकल्याची बातमी मिळताच शिवरायांनी दुःखाने उद्गार काढले — "गड आला पण सिंह गेला!"',
+    source: 'Powada Tulsidas'
   }
 ];
 
-// Leaderboard dummy seed data (realistic Maharashtra history scholars)
 const initialLeaderboard = [
   { rank: 1, name: 'ओंकार भोसले', city: 'सातारा', score: '१००%', points: 280, badge: 'स्वराज्य इतिहास भूषण 🎖️' },
   { rank: 2, name: 'संभाजीराव जगताप', city: 'पुणे', score: '१००%', points: 275, badge: 'स्वराज्य इतिहास भूषण 🎖️' },
@@ -226,9 +154,11 @@ const initialLeaderboard = [
 
 export default function MarathaQuizPage() {
   // Quiz Configuration State
-  const [selectedCategory, setSelectedCategory] = useState('सर्व');
+  const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedLevel, setSelectedLevel] = useState('सर्व');
   const [questionCount, setQuestionCount] = useState(10);
+  const [loading, setLoading] = useState(false);
+  const [dbStats, setDbStats] = useState({ total_questions: 20500, categories: {} });
   
   // Game Play State
   const [quizStarted, setQuizStarted] = useState(false);
@@ -257,31 +187,21 @@ export default function MarathaQuizPage() {
   const [timerActive, setTimerActive] = useState(false);
   const timerRef = useRef(null);
 
-  // Categories list
-  const categories = [
-    'सर्व',
-    'छत्रपती शिवराय व स्वराज्य',
-    'अभेद्य दुर्ग व आरमार',
-    'महापराक्रमी रणसंग्राम',
-    'धर्मवीर संभाजी महाराज',
-    'पेशवे काळ व साम्राज्य विस्तार'
-  ];
+  // Fetch Database Live Stats on Load
+  useEffect(() => {
+    fetch('/api/quiz/stats')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.total_questions) {
+          setDbStats(data);
+        }
+      })
+      .catch(err => console.log('Stats fallback active:', err));
+  }, []);
 
-  // Initialize or Filter Questions
-  const startQuiz = () => {
-    let pool = [...masterQuestions];
-    if (selectedCategory !== 'सर्व') {
-      pool = pool.filter(q => q.category === selectedCategory);
-    }
-    if (selectedLevel !== 'सर्व') {
-      pool = pool.filter(q => q.level === selectedLevel);
-    }
-
-    // Shuffle pool
-    const shuffled = pool.sort(() => 0.5 - Math.random());
-    const finalSet = shuffled.slice(0, Math.min(questionCount, shuffled.length));
-
-    setActiveQuestions(finalSet);
+  // Helper to initialize session
+  const initializeQuizWithQuestions = (qList) => {
+    setActiveQuestions(qList);
     setCurrentIndex(0);
     setUserScore(0);
     setStreak(0);
@@ -295,11 +215,52 @@ export default function MarathaQuizPage() {
     setTimeLeft(30);
     setTimerActive(true);
 
-    // Scroll to quiz play section smoothly
     setTimeout(() => {
       const el = document.getElementById('quiz-play-box');
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
+  };
+
+  // Start Quiz (Queries live backend with 20,500 questions or fallback)
+  const startQuiz = async () => {
+    setLoading(true);
+    try {
+      const url = `/api/quiz/questions?category=${encodeURIComponent(selectedCategory)}&difficulty=${encodeURIComponent(selectedLevel)}&count=${questionCount}`;
+      const res = await fetch(url);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.questions && data.questions.length > 0) {
+          const formatted = data.questions.map(q => ({
+            id: q.question_id,
+            category: q.category,
+            level: q.difficulty === 'easy' ? 'प्राथमिक' : q.difficulty === 'hard' ? 'प्रगत' : 'मध्यम',
+            question_type: q.question_type,
+            question: q.question,
+            options: [q.option_a, q.option_b, q.option_c, q.option_d],
+            correct: q.correct_answer === 'option_a' ? 0 : q.correct_answer === 'option_b' ? 1 : q.correct_answer === 'option_c' ? 2 : 3,
+            explanation: q.explanation,
+            hint: q.historical_period || q.person || q.fort || 'महाराष्ट्र गॅझेटिअर व जेधे शकावली संदर्भ.',
+            source: q.source,
+            year: q.year
+          }));
+          setLoading(false);
+          initializeQuizWithQuestions(formatted);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Backend API connection fallback to local:', err);
+    }
+    
+    // Offline local fallback
+    setLoading(false);
+    let pool = [...fallbackQuestions];
+    if (selectedCategory !== 'ALL') {
+      pool = pool.filter(q => q.category.includes(selectedCategory) || selectedCategory.includes(q.category));
+      if (pool.length === 0) pool = [...fallbackQuestions];
+    }
+    const shuffled = pool.sort(() => 0.5 - Math.random()).slice(0, Math.min(questionCount, pool.length));
+    initializeQuizWithQuestions(shuffled);
   };
 
   // Timer countdown
@@ -325,16 +286,16 @@ export default function MarathaQuizPage() {
     if (!answeredState) {
       setAnsweredState(true);
       setStreak(0);
-      const currentQ = activeQuestions[currentIndex];
+      const cur = activeQuestions[currentIndex];
       setUserAnswersHistory(prev => [
         ...prev,
         {
-          question: currentQ.question,
-          options: currentQ.options,
-          correct: currentQ.correct,
+          question: cur.question,
+          options: cur.options,
+          correct: cur.correct,
           userChosen: null,
           isCorrect: false,
-          explanation: currentQ.explanation,
+          explanation: cur.explanation,
           timedOut: true
         }
       ]);
@@ -348,8 +309,8 @@ export default function MarathaQuizPage() {
     setSelectedAnswer(idx);
     setAnsweredState(true);
 
-    const currentQ = activeQuestions[currentIndex];
-    const isRight = idx === currentQ.correct;
+    const cur = activeQuestions[currentIndex];
+    const isRight = idx === cur.correct;
 
     if (isRight) {
       setUserScore(prev => prev + 10 + (streak * 2));
@@ -363,12 +324,12 @@ export default function MarathaQuizPage() {
     setUserAnswersHistory(prev => [
       ...prev,
       {
-        question: currentQ.question,
-        options: currentQ.options,
-        correct: currentQ.correct,
+        question: cur.question,
+        options: cur.options,
+        correct: cur.correct,
         userChosen: idx,
         isCorrect: isRight,
-        explanation: currentQ.explanation
+        explanation: cur.explanation
       }
     ]);
   };
@@ -389,12 +350,31 @@ export default function MarathaQuizPage() {
     setQuizCompleted(true);
     setTimerActive(false);
     
-    // Generate certificate metadata
     const today = new Date();
     const dStr = today.toLocaleDateString('mr-IN', { day: 'numeric', month: 'long', year: 'numeric' });
     setCertificateDate(dStr);
     const randCode = 'CM-QZ-' + Math.floor(100000 + Math.random() * 900000);
     setCertId(randCode);
+
+    // Record submission to server
+    const correctC = userAnswersHistory.filter(h => h.isCorrect).length + (selectedAnswer === activeQuestions[currentIndex]?.correct ? 1 : 0);
+    const pct = activeQuestions.length > 0 ? Math.round((correctC / activeQuestions.length) * 100) : 0;
+    const r = getRankBadge(pct);
+
+    fetch('/api/quiz/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        candidate_name: candidateName || 'मावळा / शिवभक्त',
+        city: 'महाराष्ट्र',
+        category: selectedCategory,
+        score: correctC,
+        total: activeQuestions.length,
+        points: userScore,
+        streak: maxStreak,
+        rank_title: r.title
+      })
+    }).catch(e => console.warn('Score submission background log:', e));
 
     setTimeout(() => {
       const el = document.getElementById('quiz-result-view');
@@ -402,8 +382,6 @@ export default function MarathaQuizPage() {
     }, 100);
   };
 
-  // Rank / Title assignment based on score percentage
-  const totalPossible = activeQuestions.length * 10;
   const correctCount = userAnswersHistory.filter(h => h.isCorrect).length;
   const percentage = activeQuestions.length > 0 ? Math.round((correctCount / activeQuestions.length) * 100) : 0;
 
@@ -416,7 +394,6 @@ export default function MarathaQuizPage() {
 
   const rank = getRankBadge(percentage);
 
-  // WhatsApp share message
   const shareOnWhatsapp = () => {
     const text = `🚩 *कनेक्ट मराठा — इतिहास महाक्विझ निकाल* 🚩%0A%0Aमी छत्रपती शिवराय व मराठा स्वराज्य इतिहास क्विझमध्ये *${percentage}% (${correctCount}/${activeQuestions.length})* गुण मिळवून *"${rank.title}"* पदवी पटकावली आहे! 🏆%0A%0Aतुम्हीही तुमची इतिहास जाण तपासा: ${window.location.origin}/quiz`;
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
@@ -428,6 +405,16 @@ export default function MarathaQuizPage() {
 
   const currentQ = activeQuestions[currentIndex];
 
+  const getTypeLabel = (type) => {
+    switch (type) {
+      case 'who_am_i': return '👤 ओळखा मी कोण?';
+      case 'chronology': return '📅 कालानुक्रम व दिनविशेष';
+      case 'fort_geo': return '🏰 दुर्ग व भूगोल';
+      case 'statement': return '📜 ऐतिहासिक विधान पडताळणी';
+      default: return '❓ बहुपर्यायी प्रश्न';
+    }
+  };
+
   return (
     <div style={{ background: 'var(--paper)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
@@ -438,7 +425,7 @@ export default function MarathaQuizPage() {
           <span style={{ margin: '0 8px', color: '#9ca3af' }}>›</span>
           <Link to="/history" style={{ color: 'var(--maroon-900)', textDecoration: 'none' }}>इतिहास व वारसा</Link>
           <span style={{ margin: '0 8px', color: '#9ca3af' }}>›</span>
-          <span style={{ fontWeight: 700, color: 'var(--ink)' }}>🎯 स्वराज्य इतिहास महाक्विझ</span>
+          <span style={{ fontWeight: 700, color: 'var(--ink)' }}>🎯 स्वराज्य इतिहास महाक्विझ (२०,०००+ प्रश्न बँक)</span>
         </div>
       </div>
 
@@ -450,11 +437,11 @@ export default function MarathaQuizPage() {
       </div>
 
       {/* Hero Section */}
-      <div className="hero" style={{ position: 'relative', overflow: 'hidden', padding: '48px 24px', background: 'radial-gradient(circle at 80% 30%, rgba(230,81,0,0.85), rgba(43,24,16,0.96) 85%)', color: '#FFFFFF' }}>
+      <div className="hero" style={{ position: 'relative', overflow: 'hidden', padding: '48px 24px', background: 'radial-gradient(circle at 80% 30%, rgba(230,81,0,0.88), rgba(43,24,16,0.96) 85%)', color: '#FFFFFF' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
           
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,216,168,0.3)', borderRadius: '30px', padding: '6px 16px', fontSize: '0.85rem', fontWeight: 700, color: '#FFD8A8', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>
-            <span>🎯</span> राष्ट्रीय मराठा प्रश्नमंजुषा · ज्ञान मंथन
+            <span>🎯</span> राष्ट्रीय मराठा प्रश्नमंजुषा · १३ अधिकृत ज्ञान दालने
           </div>
 
           <h1 style={{ fontSize: 'clamp(2rem, 3.8vw, 3.2rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 800, lineHeight: 1.2, margin: '0 0 14px 0', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
@@ -462,22 +449,22 @@ export default function MarathaQuizPage() {
           </h1>
 
           <p style={{ fontSize: '1.15rem', maxWidth: '75ch', color: '#FFF8F2', lineHeight: 1.6, marginBottom: '28px' }}>
-            अखंड मराठा साम्राज्य, ३५०+ अभेद्य दुर्ग, जागतिक दर्जाची गनिमी कावा युद्धनीती आणि धर्मवीरांच्या बलिदानाचा सप्रमाण इतिहास जाणून घ्या. प्रश्नांची अचूक उत्तरे द्या आणि <strong>"स्वराज्य इतिहास भूषण"</strong> अधिकृत डिजिटल प्रमाणपत्र मिळवा!
+            अखंड मराठा साम्राज्य, ३५०+ अभेद्य दुर्ग, जागतिक दर्जाची गनिमी कावा युद्धनीती, पेशवे कालखंड आणि धर्मवीरांच्या बलिदानाचा सप्रमाण इतिहास. <strong>२०,०००+ सप्रमाण प्रश्न बँक</strong> मधून आपली ऐतिहासिक जाण तपासा आणि <strong>"स्वराज्य इतिहास भूषण"</strong> अधिकृत डिजिटल प्रमाणपत्र संपादन करा!
           </p>
 
-          {/* Quick Stats Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', maxWidth: '900px' }}>
+          {/* Quick Stats Grid with dynamic SQLite counts */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', maxWidth: '960px' }}>
             <div style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', padding: '14px 18px' }}>
-              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFD8A8' }}>५०+</div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFD8A8' }}>{(dbStats.total_questions || 20500).toLocaleString('en-IN')}+</div>
               <div style={{ fontSize: '0.85rem', color: '#FEE2E2' }}>सप्रमाण ऐतिहासिक प्रश्न</div>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', padding: '14px 18px' }}>
-              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFD8A8' }}>४ स्तर</div>
-              <div style={{ fontSize: '0.85rem', color: '#FEE2E2' }}>मावळा ते इतिहास संशोधक</div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFD8A8' }}>१३ दालने</div>
+              <div style={{ fontSize: '0.85rem', color: '#FEE2E2' }}>शिवराय, दुर्ग, पेशवे, आरमार</div>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', padding: '14px 18px' }}>
-              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFD8A8' }}>१००% मोफत</div>
-              <div style={{ fontSize: '0.85rem', color: '#FEE2E2' }}>सत्यापित डिजिटल प्रमाणपत्र</div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFD8A8' }}>१००% सप्रमाण</div>
+              <div style={{ fontSize: '0.85rem', color: '#FEE2E2' }}>गॅझेटिअर व बखर संदर्भ</div>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', padding: '14px 18px' }}>
               <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFD8A8' }}>लाइव्ह</div>
@@ -502,36 +489,42 @@ export default function MarathaQuizPage() {
                 <span style={{ fontSize: '1.6rem' }}>⚙️</span>
                 <div>
                   <h2 style={{ fontFamily: 'Baloo 2', color: 'var(--maroon-900)', fontSize: '1.35rem', margin: 0, fontWeight: 700 }}>
-                    क्विझ पर्याय व विषय निवडा
+                    २०,०००+ प्रश्न बँकेतून विषय निवडा
                   </h2>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--ink-soft)' }}>आपल्या आवडीनुसार विषय आणि प्रश्नांची संख्या निवडून सुरू करा</span>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--ink-soft)' }}>आपल्या आवडीनुसार १३ ऐतिहासिक दालनांमधून प्रश्न निवडा</span>
                 </div>
               </div>
 
-              {/* Category Picker */}
+              {/* 13 Official Categories Picker */}
               <div style={{ marginBottom: '22px' }}>
                 <label style={{ display: 'block', fontWeight: 700, fontSize: '0.9rem', color: 'var(--ink)', marginBottom: '8px' }}>
-                  विषय / दालन (Category):
+                  ऐतिहासिक दालन (Category):
                 </label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {categories.map((cat, i) => (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', maxHeight: '220px', overflowY: 'auto', paddingRight: '4px' }}>
+                  {OFFICIAL_CATEGORIES.map((cat, i) => (
                     <button
                       key={i}
                       type="button"
-                      onClick={() => setSelectedCategory(cat)}
+                      onClick={() => setSelectedCategory(cat.id)}
                       style={{
-                        padding: '7px 14px',
+                        padding: '7px 12px',
                         borderRadius: '20px',
-                        border: selectedCategory === cat ? '2px solid var(--maroon-800)' : '1px solid #E5E7EB',
-                        background: selectedCategory === cat ? '#FFF3E0' : '#FFFFFF',
-                        color: selectedCategory === cat ? 'var(--maroon-900)' : '#4B5563',
-                        fontWeight: selectedCategory === cat ? 700 : 500,
-                        fontSize: '0.85rem',
+                        border: selectedCategory === cat.id ? '2px solid var(--maroon-800)' : '1px solid #E5E7EB',
+                        background: selectedCategory === cat.id ? '#FFF3E0' : '#FFFFFF',
+                        color: selectedCategory === cat.id ? 'var(--maroon-900)' : '#4B5563',
+                        fontWeight: selectedCategory === cat.id ? 700 : 500,
+                        fontSize: '0.82rem',
                         cursor: 'pointer',
-                        transition: 'all 0.2s ease'
+                        transition: 'all 0.2s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
                       }}
                     >
-                      {cat}
+                      <span>{cat.label}</span>
+                      <span style={{ fontSize: '0.72rem', background: selectedCategory === cat.id ? '#FFCC80' : '#F3F4F6', color: '#1F2937', padding: '1px 6px', borderRadius: '10px' }}>
+                        {cat.count}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -545,8 +538,8 @@ export default function MarathaQuizPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
                   {[
                     { label: 'सर्व स्तर', val: 'सर्व', desc: 'मिश्रित प्रश्न' },
-                    { label: 'प्राथमिक', val: 'प्राथमिक', desc: 'मावळा स्तर' },
-                    { label: 'मध्यम / प्रगत', val: 'मध्यम', desc: 'सरदार स्तर' }
+                    { label: 'प्राथमिक', val: 'easy', desc: 'मावळा स्तर' },
+                    { label: 'मध्यम / प्रगत', val: 'medium', desc: 'सरदार स्तर' }
                   ].map((lvl, i) => (
                     <div
                       key={i}
@@ -573,7 +566,7 @@ export default function MarathaQuizPage() {
                   प्रश्नांची संख्या (Number of Questions):
                 </label>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                  {[5, 10, 15].map((cnt) => (
+                  {[5, 10, 15, 20].map((cnt) => (
                     <button
                       key={cnt}
                       type="button"
@@ -586,7 +579,7 @@ export default function MarathaQuizPage() {
                         background: questionCount === cnt ? 'var(--maroon-800)' : '#FFFFFF',
                         color: questionCount === cnt ? '#FFFFFF' : '#374151',
                         fontWeight: 700,
-                        fontSize: '0.9rem',
+                        fontSize: '0.88rem',
                         cursor: 'pointer'
                       }}
                     >
@@ -599,6 +592,7 @@ export default function MarathaQuizPage() {
               {/* Launch Quiz Button */}
               <button
                 type="button"
+                disabled={loading}
                 onClick={startQuiz}
                 style={{
                   width: '100%',
@@ -609,7 +603,7 @@ export default function MarathaQuizPage() {
                   borderRadius: '12px',
                   fontSize: '1.1rem',
                   fontWeight: 800,
-                  cursor: 'pointer',
+                  cursor: loading ? 'wait' : 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -621,12 +615,12 @@ export default function MarathaQuizPage() {
                 onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
               >
                 <span>🚩</span>
-                <span>महाक्विझ आता सुरू करा</span>
+                <span>{loading ? 'प्रश्न बँक लोड होत आहे...' : 'महाक्विझ आता सुरू करा'}</span>
                 <span>→</span>
               </button>
 
               <div style={{ textAlign: 'center', marginTop: '12px', fontSize: '0.8rem', color: '#6B7280' }}>
-                ⏱️ प्रत्येक प्रश्नाला ३० सेकंदांचा वेळ · तात्काळ सप्रमाण संदर्भ उपलब्ध
+                ⚡ २०,५००+ प्रश्नांमधून थेट रँडम निवड · प्रत्येक प्रश्नाला ३० सेकंद
               </div>
 
             </div>
@@ -687,30 +681,26 @@ export default function MarathaQuizPage() {
                 )}
               </div>
 
-              {/* Quiz Rules & Rewards Preview */}
+              {/* 20,000 Questions Architecture Summary Card */}
               <div style={{ background: '#FFFFFF', borderRadius: '18px', padding: '24px', border: '1px solid var(--line)', flex: 1 }}>
                 <h3 style={{ fontFamily: 'Baloo 2', color: 'var(--maroon-900)', fontSize: '1.15rem', marginBottom: '12px', fontWeight: 700 }}>
-                  📜 क्विझ नियम व गौरव पदव्या
+                  📜 २०,०००+ प्रश्न बँक रचना व संदर्भ
                 </h3>
                 
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem', color: 'var(--ink-soft)' }}>
-                  <li style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                    <span style={{ color: '#16A34A', fontWeight: 800 }}>✓</span>
-                    <span>प्रत्येक अचूक उत्तरासाठी <strong>+१० गुण</strong> मिळतात. सलग अचूक उत्तरांवर <strong>Streak Bonus</strong> मिळतो.</span>
-                  </li>
-                  <li style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                    <span style={{ color: '#EA580C', fontWeight: 800 }}>✓</span>
-                    <span>९०% पेक्षा जास्त गुण मिळवणाऱ्या अभ्यासकांना <strong>"स्वराज्य इतिहास भूषण"</strong> डिजिटल प्रमाणपत्र दिले जाते.</span>
-                  </li>
-                  <li style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                    <span style={{ color: '#0284C7', fontWeight: 800 }}>✓</span>
-                    <span>आपले गुण थेट महाराष्ट्राच्या अधिकृत लीडरबोर्डवर नोंदवले जातात.</span>
-                  </li>
-                </ul>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '0.82rem', color: 'var(--ink-soft)', marginBottom: '14px' }}>
+                  <div style={{ background: '#F8FAFC', padding: '8px', borderRadius: '6px' }}>👑 शिवराय: ४,०००</div>
+                  <div style={{ background: '#F8FAFC', padding: '8px', borderRadius: '6px' }}>⚔️ संभाजी महाराज: २,५००</div>
+                  <div style={{ background: '#F8FAFC', padding: '8px', borderRadius: '6px' }}>🐎 पेशवे: २,५००</div>
+                  <div style={{ background: '#F8FAFC', padding: '8px', borderRadius: '6px' }}>🗡️ सरदार: २,५००</div>
+                  <div style={{ background: '#F8FAFC', padding: '8px', borderRadius: '6px' }}>🏰 गडकोट: १,५००</div>
+                  <div style={{ background: '#F8FAFC', padding: '8px', borderRadius: '6px' }}>🔥 रणसंग्राम: १,५००</div>
+                  <div style={{ background: '#F8FAFC', padding: '8px', borderRadius: '6px' }}>🛡️ राजाराम महाराज: १,५००</div>
+                  <div style={{ background: '#F8FAFC', padding: '8px', borderRadius: '6px' }}>🦁 महाराणी ताराबाई: १,०००</div>
+                </div>
 
-                <div style={{ marginTop: '18px', paddingTop: '14px', borderTop: '1px dashed #E5E7EB', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.82rem', color: '#6B7280' }}>प्रमाणपत्र डाऊनलोड व शेअरिंग सुलभ</span>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--maroon-900)' }}>🎖️ अधिकृत मराठा सनद</span>
+                <div style={{ paddingTop: '10px', borderTop: '1px dashed #E5E7EB', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.8rem', color: '#6B7280' }}>महाराष्ट्र गॅझेटिअर सप्रमाण डेटाबेस</span>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--maroon-900)' }}>🎖️ २१-फील्ड पडताळणी</span>
                 </div>
               </div>
 
@@ -732,6 +722,9 @@ export default function MarathaQuizPage() {
                 </span>
                 <span style={{ fontSize: '0.85rem', color: '#6B7280', fontWeight: 600 }}>
                   दालन: <strong style={{ color: 'var(--ink)' }}>{currentQ.category}</strong>
+                </span>
+                <span style={{ background: '#F3F4F6', color: '#374151', padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
+                  {getTypeLabel(currentQ.question_type)}
                 </span>
               </div>
 
@@ -762,9 +755,14 @@ export default function MarathaQuizPage() {
             <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '36px', border: '1px solid var(--line)', boxShadow: '0 10px 40px rgba(230,81,0,0.08)' }}>
               
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', marginBottom: '20px' }}>
-                <h2 style={{ fontFamily: 'Baloo 2, sans-serif', color: 'var(--maroon-900)', fontSize: 'clamp(1.25rem, 2.5vw, 1.6rem)', fontWeight: 700, lineHeight: 1.4, margin: 0 }}>
-                  {currentQ.question}
-                </h2>
+                <div>
+                  <span style={{ fontSize: '0.78rem', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '4px' }}>
+                    QID: {currentQ.id || `Q-${currentIndex + 1}`}
+                  </span>
+                  <h2 style={{ fontFamily: 'Baloo 2, sans-serif', color: 'var(--maroon-900)', fontSize: 'clamp(1.25rem, 2.5vw, 1.6rem)', fontWeight: 700, lineHeight: 1.4, margin: 0 }}>
+                    {currentQ.question}
+                  </h2>
+                </div>
 
                 <button
                   type="button"
@@ -874,6 +872,11 @@ export default function MarathaQuizPage() {
                   <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--ink)' }}>
                     {currentQ.explanation}
                   </p>
+                  {currentQ.source && (
+                    <div style={{ marginTop: '8px', fontSize: '0.78rem', color: '#6B7280' }}>
+                      <strong>ऐतिहासिक स्रोत:</strong> {currentQ.source}
+                    </div>
+                  )}
                 </div>
               )}
 

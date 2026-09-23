@@ -3,6 +3,7 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import quizRoutes from './routes/quiz.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,6 +14,9 @@ const DB_FILE = path.join(__dirname, 'db.json');
 
 app.use(cors());
 app.use(express.json());
+
+// Mount 20,000-Question Maratha History Quiz Routes
+app.use('/api/quiz', quizRoutes);
 
 // Helper functions for reading and writing to DB
 function readData() {

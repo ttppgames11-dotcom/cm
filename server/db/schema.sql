@@ -229,3 +229,54 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   details TEXT,
   created_at TEXT
 );
+
+-- ========================================================
+-- 20,000-Question Maratha History & Heritage Quiz Tables
+-- ========================================================
+
+CREATE TABLE IF NOT EXISTS quiz_questions (
+  question_id TEXT PRIMARY KEY,
+  language TEXT DEFAULT 'mr',
+  category TEXT NOT NULL,
+  sub_category TEXT,
+  difficulty TEXT NOT NULL,
+  question_type TEXT NOT NULL,
+  question TEXT NOT NULL,
+  option_a TEXT NOT NULL,
+  option_b TEXT NOT NULL,
+  option_c TEXT NOT NULL,
+  option_d TEXT NOT NULL,
+  correct_answer TEXT NOT NULL,
+  explanation TEXT NOT NULL,
+  historical_period TEXT,
+  person TEXT,
+  fort TEXT,
+  battle TEXT,
+  year INTEGER,
+  source TEXT,
+  source_url TEXT,
+  verification_status TEXT DEFAULT 'verified',
+  created_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_quiz_category ON quiz_questions (category);
+CREATE INDEX IF NOT EXISTS idx_quiz_difficulty ON quiz_questions (difficulty);
+CREATE INDEX IF NOT EXISTS idx_quiz_type ON quiz_questions (question_type);
+CREATE INDEX IF NOT EXISTS idx_quiz_cat_diff ON quiz_questions (category, difficulty);
+
+CREATE TABLE IF NOT EXISTS quiz_submissions (
+  id TEXT PRIMARY KEY,
+  candidate_name TEXT NOT NULL,
+  city TEXT,
+  category TEXT,
+  score INTEGER,
+  total INTEGER,
+  percentage INTEGER,
+  points INTEGER,
+  streak INTEGER,
+  rank_title TEXT,
+  created_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_quiz_submissions_points ON quiz_submissions (points DESC);
+
