@@ -1169,12 +1169,62 @@ export default function HomePage() {
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
         </Link>
-        <Link to="/culture" className="eco-card">
+        <Link to="/culture/temples" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🛕</span>
             <div>
               <div className="eco-card-title">शिवकालीन मंदिरे</div>
               <div className="eco-card-desc">तुळजापूर भवानी, शिखर शिंगणापूर व शिवकालीन श्रद्धास्थाने.</div>
+            </div>
+          </div>
+          <div className="eco-card-action">दालन उघडा →</div>
+        </Link>
+        <Link to="/culture" className="eco-card">
+          <div className="eco-card-top">
+            <span className="eco-card-icon">🌍</span>
+            <div>
+              <div className="eco-card-title">सांस्कृतिक विविधता (८ प्रदेश)</div>
+              <div className="eco-card-desc">कोकण, विदर्भ, मराठवाडा, खानदेश व पश्चिम महाराष्ट्राची जीवनशैली.</div>
+            </div>
+          </div>
+          <div className="eco-card-action">दालन उघडा →</div>
+        </Link>
+        <Link to="/culture/dialects" className="eco-card">
+          <div className="eco-card-top">
+            <span className="eco-card-icon">🗣️</span>
+            <div>
+              <div className="eco-card-title">महाराष्ट्राच्या बोली व लहेजा</div>
+              <div className="eco-card-desc">मालवणी, वऱ्हाडी, अहिराणी, आगरी व कोळी बोलींची परस्पर तुलना व ऑडिओ.</div>
+            </div>
+          </div>
+          <div className="eco-card-action">दालन उघडा →</div>
+        </Link>
+        <Link to="/culture/food" className="eco-card">
+          <div className="eco-card-top">
+            <span className="eco-card-icon">🍲</span>
+            <div>
+              <div className="eco-card-title">महाराष्ट्राची खाद्यसंस्कृती</div>
+              <div className="eco-card-desc">सोलकढी, तांबडा-पांढरा रस्सा, सावजी मटण व अस्सल पारंपरिक पदार्थ.</div>
+            </div>
+          </div>
+          <div className="eco-card-action">दालन उघडा →</div>
+        </Link>
+        <Link to="/culture/gramdevat-jatra" className="eco-card">
+          <div className="eco-card-top">
+            <span className="eco-card-icon">🎪</span>
+            <div>
+              <div className="eco-card-title">ग्रामदैवत, जत्रा व लोककला</div>
+              <div className="eco-card-desc">गावची ग्रामदैवते, वार्षिक यात्रा दिनदर्शिका, दशावतार व देशी खेळ.</div>
+            </div>
+          </div>
+          <div className="eco-card-action">दालन उघडा →</div>
+        </Link>
+        <Link to="/culture/heritage-map" className="eco-card">
+          <div className="eco-card-top">
+            <span className="eco-card-icon">🗺️</span>
+            <div>
+              <div className="eco-card-title">परस्परसंवादी वारसा नकाशा</div>
+              <div className="eco-card-desc">किल्ले, लेणी, मंदिरे व युनेस्को जागतिक वारसास्थळांचे थेट नकाशा दर्शन.</div>
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
@@ -1235,12 +1285,32 @@ export default function HomePage() {
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
         </Link>
-        <Link to="/history" className="eco-card">
+        <Link to="/history/dates" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">📅</span>
             <div>
               <div className="eco-card-title">३६५ दिनविशेष दिनदर्शिका</div>
               <div className="eco-card-desc">मराठा इतिहासातील प्रत्येक दिवसाचे ऐतिहासिक स्मरण व घटना.</div>
+            </div>
+          </div>
+          <div className="eco-card-action">दालन उघडा →</div>
+        </Link>
+        <Link to="/history/knowledge-graph" className="eco-card">
+          <div className="eco-card-top">
+            <span className="eco-card-icon">⚡</span>
+            <div>
+              <div className="eco-card-title">घटना ↔ स्थळे नॉलेज ग्राफ</div>
+              <div className="eco-card-desc">राज्याभिषेक, पन्हाळा वेढा यांसारख्या घटना, व्यक्ती, किल्ले व पर्यटन मार्ग आलेख.</div>
+            </div>
+          </div>
+          <div className="eco-card-action">दालन उघडा →</div>
+        </Link>
+        <Link to="/community/oral-history" className="eco-card">
+          <div className="eco-card-top">
+            <span className="eco-card-icon">✍️</span>
+            <div>
+              <div className="eco-card-title">मौखिक इतिहास संकलन (Tier 4)</div>
+              <div className="eco-card-desc">आपल्या गावाचा इतिहास, मौखिक आख्यायिका व जुनी कागदपत्रे नोंदवा.</div>
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
