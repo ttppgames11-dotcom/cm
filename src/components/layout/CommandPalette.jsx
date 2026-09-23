@@ -23,6 +23,7 @@ const SEARCHABLE_ITEMS = [
   { title: 'सदस्य डॅशबोर्ड', path: '/dashboard', category: 'सदस्य' },
   { title: 'दुर्ग संवर्धन निधी (Donation)', path: '/donation', category: 'सेवा' },
   { title: 'अ‍ॅडमिन ईआरपी कन्सोल', path: '/admin', category: 'प्रशासन' },
+  { title: 'स्वराज्य इतिहास महाक्विझ (Maratha History Quiz)', path: '/quiz', category: 'इतिहास' },
   { title: 'सीईओ एक्झिक्युटिव्ह डॅशबोर्ड (Scope Engine)', path: '/ceo-dashboard', category: 'प्रशासन' },
   { title: 'Connect Maratha संस्था परिचय', path: '/about', category: 'संस्था' }
 ];

@@ -57,6 +57,7 @@ export default function SiteHeader({ onOpenSearch }) {
                     <Link to="/history/battles" onClick={handleLinkClick}>⚔️ प्रमुख ७ रणांगणे व व्यूहरचना</Link>
                     <Link to="/forts" onClick={handleLinkClick}>🏰 सह्याद्रीचे गड-किल्ले (३५०+)</Link>
                     <Link to="/history/navy" onClick={handleLinkClick}>⚓ मराठा आरमार व जलदुर्ग</Link>
+                    <Link to="/quiz" onClick={handleLinkClick} style={{ color: 'var(--maroon-800)', fontWeight: 700 }}>🎯 स्वराज्य इतिहास महाक्विझ</Link>
                   </div>
                   <div className="mega-col">
                     <div className="mega-col-title">🕯️ स्मृती व ग्रंथ संपदा</div>

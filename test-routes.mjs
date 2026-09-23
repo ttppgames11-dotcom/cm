@@ -38,7 +38,8 @@ const cleanReactRoutes = [
   '/jobs',
   '/gallery',
   '/culture',
-  '/profile'
+  '/profile',
+  '/quiz'
 ];
 
 async function checkRoute(path) {

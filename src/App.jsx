@@ -50,6 +50,7 @@ import WarriorsPage from './pages/history/WarriorsPage';
 import MarathaNavyPage from './pages/history/MarathaNavyPage';
 import HistoricalDatesPage from './pages/history/HistoricalDatesPage';
 import SwarajyaAdminPage from './pages/history/SwarajyaAdminPage';
+import MarathaQuizPage from './pages/history/MarathaQuizPage';
 import HeritageTrailsPage from './pages/forts/HeritageTrailsPage';
 import CommunitySafetyPage from './pages/community/CommunitySafetyPage';
 import MovementsPage from './pages/community/MovementsPage';
@@ -186,7 +187,8 @@ const legacyRedirects = [
   { from: '/cm-politicalleader.html', to: '/political' },
   { from: '/cm-social-workers.html', to: '/social-workers' },
   { from: '/cm-blood.html', to: '/blood' },
-  { from: '/cm-matrimony.html', to: '/matrimony' }
+  { from: '/cm-matrimony.html', to: '/matrimony' },
+  { from: '/cm-quiz.html', to: '/quiz' }
 ];
 
 import { ToastProvider } from './context/ToastContext';
@@ -209,6 +211,10 @@ export default function App() {
             
             {/* History & Heritage */}
             <Route path="/history" element={<HistoryPage />} />
+            <Route path="/quiz" element={<MarathaQuizPage />} />
+            <Route path="/history/quiz" element={<MarathaQuizPage />} />
+            <Route path="/maratha-quiz" element={<MarathaQuizPage />} />
+            <Route path="/quiz-portal" element={<MarathaQuizPage />} />
             <Route path="/history/battles" element={<BattlesPage />} />
             <Route path="/battles" element={<BattlesPage />} />
             <Route path="/history/warriors" element={<WarriorsPage />} />
