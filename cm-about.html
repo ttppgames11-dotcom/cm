@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>आमच्याबद्दल (About Connect Maratha) — CONNECT MARATHA</title>
+  <meta name="description" content="कनेक्ट मराठा महासंघाची स्थापना, ध्येय, सल्लागार मंडळ, पारदर्शकता व सामाजिक वचनबद्धता.">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="wrap topbar-inner" style="display:flex; justify-content:space-between; align-items:center; padding:6px 24px; font-size:0.82rem;">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span style="color:var(--gold-400); font-weight:700;">🚩 CONNECT MARATHA</span>
+        <span style="color:var(--text-sec); display:none; @media(min-width:768px){display:inline;}">इतिहास जपूया • समाज जोडूया • भविष्य घडवूया</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span>📞 समाज हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN HEADER -->
+  <header class="site-header">
+  <div class="site-header-inner">
+    <a href="index.html" class="brand-desktop">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
+      <div class="brand-titles">
+        <div class="brand-main">
+          <span class="en">CONNECT</span>
+          <span class="mr">मराठा</span>
+        </div>
+        <span class="brand-sub">अखिल भारतीय मराठा डिजिटल महासंघ</span>
+      </div>
+    </a>
+
+    <!-- Standard Flagship Desktop Navigation -->
+    <nav class="desktop-nav">
+      <a href="cm-history.html">⚔️ इतिहास</a>
+      <a href="cm-network.html">🗺️ महाराष्ट्र नेटवर्क</a>
+      <a href="cm-directory-people.html">👥 समुदाय</a>
+      <a href="cm-business-sangam.html">🤝 व्यवसाय संगम</a>
+      <a href="cm-services.html">🛠️ सेवा व करिअर</a>
+      <a href="cm-about.html" class="active">🏛️ महासंघ परिचय</a>
+      <a href="cm-more.html">📂 सर्व विभाग ▾</a>
+    </nav>
+
+    <!-- Standard Header Actions -->
+    <div class="header-actions">
+      <a href="cm-search.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🔎 शोध</a>
+      <a href="cm-card.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🪪 कार्ड</a>
+      <a href="cm-login.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
+      <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
+    </div>
+  </div>
+</header>
+
+  <!-- HERO SECTION -->
+  <div class="hero" style="position:relative; min-height:460px; overflow:hidden;">
+    <img src="assets/images/connect-maratha-council.jpg" alt="Connect Maratha Advisory Council" class="hero-bg-img" style="position:absolute; width:100%; height:100%; object-fit:cover; filter:brightness(0.38);">
+    <div class="hero-overlay" style="position:absolute; inset:0; background:radial-gradient(circle at 70% 30%, rgba(20,4,6,0.6), rgba(12,2,4,0.95) 85%);"></div>
+    <div class="wrap hero-content" style="position:relative; z-index:2; max-width:1300px; padding:64px 24px; color:#fff;">
+      <div class="eyebrow" style="color:var(--gold-400); text-transform:uppercase; font-size:0.85rem; letter-spacing:1.5px; font-weight:700;">Spec Page 2 • Institutional Framework</div>
+      <h1 style="font-size:clamp(2.2rem, 4.5vw, 3.8rem); line-height:1.15; color:#fff; margin:8px 0 16px;">
+        आमच्याबद्दल — <span style="background:linear-gradient(90deg,var(--gold-400),var(--saffron-500)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;">कनेक्ट मराठा महासंघ</span>
+      </h1>
+      <div style="background:var(--gold-500); width:80px; height:4px; margin-bottom:18px;"></div>
+      <p style="color:var(--text-sec); font-size:1.12rem; max-width:68ch; line-height:1.6;">
+        इतिहासाचे अस्सल संवर्धन, आधुनिक पिढीची विधायक जोडणी आणि सक्षम भविष्यनिर्मिती • अभ्यासक, विचारवंत, तंत्रज्ञान तज्ज्ञ व समाजसेवकांचा स्वतंत्र लोकसहभागी डिजिटल महासंघ.
+      </p>
+
+      <div style="display:flex; gap:16px; margin-top:28px; flex-wrap:wrap;">
+        <button type="button" onclick="downloadCharter()" class="btn btn-primary" style="padding:12px 24px; font-weight:700;">📜 समुदाय सनद (Charter) डाऊनलोड करा</button>
+        <a href="#council" class="btn btn-outline" style="padding:12px 24px; color:#fff; border-color:var(--gold-400);">👥 सल्लागार मंडळ पहा</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBPAGES TAB BAR (Route: /about/*) -->
+  <div class="subpage-nav-bar" style="position:sticky; top:65px; z-index:850; background:var(--paper); border-bottom:2px solid var(--border); box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+    <div class="wrap" style="max-width:1300px; margin:0 auto; padding:0 24px; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none;">
+      <a href="#overview" class="sub-tab active" onclick="switchAboutTab('overview', event)" style="padding:14px 18px; font-weight:700; color:var(--saffron-600); border-bottom:3px solid var(--saffron-600); text-decoration:none; white-space:nowrap; font-size:0.92rem;">🏛️ परिचय (/about)</a>
+      <a href="#vision" class="sub-tab" onclick="switchAboutTab('vision', event)" style="padding:14px 18px; font-weight:600; color:var(--text); text-decoration:none; white-space:nowrap; font-size:0.92rem;">🎯 दृष्टी (Vision)</a>
+      <a href="#mission" class="sub-tab" onclick="switchAboutTab('mission', event)" style="padding:14px 18px; font-weight:600; color:var(--text); text-decoration:none; white-space:nowrap; font-size:0.92rem;">🚩 ध्येय (Mission)</a>
+      <a href="#values" class="sub-tab" onclick="switchAboutTab('values', event)" style="padding:14px 18px; font-weight:600; color:var(--text); text-decoration:none; white-space:nowrap; font-size:0.92rem;">💎 मूल्ये (Values)</a>
+      <a href="#story" class="sub-tab" onclick="switchAboutTab('story', event)" style="padding:14px 18px; font-weight:600; color:var(--text); text-decoration:none; white-space:nowrap; font-size:0.92rem;">📖 आमची गाथा (Story)</a>
+      <a href="#org" class="sub-tab" onclick="switchAboutTab('org', event)" style="padding:14px 18px; font-weight:600; color:var(--text); text-decoration:none; white-space:nowrap; font-size:0.92rem;">🏢 संघटना (Organization)</a>
+      <a href="#leadership" class="sub-tab" onclick="switchAboutTab('leadership', event)" style="padding:14px 18px; font-weight:600; color:var(--text); text-decoration:none; white-space:nowrap; font-size:0.92rem;">👥 नेतृत्व मंडळ (Leadership)</a>
+      <a href="cm-network.html" class="sub-tab" style="padding:14px 18px; font-weight:700; color:var(--gold-600); text-decoration:none; white-space:nowrap; font-size:0.92rem; background:rgba(224,169,109,0.12); border-radius:6px 6px 0 0;">🗺️ महाराष्ट्र नेटवर्क (/network) →</a>
+    </div>
+  </div>
+
+  <!-- TAB 1: OVERVIEW & MISSION & PHILOSOPHY -->
+  <div id="tab-overview" class="about-tab-content active">
+    <a id="overview"></a>
+    <section class="section" style="padding:56px 24px;">
+      <div class="wrap" style="max-width:1100px; margin:0 auto;">
+        <div style="text-align:center; margin-bottom:40px;">
+          <span class="tag" style="background:var(--maroon-900); color:var(--gold-400);">आमचे मूलभूत ध्येय</span>
+          <h2 style="font-size:2.2rem; margin:10px 0;">संस्कृती, स्वाभिमान व समृद्धीचे व्यासपीठ</h2>
+          <p style="color:var(--text-sec); font-size:1.05rem;">"जपा इतिहास • जपा संस्कृती • सन्मान करा कर्तृत्वाचा • जोडा समाज • घडवा भविष्य"</p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:28px;">
+          <div class="card" style="padding:28px; border-radius:14px; border-left:4px solid var(--saffron-600);">
+            <h3 style="font-size:1.3rem; margin-bottom:10px;">१. इतिहास व वारसा संवर्धन</h3>
+            <p style="font-size:0.92rem; color:var(--text-sec); line-height:1.6;">
+              छत्रपती शिवाजी महाराज व छत्रपती संभाजी महाराजांच्या स्वराज्याची विचारधारा, गड-किल्ल्यांचे जतन आणि ऐतिहासिक साधनांची सत्यता जपणे. विकृतीकरणाला विरोध करून संशोधनधारित इतिहास पुढील पिढीपर्यंत पोहोचवणे.
+            </p>
+          </div>
+          <div class="card" style="padding:28px; border-radius:14px; border-left:4px solid var(--gold-500);">
+            <h3 style="font-size:1.3rem; margin-bottom:10px;">२. उद्योग व व्यावसायिक सक्षमीकरण</h3>
+            <p style="font-size:0.92rem; color:var(--text-sec); line-height:1.6;">
+              मराठी तरुणांमध्ये उद्योजकतेची बीजे रोवणे, 'व्यवसाय संगम'च्या माध्यमातून स्थानिक व जागतिक पातळीवर परस्परांना उद्योग-व्यवसाय मिळवून देणे आणि आर्थिक सक्षमीकरणाचा मार्ग प्रशस्त करणे.
+            </p>
+          </div>
+          <div class="card" style="padding:28px; border-radius:14px; border-left:4px solid #2E7D32;">
+            <h3 style="font-size:1.3rem; margin-bottom:10px;">३. शिक्षण, करिअर व सामाजिक एकता</h3>
+            <p style="font-size:0.92rem; color:var(--text-sec); line-height:1.6;">
+              गरजू विद्यार्थ्यांना शिष्यवृत्ती व स्पर्धा परीक्षांचे मार्गदर्शन देणे, आपत्कालीन रक्तपुरवठा व वैद्यकीय साहाय्य करणे आणि महिला नेतृत्वाला सर्व क्षेत्रांत बळ देणे.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- TAB 2: VISION (/about/vision) -->
+  <div id="tab-vision" class="about-tab-content" style="display:none;">
+    <a id="vision"></a>
+    <section class="section" style="padding:56px 24px; background:var(--paper-2);">
+      <div class="wrap" style="max-width:1100px; margin:0 auto;">
+        <div style="text-align:center; margin-bottom:40px;">
+          <span class="tag" style="background:var(--saffron-600); color:#fff;">दूरदृष्टी • VISION 2030</span>
+          <h2 style="font-size:2.2rem; margin:10px 0;">ग्लोबल मराठा: आर्थिक व बौद्धिक महाशक्ती</h2>
+          <p style="color:var(--text-sec); font-size:1.05rem;">२०३० पर्यंत जगभरातील ५ कोटी मराठा समाजाला जोडणारे सर्वात विश्वासू व स्वतंत्र डिजिटल व्यासपीठ.</p>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:24px;">
+          <div class="card" style="padding:24px; border-radius:12px;">
+            <div style="font-size:2rem; margin-bottom:10px;">🏰</div>
+            <h3 style="margin-bottom:8px;">३५०+ गड-किल्ल्यांचे १००% डिजिटायझेशन</h3>
+            <p style="font-size:0.9rem; color:var(--text-sec); line-height:1.6;">प्रत्येक किल्ल्याचा अस्सल इतिहास, ३६०° आभासी दर्शन, संवर्धन कृती आराखडा आणि आंतरराष्ट्रीय पातळीवर शिवकालीन स्थापत्यकलेचा प्रचार.</p>
+          </div>
+          <div class="card" style="padding:24px; border-radius:12px;">
+            <div style="font-size:2rem; margin-bottom:10px;">💼</div>
+            <h3 style="margin-bottom:8px;">₹ १०,००० कोटींचा वार्षिक B2B व्यापार</h3>
+            <p style="font-size:0.9rem; color:var(--text-sec); line-height:1.6;">'व्यवसाय संगम' चॅप्टर्सच्या माध्यमातून मराठी उद्योजक व व्यावसायिकांना थेट राष्ट्रीय व आंतरराष्ट्रीय खरेदीदारांशी जोडून आर्थिक संपन्नता निर्माण करणे.</p>
+          </div>
+          <div class="card" style="padding:24px; border-radius:12px;">
+            <div style="font-size:2rem; margin-bottom:10px;">🎓</div>
+            <h3 style="margin-bottom:8px;">१ लाख मराठा युवा करिअर सक्षमीकरण</h3>
+            <p style="font-size:0.9rem; color:var(--text-sec); line-height:1.6;">UPSC, MPSC, आयटी, आर्टिफिशिअल इंटेलिजन्स आणि संरक्षण दलात मराठा तरुणांचे प्रमाण सर्वोच्च पातळीवर नेणे.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- TAB 3: MISSION (/about/mission) -->
+  <div id="tab-mission" class="about-tab-content" style="display:none;">
+    <a id="mission"></a>
+    <section class="section" style="padding:56px 24px;">
+      <div class="wrap" style="max-width:1100px; margin:0 auto;">
+        <div style="text-align:center; margin-bottom:40px;">
+          <span class="tag" style="background:var(--maroon-900); color:var(--gold-400);">ध्येयस्तंभ • MISSION PILLARS</span>
+          <h2 style="font-size:2.2rem; margin:10px 0;">आमचे ५ मुख्य कार्यस्तंभ</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+          <div class="card" style="padding:20px; border-left:4px solid var(--saffron-500);">
+            <h4>१. अस्सल ऐतिहासिक ज्ञाननिर्मिती</h4>
+            <p style="font-size:0.88rem; color:var(--text-sec); margin-top:6px;">ऐतिहासिक साधनांचे (बखरी, मोडी लिपी कागदपत्रे, अस्सल फर्मान) संकलन व सार्वजनिक डिजिटल ग्रंथालय.</p>
+          </div>
+          <div class="card" style="padding:20px; border-left:4px solid var(--gold-500);">
+            <h4>२. स्वयंपूर्ण व्यवसाय मंडळे</h4>
+            <p style="font-size:0.88rem; color:var(--text-sec); margin-top:6px;">३६ जिल्ह्यांत ५००+ व्यवसाय संगम चॅप्टर्सची स्थापना आणि शून्य मध्यस्थी व्यापार.</p>
+          </div>
+          <div class="card" style="padding:20px; border-left:4px solid #2E7D32;">
+            <h4>३. आपत्कालीन सेवा व रक्तदाते नेटवर्क</h4>
+            <p style="font-size:0.88rem; color:var(--text-sec); margin-top:6px;">महाराष्ट्रातील ३५०+ तालुक्यांमध्ये २४x७ 'ब्लड कनेक्ट' व संकटमोचक रुग्ण साहाय्य पथके.</p>
+          </div>
+          <div class="card" style="padding:20px; border-left:4px solid #1976D2;">
+            <h4>४. युवा व क्रीडा प्रतिभा विकास</h4>
+            <p style="font-size:0.88rem; color:var(--text-sec); margin-top:6px;">मर्दानी खेळ, कुस्ती, दुर्गभ्रमंती, आणि ऑलिम्पिक खेळांसाठी ग्रामीण गुणवंतांना आर्थिक पाठबळ.</p>
+          </div>
+          <div class="card" style="padding:20px; border-left:4px solid #7B1FA2;">
+            <h4>५. डिजिटल स्वाभिमान व सुरक्षितता</h4>
+            <p style="font-size:0.88rem; color:var(--text-sec); margin-top:6px;">DPDP कायदा २०२३ नुसार १००% डेटा गोपनीयता, विना-राजकारण लोकसहभाग व पारदर्शक कारभार.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- TAB 4: VALUES (/about/values) -->
+  <div id="tab-values" class="about-tab-content" style="display:none;">
+    <a id="values"></a>
+    <section class="section" style="padding:56px 24px; background:var(--paper-2);">
+      <div class="wrap" style="max-width:1100px; margin:0 auto;">
+        <div style="text-align:center; margin-bottom:40px;">
+          <span class="tag" style="background:var(--maroon-900); color:var(--gold-400);">नैतिक मूल्ये • CORE VALUES</span>
+          <h2 style="font-size:2.2rem; margin:10px 0;">ज्या मूल्यांवर CONNECT MARATHA उभा आहे</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:24px; text-align:center;">
+          <div class="card" style="padding:28px;">
+            <div style="font-size:2.4rem;">⚔️</div>
+            <h3 style="margin:12px 0 6px;">शौर्य व स्वाभिमान</h3>
+            <p style="font-size:0.88rem; color:var(--text-sec);">छत्रपतींच्या स्वराज्याचे बाणेदार वारसदार म्हणून सन्मानाने आणि ताठ मानेने जगणे.</p>
+          </div>
+          <div class="card" style="padding:28px;">
+            <div style="font-size:2.4rem;">🤝</div>
+            <h3 style="margin:12px 0 6px;">परस्पर सहकार्य (बंधुभाव)</h3>
+            <p style="font-size:0.88rem; color:var(--text-sec);">'एक मराठा लाख मराठा' या घोषणेला आर्थिक व व्यावसायिक सहकार्याची खरी दिशा देणे.</p>
+          </div>
+          <div class="card" style="padding:28px;">
+            <div style="font-size:2.4rem;">🛡️</div>
+            <h3 style="margin:12px 0 6px;">निःस्वार्थ समाजसेवा</h3>
+            <p style="font-size:0.88rem; color:var(--text-sec);">पीडित, वंचित व गरजू घटकांना सर्वतोपरी साहाय्य करणे हेच आमचे प्रथम कर्तव्य.</p>
+          </div>
+          <div class="card" style="padding:28px;">
+            <div style="font-size:2.4rem;">⚖️</div>
+            <h3 style="margin:12px 0 6px;">पारदर्शकता व निष्पक्षता</h3>
+            <p style="font-size:0.88rem; color:var(--text-sec);">शून्य राजकारण, १००% ऑडिट पारदर्शकता आणि सर्वांसाठी समान विकासाची संधी.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- TAB 5: OUR STORY (/about/our-story) -->
+  <div id="tab-story" class="about-tab-content" style="display:none;">
+    <a id="story"></a>
+    <section class="section" style="padding:56px 24px;">
+      <div class="wrap" style="max-width:900px; margin:0 auto;">
+        <div style="text-align:center; margin-bottom:40px;">
+          <span class="tag" style="background:var(--saffron-600); color:#fff;">आपली यशोगाथा • OUR STORY</span>
+          <h2 style="font-size:2.2rem; margin:10px 0;">एका संकल्पातून उभा राहिलेला डिजिटल महासंघ</h2>
+        </div>
+        <div style="border-left:3px solid var(--gold-500); padding-left:24px; display:flex; flex-direction:column; gap:32px;">
+          <div>
+            <span class="badge" style="background:var(--maroon-900); color:var(--gold-400);">२०२४ — संकल्प व बीज</span>
+            <h3 style="margin:8px 0;">इतिहास संवर्धन व विस्कळीत तरुणांची एकजूट</h3>
+            <p style="font-size:0.92rem; color:var(--text-sec); line-height:1.6;">गड-किल्ले भटकंती करणारे तरुण, इतिहास अभ्यासक आणि काही मराठी आयटी व्यावसायिकांनी एकत्र येऊन समाजाला जात-पात किंवा राजकारणाच्या पलीकडे नेऊन एकात्मिक डिजिटल व्यासपीठ देण्याचा निर्णय घेतला.</p>
+          </div>
+          <div>
+            <span class="badge" style="background:var(--saffron-600); color:#fff;">२०२५ — व्यवसाय संगम व नेटवर्क विस्तार</span>
+            <h3 style="margin:8px 0;">BNI धर्तीवर मराठा बिझनेस संगमची स्थापना</h3>
+            <p style="font-size:0.92rem; color:var(--text-sec); line-height:1.6;">पुणे, मुंबई व नाशिकमध्ये पहिले २० व्यवसाय संगम चॅप्टर्स सुरू झाले. अवघ्या एका वर्षात ५,०००+ व्यावसायिकांनी परस्परांना कोट्यवधींचा व्यापार मिळवून दिला.</p>
+          </div>
+          <div>
+            <span class="badge" style="background:#2E7D32; color:#fff;">२०२६ — अखिल भारतीय डिजिटल महासंघ</span>
+            <h3 style="margin:8px 0;">८०+ एकात्मिक दालने, ३६ जिल्हे व जागतिक मराठा</h3>
+            <p style="font-size:0.92rem; color:var(--text-sec); line-height:1.6;">आज CONNECT MARATHA हे महाराष्ट्रातील ६ महसूल विभाग, ३६ जिल्हे, ३५०+ तालुके आणि ३,०००+ शाखांमध्ये पोहोचलेले सर्वात मोठे स्वतंत्र सांस्कृतिक व व्यावसायिक डिजिटल नेटवर्क बनले आहे.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- TAB 6: ORGANIZATION & CHARTER (/about/organization) -->
+  <div id="tab-org" class="about-tab-content" style="display:none;">
+    <a id="org"></a>
+    <section class="section" style="padding:56px 24px; background:var(--paper-2);">
+      <div class="wrap" style="max-width:1100px; margin:0 auto;">
+        <div style="text-align:center; margin-bottom:40px;">
+          <span class="tag" style="background:var(--maroon-900); color:var(--gold-400);">संघटनात्मक रचना • ORGANIZATION</span>
+          <h2 style="font-size:2.2rem; margin:10px 0;">स्वायत्त, लोकसहभागी व नफाविरहित रचना</h2>
+        </div>
+        <div class="card" style="padding:32px; border-radius:14px; margin-bottom:24px;">
+          <h3>📜 कायदेशीर स्वरूप व सनद (Section 8 Non-Profit)</h3>
+          <p style="font-size:0.94rem; color:var(--text-sec); line-height:1.6; margin:12px 0 20px;">
+            CONNECT MARATHA हे कंपनी कायदा २०१३ च्या कलम ८ अंतर्गत नोंदणीकृत नफाविरहित स्वायत्त महासंघ आहे. या व्यासपीठावर कोणताही राजकीय पक्ष, दबावगट किंवा वैयक्तिक मालकी हक्क चालत नाही. व्यासपीठाचे संचालन लोकशाही पद्धतीने सल्लागार मंडळ, विधी समिती आणि जिल्हा प्रतिनिधींद्वारे केले जाते.
+          </p>
+          <div style="display:flex; gap:14px; flex-wrap:wrap;">
+            <a href="cm-governance.html" class="btn btn-primary">⚖️ संस्थात्मक संविधान व DPDP धोरण पहा</a>
+            <a href="cm-network.html" class="btn btn-outline">🗺️ राज्य → विभाग → जिल्हा नेटवर्क रचना पहा</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ADVISORY COUNCIL & LEADERSHIP -->
+  <section class="section" id="council" style="padding:64px 24px; background:var(--paper-2);">
+    <a id="leadership"></a>
+    <div class="wrap" style="max-width:1300px; margin:0 auto;">
+      <div style="text-align:center; max-width:700px; margin:0 auto 48px;">
+        <span class="tag" style="background:var(--saffron-500); color:#fff;">मार्गदर्शन व नेतृत्व</span>
+        <h2 style="font-size:2.2rem; margin:10px 0;">सल्लागार मंडळ व अभ्यासक समिती</h2>
+        <p style="color:var(--text-sec);">इतिहासकार, कायदेतज्ज्ञ, निवृत्त लष्करी अधिकारी व तंत्रज्ञान तज्ज्ञांचे मार्गदर्शक मंडळ.</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:24px;">
+
+        <div class="card" style="padding:24px; border-radius:14px; text-align:center;">
+          <div style="width:80px; height:80px; margin:0 auto 16px; border-radius:50%; background:var(--paper-3); display:flex; align-items:center; justify-content:center; font-size:2.2rem; border:2px solid var(--gold-500);">
+            📚
+          </div>
+          <h3 style="font-size:1.15rem; margin-bottom:4px;">डॉ. जयसिंगराव पवार</h3>
+          <div style="font-size:0.8rem; color:var(--saffron-600); font-weight:700; margin-bottom:8px;">ज्येष्ठ इतिहास संशोधक</div>
+          <p style="font-size:0.85rem; color:var(--text-sec); line-height:1.5;">मराठा साम्राज्य, छत्रपती ताराराणी व शिवकालीन इतिहासाचे गाढे अभ्यासक आणि ऐतिहासिक सत्यता पडताळणी प्रमुख.</p>
+        </div>
+
+        <div class="card" style="padding:24px; border-radius:14px; text-align:center;">
+          <div style="width:80px; height:80px; margin:0 auto 16px; border-radius:50%; background:var(--paper-3); display:flex; align-items:center; justify-content:center; font-size:2.2rem; border:2px solid var(--gold-500);">
+            ⚖️
+          </div>
+          <h3 style="font-size:1.15rem; margin-bottom:4px;">ॲड. विश्वासराव पाटील</h3>
+          <div style="font-size:0.8rem; color:var(--saffron-600); font-weight:700; margin-bottom:8px;">घटनात्मक सल्लागार</div>
+          <p style="font-size:0.85rem; color:var(--text-sec); line-height:1.5;">उच्च न्यायालय विधी सल्लागार, डिजिटल डेटा संरक्षण (DPDP) व समुदाय कायदेशीर हक्क समिती समन्वयक.</p>
+        </div>
+
+        <div class="card" style="padding:24px; border-radius:14px; text-align:center;">
+          <div style="width:80px; height:80px; margin:0 auto 16px; border-radius:50%; background:var(--paper-3); display:flex; align-items:center; justify-content:center; font-size:2.2rem; border:2px solid var(--gold-500);">
+            👩‍💼
+          </div>
+          <h3 style="font-size:1.15rem; margin-bottom:4px;">प्रा. अनुराधा मोरे</h3>
+          <div style="font-size:0.8rem; color:var(--saffron-600); font-weight:700; margin-bottom:8px;">महिला व युवा सक्षमीकरण</div>
+          <p style="font-size:0.85rem; color:var(--text-sec); line-height:1.5;">सावित्रीबाई फुले पुणे विद्यापीठ शिक्षणतज्ज्ञ, विद्यार्थिनी मार्गदर्शन व महिला उद्योजक मंचाच्या अध्यक्षा.</p>
+        </div>
+
+        <div class="card" style="padding:24px; border-radius:14px; text-align:center;">
+          <div style="width:80px; height:80px; margin:0 auto 16px; border-radius:50%; background:var(--paper-3); display:flex; align-items:center; justify-content:center; font-size:2.2rem; border:2px solid var(--gold-500);">
+            🎖️
+          </div>
+          <h3 style="font-size:1.15rem; margin-bottom:4px;">कर्नल विजयराव साळुंखे</h3>
+          <div style="font-size:0.8rem; color:var(--saffron-600); font-weight:700; margin-bottom:8px;">निवृत्त संरक्षण अधिकारी</div>
+          <p style="font-size:0.85rem; color:var(--text-sec); line-height:1.5;">मराठा लाईट इन्फंट्री निवृत्त अधिकारी, युवा सैनिकी प्रशिक्षण व आपत्कालीन मदत दलाचे मुख्य निर्देशक.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FINANCIAL TRANSPARENCY & AUDIT -->
+  <section class="section" style="padding:56px 24px;">
+    <div class="wrap" style="max-width:1100px; margin:0 auto;">
+      <div style="background:var(--paper); border:2px solid var(--gold-500); border-radius:16px; padding:36px; box-shadow:var(--shadow-md);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:16px;">
+          <div>
+            <span class="tag" style="background:#2E7D32; color:#fff;">१००% सार्वजनिक पारदर्शकता</span>
+            <h3 style="font-size:1.8rem; margin:6px 0 0;">आर्थिक अहवाल व निधी विनियोग</h3>
+          </div>
+          <button class="btn btn-outline" onclick="showToast('२०२५-२६ वित्तीय ऑडिट अहवाल डाऊनलोड सुरू झाला...', 'success')">📥 ऑडिट अहवाल (PDF)</button>
+        </div>
+        <p style="font-size:0.95rem; color:var(--text-sec); line-height:1.6; margin-bottom:24px;">
+          CONNECT MARATHA हे नफाविरहित (Not-for-profit) धर्तीवर चालवले जाणारे डिजिटल व्यासपीठ आहे. दुर्ग संवर्धन, विद्यार्थी साहाय्य व रक्तदान मोहिमांसाठी जमा झालेल्या प्रत्येक रुपयाचा काटेकोर हिशेब संकेतस्थळावर जाहीर ठेवला जातो.
+        </p>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px; text-align:center;">
+          <div style="background:var(--paper-2); padding:18px; border-radius:10px;">
+            <div style="font-size:1.8rem; font-weight:800; color:var(--saffron-600);">₹४२.५ लाख</div>
+            <div style="font-size:0.82rem; color:var(--text-sec);">दुर्ग संवर्धनासाठी थेट विनियोग</div>
+          </div>
+          <div style="background:var(--paper-2); padding:18px; border-radius:10px;">
+            <div style="font-size:1.8rem; font-weight:800; color:var(--gold-600);">१,४५०+</div>
+            <div style="font-size:0.82rem; color:var(--text-sec);">विद्यार्थ्यांना शैक्षणिक साहाय्य</div>
+          </div>
+          <div style="background:var(--paper-2); padding:18px; border-radius:10px;">
+            <div style="font-size:1.8rem; font-weight:800; color:#2E7D32;">०%</div>
+            <div style="font-size:0.82rem; color:var(--text-sec);">प्रशासकीय नफा (Zero Profit)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="website-footer">
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+          <img src="assets/images/logo.png" alt="Logo" style="width:40px; height:40px; border-radius:50%; border:2px solid #FFF;">
+          <span style="font-size:1.3rem; font-weight:800; color:#FFF;">CONNECT <span style="color:var(--gold-400);">मराठा</span></span>
+        </div>
+        <p class="footer-brand-copy">मराठा इतिहास, संस्कृती, समाज आणि विकासाला एकात्मिक डिजिटल व्यासपीठावर जोडणारा उपक्रम.</p>
+        <div class="footer-brand-meta">© २०२६ CONNECT MARATHA • सर्व हक्क सुरक्षित</div>
+      </div>
+      <div>
+        <h3>इतिहास व किल्ले</h3>
+        <ul>
+          <li><a href="cm-history.html">मराठा साम्राज्य इतिहास</a></li>
+          <li><a href="cm-battles.html">युद्धे व रणव्यूह</a></li>
+          <li><a href="cm-forts-map.html">३५०+ गड-किल्ले नकाशा</a></li>
+          <li><a href="cm-gallery.html">आपला महाराष्ट्र दालन</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>समुदाय व व्यवसाय</h3>
+        <ul>
+          <li><a href="cm-directory-people.html">सदस्य निर्देशिका</a></li>
+          <li><a href="cm-business-sangam.html">व्यवसाय संगम</a></li>
+          <li><a href="cm-jobs.html">नोकऱ्या व करिअर</a></li>
+          <li><a href="cm-donation.html">दान व निधी</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>संस्था व धोरण</h3>
+        <ul>
+          <li><a href="cm-about.html">आमच्याबद्दल</a></li>
+          <li><a href="cm-governance.html">संविधान व DPDP गोपनीयता</a></li>
+          <li><a href="cm-settings.html">खाते सेटिंग्ज</a></li>
+          <li><a href="cm-contact.html">संपर्क व मदत</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-jai">🚩 जय जिजाऊ • जय शिवराय • जय शंभूराजे 🚩</div>
+      <div class="footer-admin"><a href="cm-admin.html">प्रशासकीय कन्सोल</a> • <a href="cm-blueprint.html">मास्टर ब्लूप्रिंट</a></div>
+    </div>
+  </footer>
+
+  <script src="assets/js/cm-data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    function downloadCharter() {
+      showToast('📜 कनेक्ट मराठा समुदाय सनद (Charter) डाऊनलोड सुरू झाली!', 'success');
+    }
+
+    function switchAboutTab(tabKey, ev) {
+      if (ev) ev.preventDefault();
+      document.querySelectorAll('.about-tab-content').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.sub-tab').forEach(el => {
+        el.classList.remove('active');
+        el.style.borderBottom = 'none';
+        el.style.color = 'var(--text)';
+      });
+
+      const target = document.getElementById('tab-' + tabKey);
+      if (target) {
+        target.style.display = 'block';
+        window.location.hash = tabKey;
+      } else if (tabKey === 'leadership') {
+        const council = document.getElementById('council');
+        if (council) {
+          council.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+
+      const activeLink = document.querySelector(`.sub-tab[href="#${tabKey}"]`);
+      if (activeLink) {
+        activeLink.classList.add('active');
+        activeLink.style.borderBottom = '3px solid var(--saffron-600)';
+        activeLink.style.color = 'var(--saffron-600)';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById('tab-' + hash)) {
+        switchAboutTab(hash);
+      }
+    });
+  </script>
+</body>
+</html>

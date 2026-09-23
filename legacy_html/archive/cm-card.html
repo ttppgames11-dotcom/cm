@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>डिजिटल सभासद ओळखपत्र व QR प्रणाली (Digital Member Card & QR System) — CONNECT MARATHA</title>
+  <meta name="description" content="कनेक्ट मराठा अधिकृत डिजिटल ओळखपत्र, QR कोड स्कॅनर, पडताळणी व झटपट जोडणी प्रणाली.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .card-perspective {
+      perspective: 1200px;
+      max-width: 480px;
+      margin: 32px auto;
+    }
+    .digital-id-card {
+      width: 100%;
+      height: 290px;
+      border-radius: 20px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+    .digital-id-card.flipped {
+      transform: rotateY(180deg);
+    }
+    .card-face {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      backface-visibility: hidden;
+      overflow: hidden;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #fff;
+    }
+    .card-front {
+      background: linear-gradient(135deg, #3d0d0d 0%, #8f2020 50%, #c9701c 100%);
+      border: 2px solid rgba(255, 215, 0, 0.4);
+    }
+    .card-back {
+      background: linear-gradient(135deg, #1f0505 0%, #4a0d0d 70%, #1f0505 100%);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      transform: rotateY(180deg);
+    }
+    .chip {
+      width: 42px;
+      height: 32px;
+      background: linear-gradient(135deg, #d4af37 0%, #fff6a6 50%, #aa8010 100%);
+      border-radius: 6px;
+      border: 1px solid #7c5c00;
+    }
+    .qr-box {
+      background: #fff;
+      padding: 6px;
+      border-radius: 8px;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .scan-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+    .scan-modal.open {
+      display: flex;
+    }
+    .scanner-window {
+      width: 260px;
+      height: 260px;
+      border: 3px solid var(--gold-400);
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      margin: 20px auto;
+      background: #111;
+    }
+    .scanner-laser {
+      position: absolute;
+      width: 100%;
+      height: 3px;
+      background: #00e676;
+      box-shadow: 0 0 12px #00e676;
+      animation: scanLaser 2s infinite ease-in-out;
+    }
+    @keyframes scanLaser {
+      0% { top: 0; }
+      50% { top: 96%; }
+      100% { top: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="wrap topbar-inner" style="display:flex; justify-content:space-between; align-items:center; padding:6px 24px; font-size:0.82rem;">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span style="color:var(--gold-400); font-weight:700;">🚩 CONNECT MARATHA</span>
+        <span>डिजिटल ओळखपत्र व QR प्रमाणीकरण व्यासपीठ</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span>📞 समाज हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN HEADER -->
+  <header class="site-header">
+  <div class="site-header-inner">
+    <a href="index.html" class="brand-desktop">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
+      <div class="brand-titles">
+        <div class="brand-main">
+          <span class="en">CONNECT</span>
+          <span class="mr">मराठा</span>
+        </div>
+        <span class="brand-sub">अखिल भारतीय मराठा डिजिटल महासंघ</span>
+      </div>
+    </a>
+
+    <!-- Standard Flagship Desktop Navigation -->
+    <nav class="desktop-nav">
+      <a href="cm-history.html">⚔️ इतिहास</a>
+      <a href="cm-network.html">🗺️ महाराष्ट्र नेटवर्क</a>
+      <a href="cm-directory-people.html">👥 समुदाय</a>
+      <a href="cm-business-sangam.html">🤝 व्यवसाय संगम</a>
+      <a href="cm-services.html">🛠️ सेवा व करिअर</a>
+      <a href="cm-about.html">🏛️ महासंघ परिचय</a>
+      <a href="cm-more.html">📂 सर्व विभाग ▾</a>
+    </nav>
+
+    <!-- Standard Header Actions -->
+    <div class="header-actions">
+      <a href="cm-search.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🔎 शोध</a>
+      <a href="cm-card.html" class="btn btn-outline active" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🪪 कार्ड</a>
+      <a href="cm-login.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
+      <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
+    </div>
+  </div>
+</header>
+
+  <div class="wrap" style="max-width:1100px; margin:40px auto; padding:0 24px;">
+
+    <!-- SECTION TITLE -->
+    <div style="text-align:center; max-width:680px; margin:0 auto 32px;">
+      <span class="tag" style="background:var(--maroon-900); color:var(--gold-400);">अधिकृत ओळखपत्र • SPEC ROUTE /member/card</span>
+      <h1 style="font-size:2.4rem; margin:10px 0;">डिजिटल सभासद कार्ड व QR प्रणाली</h1>
+      <p style="color:var(--text-sec); font-size:1rem;">
+        स्मार्ट डिजिटल ओळखपत्र, झटपट Scan & Connect तंत्रज्ञान आणि अखिल भारतीय अधिकृत सभासद पडताळणी.
+      </p>
+    </div>
+
+    <!-- 3D FLIPPABLE DIGITAL ID CARD -->
+    <div class="card-perspective">
+      <div id="digitalCard" class="digital-id-card" onclick="flipCard()">
+        <!-- FRONT OF CARD -->
+        <div class="card-face card-front">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <img src="assets/images/logo.png" alt="Logo" style="width:36px; height:36px; border-radius:50%; border:2px solid #fff;">
+              <div>
+                <div style="font-size:1.05rem; font-weight:800; letter-spacing:0.5px;">CONNECT MARATHA</div>
+                <div style="font-size:0.68rem; opacity:0.85;">अखिल भारतीय अधिकृत सभासद ओळखपत्र</div>
+              </div>
+            </div>
+            <span class="badge" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,215,0,0.6); color:#fff; font-size:0.75rem;">⭐ GOLD MEMBER</span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:18px; margin:14px 0;">
+            <div style="width:72px; height:72px; border-radius:14px; border:2px solid var(--gold-400); background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; font-size:2.4rem; flex-shrink:0;">
+              👤
+            </div>
+            <div>
+              <div id="cardUserName" style="font-size:1.35rem; font-weight:800; line-height:1.2;">यशराज साठे</div>
+              <div id="cardUserRole" style="font-size:0.85rem; color:#ffe082; font-weight:600; margin-top:2px;">💼 व्यावसायिक (Professional)</div>
+              <div id="cardUserCity" style="font-size:0.78rem; opacity:0.9;">📍 पुणे, सातारा • महाराष्ट्र</div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+            <div>
+              <div style="font-size:0.68rem; opacity:0.8; text-transform:uppercase;">Member ID</div>
+              <div id="cardMemberId" style="font-size:1.05rem; font-weight:800; letter-spacing:1px; color:#fff6a6;">CM-MH-2026-8842</div>
+              <div style="font-size:0.7rem; color:#81c784; margin-top:2px;">✓ DPDP २०२३ प्रमाणित</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="qr-box">
+                <!-- SVG QR Code -->
+                <svg width="68" height="68" viewBox="0 0 25 25" fill="#111">
+                  <rect x="0" y="0" width="7" height="7"/>
+                  <rect x="1" y="1" width="5" height="5" fill="#fff"/>
+                  <rect x="2" y="2" width="3" height="3"/>
+                  <rect x="18" y="0" width="7" height="7"/>
+                  <rect x="19" y="1" width="5" height="5" fill="#fff"/>
+                  <rect x="20" y="2" width="3" height="3"/>
+                  <rect x="0" y="18" width="7" height="7"/>
+                  <rect x="1" y="19" width="5" height="5" fill="#fff"/>
+                  <rect x="2" y="20" width="3" height="3"/>
+                  <rect x="9" y="2" width="2" height="2"/>
+                  <rect x="13" y="4" width="2" height="2"/>
+                  <rect x="9" y="9" width="7" height="7"/>
+                  <rect x="10" y="10" width="5" height="5" fill="#fff"/>
+                  <rect x="11" y="11" width="3" height="3"/>
+                  <rect x="18" y="10" width="3" height="2"/>
+                  <rect x="18" y="14" width="2" height="4"/>
+                  <rect x="10" y="18" width="4" height="2"/>
+                  <rect x="12" y="22" width="4" height="2"/>
+                  <rect x="20" y="20" width="4" height="4"/>
+                </svg>
+              </div>
+              <div style="font-size:0.65rem; opacity:0.8; margin-top:2px;">Scan to Connect</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BACK OF CARD -->
+        <div class="card-face card-back">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:8px;">
+            <span style="font-size:0.82rem; font-weight:700;">अखिल भारतीय मराठा महासंघ</span>
+            <span style="font-size:0.75rem; color:#ffe082;">हेल्पलाईन: १८००-२३३-१९२४</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:0.82rem; margin:10px 0;">
+            <div>
+              <span style="opacity:0.7; font-size:0.72rem;">रक्तगट (Blood Group):</span>
+              <div style="font-weight:700; color:#ff8a80;">O +ve (रक्तदाता)</div>
+            </div>
+            <div>
+              <span style="opacity:0.7; font-size:0.72rem;">संबद्ध चॅप्टर (Chapter):</span>
+              <div style="font-weight:700;">पुणे – शिवनेरी चॅप्टर</div>
+            </div>
+            <div>
+              <span style="opacity:0.7; font-size:0.72rem;">वैधता (Valid Thru):</span>
+              <div style="font-weight:700;">आजीवन (Lifetime)</div>
+            </div>
+            <div>
+              <span style="opacity:0.7; font-size:0.72rem;">आपत्कालीन संपर्क:</span>
+              <div style="font-weight:700;">+९१ ९८२२० ११९२४</div>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid rgba(255,255,255,0.15); padding-top:8px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:0.68rem; opacity:0.8; max-width:280px; line-height:1.3;">
+              हे ओळखपत्र केवळ अधिकृत CONNECT MARATHA सदस्यासाठी वैध आहे. गैरवापर कायद्याने दंडनीय आहे.
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:'Brush Script MT',cursive; font-size:1.1rem; color:var(--gold-400);">Dr. J. Pawar</div>
+              <div style="font-size:0.62rem; opacity:0.7;">अधिकृत स्वाक्षरी</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center; font-size:0.82rem; color:var(--text-sec); margin-top:8px;">
+        💡 कार्ड उलटे फिरवण्यासाठी कार्डवर क्लिक करा (Click to Flip)
+      </div>
+    </div>
+
+    <!-- CARD ACTIONS -->
+    <div style="display:flex; justify-content:center; gap:16px; margin-bottom:48px; flex-wrap:wrap;">
+      <button type="button" onclick="flipCard()" class="btn btn-outline" style="padding:10px 20px;">🔄 कार्ड फिरवा (Flip)</button>
+      <button type="button" onclick="downloadCard()" class="btn btn-primary" style="padding:10px 24px;">📥 कार्ड डाऊनलोड करा (Download ID)</button>
+      <button type="button" onclick="shareCard()" class="btn btn-outline" style="padding:10px 20px;">🔗 शेअर करा (Share Link)</button>
+      <button type="button" onclick="openScannerModal()" class="btn btn-primary" style="padding:10px 20px; background:#2E7D32;">📷 Scan & Connect</button>
+    </div>
+
+    <!-- QR SYSTEM SUITE TABS (Routes: /scan, /qr/member, /qr/business, /qr/event, /qr/receipt, /verify/qr) -->
+    <div class="card" style="padding:32px; border-radius:16px; margin-bottom:40px;">
+      <div style="margin-bottom:24px;">
+        <span class="tag" style="background:var(--saffron-600); color:#fff;">SPEC SECTION T • QR SYSTEM</span>
+        <h2 style="font-size:1.8rem; margin:8px 0;">कनेक्ट मराठा एकात्मिक QR सुट (QR Suite)</h2>
+        <p style="color:var(--text-sec); font-size:0.92rem;">व्यासपीठावरील सर्व ५ प्रमुख प्रणालींसाठी डायनॅमिक QR कोड्स.</p>
+      </div>
+
+      <div class="tabs" style="margin-bottom:24px; border-bottom:1px solid var(--border); display:flex; gap:10px; overflow-x:auto;">
+        <button class="tab active" onclick="switchQRTab('member', this)" style="padding:10px 16px; border:none; background:none; font-weight:700; color:var(--saffron-600); border-bottom:3px solid var(--saffron-600); cursor:pointer;">🪪 सभासद QR (/qr/member)</button>
+        <button class="tab" onclick="switchQRTab('business', this)" style="padding:10px 16px; border:none; background:none; font-weight:600; color:var(--text); cursor:pointer;">🏢 व्यवसाय QR (/qr/business)</button>
+        <button class="tab" onclick="switchQRTab('event', this)" style="padding:10px 16px; border:none; background:none; font-weight:600; color:var(--text); cursor:pointer;">🎟️ कार्यक्रम QR (/qr/event)</button>
+        <button class="tab" onclick="switchQRTab('receipt', this)" style="padding:10px 16px; border:none; background:none; font-weight:600; color:var(--text); cursor:pointer;">🧾 पावती QR (/qr/receipt)</button>
+        <button class="tab" onclick="switchQRTab('verify', this)" style="padding:10px 16px; border:none; background:none; font-weight:600; color:var(--text); cursor:pointer;">🛡️ QR पडताळणी (/verify/qr)</button>
+      </div>
+
+      <div id="qrContentPane" style="background:var(--paper-2); padding:24px; border-radius:12px;">
+        <div id="qrMemberView">
+          <div style="display:flex; gap:24px; align-items:center; flex-wrap:wrap;">
+            <div class="qr-box" style="width:120px; height:120px; border:2px solid var(--border);">
+              <svg width="105" height="105" viewBox="0 0 25 25" fill="#111">
+                <rect x="0" y="0" width="7" height="7"/>
+                <rect x="1" y="1" width="5" height="5" fill="#fff"/>
+                <rect x="2" y="2" width="3" height="3"/>
+                <rect x="18" y="0" width="7" height="7"/>
+                <rect x="19" y="1" width="5" height="5" fill="#fff"/>
+                <rect x="20" y="2" width="3" height="3"/>
+                <rect x="0" y="18" width="7" height="7"/>
+                <rect x="1" y="19" width="5" height="5" fill="#fff"/>
+                <rect x="2" y="20" width="3" height="3"/>
+                <rect x="9" y="2" width="2" height="2"/>
+                <rect x="13" y="4" width="2" height="2"/>
+                <rect x="9" y="9" width="7" height="7"/>
+                <rect x="10" y="10" width="5" height="5" fill="#fff"/>
+                <rect x="11" y="11" width="3" height="3"/>
+                <rect x="18" y="10" width="3" height="2"/>
+                <rect x="18" y="14" width="2" height="4"/>
+                <rect x="10" y="18" width="4" height="2"/>
+                <rect x="12" y="22" width="4" height="2"/>
+                <rect x="20" y="20" width="4" height="4"/>
+              </svg>
+            </div>
+            <div>
+              <h3>यशराज साठे — सभासद प्रोफाइल QR</h3>
+              <p style="color:var(--text-sec); font-size:0.88rem; margin:6px 0 12px;">
+                हा QR कोड स्कॅन करून इतर सदस्य थेट आपल्या प्रोफाईलशी जोडू शकतात आणि व्यवसाय संदर्भ पाठवू शकतात.
+              </p>
+              <div style="font-family:monospace; background:var(--paper); padding:8px 14px; border-radius:6px; font-size:0.85rem; border:1px solid var(--border);">
+                https://connectmaratha.com/qr/member/CM-MH-2026-8842
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="qrBusinessView" style="display:none;">
+          <div style="display:flex; gap:24px; align-items:center; flex-wrap:wrap;">
+            <div class="qr-box" style="width:120px; height:120px; border:2px solid var(--border);">
+              <svg width="105" height="105" viewBox="0 0 25 25" fill="#111">
+                <rect x="0" y="0" width="7" height="7"/>
+                <rect x="1" y="1" width="5" height="5" fill="#fff"/>
+                <rect x="2" y="2" width="3" height="3"/>
+                <rect x="18" y="0" width="7" height="7"/>
+                <rect x="19" y="1" width="5" height="5" fill="#fff"/>
+                <rect x="20" y="2" width="3" height="3"/>
+                <rect x="0" y="18" width="7" height="7"/>
+                <rect x="1" y="19" width="5" height="5" fill="#fff"/>
+                <rect x="2" y="20" width="3" height="3"/>
+                <rect x="10" y="2" width="4" height="3"/>
+                <rect x="14" y="6" width="3" height="2"/>
+                <rect x="8" y="10" width="8" height="6"/>
+                <rect x="18" y="14" width="4" height="4"/>
+                <rect x="10" y="19" width="6" height="4"/>
+              </svg>
+            </div>
+            <div>
+              <h3>शिवमुद्रा टेक्नॉलॉजीज — व्यवसाय QR (/qr/business/BIZ-408)</h3>
+              <p style="color:var(--text-sec); font-size:0.88rem; margin:6px 0 12px;">
+                ग्राहकांना व B2B भागीदारांना आपल्या व्यवसाय कॅटलॉग, उत्पादने व सेवांकडे थेट नेण्यासाठी.
+              </p>
+              <div style="font-family:monospace; background:var(--paper); padding:8px 14px; border-radius:6px; font-size:0.85rem; border:1px solid var(--border);">
+                https://connectmaratha.com/qr/business/BIZ-408
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="qrEventView" style="display:none;">
+          <div style="display:flex; gap:24px; align-items:center; flex-wrap:wrap;">
+            <div class="qr-box" style="width:120px; height:120px; border:2px solid var(--border);">
+              <svg width="105" height="105" viewBox="0 0 25 25" fill="#111">
+                <rect x="0" y="0" width="7" height="7"/>
+                <rect x="1" y="1" width="5" height="5" fill="#fff"/>
+                <rect x="2" y="2" width="3" height="3"/>
+                <rect x="18" y="0" width="7" height="7"/>
+                <rect x="19" y="1" width="5" height="5" fill="#fff"/>
+                <rect x="20" y="2" width="3" height="3"/>
+                <rect x="0" y="18" width="7" height="7"/>
+                <rect x="1" y="19" width="5" height="5" fill="#fff"/>
+                <rect x="2" y="20" width="3" height="3"/>
+                <rect x="8" y="4" width="6" height="4"/>
+                <rect x="14" y="12" width="8" height="3"/>
+                <rect x="10" y="16" width="4" height="6"/>
+              </svg>
+            </div>
+            <div>
+              <h3>पुणे बिझनेस संगम वार्षिक संमेलन — कार्यक्रम प्रवेश पास QR</h3>
+              <p style="color:var(--text-sec); font-size:0.88rem; margin:6px 0 12px;">
+                कार्यक्रमाच्या ठिकाणी थेट हजेरी नोंदणी व डिजिटल बॅज पडताळणीसाठी.
+              </p>
+              <div style="font-family:monospace; background:var(--paper); padding:8px 14px; border-radius:6px; font-size:0.85rem; border:1px solid var(--border);">
+                https://connectmaratha.com/qr/event/EVT-2026-PUNE-01
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="qrReceiptView" style="display:none;">
+          <div style="display:flex; gap:24px; align-items:center; flex-wrap:wrap;">
+            <div class="qr-box" style="width:120px; height:120px; border:2px solid var(--border);">
+              <svg width="105" height="105" viewBox="0 0 25 25" fill="#111">
+                <rect x="0" y="0" width="7" height="7"/>
+                <rect x="1" y="1" width="5" height="5" fill="#fff"/>
+                <rect x="2" y="2" width="3" height="3"/>
+                <rect x="18" y="0" width="7" height="7"/>
+                <rect x="19" y="1" width="5" height="5" fill="#fff"/>
+                <rect x="20" y="2" width="3" height="3"/>
+                <rect x="0" y="18" width="7" height="7"/>
+                <rect x="1" y="19" width="5" height="5" fill="#fff"/>
+                <rect x="2" y="20" width="3" height="3"/>
+                <rect x="10" y="8" width="4" height="8"/>
+                <rect x="16" y="8" width="4" height="4"/>
+                <rect x="12" y="18" width="8" height="4"/>
+              </svg>
+            </div>
+            <div>
+              <h3>दुर्ग संवर्धन देणगी अधिकृत पावती — ₹ ५,००० (80G करसवलत)</h3>
+              <p style="color:var(--text-sec); font-size:0.88rem; margin:6px 0 12px;">
+                आयकर कलम 80G अंतर्गत वैध देणगी पावती व डिजिटल सहीचा पडताळणी QR कोड.
+              </p>
+              <div style="font-family:monospace; background:var(--paper); padding:8px 14px; border-radius:6px; font-size:0.85rem; border:1px solid var(--border);">
+                https://connectmaratha.com/qr/receipt/RCPT-883921-FORT
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="qrVerifyView" style="display:none;">
+          <div>
+            <h3>🛡️ QR कोड पडताळणी केंद्र (/verify/qr/:code)</h3>
+            <p style="color:var(--text-sec); font-size:0.88rem; margin:8px 0 16px;">
+              कोणत्याही कनेक्ट मराठा कार्ड, पावती किंवा प्रमाणपत्राचा १२-अंकी पडताळणी कोड टाका आणि सत्यता तपासा.
+            </p>
+            <div style="display:flex; gap:10px; max-width:500px;">
+              <input type="text" id="verifyInput" placeholder="उदा. CM-MH-2026-8842" style="flex:1; padding:10px 14px; border:1px solid var(--border); border-radius:8px;">
+              <button type="button" onclick="verifyCodeAction()" class="btn btn-primary">पडताळा</button>
+            </div>
+            <div id="verifyResultBox" style="margin-top:16px; display:none; padding:14px; border-radius:8px; background:rgba(46,125,50,0.12); border:1px solid #2E7D32; color:#2E7D32;">
+              ✓ अधिकृत व सत्य पडताळणी: <strong>यशराज साठे</strong> (पुणे चॅप्टर, सभासद वैध, DPDP २०२३ नोंदणीकृत)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCAN & CONNECT CAMERA MODAL (Route: /scan) -->
+  <div id="scannerModal" class="scan-modal" onclick="closeScannerModal(event)">
+    <div class="card" style="max-width:380px; width:100%; padding:28px; text-align:center; position:relative;" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0; font-size:1.2rem;">📷 Scan & Connect</h3>
+        <button type="button" onclick="closeScannerModal()" style="background:none; border:none; font-size:1.4rem; cursor:pointer;">✕</button>
+      </div>
+      <p style="color:var(--text-sec); font-size:0.82rem; margin:8px 0 16px;">कोणत्याही सभासदाचे डिजिटल कार्ड किंवा QR कोड स्कॅन करा.</p>
+      
+      <div class="scanner-window">
+        <div class="scanner-laser"></div>
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.4); font-size:0.75rem;">
+          [ कॅमेरा सुरू आहे... ]
+        </div>
+      </div>
+
+      <button type="button" onclick="simulateSuccessfulScan()" class="btn btn-primary btn-block" style="margin-top:12px;">
+        ⚡ चाचणी स्कॅन करा (Simulate Match)
+      </button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="website-footer">
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+          <img src="assets/images/logo.png" alt="Logo" style="width:40px; height:40px; border-radius:50%; border:2px solid #FFF;">
+          <span style="font-size:1.3rem; font-weight:800; color:#FFF;">CONNECT <span style="color:var(--gold-400);">मराठा</span></span>
+        </div>
+        <p class="footer-brand-copy">डिजिटल सभासद ओळखपत्र, QR कोड स्कॅनर व पडताळणी प्रणाली.</p>
+        <div class="footer-brand-meta">© २०२६ CONNECT MARATHA • सर्व हक्क सुरक्षित</div>
+      </div>
+      <div>
+        <h3>इतिहास व किल्ले</h3>
+        <ul>
+          <li><a href="cm-history.html">मराठा साम्राज्य इतिहास</a></li>
+          <li><a href="cm-battles.html">युद्धे व रणव्यूह</a></li>
+          <li><a href="cm-forts-map.html">३५०+ गड-किल्ले नकाशा</a></li>
+          <li><a href="cm-gallery.html">आपला महाराष्ट्र दालन</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>समुदाय व व्यवसाय</h3>
+        <ul>
+          <li><a href="cm-directory-people.html">सदस्य निर्देशिका</a></li>
+          <li><a href="cm-business-sangam.html">व्यवसाय संगम</a></li>
+          <li><a href="cm-card.html">डिजिटल सभासद कार्ड</a></li>
+          <li><a href="cm-donation.html">दान व निधी</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>संस्था व धोरण</h3>
+        <ul>
+          <li><a href="cm-about.html">आमच्याबद्दल</a></li>
+          <li><a href="cm-network.html">महाराष्ट्र नेटवर्क</a></li>
+          <li><a href="cm-governance.html">संविधान व DPDP गोपनीयता</a></li>
+          <li><a href="cm-contact.html">संपर्क व मदत</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-jai">🚩 जय जिजाऊ • जय शिवराय • जय शंभूराजे 🚩</div>
+      <div class="footer-admin"><a href="cm-admin.html">प्रशासकीय कन्सोल</a> • <a href="cm-blueprint.html">मास्टर ब्लूप्रिंट</a></div>
+    </div>
+  </footer>
+
+  <script src="assets/js/cm-data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    function flipCard() {
+      const card = document.getElementById('digitalCard');
+      card.classList.toggle('flipped');
+    }
+
+    function downloadCard() {
+      showToast('📥 तुमचे डिजिटल सभासद कार्ड (PNG/PDF) यशस्वीरित्या तयार झाले!', 'success');
+    }
+
+    function shareCard() {
+      const url = window.location.origin + '/cm-card.html';
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url);
+        showToast('🔗 कार्ड लिंक क्लिपबोर्डवर कॉपी केली!', 'success');
+      } else {
+        showToast('🔗 लिंक: ' + url, 'success');
+      }
+    }
+
+    function openScannerModal() {
+      document.getElementById('scannerModal').classList.add('open');
+    }
+
+    function closeScannerModal(e) {
+      document.getElementById('scannerModal').classList.remove('open');
+    }
+
+    function simulateSuccessfulScan() {
+      closeScannerModal();
+      showToast('✓ QR कोड पडताळला! सदस्य: यशराज साठे (पुणे) शी कनेक्शन विनंती पाठवली.', 'success');
+    }
+
+    function switchQRTab(tabKey, btn) {
+      document.querySelectorAll('.tabs .tab').forEach(t => {
+        t.classList.remove('active');
+        t.style.borderBottom = 'none';
+        t.style.color = 'var(--text)';
+      });
+      btn.classList.add('active');
+      btn.style.borderBottom = '3px solid var(--saffron-600)';
+      btn.style.color = 'var(--saffron-600)';
+
+      document.getElementById('qrMemberView').style.display = tabKey === 'member' ? 'block' : 'none';
+      document.getElementById('qrBusinessView').style.display = tabKey === 'business' ? 'block' : 'none';
+      document.getElementById('qrEventView').style.display = tabKey === 'event' ? 'block' : 'none';
+      document.getElementById('qrReceiptView').style.display = tabKey === 'receipt' ? 'block' : 'none';
+      document.getElementById('qrVerifyView').style.display = tabKey === 'verify' ? 'block' : 'none';
+    }
+
+    function verifyCodeAction() {
+      const code = document.getElementById('verifyInput').value.trim();
+      const resBox = document.getElementById('verifyResultBox');
+      if (!code) {
+        showToast('कृपया पडताळणीसाठी कोड प्रविष्ट करा', 'error');
+        return;
+      }
+      resBox.style.display = 'block';
+      showToast('✓ कोड वैध आढळला!', 'success');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const m = typeof CMDB !== 'undefined' ? CMDB.currentMember() : null;
+      if (m) {
+        if (m.name) document.getElementById('cardUserName').textContent = m.name;
+        if (m.city) document.getElementById('cardUserCity').textContent = `📍 ${m.city} • महाराष्ट्र`;
+        if (m.personaRole) {
+          const roleMap = {
+            professional: "💼 व्यावसायिक (Professional)",
+            entrepreneur: "🚀 उद्योजक (Entrepreneur)",
+            student: "🎓 विद्यार्थी (Student)",
+            mentor: "💡 मार्गदर्शक (Mentor)",
+            creative: "🎨 लेखक / कलाकार (Creative)",
+            farmer: "🌾 कृषी / शेतकरी (Farmer)"
+          };
+          document.getElementById('cardUserRole').textContent = roleMap[m.personaRole] || m.personaRole;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

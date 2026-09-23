@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>आपला महाराष्ट्र — समुदाय छायाचित्र दालन (Community Gallery) — CONNECT MARATHA</title>
+  <meta name="description" content="महाराष्ट्र, सह्याद्री गड-किल्ले, ट्रेकिंग, उत्सव व समाजोपयोगी उपक्रमांचे समुदाय छायाचित्र दालन.">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="wrap topbar-inner" style="display:flex; justify-content:space-between; align-items:center; padding:6px 24px; font-size:0.82rem;">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span style="color:var(--gold-400); font-weight:700;">🚩 CONNECT MARATHA</span>
+        <span style="color:var(--text-sec); display:none; @media(min-width:768px){display:inline;}">इतिहास जपूया • समाज जोडूया • भविष्य घडवूया</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span>📞 समाज हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN HEADER -->
+  <header class="site-header">
+  <div class="site-header-inner">
+    <a href="index.html" class="brand-desktop">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
+      <div class="brand-titles">
+        <div class="brand-main">
+          <span class="en">CONNECT</span>
+          <span class="mr">मराठा</span>
+        </div>
+        <span class="brand-sub">अखिल भारतीय मराठा डिजिटल महासंघ</span>
+      </div>
+    </a>
+
+    <!-- Standard Flagship Desktop Navigation -->
+    <nav class="desktop-nav">
+      <a href="cm-history.html" class="active">⚔️ इतिहास</a>
+      <a href="cm-network.html">🗺️ महाराष्ट्र नेटवर्क</a>
+      <a href="cm-directory-people.html">👥 समुदाय</a>
+      <a href="cm-business-sangam.html">🤝 व्यवसाय संगम</a>
+      <a href="cm-services.html">🛠️ सेवा व करिअर</a>
+      <a href="cm-about.html">🏛️ महासंघ परिचय</a>
+      <a href="cm-more.html">📂 सर्व विभाग ▾</a>
+    </nav>
+
+    <!-- Standard Header Actions -->
+    <div class="header-actions">
+      <a href="cm-search.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🔎 शोध</a>
+      <a href="cm-card.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🪪 कार्ड</a>
+      <a href="cm-login.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
+      <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
+    </div>
+  </div>
+</header>
+
+  <!-- HERO SECTION -->
+  <div class="hero" style="position:relative; min-height:480px; overflow:hidden;">
+    <img src="assets/images/apla-maharashtra-gallery.jpg" alt="आपला महाराष्ट्र सह्याद्री गड-किल्ले" class="hero-bg-img" style="position:absolute; width:100%; height:100%; object-fit:cover; filter:brightness(0.42);">
+    <div class="hero-overlay" style="position:absolute; inset:0; background:radial-gradient(circle at 70% 30%, rgba(20,4,6,0.6), rgba(12,2,4,0.95) 85%);"></div>
+    <div class="wrap hero-content" style="position:relative; z-index:2; max-width:1300px; padding:64px 24px; color:#fff;">
+      <div class="eyebrow" style="color:var(--gold-400); text-transform:uppercase; font-size:0.85rem; letter-spacing:1.5px; font-weight:700;">Spec Page 34 • Community Visual Archive</div>
+      <h1 style="font-size:clamp(2.2rem, 4.5vw, 3.8rem); line-height:1.15; color:#fff; margin:8px 0 16px;">
+        आपला महाराष्ट्र — <span style="background:linear-gradient(90deg,var(--gold-400),var(--saffron-500)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;">छायाचित्र दालन</span>
+      </h1>
+      <div style="background:var(--gold-500); width:80px; height:4px; margin-bottom:18px;"></div>
+      <p style="color:var(--text-sec); font-size:1.12rem; max-width:68ch; line-height:1.6;">
+        सह्याद्रीच्या उत्तुंग कड्यांवरून दिसणारा भव्य सूर्योदय, दुर्गांच्या बुरुजांची अभेद्य वास्तुकला, गडभ्रमंतीचे क्षण आणि सामाजिक उपक्रमांचे जिवंत दस्तऐवजीकरण.
+      </p>
+
+      <div style="display:flex; gap:16px; margin-top:28px; flex-wrap:wrap;">
+        <button type="button" onclick="openUploadModal()" class="btn btn-primary" style="padding:12px 24px; font-weight:700;">📸 तुमचे छायाचित्र जोडा</button>
+        <a href="#galleryGrid" class="btn btn-outline" style="padding:12px 24px; color:#fff; border-color:var(--gold-400);">🖼️ दालन एक्सप्लोर करा</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHOTO OF THE MONTH SPOTLIGHT -->
+  <section class="section" style="padding:48px 24px; background:var(--paper-2); border-bottom:1px solid var(--line);">
+    <div class="wrap" style="max-width:1300px; margin:0 auto;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:32px; align-items:center;">
+        <div style="border-radius:16px; overflow:hidden; border:2px solid var(--gold-400); box-shadow:var(--shadow-lg);">
+          <img src="assets/images/apla-maharashtra-gallery.jpg" alt="महिना सर्वोत्तम छायाचित्र" style="width:100%; height:380px; object-fit:cover;">
+        </div>
+        <div>
+          <span class="tag" style="background:var(--saffron-500); color:#fff; font-weight:700;">🏆 Photo of the Month (महिन्याचे सर्वोत्तम छायाचित्र)</span>
+          <h2 style="font-size:2rem; margin:12px 0 8px;">हरिश्चंद्रगड — कोकणकड्यावरील सुवर्ण क्षितिज</h2>
+          <p style="color:var(--text-sec); font-size:0.95rem; line-height:1.6; margin-bottom:16px;">
+            "पावसाळ्यानंतर धुक्यातून वर येणारा सह्याद्रीचा हा रौद्र आणि नयनरम्य कोकणकडा. अथांग दरी आणि गड भटक्यांचा उत्साह या एकाच फ्रेममध्ये कैद झाला आहे."
+          </p>
+          <div style="background:var(--paper); padding:16px; border-radius:12px; border:1px solid var(--line); font-size:0.88rem; line-height:1.6;">
+            <div><strong>छायाचित्रकार:</strong> रोहित देशमुख (पुणे ट्रेकर्स मंडळ)</div>
+            <div><strong>स्थान:</strong> हरिश्चंद्रगड, अहमदनगर जिल्हा • उंची: १,४२४ मी.</div>
+            <div><strong>कॅमेरा:</strong> Sony Alpha A7 III • 24-70mm f/2.8 GM</div>
+            <div><strong>लाईक्स:</strong> ❤️ १,४२० • शेअर: 🔄 ३२०</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY MASONRY WITH CATEGORY TABS -->
+  <section class="section" id="galleryGrid" style="padding:64px 24px;">
+    <div class="wrap" style="max-width:1300px; margin:0 auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; flex-wrap:wrap; gap:16px;">
+        <div>
+          <span class="tag" style="background:var(--maroon-900); color:var(--gold-400);">समुदाय संग्रहित</span>
+          <h2 style="font-size:2.2rem; margin:6px 0 0;">छायाचित्र संग्रह</h2>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-outline active" style="padding:6px 14px; font-size:0.82rem;" onclick="filterGallery('all', this)">सर्व छायाचित्रे</button>
+          <button class="btn btn-outline" style="padding:6px 14px; font-size:0.82rem;" onclick="filterGallery('forts', this)">🏰 किल्ले व वास्तू</button>
+          <button class="btn btn-outline" style="padding:6px 14px; font-size:0.82rem;" onclick="filterGallery('trek', this)">🧗 ट्रेकिंग व सह्याद्री</button>
+          <button class="btn btn-outline" style="padding:6px 14px; font-size:0.82rem;" onclick="filterGallery('culture', this)">🚩 उत्सव व संस्कृती</button>
+          <button class="btn btn-outline" style="padding:6px 14px; font-size:0.82rem;" onclick="filterGallery('seva', this)">🌱 दुर्ग संवर्धन व सेवा</button>
+        </div>
+      </div>
+
+      <!-- GALLERY ITEMS GRID -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px;" id="galleryContainer">
+
+        <!-- Item 1 -->
+        <div class="gallery-card card" data-cat="forts" style="border-radius:12px; overflow:hidden; cursor:pointer;" onclick="openPhotoView('रायगड — महादरवाजा व नगारखाना', 'assets/images/real-raigad-panoramic.jpg', 'अमोल जाधव', 'रायगड जिल्हा')">
+          <div style="height:220px; overflow:hidden;">
+            <img src="assets/images/real-raigad-panoramic.jpg" alt="रायगड किल्ला" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+          </div>
+          <div style="padding:14px;">
+            <div style="font-size:0.75rem; color:var(--saffron-600); font-weight:700;">🏰 किल्ले व वास्तू</div>
+            <h4 style="margin:4px 0 6px; font-size:1rem;">रायगड — महादरवाजा व नगारखाना</h4>
+            <div style="font-size:0.78rem; color:var(--text-sec); display:flex; justify-content:space-between;">
+              <span>👤 अमोल जाधव</span>
+              <span>❤️ ४५०</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="gallery-card card" data-cat="trek" style="border-radius:12px; overflow:hidden; cursor:pointer;" onclick="openPhotoView('सह्याद्रीची रौद्र वाट — नाळेची वाट', 'assets/images/apla-maharashtra-gallery.jpg', 'सचिन पवार', 'पुणे')">
+          <div style="height:220px; overflow:hidden;">
+            <img src="assets/images/apla-maharashtra-gallery.jpg" alt="सह्याद्री ट्रेक" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+          </div>
+          <div style="padding:14px;">
+            <div style="font-size:0.75rem; color:var(--saffron-600); font-weight:700;">🧗 ट्रेकिंग व सह्याद्री</div>
+            <h4 style="margin:4px 0 6px; font-size:1rem;">सह्याद्रीची रौद्र वाट — नाळेची वाट</h4>
+            <div style="font-size:0.78rem; color:var(--text-sec); display:flex; justify-content:space-between;">
+              <span>👤 सचिन पवार</span>
+              <span>❤️ ६२०</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="gallery-card card" data-cat="culture" style="border-radius:12px; overflow:hidden; cursor:pointer;" onclick="openPhotoView('मूक मोर्चा — भगवे वादळ व शिस्तबद्धता', 'assets/images/maratha-kranti-morcha.jpg', 'प्रवीण मोरे', 'मुंबई')">
+          <div style="height:220px; overflow:hidden;">
+            <img src="assets/images/maratha-kranti-morcha.jpg" alt="मराठा क्रांती मोर्चा" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+          </div>
+          <div style="padding:14px;">
+            <div style="font-size:0.75rem; color:var(--saffron-600); font-weight:700;">🚩 उत्सव व संस्कृती</div>
+            <h4 style="margin:4px 0 6px; font-size:1rem;">मूक मोर्चा — भगवे वादळ व शिस्तबद्धता</h4>
+            <div style="font-size:0.78rem; color:var(--text-sec); display:flex; justify-content:space-between;">
+              <span>👤 प्रवीण मोरे</span>
+              <span>❤️ ९८०</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="gallery-card card" data-cat="seva" style="border-radius:12px; overflow:hidden; cursor:pointer;" onclick="openPhotoView('अखंड स्वाभिमान स्मारक — तुळापूर', 'assets/images/balidan-maas-memorial.jpg', 'सुनील कदम', 'तुळापूर')">
+          <div style="height:220px; overflow:hidden;">
+            <img src="assets/images/balidan-maas-memorial.jpg" alt="तुळापूर स्मारक" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+          </div>
+          <div style="padding:14px;">
+            <div style="font-size:0.75rem; color:var(--saffron-600); font-weight:700;">🌱 दुर्ग संवर्धन व सेवा</div>
+            <h4 style="margin:4px 0 6px; font-size:1rem;">अखंड स्वाभिमान स्मारक — तुळापूर</h4>
+            <div style="font-size:0.78rem; color:var(--text-sec); display:flex; justify-content:space-between;">
+              <span>👤 सुनील कदम</span>
+              <span>❤️ ७५०</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 5 -->
+        <div class="gallery-card card" data-cat="forts" style="border-radius:12px; overflow:hidden; cursor:pointer;" onclick="openPhotoView('पन्हाळगड — तीन दरवाजा व तटबंदी', 'assets/images/real-panhala-fort.jpg', 'महेश पाटील', 'कोल्हापूर')">
+          <div style="height:220px; overflow:hidden;">
+            <img src="assets/images/real-panhala-fort.jpg" alt="पन्हाळगड किल्ला" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+          </div>
+          <div style="padding:14px;">
+            <div style="font-size:0.75rem; color:var(--saffron-600); font-weight:700;">🏰 किल्ले व वास्तू</div>
+            <h4 style="margin:4px 0 6px; font-size:1rem;">पन्हाळगड — तीन दरवाजा व तटबंदी</h4>
+            <div style="font-size:0.78rem; color:var(--text-sec); display:flex; justify-content:space-between;">
+              <span>👤 महेश पाटील</span>
+              <span>❤️ ८९०</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 6 -->
+        <div class="gallery-card card" data-cat="forts" style="border-radius:12px; overflow:hidden; cursor:pointer;" onclick="openPhotoView('प्रतापगड — भवानी माता मंदिर व बुरुज', 'assets/images/real-pratapgad-fort.jpg', 'वैष्णवी सावंत', 'सातारा')">
+          <div style="height:220px; overflow:hidden;">
+            <img src="assets/images/real-pratapgad-fort.jpg" alt="प्रतापगड किल्ला" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+          </div>
+          <div style="padding:14px;">
+            <div style="font-size:0.75rem; color:var(--saffron-600); font-weight:700;">🏰 किल्ले व वास्तू</div>
+            <h4 style="margin:4px 0 6px; font-size:1rem;">प्रतापगड — भवानी माता मंदिर व बुरुज</h4>
+            <div style="font-size:0.78rem; color:var(--text-sec); display:flex; justify-content:space-between;">
+              <span>👤 वैष्णवी सावंत</span>
+              <span>❤️ ९४०</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- UPLOAD MODAL -->
+  <div id="uploadModal" class="cm-cmd-backdrop" style="align-items:center;">
+    <div class="cm-cmd-modal" style="max-width:560px; padding:24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="margin:0;">📸 तुमचे छायाचित्र सबमिट करा</h3>
+        <button type="button" onclick="closeUploadModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+      <p style="font-size:0.85rem; color:var(--text-sec); margin-bottom:16px;">
+        सर्व छायाचित्रे CONNECT MARATHA च्या प्रकाशनापूर्वी संपादकीय संचलन पडताळणीतून (Pre-Publish Moderation) जातात. कॉपीराईट-मुक्त व अस्सल छायाचित्रेच जोडावीत.
+      </p>
+      <form onsubmit="handleUploadSubmit(event)">
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px;">छायाचित्राचे शीर्षक / वर्णन *</label>
+          <input type="text" required class="input" style="width:100%; padding:8px 12px;" placeholder="उदा. तोरणा किल्ल्यावरून दिसणारा सूर्योदय">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px;">विभाग निवडा *</label>
+          <select required class="input" style="width:100%; padding:8px 12px;">
+            <option value="forts">किल्ले व वास्तू</option>
+            <option value="trek">ट्रेकिंग व सह्याद्री</option>
+            <option value="culture">उत्सव व संस्कृती</option>
+            <option value="seva">दुर्ग संवर्धन व सेवा</option>
+          </select>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px;">स्थान / जिल्हा *</label>
+          <input type="text" required class="input" style="width:100%; padding:8px 12px;" placeholder="उदा. रायगड, राजगड, पुणे">
+        </div>
+        <div style="margin-bottom:16px;">
+          <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px;">फोटो फाईल (JPG, PNG - कमाल 15MB) *</label>
+          <input type="file" required accept="image/*" class="input" style="width:100%; padding:8px 12px;">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" onclick="closeUploadModal()" class="btn btn-outline">रद्द करा</button>
+          <button type="submit" class="btn btn-primary">✓ तपासणीसाठी पाठवा</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX MODAL -->
+  <div id="photoLightbox" class="cm-cmd-backdrop" style="align-items:center;" onclick="closePhotoView()">
+    <div class="cm-cmd-modal" style="max-width:800px; background:#111; color:#fff;" onclick="event.stopPropagation()">
+      <div style="position:relative;">
+        <img id="lightboxImg" src="" alt="View" style="width:100%; max-height:500px; object-fit:contain; background:#000;">
+        <button type="button" onclick="closePhotoView()" style="position:absolute; top:12px; right:12px; background:rgba(0,0,0,0.7); color:#fff; border:none; border-radius:50%; width:32px; height:32px; font-size:1.1rem; cursor:pointer;">✕</button>
+      </div>
+      <div style="padding:20px;">
+        <h3 id="lightboxTitle" style="color:var(--gold-400); margin-bottom:6px;"></h3>
+        <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#aaa;">
+          <span id="lightboxAuthor"></span>
+          <span id="lightboxLoc"></span>
+        </div>
+        <div style="display:flex; gap:12px; margin-top:16px;">
+          <button class="btn btn-primary" onclick="showToast('छायाचित्र आवडीमध्ये जतन झाले!', 'success')">❤️ लाईक करा</button>
+          <button class="btn btn-outline" style="color:#fff; border-color:#fff;" onclick="showToast('शेअर लिंक कॉपी झाली!', 'info')">🔗 शेअर करा</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="website-footer">
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+          <img src="assets/images/logo.png" alt="Logo" style="width:40px; height:40px; border-radius:50%; border:2px solid #FFF;">
+          <span style="font-size:1.3rem; font-weight:800; color:#FFF;">CONNECT <span style="color:var(--gold-400);">मराठा</span></span>
+        </div>
+        <p class="footer-brand-copy">मराठा इतिहास, संस्कृती, समाज आणि विकासाला एकात्मिक डिजिटल व्यासपीठावर जोडणारा उपक्रम.</p>
+        <div class="footer-brand-meta">© २०२६ CONNECT MARATHA • सर्व हक्क सुरक्षित</div>
+      </div>
+      <div>
+        <h3>इतिहास व किल्ले</h3>
+        <ul>
+          <li><a href="cm-history.html">मराठा साम्राज्य इतिहास</a></li>
+          <li><a href="cm-battles.html">युद्धे व रणव्यूह</a></li>
+          <li><a href="cm-forts-map.html">३५०+ गड-किल्ले नकाशा</a></li>
+          <li><a href="cm-gallery.html">आपला महाराष्ट्र दालन</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>समुदाय व व्यवसाय</h3>
+        <ul>
+          <li><a href="cm-directory-people.html">सदस्य निर्देशिका</a></li>
+          <li><a href="cm-business-sangam.html">व्यवसाय संगम</a></li>
+          <li><a href="cm-jobs.html">नोकऱ्या व करिअर</a></li>
+          <li><a href="cm-donation.html">दान व निधी</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>संस्था व धोरण</h3>
+        <ul>
+          <li><a href="cm-about.html">आमच्याबद्दल</a></li>
+          <li><a href="cm-governance.html">संविधान व DPDP गोपनीयता</a></li>
+          <li><a href="cm-settings.html">खाते सेटिंग्ज</a></li>
+          <li><a href="cm-contact.html">संपर्क व मदत</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-jai">🚩 जय जिजाऊ • जय शिवराय • जय शंभूराजे 🚩</div>
+      <div class="footer-admin"><a href="cm-admin.html">प्रशासकीय कन्सोल</a> • <a href="cm-blueprint.html">मास्टर ब्लूप्रिंट</a></div>
+    </div>
+  </footer>
+
+  <script src="assets/js/cm-data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    function filterGallery(cat, btn) {
+      document.querySelectorAll('#galleryGrid .btn-outline').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cards = document.querySelectorAll('.gallery-card');
+      cards.forEach(card => {
+        if (cat === 'all' || card.getAttribute('data-cat') === cat) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function openUploadModal() {
+      document.getElementById('uploadModal').classList.add('is-open');
+    }
+
+    function closeUploadModal() {
+      document.getElementById('uploadModal').classList.remove('is-open');
+    }
+
+    function handleUploadSubmit(e) {
+      e.preventDefault();
+      closeUploadModal();
+      showToast('छायाचित्र यशस्वीरित्या पाठवले! संपादकीय पडताळणीनंतर दालनात दिसेल.', 'success');
+    }
+
+    function openPhotoView(title, src, author, loc) {
+      document.getElementById('lightboxTitle').textContent = title;
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightboxAuthor').textContent = '📸 ' + author;
+      document.getElementById('lightboxLoc').textContent = '📍 ' + loc;
+      document.getElementById('photoLightbox').classList.add('is-open');
+    }
+
+    function closePhotoView() {
+      document.getElementById('photoLightbox').classList.remove('is-open');
+    }
+  </script>
+</body>
+</html>

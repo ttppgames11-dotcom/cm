@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>लॉगिन — Connect Maratha (कनेक्ट मराठा)</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- Website Top Announcement & Utility Bar -->
+<div class="site-topbar">
+  <div class="site-topbar-inner">
+    <div class="left-info">
+      <span>🚩 <strong>जय जिजाऊ · जय शिवराय · जय शंभूराजे</strong></span>
+      <span style="opacity:0.6;">|</span>
+      <span>अखंड हिंदुस्थानचे प्रेरणास्थान — हिंदवी स्वराज्य</span>
+    </div>
+    <div class="right-info">
+      <span>📞 समाज हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
+      <span style="opacity:0.6;">|</span>
+      <span>📅 <strong>शिवराज्याभिषेक शक ३५१</strong></span>
+      <span style="opacity:0.6;">|</span>
+      <a href="cm-contact.html" style="color:var(--gold-400); text-decoration:underline;">संपर्क व मदत</a>
+    </div>
+  </div>
+</div>
+
+<!-- Main Desktop Website Header & Mega Navbar -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="index.html" class="brand-desktop">
+      <img src="assets/images/logo.png" alt="Connect Maratha Logo" class="brand-logo">
+      <div class="brand-titles">
+        <div class="brand-main">
+          <span class="en">CONNECT</span>
+          <span class="mr">मराठा</span>
+        </div>
+        <span class="brand-sub">अखिल भारतीय मराठा डिजिटल महासंघ</span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation Menu -->
+        <!-- Standard Flagship Desktop Navigation -->
+    <nav class="desktop-nav">
+      <a href="cm-history.html">⚔️ इतिहास</a>
+      <a href="cm-network.html">🗺️ महाराष्ट्र नेटवर्क</a>
+      <a href="cm-directory-people.html">👥 समुदाय</a>
+      <a href="cm-business-sangam.html">🤝 व्यवसाय संगम</a>
+      <a href="cm-services.html">🛠️ सेवा व करिअर</a>
+      <a href="cm-about.html">🏛️ महासंघ परिचय</a>
+      <a href="cm-more.html">📂 सर्व विभाग ▾</a>
+    </nav>
+
+    <!-- Header Actions -->
+        <!-- Standard Header Actions -->
+    <div class="header-actions">
+      <a href="cm-search.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🔎 शोध</a>
+      <a href="cm-card.html" class="btn btn-outline" style="padding:8px 14px; font-size:0.86rem; font-weight:600;">🪪 कार्ड</a>
+      <a href="cm-login.html" class="btn btn-outline active" style="padding:8px 16px; font-size:0.88rem; font-weight:600;">👤 लॉगिन</a>
+      <a href="cm-register.html" class="btn btn-primary" style="padding:8px 18px; font-size:0.88rem; font-weight:700;">🚩 नोंदणी</a>
+    </div>
+  </div>
+</header>
+
+
+<style>
+  .auth-split-wrapper {
+    max-width: 1000px;
+    margin: 32px auto 40px;
+    background: #fff;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px -18px rgba(61,13,13,0.45);
+    border: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    min-height: 600px;
+  }
+  .auth-visual-side {
+    position: relative;
+    background-image: url('assets/images/real-raigad-panoramic.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #fff;
+  }
+  .auth-visual-side::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(30,10,8,0.65) 0%, rgba(30,10,8,0.25) 40%, rgba(15,6,5,0.92) 100%);
+  }
+  .auth-visual-side > * { position: relative; z-index: 1; }
+  .auth-form-side {
+    padding: 36px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #fff;
+  }
+  @media (max-width: 860px) {
+    .auth-split-wrapper { grid-template-columns: 1fr; min-height: auto; margin: 16px; }
+    .auth-visual-side { min-height: 200px; padding: 24px; }
+    .auth-form-side { padding: 26px 20px; }
+  }
+</style>
+
+<div class="wrap" style="padding-top:12px;">
+  <div class="auth-split-wrapper">
+    <!-- Visual Left Panel -->
+    <div class="auth-visual-side">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img src="assets/images/logo.png" alt="Connect Maratha" style="width:40px; height:40px; object-fit:contain;">
+        <div>
+          <div style="font-family:'Fraunces', serif; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#f0ded0;">CONNECT</div>
+          <div style="font-family:'Baloo 2', sans-serif; font-size:22px; font-weight:800; color:#fff; line-height:1;">मराठा</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'Baloo 2', sans-serif; font-size:26px; font-weight:700; line-height:1.7; text-shadow:0 2px 10px rgba(0,0,0,0.6);">
+          जपा इतिहास<br>जोडा समाज<br>घडवा भविष्य
+        </div>
+      </div>
+      <div style="font-size:13px; color:#e9dccb; letter-spacing:0.04em;">
+        <div style="font-weight:700; font-size:15px; color:#fff; text-transform:uppercase; margin-bottom:4px;">Connect Maratha</div>
+        अखिल भारतीय मराठा समाजाचे अधिकृत व सुरक्षित डिजिटल व्यासपीठ
+      </div>
+    </div>
+
+    <!-- Form Right Panel -->
+    <div class="auth-form-side">
+      <div style="text-align:right; font-size:13px; color:var(--muted); margin-bottom:10px;">
+        नवीन सदस्य? <a href="cm-register.html" style="color:var(--maroon-800); font-weight:700; text-decoration:none;">येथे नोंदणी करा →</a>
+      </div>
+
+      </div>
+
+      <!-- AUTH SUBPAGE TABS (Spec Routes: /login, /verify-otp, /application/status, /account/activate) -->
+      <div style="display:flex; gap:6px; margin-bottom:18px; border-bottom:1px solid var(--line); padding-bottom:6px; overflow-x:auto;">
+        <button type="button" class="auth-mode-tab active" onclick="switchAuthMode('password', this)" style="padding:6px 10px; font-size:0.78rem; font-weight:700; border:none; background:none; border-bottom:2px solid var(--maroon-800); color:var(--maroon-900); cursor:pointer;">🔑 पासवर्ड लॉगिन</button>
+        <button type="button" class="auth-mode-tab" onclick="switchAuthMode('otp', this)" style="padding:6px 10px; font-size:0.78rem; font-weight:600; border:none; background:none; color:var(--muted); cursor:pointer;">📱 OTP लॉगिन</button>
+        <button type="button" class="auth-mode-tab" onclick="switchAuthMode('status', this)" style="padding:6px 10px; font-size:0.78rem; font-weight:600; border:none; background:none; color:var(--muted); cursor:pointer;">🔎 अर्ज स्थिती</button>
+        <button type="button" class="auth-mode-tab" onclick="switchAuthMode('activate', this)" style="padding:6px 10px; font-size:0.78rem; font-weight:600; border:none; background:none; color:var(--muted); cursor:pointer;">⚡ सक्रियता</button>
+      </div>
+
+      <h1 id="authTitle" style="font-family:'Baloo 2', sans-serif; font-size:1.6rem; color:var(--maroon-950); margin:0 0 4px;">आपल्या खात्यात प्रवेश करा</h1>
+      <p id="authSubtitle" class="muted" style="font-size:0.85rem; margin:0 0 18px;">Connect Maratha — संस्कृती, उद्योग व सामाजिक एकात्मता.</p>
+
+      <!-- PANE 1: PASSWORD LOGIN -->
+      <form id="loginForm" class="auth-pane">
+        <div class="field" style="margin-bottom:14px;">
+          <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px;">मोबाईल नंबर किंवा सदस्य ID (Mobile or CM ID)</label>
+          <input type="text" id="loginId" placeholder="+91 XXXXX XXXXX किंवा CM12345678" value="9876543210" required style="width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid var(--line);">
+        </div>
+
+        <div class="field" style="margin-bottom:14px;">
+          <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px;">पासवर्ड (Password)</label>
+          <input type="password" id="loginPass" placeholder="तुमचा पासवर्ड टाका" value="maratha1674" required style="width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid var(--line);">
+        </div>
+
+        <div class="field" style="margin-bottom:16px;">
+          <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px;">प्रवेश प्रकार (Role Mode)</label>
+          <select id="loginRole" style="width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid var(--line);">
+            <option value="member">सदस्य (General Member)</option>
+            <option value="business">व्यावसायिक / उद्योजक (Business Owner)</option>
+            <option value="provider">सेवा प्रदाता (Service Provider)</option>
+            <option value="karyakarta">कार्यकर्ता / समन्वयक (Coordinator)</option>
+          </select>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.82rem; margin-bottom:20px;">
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:600; color:var(--stone-800);">
+            <input type="checkbox" id="rememberMe" checked style="width:auto; accent-color:var(--maroon-800);"> मला आठवणीत ठेवा
+          </label>
+          <a href="javascript:void(0)" onclick="openForgotModal()" id="forgotPassBtn" style="color:var(--saffron-700); font-weight:700; text-decoration:none;">पासवर्ड विसरलात?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" style="font-size:1rem; padding:12px; font-weight:700; border-radius:8px;">
+          लॉगिन करा (Log in) →
+        </button>
+
+        <div style="display:flex; align-items:center; gap:10px; margin:16px 0; color:var(--muted); font-size:0.8rem;">
+          <div style="flex:1; height:1px; background:var(--line);"></div>
+          <span>किंवा (OR)</span>
+          <div style="flex:1; height:1px; background:var(--line);"></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <button type="button" class="btn btn-outline" onclick="window.location.href='cm-dashboard.html'" style="font-size:0.82rem; padding:10px; display:flex; align-items:center; justify-content:center; gap:6px;">
+            <svg width="15" height="15" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+            Google लॉगिन
+          </button>
+          <button type="button" id="demoLoginBtn" class="btn btn-outline" style="font-size:0.82rem; padding:10px; border-style:dashed; font-weight:700; color:var(--saffron-800);">
+            ⚡ Demo लॉगिन
+          </button>
+        </div>
+      </form>
+
+      <!-- PANE 2: OTP LOGIN (/verify-otp) -->
+      <div id="otpPane" class="auth-pane" style="display:none;">
+        <div class="field" style="margin-bottom:14px;">
+          <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px;">नोंदणीकृत मोबाईल नंबर</label>
+          <div style="display:flex; gap:8px;">
+            <input type="tel" id="otpPhoneInput" placeholder="१० अंकी मोबाईल नंबर" value="9876543210" style="flex:1; padding:10px 12px; border-radius:8px; border:1.5px solid var(--line);">
+            <button type="button" onclick="sendOtpCode()" class="btn btn-outline" style="white-space:nowrap; padding:10px 14px; font-size:0.82rem;">OTP पाठवा</button>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:18px;">
+          <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px;">प्राप्त झालेला ६-अंकी OTP प्रविष्ट करा</label>
+          <input type="text" id="otpCodeInput" maxlength="6" placeholder="उदा. 167430" value="167430" style="width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid var(--line); letter-spacing:4px; font-size:1.1rem; text-align:center;">
+        </div>
+        <button type="button" onclick="verifyOtpLogin()" class="btn btn-primary btn-block" style="font-size:1rem; padding:12px; font-weight:700; border-radius:8px;">
+          ✓ पडताळा आणि लॉगिन करा
+        </button>
+      </div>
+
+      <!-- PANE 3: APPLICATION STATUS (/application/status) -->
+      <div id="statusPane" class="auth-pane" style="display:none;">
+        <div class="field" style="margin-bottom:14px;">
+          <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px;">अर्ज क्रमांक किंवा मोबाईल नंबर</label>
+          <input type="text" id="appStatusInput" placeholder="उदा. CM-APP-2026-4402 किंवा मोबाईल नंबर" value="CM-APP-2026-4402" style="width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid var(--line);">
+        </div>
+        <button type="button" onclick="checkAppStatus()" class="btn btn-primary btn-block" style="font-size:0.95rem; padding:10px; font-weight:700;">
+          🔎 स्थिती तपासा
+        </button>
+        <div id="appStatusResult" style="display:none; margin-top:16px; padding:14px; border-radius:8px; background:rgba(46,125,50,0.1); border:1px solid #2E7D32;">
+          <div style="font-weight:700; color:#2E7D32; font-size:0.9rem;">✓ अर्ज मंजूर (Approved)</div>
+          <div style="font-size:0.82rem; color:var(--text); margin-top:4px;">
+            तुमचा <strong>व्यवसाय संगम चॅप्टर सदस्यत्व</strong> अर्ज पुणे जिल्हा समितीकडून मंजूर करण्यात आला आहे.
+          </div>
+          <a href="cm-dashboard.html" class="btn btn-outline" style="display:inline-block; margin-top:10px; font-size:0.78rem; padding:4px 12px;">डॅशबोर्ड उघडा →</a>
+        </div>
+      </div>
+
+      <!-- PANE 4: ACCOUNT ACTIVATION (/account/activate) -->
+      <div id="activatePane" class="auth-pane" style="display:none;">
+        <div class="field" style="margin-bottom:14px;">
+          <label style="display:block; font-size:0.82rem; font-weight:700; margin-bottom:4px;">सक्रियता कोड (Activation Token)</label>
+          <input type="text" id="activateToken" placeholder="SMS / Email मधील कोड टाका" value="ACT-MARATHA-9921" style="width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid var(--line);">
+        </div>
+        <button type="button" onclick="activateAccountAction()" class="btn btn-primary btn-block" style="font-size:0.95rem; padding:10px; font-weight:700; background:#2E7D32;">
+          ⚡ खाते त्वरित सक्रिय करा
+        </button>
+      </div>
+
+      <div style="margin-top:16px; padding:10px 12px; background:rgba(221,138,46,0.1); border:1px dashed var(--saffron-600); border-radius:8px; text-align:center; font-size:0.8rem;">
+        🚀 <strong>ऑनबोर्डिंग स्टुडिओ:</strong> सर्व ९ परस्परसंवादी स्क्रीन पाहण्यासाठी <a href="cm-onboarding.html" style="color:var(--maroon-800); font-weight:800; text-decoration:underline;">येथे क्लिक करा →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice safe" style="max-width:1000px; margin:0 auto 20px;">
+    🔒 <strong>सुरक्षित व्यासपीठ:</strong> तुमचे वैयक्तिक तपशील, संपर्क आणि सेवा इतिहास पूर्णपणे सुरक्षित आणि गोपनीय ठेवला जातो.
+  </div>
+</div>
+
+<!-- Grand Desktop Website Mega-Footer -->
+<footer class="website-footer">
+  <div class="footer-grid">
+    <!-- Column 1: Brand & Mission -->
+    <div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+        <img src="assets/images/logo.png" alt="Connect Maratha Logo" style="width:42px; height:42px; object-fit:contain;">
+        <span style="font-family:'Baloo 2', sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold-400);">CONNECT मराठा</span>
+      </div>
+      <p style="font-size:0.86rem; line-height:1.6; color:rgba(251,243,227,0.8); margin-bottom:16px;">
+        अखिल भारतीय मराठा समाजाला संस्कृती, इतिहास, रोजगार, सामाजिक एकता आणि आर्थिक स्वावलंबनाच्या धाग्यात बांधणारे अधिकृत व सुरक्षित डिजिटल व्यासपीठ.
+      </p>
+      <div style="font-size:0.8rem; color:var(--gold-300);">
+        📍 मुख्य कार्यालय: शनिवार वाडा परिसर, पुणे / दुर्गराज रायगड परिसर<br>
+        📧 संपर्क: contact@connectmaratha.org
+      </div>
+    </div>
+
+    <!-- Column 2: इतिहास व संशोधन दालन -->
+    <div>
+      <h3>इतिहास व संशोधन</h3>
+      <ul>
+        <li><a href="cm-shivaji-maharaj.html">🚩 छत्रपती शिवाजी महाराज</a></li>
+        <li><a href="cm-sambhaji-maharaj.html">⚔️ छत्रपती संभाजी महाराज</a></li>
+        <li><a href="cm-bajirao-peshwa.html">🐎 श्रीमंत बाजीराव पेशवे</a></li>
+        <li><a href="cm-rajmata-jijau.html">🙏 राजमाता जिजाऊ</a></li>
+        <li><a href="cm-rajaram-maharaj.html">🛡️ छत्रपती राजाराम महाराज</a></li>
+        <li><a href="cm-tarabai.html">👑 महाराणी ताराबाई</a></li>
+        <li><a href="cm-shahu-maharaj.html">📜 छत्रपती शाहू महाराज</a></li>
+        <li><a href="cm-warriors.html">🛡️ अमर वीर व वीरांगना</a></li>
+        <li><a href="cm-forts-map.html">🏰 महाराष्ट्रातील ३५०+ किल्ले</a></li>
+        <li><a href="cm-history.html">📖 मराठा साम्राज्य कालपट</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 3: सेवा व उपक्रम -->
+    <div>
+      <h3>सेवा व उपक्रम</h3>
+      <ul>
+        <li><a href="cm-services.html">🛠️ अधिकृत सेवा निर्देशिका</a></li>
+        <li><a href="cm-business-directory.html">💼 मराठा उद्योग व व्यवसाय</a></li>
+        <li><a href="cm-jobs.html">🤝 रोजगार व करिअर मार्गदर्शन</a></li>
+        <li><a href="cm-education.html">🎓 शिक्षण व स्पर्धा परीक्षा</a></li>
+        <li><a href="cm-donation.html">❤️ गड संवर्धन व आरोग्य निधी</a></li>
+        <li><a href="cm-events.html">📅 आगामी कार्यक्रम व शिबिरे</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 4: मदत व सुरक्षितता -->
+    <div>
+      <h3>मदत व सुरक्षितता</h3>
+      <ul>
+        <li><a href="cm-login.html">👤 सदस्य लॉगिन</a></li>
+        <li><a href="cm-register.html">📝 नवीन सदस्य नोंदणी</a></li>
+        <li><a href="cm-membership.html">⭐ सदस्यत्व श्रेणी (Tiers)</a></li>
+        <li><a href="cm-community-safety.html">🚨 आपत्कालीन सुरक्षा कक्ष</a></li>
+        <li><a href="cm-contact.html">☎️ संपर्क व तक्रार निवारण</a></li>
+      </ul>
+      <div style="margin-top:16px; padding:10px; background:rgba(199,56,0,0.3); border-radius:6px; border:1px solid rgba(233,196,106,0.3); font-size:0.78rem;">
+        🔒 <strong>सुरक्षित व्यासपीठ:</strong> डेटा एन्क्रिप्शन व १००% गोपनीयता.
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© २०२६ Connect Maratha (कनेक्ट मराठा) · सर्व हक्क सुरक्षित · नोंदणीकृत सामाजिक व्यासपीठ</p>
+    <p style="margin-top:4px; color:var(--gold-400); font-weight:600;">॥ जय भवानी, जय शिवाजी ॥ अखंड मराठा साम्राज्य की जय!</p>
+  </div>
+</footer>
+
+  <!-- FORGOT PASSWORD & RESET MODAL (Spec Routes: /forgot-password, /reset-password) -->
+  <div id="forgotModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+    <div class="card" style="max-width:420px; width:100%; padding:28px; border-radius:14px; background:#fff; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 style="margin:0; font-size:1.2rem; color:var(--maroon-900);">🔑 पासवर्ड रीसेट करा (/reset-password)</h3>
+        <button type="button" onclick="closeForgotModal()" style="background:none; border:none; font-size:1.3rem; cursor:pointer;">✕</button>
+      </div>
+      <p style="font-size:0.85rem; color:var(--stone-600); margin-bottom:16px;">
+        तुमचा नोंदणीकृत मोबाईल नंबर प्रविष्ट करा. आम्ही त्यावर सुरक्षित पासवर्ड रीसेट लिंक आणि OTP पाठवू.
+      </p>
+      <div class="field" style="margin-bottom:14px;">
+        <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:4px;">मोबाईल नंबर</label>
+        <input type="tel" id="forgotMobileInput" placeholder="+91 XXXXX XXXXX" value="9876543210" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--line);">
+      </div>
+      <button type="button" onclick="submitForgotAction()" class="btn btn-primary btn-block" style="padding:10px; font-weight:700;">
+        📩 OTP व रीसेट लिंक पाठवा
+      </button>
+      <div id="forgotSuccessBox" style="display:none; margin-top:14px; padding:10px; border-radius:6px; background:#e8f5e9; border:1px solid #2e7d32; color:#2e7d32; font-size:0.82rem;">
+        ✓ OTP यशस्वीरीत्या पाठवला! तात्पुरता पासवर्ड: <strong>MH-2026-PASS</strong>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/cm-data.js"></script>
+  <script src="assets/js/cm-connect.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    function switchAuthMode(mode, btn) {
+      document.querySelectorAll('.auth-mode-tab').forEach(t => {
+        t.style.borderBottom = 'none';
+        t.style.color = 'var(--muted)';
+      });
+      btn.style.borderBottom = '2px solid var(--maroon-800)';
+      btn.style.color = 'var(--maroon-900)';
+
+      document.querySelectorAll('.auth-pane').forEach(p => p.style.display = 'none');
+
+      const titleEl = document.getElementById('authTitle');
+      const subEl = document.getElementById('authSubtitle');
+
+      if (mode === 'password') {
+        document.getElementById('loginForm').style.display = 'block';
+        titleEl.textContent = 'आपल्या खात्यात प्रवेश करा';
+        subEl.textContent = 'Connect Maratha — संस्कृती, उद्योग व सामाजिक एकात्मता.';
+      } else if (mode === 'otp') {
+        document.getElementById('otpPane').style.display = 'block';
+        titleEl.textContent = 'OTP द्वारे झटपट लॉगिन (/verify-otp)';
+        subEl.textContent = 'आपल्या मोबाईलवर प्राप्त ६-अंकी OTP टाकून सुरक्षित प्रवेश मिळवा.';
+      } else if (mode === 'status') {
+        document.getElementById('statusPane').style.display = 'block';
+        titleEl.textContent = 'अर्जाची स्थिती तपासा (/application/status)';
+        subEl.textContent = 'सदस्यत्व, चॅप्टर अर्ज किंवा व्यवसाय पडताळणीची सद्यस्थिती पहा.';
+      } else if (mode === 'activate') {
+        document.getElementById('activatePane').style.display = 'block';
+        titleEl.textContent = 'खाते सक्रिय करा (/account/activate)';
+        subEl.textContent = 'नोंदणीनंतर मिळालेला टोकन टाकून खाते सक्रिय करा.';
+      }
+    }
+
+    function sendOtpCode() {
+      const phone = document.getElementById('otpPhoneInput').value.trim();
+      if (!phone) { showToast('कृपया मोबाईल नंबर टाका', 'error'); return; }
+      showToast('📩 OTP कोड 167430 आपल्या मोबाईलवर पाठवला आहे!', 'success');
+      document.getElementById('otpCodeInput').value = '167430';
+    }
+
+    function verifyOtpLogin() {
+      const code = document.getElementById('otpCodeInput').value.trim();
+      if (code.length < 4) { showToast('कृपया वैध OTP टाका', 'error'); return; }
+      showToast('✓ OTP पडताळणी यशस्वी! डॅशबोर्ड उघडत आहे...', 'success');
+      setTimeout(() => { window.location.href = 'cm-dashboard.html'; }, 700);
+    }
+
+    function checkAppStatus() {
+      const q = document.getElementById('appStatusInput').value.trim();
+      if (!q) { showToast('कृपया अर्ज क्रमांक प्रविष्ट करा', 'error'); return; }
+      document.getElementById('appStatusResult').style.display = 'block';
+      showToast('✓ अर्जाची माहिती आढळली', 'success');
+    }
+
+    function activateAccountAction() {
+      const tok = document.getElementById('activateToken').value.trim();
+      if (!tok) { showToast('कृपया सक्रियता कोड टाका', 'error'); return; }
+      showToast('⚡ अभिनंदन! तुमचे कनेक्ट मराठा खाते सक्रिय झाले आहे.', 'success');
+      setTimeout(() => { window.location.href = 'cm-dashboard.html'; }, 800);
+    }
+
+    function openForgotModal() {
+      const m = document.getElementById('forgotModal');
+      m.style.display = 'flex';
+    }
+
+    function closeForgotModal() {
+      document.getElementById('forgotModal').style.display = 'none';
+    }
+
+    function submitForgotAction() {
+      document.getElementById('forgotSuccessBox').style.display = 'block';
+      showToast('रीसेट OTP पाठवला आहे!', 'success');
+    }
+  </script>
+</body>
+</html>
