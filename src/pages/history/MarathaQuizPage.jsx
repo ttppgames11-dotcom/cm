@@ -172,6 +172,8 @@ export default function MarathaQuizPage() {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [userAnswersHistory, setUserAnswersHistory] = useState([]);
   const [answeredMap, setAnsweredMap] = useState({});
+  const [visitedMap, setVisitedMap] = useState({ 0: true });
+  const [markedMap, setMarkedMap] = useState({});
   const [showQuestionPalette, setShowQuestionPalette] = useState(false);
   const [palettePage, setPalettePage] = useState(0);
   const [reviewFilter, setReviewFilter] = useState('all');
@@ -215,6 +217,8 @@ export default function MarathaQuizPage() {
     setShowHint(false);
     setUserAnswersHistory([]);
     setAnsweredMap({});
+    setVisitedMap({ 0: true });
+    setMarkedMap({});
     setShowQuestionPalette(false);
     setPalettePage(0);
     setReviewFilter('all');
@@ -364,6 +368,8 @@ export default function MarathaQuizPage() {
     if (targetIdx < 0 || targetIdx >= activeQuestions.length) return;
     clearInterval(timerRef.current);
     setCurrentIndex(targetIdx);
+    setVisitedMap(prev => ({ ...prev, [targetIdx]: true }));
+    setPalettePage(Math.floor(targetIdx / 32));
     const existing = answeredMap[targetIdx];
     if (existing) {
       setSelectedAnswer(existing.userChosen);
@@ -378,6 +384,13 @@ export default function MarathaQuizPage() {
     setShowHint(false);
     const el = document.getElementById('quiz-play-box');
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const toggleMarkForReview = (targetIdx = currentIndex) => {
+    setMarkedMap(prev => ({
+      ...prev,
+      [targetIdx]: !prev[targetIdx]
+    }));
   };
 
   const handleNextQuestion = () => {
@@ -432,6 +445,12 @@ export default function MarathaQuizPage() {
     }, 100);
   };
 
+  // Exam Question Palette 4 Categories (Matching user design):
+  const markedCount = Object.keys(markedMap).filter(k => markedMap[k] && Number(k) < activeQuestions.length).length;
+  const answeredCount = Object.keys(answeredMap).filter(k => !markedMap[k] && Number(k) < activeQuestions.length).length;
+  const notAnsweredCount = Object.keys(visitedMap).filter(k => visitedMap[k] && answeredMap[k] === undefined && !markedMap[k] && Number(k) < activeQuestions.length).length;
+  const notVisitedCount = Math.max(0, activeQuestions.length - (answeredCount + markedCount + notAnsweredCount));
+
   const solvedCount = Object.keys(answeredMap).length;
   const unsolvedCount = Math.max(0, activeQuestions.length - solvedCount);
   const correctCount = Object.values(answeredMap).filter(h => h.isCorrect).length;
@@ -459,6 +478,7 @@ export default function MarathaQuizPage() {
   // Review calculations
   const allReviewQuestions = activeQuestions.map((q, idx) => {
     const ans = answeredMap[idx];
+    const isMrk = Boolean(markedMap[idx]);
     return {
       qIndex: idx,
       id: q.id,
@@ -467,6 +487,7 @@ export default function MarathaQuizPage() {
       correct: q.correct,
       userChosen: ans ? ans.userChosen : null,
       isSolved: Boolean(ans),
+      isMarked: isMrk,
       isCorrect: ans ? ans.isCorrect : false,
       timedOut: ans ? ans.timedOut : false,
       explanation: q.explanation,
@@ -478,6 +499,7 @@ export default function MarathaQuizPage() {
   const filteredReviewQuestions = allReviewQuestions.filter(item => {
     if (reviewFilter === 'solved') return item.isSolved;
     if (reviewFilter === 'unsolved') return !item.isSolved;
+    if (reviewFilter === 'marked') return item.isMarked;
     if (reviewFilter === 'correct') return item.isSolved && item.isCorrect;
     if (reviewFilter === 'incorrect') return item.isSolved && !item.isCorrect;
     return true;
@@ -784,12 +806,26 @@ export default function MarathaQuizPage() {
 
         {/* 2. LIVE QUIZ PLAY ENGINE (When quiz is active and not completed) */}
         {quizStarted && !quizCompleted && currentQ && (
-          <div id="quiz-play-box" style={{ maxWidth: '880px', margin: '0 auto 40px auto' }}>
+          <div id="quiz-play-box" style={{ maxWidth: '1280px', margin: '0 auto 40px auto' }}>
             
+            <style>{`
+              .quiz-play-grid {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 320px;
+                gap: 24px;
+                align-items: start;
+              }
+              @media (max-width: 992px) {
+                .quiz-play-grid {
+                  grid-template-columns: 1fr;
+                }
+              }
+            `}</style>
+
             {/* Top Bar with Question Count, Streak, Points & Timer */}
             <div style={{ background: '#FFFFFF', borderRadius: '16px', padding: '16px 24px', border: '1px solid var(--line)', marginBottom: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '14px' }}>
               
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                 <span style={{ background: '#FFF3E0', color: 'var(--maroon-900)', padding: '6px 14px', borderRadius: '20px', fontWeight: 800, fontSize: '0.9rem' }}>
                   प्रश्न {currentIndex + 1} / {activeQuestions.length}
                 </span>
@@ -801,7 +837,7 @@ export default function MarathaQuizPage() {
                 </span>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
                 {streak > 1 && (
                   <div style={{ background: '#FEF3C7', color: '#B45309', padding: '4px 10px', borderRadius: '12px', fontSize: '0.82rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span>🔥</span> Streak: {streak}x
@@ -815,437 +851,556 @@ export default function MarathaQuizPage() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: timeLeft <= 5 ? '#FEE2E2' : '#F3F4F6', color: timeLeft <= 5 ? '#DC2626' : '#374151', padding: '4px 12px', borderRadius: '16px', fontWeight: 800, fontSize: '0.9rem' }}>
                   <span>⏱️</span> {timeLeft}s
                 </div>
-              </div>
-
-            </div>
-
-            {/* Solved vs Unsolved Live Status Bar */}
-            <div style={{
-              background: '#FFFFFF',
-              borderRadius: '14px',
-              padding: '12px 20px',
-              border: '1px solid #FFE0B2',
-              marginBottom: '16px',
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              gap: '12px',
-              boxShadow: '0 2px 10px rgba(230,81,0,0.04)'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--ink)' }}>
-                  प्रगती (Status):
-                </span>
-                <span style={{
-                  background: '#DCFCE7',
-                  color: '#15803D',
-                  padding: '4px 12px',
-                  borderRadius: '20px',
-                  fontSize: '0.82rem',
-                  fontWeight: 700,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '5px'
-                }}>
-                  <span>✅</span> सोडवलेले: <strong>{solvedCount}</strong>
-                </span>
-                <span style={{
-                  background: '#FEF3C7',
-                  color: '#92400E',
-                  padding: '4px 12px',
-                  borderRadius: '20px',
-                  fontSize: '0.82rem',
-                  fontWeight: 700,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '5px'
-                }}>
-                  <span>⏳</span> न सोडवलेले: <strong>{unsolvedCount}</strong>
-                </span>
-                <span style={{
-                  background: '#F3F4F6',
-                  color: '#4B5563',
-                  padding: '4px 12px',
-                  borderRadius: '20px',
-                  fontSize: '0.82rem',
-                  fontWeight: 600
-                }}>
-                  एकूण: <strong>{activeQuestions.length}</strong>
-                </span>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setShowQuestionPalette(!showQuestionPalette)}
-                style={{
-                  padding: '7px 14px',
-                  background: showQuestionPalette ? 'var(--maroon-800)' : '#FFF8F0',
-                  color: showQuestionPalette ? '#FFFFFF' : 'var(--maroon-900)',
-                  border: '1px solid #FFCC80',
-                  borderRadius: '8px',
-                  fontSize: '0.82rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <span>🔢</span> {showQuestionPalette ? 'प्रश्न सूची बंद करा' : 'प्रश्न सूची (Navigator) पहा'}
-              </button>
-            </div>
-
-            {/* Question Palette Drawer */}
-            {showQuestionPalette && (
-              <div style={{
-                background: '#FFFFFF',
-                borderRadius: '16px',
-                padding: '20px',
-                border: '1px solid #FED7AA',
-                marginBottom: '18px',
-                boxShadow: '0 4px 20px rgba(230,81,0,0.08)'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
-                  <div style={{ fontWeight: 800, color: 'var(--maroon-900)', fontSize: '0.98rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span>📋</span> प्रश्न सूची व स्थिती (Question Navigator)
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.78rem', fontWeight: 600 }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#16A34A', display: 'inline-block' }}></span>
-                      बरोबर ({correctCount})
-                    </span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#DC2626', display: 'inline-block' }}></span>
-                      चुकीचे ({incorrectCount})
-                    </span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#F1F5F9', border: '1px solid #94A3B8', display: 'inline-block' }}></span>
-                      न सोडवलेले ({unsolvedCount})
-                    </span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#F59E0B', display: 'inline-block' }}></span>
-                      चालू प्रश्न
-                    </span>
-                  </div>
-                </div>
-
-                {/* Palette Block Navigation if > 50 questions */}
-                {activeQuestions.length > 50 && (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', background: '#FFF8F0', padding: '8px 12px', borderRadius: '10px' }}>
-                    <button
-                      type="button"
-                      disabled={palettePage === 0}
-                      onClick={() => setPalettePage(p => Math.max(0, p - 1))}
-                      style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid #E5E7EB', background: '#FFF', fontSize: '0.8rem', cursor: palettePage === 0 ? 'not-allowed' : 'pointer' }}
-                    >
-                      ← मागील ५० प्रश्न
-                    </button>
-                    <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--maroon-900)' }}>
-                      प्रश्न {palettePage * 50 + 1} ते {Math.min((palettePage + 1) * 50, activeQuestions.length)} (एकूण: {activeQuestions.length})
-                    </span>
-                    <button
-                      type="button"
-                      disabled={(palettePage + 1) * 50 >= activeQuestions.length}
-                      onClick={() => setPalettePage(p => p + 1)}
-                      style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid #E5E7EB', background: '#FFF', fontSize: '0.8rem', cursor: (palettePage + 1) * 50 >= activeQuestions.length ? 'not-allowed' : 'pointer' }}
-                    >
-                      पुढील ५० प्रश्न →
-                    </button>
-                  </div>
-                )}
-
-                {/* Grid of Question Numbers */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(44px, 1fr))',
-                  gap: '8px',
-                  maxHeight: '240px',
-                  overflowY: 'auto',
-                  padding: '4px'
-                }}>
-                  {activeQuestions.slice(palettePage * 50, Math.min((palettePage + 1) * 50, activeQuestions.length)).map((q, localIdx) => {
-                    const globalIdx = palettePage * 50 + localIdx;
-                    const ans = answeredMap[globalIdx];
-                    const isCur = globalIdx === currentIndex;
-
-                    let bg = '#FFFFFF';
-                    let color = '#374151';
-                    let border = '1px solid #CBD5E1';
-
-                    if (ans) {
-                      if (ans.isCorrect) {
-                        bg = '#16A34A';
-                        color = '#FFFFFF';
-                        border = '1px solid #15803D';
-                      } else {
-                        bg = '#DC2626';
-                        color = '#FFFFFF';
-                        border = '1px solid #B91C1C';
-                      }
-                    }
-
-                    return (
-                      <button
-                        key={globalIdx}
-                        type="button"
-                        onClick={() => jumpToQuestion(globalIdx)}
-                        style={{
-                          height: '36px',
-                          borderRadius: '8px',
-                          background: bg,
-                          color: color,
-                          border: border,
-                          fontWeight: 700,
-                          fontSize: '0.82rem',
-                          cursor: 'pointer',
-                          outline: isCur ? '3px solid #F59E0B' : 'none',
-                          boxShadow: isCur ? '0 0 10px rgba(245,158,11,0.4)' : 'none',
-                          transition: 'transform 0.1s ease'
-                        }}
-                        title={`प्रश्न ${globalIdx + 1}: ${ans ? (ans.isCorrect ? 'बरोबर' : 'चुकीचे') : 'न सोडवलेला'}`}
-                      >
-                        {globalIdx + 1}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Progress Bar */}
-            <div style={{ height: '8px', background: '#E5E7EB', borderRadius: '4px', overflow: 'hidden', marginBottom: '22px' }}>
-              <div style={{ height: '100%', width: `${((currentIndex + 1) / activeQuestions.length) * 100}%`, background: 'linear-gradient(90deg, #E65100, #F59E0B)', transition: 'width 0.3s ease' }}></div>
-            </div>
-
-            {/* Main Question Card */}
-            <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '36px', border: '1px solid var(--line)', boxShadow: '0 10px 40px rgba(230,81,0,0.08)' }}>
-              
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', marginBottom: '20px' }}>
-                <div>
-                  <span style={{ fontSize: '0.78rem', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '4px' }}>
-                    QID: {currentQ.id || `Q-${currentIndex + 1}`}
-                  </span>
-                  <h2 style={{ fontFamily: 'Baloo 2, sans-serif', color: 'var(--maroon-900)', fontSize: 'clamp(1.25rem, 2.5vw, 1.6rem)', fontWeight: 700, lineHeight: 1.4, margin: 0 }}>
-                    {currentQ.question}
-                  </h2>
-                </div>
 
                 <button
                   type="button"
-                  onClick={() => setShowHint(!showHint)}
-                  style={{ background: '#FEF9C3', border: '1px solid #FDE047', color: '#854D0E', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => {
+                    const el = document.getElementById('exam-question-palette');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '6px 12px',
+                    background: '#F1F5F9',
+                    border: '1px solid #CBD5E1',
+                    borderRadius: '8px',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    color: '#334155',
+                    cursor: 'pointer'
+                  }}
                 >
-                  💡 संकेत (Hint)
+                  <span>📋</span> प्रश्न पत्रिका ({answeredCount + markedCount}/{activeQuestions.length})
                 </button>
               </div>
 
-              {showHint && (
-                <div style={{ background: '#FEFCE8', border: '1px dashed #FACC15', borderRadius: '10px', padding: '10px 16px', marginBottom: '22px', fontSize: '0.88rem', color: '#713F12' }}>
-                  <strong>ऐतिहासिक संकेत:</strong> {currentQ.hint}
+            </div>
+
+            {/* 2-Column Responsive Layout: Question on Left, Palette on Right */}
+            <div className="quiz-play-grid">
+
+              {/* LEFT COLUMN: Question Content & Action Buttons */}
+              <div style={{ minWidth: 0 }}>
+                
+                {/* Progress Bar */}
+                <div style={{ height: '8px', background: '#E5E7EB', borderRadius: '4px', overflow: 'hidden', marginBottom: '18px' }}>
+                  <div style={{ height: '100%', width: `${((currentIndex + 1) / activeQuestions.length) * 100}%`, background: 'linear-gradient(90deg, #E65100, #F59E0B)', transition: 'width 0.3s ease' }}></div>
                 </div>
-              )}
 
-              {/* 4 Interactive Options */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '14px', marginBottom: '28px' }}>
-                {currentQ.options.map((opt, idx) => {
-                  const letters = ['अ', 'ब', 'क', 'ड'];
-                  const isCorrectChoice = idx === currentQ.correct;
-                  const isUserSelection = idx === selectedAnswer;
-
-                  let optBorder = '1px solid #E5E7EB';
-                  let optBg = '#FFFFFF';
-                  let optColor = '#1F2937';
-
-                  if (answeredState) {
-                    if (isCorrectChoice) {
-                      optBorder = '2px solid #16A34A';
-                      optBg = '#DCFCE7';
-                      optColor = '#15803D';
-                    } else if (isUserSelection) {
-                      optBorder = '2px solid #DC2626';
-                      optBg = '#FEE2E2';
-                      optColor = '#B91C1C';
-                    } else {
-                      optBg = '#F9FAFB';
-                      optColor = '#9CA3AF';
-                    }
-                  }
-
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      disabled={answeredState}
-                      onClick={() => handleSelectOption(idx)}
-                      style={{
-                        padding: '16px 20px',
-                        borderRadius: '12px',
-                        border: optBorder,
-                        background: optBg,
-                        color: optColor,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        cursor: answeredState ? 'default' : 'pointer',
-                        textAlign: 'left',
-                        fontSize: '1.05rem',
-                        fontWeight: isUserSelection || (answeredState && isCorrectChoice) ? 700 : 500,
-                        transition: 'all 0.15s ease',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
-                      }}
-                      onMouseOver={(e) => {
-                        if (!answeredState) e.currentTarget.style.borderColor = 'var(--maroon-800)';
-                      }}
-                      onMouseOut={(e) => {
-                        if (!answeredState) e.currentTarget.style.borderColor = '#E5E7EB';
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                        <span style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '50%',
-                          background: answeredState && isCorrectChoice ? '#16A34A' : answeredState && isUserSelection ? '#DC2626' : '#F3F4F6',
-                          color: answeredState && (isCorrectChoice || isUserSelection) ? '#FFFFFF' : '#374151',
-                          fontWeight: 700,
-                          fontSize: '0.88rem'
-                        }}>
-                          {letters[idx]}
+                {/* Main Question Card */}
+                <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '32px', border: '1px solid var(--line)', boxShadow: '0 10px 40px rgba(230,81,0,0.06)' }}>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', marginBottom: '20px' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                        <span style={{ fontSize: '0.78rem', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                          QID: {currentQ.id || `Q-${currentIndex + 1}`}
                         </span>
-                        <span>{opt}</span>
+                        {markedMap[currentIndex] && (
+                          <span style={{ background: '#F3E8FF', color: '#7E22CE', border: '1px solid #D8B4FE', fontSize: '0.75rem', fontWeight: 700, padding: '2px 8px', borderRadius: '12px' }}>
+                            🟣 Marked for Review
+                          </span>
+                        )}
                       </div>
+                      <h2 style={{ fontFamily: 'Baloo 2, sans-serif', color: 'var(--maroon-900)', fontSize: 'clamp(1.2rem, 2.2vw, 1.55rem)', fontWeight: 700, lineHeight: 1.4, margin: 0 }}>
+                        {currentQ.question}
+                      </h2>
+                    </div>
 
-                      {answeredState && isCorrectChoice && (
-                        <span style={{ color: '#16A34A', fontWeight: 800, fontSize: '1.2rem' }}>✓ अचूक</span>
-                      )}
-                      {answeredState && isUserSelection && !isCorrectChoice && (
-                        <span style={{ color: '#DC2626', fontWeight: 800, fontSize: '1.2rem' }}>✗ चूक</span>
-                      )}
+                    <button
+                      type="button"
+                      onClick={() => setShowHint(!showHint)}
+                      style={{ background: '#FEF9C3', border: '1px solid #FDE047', color: '#854D0E', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}
+                    >
+                      💡 संकेत (Hint)
                     </button>
-                  );
-                })}
-              </div>
-
-              {/* Historical Explanation Box (Revealed after answering) */}
-              {answeredState && (
-                <div style={{ background: '#FFF8F0', borderLeft: '4px solid var(--maroon-800)', borderRadius: '0 12px 12px 0', padding: '16px 20px', marginBottom: '28px', animation: 'fadeIn 0.3s ease' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, color: 'var(--maroon-900)', fontSize: '0.92rem', marginBottom: '6px' }}>
-                    <span>📖</span> सविस्तर ऐतिहासिक संदर्भ व सत्य माहिती:
                   </div>
-                  <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--ink)' }}>
-                    {currentQ.explanation}
-                  </p>
-                  {currentQ.source && (
-                    <div style={{ marginTop: '8px', fontSize: '0.78rem', color: '#6B7280' }}>
-                      <strong>ऐतिहासिक स्रोत:</strong> {currentQ.source}
+
+                  {showHint && (
+                    <div style={{ background: '#FEFCE8', border: '1px dashed #FACC15', borderRadius: '10px', padding: '10px 16px', marginBottom: '22px', fontSize: '0.88rem', color: '#713F12' }}>
+                      <strong>ऐतिहासिक संकेत:</strong> {currentQ.hint}
                     </div>
                   )}
-                </div>
-              )}
 
-              {/* Action Buttons: Prev / Next / Finish */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #F3F4F6', paddingTop: '20px', flexWrap: 'wrap', gap: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                  <button
-                    type="button"
-                    onClick={() => { setQuizStarted(false); setQuizCompleted(false); }}
-                    style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '0.88rem', cursor: 'pointer', textDecoration: 'underline' }}
-                  >
-                    ← क्विझ थांबवा व बाहेर पडा
-                  </button>
+                  {/* 4 Interactive Options */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '14px', marginBottom: '28px' }}>
+                    {currentQ.options.map((opt, idx) => {
+                      const letters = ['अ', 'ब', 'क', 'ड'];
+                      const isCorrectChoice = idx === currentQ.correct;
+                      const isUserSelection = idx === selectedAnswer;
 
-                  {currentIndex > 0 && (
-                    <button
-                      type="button"
-                      onClick={handlePrevQuestion}
-                      style={{
-                        padding: '10px 16px',
-                        background: '#FFFFFF',
-                        color: 'var(--maroon-900)',
-                        border: '1px solid #CBD5E1',
-                        borderRadius: '10px',
-                        fontSize: '0.88rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px'
-                      }}
-                    >
-                      <span>←</span> मागील प्रश्न
-                    </button>
+                      let optBorder = '1px solid #E5E7EB';
+                      let optBg = '#FFFFFF';
+                      let optColor = '#1F2937';
+
+                      if (answeredState) {
+                        if (isCorrectChoice) {
+                          optBorder = '2px solid #16A34A';
+                          optBg = '#DCFCE7';
+                          optColor = '#15803D';
+                        } else if (isUserSelection) {
+                          optBorder = '2px solid #DC2626';
+                          optBg = '#FEE2E2';
+                          optColor = '#B91C1C';
+                        } else {
+                          optBg = '#F9FAFB';
+                          optColor = '#9CA3AF';
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          disabled={answeredState}
+                          onClick={() => handleSelectOption(idx)}
+                          style={{
+                            padding: '16px 20px',
+                            borderRadius: '12px',
+                            border: optBorder,
+                            background: optBg,
+                            color: optColor,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            cursor: answeredState ? 'default' : 'pointer',
+                            textAlign: 'left',
+                            fontSize: '1.05rem',
+                            fontWeight: isUserSelection || (answeredState && isCorrectChoice) ? 700 : 500,
+                            transition: 'all 0.15s ease',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
+                          }}
+                          onMouseOver={(e) => {
+                            if (!answeredState) e.currentTarget.style.borderColor = 'var(--maroon-800)';
+                          }}
+                          onMouseOut={(e) => {
+                            if (!answeredState) e.currentTarget.style.borderColor = '#E5E7EB';
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                            <span style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '50%',
+                              background: answeredState && isCorrectChoice ? '#16A34A' : answeredState && isUserSelection ? '#DC2626' : '#F3F4F6',
+                              color: answeredState && (isCorrectChoice || isUserSelection) ? '#FFFFFF' : '#374151',
+                              fontWeight: 700,
+                              fontSize: '0.88rem'
+                            }}>
+                              {letters[idx]}
+                            </span>
+                            <span>{opt}</span>
+                          </div>
+
+                          {answeredState && isCorrectChoice && (
+                            <span style={{ color: '#16A34A', fontWeight: 800, fontSize: '1.1rem' }}>✓ अचूक</span>
+                          )}
+                          {answeredState && isUserSelection && !isCorrectChoice && (
+                            <span style={{ color: '#DC2626', fontWeight: 800, fontSize: '1.1rem' }}>✗ चूक</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Historical Explanation Box (Revealed after answering) */}
+                  {answeredState && (
+                    <div style={{ background: '#FFF8F0', borderLeft: '4px solid var(--maroon-800)', borderRadius: '0 12px 12px 0', padding: '16px 20px', marginBottom: '28px', animation: 'fadeIn 0.3s ease' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, color: 'var(--maroon-900)', fontSize: '0.92rem', marginBottom: '6px' }}>
+                        <span>📖</span> सविस्तर ऐतिहासिक संदर्भ व सत्य माहिती:
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--ink)' }}>
+                        {currentQ.explanation}
+                      </p>
+                      {currentQ.source && (
+                        <div style={{ marginTop: '8px', fontSize: '0.78rem', color: '#6B7280' }}>
+                          <strong>ऐतिहासिक स्रोत:</strong> {currentQ.source}
+                        </div>
+                      )}
+                    </div>
                   )}
-                </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                  {solvedCount >= 1 && (
-                    <button
-                      type="button"
-                      onClick={finishQuiz}
-                      style={{
-                        padding: '10px 18px',
-                        background: '#FFF3E0',
-                        color: 'var(--maroon-900)',
-                        border: '1px solid #FFB74D',
-                        borderRadius: '10px',
-                        fontSize: '0.9rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px'
-                      }}
-                    >
-                      <span>🏆 निकाल व प्रमाणपत्र समाप्त करा ({solvedCount} सोडवले)</span>
-                    </button>
-                  )}
-
-                  {answeredState ? (
-                    <button
-                      type="button"
-                      onClick={handleNextQuestion}
-                      style={{
-                        padding: '12px 28px',
-                        background: 'linear-gradient(135deg, #E65100, #BF360C)',
-                        color: '#FFFFFF',
-                        border: 'none',
-                        borderRadius: '10px',
-                        fontSize: '1rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        boxShadow: '0 4px 14px rgba(230,81,0,0.25)'
-                      }}
-                    >
-                      <span>{currentIndex < activeQuestions.length - 1 ? 'पुढील प्रश्न →' : 'निकाल व प्रमाणपत्र पहा 🏆'}</span>
-                    </button>
-                  ) : (
-                    currentIndex < activeQuestions.length - 1 && (
+                  {/* Action Buttons: Prev / Mark / Skip / Next / Finish */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #F3F4F6', paddingTop: '20px', flexWrap: 'wrap', gap: '12px' }}>
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                       <button
                         type="button"
-                        onClick={handleNextQuestion}
+                        onClick={() => { setQuizStarted(false); setQuizCompleted(false); }}
+                        style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '0.84rem', cursor: 'pointer', textDecoration: 'underline', paddingRight: '4px' }}
+                      >
+                        ← बाहेर पडा
+                      </button>
+
+                      {currentIndex > 0 && (
+                        <button
+                          type="button"
+                          onClick={handlePrevQuestion}
+                          style={{
+                            padding: '9px 15px',
+                            background: '#FFFFFF',
+                            color: 'var(--maroon-900)',
+                            border: '1px solid #CBD5E1',
+                            borderRadius: '10px',
+                            fontSize: '0.88rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          <span>←</span> मागील
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => toggleMarkForReview(currentIndex)}
                         style={{
-                          padding: '10px 18px',
-                          background: '#F8FAFC',
-                          color: '#4B5563',
-                          border: '1px solid #E2E8F0',
+                          padding: '9px 15px',
+                          background: markedMap[currentIndex] ? '#8B5CF6' : '#F5F3FF',
+                          color: markedMap[currentIndex] ? '#FFFFFF' : '#6D28D9',
+                          border: markedMap[currentIndex] ? '1px solid #7C3AED' : '1px solid #C4B5FD',
                           borderRadius: '10px',
                           fontSize: '0.88rem',
-                          fontWeight: 600,
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <span>🟣</span> {markedMap[currentIndex] ? 'चिन्हांकित (Marked)' : 'खूण करा (Mark)'}
+                      </button>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                      {answeredState ? (
+                        <button
+                          type="button"
+                          onClick={handleNextQuestion}
+                          style={{
+                            padding: '12px 26px',
+                            background: 'linear-gradient(135deg, #E65100, #BF360C)',
+                            color: '#FFFFFF',
+                            border: 'none',
+                            borderRadius: '10px',
+                            fontSize: '0.98rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            boxShadow: '0 4px 14px rgba(230,81,0,0.25)'
+                          }}
+                        >
+                          <span>{currentIndex < activeQuestions.length - 1 ? 'पुढील प्रश्न →' : 'निकाल व प्रमाणपत्र पहा 🏆'}</span>
+                        </button>
+                      ) : (
+                        currentIndex < activeQuestions.length - 1 && (
+                          <button
+                            type="button"
+                            onClick={handleNextQuestion}
+                            style={{
+                              padding: '10px 18px',
+                              background: '#F8FAFC',
+                              color: '#4B5563',
+                              border: '1px solid #E2E8F0',
+                              borderRadius: '10px',
+                              fontSize: '0.88rem',
+                              fontWeight: 600,
+                              cursor: 'pointer'
+                            }}
+                          >
+                            हा प्रश्न वगळा व पुढे जा →
+                          </button>
+                        )
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={finishQuiz}
+                        style={{
+                          padding: '10px 16px',
+                          background: '#FFF3E0',
+                          color: 'var(--maroon-900)',
+                          border: '1px solid #FFB74D',
+                          borderRadius: '10px',
+                          fontSize: '0.88rem',
+                          fontWeight: 700,
                           cursor: 'pointer'
                         }}
                       >
-                        हा प्रश्न वगळा व पुढे जा →
+                        🏆 समाप्त करा
                       </button>
-                    )
-                  )}
+                    </div>
+
+                  </div>
+
                 </div>
+
+              </div>
+
+              {/* RIGHT COLUMN: Question Palette (Exact visual replica of user's image) */}
+              <div
+                id="exam-question-palette"
+                style={{
+                  background: '#FFFFFF',
+                  borderRadius: '16px',
+                  border: '1px solid #E2E8F0',
+                  padding: '16px',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                  position: 'sticky',
+                  top: '20px'
+                }}
+              >
+                
+                {/* BOX 1: Legend (Highlighted by red box in user image) */}
+                <div style={{
+                  border: '2px solid #EF4444',
+                  borderRadius: '12px',
+                  padding: '14px 16px',
+                  marginBottom: '16px',
+                  background: '#FFFFFF'
+                }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 10px' }}>
+                    
+                    {/* 🟢 Answered */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '50%',
+                        background: '#16A34A',
+                        color: '#FFFFFF',
+                        fontWeight: 800,
+                        fontSize: '0.82rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}>
+                        {answeredCount}
+                      </span>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#374151' }}>
+                        Answered
+                      </span>
+                    </div>
+
+                    {/* 🟣 Marked */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '50%',
+                        background: '#8B5CF6',
+                        color: '#FFFFFF',
+                        fontWeight: 800,
+                        fontSize: '0.82rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}>
+                        {markedCount}
+                      </span>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#374151' }}>
+                        Marked
+                      </span>
+                    </div>
+
+                    {/* ⚪ Not Visited */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '50%',
+                        background: '#CBD5E1',
+                        color: '#374151',
+                        fontWeight: 800,
+                        fontSize: '0.82rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}>
+                        {notVisitedCount}
+                      </span>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#374151' }}>
+                        Not Visited
+                      </span>
+                    </div>
+
+                    {/* 🔴 Not Answered */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '50%',
+                        background: '#DC2626',
+                        color: '#FFFFFF',
+                        fontWeight: 800,
+                        fontSize: '0.82rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}>
+                        {notAnsweredCount}
+                      </span>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#374151' }}>
+                        Not Answered
+                      </span>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* Section Title */}
+                <div style={{
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  color: '#475569',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  marginBottom: '10px',
+                  paddingLeft: '4px'
+                }}>
+                  SECTION : {selectedCategory === 'ALL' ? 'All Sections' : selectedCategory}
+                </div>
+
+                {/* BOX 2: Question Number Grid (Highlighted by red box in user image) */}
+                <div style={{
+                  border: '2px solid #EF4444',
+                  borderRadius: '12px',
+                  padding: '12px',
+                  background: '#FFFFFF'
+                }}>
+                  
+                  {/* Block Pager if > 32 questions */}
+                  {activeQuestions.length > 32 && (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', background: '#F8FAFC', padding: '6px 8px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                      <button
+                        type="button"
+                        disabled={palettePage === 0}
+                        onClick={() => setPalettePage(p => Math.max(0, p - 1))}
+                        style={{ padding: '3px 8px', borderRadius: '6px', border: '1px solid #CBD5E1', background: '#FFF', fontSize: '0.75rem', cursor: palettePage === 0 ? 'not-allowed' : 'pointer' }}
+                      >
+                        ← मागे
+                      </button>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--maroon-900)' }}>
+                        {palettePage * 32 + 1} - {Math.min((palettePage + 1) * 32, activeQuestions.length)} / {activeQuestions.length}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={(palettePage + 1) * 32 >= activeQuestions.length}
+                        onClick={() => setPalettePage(p => p + 1)}
+                        style={{ padding: '3px 8px', borderRadius: '6px', border: '1px solid #CBD5E1', background: '#FFF', fontSize: '0.75rem', cursor: (palettePage + 1) * 32 >= activeQuestions.length ? 'not-allowed' : 'pointer' }}
+                      >
+                        पुढे →
+                      </button>
+                    </div>
+                  )}
+
+                  {/* 4-Column Number Grid (Matches 1, 2, 3, 4 ... 32 from image) */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(4, 1fr)',
+                    gap: '8px',
+                    maxHeight: '340px',
+                    overflowY: 'auto',
+                    padding: '2px'
+                  }}>
+                    {activeQuestions.slice(palettePage * 32, Math.min((palettePage + 1) * 32, activeQuestions.length)).map((q, localIdx) => {
+                      const globalIdx = palettePage * 32 + localIdx;
+                      const isCur = globalIdx === currentIndex;
+                      const isAns = answeredMap[globalIdx] !== undefined;
+                      const isMrk = Boolean(markedMap[globalIdx]);
+                      const isVis = Boolean(visitedMap[globalIdx]);
+
+                      let bg = '#E2E8F0'; // Not Visited (Gray)
+                      let color = '#374151';
+                      let border = '1px solid #CBD5E1';
+
+                      if (isMrk) {
+                        bg = '#8B5CF6'; // Marked (Purple)
+                        color = '#FFFFFF';
+                        border = '1px solid #7C3AED';
+                      } else if (isAns) {
+                        bg = '#16A34A'; // Answered (Green)
+                        color = '#FFFFFF';
+                        border = '1px solid #15803D';
+                      } else if (isVis) {
+                        bg = '#DC2626'; // Not Answered (Red)
+                        color = '#FFFFFF';
+                        border = '1px solid #B91C1C';
+                      }
+
+                      return (
+                        <button
+                          key={globalIdx}
+                          type="button"
+                          onClick={() => jumpToQuestion(globalIdx)}
+                          style={{
+                            height: '40px',
+                            borderRadius: '8px',
+                            background: bg,
+                            color: color,
+                            border: border,
+                            fontWeight: 800,
+                            fontSize: '0.9rem',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            outline: isCur ? '3px solid #2563EB' : 'none',
+                            boxShadow: isCur ? '0 0 10px rgba(37,99,235,0.45)' : 'none',
+                            transform: isCur ? 'scale(1.05)' : 'none',
+                            transition: 'all 0.15s ease'
+                          }}
+                          title={`प्रश्न ${globalIdx + 1}: ${isMrk ? 'Marked' : isAns ? 'Answered' : isVis ? 'Not Answered' : 'Not Visited'}`}
+                        >
+                          {globalIdx + 1}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                </div>
+
+                {/* Submit Test Button */}
+                <div style={{ marginTop: '16px' }}>
+                  <button
+                    type="button"
+                    onClick={finishQuiz}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '10px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #10B981, #059669)',
+                      color: '#FFFFFF',
+                      fontWeight: 800,
+                      fontSize: '0.92rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 12px rgba(16,185,129,0.25)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    <span>📝</span> चाचणी समाप्त करा (Submit Test)
+                  </button>
+                </div>
+
               </div>
 
             </div>
@@ -1497,6 +1652,7 @@ export default function MarathaQuizPage() {
                     { key: 'all', label: `सर्व प्रश्न (${activeQuestions.length})` },
                     { key: 'solved', label: `✅ सोडवलेले (${solvedCount})` },
                     { key: 'unsolved', label: `⏳ न सोडवलेले (${unsolvedCount})` },
+                    { key: 'marked', label: `🟣 Marked (${markedCount})` },
                     { key: 'correct', label: `✔️ बरोबर (${correctCount})` },
                     { key: 'incorrect', label: `❌ चुकीचे (${incorrectCount})` }
                   ].map(tab => (
@@ -1581,12 +1737,17 @@ export default function MarathaQuizPage() {
                     let badgeBg = '#64748B';
                     let badgeText = '⏳ न सोडवलेला';
 
-                    if (h.isSolved) {
+                    if (h.isMarked && !h.isSolved) {
+                      cardBorder = '1px solid #D8B4FE';
+                      cardBg = '#FAF5FF';
+                      badgeBg = '#8B5CF6';
+                      badgeText = '🟣 Marked (न सोडवलेला)';
+                    } else if (h.isSolved) {
                       if (h.isCorrect) {
                         cardBorder = '1px solid #86EFAC';
                         cardBg = '#F0FDF4';
                         badgeBg = '#16A34A';
-                        badgeText = '✓ बरोबर (+१०)';
+                        badgeText = h.isMarked ? '✓ बरोबर (Marked)' : '✓ बरोबर (+१०)';
                       } else if (h.timedOut) {
                         cardBorder = '1px solid #FDBA74';
                         cardBg = '#FFF7ED';
@@ -1596,7 +1757,7 @@ export default function MarathaQuizPage() {
                         cardBorder = '1px solid #FCA5A5';
                         cardBg = '#FEF2F2';
                         badgeBg = '#DC2626';
-                        badgeText = '✗ चूक';
+                        badgeText = h.isMarked ? '✗ चूक (Marked)' : '✗ चूक';
                       }
                     }
 
