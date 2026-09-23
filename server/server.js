@@ -4,6 +4,16 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import quizRoutes from './routes/quiz.routes.js';
+import authRoutes from './routes/auth.routes.js';
+import membersRoutes from './routes/members.routes.js';
+import businessesRoutes from './routes/businesses.routes.js';
+import sangamRoutes from './routes/sangam.routes.js';
+import eventsRoutes from './routes/events.routes.js';
+import donationsRoutes from './routes/donations.routes.js';
+import jobsRoutes from './routes/jobs.routes.js';
+import communityRoutes from './routes/community.routes.js';
+import adminRoutes from './routes/admin.routes.js';
+import cultureRoutes from './routes/culture.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,8 +25,20 @@ const DB_FILE = path.join(__dirname, 'db.json');
 app.use(cors());
 app.use(express.json());
 
-// Mount 20,000-Question Maratha History Quiz Routes
+// ==========================================
+// MOUNT ALL CONNECT MARATHA REST API ROUTERS
+// ==========================================
 app.use('/api/quiz', quizRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/members', membersRoutes);
+app.use('/api/businesses', businessesRoutes);
+app.use('/api/sangam', sangamRoutes);
+app.use('/api/events', eventsRoutes);
+app.use('/api/donations', donationsRoutes);
+app.use('/api/jobs', jobsRoutes);
+app.use('/api/community', communityRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/culture', cultureRoutes);
 
 // Helper functions for reading and writing to DB
 function readData() {

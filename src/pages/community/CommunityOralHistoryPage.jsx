@@ -49,6 +49,33 @@ export default function CommunityOralHistoryPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+  // Fetch oral history stories from backend on mount
+  React.useEffect(() => {
+    fetch('/api/culture/oral-history')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.success && Array.isArray(data.data) && data.data.length > 0) {
+          const apiStories = data.data.map(item => ({
+            id: item.id,
+            title: item.title,
+            author: item.contributor || item.author,
+            village: `${item.village || ''} (${item.district || ''})`,
+            category: item.tier || 'स्थानिक लोकपरंपरा',
+            submissionDate: item.dateSubmitted || 'सप्टेंबर २०२६',
+            narrative: item.story,
+            sourceType: item.historicalReference || 'मौखिक कुटुंब परंपरा',
+            confidence: CONFIDENCE_LEVELS.COMMUNITY,
+            tier: SOURCE_TIERS.TIER_4,
+            status: item.status || 'समीक्षित'
+          }));
+          setStories([...apiStories, ...INITIAL_COMMUNITY_STORIES]);
+        }
+      })
+      .catch(err => {
+        console.log('Backend oral history using local dataset:', err.message);
+      });
+  }, []);
+
   const [formData, setFormData] = useState({
     title: '',
     author: '',
@@ -59,7 +86,7 @@ export default function CommunityOralHistoryPage() {
     agreedToTier4: false
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title || !formData.narrative || !formData.author) {
       alert('कृपया सर्व आवश्यक माहिती भरा.');
@@ -80,8 +107,27 @@ export default function CommunityOralHistoryPage() {
       status: 'संपादकीय पुनरावलोकनाधीन (Under Review)'
     };
 
+    // Optimistic UI update
     setStories([newStory, ...stories]);
     setShowSuccessModal(true);
+
+    // Persist to backend database
+    try {
+      await fetch('/api/culture/oral-history', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: formData.title,
+          village: formData.village,
+          contributor: formData.author,
+          story: formData.narrative,
+          historicalReference: formData.sourceType
+        })
+      });
+    } catch (err) {
+      console.warn('Could not persist oral history to backend:', err.message);
+    }
+
     setFormData({
       title: '',
       author: '',
