@@ -98,8 +98,8 @@ export default function MaharashtraFoodCulturePage() {
         {/* 2-Column Layout: Food Items List + Active Food Knowledge Card */}
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 1fr) minmax(420px, 1.8fr)', gap: '28px', alignItems: 'flex-start' }}>
           
-          {/* Left Column: Food List */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {/* Left Column: Food List with Thumbnails */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {filteredFoods.map(food => {
               const isSelected = food.id === selectedFoodId;
               return (
@@ -109,72 +109,100 @@ export default function MaharashtraFoodCulturePage() {
                   style={{
                     background: isSelected ? 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)' : '#FFFFFF',
                     border: isSelected ? '2px solid #F59E0B' : '1px solid #E5E7EB',
-                    borderRadius: '14px',
-                    padding: '16px',
+                    borderRadius: '16px',
+                    padding: '14px',
                     cursor: 'pointer',
                     transition: 'all 0.15s ease',
-                    boxShadow: isSelected ? '0 6px 16px rgba(245,158,11,0.2)' : '0 1px 3px rgba(0,0,0,0.04)'
+                    boxShadow: isSelected ? '0 6px 18px rgba(245,158,11,0.2)' : '0 1px 3px rgba(0,0,0,0.04)',
+                    display: 'flex',
+                    gap: '14px',
+                    alignItems: 'center'
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
-                    <h3 style={{ fontSize: '1.15rem', color: isSelected ? '#78350F' : '#1F2937', fontWeight: 800, margin: 0 }}>
-                      {food.name}
-                    </h3>
-                    <span style={{ fontSize: '0.75rem', background: '#FEE2E2', color: '#B91C1C', padding: '2px 8px', borderRadius: '10px', fontWeight: 700 }}>
-                      {food.category}
-                    </span>
+                  {/* Food Thumbnail */}
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    flexShrink: 0,
+                    background: '#FEE2E2',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.08)'
+                  }}>
+                    <img 
+                      src={food.heroImage} 
+                      alt={food.name}
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
                   </div>
 
-                  <div style={{ fontSize: '0.82rem', color: '#6B7280', marginBottom: '6px' }}>
-                    📍 <strong>उगम:</strong> {food.region}
-                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
+                      <h3 style={{ fontSize: '1.05rem', color: isSelected ? '#78350F' : '#1F2937', fontWeight: 800, margin: 0 }}>
+                        {food.name}
+                      </h3>
+                      <span style={{ fontSize: '0.7rem', background: '#FEE2E2', color: '#B91C1C', padding: '2px 8px', borderRadius: '10px', fontWeight: 700, flexShrink: 0 }}>
+                        {food.category}
+                      </span>
+                    </div>
 
-                  <div style={{ fontSize: '0.82rem', color: '#4B5563', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                    {food.traditionalPrep}
-                  </div>
+                    <div style={{ fontSize: '0.8rem', color: '#6B7280', marginBottom: '4px' }}>
+                      📍 <strong>उगम:</strong> {food.region.split(' (')[0]}
+                    </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', fontSize: '0.75rem' }}>
-                    <span style={{ color: food.sourceRef.confidence.color, fontWeight: 700 }}>
-                      {food.sourceRef.confidence.icon} {food.sourceRef.confidence.label}
-                    </span>
-                    <span style={{ color: '#B91C1C', fontWeight: 700 }}>
-                      सविस्तर ज्ञान कार्ड →
-                    </span>
+                    <div style={{ fontSize: '0.78rem', color: '#4B5563', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {food.traditionalPrep}
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', fontSize: '0.72rem' }}>
+                      <span style={{ color: food.sourceRef.confidence.color, fontWeight: 700 }}>
+                        {food.sourceRef.confidence.icon} {food.sourceRef.confidence.label.split(' ')[0]}
+                      </span>
+                      <span style={{ color: '#B91C1C', fontWeight: 700 }}>
+                        सविस्तर ज्ञान कार्ड →
+                      </span>
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* Right Column: Active Food Knowledge Card (Every property from the user's specification) */}
+          {/* Right Column: Active Food Knowledge Card with Hero Banner */}
           <div style={{
             background: '#FFFFFF',
-            borderRadius: '18px',
+            borderRadius: '20px',
             border: '1px solid #F3E8D8',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.06)',
+            boxShadow: '0 12px 36px rgba(0,0,0,0.08)',
             overflow: 'hidden',
             position: 'sticky',
             top: '20px'
           }}>
-            {/* Top Header */}
+            {/* Top Panoramic Hero Banner with Food Image */}
             <div style={{
-              background: 'linear-gradient(90deg, #7C1D05 0%, #B91C1C 100%)',
+              position: 'relative',
+              minHeight: '200px',
+              backgroundImage: `linear-gradient(to top, rgba(20, 6, 2, 0.95) 0%, rgba(124, 29, 5, 0.75) 50%, rgba(0, 0, 0, 0.3) 100%), url(${activeFood.heroImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
               color: '#FFFFFF',
               padding: '24px 28px',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'flex-start',
+              alignItems: 'flex-end',
               flexWrap: 'wrap',
-              gap: '12px'
+              gap: '12px',
+              borderBottom: '4px solid #F59E0B'
             }}>
               <div>
-                <span style={{ background: 'rgba(255,255,255,0.2)', padding: '3px 10px', borderRadius: '12px', fontSize: '0.78rem', fontWeight: 700 }}>
-                  {activeFood.category}
+                <span style={{ background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(4px)', padding: '3px 10px', borderRadius: '12px', fontSize: '0.78rem', fontWeight: 700 }}>
+                  🍲 {activeFood.category}
                 </span>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '8px 0 4px' }}>
+                <h2 style={{ fontSize: '1.9rem', fontWeight: 800, margin: '8px 0 4px', textShadow: '0 2px 6px rgba(0,0,0,0.6)' }}>
                   {activeFood.name}
                 </h2>
-                <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>
+                <div style={{ fontSize: '0.9rem', color: '#FDE68A' }}>
                   📍 {activeFood.region}
                 </div>
               </div>
@@ -184,14 +212,14 @@ export default function MaharashtraFoodCulturePage() {
                   background: activeFood.sourceRef.confidence.bg,
                   color: activeFood.sourceRef.confidence.color,
                   border: `1px solid ${activeFood.sourceRef.confidence.color}`,
-                  padding: '4px 10px',
+                  padding: '4px 12px',
                   borderRadius: '20px',
-                  fontSize: '0.78rem',
-                  fontWeight: 700
+                  fontSize: '0.8rem',
+                  fontWeight: 800
                 }}>
                   {activeFood.sourceRef.confidence.icon} {activeFood.sourceRef.confidence.label}
                 </span>
-                <span style={{ fontSize: '0.72rem', color: '#FCD34D' }}>
+                <span style={{ fontSize: '0.75rem', color: '#FCD34D', background: 'rgba(0,0,0,0.5)', padding: '2px 8px', borderRadius: '4px' }}>
                   {activeFood.sourceRef.tier.badge}
                 </span>
               </div>
