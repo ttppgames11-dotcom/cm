@@ -266,6 +266,7 @@ export default function App() {
 
             {/* Membership, Card & User Center */}
             <Route path="/card" element={<DigitalMemberCardPage />} />
+            <Route path="/member/card" element={<DigitalMemberCardPage />} />
             <Route path="/register" element={<RegisterWizardPage />} />
             <Route path="/onboarding" element={<RegisterWizardPage />} />
             <Route path="/membership" element={<RegisterWizardPage />} />

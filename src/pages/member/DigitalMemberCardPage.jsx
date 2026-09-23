@@ -5,114 +5,45 @@ import { useAuth } from '../../context/AuthContext';
 export default function DigitalMemberCardPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  
+  // Card Display Mode: 'certificate' (Royal Certificate Style) or 'pocket' (3D Flip Pocket ID)
+  const [viewMode, setViewMode] = useState('certificate');
   const [isFlipped, setIsFlipped] = useState(false);
   const [scannerOpen, setScannerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('member');
   const [verifyCode, setVerifyCode] = useState('');
   const [verifyResult, setVerifyResult] = useState(null);
 
-  // Strictly enforce login: If user is not logged in, render Login Gate Screen
-  if (!user || !user.id) {
-    return (
-      <div style={{
-        background: '#f8fafc',
-        minHeight: '80vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2rem 1rem'
-      }}>
-        <div style={{
-          background: '#ffffff',
-          borderRadius: '24px',
-          padding: '3rem 2rem',
-          maxWidth: '520px',
-          width: '100%',
-          textAlign: 'center',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.08)',
-          border: '1px solid #e2e8f0'
-        }}>
-          <div style={{
-            width: '80px',
-            height: '80px',
-            borderRadius: '20px',
-            background: '#fff7ed',
-            color: '#c2410c',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '2.5rem',
-            margin: '0 auto 1.5rem'
-          }}>
-            🪪
-          </div>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem' }}>
-            डिजिटल सभासद ओळखपत्र
-          </h2>
-          <p style={{ color: '#64748b', fontSize: '1rem', lineHeight: 1.6, margin: '0 0 2rem' }}>
-            आपले डिजिटल सभासद कार्ड (Digital Member ID Card) पाहण्यासाठी किंवा डाऊनलोड करण्यासाठी कृपया प्रथम आपल्या खात्यात लॉगिन करा.
-          </p>
+  // Defaults if guest/preview
+  const defaultName = user?.name || user?.fullName || 'श्री. संभाजीराव जयसिंगराव मोहिते';
+  const [candidateName, setCandidateName] = useState(defaultName);
+  
+  const memberRole = user?.profession || user?.persona || 'व्यावसायिक व समाजसेवक';
+  const memberCity = user?.city ? `${user.city} • महाराष्ट्र` : 'पुणे • महाराष्ट्र';
+  const memberChapter = user?.chapter || 'पुणे – शिवनेरी चॅप्टर';
+  const memberId = user?.id || 'CM-MH-2026-8842';
+  const memberTier = user?.tier || 'GOLD FOUNDER MEMBER';
+  const bloodGroup = user?.bloodGroup || 'O +ve (नोंदणीकृत रक्तदाता)';
+  const emergencyPhone = user?.phone || '+९१ ९८२२० ११९२४';
+  const issueDate = '२३ सप्टेंबर २०२६';
 
-          <div style={{ display: 'flex', gap: '1rem', flexDirection: 'column' }}>
-            <Link
-              to="/login"
-              style={{
-                background: '#ea580c',
-                color: '#ffffff',
-                textDecoration: 'none',
-                padding: '0.9rem',
-                borderRadius: '12px',
-                fontWeight: 700,
-                fontSize: '1rem',
-                display: 'block'
-              }}
-            >
-              👤 लॉगिन करा (Login Now)
-            </Link>
-            <Link
-              to="/register"
-              style={{
-                background: '#f1f5f9',
-                color: '#334155',
-                textDecoration: 'none',
-                padding: '0.8rem',
-                borderRadius: '12px',
-                fontWeight: 700,
-                fontSize: '0.95rem',
-                display: 'block'
-              }}
-            >
-              🚩 नवीन सभासद नोंदणी (Register)
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const memberName = user.name || user.fullName || 'मराठा सभासद';
-  const memberRole = user.profession || user.persona || '💼 नोंदणीकृत सदस्य';
-  const memberCity = user.city ? `${user.city} • महाराष्ट्र` : 'महाराष्ट्र';
-  const memberId = user.id || 'CM-MH-2026-8842';
-  const memberTier = user.tier || 'GOLD MEMBER';
+  const handlePrintCertificate = () => {
+    window.print();
+  };
 
   const handleShare = () => {
     const url = window.location.href;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
-      alert('🔗 कार्ड लिंक क्लिपबोर्डवर कॉपी केली!');
+      alert('🔗 अधिकृत ओळखपत्र लिंक क्लिपबोर्डवर कॉपी केली!');
     } else {
       alert('🔗 लिंक: ' + url);
     }
   };
 
-  const handleDownload = () => {
-    alert('📥 तुमचे डिजिटल सभासद कार्ड (PNG/PDF) तयार झाले!');
-  };
-
   const handleSimulateScan = () => {
     setScannerOpen(false);
-    alert(`✓ QR कोड पडताळला! सदस्य: ${memberName} शी कनेक्शन विनंती पाठवली.`);
+    alert(`✓ QR कोड पडताळला! सदस्य: ${candidateName || defaultName} शी कनेक्शन विनंती पाठवली.`);
   };
 
   const handleVerify = (e) => {
@@ -123,7 +54,7 @@ export default function DigitalMemberCardPage() {
     }
     setVerifyResult({
       code: verifyCode.trim(),
-      name: memberName,
+      name: candidateName || defaultName,
       status: 'valid'
     });
     alert('✓ कोड वैध आढळला!');
@@ -132,10 +63,33 @@ export default function DigitalMemberCardPage() {
   return (
     <>
       <style>{`
+        /* Print Styles: Isolates the Certificate ID card for clean print/PDF */
+        @media print {
+          body * {
+            visibility: hidden !important;
+          }
+          #printable-certificate-id, #printable-certificate-id * {
+            visibility: visible !important;
+          }
+          #printable-certificate-id {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 30px !important;
+            box-shadow: none !important;
+            border-width: 8px !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+        }
+
         .card-perspective {
           perspective: 1200px;
           max-width: 480px;
-          margin: 32px auto;
+          margin: 24px auto;
         }
         .digital-id-card {
           width: 100%;
@@ -173,13 +127,6 @@ export default function DigitalMemberCardPage() {
           background: linear-gradient(135deg, #1f0505 0%, #4a0d0d 70%, #1f0505 100%);
           border: 2px solid rgba(255, 215, 0, 0.3);
           transform: rotateY(180deg);
-        }
-        .chip {
-          width: 42px;
-          height: 32px;
-          background: linear-gradient(135deg, #d4af37 0%, #fff6a6 50%, #aa8010 100%);
-          border-radius: 6px;
-          border: 1px solid #7c5c00;
         }
         .qr-box {
           background: #fff;
@@ -226,104 +173,369 @@ export default function DigitalMemberCardPage() {
         }
       `}</style>
 
-      {/* Floating Toast */}
-      {typeof toastMessage !== 'undefined' && toastMessage && (
-        <div style={{
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          background: toastMessage.type === 'error' ? '#C62828' : '#2E7D32',
-          color: '#FFF',
-          padding: '12px 22px',
-          borderRadius: '10px',
-          fontWeight: 700,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-          zIndex: 10000,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px'
-        }}>
-          {toastMessage.msg}
-        </div>
-      )}
-
       {/* TOP NOTIFICATION STRIP */}
-      <div className="topbar">
+      <div className="topbar no-print">
         <div className="wrap topbar-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 24px', fontSize: '0.82rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <span style={{ color: 'var(--gold-400)', fontWeight: 700 }}>🚩 CONNECT MARATHA</span>
-            <span>डिजिटल ओळखपत्र व QR प्रमाणीकरण व्यासपीठ</span>
+            <span>अखिल भारतीय अधिकृत सभासद ओळखपत्र व डिजिटल QR प्रमाणीकरण</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span>📞 समाज हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
+            <span>📞 २४x७ समाज हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
           </div>
         </div>
       </div>
 
-      <div className="wrap" style={{ maxWidth: '1100px', margin: '40px auto', padding: '0 24px' }}>
-        {/* SECTION TITLE */}
-        <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 32px' }}>
-          <span className="tag" style={{ background: 'var(--maroon-900)', color: 'var(--gold-400)' }}>
-            अधिकृत ओळखपत्र • SPEC ROUTE /member/card
+      <div className="wrap" style={{ maxWidth: '1100px', margin: '30px auto 50px', padding: '0 20px' }}>
+        
+        {/* Guest Preview Notice if not logged in */}
+        {(!user || !user.id) && (
+          <div className="no-print" style={{
+            background: 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)',
+            border: '1px solid #F59E0B',
+            borderRadius: '12px',
+            padding: '12px 18px',
+            marginBottom: '24px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '10px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: '#92400E' }}>
+              <span>💡</span>
+              <span>
+                <strong>नमुना ओळखपत्र दृश्य (Guest Preview):</strong> आपण अद्याप लॉगिन केलेले नाही. खालील नमुना ओळखपत्र तपासा किंवा आपल्या स्वतःच्या खात्यातील तपशीलासाठी लॉगिन करा.
+              </span>
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Link to="/login" style={{ background: '#B91C1C', color: '#FFFFFF', padding: '6px 14px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none' }}>
+                लॉगिन करा
+              </Link>
+              <Link to="/register" style={{ background: '#FFFFFF', color: '#374151', border: '1px solid #D1D5DB', padding: '6px 14px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none' }}>
+                नवीन नोंदणी
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* SECTION TITLE & VIEW TOGGLE */}
+        <div className="no-print" style={{ textAlign: 'center', maxWidth: '780px', margin: '0 auto 28px' }}>
+          <span className="tag" style={{ background: 'var(--maroon-900)', color: 'var(--gold-400)', padding: '5px 14px', borderRadius: '20px', fontSize: '0.8rem' }}>
+            अधिकृत ओळखपत्र • SPEC ROUTE /member/card & /card
           </span>
-          <h1 style={{ fontSize: '2.4rem', margin: '10px 0', fontFamily: 'Baloo 2' }}>
-            डिजिटल सभासद कार्ड व QR प्रणाली
+          <h1 style={{ fontSize: '2.4rem', margin: '12px 0 6px', fontFamily: 'Baloo 2', fontWeight: 800, color: 'var(--maroon-900)' }}>
+            डिजिटल सभासद ओळखपत्र व प्रमाणीकरण
           </h1>
-          <p style={{ color: 'var(--text-sec)', fontSize: '1rem' }}>
-            स्मार्ट डिजिटल ओळखपत्र, झटपट Scan & Connect तंत्रज्ञान आणि अखिल भारतीय अधिकृत सभासद पडताळणी.
+          <p style={{ color: 'var(--text-sec)', fontSize: '1rem', lineHeight: 1.5, margin: '0 0 20px' }}>
+            इतिहास गौरव प्रमाणपत्राच्या राजेशाही शैलीतील अधिकृत ओळखपत्र, झटपट QR पडताळणी आणि स्मार्ट वॉलेट कार्ड.
           </p>
+
+          {/* View Mode Toggle: Certificate Style vs Pocket 3D Card */}
+          <div style={{
+            display: 'inline-flex',
+            background: '#F3F4F6',
+            padding: '4px',
+            borderRadius: '30px',
+            border: '1px solid #E5E7EB',
+            gap: '4px'
+          }}>
+            <button
+              type="button"
+              onClick={() => setViewMode('certificate')}
+              style={{
+                padding: '8px 20px',
+                borderRadius: '24px',
+                border: 'none',
+                background: viewMode === 'certificate' ? '#B91C1C' : 'transparent',
+                color: viewMode === 'certificate' ? '#FFFFFF' : '#4B5563',
+                fontWeight: 800,
+                fontSize: '0.88rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <span>📜</span>
+              <span>प्रमाणपत्र शैली ओळखपत्र (Certificate Style)</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setViewMode('pocket')}
+              style={{
+                padding: '8px 20px',
+                borderRadius: '24px',
+                border: 'none',
+                background: viewMode === 'pocket' ? '#B91C1C' : 'transparent',
+                color: viewMode === 'pocket' ? '#FFFFFF' : '#4B5563',
+                fontWeight: 800,
+                fontSize: '0.88rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <span>🪪</span>
+              <span>पॉकेट ३D वॉलेट कार्ड (Pocket Card)</span>
+            </button>
+          </div>
         </div>
 
-        {/* 3D FLIPPABLE DIGITAL ID CARD */}
-        <div className="card-perspective">
-          <div
-            id="digitalCard"
-            className={`digital-id-card ${isFlipped ? 'flipped' : ''}`}
-            onClick={() => setIsFlipped(!isFlipped)}
-          >
-            {/* FRONT OF CARD */}
-            <div className="card-face card-front">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <img
-                    src="/assets/images/logo.png"
-                    alt="Logo"
-                    style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #fff' }}
-                  />
+        {/* CONTROLS BAR: Name input & Print/Download buttons (Same as game certificate) */}
+        <div className="no-print" style={{
+          background: '#FFFFFF',
+          borderRadius: '14px',
+          padding: '18px 24px',
+          border: '1px solid #E5E7EB',
+          marginBottom: '24px',
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '16px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.03)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <label style={{ fontWeight: 700, color: 'var(--ink)', fontSize: '0.9rem' }}>
+              ओळखपत्रावरील नाव:
+            </label>
+            <input
+              type="text"
+              value={candidateName}
+              onChange={(e) => setCandidateName(e.target.value)}
+              placeholder="आपले संपूर्ण नाव प्रविष्ट करा"
+              style={{
+                padding: '9px 14px',
+                borderRadius: '8px',
+                border: '1px solid #CBD5E1',
+                fontSize: '0.95rem',
+                width: '280px',
+                fontWeight: 700,
+                color: '#1F2937'
+              }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={handlePrintCertificate}
+              style={{
+                padding: '9px 18px',
+                background: '#1F2937',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 700,
+                fontSize: '0.88rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <span>🖨️</span> ओळखपत्र प्रिंट / PDF डाऊनलोड करा
+            </button>
+
+            <button
+              type="button"
+              onClick={handleShare}
+              style={{
+                padding: '9px 16px',
+                background: '#F3F4F6',
+                color: '#374151',
+                border: '1px solid #D1D5DB',
+                borderRadius: '8px',
+                fontWeight: 700,
+                fontSize: '0.88rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <span>🔗</span> शेअर करा
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setScannerOpen(true)}
+              style={{
+                padding: '9px 16px',
+                background: '#047857',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 700,
+                fontSize: '0.88rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <span>📷</span> Scan & Connect
+            </button>
+          </div>
+        </div>
+
+        {/* ======================================================== */}
+        {/* 1. ROYAL CERTIFICATE-STYLE ID CARD (GAME CERTIFICATE STYLING) */}
+        {/* ======================================================== */}
+        {viewMode === 'certificate' && (
+          <div style={{ marginBottom: '40px' }}>
+            <div
+              id="printable-certificate-id"
+              className="certificate-card"
+              style={{
+                background: '#FFFDF9',
+                border: '12px double #C73800',
+                borderRadius: '16px',
+                padding: '44px 36px',
+                boxShadow: '0 12px 50px rgba(0,0,0,0.08)',
+                position: 'relative',
+                textAlign: 'center'
+              }}
+            >
+              {/* Header Crest (Exact match to Game Certificate) */}
+              <div style={{ marginBottom: '14px' }}>
+                <img
+                  src="/assets/images/logo.png"
+                  alt="Connect Maratha Seal"
+                  style={{ height: '70px', objectFit: 'contain', marginBottom: '8px' }}
+                />
+                <div style={{ fontFamily: 'Baloo 2', fontSize: '1.45rem', fontWeight: 800, color: 'var(--maroon-900)', letterSpacing: '1px' }}>
+                  कनेक्ट मराठा — अखिल भारतीय अधिकृत सभासद ओळखपत्र
+                </div>
+                <div style={{ fontSize: '0.85rem', color: '#B45309', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px' }}>
+                  || स्वराज्य समाज संघटन व अधिकृत सभासदत्व गौरव पत्र ||
+                </div>
+              </div>
+
+              {/* Saffron/Gold Gradient Divider (Exact match) */}
+              <div style={{ height: '2px', background: 'linear-gradient(90deg, transparent, #E65100, transparent)', margin: '14px 0 24px 0' }} />
+
+              <p style={{ fontSize: '1.05rem', color: '#4B5563', margin: 0 }}>
+                हे सन्मानपूर्वक अधिकृतरीत्या प्रमाणित करण्यात येते की,
+              </p>
+
+              {/* Member Name in large prominent Baloo 2 typography */}
+              <h3 style={{
+                fontFamily: 'Baloo 2',
+                fontSize: '2.4rem',
+                fontWeight: 800,
+                color: '#C73800',
+                margin: '12px 0',
+                textDecoration: 'underline',
+                textUnderlineOffset: '8px'
+              }}>
+                {candidateName || defaultName}
+              </h3>
+
+              <p style={{ fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '72ch', margin: '0 auto 24px auto', color: '#1F2937' }}>
+                यांना कनेक्ट मराठा व्यासपीठाचे अधिकृत सभासदत्व बहाल करण्यात आले असून, ते समाज संघटन, सहकार्य, व्यवसाय प्रगती 
+                आणि छत्रपती शिवरायांच्या स्वराज्य मूल्यांशी बांधील असणारे 
+                <strong style={{ color: 'var(--maroon-900)' }}> "{memberTier}" </strong> 
+                श्रेणीचे प्रमाणित अधिकृत सभासद आहेत.
+              </p>
+
+              {/* Structured Identification Grid within the Certificate */}
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.75)',
+                border: '1px solid #FDE68A',
+                borderRadius: '12px',
+                padding: '20px 24px',
+                margin: '0 auto 28px',
+                maxWidth: '820px',
+                display: 'grid',
+                gridTemplateColumns: 'auto 1fr auto',
+                gap: '24px',
+                alignItems: 'center',
+                textAlign: 'left'
+              }}>
+                {/* Member Avatar / Photo with Gold Frame */}
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{
+                    width: '90px',
+                    height: '90px',
+                    borderRadius: '12px',
+                    border: '3px double #C73800',
+                    background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '2.8rem',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.06)'
+                  }}>
+                    {user?.avatar || '👤'}
+                  </div>
+                  <div style={{
+                    marginTop: '6px',
+                    background: '#C73800',
+                    color: '#FFFFFF',
+                    fontSize: '0.65rem',
+                    fontWeight: 800,
+                    padding: '2px 8px',
+                    borderRadius: '10px'
+                  }}>
+                    प्रमाणित सदस्य
+                  </div>
+                </div>
+
+                {/* Member Key Attributes */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px 16px', fontSize: '0.85rem' }}>
                   <div>
-                    <div style={{ fontSize: '1.05rem', fontWeight: 800, letterSpacing: '0.5px' }}>CONNECT MARATHA</div>
-                    <div style={{ fontSize: '0.68rem', opacity: 0.85 }}>अखिल भारतीय अधिकृत सभासद ओळखपत्र</div>
+                    <span style={{ color: '#6B7280', fontSize: '0.74rem' }}>सभासद आयडी (Member ID):</span>
+                    <div style={{ fontWeight: 800, color: '#C73800', fontFamily: 'monospace', fontSize: '0.95rem' }}>
+                      {memberId}
+                    </div>
                   </div>
-                </div>
-                <span className="badge" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,215,0,0.6)', color: '#fff', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '12px', fontWeight: 700 }}>
-                  ⭐ {memberTier}
-                </span>
-              </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '18px', margin: '14px 0' }}>
-                <div style={{ width: '72px', height: '72px', borderRadius: '14px', border: '2px solid var(--gold-400)', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.4rem', flexShrink: 0 }}>
-                  {user?.avatar || '👤'}
-                </div>
-                <div>
-                  <div style={{ fontSize: '1.35rem', fontWeight: 800, lineHeight: 1.2 }}>{memberName}</div>
-                  <div style={{ fontSize: '0.85rem', color: '#ffe082', fontWeight: 600, margin: '2px 0' }}>
-                    {memberRole}
+                  <div>
+                    <span style={{ color: '#6B7280', fontSize: '0.74rem' }}>पद / व्यवसाय (Profession):</span>
+                    <div style={{ fontWeight: 700, color: '#1F2937' }}>
+                      {memberRole}
+                    </div>
                   </div>
-                  <div style={{ fontSize: '0.78rem', opacity: 0.9 }}>📍 {memberCity}</div>
-                </div>
-              </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                <div>
-                  <div style={{ fontSize: '0.68rem', opacity: 0.8, textTransform: 'uppercase' }}>Member ID</div>
-                  <div style={{ fontSize: '1.05rem', fontWeight: 800, letterSpacing: '1px', color: '#fff6a6' }}>
-                    {memberId}
+                  <div>
+                    <span style={{ color: '#6B7280', fontSize: '0.74rem' }}>संबद्ध चॅप्टर (Chapter):</span>
+                    <div style={{ fontWeight: 700, color: '#1F2937' }}>
+                      {memberChapter}
+                    </div>
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: '#81c784', marginTop: '2px' }}>✓ DPDP २०२३ प्रमाणित</div>
+
+                  <div>
+                    <span style={{ color: '#6B7280', fontSize: '0.74rem' }}>रक्तगट (Blood Group):</span>
+                    <div style={{ fontWeight: 700, color: '#DC2626' }}>
+                      {bloodGroup}
+                    </div>
+                  </div>
+
+                  <div>
+                    <span style={{ color: '#6B7280', fontSize: '0.74rem' }}>वैधता (Validity):</span>
+                    <div style={{ fontWeight: 700, color: '#059669' }}>
+                      आजीवन (Lifetime Member)
+                    </div>
+                  </div>
+
+                  <div>
+                    <span style={{ color: '#6B7280', fontSize: '0.74rem' }}>आपत्कालीन संपर्क:</span>
+                    <div style={{ fontWeight: 700, color: '#1F2937' }}>
+                      {emergencyPhone}
+                    </div>
+                  </div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div className="qr-box">
-                    <svg width="68" height="68" viewBox="0 0 25 25" fill="#111">
+
+                {/* Digital Verification QR Box */}
+                <div style={{ textAlign: 'center' }}>
+                  <div className="qr-box" style={{ width: '84px', height: '84px', border: '1px solid #D1D5DB', margin: '0 auto' }}>
+                    <svg width="74" height="74" viewBox="0 0 25 25" fill="#111">
                       <rect x="0" y="0" width="7" height="7"/>
                       <rect x="1" y="1" width="5" height="5" fill="#fff"/>
                       <rect x="2" y="2" width="3" height="3"/>
@@ -345,84 +557,224 @@ export default function DigitalMemberCardPage() {
                       <rect x="20" y="20" width="4" height="4"/>
                     </svg>
                   </div>
-                  <div style={{ fontSize: '0.65rem', opacity: 0.8, marginTop: '2px' }}>Scan to Connect</div>
+                  <div style={{ fontSize: '0.65rem', color: '#6B7280', marginTop: '4px', fontWeight: 600 }}>
+                    Scan to Verify
+                  </div>
                 </div>
+              </div>
+
+              {/* Certificate Bottom Verification Data (Exact match to Game Certificate) */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                marginTop: '36px',
+                borderTop: '1px solid #FDE68A',
+                paddingTop: '20px'
+              }}>
+                <div style={{ textAlign: 'left', fontSize: '0.82rem', color: '#6B7280' }}>
+                  <div><strong>दिनांक:</strong> {issueDate}</div>
+                  <div><strong>नोंदणी क्रमांक:</strong> {memberId}</div>
+                  <div><strong>सत्यापित:</strong> connectmaratha.com/verify</div>
+                  <div style={{ fontSize: '0.74rem', color: '#059669', marginTop: '2px', fontWeight: 700 }}>
+                    ✓ DPDP कायदा २०२३ डिजिटल गोपनीयता प्रमाणित
+                  </div>
+                </div>
+
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    border: '3px dashed #C73800',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#C73800',
+                    fontSize: '0.7rem',
+                    fontWeight: 800,
+                    margin: '0 auto 4px auto'
+                  }}>
+                    <span>🚩</span>
+                    <span>शिवमुद्रा</span>
+                    <span>सील</span>
+                  </div>
+                  <span style={{ fontSize: '0.75rem', color: '#6B7280', fontWeight: 600 }}>अधिकृत मुद्रा</span>
+                </div>
+
+                <div style={{ textAlign: 'right', fontSize: '0.82rem', color: '#6B7280' }}>
+                  <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.25rem', fontWeight: 700, color: '#1F2937' }}>
+                    Dr. J. Pawar
+                  </div>
+                  <div><strong>मुख्य सचिव, कनेक्ट मराठा परिषद</strong></div>
+                  <div>महाराष्ट्र राज्य, भारत</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* 2. POCKET 3D WALLET CARD (ALTERNATIVE FLIPPABLE VIEW) */}
+        {/* ======================================================== */}
+        {viewMode === 'pocket' && (
+          <div style={{ marginBottom: '40px' }}>
+            <div className="card-perspective">
+              <div
+                id="digitalCard"
+                className={`digital-id-card ${isFlipped ? 'flipped' : ''}`}
+                onClick={() => setIsFlipped(!isFlipped)}
+              >
+                {/* FRONT OF CARD */}
+                <div className="card-face card-front">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <img
+                        src="/assets/images/logo.png"
+                        alt="Logo"
+                        style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #fff' }}
+                      />
+                      <div>
+                        <div style={{ fontSize: '1.05rem', fontWeight: 800, letterSpacing: '0.5px' }}>CONNECT MARATHA</div>
+                        <div style={{ fontSize: '0.68rem', opacity: 0.85 }}>अखिल भारतीय अधिकृत सभासद ओळखपत्र</div>
+                      </div>
+                    </div>
+                    <span className="badge" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,215,0,0.6)', color: '#fff', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '12px', fontWeight: 700 }}>
+                      ⭐ {memberTier}
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '18px', margin: '14px 0' }}>
+                    <div style={{ width: '72px', height: '72px', borderRadius: '14px', border: '2px solid var(--gold-400)', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.4rem', flexShrink: 0 }}>
+                      {user?.avatar || '👤'}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '1.35rem', fontWeight: 800, lineHeight: 1.2 }}>{candidateName || defaultName}</div>
+                      <div style={{ fontSize: '0.85rem', color: '#ffe082', fontWeight: 600, margin: '2px 0' }}>
+                        {memberRole}
+                      </div>
+                      <div style={{ fontSize: '0.78rem', opacity: 0.9 }}>📍 {memberCity}</div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                    <div>
+                      <div style={{ fontSize: '0.68rem', opacity: 0.8, textTransform: 'uppercase' }}>Member ID</div>
+                      <div style={{ fontSize: '1.05rem', fontWeight: 800, letterSpacing: '1px', color: '#fff6a6' }}>
+                        {memberId}
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: '#81c784', marginTop: '2px' }}>✓ DPDP २०२३ प्रमाणित</div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div className="qr-box">
+                        <svg width="68" height="68" viewBox="0 0 25 25" fill="#111">
+                          <rect x="0" y="0" width="7" height="7"/>
+                          <rect x="1" y="1" width="5" height="5" fill="#fff"/>
+                          <rect x="2" y="2" width="3" height="3"/>
+                          <rect x="18" y="0" width="7" height="7"/>
+                          <rect x="19" y="1" width="5" height="5" fill="#fff"/>
+                          <rect x="20" y="2" width="3" height="3"/>
+                          <rect x="0" y="18" width="7" height="7"/>
+                          <rect x="1" y="19" width="5" height="5" fill="#fff"/>
+                          <rect x="2" y="20" width="3" height="3"/>
+                          <rect x="9" y="2" width="2" height="2"/>
+                          <rect x="13" y="4" width="2" height="2"/>
+                          <rect x="9" y="9" width="7" height="7"/>
+                          <rect x="10" y="10" width="5" height="5" fill="#fff"/>
+                          <rect x="11" y="11" width="3" height="3"/>
+                          <rect x="18" y="10" width="3" height="2"/>
+                          <rect x="18" y="14" width="2" height="4"/>
+                          <rect x="10" y="18" width="4" height="2"/>
+                          <rect x="12" y="22" width="4" height="2"/>
+                          <rect x="20" y="20" width="4" height="4"/>
+                        </svg>
+                      </div>
+                      <div style={{ fontSize: '0.65rem', opacity: 0.8, marginTop: '2px' }}>Scan to Connect</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* BACK OF CARD */}
+                <div className="card-face card-back">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.15)', paddingBottom: '8px' }}>
+                    <span style={{ fontSize: '0.82rem', fontWeight: 700 }}>CONNECT MARATHA</span>
+                    <span style={{ fontSize: '0.75rem', color: '#ffe082' }}>हेल्पलाईन: १८००-२३३-१९२४</span>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '0.82rem', margin: '10px 0' }}>
+                    <div>
+                      <span style={{ opacity: 0.7, fontSize: '0.72rem' }}>रक्तगट (Blood Group):</span>
+                      <div style={{ fontWeight: 700, color: '#ff8a80' }}>{bloodGroup}</div>
+                    </div>
+                    <div>
+                      <span style={{ opacity: 0.7, fontSize: '0.72rem' }}>संबद्ध चॅप्टर (Chapter):</span>
+                      <div style={{ fontWeight: 700 }}>{memberChapter}</div>
+                    </div>
+                    <div>
+                      <span style={{ opacity: 0.7, fontSize: '0.72rem' }}>वैधता (Valid Thru):</span>
+                      <div style={{ fontWeight: 700 }}>आजीवन (Lifetime)</div>
+                    </div>
+                    <div>
+                      <span style={{ opacity: 0.7, fontSize: '0.72rem' }}>आपत्कालीन संपर्क:</span>
+                      <div style={{ fontWeight: 700 }}>{emergencyPhone}</div>
+                    </div>
+                  </div>
+
+                  <div style={{ borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontSize: '0.68rem', opacity: 0.8, maxWidth: '280px', lineHeight: 1.3 }}>
+                      हे ओळखपत्र केवळ अधिकृत CONNECT MARATHA सदस्यासाठी वैध आहे. गैरवापर कायद्याने दंडनीय आहे.
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontFamily: "'Brush Script MT', cursive, serif", fontSize: '1.1rem', color: 'var(--gold-400)' }}>Dr. J. Pawar</div>
+                      <div style={{ fontSize: '0.62rem', opacity: 0.7 }}>अधिकृत स्वाक्षरी</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--text-sec)', marginTop: '8px' }}>
+                💡 कार्ड उलटे फिरवण्यासाठी कार्डवर क्लिक करा (Click to Flip)
               </div>
             </div>
 
-            {/* BACK OF CARD */}
-            <div className="card-face card-back">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.15)', paddingBottom: '8px' }}>
-                <span style={{ fontSize: '0.82rem', fontWeight: 700 }}>CONNECT MARATHA</span>
-                <span style={{ fontSize: '0.75rem', color: '#ffe082' }}>हेल्पलाईन: १८००-२३३-१९२४</span>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '0.82rem', margin: '10px 0' }}>
-                <div>
-                  <span style={{ opacity: 0.7, fontSize: '0.72rem' }}>रक्तगट (Blood Group):</span>
-                  <div style={{ fontWeight: 700, color: '#ff8a80' }}>O +ve (रक्तदाता)</div>
-                </div>
-                <div>
-                  <span style={{ opacity: 0.7, fontSize: '0.72rem' }}>संबद्ध चॅप्टर (Chapter):</span>
-                  <div style={{ fontWeight: 700 }}>पुणे – शिवनेरी चॅप्टर</div>
-                </div>
-                <div>
-                  <span style={{ opacity: 0.7, fontSize: '0.72rem' }}>वैधता (Valid Thru):</span>
-                  <div style={{ fontWeight: 700 }}>आजीवन (Lifetime)</div>
-                </div>
-                <div>
-                  <span style={{ opacity: 0.7, fontSize: '0.72rem' }}>आपत्कालीन संपर्क:</span>
-                  <div style={{ fontWeight: 700 }}>+९१ ९८२२० ११९२४</div>
-                </div>
-              </div>
-
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ fontSize: '0.68rem', opacity: 0.8, maxWidth: '280px', lineHeight: 1.3 }}>
-                  हे ओळखपत्र केवळ अधिकृत CONNECT MARATHA सदस्यासाठी वैध आहे. गैरवापर कायद्याने दंडनीय आहे.
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontFamily: "'Brush Script MT', cursive, serif", fontSize: '1.1rem', color: 'var(--gold-400)' }}>Dr. J. Pawar</div>
-                  <div style={{ fontSize: '0.62rem', opacity: 0.7 }}>अधिकृत स्वाक्षरी</div>
-                </div>
-              </div>
+            <div style={{ textAlign: 'center', marginTop: '16px' }}>
+              <button
+                type="button"
+                onClick={() => setIsFlipped(!isFlipped)}
+                style={{
+                  padding: '8px 20px',
+                  background: '#F3F4F6',
+                  border: '1px solid #D1D5DB',
+                  borderRadius: '20px',
+                  fontWeight: 700,
+                  fontSize: '0.85rem',
+                  cursor: 'pointer'
+                }}
+              >
+                🔄 कार्ड फिरवा (Flip Card)
+              </button>
             </div>
           </div>
-          <div style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--text-sec)', marginTop: '8px' }}>
-            💡 कार्ड उलटे फिरवण्यासाठी कार्डवर क्लिक करा (Click to Flip)
-          </div>
-        </div>
+        )}
 
-        {/* CARD ACTIONS */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginBottom: '48px', flexWrap: 'wrap' }}>
-          <button type="button" onClick={() => setIsFlipped(!isFlipped)} className="btn btn-outline" style={{ padding: '10px 20px' }}>
-            🔄 कार्ड फिरवा (Flip)
-          </button>
-          <button type="button" onClick={handleDownload} className="btn btn-primary" style={{ padding: '10px 24px' }}>
-            📥 कार्ड डाऊनलोड करा (Download ID)
-          </button>
-          <button type="button" onClick={handleShare} className="btn btn-outline" style={{ padding: '10px 20px' }}>
-            🔗 शेअर करा (Share Link)
-          </button>
-          <button type="button" onClick={() => setScannerOpen(true)} className="btn btn-primary" style={{ padding: '10px 20px', background: '#2E7D32' }}>
-            📷 Scan & Connect
-          </button>
-        </div>
-
-        {/* QR SYSTEM SUITE TABS */}
-        <div className="card" style={{ padding: '32px', borderRadius: '16px', marginBottom: '40px' }}>
+        {/* ======================================================== */}
+        {/* QR SYSTEM SUITE TABS (MEMBER, BUSINESS, EVENT, RECEIPT) */}
+        {/* ======================================================== */}
+        <div className="card no-print" style={{ padding: '32px', borderRadius: '16px', marginBottom: '40px', background: '#FFFFFF', border: '1px solid #E5E7EB', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
           <div style={{ marginBottom: '24px' }}>
-            <span className="tag" style={{ background: 'var(--saffron-600)', color: '#fff' }}>
+            <span className="tag" style={{ background: 'var(--saffron-600)', color: '#fff', padding: '4px 12px', borderRadius: '14px', fontSize: '0.78rem', fontWeight: 700 }}>
               SPEC SECTION T • QR SYSTEM
             </span>
-            <h2 style={{ fontSize: '1.8rem', margin: '8px 0', fontFamily: 'Baloo 2' }}>
-              कनेक्ट मराठा एकात्मिक QR सुट (QR Suite)
+            <h2 style={{ fontSize: '1.75rem', margin: '8px 0', fontFamily: 'Baloo 2', fontWeight: 800, color: 'var(--maroon-900)' }}>
+              कनेक्ट मराठा एकात्मिक QR सुट (Dynamic QR Suite)
             </h2>
-            <p style={{ color: 'var(--text-sec)', fontSize: '0.92rem' }}>
+            <p style={{ color: 'var(--text-sec)', fontSize: '0.92rem', margin: 0 }}>
               व्यासपीठावरील सर्व ५ प्रमुख प्रणालींसाठी डायनॅमिक QR कोड्स.
             </p>
           </div>
 
-          <div className="tabs" style={{ marginBottom: '24px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '10px', overflowX: 'auto' }}>
+          <div className="tabs" style={{ marginBottom: '24px', borderBottom: '1px solid #E5E7EB', display: 'flex', gap: '10px', overflowX: 'auto' }}>
             <button
               className={`tab ${activeTab === 'member' ? 'active' : ''}`}
               onClick={() => setActiveTab('member')}
@@ -430,9 +782,9 @@ export default function DigitalMemberCardPage() {
                 padding: '10px 16px',
                 border: 'none',
                 background: 'none',
-                fontWeight: activeTab === 'member' ? 700 : 600,
-                color: activeTab === 'member' ? 'var(--saffron-600)' : 'var(--text)',
-                borderBottom: activeTab === 'member' ? '3px solid var(--saffron-600)' : 'none',
+                fontWeight: activeTab === 'member' ? 800 : 600,
+                color: activeTab === 'member' ? '#C73800' : 'var(--text)',
+                borderBottom: activeTab === 'member' ? '3px solid #C73800' : 'none',
                 cursor: 'pointer'
               }}
             >
@@ -445,9 +797,9 @@ export default function DigitalMemberCardPage() {
                 padding: '10px 16px',
                 border: 'none',
                 background: 'none',
-                fontWeight: activeTab === 'business' ? 700 : 600,
-                color: activeTab === 'business' ? 'var(--saffron-600)' : 'var(--text)',
-                borderBottom: activeTab === 'business' ? '3px solid var(--saffron-600)' : 'none',
+                fontWeight: activeTab === 'business' ? 800 : 600,
+                color: activeTab === 'business' ? '#C73800' : 'var(--text)',
+                borderBottom: activeTab === 'business' ? '3px solid #C73800' : 'none',
                 cursor: 'pointer'
               }}
             >
@@ -460,9 +812,9 @@ export default function DigitalMemberCardPage() {
                 padding: '10px 16px',
                 border: 'none',
                 background: 'none',
-                fontWeight: activeTab === 'event' ? 700 : 600,
-                color: activeTab === 'event' ? 'var(--saffron-600)' : 'var(--text)',
-                borderBottom: activeTab === 'event' ? '3px solid var(--saffron-600)' : 'none',
+                fontWeight: activeTab === 'event' ? 800 : 600,
+                color: activeTab === 'event' ? '#C73800' : 'var(--text)',
+                borderBottom: activeTab === 'event' ? '3px solid #C73800' : 'none',
                 cursor: 'pointer'
               }}
             >
@@ -475,9 +827,9 @@ export default function DigitalMemberCardPage() {
                 padding: '10px 16px',
                 border: 'none',
                 background: 'none',
-                fontWeight: activeTab === 'receipt' ? 700 : 600,
-                color: activeTab === 'receipt' ? 'var(--saffron-600)' : 'var(--text)',
-                borderBottom: activeTab === 'receipt' ? '3px solid var(--saffron-600)' : 'none',
+                fontWeight: activeTab === 'receipt' ? 800 : 600,
+                color: activeTab === 'receipt' ? '#C73800' : 'var(--text)',
+                borderBottom: activeTab === 'receipt' ? '3px solid #C73800' : 'none',
                 cursor: 'pointer'
               }}
             >
@@ -490,9 +842,9 @@ export default function DigitalMemberCardPage() {
                 padding: '10px 16px',
                 border: 'none',
                 background: 'none',
-                fontWeight: activeTab === 'verify' ? 700 : 600,
-                color: activeTab === 'verify' ? 'var(--saffron-600)' : 'var(--text)',
-                borderBottom: activeTab === 'verify' ? '3px solid var(--saffron-600)' : 'none',
+                fontWeight: activeTab === 'verify' ? 800 : 600,
+                color: activeTab === 'verify' ? '#C73800' : 'var(--text)',
+                borderBottom: activeTab === 'verify' ? '3px solid #C73800' : 'none',
                 cursor: 'pointer'
               }}
             >
@@ -500,10 +852,10 @@ export default function DigitalMemberCardPage() {
             </button>
           </div>
 
-          <div id="qrContentPane" style={{ background: 'var(--paper-2)', padding: '24px', borderRadius: '12px' }}>
+          <div id="qrContentPane" style={{ background: '#F8FAFC', padding: '24px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
             {activeTab === 'member' && (
               <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
-                <div className="qr-box" style={{ width: '120px', height: '120px', border: '2px solid var(--border)' }}>
+                <div className="qr-box" style={{ width: '120px', height: '120px', border: '2px solid #CBD5E1' }}>
                   <svg width="105" height="105" viewBox="0 0 25 25" fill="#111">
                     <rect x="0" y="0" width="7" height="7"/>
                     <rect x="1" y="1" width="5" height="5" fill="#fff"/>
@@ -527,11 +879,13 @@ export default function DigitalMemberCardPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 style={{ margin: '0 0 6px', fontSize: '1.25rem' }}>{memberName} — सभासद प्रोफाइल QR</h3>
-                  <p style={{ color: 'var(--text-sec)', fontSize: '0.88rem', margin: '6px 0 12px', maxWidth: '600px' }}>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '1.25rem', color: '#1F2937' }}>
+                    {candidateName || defaultName} — सभासद प्रोफाइल QR
+                  </h3>
+                  <p style={{ color: '#4B5563', fontSize: '0.88rem', margin: '6px 0 12px', maxWidth: '600px', lineHeight: 1.5 }}>
                     हा QR कोड स्कॅन करून इतर सदस्य थेट आपल्या प्रोफाईलशी जोडू शकतात आणि व्यवसाय संदर्भ पाठवू शकतात.
                   </p>
-                  <div style={{ fontFamily: 'monospace', background: 'var(--paper)', padding: '8px 14px', borderRadius: '6px', fontSize: '0.85rem', border: '1px solid var(--border)' }}>
+                  <div style={{ fontFamily: 'monospace', background: '#FFFFFF', padding: '8px 14px', borderRadius: '6px', fontSize: '0.85rem', border: '1px solid #CBD5E1', display: 'inline-block' }}>
                     https://connectmaratha.com/qr/member/{memberId}
                   </div>
                 </div>
@@ -540,7 +894,7 @@ export default function DigitalMemberCardPage() {
 
             {activeTab === 'business' && (
               <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
-                <div className="qr-box" style={{ width: '120px', height: '120px', border: '2px solid var(--border)' }}>
+                <div className="qr-box" style={{ width: '120px', height: '120px', border: '2px solid #CBD5E1' }}>
                   <svg width="105" height="105" viewBox="0 0 25 25" fill="#111">
                     <rect x="0" y="0" width="7" height="7"/>
                     <rect x="1" y="1" width="5" height="5" fill="#fff"/>
@@ -559,11 +913,13 @@ export default function DigitalMemberCardPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 style={{ margin: '0 0 6px', fontSize: '1.25rem' }}>शिवमुद्रा टेक्नॉलॉजीज — व्यवसाय QR (/qr/business/BIZ-408)</h3>
-                  <p style={{ color: 'var(--text-sec)', fontSize: '0.88rem', margin: '6px 0 12px', maxWidth: '600px' }}>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '1.25rem', color: '#1F2937' }}>
+                    शिवमुद्रा टेक्नॉलॉजीज — व्यवसाय QR (/qr/business/BIZ-408)
+                  </h3>
+                  <p style={{ color: '#4B5563', fontSize: '0.88rem', margin: '6px 0 12px', maxWidth: '600px', lineHeight: 1.5 }}>
                     ग्राहकांना व B2B भागीदारांना आपल्या व्यवसाय कॅटलॉग, उत्पादने व सेवांकडे थेट नेण्यासाठी.
                   </p>
-                  <div style={{ fontFamily: 'monospace', background: 'var(--paper)', padding: '8px 14px', borderRadius: '6px', fontSize: '0.85rem', border: '1px solid var(--border)' }}>
+                  <div style={{ fontFamily: 'monospace', background: '#FFFFFF', padding: '8px 14px', borderRadius: '6px', fontSize: '0.85rem', border: '1px solid #CBD5E1', display: 'inline-block' }}>
                     https://connectmaratha.com/qr/business/BIZ-408
                   </div>
                 </div>
@@ -572,7 +928,7 @@ export default function DigitalMemberCardPage() {
 
             {activeTab === 'event' && (
               <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
-                <div className="qr-box" style={{ width: '120px', height: '120px', border: '2px solid var(--border)' }}>
+                <div className="qr-box" style={{ width: '120px', height: '120px', border: '2px solid #CBD5E1' }}>
                   <svg width="105" height="105" viewBox="0 0 25 25" fill="#111">
                     <rect x="0" y="0" width="7" height="7"/>
                     <rect x="1" y="1" width="5" height="5" fill="#fff"/>
@@ -589,11 +945,13 @@ export default function DigitalMemberCardPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 style={{ margin: '0 0 6px', fontSize: '1.25rem' }}>पुणे बिझनेस संगम वार्षिक संमेलन — कार्यक्रम प्रवेश पास QR</h3>
-                  <p style={{ color: 'var(--text-sec)', fontSize: '0.88rem', margin: '6px 0 12px', maxWidth: '600px' }}>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '1.25rem', color: '#1F2937' }}>
+                    पुणे बिझनेस संगम वार्षिक संमेलन — कार्यक्रम पास QR
+                  </h3>
+                  <p style={{ color: '#4B5563', fontSize: '0.88rem', margin: '6px 0 12px', maxWidth: '600px', lineHeight: 1.5 }}>
                     कार्यक्रमाच्या ठिकाणी थेट हजेरी नोंदणी व डिजिटल बॅज पडताळणीसाठी.
                   </p>
-                  <div style={{ fontFamily: 'monospace', background: 'var(--paper)', padding: '8px 14px', borderRadius: '6px', fontSize: '0.85rem', border: '1px solid var(--border)' }}>
+                  <div style={{ fontFamily: 'monospace', background: '#FFFFFF', padding: '8px 14px', borderRadius: '6px', fontSize: '0.85rem', border: '1px solid #CBD5E1', display: 'inline-block' }}>
                     https://connectmaratha.com/qr/event/EVT-2026-PUNE-01
                   </div>
                 </div>
@@ -602,7 +960,7 @@ export default function DigitalMemberCardPage() {
 
             {activeTab === 'receipt' && (
               <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
-                <div className="qr-box" style={{ width: '120px', height: '120px', border: '2px solid var(--border)' }}>
+                <div className="qr-box" style={{ width: '120px', height: '120px', border: '2px solid #CBD5E1' }}>
                   <svg width="105" height="105" viewBox="0 0 25 25" fill="#111">
                     <rect x="0" y="0" width="7" height="7"/>
                     <rect x="1" y="1" width="5" height="5" fill="#fff"/>
@@ -619,11 +977,13 @@ export default function DigitalMemberCardPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 style={{ margin: '0 0 6px', fontSize: '1.25rem' }}>दुर्ग संवर्धन देणगी अधिकृत पावती — ₹ ५,००० (80G करसवलत)</h3>
-                  <p style={{ color: 'var(--text-sec)', fontSize: '0.88rem', margin: '6px 0 12px', maxWidth: '600px' }}>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '1.25rem', color: '#1F2937' }}>
+                    दुर्ग संवर्धन देणगी अधिकृत पावती — ₹ ५,००० (80G करसवलत)
+                  </h3>
+                  <p style={{ color: '#4B5563', fontSize: '0.88rem', margin: '6px 0 12px', maxWidth: '600px', lineHeight: 1.5 }}>
                     आयकर कलम 80G अंतर्गत वैध देणगी पावती व डिजिटल सहीचा पडताळणी QR कोड.
                   </p>
-                  <div style={{ fontFamily: 'monospace', background: 'var(--paper)', padding: '8px 14px', borderRadius: '6px', fontSize: '0.85rem', border: '1px solid var(--border)' }}>
+                  <div style={{ fontFamily: 'monospace', background: '#FFFFFF', padding: '8px 14px', borderRadius: '6px', fontSize: '0.85rem', border: '1px solid #CBD5E1', display: 'inline-block' }}>
                     https://connectmaratha.com/qr/receipt/RCPT-883921-FORT
                   </div>
                 </div>
@@ -632,8 +992,10 @@ export default function DigitalMemberCardPage() {
 
             {activeTab === 'verify' && (
               <div>
-                <h3 style={{ margin: '0 0 8px', fontSize: '1.25rem' }}>🛡️ QR कोड पडताळणी केंद्र (/verify/qr/:code)</h3>
-                <p style={{ color: 'var(--text-sec)', fontSize: '0.88rem', margin: '8px 0 16px', maxWidth: '640px' }}>
+                <h3 style={{ margin: '0 0 8px', fontSize: '1.25rem', color: '#1F2937' }}>
+                  🛡️ QR कोड पडताळणी केंद्र (/verify/qr/:code)
+                </h3>
+                <p style={{ color: '#4B5563', fontSize: '0.88rem', margin: '8px 0 16px', maxWidth: '640px', lineHeight: 1.5 }}>
                   कोणत्याही कनेक्ट मराठा कार्ड, पावती किंवा प्रमाणपत्राचा १२-अंकी पडताळणी कोड टाका आणि सत्यता तपासा.
                 </p>
                 <form onSubmit={handleVerify} style={{ display: 'flex', gap: '10px', maxWidth: '500px' }}>
@@ -642,9 +1004,9 @@ export default function DigitalMemberCardPage() {
                     value={verifyCode}
                     onChange={(e) => setVerifyCode(e.target.value)}
                     placeholder="उदा. CM-MH-2026-8842"
-                    style={{ flex: 1, padding: '10px 14px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '0.9rem' }}
+                    style={{ flex: 1, padding: '10px 14px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '0.9rem' }}
                   />
-                  <button type="submit" className="btn btn-primary" style={{ padding: '10px 20px', fontWeight: 700 }}>
+                  <button type="submit" style={{ background: '#B91C1C', color: '#FFFFFF', border: 'none', borderRadius: '8px', padding: '10px 20px', fontWeight: 700, cursor: 'pointer' }}>
                     पडताळा
                   </button>
                 </form>
@@ -657,6 +1019,7 @@ export default function DigitalMemberCardPage() {
             )}
           </div>
         </div>
+
       </div>
 
       {/* SCAN & CONNECT CAMERA MODAL */}
@@ -664,20 +1027,20 @@ export default function DigitalMemberCardPage() {
         <div className="scan-modal" onClick={() => setScannerOpen(false)}>
           <div
             className="card"
-            style={{ maxWidth: '380px', width: '100%', padding: '28px', textAlign: 'center', position: 'relative' }}
+            style={{ maxWidth: '380px', width: '100%', padding: '28px', textAlign: 'center', position: 'relative', background: '#FFFFFF', borderRadius: '16px' }}
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontFamily: 'Baloo 2' }}>📷 Scan & Connect</h3>
+              <h3 style={{ margin: 0, fontSize: '1.2rem', fontFamily: 'Baloo 2', fontWeight: 800 }}>📷 Scan & Connect</h3>
               <button
                 type="button"
                 onClick={() => setScannerOpen(false)}
-                style={{ background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer', color: 'var(--text)' }}
+                style={{ background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer', color: '#6B7280' }}
               >
                 ✕
               </button>
             </div>
-            <p style={{ color: 'var(--text-sec)', fontSize: '0.82rem', margin: '8px 0 16px' }}>
+            <p style={{ color: '#6B7280', fontSize: '0.82rem', margin: '8px 0 16px' }}>
               कोणत्याही सभासदाचे डिजिटल कार्ड किंवा QR कोड स्कॅन करा.
             </p>
 
@@ -691,8 +1054,7 @@ export default function DigitalMemberCardPage() {
             <button
               type="button"
               onClick={handleSimulateScan}
-              className="btn btn-primary"
-              style={{ width: '100%', marginTop: '12px', padding: '10px 16px', fontWeight: 700 }}
+              style={{ width: '100%', marginTop: '12px', padding: '10px 16px', fontWeight: 700, background: '#047857', color: '#FFFFFF', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
             >
               ⚡ चाचणी स्कॅन करा (Simulate Match)
             </button>
