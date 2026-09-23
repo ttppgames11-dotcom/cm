@@ -171,6 +171,11 @@ export default function MarathaQuizPage() {
   const [showHint, setShowHint] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [userAnswersHistory, setUserAnswersHistory] = useState([]);
+  const [answeredMap, setAnsweredMap] = useState({});
+  const [showQuestionPalette, setShowQuestionPalette] = useState(false);
+  const [palettePage, setPalettePage] = useState(0);
+  const [reviewFilter, setReviewFilter] = useState('all');
+  const [reviewPage, setReviewPage] = useState(0);
   
   // Certificate State
   const [candidateName, setCandidateName] = useState('मावळा / शिवभक्त');
@@ -209,6 +214,11 @@ export default function MarathaQuizPage() {
     setAnsweredState(false);
     setShowHint(false);
     setUserAnswersHistory([]);
+    setAnsweredMap({});
+    setShowQuestionPalette(false);
+    setPalettePage(0);
+    setReviewFilter('all');
+    setReviewPage(0);
     setQuizCompleted(false);
     setQuizStarted(true);
     setTimeLeft(30);
@@ -285,18 +295,26 @@ export default function MarathaQuizPage() {
       setAnsweredState(true);
       setStreak(0);
       const cur = activeQuestions[currentIndex];
-      setUserAnswersHistory(prev => [
+      const answerRecord = {
+        qIndex: currentIndex,
+        id: cur.id,
+        question: cur.question,
+        options: cur.options,
+        correct: cur.correct,
+        userChosen: null,
+        isCorrect: false,
+        explanation: cur.explanation,
+        timedOut: true,
+        source: cur.source
+      };
+      setAnsweredMap(prev => ({
         ...prev,
-        {
-          question: cur.question,
-          options: cur.options,
-          correct: cur.correct,
-          userChosen: null,
-          isCorrect: false,
-          explanation: cur.explanation,
-          timedOut: true
-        }
-      ]);
+        [currentIndex]: answerRecord
+      }));
+      setUserAnswersHistory(prev => {
+        const filtered = prev.filter(h => h.qIndex !== currentIndex);
+        return [...filtered, answerRecord];
+      });
     }
   };
 
@@ -319,34 +337,67 @@ export default function MarathaQuizPage() {
       setStreak(0);
     }
 
-    setUserAnswersHistory(prev => [
+    const answerRecord = {
+      qIndex: currentIndex,
+      id: cur.id,
+      question: cur.question,
+      options: cur.options,
+      correct: cur.correct,
+      userChosen: idx,
+      isCorrect: isRight,
+      explanation: cur.explanation,
+      source: cur.source
+    };
+
+    setAnsweredMap(prev => ({
       ...prev,
-      {
-        question: cur.question,
-        options: cur.options,
-        correct: cur.correct,
-        userChosen: idx,
-        isCorrect: isRight,
-        explanation: cur.explanation
-      }
-    ]);
+      [currentIndex]: answerRecord
+    }));
+
+    setUserAnswersHistory(prev => {
+      const filtered = prev.filter(h => h.qIndex !== currentIndex);
+      return [...filtered, answerRecord];
+    });
+  };
+
+  const jumpToQuestion = (targetIdx) => {
+    if (targetIdx < 0 || targetIdx >= activeQuestions.length) return;
+    clearInterval(timerRef.current);
+    setCurrentIndex(targetIdx);
+    const existing = answeredMap[targetIdx];
+    if (existing) {
+      setSelectedAnswer(existing.userChosen);
+      setAnsweredState(true);
+      setTimerActive(false);
+    } else {
+      setSelectedAnswer(null);
+      setAnsweredState(false);
+      setTimeLeft(30);
+      setTimerActive(true);
+    }
+    setShowHint(false);
+    const el = document.getElementById('quiz-play-box');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const handleNextQuestion = () => {
     if (currentIndex < activeQuestions.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-      setSelectedAnswer(null);
-      setAnsweredState(false);
-      setShowHint(false);
-      setTimeLeft(30);
+      jumpToQuestion(currentIndex + 1);
     } else {
       finishQuiz();
+    }
+  };
+
+  const handlePrevQuestion = () => {
+    if (currentIndex > 0) {
+      jumpToQuestion(currentIndex - 1);
     }
   };
 
   const finishQuiz = () => {
     setQuizCompleted(true);
     setTimerActive(false);
+    clearInterval(timerRef.current);
     
     const today = new Date();
     const dStr = today.toLocaleDateString('mr-IN', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -355,9 +406,9 @@ export default function MarathaQuizPage() {
     setCertId(randCode);
 
     // Record submission to server
-    const totalAnswered = userAnswersHistory.length || 1;
-    const correctC = userAnswersHistory.filter(h => h.isCorrect).length;
-    const pct = Math.round((correctC / totalAnswered) * 100);
+    const solvedTotal = Object.keys(answeredMap).length || userAnswersHistory.length || 1;
+    const correctC = Object.values(answeredMap).filter(h => h.isCorrect).length;
+    const pct = Math.round((correctC / solvedTotal) * 100);
     const r = getRankBadge(pct);
 
     fetch('/api/quiz/submit', {
@@ -368,7 +419,7 @@ export default function MarathaQuizPage() {
         city: 'महाराष्ट्र',
         category: selectedCategory,
         score: correctC,
-        total: totalAnswered,
+        total: solvedTotal,
         points: userScore,
         streak: maxStreak,
         rank_title: r.title
@@ -381,9 +432,11 @@ export default function MarathaQuizPage() {
     }, 100);
   };
 
-  const answeredCount = userAnswersHistory.length || activeQuestions.length;
-  const correctCount = userAnswersHistory.filter(h => h.isCorrect).length;
-  const percentage = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+  const solvedCount = Object.keys(answeredMap).length;
+  const unsolvedCount = Math.max(0, activeQuestions.length - solvedCount);
+  const correctCount = Object.values(answeredMap).filter(h => h.isCorrect).length;
+  const incorrectCount = Object.values(answeredMap).filter(h => !h.isCorrect).length;
+  const percentage = solvedCount > 0 ? Math.round((correctCount / solvedCount) * 100) : 0;
 
   const getRankBadge = (pct) => {
     if (pct >= 90) return { title: 'स्वराज्य इतिहास भूषण', icon: '🎖️', color: '#16a34a', desc: 'छत्रपती शिवरायांच्या इतिहासाचे गाढे अभ्यासक व विद्वान!' };
@@ -395,13 +448,48 @@ export default function MarathaQuizPage() {
   const rank = getRankBadge(percentage);
 
   const shareOnWhatsapp = () => {
-    const text = `🚩 *कनेक्ट मराठा — इतिहास महाक्विझ निकाल* 🚩%0A%0Aमी छत्रपती शिवराय व मराठा स्वराज्य इतिहास क्विझमध्ये *${percentage}% (${correctCount}/${answeredCount})* गुण मिळवून *"${rank.title}"* पदवी पटकावली आहे! 🏆%0A%0Aतुम्हीही तुमची इतिहास जाण तपासा: ${window.location.origin}/quiz`;
+    const text = `🚩 *कनेक्ट मराठा — इतिहास महाक्विझ निकाल* 🚩%0A%0Aमी छत्रपती शिवराय व मराठा स्वराज्य इतिहास क्विझमध्ये *${percentage}% (${correctCount}/${solvedCount})* गुण मिळवून *"${rank.title}"* पदवी पटकावली आहे! 🏆%0A%0Aतुम्हीही तुमची इतिहास जाण तपासा: ${window.location.origin}/quiz`;
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
   const handlePrintCertificate = () => {
     window.print();
   };
+
+  // Review calculations
+  const allReviewQuestions = activeQuestions.map((q, idx) => {
+    const ans = answeredMap[idx];
+    return {
+      qIndex: idx,
+      id: q.id,
+      question: q.question,
+      options: q.options,
+      correct: q.correct,
+      userChosen: ans ? ans.userChosen : null,
+      isSolved: Boolean(ans),
+      isCorrect: ans ? ans.isCorrect : false,
+      timedOut: ans ? ans.timedOut : false,
+      explanation: q.explanation,
+      hint: q.hint,
+      source: q.source
+    };
+  });
+
+  const filteredReviewQuestions = allReviewQuestions.filter(item => {
+    if (reviewFilter === 'solved') return item.isSolved;
+    if (reviewFilter === 'unsolved') return !item.isSolved;
+    if (reviewFilter === 'correct') return item.isSolved && item.isCorrect;
+    if (reviewFilter === 'incorrect') return item.isSolved && !item.isCorrect;
+    return true;
+  });
+
+  const REVIEW_PAGE_SIZE = 20;
+  const totalReviewPages = Math.ceil(filteredReviewQuestions.length / REVIEW_PAGE_SIZE) || 1;
+  const currentReviewPage = Math.min(reviewPage, totalReviewPages - 1);
+  const paginatedReview = filteredReviewQuestions.slice(
+    currentReviewPage * REVIEW_PAGE_SIZE,
+    (currentReviewPage + 1) * REVIEW_PAGE_SIZE
+  );
 
   const currentQ = activeQuestions[currentIndex];
 
@@ -731,6 +819,200 @@ export default function MarathaQuizPage() {
 
             </div>
 
+            {/* Solved vs Unsolved Live Status Bar */}
+            <div style={{
+              background: '#FFFFFF',
+              borderRadius: '14px',
+              padding: '12px 20px',
+              border: '1px solid #FFE0B2',
+              marginBottom: '16px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '12px',
+              boxShadow: '0 2px 10px rgba(230,81,0,0.04)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--ink)' }}>
+                  प्रगती (Status):
+                </span>
+                <span style={{
+                  background: '#DCFCE7',
+                  color: '#15803D',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px'
+                }}>
+                  <span>✅</span> सोडवलेले: <strong>{solvedCount}</strong>
+                </span>
+                <span style={{
+                  background: '#FEF3C7',
+                  color: '#92400E',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px'
+                }}>
+                  <span>⏳</span> न सोडवलेले: <strong>{unsolvedCount}</strong>
+                </span>
+                <span style={{
+                  background: '#F3F4F6',
+                  color: '#4B5563',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontSize: '0.82rem',
+                  fontWeight: 600
+                }}>
+                  एकूण: <strong>{activeQuestions.length}</strong>
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowQuestionPalette(!showQuestionPalette)}
+                style={{
+                  padding: '7px 14px',
+                  background: showQuestionPalette ? 'var(--maroon-800)' : '#FFF8F0',
+                  color: showQuestionPalette ? '#FFFFFF' : 'var(--maroon-900)',
+                  border: '1px solid #FFCC80',
+                  borderRadius: '8px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <span>🔢</span> {showQuestionPalette ? 'प्रश्न सूची बंद करा' : 'प्रश्न सूची (Navigator) पहा'}
+              </button>
+            </div>
+
+            {/* Question Palette Drawer */}
+            {showQuestionPalette && (
+              <div style={{
+                background: '#FFFFFF',
+                borderRadius: '16px',
+                padding: '20px',
+                border: '1px solid #FED7AA',
+                marginBottom: '18px',
+                boxShadow: '0 4px 20px rgba(230,81,0,0.08)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+                  <div style={{ fontWeight: 800, color: 'var(--maroon-900)', fontSize: '0.98rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>📋</span> प्रश्न सूची व स्थिती (Question Navigator)
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.78rem', fontWeight: 600 }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#16A34A', display: 'inline-block' }}></span>
+                      बरोबर ({correctCount})
+                    </span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#DC2626', display: 'inline-block' }}></span>
+                      चुकीचे ({incorrectCount})
+                    </span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#F1F5F9', border: '1px solid #94A3B8', display: 'inline-block' }}></span>
+                      न सोडवलेले ({unsolvedCount})
+                    </span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#F59E0B', display: 'inline-block' }}></span>
+                      चालू प्रश्न
+                    </span>
+                  </div>
+                </div>
+
+                {/* Palette Block Navigation if > 50 questions */}
+                {activeQuestions.length > 50 && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', background: '#FFF8F0', padding: '8px 12px', borderRadius: '10px' }}>
+                    <button
+                      type="button"
+                      disabled={palettePage === 0}
+                      onClick={() => setPalettePage(p => Math.max(0, p - 1))}
+                      style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid #E5E7EB', background: '#FFF', fontSize: '0.8rem', cursor: palettePage === 0 ? 'not-allowed' : 'pointer' }}
+                    >
+                      ← मागील ५० प्रश्न
+                    </button>
+                    <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--maroon-900)' }}>
+                      प्रश्न {palettePage * 50 + 1} ते {Math.min((palettePage + 1) * 50, activeQuestions.length)} (एकूण: {activeQuestions.length})
+                    </span>
+                    <button
+                      type="button"
+                      disabled={(palettePage + 1) * 50 >= activeQuestions.length}
+                      onClick={() => setPalettePage(p => p + 1)}
+                      style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid #E5E7EB', background: '#FFF', fontSize: '0.8rem', cursor: (palettePage + 1) * 50 >= activeQuestions.length ? 'not-allowed' : 'pointer' }}
+                    >
+                      पुढील ५० प्रश्न →
+                    </button>
+                  </div>
+                )}
+
+                {/* Grid of Question Numbers */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(44px, 1fr))',
+                  gap: '8px',
+                  maxHeight: '240px',
+                  overflowY: 'auto',
+                  padding: '4px'
+                }}>
+                  {activeQuestions.slice(palettePage * 50, Math.min((palettePage + 1) * 50, activeQuestions.length)).map((q, localIdx) => {
+                    const globalIdx = palettePage * 50 + localIdx;
+                    const ans = answeredMap[globalIdx];
+                    const isCur = globalIdx === currentIndex;
+
+                    let bg = '#FFFFFF';
+                    let color = '#374151';
+                    let border = '1px solid #CBD5E1';
+
+                    if (ans) {
+                      if (ans.isCorrect) {
+                        bg = '#16A34A';
+                        color = '#FFFFFF';
+                        border = '1px solid #15803D';
+                      } else {
+                        bg = '#DC2626';
+                        color = '#FFFFFF';
+                        border = '1px solid #B91C1C';
+                      }
+                    }
+
+                    return (
+                      <button
+                        key={globalIdx}
+                        type="button"
+                        onClick={() => jumpToQuestion(globalIdx)}
+                        style={{
+                          height: '36px',
+                          borderRadius: '8px',
+                          background: bg,
+                          color: color,
+                          border: border,
+                          fontWeight: 700,
+                          fontSize: '0.82rem',
+                          cursor: 'pointer',
+                          outline: isCur ? '3px solid #F59E0B' : 'none',
+                          boxShadow: isCur ? '0 0 10px rgba(245,158,11,0.4)' : 'none',
+                          transition: 'transform 0.1s ease'
+                        }}
+                        title={`प्रश्न ${globalIdx + 1}: ${ans ? (ans.isCorrect ? 'बरोबर' : 'चुकीचे') : 'न सोडवलेला'}`}
+                      >
+                        {globalIdx + 1}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Progress Bar */}
             <div style={{ height: '8px', background: '#E5E7EB', borderRadius: '4px', overflow: 'hidden', marginBottom: '22px' }}>
               <div style={{ height: '100%', width: `${((currentIndex + 1) / activeQuestions.length) * 100}%`, background: 'linear-gradient(90deg, #E65100, #F59E0B)', transition: 'width 0.3s ease' }}></div>
@@ -865,18 +1147,42 @@ export default function MarathaQuizPage() {
                 </div>
               )}
 
-              {/* Action Buttons: Next / Finish */}
+              {/* Action Buttons: Prev / Next / Finish */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #F3F4F6', paddingTop: '20px', flexWrap: 'wrap', gap: '12px' }}>
-                <button
-                  type="button"
-                  onClick={() => { setQuizStarted(false); setQuizCompleted(false); }}
-                  style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '0.88rem', cursor: 'pointer', textDecoration: 'underline' }}
-                >
-                  ← क्विझ थांबवा व बाहेर पडा
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={() => { setQuizStarted(false); setQuizCompleted(false); }}
+                    style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '0.88rem', cursor: 'pointer', textDecoration: 'underline' }}
+                  >
+                    ← क्विझ थांबवा व बाहेर पडा
+                  </button>
+
+                  {currentIndex > 0 && (
+                    <button
+                      type="button"
+                      onClick={handlePrevQuestion}
+                      style={{
+                        padding: '10px 16px',
+                        background: '#FFFFFF',
+                        color: 'var(--maroon-900)',
+                        border: '1px solid #CBD5E1',
+                        borderRadius: '10px',
+                        fontSize: '0.88rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <span>←</span> मागील प्रश्न
+                    </button>
+                  )}
+                </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                  {userAnswersHistory.length >= 1 && (
+                  {solvedCount >= 1 && (
                     <button
                       type="button"
                       onClick={finishQuiz}
@@ -894,11 +1200,11 @@ export default function MarathaQuizPage() {
                         gap: '6px'
                       }}
                     >
-                      <span>🏆 निकाल व प्रमाणपत्र समाप्त करा ({userAnswersHistory.length} सोडवले)</span>
+                      <span>🏆 निकाल व प्रमाणपत्र समाप्त करा ({solvedCount} सोडवले)</span>
                     </button>
                   )}
 
-                  {answeredState && (
+                  {answeredState ? (
                     <button
                       type="button"
                       onClick={handleNextQuestion}
@@ -919,6 +1225,25 @@ export default function MarathaQuizPage() {
                     >
                       <span>{currentIndex < activeQuestions.length - 1 ? 'पुढील प्रश्न →' : 'निकाल व प्रमाणपत्र पहा 🏆'}</span>
                     </button>
+                  ) : (
+                    currentIndex < activeQuestions.length - 1 && (
+                      <button
+                        type="button"
+                        onClick={handleNextQuestion}
+                        style={{
+                          padding: '10px 18px',
+                          background: '#F8FAFC',
+                          color: '#4B5563',
+                          border: '1px solid #E2E8F0',
+                          borderRadius: '10px',
+                          fontSize: '0.88rem',
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        हा प्रश्न वगळा व पुढे जा →
+                      </button>
+                    )
                   )}
                 </div>
               </div>
@@ -950,14 +1275,26 @@ export default function MarathaQuizPage() {
               </p>
 
               {/* Statistics Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px', maxWidth: '720px', margin: '0 auto 30px auto' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '14px', maxWidth: '860px', margin: '0 auto 30px auto' }}>
                 <div style={{ background: '#F8FAFC', borderRadius: '12px', padding: '16px', border: '1px solid #E2E8F0' }}>
                   <div style={{ fontSize: '1.8rem', fontWeight: 800, color: rank.color }}>{percentage}%</div>
                   <div style={{ fontSize: '0.82rem', color: '#64748B' }}>अचूकता (Accuracy)</div>
                 </div>
+                <div style={{ background: '#F0FDF4', borderRadius: '12px', padding: '16px', border: '1px solid #BBF7D0' }}>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#16A34A' }}>{solvedCount}</div>
+                  <div style={{ fontSize: '0.82rem', color: '#15803D', fontWeight: 600 }}>✅ सोडवलेले प्रश्न</div>
+                </div>
+                <div style={{ background: '#FFFBEB', borderRadius: '12px', padding: '16px', border: '1px solid #FDE68A' }}>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#B45309' }}>{unsolvedCount}</div>
+                  <div style={{ fontSize: '0.82rem', color: '#92400E', fontWeight: 600 }}>⏳ न सोडवलेले</div>
+                </div>
                 <div style={{ background: '#F8FAFC', borderRadius: '12px', padding: '16px', border: '1px solid #E2E8F0' }}>
-                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--maroon-900)' }}>{correctCount} / {answeredCount}</div>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#15803D' }}>{correctCount}</div>
                   <div style={{ fontSize: '0.82rem', color: '#64748B' }}>बरोबर उत्तरे</div>
+                </div>
+                <div style={{ background: '#FEF2F2', borderRadius: '12px', padding: '16px', border: '1px solid #FECACA' }}>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#DC2626' }}>{incorrectCount}</div>
+                  <div style={{ fontSize: '0.82rem', color: '#991B1B' }}>चुकीची उत्तरे</div>
                 </div>
                 <div style={{ background: '#F8FAFC', borderRadius: '12px', padding: '16px', border: '1px solid #E2E8F0' }}>
                   <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#B45309' }}>{userScore}</div>
@@ -1108,7 +1445,7 @@ export default function MarathaQuizPage() {
                 </h3>
 
                 <p style={{ fontSize: '1.05rem', lineHeight: 1.7, maxWidth: '70ch', margin: '0 auto 24px auto', color: '#1F2937' }}>
-                  यांनी <strong>छत्रपती शिवराय व मराठा स्वराज्य इतिहास महाक्विझ</strong> मध्ये अत्यंत प्रशंसनीय सहभाग नोंदवून <strong>{percentage}% ({correctCount}/{answeredCount})</strong> गुणांसह उत्तीर्ण होऊन 
+                  यांनी <strong>छत्रपती शिवराय व मराठा स्वराज्य इतिहास महाक्विझ</strong> मध्ये अत्यंत प्रशंसनीय सहभाग नोंदवून <strong>{percentage}% ({correctCount}/{solvedCount})</strong> गुणांसह उत्तीर्ण होऊन 
                   <strong style={{ color: 'var(--maroon-900)' }}> "{rank.title}" </strong> 
                   हा सर्वोच्च इतिहास गौरव सन्मान संपादन केला आहे.
                 </p>
@@ -1141,53 +1478,254 @@ export default function MarathaQuizPage() {
 
             </div>
 
-            {/* Comprehensive Question-by-Question Review Accordion */}
-            <div style={{ background: '#FFFFFF', borderRadius: '18px', padding: '30px', border: '1px solid var(--line)' }}>
-              <h3 style={{ fontFamily: 'Baloo 2', color: 'var(--maroon-900)', fontSize: '1.35rem', fontWeight: 700, marginBottom: '20px' }}>
-                📋 सर्व प्रश्नांचे सविस्तर पुनरावलोकन व संदर्भ
-              </h3>
+            {/* Comprehensive Question-by-Question Review Accordion (Solved & Unsolved) */}
+            <div style={{ background: '#FFFFFF', borderRadius: '18px', padding: '30px', border: '1px solid var(--line)', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px', marginBottom: '20px', borderBottom: '1px solid #F3F4F6', paddingBottom: '16px' }}>
+                <div>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: 'var(--maroon-900)', fontSize: '1.35rem', fontWeight: 700, margin: '0 0 4px 0' }}>
+                    📋 सर्व प्रश्नांचे सविस्तर पुनरावलोकन (Question Review)
+                  </h3>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--ink-soft)' }}>
+                    सोडवलेले आणि न सोडवलेले प्रश्न, अचूक पर्याय आणि ऐतिहासिक संदर्भ तपासा
+                  </div>
+                </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {userAnswersHistory.map((h, i) => (
-                  <div
-                    key={i}
+                {/* Filter Tabs */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {[
+                    { key: 'all', label: `सर्व प्रश्न (${activeQuestions.length})` },
+                    { key: 'solved', label: `✅ सोडवलेले (${solvedCount})` },
+                    { key: 'unsolved', label: `⏳ न सोडवलेले (${unsolvedCount})` },
+                    { key: 'correct', label: `✔️ बरोबर (${correctCount})` },
+                    { key: 'incorrect', label: `❌ चुकीचे (${incorrectCount})` }
+                  ].map(tab => (
+                    <button
+                      key={tab.key}
+                      type="button"
+                      onClick={() => { setReviewFilter(tab.key); setReviewPage(0); }}
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        border: reviewFilter === tab.key ? '2px solid var(--maroon-800)' : '1px solid #E5E7EB',
+                        background: reviewFilter === tab.key ? '#FFF8F0' : '#FFFFFF',
+                        color: reviewFilter === tab.key ? 'var(--maroon-900)' : '#4B5563',
+                        fontWeight: reviewFilter === tab.key ? 800 : 500,
+                        fontSize: '0.82rem',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pagination Controls for Review */}
+              {totalReviewPages > 1 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#F8FAFC', padding: '10px 16px', borderRadius: '10px', marginBottom: '18px', border: '1px solid #E2E8F0', flexWrap: 'wrap', gap: '10px' }}>
+                  <button
+                    type="button"
+                    disabled={currentReviewPage === 0}
+                    onClick={() => setReviewPage(p => Math.max(0, p - 1))}
                     style={{
-                      border: `1px solid ${h.isCorrect ? '#86EFAC' : '#FCA5A5'}`,
-                      background: h.isCorrect ? '#F0FDF4' : '#FEF2F2',
-                      borderRadius: '12px',
-                      padding: '16px 20px'
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid #CBD5E1',
+                      background: currentReviewPage === 0 ? '#F1F5F9' : '#FFFFFF',
+                      color: currentReviewPage === 0 ? '#94A3B8' : '#374151',
+                      fontWeight: 600,
+                      fontSize: '0.82rem',
+                      cursor: currentReviewPage === 0 ? 'not-allowed' : 'pointer'
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px', marginBottom: '8px' }}>
-                      <span style={{ fontWeight: 700, color: '#1F2937', fontSize: '0.98rem' }}>
-                        {i + 1}. {h.question}
-                      </span>
-                      <span style={{
-                        padding: '3px 10px',
-                        borderRadius: '12px',
-                        fontSize: '0.78rem',
-                        fontWeight: 700,
-                        background: h.isCorrect ? '#16A34A' : '#DC2626',
-                        color: '#FFFFFF'
-                      }}>
-                        {h.isCorrect ? '✓ बरोबर (+१०)' : h.timedOut ? '⏱️ वेळ संपला' : '✗ चूक'}
-                      </span>
-                    </div>
+                    ← मागील २० प्रश्न
+                  </button>
 
-                    <div style={{ fontSize: '0.88rem', color: '#4B5563', marginBottom: '6px' }}>
-                      <strong>आपले उत्तर:</strong> {h.userChosen !== null ? h.options[h.userChosen] : 'उत्तर दिले नाही'}
-                    </div>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--maroon-900)' }}>
+                    पान {currentReviewPage + 1} / {totalReviewPages} (दाखवत आहे: {currentReviewPage * REVIEW_PAGE_SIZE + 1} ते {Math.min((currentReviewPage + 1) * REVIEW_PAGE_SIZE, filteredReviewQuestions.length)} / एकूण: {filteredReviewQuestions.length})
+                  </span>
 
-                    <div style={{ fontSize: '0.88rem', color: '#15803D', fontWeight: 600, marginBottom: '8px' }}>
-                      <strong>अचूक उत्तर:</strong> {h.options[h.correct]}
-                    </div>
+                  <button
+                    type="button"
+                    disabled={currentReviewPage >= totalReviewPages - 1}
+                    onClick={() => setReviewPage(p => Math.min(totalReviewPages - 1, p + 1))}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid #CBD5E1',
+                      background: currentReviewPage >= totalReviewPages - 1 ? '#F1F5F9' : '#FFFFFF',
+                      color: currentReviewPage >= totalReviewPages - 1 ? '#94A3B8' : '#374151',
+                      fontWeight: 600,
+                      fontSize: '0.82rem',
+                      cursor: currentReviewPage >= totalReviewPages - 1 ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    पुढील २० प्रश्न →
+                  </button>
+                </div>
+              )}
 
-                    <div style={{ fontSize: '0.85rem', color: '#374151', background: '#FFFFFF', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E5E7EB', lineHeight: 1.5 }}>
-                      <strong>संदर्भ:</strong> {h.explanation}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {/* Review Question Cards */}
+              {paginatedReview.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px 20px', color: '#6B7280' }}>
+                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🔍</div>
+                  <div style={{ fontWeight: 600 }}>या फिल्टरमध्ये एकही प्रश्न उपलब्ध नाही.</div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  {paginatedReview.map((h) => {
+                    let cardBorder = '1px solid #CBD5E1';
+                    let cardBg = '#F8FAFC';
+                    let badgeBg = '#64748B';
+                    let badgeText = '⏳ न सोडवलेला';
+
+                    if (h.isSolved) {
+                      if (h.isCorrect) {
+                        cardBorder = '1px solid #86EFAC';
+                        cardBg = '#F0FDF4';
+                        badgeBg = '#16A34A';
+                        badgeText = '✓ बरोबर (+१०)';
+                      } else if (h.timedOut) {
+                        cardBorder = '1px solid #FDBA74';
+                        cardBg = '#FFF7ED';
+                        badgeBg = '#EA580C';
+                        badgeText = '⏱️ वेळ संपला';
+                      } else {
+                        cardBorder = '1px solid #FCA5A5';
+                        cardBg = '#FEF2F2';
+                        badgeBg = '#DC2626';
+                        badgeText = '✗ चूक';
+                      }
+                    }
+
+                    return (
+                      <div
+                        key={h.qIndex}
+                        style={{
+                          border: cardBorder,
+                          background: cardBg,
+                          borderRadius: '12px',
+                          padding: '18px 20px',
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', marginBottom: '10px' }}>
+                          <span style={{ fontWeight: 700, color: '#1F2937', fontSize: '0.98rem', lineHeight: 1.4 }}>
+                            {h.qIndex + 1}. {h.question}
+                          </span>
+                          <span style={{
+                            padding: '4px 12px',
+                            borderRadius: '12px',
+                            fontSize: '0.78rem',
+                            fontWeight: 700,
+                            background: badgeBg,
+                            color: '#FFFFFF',
+                            whiteSpace: 'nowrap'
+                          }}>
+                            {badgeText}
+                          </span>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px', marginBottom: '10px' }}>
+                          <div style={{ fontSize: '0.88rem', color: '#4B5563', background: '#FFFFFF', padding: '8px 12px', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
+                            <strong style={{ color: '#374151' }}>आपले उत्तर: </strong> 
+                            {h.isSolved ? (
+                              <span style={{ color: h.isCorrect ? '#15803D' : '#DC2626', fontWeight: 600 }}>
+                                {h.userChosen !== null ? h.options[h.userChosen] : 'वेळ संपली (उत्तर नाही)'}
+                              </span>
+                            ) : (
+                              <span style={{ color: '#92400E', fontWeight: 600 }}>
+                                उत्तर दिले नाही (न सोडवलेला)
+                              </span>
+                            )}
+                          </div>
+
+                          <div style={{ fontSize: '0.88rem', color: '#15803D', background: '#FFFFFF', padding: '8px 12px', borderRadius: '8px', border: '1px solid #BBF7D0' }}>
+                            <strong>अचूक उत्तर: </strong> 
+                            <span style={{ fontWeight: 700 }}>{h.options[h.correct]}</span>
+                          </div>
+                        </div>
+
+                        <div style={{ fontSize: '0.85rem', color: '#374151', background: '#FFFFFF', padding: '12px 16px', borderRadius: '8px', border: '1px solid #E5E7EB', lineHeight: 1.6, marginBottom: '8px' }}>
+                          <strong style={{ color: 'var(--maroon-900)' }}>📖 ऐतिहासिक संदर्भ: </strong> {h.explanation}
+                          {h.source && (
+                            <div style={{ marginTop: '4px', fontSize: '0.78rem', color: '#6B7280' }}>
+                              <strong>स्रोत: </strong> {h.source}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Quick Jump to Question */}
+                        <div style={{ textAlign: 'right' }}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setQuizCompleted(false);
+                              jumpToQuestion(h.qIndex);
+                            }}
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              color: 'var(--maroon-800)',
+                              fontSize: '0.82rem',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              textDecoration: 'underline'
+                            }}
+                          >
+                            हा प्रश्न सोडवण्यासाठी उघडा ↗
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Bottom Pagination if needed */}
+              {totalReviewPages > 1 && (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', marginTop: '20px' }}>
+                  <button
+                    type="button"
+                    disabled={currentReviewPage === 0}
+                    onClick={() => setReviewPage(p => Math.max(0, p - 1))}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid #CBD5E1',
+                      background: currentReviewPage === 0 ? '#F1F5F9' : '#FFFFFF',
+                      color: currentReviewPage === 0 ? '#94A3B8' : '#374151',
+                      fontWeight: 600,
+                      fontSize: '0.82rem',
+                      cursor: currentReviewPage === 0 ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    ← मागील पान
+                  </button>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#4B5563' }}>
+                    पान {currentReviewPage + 1} / {totalReviewPages}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={currentReviewPage >= totalReviewPages - 1}
+                    onClick={() => setReviewPage(p => Math.min(totalReviewPages - 1, p + 1))}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid #CBD5E1',
+                      background: currentReviewPage >= totalReviewPages - 1 ? '#F1F5F9' : '#FFFFFF',
+                      color: currentReviewPage >= totalReviewPages - 1 ? '#94A3B8' : '#374151',
+                      fontWeight: 600,
+                      fontSize: '0.82rem',
+                      cursor: currentReviewPage >= totalReviewPages - 1 ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    पुढील पान →
+                  </button>
+                </div>
+              )}
 
             </div>
 
