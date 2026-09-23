@@ -86,7 +86,7 @@ router.get('/categories', async (req, res, next) => {
 // GET /api/quiz/questions
 router.get('/questions', async (req, res, next) => {
   try {
-    const { category, difficulty, type, count = 10 } = req.query;
+    const { category, difficulty, type, count } = req.query;
 
     let sql = 'SELECT * FROM quiz_questions WHERE 1=1';
     const params = [];
@@ -108,15 +108,16 @@ router.get('/questions', async (req, res, next) => {
       params.push(type);
     }
 
-    sql += ' ORDER BY RANDOM()';
-
-    if (count === 'all') {
-      sql += ' LIMIT 100';
-    } else {
+    if (count && count !== 'all') {
       const parsed = parseInt(count, 10);
-      const limit = Math.min(Math.max(!isNaN(parsed) && parsed > 0 ? parsed : 10, 1), 100);
-      sql += ' LIMIT ?';
-      params.push(limit);
+      if (!isNaN(parsed) && parsed > 0) {
+        sql += ' ORDER BY RANDOM() LIMIT ?';
+        params.push(parsed);
+      } else {
+        sql += ' ORDER BY question_id ASC';
+      }
+    } else {
+      sql += ' ORDER BY question_id ASC';
     }
 
     const questions = await all(sql, params);

@@ -156,7 +156,6 @@ export default function MarathaQuizPage() {
   // Quiz Configuration State
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedLevel, setSelectedLevel] = useState('सर्व');
-  const [questionCount, setQuestionCount] = useState(10);
   const [loading, setLoading] = useState(false);
   const [dbStats, setDbStats] = useState({ total_questions: 20500, categories: {} });
   
@@ -225,7 +224,7 @@ export default function MarathaQuizPage() {
   const startQuiz = async () => {
     setLoading(true);
     try {
-      const url = `/api/quiz/questions?category=${encodeURIComponent(selectedCategory)}&difficulty=${encodeURIComponent(selectedLevel)}&count=${questionCount}`;
+      const url = `/api/quiz/questions?category=${encodeURIComponent(selectedCategory)}&difficulty=${encodeURIComponent(selectedLevel)}&count=all`;
       const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
@@ -259,8 +258,7 @@ export default function MarathaQuizPage() {
       pool = pool.filter(q => q.category.includes(selectedCategory) || selectedCategory.includes(q.category));
       if (pool.length === 0) pool = [...fallbackQuestions];
     }
-    const shuffled = pool.sort(() => 0.5 - Math.random()).slice(0, Math.min(questionCount, pool.length));
-    initializeQuizWithQuestions(shuffled);
+    initializeQuizWithQuestions(pool);
   };
 
   // Timer countdown
@@ -357,8 +355,9 @@ export default function MarathaQuizPage() {
     setCertId(randCode);
 
     // Record submission to server
-    const correctC = userAnswersHistory.filter(h => h.isCorrect).length + (selectedAnswer === activeQuestions[currentIndex]?.correct ? 1 : 0);
-    const pct = activeQuestions.length > 0 ? Math.round((correctC / activeQuestions.length) * 100) : 0;
+    const totalAnswered = userAnswersHistory.length || 1;
+    const correctC = userAnswersHistory.filter(h => h.isCorrect).length;
+    const pct = Math.round((correctC / totalAnswered) * 100);
     const r = getRankBadge(pct);
 
     fetch('/api/quiz/submit', {
@@ -369,7 +368,7 @@ export default function MarathaQuizPage() {
         city: 'महाराष्ट्र',
         category: selectedCategory,
         score: correctC,
-        total: activeQuestions.length,
+        total: totalAnswered,
         points: userScore,
         streak: maxStreak,
         rank_title: r.title
@@ -382,8 +381,9 @@ export default function MarathaQuizPage() {
     }, 100);
   };
 
+  const answeredCount = userAnswersHistory.length || activeQuestions.length;
   const correctCount = userAnswersHistory.filter(h => h.isCorrect).length;
-  const percentage = activeQuestions.length > 0 ? Math.round((correctCount / activeQuestions.length) * 100) : 0;
+  const percentage = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
 
   const getRankBadge = (pct) => {
     if (pct >= 90) return { title: 'स्वराज्य इतिहास भूषण', icon: '🎖️', color: '#16a34a', desc: 'छत्रपती शिवरायांच्या इतिहासाचे गाढे अभ्यासक व विद्वान!' };
@@ -395,7 +395,7 @@ export default function MarathaQuizPage() {
   const rank = getRankBadge(percentage);
 
   const shareOnWhatsapp = () => {
-    const text = `🚩 *कनेक्ट मराठा — इतिहास महाक्विझ निकाल* 🚩%0A%0Aमी छत्रपती शिवराय व मराठा स्वराज्य इतिहास क्विझमध्ये *${percentage}% (${correctCount}/${activeQuestions.length})* गुण मिळवून *"${rank.title}"* पदवी पटकावली आहे! 🏆%0A%0Aतुम्हीही तुमची इतिहास जाण तपासा: ${window.location.origin}/quiz`;
+    const text = `🚩 *कनेक्ट मराठा — इतिहास महाक्विझ निकाल* 🚩%0A%0Aमी छत्रपती शिवराय व मराठा स्वराज्य इतिहास क्विझमध्ये *${percentage}% (${correctCount}/${answeredCount})* गुण मिळवून *"${rank.title}"* पदवी पटकावली आहे! 🏆%0A%0Aतुम्हीही तुमची इतिहास जाण तपासा: ${window.location.origin}/quiz`;
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
@@ -574,35 +574,6 @@ export default function MarathaQuizPage() {
                 </div>
               </div>
 
-              {/* Question Count */}
-              <div style={{ marginBottom: '28px' }}>
-                <label style={{ display: 'block', fontWeight: 700, fontSize: '0.9rem', color: 'var(--ink)', marginBottom: '8px' }}>
-                  प्रश्नांची संख्या (Number of Questions):
-                </label>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  {[5, 10, 15, 20].map((cnt) => (
-                    <button
-                      key={cnt}
-                      type="button"
-                      onClick={() => setQuestionCount(cnt)}
-                      style={{
-                        flex: 1,
-                        padding: '9px',
-                        borderRadius: '10px',
-                        border: questionCount === cnt ? '2px solid var(--maroon-800)' : '1px solid #E5E7EB',
-                        background: questionCount === cnt ? 'var(--maroon-800)' : '#FFFFFF',
-                        color: questionCount === cnt ? '#FFFFFF' : '#374151',
-                        fontWeight: 700,
-                        fontSize: '0.88rem',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {cnt} प्रश्न
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Launch Quiz Button */}
               <button
                 type="button"
@@ -629,12 +600,12 @@ export default function MarathaQuizPage() {
                 onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
               >
                 <span>🚩</span>
-                <span>{loading ? 'प्रश्न बँक लोड होत आहे...' : 'महाक्विझ आता सुरू करा'}</span>
+                <span>{loading ? 'प्रश्न बँक लोड होत आहे...' : 'निवडलेल्या दालनातील सर्व प्रश्न सुरू करा'}</span>
                 <span>→</span>
               </button>
 
               <div style={{ textAlign: 'center', marginTop: '12px', fontSize: '0.8rem', color: '#6B7280' }}>
-                ⚡ २०,५००+ प्रश्नांमधून थेट रँडम निवड · प्रत्येक प्रश्नाला ३० सेकंद
+                ⚡ निवडलेल्या दालनातील सर्व अधिकृत ऐतिहासिक प्रश्न सलग उपलब्ध होतील · प्रत्येक प्रश्नाला ३० सेकंद
               </div>
 
             </div>
@@ -895,7 +866,7 @@ export default function MarathaQuizPage() {
               )}
 
               {/* Action Buttons: Next / Finish */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #F3F4F6', paddingTop: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #F3F4F6', paddingTop: '20px', flexWrap: 'wrap', gap: '12px' }}>
                 <button
                   type="button"
                   onClick={() => { setQuizStarted(false); setQuizCompleted(false); }}
@@ -904,28 +875,52 @@ export default function MarathaQuizPage() {
                   ← क्विझ थांबवा व बाहेर पडा
                 </button>
 
-                {answeredState && (
-                  <button
-                    type="button"
-                    onClick={handleNextQuestion}
-                    style={{
-                      padding: '12px 28px',
-                      background: 'linear-gradient(135deg, #E65100, #BF360C)',
-                      color: '#FFFFFF',
-                      border: 'none',
-                      borderRadius: '10px',
-                      fontSize: '1rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      boxShadow: '0 4px 14px rgba(230,81,0,0.25)'
-                    }}
-                  >
-                    <span>{currentIndex < activeQuestions.length - 1 ? 'पुढील प्रश्न →' : 'निकाल व प्रमाणपत्र पहा 🏆'}</span>
-                  </button>
-                )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  {userAnswersHistory.length >= 1 && (
+                    <button
+                      type="button"
+                      onClick={finishQuiz}
+                      style={{
+                        padding: '10px 18px',
+                        background: '#FFF3E0',
+                        color: 'var(--maroon-900)',
+                        border: '1px solid #FFB74D',
+                        borderRadius: '10px',
+                        fontSize: '0.9rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <span>🏆 निकाल व प्रमाणपत्र समाप्त करा ({userAnswersHistory.length} सोडवले)</span>
+                    </button>
+                  )}
+
+                  {answeredState && (
+                    <button
+                      type="button"
+                      onClick={handleNextQuestion}
+                      style={{
+                        padding: '12px 28px',
+                        background: 'linear-gradient(135deg, #E65100, #BF360C)',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '10px',
+                        fontSize: '1rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        boxShadow: '0 4px 14px rgba(230,81,0,0.25)'
+                      }}
+                    >
+                      <span>{currentIndex < activeQuestions.length - 1 ? 'पुढील प्रश्न →' : 'निकाल व प्रमाणपत्र पहा 🏆'}</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
             </div>
@@ -961,7 +956,7 @@ export default function MarathaQuizPage() {
                   <div style={{ fontSize: '0.82rem', color: '#64748B' }}>अचूकता (Accuracy)</div>
                 </div>
                 <div style={{ background: '#F8FAFC', borderRadius: '12px', padding: '16px', border: '1px solid #E2E8F0' }}>
-                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--maroon-900)' }}>{correctCount} / {activeQuestions.length}</div>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--maroon-900)' }}>{correctCount} / {answeredCount}</div>
                   <div style={{ fontSize: '0.82rem', color: '#64748B' }}>बरोबर उत्तरे</div>
                 </div>
                 <div style={{ background: '#F8FAFC', borderRadius: '12px', padding: '16px', border: '1px solid #E2E8F0' }}>
@@ -1113,7 +1108,7 @@ export default function MarathaQuizPage() {
                 </h3>
 
                 <p style={{ fontSize: '1.05rem', lineHeight: 1.7, maxWidth: '70ch', margin: '0 auto 24px auto', color: '#1F2937' }}>
-                  यांनी <strong>छत्रपती शिवराय व मराठा स्वराज्य इतिहास महाक्विझ</strong> मध्ये अत्यंत प्रशंसनीय सहभाग नोंदवून <strong>{percentage}% ({correctCount}/{activeQuestions.length})</strong> गुणांसह उत्तीर्ण होऊन 
+                  यांनी <strong>छत्रपती शिवराय व मराठा स्वराज्य इतिहास महाक्विझ</strong> मध्ये अत्यंत प्रशंसनीय सहभाग नोंदवून <strong>{percentage}% ({correctCount}/{answeredCount})</strong> गुणांसह उत्तीर्ण होऊन 
                   <strong style={{ color: 'var(--maroon-900)' }}> "{rank.title}" </strong> 
                   हा सर्वोच्च इतिहास गौरव सन्मान संपादन केला आहे.
                 </p>
