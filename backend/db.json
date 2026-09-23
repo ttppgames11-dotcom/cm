@@ -1,0 +1,122 @@
+{
+  "doctors": [
+    {
+      "id": "DOC-101",
+      "name": "डॉ. अमित संभाजीराव पाटील",
+      "degree": "M.B.B.S., M.S. (Orthopedics)",
+      "specialty": "अस्थिरोग व सांधेप्रत्यारोपण तज्ज्ञ",
+      "category": "हाडे व सांधे",
+      "icon": "🦴",
+      "experience": "१५ वर्षे अनुभव",
+      "hospital": "सह्याद्री सुपरस्पेशालिटी हॉस्पिटल",
+      "city": "पुणे (डेक्कन), महाराष्ट्र",
+      "phone": "+91 98220 12345",
+      "consultationFee": "₹७००",
+      "timing": "सोम ते शनि: स. १० ते सायं. ६",
+      "rating": "4.9 ★★★★★"
+    },
+    {
+      "id": "DOC-102",
+      "name": "डॉ. सौ. सानिका विक्रमराजे कदम",
+      "degree": "M.B.B.S., M.D. (Gynecology)",
+      "specialty": "स्त्रीरोग व प्रसूतीशास्त्र तज्ज्ञ",
+      "category": "स्त्रीरोग",
+      "icon": "👩‍⚕️",
+      "experience": "१२ वर्षे अनुभव",
+      "hospital": "दीनानाथ मंगेशकर रुग्णालय",
+      "city": "पुणे (एरंडवणे), महाराष्ट्र",
+      "phone": "+91 98901 67890",
+      "consultationFee": "₹८००",
+      "timing": "सोम ते शुक्र: स. ११ ते सायं. ५",
+      "rating": "4.8 ★★★★★"
+    },
+    {
+      "id": "DOC-103",
+      "name": "डॉ. प्रशांत जयसिंगराव गायकवाड",
+      "degree": "M.B.B.S., M.D. (Cardiology), D.N.B.",
+      "specialty": "हृदयरोग तज्ज्ञ (Cardiologist)",
+      "category": "हृदय रोग",
+      "icon": "❤️",
+      "experience": "१८ वर्षे अनुभव",
+      "hospital": "एशियन हार्ट इन्स्टिट्यूट",
+      "city": "मुंबई (बीकेसी), महाराष्ट्र",
+      "phone": "+91 98200 99887",
+      "consultationFee": "₹१,०००",
+      "timing": "२४×७ आणीबाणी / सोम ते शनि",
+      "rating": "5.0 ★★★★★"
+    }
+  ],
+  "bloodRequests": [
+    {
+      "id": "REQ-101",
+      "patient": "प्रशांत संभाजी जाधव",
+      "hospital": "ससून सर्वोपचार रुग्णालय, पुणे",
+      "bloodGroup": "O Negative (O-)",
+      "units": 2,
+      "urgency": "तात्काळ (Emergency)",
+      "time": "१० मिनिटांपूर्वी",
+      "contact": "+91 98221 11223"
+    },
+    {
+      "id": "REQ-102",
+      "patient": "सौ. सुमित्रा बाजीराव गायकवाड",
+      "hospital": "के.ई.एम. रुग्णालय, परळ, मुंबई",
+      "bloodGroup": "AB Positive (AB+)",
+      "units": 3,
+      "urgency": "पुढील ४ तासांत",
+      "time": "२५ मिनिटांपूर्वी",
+      "contact": "+91 99203 44556"
+    }
+  ],
+  "bloodDonors": [
+    { "id": "DON-1", "name": "रोहन प्रकाश देशमुख", "group": "O+", "city": "पुणे (कोथरूड)", "lastDonated": "४ महिन्यांपूर्वी", "totalDonations": 8, "phone": "+91 98220 XXXXX" },
+    { "id": "DON-2", "name": "अजिंक्य तानाजी सावंत", "group": "O-", "city": "सातारा", "lastDonated": "५ महिन्यांपूर्वी", "totalDonations": 12, "phone": "+91 94211 XXXXX" }
+  ],
+  "matrimony": [
+    {
+      "id": "CM-M-801",
+      "name": "इंजि. रोहन संभाजीराव कदम",
+      "gender": "वर (Groom)",
+      "age": 28,
+      "height": "5' 10\"",
+      "caste": "९६ कुळी मराठा",
+      "kul": "कदम (भारद्वाज गोत्र)",
+      "education": "B.Tech (Computer Science), COEP",
+      "profession": "Senior Software Engineer, MNC Pune",
+      "income": "₹२२ लाख वार्षिक",
+      "city": "पुणे (मूळ: कराड, सातारा)",
+      "verified": true,
+      "photo": "👨‍💼",
+      "expectations": "सुशिक्षित, पदवीधर, कौटुंबिक मूल्यांची जाण असणारी अनुरूप वधू."
+    },
+    {
+      "id": "CM-F-802",
+      "name": "डॉ. स्नेहल विक्रमराव पाटील",
+      "gender": "वधू (Bride)",
+      "age": 26,
+      "height": "5' 5\"",
+      "caste": "९६ कुळी मराठा",
+      "kul": "पाटील (वसिष्ठ गोत्र)",
+      "education": "M.B.B.S., D.G.O. (Gynecologist)",
+      "profession": "वैद्यकीय अधिकारी, शासकीय रुग्णालय",
+      "income": "₹१५ लाख वार्षिक",
+      "city": "कोल्हापूर",
+      "verified": true,
+      "photo": "👩‍⚕️",
+      "expectations": "डॉक्टर किंवा उच्चशिक्षित मराठा वर, व्यसनमुक्त, सुसंस्कृत."
+    }
+  ],
+  "grievances": [],
+  "volunteers": [],
+  "womenHelp": [],
+  "builders": [],
+  "bankLoans": [],
+  "dairy": [],
+  "manufacturers": [],
+  "books": [],
+  "movies": [],
+  "speakers": [],
+  "officers": [],
+  "organizations": [],
+  "news": []
+}

@@ -1,0 +1,12 @@
+{
+  "name": "connect-maratha-database",
+  "version": "1.0.0",
+  "description": "Connect Maratha SQLite Database & Schema Manager",
+  "type": "module",
+  "scripts": {
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "sql.js": "^1.14.2"
+  }
+}
