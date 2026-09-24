@@ -534,10 +534,10 @@ export default function MeetingsPortalPage() {
 
           <div style={{ background: '#FFFFFF', padding: '18px 20px', borderRadius: '14px', border: '1.5px solid #fed7aa', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
             <div style={{ fontSize: '0.80rem', color: '#9a3412', fontWeight: 700 }}>साप्ताहिक चॅप्टर संगम</div>
-            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#2563eb', margin: '4px 0', fontFamily: 'Baloo 2' }}>
+            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ea580c', margin: '4px 0', fontFamily: 'Baloo 2' }}>
               {CHAPTER_MEETINGS.length}
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>सक्रिय नागरी मंडळे</div>
+            <div style={{ fontSize: '0.75rem', color: '#c2410c' }}>सक्रिय नागरी मंडळे</div>
           </div>
         </div>
 

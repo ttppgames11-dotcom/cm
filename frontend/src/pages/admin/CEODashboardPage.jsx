@@ -98,158 +98,136 @@ const CEO_DETAILED_MANDAL_REPORTS = [
     year: '2026',
     month: '09',
     week: 'Week 37',
-    day: '12',
-    userId: 'CM-10315',
-    leader: 'अनिरुद्ध भालचंद्र पाटील',
-    name: 'पिंपरी-चिंचवड औद्योगिक मंडळ',
-    state: 'महाराष्ट्र',
-    district: 'पुणे',
-    city: 'पिंपरी-चिंचवड',
-    division: 'पश्चिम महाराष्ट्र विभाग',
-    members: 52,
-    refs: '१,१५०',
-    rev: '₹११.२ कोटी',
-    revNumeric: 112000000,
-    grade: 'A+ Elite',
-    growth: '+२१.३%'
-  },
-  {
-    id: 'MNDL-2026-004',
-    stage: 'active',
-    year: '2026',
-    month: '08',
-    week: 'Week 34',
-    day: '22',
-    userId: 'ADM-02',
-    leader: 'विश्वासराव मोरे',
-    name: 'ठाणे – सह्याद्री उद्योग चॅप्टर',
-    state: 'महाराष्ट्र',
-    district: 'ठाणे',
-    city: 'ठाणे',
-    division: 'कोकण विभाग',
-    members: 40,
-    refs: '९८०',
-    rev: '₹६.५ कोटी',
-    revNumeric: 65000000,
-    grade: 'A Grade',
-    growth: '+१४.१%'
-  },
-  {
-    id: 'MNDL-2026-005',
-    stage: 'active',
-    year: '2026',
-    month: '08',
-    week: 'Week 32',
-    day: '08',
-    userId: 'CM-10480',
-    leader: 'विक्रमसिंह घाटगे',
-    name: 'कोल्हापूर – महालक्ष्मी व्यापारी संघ',
+    day: '14',
+    userId: 'CM-22019',
+    leader: 'दिग्विजय राजे कदम',
+    name: 'कोल्हापूर – महालक्ष्मी व्यवसाय मंडळ',
     state: 'महाराष्ट्र',
     district: 'कोल्हापूर',
     city: 'कोल्हापूर',
     division: 'पश्चिम महाराष्ट्र विभाग',
     members: 38,
-    refs: '८४०',
-    rev: '₹७.२ कोटी',
-    revNumeric: 72000000,
-    grade: 'A Grade',
-    growth: '+१५.०%'
+    refs: '९८०',
+    rev: '₹५.८ कोटी',
+    revNumeric: 58000000,
+    grade: 'A Active',
+    growth: '+१४.१%'
   },
   {
-    id: 'MNDL-2026-006',
+    id: 'MNDL-2026-004',
+    stage: 'active',
+    year: '2026',
+    month: '09',
+    week: 'Week 37',
+    day: '12',
+    userId: 'CM-88392',
+    leader: 'अमोल सूर्यवंशी',
+    name: 'नाशिक – गोदावरी उद्योजक मंच',
+    state: 'महाराष्ट्र',
+    district: 'नाशिक',
+    city: 'नाशिक',
+    division: 'उत्तर महाराष्ट्र विभाग',
+    members: 34,
+    refs: '७६०',
+    rev: '₹४.२ कोटी',
+    revNumeric: 42000000,
+    grade: 'A Active',
+    growth: '+११.६%'
+  },
+  {
+    id: 'MNDL-2026-005',
     stage: 'review',
     year: '2026',
-    month: '07',
-    week: 'Week 28',
-    day: '14',
-    userId: 'CM-10512',
-    leader: 'सुभाषराव जगताप',
+    month: '09',
+    week: 'Week 36',
+    day: '08',
+    userId: 'CM-90124',
+    leader: 'सचिन मोहिते',
     name: 'सातारा – अजिंक्यतारा उद्योग गट',
     state: 'महाराष्ट्र',
     district: 'सातारा',
     city: 'सातारा',
     division: 'पश्चिम महाराष्ट्र विभाग',
-    members: 35,
-    refs: '६२०',
-    rev: '₹४.८ कोटी',
-    revNumeric: 48000000,
-    grade: 'B+ Gold',
-    growth: '+११.५%'
+    members: 28,
+    refs: '५४०',
+    rev: '₹३.१ कोटी',
+    revNumeric: 31000000,
+    grade: 'B+ Review',
+    growth: '+९.८%'
+  },
+  {
+    id: 'MNDL-2026-006',
+    stage: 'review',
+    year: '2026',
+    month: '09',
+    week: 'Week 36',
+    day: '05',
+    userId: 'CM-11930',
+    leader: 'रणजित जगताप',
+    name: 'संभाजीनगर – दौलताबाद व्यापार मंडळ',
+    state: 'महाराष्ट्र',
+    district: 'छत्रपती संभाजीनगर',
+    city: 'संभाजीनगर',
+    division: 'मराठवाडा विभाग',
+    members: 24,
+    refs: '४२०',
+    rev: '₹२.६ कोटी',
+    revNumeric: 26000000,
+    grade: 'B+ Review',
+    growth: '+८.४%'
   },
   {
     id: 'MNDL-2026-007',
-    stage: 'review',
+    stage: 'new',
     year: '2026',
-    month: '06',
-    week: 'Week 24',
-    day: '10',
-    userId: 'CM-10650',
-    leader: 'संदीप दत्तात्रय कदम',
-    name: 'नाशिक – गोदावरी कृषी-व्यापार चॅप्टर',
+    month: '09',
+    week: 'Week 35',
+    day: '01',
+    userId: 'CM-54129',
+    leader: 'विकास गायकवाड',
+    name: 'नागपूर – दीक्षाभूमी उद्योग मंच',
     state: 'महाराष्ट्र',
-    district: 'नाशिक',
-    city: 'नाशिक',
-    division: 'उत्तर महाराष्ट्र विभाग',
-    members: 42,
-    refs: '१,०५०',
-    rev: '₹६.९ कोटी',
-    revNumeric: 69000000,
-    grade: 'A Grade',
-    growth: '+१३.८%'
+    district: 'नागपूर',
+    city: 'नागपूर',
+    division: 'विदर्भ विभाग',
+    members: 18,
+    refs: '२१०',
+    rev: '₹१.२ कोटी',
+    revNumeric: 12000000,
+    grade: 'C New',
+    growth: '+१५.०%'
   },
   {
     id: 'MNDL-2026-008',
     stage: 'new',
     year: '2026',
-    month: '05',
-    week: 'Week 20',
-    day: '18',
-    userId: 'CM-10722',
-    leader: 'राजेंद्रसिंह देशमुख',
-    name: 'छत्रपती संभाजीनगर – देवगिरी उद्योग परिषद',
+    month: '08',
+    week: 'Week 34',
+    day: '28',
+    userId: 'CM-66201',
+    leader: 'उदयसिंह पवार',
+    name: 'सोलापूर – सिद्धेश्वर व्यवसाय मंडळ',
     state: 'महाराष्ट्र',
-    district: 'छत्रपती संभाजीनगर',
-    city: 'छत्रपती संभाजीनगर',
-    division: 'मराठवाडा विभाग',
-    members: 36,
-    refs: '८९०',
-    rev: '₹५.८ कोटी',
-    revNumeric: 58000000,
-    grade: 'B+ Gold',
-    growth: '+१०.२%'
-  },
-  {
-    id: 'MNDL-2025-009',
-    stage: 'new',
-    year: '2025',
-    month: '11',
-    week: 'Week 46',
-    day: '15',
-    userId: 'ADM-02',
-    leader: 'विश्वासराव मोरे',
-    name: 'नागपूर – दीक्षाभूमी व्यापार महासंघ',
-    state: 'महाराष्ट्र',
-    district: 'नागपूर',
-    city: 'नागपूर',
-    division: 'विदर्भ विभाग',
-    members: 34,
-    refs: '७६०',
-    rev: '₹५.२ कोटी',
-    revNumeric: 52000000,
-    grade: 'B+ Gold',
-    growth: '+९.८%'
+    district: 'सोलापूर',
+    city: 'सोलापूर',
+    division: 'पश्चिम महाराष्ट्र विभाग',
+    members: 16,
+    refs: '१८०',
+    rev: '₹९५ लाख',
+    revNumeric: 9500000,
+    grade: 'C New',
+    growth: '+१२.२%'
   }
 ];
 
 export default function CEODashboardPage() {
-  const navigate = useNavigate();
-  const [selectedArea, setSelectedArea] = useState('maharashtra');
-  const [viewMode, setViewMode] = useState('pipeline'); // 'pipeline' (kanban) | 'grid' (table) | 'divisions'
-  const [period, setPeriod] = useState('mtd'); // 'today' | 'week' | 'mtd' | 'ytd'
+  const [scope, setScope] = useState('maharashtra');
+  const [viewMode, setViewMode] = useState('pipeline'); // 'pipeline' | 'grid' | 'divisions'
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [period, setPeriod] = useState('mtd'); // 'today' | 'week' | 'mtd' | 'ytd'
   const [selectedMandal, setSelectedMandal] = useState(null);
 
-  // Filters
+  // Filters State
   const [filters, setFilters] = useState({
     division: 'all',
     district: 'all',
@@ -257,166 +235,160 @@ export default function CEODashboardPage() {
     search: ''
   });
 
-  const profile = scopeProfiles[selectedArea] || scopeProfiles.maharashtra;
+  const profile = scopeProfiles[scope] || scopeProfiles.maharashtra;
 
-  // Filtered dataset
+  // Filtered reports
   const filteredReports = useMemo(() => {
-    return CEO_DETAILED_MANDAL_REPORTS.filter((r) => {
-      if (filters.division !== 'all' && r.division !== filters.division) return false;
-      if (filters.district !== 'all' && r.district !== filters.district) return false;
-      if (filters.stage !== 'all' && r.stage !== filters.stage) return false;
-      if (filters.search) {
-        const q = filters.search.toLowerCase();
-        return (
-          r.name.toLowerCase().includes(q) ||
-          r.leader.toLowerCase().includes(q) ||
-          r.district.toLowerCase().includes(q) ||
-          r.division.toLowerCase().includes(q) ||
-          r.id.toLowerCase().includes(q)
-        );
-      }
-      return true;
+    return CEO_DETAILED_MANDAL_REPORTS.filter((item) => {
+      const matchDivision = filters.division === 'all' || item.division === filters.division;
+      const matchStage = filters.stage === 'all' || item.stage === filters.stage;
+      const matchSearch =
+        !filters.search ||
+        item.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+        item.leader.toLowerCase().includes(filters.search.toLowerCase()) ||
+        item.district.toLowerCase().includes(filters.search.toLowerCase()) ||
+        item.id.toLowerCase().includes(filters.search.toLowerCase());
+
+      return matchDivision && matchStage && matchSearch;
     });
   }, [filters]);
 
-  // Kanban Stage Grouping
+  // Kanban Stages Definition (Strict White & Bhagwa Saffron Palette)
   const stages = [
-    { id: 'new', name: 'नवीन नोंदणी (New Inquiries)', badge: '#60A5FA', count: filteredReports.filter(r => r.stage === 'new').length },
-    { id: 'review', name: 'पडताळणी प्रलंबित (Under Scrutiny)', badge: '#F59E0B', count: filteredReports.filter(r => r.stage === 'review').length },
-    { id: 'active', name: 'सक्रिय चॅप्टर्स (Active Mandals)', badge: '#10B981', count: filteredReports.filter(r => r.stage === 'active').length },
-    { id: 'vip', name: 'एलिट VIP मंडळ (A+ Elite)', badge: '#8B5CF6', count: filteredReports.filter(r => r.stage === 'vip').length }
+    { id: 'vip', name: '👑 A+ Elite VIP मंडळे', badge: '#EA580C', desc: '₹५+ कोटी उलाढाल' },
+    { id: 'active', name: '⚡ सक्रिय व्यवसाय मंडळे', badge: '#D97706', desc: '₹२ ते ₹५ कोटी' },
+    { id: 'review', name: '⏳ पडताळणी प्रलंबित', badge: '#F97316', desc: '₹१ ते ₹२ कोटी' },
+    { id: 'new', name: '🌱 नवीन नोंदणीकृत', badge: '#C2410C', desc: 'नवीन स्थापन' }
   ];
 
-  // Export CSV
   const handleExportCSV = () => {
-    const headers = ['Mandal ID', 'Name', 'Leader', 'Division', 'District', 'Members', 'Referrals', 'Revenue', 'Growth', 'Stage'];
-    const rows = filteredReports.map((r) => [
-      r.id,
-      `"${r.name}"`,
-      `"${r.leader}"`,
-      `"${r.division}"`,
-      `"${r.district}"`,
-      r.members,
-      `"${r.refs}"`,
-      `"${r.rev}"`,
-      `"${r.growth}"`,
-      r.stage
-    ]);
-    const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
-    const encoded = encodeURI(csvContent);
+    const csvContent = 'data:text/csv;charset=utf-8,' +
+      ['ID,Mandal Name,Leader,Division,District,Members,Referrals,Revenue,Grade',
+        ...filteredReports.map(r => `"${r.id}","${r.name}","${r.leader}","${r.division}","${r.district}",${r.members},"${r.refs}","${r.rev}","${r.grade}"`)
+      ].join('\n');
+    const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
-    link.href = encoded;
-    link.download = `Connect_Maratha_CEO_CRM_${period}_${Date.now()}.csv`;
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `connect_maratha_ceo_report_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#090D16', color: '#F1F5F9', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#FFFDF9', color: '#1E293B', fontFamily: 'Inter, system-ui, sans-serif' }}>
       
       {/* ============================================================ */}
-      {/* 1. LEFT CRM SIDEBAR NAVIGATION (ENTERPRISE FORMAT) */}
+      {/* 1. COLLAPSIBLE EXECUTIVE LEFT SIDEBAR (WHITE & BHAGWA) */}
       {/* ============================================================ */}
       <aside style={{
         width: sidebarCollapsed ? '72px' : '260px',
-        background: '#0B0F19',
-        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+        transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+        background: '#FFFFFF',
+        borderRight: '1px solid #FED7AA',
         display: 'flex',
         flexDirection: 'column',
-        transition: 'width 0.25s ease',
-        flexShrink: 0,
+        zIndex: 40,
         position: 'sticky',
         top: 0,
         height: '100vh',
-        zIndex: 40
+        boxShadow: '2px 0 10px rgba(234, 88, 12, 0.04)'
       }}>
-        {/* Brand & Workspace */}
+        {/* Brand & Toggle Header */}
         <div style={{
           padding: '18px 16px',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid #FED7AA',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: sidebarCollapsed ? 'center' : 'space-between'
+          justifyContent: sidebarCollapsed ? 'center' : 'space-between',
+          background: '#FFF7ED'
         }}>
           {!sidebarCollapsed && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden' }}>
               <div style={{
-                width: '36px',
-                height: '36px',
+                width: '38px',
+                height: '38px',
                 borderRadius: '8px',
-                background: 'linear-gradient(135deg, #F59E0B, #DC2626)',
+                background: 'linear-gradient(135deg, #EA580C 0%, #D97706 100%)',
+                color: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '1.2rem',
-                fontWeight: 900
+                fontSize: '1.25rem',
+                fontWeight: 900,
+                boxShadow: '0 2px 8px rgba(234, 88, 12, 0.35)',
+                flexShrink: 0
               }}>
-                🚩
+                🦅
               </div>
-              <div>
-                <strong style={{ fontSize: '0.88rem', color: '#FFFFFF', display: 'block', lineHeight: 1.2 }}>
-                  CONNECT MARATHA
-                </strong>
-                <span style={{ fontSize: '0.68rem', color: '#F59E0B', fontWeight: 700, letterSpacing: '0.5px' }}>
-                  ENTERPRISE CRM v2.4
-                </span>
+              <div style={{ overflow: 'hidden' }}>
+                <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#431407', whiteSpace: 'nowrap', letterSpacing: '-0.3px' }}>
+                  CEO COCKPIT
+                </div>
+                <div style={{ fontSize: '0.68rem', color: '#EA580C', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  State Executive
+                </div>
               </div>
             </div>
           )}
 
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            title={sidebarCollapsed ? 'विस्तार करा' : 'संक्षिप्त करा'}
             style={{
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '6px',
-              color: '#94A3B8',
+              background: '#FFFFFF',
+              border: '1px solid #FED7AA',
+              color: '#EA580C',
               width: '28px',
               height: '28px',
+              borderRadius: '6px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              fontSize: '0.8rem',
+              fontWeight: 800
             }}>
-            {sidebarCollapsed ? '➔' : '←'}
+            {sidebarCollapsed ? '→' : '←'}
           </button>
         </div>
 
-        {/* Territory Scope Switcher */}
+        {/* Scope Selector (State vs Division vs District) */}
         {!sidebarCollapsed && (
-          <div style={{ padding: '14px 16px', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
-            <label style={{ display: 'block', fontSize: '0.68rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase', marginBottom: '6px' }}>
-              कार्यक्षेत्र व्याप्ती (Territory Scope)
+          <div style={{ padding: '12px 14px', borderBottom: '1px solid #FED7AA', background: '#FFFFFF' }}>
+            <label style={{ fontSize: '0.68rem', color: '#9A3412', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '6px' }}>
+              प्रशासकीय कक्ष (Jurisdiction):
             </label>
-            <select
-              value={selectedArea}
-              onChange={(e) => setSelectedArea(e.target.value)}
-              style={{
-                width: '100%',
-                background: '#111827',
-                border: '1px solid rgba(245, 158, 11, 0.3)',
-                color: '#FCD34D',
-                borderRadius: '6px',
-                padding: '7px 10px',
-                fontSize: '0.78rem',
-                fontWeight: 700,
-                outline: 'none',
-                cursor: 'pointer'
-              }}>
-              <option value="maharashtra">🦅 महाराष्ट्र राज्य (Statewide)</option>
-              <option value="pune_div">🏢 पुणे विभाग (Divisional)</option>
-              <option value="sangli_dist">📍 सांगली जिल्हा (District)</option>
-            </select>
+            <div style={{ position: 'relative' }}>
+              <select
+                value={scope}
+                onChange={(e) => setScope(e.target.value)}
+                style={{
+                  width: '100%',
+                  background: '#FFF7ED',
+                  border: '1px solid #FED7AA',
+                  color: '#431407',
+                  borderRadius: '8px',
+                  padding: '7px 10px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  outline: 'none',
+                  cursor: 'pointer'
+                }}>
+                <option value="maharashtra">महाराष्ट्र राज्य (सर्व ६ विभाग)</option>
+                <option value="pune_div">पुणे विभाग (५ जिल्हे)</option>
+                <option value="sangli_dist">सांगली जिल्हा (१० तालुके)</option>
+              </select>
+            </div>
           </div>
         )}
 
         {/* Navigation Links */}
-        <nav style={{ flex: 1, padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto' }}>
+        <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {[
-            { id: 'ceo', label: 'कार्यकारी नियंत्रण (CEO Cockpit)', icon: '📊', active: true, to: '/crm/ceo', badge: 'Active' },
-            { id: 'pipeline', label: 'डील्स व व्यवसाय पाईपलाईन', icon: '👥', to: '/sangam', badge: profile.businesses },
-            { id: 'mandals', label: 'व्यवसाय मंडळे व चॅप्टर्स', icon: '📇', to: '/crm/chapter', badge: profile.mandals },
+            { id: 'cockpit', label: 'राज्यस्तरीय CEO Cockpit', icon: '🦅', to: '/crm/ceo', active: true },
+            { id: 'erp', label: 'केंद्रीय सुपर ॲडमिन ERP', icon: '👑', to: '/crm' },
+            { id: 'sangam', label: 'व्यवसाय मंडळे व चॅप्टर्स', icon: '🏢', to: '/sangam', badge: profile.mandals },
             { id: 'referrals', label: 'B2B रेफरल्स (TYFCB)', icon: '🤝', to: '/referrals', badge: profile.referrals },
             { id: 'district', label: 'जिल्हा KYC पडताळणी', icon: '📍', to: '/crm/district', badge: '३६ जिल्हे' },
             { id: 'helpdesk', label: 'समाज साहाय्यता व हेल्पडेस्क', icon: '🩺', to: '/crm/helpdesk', badge: '२४x७' },
@@ -435,19 +407,19 @@ export default function CEODashboardPage() {
                 borderRadius: '8px',
                 textDecoration: 'none',
                 background: item.active
-                  ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(220, 38, 38, 0.1))'
+                  ? '#FFF7ED'
                   : item.highlight
-                  ? 'rgba(124, 58, 237, 0.15)'
+                  ? '#FFEDD5'
                   : 'transparent',
                 color: item.active
-                  ? '#F59E0B'
+                  ? '#EA580C'
                   : item.highlight
-                  ? '#C084FC'
-                  : '#94A3B8',
+                  ? '#C2410C'
+                  : '#475569',
                 border: item.active
-                  ? '1px solid rgba(245, 158, 11, 0.4)'
+                  ? '1px solid #FED7AA'
                   : item.highlight
-                  ? '1px solid rgba(124, 58, 237, 0.3)'
+                  ? '1px solid #FDBA74'
                   : '1px solid transparent',
                 fontSize: '0.82rem',
                 fontWeight: item.active ? 800 : 600,
@@ -461,8 +433,8 @@ export default function CEODashboardPage() {
                   </span>
                   {item.badge && (
                     <span style={{
-                      background: item.active ? '#F59E0B' : 'rgba(255,255,255,0.08)',
-                      color: item.active ? '#000000' : '#CBD5E1',
+                      background: item.active ? '#EA580C' : '#FFEDD5',
+                      color: item.active ? '#FFFFFF' : '#C2410C',
                       fontSize: '0.65rem',
                       fontWeight: 800,
                       padding: '2px 6px',
@@ -480,8 +452,8 @@ export default function CEODashboardPage() {
         {/* Sidebar Footer User Info */}
         <div style={{
           padding: '14px 16px',
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          background: 'rgba(0,0,0,0.3)',
+          borderTop: '1px solid #FED7AA',
+          background: '#FFF7ED',
           display: 'flex',
           alignItems: 'center',
           gap: '10px'
@@ -490,8 +462,8 @@ export default function CEODashboardPage() {
             width: '34px',
             height: '34px',
             borderRadius: '50%',
-            background: '#F59E0B',
-            color: '#000',
+            background: 'linear-gradient(135deg, #EA580C 0%, #D97706 100%)',
+            color: '#FFFFFF',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -502,11 +474,11 @@ export default function CEODashboardPage() {
           </div>
           {!sidebarCollapsed && (
             <div style={{ overflow: 'hidden' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#FFFFFF', whiteSpace: 'nowrap' }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#431407', whiteSpace: 'nowrap' }}>
                 कार्याध्यक्ष (State CEO)
               </div>
-              <div style={{ fontSize: '0.68rem', color: '#10B981', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981' }} />
+              <div style={{ fontSize: '0.68rem', color: '#16A34A', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 700 }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#16A34A' }} />
                 <span>🟢 ४ ॲडमिन लाईव्ह</span>
               </div>
             </div>
@@ -515,7 +487,7 @@ export default function CEODashboardPage() {
       </aside>
 
       {/* ============================================================ */}
-      {/* 2. MAIN CRM WORKSPACE AREA */}
+      {/* 2. MAIN CRM WORKSPACE AREA (WHITE & BHAGWA) */}
       {/* ============================================================ */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
         
@@ -524,15 +496,15 @@ export default function CEODashboardPage() {
           position: 'sticky',
           top: 0,
           zIndex: 30,
-          background: 'rgba(11, 15, 25, 0.95)',
-          backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          background: '#FFFFFF',
+          borderBottom: '1px solid #FED7AA',
           padding: '12px 24px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
-          gap: '12px'
+          gap: '12px',
+          boxShadow: '0 2px 10px rgba(234, 88, 12, 0.05)'
         }}>
           {/* Global Search Input */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, maxWidth: '480px' }}>
@@ -540,13 +512,13 @@ export default function CEODashboardPage() {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              background: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
+              background: '#FFF7ED',
+              border: '1px solid #FED7AA',
               borderRadius: '8px',
               padding: '8px 14px',
               width: '100%'
             }}>
-              <span style={{ color: '#64748B' }}>🔍</span>
+              <span style={{ color: '#EA580C' }}>🔍</span>
               <input
                 type="text"
                 placeholder="मंडळ, जिल्हा, पदाधिकारी किंवा युझर शोधा (Ctrl+K)..."
@@ -555,19 +527,21 @@ export default function CEODashboardPage() {
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#FFFFFF',
+                  color: '#1E293B',
                   fontSize: '0.82rem',
                   outline: 'none',
-                  width: '100%'
+                  width: '100%',
+                  fontWeight: 600
                 }}
               />
               <span style={{
-                background: 'rgba(255,255,255,0.08)',
-                color: '#94A3B8',
+                background: '#FFFFFF',
+                border: '1px solid #FED7AA',
+                color: '#9A3412',
                 fontSize: '0.68rem',
                 padding: '2px 6px',
                 borderRadius: '4px',
-                fontWeight: 600
+                fontWeight: 700
               }}>
                 ⌘K
               </span>
@@ -578,7 +552,7 @@ export default function CEODashboardPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             
             {/* Period Selector */}
-            <div style={{ display: 'flex', background: '#111827', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '6px', padding: '2px' }}>
+            <div style={{ display: 'flex', background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: '6px', padding: '2px' }}>
               {[
                 { id: 'today', label: 'आज' },
                 { id: 'week', label: 'आठवडा' },
@@ -589,8 +563,8 @@ export default function CEODashboardPage() {
                   key={p.id}
                   onClick={() => setPeriod(p.id)}
                   style={{
-                    background: period === p.id ? '#F59E0B' : 'transparent',
-                    color: period === p.id ? '#000000' : '#94A3B8',
+                    background: period === p.id ? 'linear-gradient(135deg, #EA580C, #D97706)' : 'transparent',
+                    color: period === p.id ? '#FFFFFF' : '#7C2D12',
                     border: 'none',
                     borderRadius: '4px',
                     padding: '5px 10px',
@@ -607,8 +581,8 @@ export default function CEODashboardPage() {
             <Link
               to="/sangam"
               style={{
-                background: 'linear-gradient(135deg, #F59E0B, #D97706)',
-                color: '#000000',
+                background: 'linear-gradient(135deg, #EA580C, #D97706)',
+                color: '#FFFFFF',
                 border: 'none',
                 borderRadius: '8px',
                 padding: '8px 14px',
@@ -617,7 +591,8 @@ export default function CEODashboardPage() {
                 textDecoration: 'none',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px'
+                gap: '6px',
+                boxShadow: '0 2px 8px rgba(234, 88, 12, 0.3)'
               }}>
               <span>+</span>
               <span>नवीन डील / रेफरल</span>
@@ -626,13 +601,13 @@ export default function CEODashboardPage() {
             <button
               onClick={handleExportCSV}
               style={{
-                background: 'rgba(255,255,255,0.08)',
-                color: '#FFFFFF',
-                border: '1px solid rgba(255,255,255,0.15)',
+                background: '#FFFFFF',
+                color: '#7C2D12',
+                border: '1px solid #FED7AA',
                 borderRadius: '8px',
                 padding: '8px 12px',
                 fontSize: '0.78rem',
-                fontWeight: 600,
+                fontWeight: 700,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -645,16 +620,17 @@ export default function CEODashboardPage() {
             <Link
               to="/ai"
               style={{
-                background: 'linear-gradient(135deg, #7C3AED, #4F46E5)',
+                background: 'linear-gradient(135deg, #EA580C, #C2410C)',
                 color: '#FFFFFF',
                 borderRadius: '8px',
                 padding: '8px 12px',
                 fontSize: '0.78rem',
-                fontWeight: 700,
+                fontWeight: 800,
                 textDecoration: 'none',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px'
+                gap: '6px',
+                boxShadow: '0 2px 8px rgba(234, 88, 12, 0.25)'
               }}>
               <span>🤖</span>
               <span>AI सहाय्यक</span>
@@ -667,36 +643,37 @@ export default function CEODashboardPage() {
           
           {/* Executive Header Banner */}
           <div style={{
-            background: 'linear-gradient(135deg, #1E1B4B 0%, #0F172A 60%, #172554 100%)',
-            border: '1px solid rgba(245, 158, 11, 0.3)',
+            background: '#FFF7ED',
+            border: '1.5px solid #FED7AA',
             borderRadius: '16px',
             padding: '20px 24px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
-            gap: '16px'
+            gap: '16px',
+            boxShadow: '0 4px 15px rgba(234, 88, 12, 0.06)'
           }}>
             <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(245, 158, 11, 0.15)', border: '1px solid #F59E0B', borderRadius: '20px', padding: '3px 12px', fontSize: '0.72rem', color: '#FDE68A', marginBottom: '8px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#FFEDD5', border: '1px solid #FDBA74', borderRadius: '20px', padding: '3px 12px', fontSize: '0.72rem', color: '#9A3412', fontWeight: 800, marginBottom: '8px' }}>
                 <span>🚩 {profile.badge}</span>
                 <span>•</span>
-                <span>🟢 लाईव्ह डेटाबेस सिंक्रोनाइझेशन</span>
+                <span style={{ color: '#16A34A' }}>🟢 लाईव्ह डेटाबेस सिंक्रोनाइझेशन</span>
               </div>
-              <h1 style={{ margin: 0, fontSize: '1.45rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.3px' }}>
+              <h1 style={{ margin: 0, fontSize: '1.45rem', fontWeight: 900, color: '#431407', letterSpacing: '-0.3px' }}>
                 {profile.title}
               </h1>
-              <p style={{ margin: '4px 0 0 0', fontSize: '0.84rem', color: '#94A3B8' }}>
+              <p style={{ margin: '4px 0 0 0', fontSize: '0.84rem', color: '#7C2D12', fontWeight: 600 }}>
                 {profile.sub}
               </p>
             </div>
 
-            <div style={{ display: 'flex', gap: '8px', background: 'rgba(0,0,0,0.3)', padding: '6px', borderRadius: '10px' }}>
+            <div style={{ display: 'flex', gap: '8px', background: '#FFFFFF', padding: '6px', borderRadius: '10px', border: '1px solid #FED7AA' }}>
               <button
                 onClick={() => setViewMode('pipeline')}
                 style={{
-                  background: viewMode === 'pipeline' ? '#F59E0B' : 'transparent',
-                  color: viewMode === 'pipeline' ? '#000' : '#CBD5E1',
+                  background: viewMode === 'pipeline' ? 'linear-gradient(135deg, #EA580C, #D97706)' : 'transparent',
+                  color: viewMode === 'pipeline' ? '#FFFFFF' : '#7C2D12',
                   border: 'none',
                   borderRadius: '6px',
                   padding: '7px 14px',
@@ -705,7 +682,8 @@ export default function CEODashboardPage() {
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px'
+                  gap: '6px',
+                  boxShadow: viewMode === 'pipeline' ? '0 2px 8px rgba(234, 88, 12, 0.3)' : 'none'
                 }}>
                 <span>📊</span>
                 <span>पाईपलाईन (Kanban)</span>
@@ -714,8 +692,8 @@ export default function CEODashboardPage() {
               <button
                 onClick={() => setViewMode('grid')}
                 style={{
-                  background: viewMode === 'grid' ? '#F59E0B' : 'transparent',
-                  color: viewMode === 'grid' ? '#000' : '#CBD5E1',
+                  background: viewMode === 'grid' ? 'linear-gradient(135deg, #EA580C, #D97706)' : 'transparent',
+                  color: viewMode === 'grid' ? '#FFFFFF' : '#7C2D12',
                   border: 'none',
                   borderRadius: '6px',
                   padding: '7px 14px',
@@ -724,7 +702,8 @@ export default function CEODashboardPage() {
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px'
+                  gap: '6px',
+                  boxShadow: viewMode === 'grid' ? '0 2px 8px rgba(234, 88, 12, 0.3)' : 'none'
                 }}>
                 <span>📋</span>
                 <span>डेटा ग्रिड (Table)</span>
@@ -733,8 +712,8 @@ export default function CEODashboardPage() {
               <button
                 onClick={() => setViewMode('divisions')}
                 style={{
-                  background: viewMode === 'divisions' ? '#F59E0B' : 'transparent',
-                  color: viewMode === 'divisions' ? '#000' : '#CBD5E1',
+                  background: viewMode === 'divisions' ? 'linear-gradient(135deg, #EA580C, #D97706)' : 'transparent',
+                  color: viewMode === 'divisions' ? '#FFFFFF' : '#7C2D12',
                   border: 'none',
                   borderRadius: '6px',
                   padding: '7px 14px',
@@ -743,7 +722,8 @@ export default function CEODashboardPage() {
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px'
+                  gap: '6px',
+                  boxShadow: viewMode === 'divisions' ? '0 2px 8px rgba(234, 88, 12, 0.3)' : 'none'
                 }}>
                 <span>🗺️</span>
                 <span>विभागीय सांख्यिकी</span>
@@ -751,7 +731,7 @@ export default function CEODashboardPage() {
             </div>
           </div>
 
-          {/* KPI Ribbon (Compact, Modern Metric Cards) */}
+          {/* KPI Ribbon (White Cards with Bhagwa Highlights) */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
             {[
               { label: 'एकूण बिझनेस उलाढाल', val: profile.revenue, delta: profile.growth, icon: '💰', sub: 'Gross Business Closed' },
@@ -764,28 +744,28 @@ export default function CEODashboardPage() {
               <div
                 key={idx}
                 style={{
-                  background: '#111827',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: '#FFFFFF',
+                  border: '1px solid #FED7AA',
                   borderRadius: '12px',
                   padding: '16px',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '8px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                  boxShadow: '0 4px 12px rgba(234, 88, 12, 0.06)'
                 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 600 }}>{kpi.label}</span>
+                  <span style={{ fontSize: '0.75rem', color: '#7C2D12', fontWeight: 700 }}>{kpi.label}</span>
                   <span style={{ fontSize: '1.2rem' }}>{kpi.icon}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                  <span style={{ fontSize: '1.45rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.5px' }}>
+                  <span style={{ fontSize: '1.45rem', fontWeight: 900, color: '#EA580C', letterSpacing: '-0.5px' }}>
                     {kpi.val}
                   </span>
-                  <span style={{ fontSize: '0.7rem', color: '#10B981', fontWeight: 700, background: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '6px' }}>
+                  <span style={{ fontSize: '0.7rem', color: '#16A34A', fontWeight: 800, background: '#DCFCE7', padding: '2px 6px', borderRadius: '6px', border: '1px solid #86EFAC' }}>
                     {kpi.delta}
                   </span>
                 </div>
-                <div style={{ fontSize: '0.68rem', color: '#64748B' }}>
+                <div style={{ fontSize: '0.68rem', color: '#9A3412', fontWeight: 600 }}>
                   {kpi.sub}
                 </div>
               </div>
@@ -794,27 +774,29 @@ export default function CEODashboardPage() {
 
           {/* Filter Bar */}
           <div style={{
-            background: '#111827',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: '#FFFFFF',
+            border: '1px solid #FED7AA',
             borderRadius: '12px',
             padding: '12px 16px',
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            boxShadow: '0 2px 8px rgba(234, 88, 12, 0.04)'
           }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94A3B8' }}>फिल्टर्स:</span>
+            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#7C2D12' }}>फिल्टर्स:</span>
 
             <select
               value={filters.division}
               onChange={(e) => setFilters({ ...filters, division: e.target.value })}
               style={{
-                background: '#0F172A',
-                border: '1px solid rgba(255,255,255,0.15)',
-                color: '#FFF',
+                background: '#FFF7ED',
+                border: '1px solid #FED7AA',
+                color: '#431407',
                 borderRadius: '6px',
                 padding: '6px 10px',
-                fontSize: '0.78rem'
+                fontSize: '0.78rem',
+                fontWeight: 700
               }}>
               <option value="all">सर्व विभाग (All Divisions)</option>
               <option value="पश्चिम महाराष्ट्र विभाग">पश्चिम महाराष्ट्र विभाग</option>
@@ -828,12 +810,13 @@ export default function CEODashboardPage() {
               value={filters.stage}
               onChange={(e) => setFilters({ ...filters, stage: e.target.value })}
               style={{
-                background: '#0F172A',
-                border: '1px solid rgba(255,255,255,0.15)',
-                color: '#FFF',
+                background: '#FFF7ED',
+                border: '1px solid #FED7AA',
+                color: '#431407',
                 borderRadius: '6px',
                 padding: '6px 10px',
-                fontSize: '0.78rem'
+                fontSize: '0.78rem',
+                fontWeight: 700
               }}>
               <option value="all">सर्व टप्पे (All Stages)</option>
               <option value="vip">A+ Elite VIP मंडळ</option>
@@ -846,20 +829,21 @@ export default function CEODashboardPage() {
               <button
                 onClick={() => setFilters({ division: 'all', district: 'all', stage: 'all', search: '' })}
                 style={{
-                  background: 'transparent',
-                  border: '1px solid rgba(239, 68, 68, 0.4)',
-                  color: '#F87171',
+                  background: '#FEE2E2',
+                  border: '1px solid #FCA5A5',
+                  color: '#DC2626',
                   borderRadius: '6px',
                   padding: '5px 10px',
                   fontSize: '0.72rem',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  fontWeight: 700
                 }}>
                 ✕ रिसेट फिल्टर्स
               </button>
             )}
 
-            <div style={{ marginLeft: 'auto', fontSize: '0.75rem', color: '#64748B' }}>
-              एकूण सापडलेले अहवाल: <strong>{filteredReports.length}</strong>
+            <div style={{ marginLeft: 'auto', fontSize: '0.75rem', color: '#7C2D12', fontWeight: 700 }}>
+              एकूण सापडलेले अहवाल: <strong style={{ color: '#EA580C' }}>{filteredReports.length}</strong>
             </div>
           </div>
 
@@ -879,27 +863,28 @@ export default function CEODashboardPage() {
                   <div
                     key={stg.id}
                     style={{
-                      background: '#0F172A',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      background: '#FFF7ED',
+                      border: '1px solid #FED7AA',
                       borderRadius: '12px',
                       padding: '14px',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '12px'
+                      gap: '12px',
+                      boxShadow: '0 2px 8px rgba(234, 88, 12, 0.04)'
                     }}>
                     {/* Stage Header */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #FED7AA', paddingBottom: '8px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: stg.badge }} />
-                        <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#E2E8F0' }}>
+                        <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#431407' }}>
                           {stg.name}
                         </span>
                       </div>
                       <span style={{
-                        background: 'rgba(255,255,255,0.08)',
-                        color: '#94A3B8',
+                        background: '#FFEDD5',
+                        color: '#EA580C',
                         fontSize: '0.7rem',
-                        fontWeight: 700,
+                        fontWeight: 800,
                         padding: '2px 8px',
                         borderRadius: '10px'
                       }}>
@@ -914,31 +899,33 @@ export default function CEODashboardPage() {
                           key={item.id}
                           onClick={() => setSelectedMandal(item)}
                           style={{
-                            background: '#1E293B',
-                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                            background: '#FFFFFF',
+                            border: '1px solid #FED7AA',
                             borderRadius: '10px',
                             padding: '12px',
                             cursor: 'pointer',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '8px',
+                            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
                             transition: 'all 0.15s ease'
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.borderColor = '#F59E0B';
+                            e.currentTarget.style.borderColor = '#EA580C';
                             e.currentTarget.style.transform = 'translateY(-2px)';
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                            e.currentTarget.style.borderColor = '#FED7AA';
                             e.currentTarget.style.transform = 'none';
                           }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <span style={{ fontSize: '0.68rem', color: '#94A3B8', fontFamily: 'monospace' }}>
+                            <span style={{ fontSize: '0.68rem', color: '#9A3412', fontFamily: 'monospace', fontWeight: 700 }}>
                               {item.id}
                             </span>
                             <span style={{
-                              background: 'rgba(245, 158, 11, 0.15)',
-                              color: '#FCD34D',
+                              background: '#FFF7ED',
+                              color: '#EA580C',
+                              border: '1px solid #FED7AA',
                               fontSize: '0.68rem',
                               fontWeight: 800,
                               padding: '2px 6px',
@@ -948,12 +935,12 @@ export default function CEODashboardPage() {
                             </span>
                           </div>
 
-                          <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FFFFFF' }}>
+                          <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#1E293B' }}>
                             {item.name}
                           </div>
 
-                          <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>
-                            👤 अध्यक्ष: <strong style={{ color: '#E2E8F0' }}>{item.leader}</strong>
+                          <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                            👤 अध्यक्ष: <strong style={{ color: '#431407' }}>{item.leader}</strong>
                           </div>
 
                           <div style={{
@@ -961,13 +948,13 @@ export default function CEODashboardPage() {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             paddingTop: '6px',
-                            borderTop: '1px solid rgba(255,255,255,0.06)',
+                            borderTop: '1px solid #FED7AA',
                             fontSize: '0.72rem'
                           }}>
-                            <span style={{ color: '#10B981', fontWeight: 800 }}>
+                            <span style={{ color: '#EA580C', fontWeight: 900 }}>
                               {item.rev}
                             </span>
-                            <span style={{ color: '#64748B' }}>
+                            <span style={{ color: '#9A3412', fontWeight: 600 }}>
                               👥 {item.members} सदस्य | 🤝 {item.refs}
                             </span>
                           </div>
@@ -975,7 +962,7 @@ export default function CEODashboardPage() {
                       ))}
 
                       {stageItems.length === 0 && (
-                        <div style={{ textAlign: 'center', padding: '24px 12px', color: '#64748B', fontSize: '0.75rem' }}>
+                        <div style={{ textAlign: 'center', padding: '24px 12px', color: '#9A3412', fontSize: '0.75rem', fontWeight: 600 }}>
                           या टप्प्यात नोंदी नाहीत
                         </div>
                       )}
@@ -991,15 +978,16 @@ export default function CEODashboardPage() {
           {/* ============================================================ */}
           {viewMode === 'grid' && (
             <div style={{
-              background: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: '#FFFFFF',
+              border: '1px solid #FED7AA',
               borderRadius: '12px',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              boxShadow: '0 4px 15px rgba(234, 88, 12, 0.05)'
             }}>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: 'left' }}>
                   <thead>
-                    <tr style={{ background: '#0F172A', borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#94A3B8' }}>
+                    <tr style={{ background: '#FFF7ED', borderBottom: '1px solid #FED7AA', color: '#7C2D12', fontWeight: 800 }}>
                       <th style={{ padding: '12px 16px' }}>अहवाल आयडी</th>
                       <th style={{ padding: '12px 16px' }}>मंडळाचे नाव</th>
                       <th style={{ padding: '12px 16px' }}>अध्यक्ष / समन्वयक</th>
@@ -1015,34 +1003,35 @@ export default function CEODashboardPage() {
                     {filteredReports.map((row) => (
                       <tr
                         key={row.id}
-                        style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
+                        style={{ borderBottom: '1px solid #FED7AA' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = '#FFF7ED')}
                         onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
-                        <td style={{ padding: '12px 16px', fontFamily: 'monospace', color: '#F59E0B' }}>
+                        <td style={{ padding: '12px 16px', fontFamily: 'monospace', color: '#EA580C', fontWeight: 800 }}>
                           {row.id}
                         </td>
-                        <td style={{ padding: '12px 16px', fontWeight: 700, color: '#FFFFFF' }}>
+                        <td style={{ padding: '12px 16px', fontWeight: 800, color: '#1E293B' }}>
                           {row.name}
                         </td>
-                        <td style={{ padding: '12px 16px', color: '#CBD5E1' }}>
+                        <td style={{ padding: '12px 16px', color: '#475569' }}>
                           {row.leader}
                         </td>
-                        <td style={{ padding: '12px 16px', color: '#94A3B8' }}>
+                        <td style={{ padding: '12px 16px', color: '#64748B' }}>
                           {row.division} • {row.district}
                         </td>
-                        <td style={{ padding: '12px 16px', color: '#E2E8F0' }}>
+                        <td style={{ padding: '12px 16px', color: '#1E293B', fontWeight: 600 }}>
                           {row.members}
                         </td>
-                        <td style={{ padding: '12px 16px', color: '#E2E8F0' }}>
+                        <td style={{ padding: '12px 16px', color: '#1E293B', fontWeight: 600 }}>
                           {row.refs}
                         </td>
-                        <td style={{ padding: '12px 16px', fontWeight: 800, color: '#10B981' }}>
+                        <td style={{ padding: '12px 16px', fontWeight: 900, color: '#EA580C' }}>
                           {row.rev}
                         </td>
                         <td style={{ padding: '12px 16px' }}>
                           <span style={{
-                            background: 'rgba(245, 158, 11, 0.15)',
-                            color: '#FCD34D',
+                            background: '#FFF7ED',
+                            color: '#C2410C',
+                            border: '1px solid #FED7AA',
                             padding: '3px 8px',
                             borderRadius: '4px',
                             fontSize: '0.72rem',
@@ -1055,12 +1044,13 @@ export default function CEODashboardPage() {
                           <button
                             onClick={() => setSelectedMandal(row)}
                             style={{
-                              background: 'rgba(255,255,255,0.08)',
-                              border: '1px solid rgba(255,255,255,0.15)',
-                              color: '#FFF',
+                              background: '#FFFFFF',
+                              border: '1px solid #FED7AA',
+                              color: '#EA580C',
                               borderRadius: '6px',
                               padding: '4px 10px',
                               fontSize: '0.72rem',
+                              fontWeight: 700,
                               cursor: 'pointer'
                             }}>
                             तपशील ➔
@@ -1089,35 +1079,36 @@ export default function CEODashboardPage() {
                 <div
                   key={i}
                   style={{
-                    background: '#111827',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    background: '#FFFFFF',
+                    border: '1px solid #FED7AA',
                     borderRadius: '12px',
                     padding: '18px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '10px'
+                    gap: '10px',
+                    boxShadow: '0 4px 12px rgba(234, 88, 12, 0.06)'
                   }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800, color: '#FFFFFF' }}>
+                    <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 900, color: '#431407' }}>
                       {div.name}
                     </h3>
-                    <span style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10B981', fontSize: '0.72rem', fontWeight: 800, padding: '2px 8px', borderRadius: '6px' }}>
+                    <span style={{ background: '#DCFCE7', color: '#16A34A', border: '1px solid #86EFAC', fontSize: '0.72rem', fontWeight: 800, padding: '2px 8px', borderRadius: '6px' }}>
                       {div.growth}
                     </span>
                   </div>
 
-                  <p style={{ margin: 0, fontSize: '0.75rem', color: '#94A3B8' }}>
+                  <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748B' }}>
                     {div.dists}
                   </p>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid #FED7AA' }}>
                     <div>
-                      <div style={{ fontSize: '0.68rem', color: '#64748B' }}>व्यवसाय मंडळे</div>
-                      <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#FCD34D' }}>{div.mandals}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#7C2D12', fontWeight: 700 }}>व्यवसाय मंडळे</div>
+                      <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#EA580C' }}>{div.mandals}</div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: '0.68rem', color: '#64748B' }}>एकूण उलाढाल</div>
-                      <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#10B981' }}>{div.rev}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#7C2D12', fontWeight: 700 }}>एकूण उलाढाल</div>
+                      <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#C2410C' }}>{div.rev}</div>
                     </div>
                   </div>
                 </div>
@@ -1135,7 +1126,7 @@ export default function CEODashboardPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'rgba(0,0,0,0.7)',
+          background: 'rgba(0,0,0,0.6)',
           backdropFilter: 'blur(4px)',
           display: 'flex',
           justifyContent: 'flex-end',
@@ -1145,57 +1136,58 @@ export default function CEODashboardPage() {
             width: '460px',
             maxWidth: '100%',
             height: '100%',
-            background: '#0F172A',
-            borderLeft: '1px solid rgba(255,255,255,0.1)',
+            background: '#FFFFFF',
+            borderLeft: '2px solid #EA580C',
             padding: '24px',
             display: 'flex',
             flexDirection: 'column',
             gap: '16px',
-            overflowY: 'auto'
+            overflowY: 'auto',
+            boxShadow: '-10px 0 30px rgba(234, 88, 12, 0.15)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.75rem', color: '#F59E0B', fontFamily: 'monospace' }}>
+              <span style={{ fontSize: '0.75rem', color: '#EA580C', fontFamily: 'monospace', fontWeight: 800 }}>
                 {selectedMandal.id}
               </span>
               <button
                 onClick={() => setSelectedMandal(null)}
-                style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: '1.4rem', cursor: 'pointer' }}>
+                style={{ background: 'none', border: 'none', color: '#EA580C', fontSize: '1.4rem', cursor: 'pointer', fontWeight: 900 }}>
                 ✕
               </button>
             </div>
 
-            <h2 style={{ margin: 0, fontSize: '1.3rem', color: '#FFF', fontWeight: 900 }}>
+            <h2 style={{ margin: 0, fontSize: '1.3rem', color: '#431407', fontWeight: 900 }}>
               {selectedMandal.name}
             </h2>
 
-            <div style={{ background: '#1E293B', borderRadius: '10px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>अध्यक्ष / समन्वयक</div>
-              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#FFF' }}>{selectedMandal.leader}</div>
+            <div style={{ background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: '10px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ fontSize: '0.75rem', color: '#7C2D12', fontWeight: 700 }}>अध्यक्ष / समन्वयक</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#1E293B' }}>{selectedMandal.leader}</div>
               <div style={{ fontSize: '0.75rem', color: '#64748B' }}>User ID: {selectedMandal.userId}</div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-              <div style={{ background: '#1E293B', padding: '12px', borderRadius: '8px' }}>
-                <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>उलाढाल</span>
-                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#10B981' }}>{selectedMandal.rev}</div>
+              <div style={{ background: '#FFF7ED', border: '1px solid #FED7AA', padding: '12px', borderRadius: '8px' }}>
+                <span style={{ fontSize: '0.7rem', color: '#7C2D12', fontWeight: 700 }}>उलाढाल</span>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#EA580C' }}>{selectedMandal.rev}</div>
               </div>
-              <div style={{ background: '#1E293B', padding: '12px', borderRadius: '8px' }}>
-                <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>सदस्य संख्या</span>
-                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#FFF' }}>{selectedMandal.members}</div>
+              <div style={{ background: '#FFF7ED', border: '1px solid #FED7AA', padding: '12px', borderRadius: '8px' }}>
+                <span style={{ fontSize: '0.7rem', color: '#7C2D12', fontWeight: 700 }}>सदस्य संख्या</span>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#1E293B' }}>{selectedMandal.members}</div>
               </div>
-              <div style={{ background: '#1E293B', padding: '12px', borderRadius: '8px' }}>
-                <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>रेफरल्स</span>
-                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#FCD34D' }}>{selectedMandal.refs}</div>
+              <div style={{ background: '#FFF7ED', border: '1px solid #FED7AA', padding: '12px', borderRadius: '8px' }}>
+                <span style={{ fontSize: '0.7rem', color: '#7C2D12', fontWeight: 700 }}>रेफरल्स</span>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#D97706' }}>{selectedMandal.refs}</div>
               </div>
-              <div style={{ background: '#1E293B', padding: '12px', borderRadius: '8px' }}>
-                <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>दर्जा</span>
-                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#A78BFA' }}>{selectedMandal.grade}</div>
+              <div style={{ background: '#FFF7ED', border: '1px solid #FED7AA', padding: '12px', borderRadius: '8px' }}>
+                <span style={{ fontSize: '0.7rem', color: '#7C2D12', fontWeight: 700 }}>दर्जा</span>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#C2410C' }}>{selectedMandal.grade}</div>
               </div>
             </div>
 
-            <div style={{ background: '#1E293B', padding: '14px', borderRadius: '10px' }}>
-              <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginBottom: '6px' }}>भौगोलिक स्थान</div>
-              <div style={{ fontSize: '0.88rem', color: '#FFF' }}>
+            <div style={{ background: '#FFF7ED', border: '1px solid #FED7AA', padding: '14px', borderRadius: '10px' }}>
+              <div style={{ fontSize: '0.75rem', color: '#7C2D12', fontWeight: 700, marginBottom: '6px' }}>भौगोलिक स्थान</div>
+              <div style={{ fontSize: '0.88rem', color: '#1E293B', fontWeight: 600 }}>
                 {selectedMandal.city}, {selectedMandal.district} ({selectedMandal.state})
               </div>
               <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '2px' }}>
@@ -1208,26 +1200,28 @@ export default function CEODashboardPage() {
                 to="/sangam"
                 style={{
                   flex: 1,
-                  background: 'linear-gradient(135deg, #F59E0B, #DC2626)',
-                  color: '#000',
+                  background: 'linear-gradient(135deg, #EA580C, #D97706)',
+                  color: '#FFFFFF',
                   fontWeight: 900,
                   padding: '10px',
                   borderRadius: '8px',
                   textAlign: 'center',
                   textDecoration: 'none',
-                  fontSize: '0.82rem'
+                  fontSize: '0.82rem',
+                  boxShadow: '0 2px 8px rgba(234, 88, 12, 0.3)'
                 }}>
                 B2B बैठका पहा
               </Link>
               <button
                 onClick={() => setSelectedMandal(null)}
                 style={{
-                  background: 'rgba(255,255,255,0.08)',
-                  color: '#CBD5E1',
-                  border: 'none',
+                  background: '#FFF7ED',
+                  color: '#7C2D12',
+                  border: '1px solid #FED7AA',
                   padding: '10px 16px',
                   borderRadius: '8px',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  fontWeight: 700
                 }}>
                 बंद करा
               </button>

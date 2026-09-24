@@ -154,7 +154,7 @@ export default function DistrictAdminCRM() {
   });
 
   return (
-    <div style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '60px' }}>
+    <div style={{ background: '#FFFDF9', minHeight: '100vh', paddingBottom: '60px' }}>
       
       {/* Toast Notification */}
       {toastMessage && (
@@ -162,12 +162,12 @@ export default function DistrictAdminCRM() {
           position: 'fixed',
           bottom: '24px',
           right: '24px',
-          background: '#0f172a',
-          color: '#38bdf8',
-          border: '1px solid #0284c7',
+          background: '#431407',
+          color: '#FED7AA',
+          border: '1px solid #EA580C',
           padding: '12px 20px',
           borderRadius: '8px',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+          boxShadow: '0 8px 24px rgba(234, 88, 12, 0.25)',
           zIndex: 9999,
           fontWeight: 600
         }}>
@@ -176,22 +176,22 @@ export default function DistrictAdminCRM() {
       )}
 
       {/* TOP ISOLATED HEADER BAR */}
-      <div style={{ background: '#0f172a', color: '#fff', padding: '12px 24px', borderBottom: '1px solid #1e293b' }}>
+      <div style={{ background: '#FFFFFF', color: '#1E293B', padding: '12px 24px', borderBottom: '1.5px solid #FED7AA' }}>
         <div style={{ maxWidth: '1380px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <span style={{ fontSize: '1.4rem' }}>📍</span>
             <div>
-              <strong style={{ fontSize: '1.05rem', color: '#f8fafc', fontFamily: 'Baloo 2' }}>
+              <strong style={{ fontSize: '1.05rem', color: '#431407', fontFamily: 'Baloo 2' }}>
                 CONNECT MARATHA — जिल्हा समन्वयक CRM
               </strong>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.75rem', color: '#7C2D12' }}>
                 स्वतंत्र जिल्हा प्रशासन व सदस्य पडताळणी नियंत्रण कक्ष (District Head CRM)
               </div>
             </div>
           </div>
 
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <span style={{ background: '#0284c7', color: '#fff', padding: '4px 12px', borderRadius: '16px', fontSize: '0.74rem', fontWeight: 800 }}>
+            <span style={{ background: '#EA580C', color: '#fff', padding: '4px 12px', borderRadius: '16px', fontSize: '0.74rem', fontWeight: 800 }}>
               📍 अधिकृत जिल्हा भूमिका
             </span>
             <Link
@@ -199,9 +199,9 @@ export default function DistrictAdminCRM() {
               style={{
                 padding: '6px 12px',
                 fontSize: '0.78rem',
-                background: '#1e293b',
-                color: '#f8fafc',
-                border: '1px solid #334155',
+                background: '#FFF7ED',
+                color: '#EA580C',
+                border: '1px solid #FED7AA',
                 borderRadius: '6px',
                 textDecoration: 'none',
                 fontWeight: 700
@@ -217,11 +217,11 @@ export default function DistrictAdminCRM() {
         
         {/* DISTRICT HEADER BANNER */}
         <div style={{
-          background: 'linear-gradient(135deg, #0369a1, #0284c7)',
+          background: 'linear-gradient(135deg, #EA580C, #D97706, #C2410C)',
           borderRadius: '16px',
           padding: '24px 28px',
           color: '#fff',
-          boxShadow: '0 8px 24px rgba(2, 132, 199, 0.2)',
+          boxShadow: '0 8px 24px rgba(234, 88, 12, 0.25)',
           marginBottom: '24px',
           display: 'flex',
           justifyContent: 'space-between',
@@ -242,7 +242,7 @@ export default function DistrictAdminCRM() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#e0f2fe' }}>जिल्हा बदला:</label>
+            <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#FFEDD5' }}>जिल्हा बदला:</label>
             <select
               value={selectedDistrict}
               onChange={(e) => {
@@ -276,9 +276,9 @@ export default function DistrictAdminCRM() {
             <div style={{ fontSize: '0.78rem', color: '#16a34a', fontWeight: 700 }}>↑ ८.४% मागील महिन्यापेक्षा</div>
           </div>
 
-          <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-            <div style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600 }}>नोंदणीकृत व्यवसाय (Businesses)</div>
-            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0284c7', margin: '4px 0', fontFamily: 'Baloo 2' }}>{districtInfo.verifiedBiz}</div>
+          <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1.5px solid #FED7AA', boxShadow: '0 2px 8px rgba(234,88,12,0.05)' }}>
+            <div style={{ fontSize: '0.82rem', color: '#7C2D12', fontWeight: 600 }}>नोंदणीकृत व्यवसाय (Businesses)</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#EA580C', margin: '4px 0', fontFamily: 'Baloo 2' }}>{districtInfo.verifiedBiz}</div>
             <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{districtInfo.mandalsCount} सक्रिय व्यवसाय मंडळे</div>
           </div>
 
@@ -296,7 +296,7 @@ export default function DistrictAdminCRM() {
         </div>
 
         {/* DISTRICT MODULE TABS */}
-        <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #e2e8f0', marginBottom: '20px', overflowX: 'auto' }}>
+        <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #FED7AA', marginBottom: '20px', overflowX: 'auto' }}>
           {[
             { id: 'kyc', label: '📋 ओळखपत्र पडताळणी कक्ष (KYC Queue)', count: filteredMembers.length },
             { id: 'mandals', label: '🏢 व्यवसाय मंडळे व शाखा (Mandals)', count: districtInfo.mandals.length },
@@ -309,8 +309,8 @@ export default function DistrictAdminCRM() {
               style={{
                 padding: '12px 20px',
                 border: 'none',
-                background: activeTab === tab.id ? '#0284c7' : 'transparent',
-                color: activeTab === tab.id ? '#fff' : '#475569',
+                background: activeTab === tab.id ? '#EA580C' : 'transparent',
+                color: activeTab === tab.id ? '#fff' : '#7C2D12',
                 borderRadius: '8px 8px 0 0',
                 fontWeight: 700,
                 fontSize: '0.88rem',
@@ -324,8 +324,8 @@ export default function DistrictAdminCRM() {
               <span>{tab.label}</span>
               {tab.count !== undefined && (
                 <span style={{
-                  background: activeTab === tab.id ? 'rgba(255,255,255,0.25)' : '#e2e8f0',
-                  color: activeTab === tab.id ? '#fff' : '#0f172a',
+                  background: activeTab === tab.id ? 'rgba(255,255,255,0.25)' : '#FFEDD5',
+                  color: activeTab === tab.id ? '#fff' : '#C2410C',
                   padding: '2px 8px',
                   borderRadius: '12px',
                   fontSize: '0.72rem'
@@ -396,7 +396,7 @@ export default function DistrictAdminCRM() {
                   ) : (
                     filteredMembers.map((m) => (
                       <tr key={m.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                        <td style={{ padding: '12px 14px', fontWeight: 700, color: '#0369a1' }}>{m.id}</td>
+                        <td style={{ padding: '12px 14px', fontWeight: 700, color: '#EA580C' }}>{m.id}</td>
                         <td style={{ padding: '12px 14px', fontWeight: 600, color: '#0f172a' }}>{m.name}</td>
                         <td style={{ padding: '12px 14px', color: '#475569' }}>{m.taluka}</td>
                         <td style={{ padding: '12px 14px', color: '#475569' }}>{m.profession}</td>
@@ -464,8 +464,8 @@ export default function DistrictAdminCRM() {
               {districtInfo.mandals.map((m) => (
                 <div key={m.id} style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '16px', background: '#f8fafc' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                    <h4 style={{ margin: 0, fontSize: '1rem', color: '#0369a1', fontFamily: 'Baloo 2' }}>{m.name}</h4>
-                    <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 700 }}>{m.id}</span>
+                    <h4 style={{ margin: 0, fontSize: '1rem', color: '#C2410C', fontFamily: 'Baloo 2' }}>{m.name}</h4>
+                    <span style={{ background: '#FFF7ED', color: '#EA580C', border: '1px solid #FED7AA', padding: '2px 8px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 700 }}>{m.id}</span>
                   </div>
                   <div style={{ fontSize: '0.82rem', color: '#475569', marginBottom: '4px' }}>
                     <strong>📍 तालुका/परिसर:</strong> {m.taluka}
@@ -509,7 +509,7 @@ export default function DistrictAdminCRM() {
                 {districtInfo.talukaStats.map((ts, idx) => (
                   <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9' }}>
                     <td style={{ padding: '12px 14px', fontWeight: 700, color: '#0f172a' }}>{ts.taluka}</td>
-                    <td style={{ padding: '12px 14px', color: '#0369a1', fontWeight: 600 }}>{ts.members}</td>
+                    <td style={{ padding: '12px 14px', color: '#EA580C', fontWeight: 600 }}>{ts.members}</td>
                     <td style={{ padding: '12px 14px', color: '#16a34a', fontWeight: 600 }}>{ts.biz}</td>
                     <td style={{ padding: '12px 14px', color: '#e11d48', fontWeight: 600 }}>{ts.donors}</td>
                     <td style={{ padding: '12px 14px', color: '#475569' }}>{ts.mandals} शाखा</td>
@@ -545,9 +545,9 @@ export default function DistrictAdminCRM() {
               <tbody>
                 {grievances.map((g) => (
                   <tr key={g.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '12px 14px', fontWeight: 700, color: '#0369a1' }}>{g.id}</td>
+                    <td style={{ padding: '12px 14px', fontWeight: 700, color: '#EA580C' }}>{g.id}</td>
                     <td style={{ padding: '12px 14px', fontWeight: 600 }}>{g.complainant}</td>
-                    <td style={{ padding: '12px 14px', color: '#0284c7' }}>{g.category}</td>
+                    <td style={{ padding: '12px 14px', color: '#C2410C' }}>{g.category}</td>
                     <td style={{ padding: '12px 14px', color: '#475569' }}>{g.issue}</td>
                     <td style={{ padding: '12px 14px', color: '#64748b', fontSize: '0.82rem' }}>{g.date}</td>
                     <td style={{ padding: '12px 14px' }}>
@@ -567,7 +567,7 @@ export default function DistrictAdminCRM() {
                         <button
                           type="button"
                           onClick={() => handleResolveGrievance(g.id)}
-                          style={{ padding: '5px 10px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
+                          style={{ padding: '5px 10px', background: '#EA580C', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
                         >
                           निवारण करा
                         </button>

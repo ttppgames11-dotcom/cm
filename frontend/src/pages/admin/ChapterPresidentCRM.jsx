@@ -269,8 +269,8 @@ export default function ChapterPresidentCRM() {
 
           <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
             <div style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600 }}>१-ते-१ व्यावसायिक भेटी</div>
-            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#2563eb', margin: '4px 0', fontFamily: 'Baloo 2' }}>{chapterInfo.oneToOneCount}</div>
-            <div style={{ fontSize: '0.78rem', color: '#2563eb', fontWeight: 700 }}>उच्च नेटवर्किंग दर</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ea580c', margin: '4px 0', fontFamily: 'Baloo 2' }}>{chapterInfo.oneToOneCount}</div>
+            <div style={{ fontSize: '0.78rem', color: '#ea580c', fontWeight: 700 }}>उच्च नेटवर्किंग दर</div>
           </div>
 
           <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
@@ -394,7 +394,7 @@ export default function ChapterPresidentCRM() {
                     <tr key={r.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                       <td style={{ padding: '12px 14px', fontWeight: 700, color: '#15803d' }}>{r.id}</td>
                       <td style={{ padding: '12px 14px', fontWeight: 600 }}>{r.giver}</td>
-                      <td style={{ padding: '12px 14px', fontWeight: 600, color: '#0284c7' }}>{r.receiver}</td>
+                      <td style={{ padding: '12px 14px', fontWeight: 600, color: '#ea580c' }}>{r.receiver}</td>
                       <td style={{ padding: '12px 14px', color: '#475569' }}>{r.requirement}</td>
                       <td style={{ padding: '12px 14px', fontWeight: 700, color: '#15803d' }}>{r.amount}</td>
                       <td style={{ padding: '12px 14px', color: '#64748b', fontSize: '0.82rem' }}>{r.date}</td>
@@ -404,8 +404,8 @@ export default function ChapterPresidentCRM() {
                           borderRadius: '12px',
                           fontSize: '0.74rem',
                           fontWeight: 700,
-                          background: r.status === 'Closed Won' ? '#dcfce7' : r.status === 'In Discussion' ? '#fef3c7' : '#e0f2fe',
-                          color: r.status === 'Closed Won' ? '#166534' : r.status === 'In Discussion' ? '#92400e' : '#0369a1'
+                          background: r.status === 'Closed Won' ? '#dcfce7' : r.status === 'In Discussion' ? '#fef3c7' : '#ffedd5',
+                          color: r.status === 'Closed Won' ? '#166534' : r.status === 'In Discussion' ? '#92400e' : '#c2410c'
                         }}>
                           {r.status}
                         </span>
@@ -526,7 +526,7 @@ export default function ChapterPresidentCRM() {
               <tbody>
                 {oneToOneList.map((m) => (
                   <tr key={m.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '12px 14px', fontWeight: 700, color: '#2563eb' }}>{m.id}</td>
+                    <td style={{ padding: '12px 14px', fontWeight: 700, color: '#ea580c' }}>{m.id}</td>
                     <td style={{ padding: '12px 14px', fontWeight: 600 }}>{m.member1}</td>
                     <td style={{ padding: '12px 14px', fontWeight: 600 }}>{m.member2}</td>
                     <td style={{ padding: '12px 14px', color: '#64748b', fontSize: '0.82rem' }}>{m.date}</td>
@@ -567,7 +567,7 @@ export default function ChapterPresidentCRM() {
                     <td style={{ padding: '12px 14px', fontWeight: 700 }}>{r.name}</td>
                     <td style={{ padding: '12px 14px', color: '#475569' }}>{r.category}</td>
                     <td style={{ padding: '12px 14px', color: '#16a34a', fontWeight: 700 }}>{r.bizGiven}</td>
-                    <td style={{ padding: '12px 14px', color: '#2563eb', fontWeight: 700 }}>{r.bizReceived}</td>
+                    <td style={{ padding: '12px 14px', color: '#ea580c', fontWeight: 700 }}>{r.bizReceived}</td>
                     <td style={{ padding: '12px 14px' }}>{r.rating}</td>
                   </tr>
                 ))}

@@ -195,10 +195,10 @@ export default function SevaHelpdeskCRM() {
 
           <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
             <div style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600 }}>शिष्यवृत्ती अर्ज छाननी</div>
-            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#2563eb', margin: '4px 0', fontFamily: 'Baloo 2' }}>
+            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ea580c', margin: '4px 0', fontFamily: 'Baloo 2' }}>
               {scholarshipList.filter(s => s.status !== 'Approved').length}
             </div>
-            <div style={{ fontSize: '0.78rem', color: '#2563eb', fontWeight: 700 }}>उच्च शिक्षण निधी वाटप</div>
+            <div style={{ fontSize: '0.78rem', color: '#c2410c', fontWeight: 700 }}>उच्च शिक्षण निधी वाटप</div>
           </div>
 
           <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
@@ -294,8 +294,8 @@ export default function SevaHelpdeskCRM() {
                           borderRadius: '12px',
                           fontSize: '0.72rem',
                           fontWeight: 700,
-                          background: b.status === 'Fulfilled' ? '#dcfce7' : b.status === 'Assigned' ? '#e0f2fe' : '#fee2e2',
-                          color: b.status === 'Fulfilled' ? '#166534' : b.status === 'Assigned' ? '#0369a1' : '#991b1b'
+                          background: b.status === 'Fulfilled' ? '#dcfce7' : b.status === 'Assigned' ? '#ffedd5' : '#fee2e2',
+                          color: b.status === 'Fulfilled' ? '#166534' : b.status === 'Assigned' ? '#c2410c' : '#991b1b'
                         }}>
                           {b.status}
                         </div>
@@ -306,7 +306,7 @@ export default function SevaHelpdeskCRM() {
                           <button
                             type="button"
                             onClick={() => handleAssignBloodDonor(b.id)}
-                            style={{ padding: '5px 10px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
+                            style={{ padding: '5px 10px', background: '#ea580c', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
                           >
                             स्वयंसेवक नियुक्त करा
                           </button>
@@ -357,7 +357,7 @@ export default function SevaHelpdeskCRM() {
               <tbody>
                 {scholarshipList.map((s) => (
                   <tr key={s.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '12px 14px', fontWeight: 700, color: '#2563eb' }}>{s.id}</td>
+                    <td style={{ padding: '12px 14px', fontWeight: 700, color: '#ea580c' }}>{s.id}</td>
                     <td style={{ padding: '12px 14px', fontWeight: 700 }}>{s.student}</td>
                     <td style={{ padding: '12px 14px', color: '#475569' }}>{s.course}</td>
                     <td style={{ padding: '12px 14px', color: '#64748b' }}>{s.income}</td>
@@ -431,15 +431,15 @@ export default function SevaHelpdeskCRM() {
                     <td style={{ padding: '12px 14px', fontWeight: 700 }}>{h.patient}</td>
                     <td style={{ padding: '12px 14px', color: '#475569' }}>{h.hospital} ({h.district})</td>
                     <td style={{ padding: '12px 14px', fontWeight: 600 }}>{h.requirement}</td>
-                    <td style={{ padding: '12px 14px', color: '#0284c7' }}>{h.volunteer}</td>
+                    <td style={{ padding: '12px 14px', color: '#ea580c', fontWeight: 600 }}>{h.volunteer}</td>
                     <td style={{ padding: '12px 14px' }}>
                       <span style={{
                         padding: '3px 8px',
                         borderRadius: '12px',
                         fontSize: '0.74rem',
                         fontWeight: 700,
-                        background: h.status === 'पूर्ण झाले' ? '#dcfce7' : '#e0f2fe',
-                        color: h.status === 'पूर्ण झाले' ? '#166534' : '#0369a1'
+                        background: h.status === 'पूर्ण झाले' ? '#dcfce7' : '#ffedd5',
+                        color: h.status === 'पूर्ण झाले' ? '#166534' : '#c2410c'
                       }}>
                         {h.status}
                       </span>

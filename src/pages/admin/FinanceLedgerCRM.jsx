@@ -186,7 +186,7 @@ export default function FinanceLedgerCRM() {
 
           <div style={{ background: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
             <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600 }}>B2B व्यापार व्यवहार संगम मूल्य</div>
-            <div style={{ fontSize: '1.9rem', fontWeight: 900, color: '#2563EB', marginTop: '4px' }}>
+            <div style={{ fontSize: '1.9rem', fontWeight: 900, color: '#EA580C', marginTop: '4px' }}>
               ₹ {(metrics?.overview?.totalBusinessExchangedINR || 184600000).toLocaleString('en-IN')}
             </div>
             <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '4px' }}>३६ जिल्ह्यांचे B2B संगम टर्नओव्हर</div>
@@ -342,7 +342,7 @@ export default function FinanceLedgerCRM() {
                           <div style={{ fontSize: '0.75rem', color: '#64748B' }}>✉️ {d.donorEmail || d.email || 'donor@email.com'}</div>
                         </td>
                         <td style={{ padding: '14px 16px' }}>
-                          <span style={{ background: '#E0F2FE', color: '#0369A1', padding: '3px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>
+                          <span style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA', padding: '3px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>
                             {d.cause || d.campaignTitle || 'अखिल भारतीय मराठा महासंघ सामाजिक निधी'}
                           </span>
                         </td>
@@ -486,7 +486,7 @@ export default function FinanceLedgerCRM() {
             </div>
 
             <div style={{ background: '#FFFFFF', padding: '24px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-              <div style={{ fontSize: '0.9rem', color: '#2563EB', fontWeight: 800 }}>💎 Platinum Member (व्यावसायिक)</div>
+              <div style={{ fontSize: '0.9rem', color: '#EA580C', fontWeight: 800 }}>💎 Platinum Member (व्यावसायिक)</div>
               <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0F172A', margin: '8px 0' }}>₹ ५,००० / वर्ष</div>
               <p style={{ fontSize: '0.85rem', color: '#64748B' }}>बिझनेस संगम चॅप्टर सहभाग, B2B रेफरल एक्सचेंज व व्यापारी निर्देशिका प्राधान्य.</p>
               <div style={{ borderTop: '1px solid #F1F5F9', paddingTop: '12px', marginTop: '12px', fontSize: '0.82rem', color: '#059669', fontWeight: 700 }}>

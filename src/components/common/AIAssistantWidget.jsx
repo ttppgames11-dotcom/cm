@@ -154,90 +154,85 @@ export default function AIAssistantWidget() {
       setIsListening(false);
     }
 
-    const userEntry = {
+    const userMsg = {
       id: `u-${Date.now()}`,
       role: 'user',
       text: query,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
-    setMessages((prev) => [...prev, userEntry]);
+    setMessages((prev) => [...prev, userMsg]);
     setInputMsg('');
     setLoading(true);
 
     try {
-      let reply = '';
+      let aiText = '';
       try {
         const res = await (apiClient.aiChat
-          ? apiClient.aiChat(query, language, messages.slice(-3).map((m) => ({ role: m.role, text: m.text })))
+          ? apiClient.aiChat(query, language, messages.slice(-4).map((m) => ({ role: m.role, text: m.text })))
           : apiClient.post('/ai/chat', {
               message: query,
               language: language,
-              history: messages.slice(-3).map((m) => ({ role: m.role, text: m.text }))
+              history: messages.slice(-4).map((m) => ({ role: m.role, text: m.text }))
             }));
 
-        reply = res?.data?.response || res?.response || res?.data?.reply || res?.reply || '';
-      } catch (fetchErr) {
-        console.warn('Backend fetch fallback:', fetchErr.message);
+        aiText = res?.data?.response || res?.response || res?.data?.reply || res?.reply || '';
+      } catch (fErr) {
+        console.warn('Backend call failed, using client fallback:', fErr.message);
       }
 
-      if (!reply) {
-        reply = getClientFallback(query, language);
+      if (!aiText) {
+        aiText = getClientFallback(query, language);
       }
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `a-${Date.now()}`,
-          role: 'assistant',
-          text: reply,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-      ]);
-    } catch (err) {
-      const fallbackReply = getClientFallback(query, language);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `a-${Date.now()}`,
-          role: 'assistant',
-          text: fallbackReply,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-      ]);
+      const botMsg = {
+        id: `b-${Date.now()}`,
+        role: 'assistant',
+        text: aiText,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages((prev) => [...prev, botMsg]);
+    } catch (e) {
+      const fallbackText = getClientFallback(query, language);
+      const botMsg = {
+        id: `b-${Date.now()}`,
+        role: 'assistant',
+        text: fallbackText,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages((prev) => [...prev, botMsg]);
     } finally {
       setLoading(false);
     }
   };
 
-  const samplePills = [
-    'रायगड किल्ला',
-    'शिवराज्याभिषेक सोहळा',
-    'प्रतापगड युद्ध',
-    'बिझनेस संगम',
-    'रक्तदान साहाय्य'
-  ];
+  const samplePills = language === 'en'
+    ? ['Shivrajyabhishek Date', 'Raigad Fort Info', 'Business Sangam Help', '24x7 Blood Support']
+    : language === 'hi'
+    ? ['शिवराज्याभिषेक कब हुआ?', 'रायगढ़ किले की जानकारी', 'बिज़नेस संगम क्या है?', 'आपातकालीन रक्त']
+    : ['शिवराज्याभिषेक सोहळा', 'रायगड किल्ला माहिती', 'बिझनेस संगम जोडणी', 'आपत्कालीन रक्त साहाय्य'];
 
   return (
     <>
-      {/* Floating Trigger Button */}
+      {/* Floating Widget Trigger Button (Pure Royal Bhagwa & White) */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
+          title="Connect Maratha AI Agent"
           style={{
             position: 'fixed',
             bottom: '24px',
             right: '24px',
-            zIndex: 9999,
-            background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #DC2626 100%)',
+            zIndex: 9990,
+            background: 'linear-gradient(135deg, #EA580C 0%, #D97706 100%)',
             color: '#FFFFFF',
-            border: '2px solid rgba(255,255,255,0.4)',
+            border: '2px solid #FED7AA',
             borderRadius: '50px',
             padding: '12px 20px',
-            fontSize: '0.92rem',
+            fontSize: '0.88rem',
             fontWeight: 800,
             cursor: 'pointer',
-            boxShadow: '0 10px 28px rgba(245, 158, 11, 0.5), 0 4px 12px rgba(0,0,0,0.4)',
+            boxShadow: '0 8px 24px rgba(234, 88, 12, 0.45)',
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
@@ -252,13 +247,13 @@ export default function AIAssistantWidget() {
             width: '10px',
             height: '10px',
             borderRadius: '50%',
-            background: '#10B981',
-            boxShadow: '0 0 8px #10B981'
+            background: '#FFFFFF',
+            boxShadow: '0 0 8px #FFFFFF'
           }} />
         </button>
       )}
 
-      {/* Floating Chat Modal */}
+      {/* Floating Chat Modal (Strict White & Bhagwa Theme) */}
       {isOpen && (
         <div style={{
           position: 'fixed',
@@ -269,18 +264,18 @@ export default function AIAssistantWidget() {
           height: '560px',
           maxHeight: 'calc(100vh - 48px)',
           zIndex: 9999,
-          background: '#0F172A',
-          border: '2px solid rgba(245, 158, 11, 0.4)',
+          background: '#FFFFFF',
+          border: '2px solid #EA580C',
           borderRadius: '20px',
           display: 'flex',
           flexDirection: 'column',
-          boxShadow: '0 25px 60px rgba(0,0,0,0.85)',
+          boxShadow: '0 20px 50px rgba(234, 88, 12, 0.25)',
           overflow: 'hidden'
         }}>
           {/* Header */}
           <div style={{
-            background: 'linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #431407 100%)',
-            borderBottom: '1px solid rgba(245, 158, 11, 0.3)',
+            background: 'linear-gradient(135deg, #EA580C 0%, #D97706 60%, #C2410C 100%)',
+            borderBottom: '1px solid #FDBA74',
             padding: '12px 16px',
             display: 'flex',
             alignItems: 'center',
@@ -289,10 +284,10 @@ export default function AIAssistantWidget() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '1.3rem' }}>🚩</span>
               <div>
-                <strong style={{ fontSize: '0.9rem', color: '#FFFFFF', display: 'block', lineHeight: 1.2 }}>
+                <strong style={{ fontSize: '0.9rem', color: '#FFFFFF', display: 'block', lineHeight: 1.2, fontWeight: 900 }}>
                   Connect Maratha AI
                 </strong>
-                <span style={{ fontSize: '0.68rem', color: '#34D399', fontWeight: 600 }}>
+                <span style={{ fontSize: '0.68rem', color: '#FEF08A', fontWeight: 700 }}>
                   ● 84 ज्ञान शाखा • Active RAG
                 </span>
               </div>
@@ -300,14 +295,14 @@ export default function AIAssistantWidget() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               {/* Language Pills */}
-              <div style={{ display: 'flex', background: 'rgba(0,0,0,0.4)', borderRadius: '6px', padding: '2px' }}>
+              <div style={{ display: 'flex', background: 'rgba(255,255,255,0.2)', borderRadius: '6px', padding: '2px', border: '1px solid rgba(255,255,255,0.4)' }}>
                 {['mr', 'hi', 'en'].map((l) => (
                   <button
                     key={l}
                     onClick={() => handleLangChange(l)}
                     style={{
-                      background: language === l ? '#F59E0B' : 'transparent',
-                      color: language === l ? '#000' : '#CBD5E1',
+                      background: language === l ? '#FFFFFF' : 'transparent',
+                      color: language === l ? '#EA580C' : '#FFFFFF',
                       border: 'none',
                       borderRadius: '4px',
                       padding: '2px 6px',
@@ -326,13 +321,14 @@ export default function AIAssistantWidget() {
                 onClick={() => setIsOpen(false)}
                 title="पूर्ण स्क्रीन उघडा"
                 style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  color: '#CBD5E1',
-                  border: 'none',
+                  background: 'rgba(255,255,255,0.2)',
+                  color: '#FFFFFF',
+                  border: '1px solid rgba(255,255,255,0.4)',
                   borderRadius: '6px',
                   padding: '4px 8px',
                   fontSize: '0.75rem',
-                  textDecoration: 'none'
+                  textDecoration: 'none',
+                  fontWeight: 800
                 }}>
                 ↗
               </Link>
@@ -343,10 +339,11 @@ export default function AIAssistantWidget() {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#94A3B8',
+                  color: '#FFFFFF',
                   fontSize: '1.2rem',
                   cursor: 'pointer',
-                  padding: '2px 6px'
+                  padding: '2px 6px',
+                  fontWeight: 900
                 }}>
                 ✕
               </button>
@@ -355,9 +352,9 @@ export default function AIAssistantWidget() {
 
           {/* Quick Prompt Pills */}
           <div style={{
-            background: '#111827',
+            background: '#FFF7ED',
             padding: '8px 12px',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            borderBottom: '1px solid #FED7AA',
             display: 'flex',
             gap: '6px',
             overflowX: 'auto',
@@ -368,13 +365,13 @@ export default function AIAssistantWidget() {
                 key={i}
                 onClick={() => handleSend(pill)}
                 style={{
-                  background: 'rgba(245, 158, 11, 0.1)',
-                  color: '#FDE68A',
-                  border: '1px solid rgba(245, 158, 11, 0.25)',
+                  background: '#FFFFFF',
+                  color: '#C2410C',
+                  border: '1px solid #FED7AA',
                   borderRadius: '12px',
                   padding: '3px 10px',
                   fontSize: '0.7rem',
-                  fontWeight: 600,
+                  fontWeight: 700,
                   cursor: 'pointer',
                   flexShrink: 0
                 }}>
@@ -391,7 +388,7 @@ export default function AIAssistantWidget() {
             display: 'flex',
             flexDirection: 'column',
             gap: '12px',
-            background: '#090D16'
+            background: '#FFFDF9'
           }}>
             {messages.map((m, idx) => {
               const isU = m.role === 'user';
@@ -409,30 +406,34 @@ export default function AIAssistantWidget() {
                   )}
                   <div style={{
                     maxWidth: '82%',
-                    background: isU ? '#2563EB' : 'rgba(30, 41, 59, 0.95)',
-                    color: '#FFFFFF',
+                    background: isU ? 'linear-gradient(135deg, #EA580C, #D97706)' : '#FFF7ED',
+                    color: isU ? '#FFFFFF' : '#1E293B',
                     borderRadius: isU ? '14px 14px 2px 14px' : '14px 14px 14px 2px',
                     padding: '10px 14px',
                     fontSize: '0.84rem',
                     lineHeight: '1.5',
-                    border: isU ? 'none' : '1px solid rgba(255,255,255,0.08)'
+                    border: isU ? 'none' : '1px solid #FED7AA',
+                    boxShadow: isU ? '0 2px 8px rgba(234, 88, 12, 0.25)' : '0 2px 6px rgba(0,0,0,0.04)'
                   }}>
                     {m.text}
 
                     {!isU && (
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', paddingTop: '4px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-                        <span style={{ fontSize: '0.65rem', color: '#94A3B8' }}>{m.timestamp}</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', paddingTop: '4px', borderTop: '1px solid #FED7AA' }}>
+                        <span style={{ fontSize: '0.65rem', color: '#7C2D12', fontWeight: 600 }}>{m.timestamp}</span>
                         <button
                           onClick={() => speakText(m.text, idx)}
                           style={{
-                            background: 'none',
-                            border: 'none',
-                            color: '#FCD34D',
+                            background: '#FFFFFF',
+                            border: '1px solid #FED7AA',
+                            borderRadius: '4px',
+                            color: '#EA580C',
                             fontSize: '0.7rem',
+                            fontWeight: 700,
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '3px'
+                            gap: '3px',
+                            padding: '2px 6px'
                           }}>
                           <span>{speakingIdx === idx ? '⏹️' : '🔊'}</span>
                           <span>{speakingIdx === idx ? 'थांबवा' : 'ऐका'}</span>
@@ -445,7 +446,7 @@ export default function AIAssistantWidget() {
             })}
 
             {loading && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#FCD34D', fontSize: '0.78rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#EA580C', fontSize: '0.78rem', fontWeight: 700 }}>
                 <span className="spin">⚙️</span>
                 <span>AI विचार करत आहे...</span>
               </div>
@@ -455,12 +456,12 @@ export default function AIAssistantWidget() {
 
           {/* Input Footer */}
           <div style={{
-            background: '#111827',
+            background: '#FFFFFF',
             padding: '10px 12px',
-            borderTop: '1px solid rgba(255,255,255,0.08)'
+            borderTop: '1px solid #FED7AA'
           }}>
             {isListening && (
-              <div style={{ fontSize: '0.72rem', color: '#F87171', marginBottom: '6px', fontWeight: 700 }}>
+              <div style={{ fontSize: '0.72rem', color: '#DC2626', marginBottom: '6px', fontWeight: 800 }}>
                 🔴 ऐकत आहे... कृपया बोला...
               </div>
             )}
@@ -478,9 +479,9 @@ export default function AIAssistantWidget() {
                   width: '38px',
                   height: '38px',
                   borderRadius: '10px',
-                  background: isListening ? '#EF4444' : 'rgba(245, 158, 11, 0.15)',
-                  color: isListening ? '#FFF' : '#F59E0B',
-                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  background: isListening ? '#DC2626' : '#FFF7ED',
+                  color: isListening ? '#FFF' : '#EA580C',
+                  border: '1px solid #FED7AA',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -498,13 +499,14 @@ export default function AIAssistantWidget() {
                 placeholder="प्रश्न विचारा..."
                 style={{
                   flex: 1,
-                  background: 'rgba(0,0,0,0.4)',
-                  border: '1px solid rgba(255,255,255,0.15)',
+                  background: '#FFF7ED',
+                  border: '1px solid #FED7AA',
                   borderRadius: '8px',
                   padding: '8px 12px',
-                  color: '#FFFFFF',
+                  color: '#1E293B',
                   fontSize: '0.84rem',
-                  outline: 'none'
+                  outline: 'none',
+                  fontWeight: 600
                 }}
               />
 
@@ -512,14 +514,15 @@ export default function AIAssistantWidget() {
                 type="submit"
                 disabled={loading || !inputMsg.trim()}
                 style={{
-                  background: !inputMsg.trim() || loading ? 'rgba(255,255,255,0.1)' : '#F59E0B',
-                  color: !inputMsg.trim() || loading ? '#64748B' : '#000000',
+                  background: !inputMsg.trim() || loading ? '#E2E8F0' : 'linear-gradient(135deg, #EA580C, #D97706)',
+                  color: !inputMsg.trim() || loading ? '#94A3B8' : '#FFFFFF',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '8px 14px',
-                  fontWeight: 800,
+                  fontWeight: 900,
                   fontSize: '0.82rem',
-                  cursor: !inputMsg.trim() || loading ? 'not-allowed' : 'pointer'
+                  cursor: !inputMsg.trim() || loading ? 'not-allowed' : 'pointer',
+                  boxShadow: inputMsg.trim() ? '0 2px 8px rgba(234, 88, 12, 0.3)' : 'none'
                 }}>
                 ➔
               </button>
