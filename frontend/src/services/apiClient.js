@@ -1,6 +1,18 @@
 // Central API Client connecting React Frontend to Express Backend Server (Port 5000)
 
-const BASE_URL = '/api';
+const BACKEND_PORT = 5000;
+function getBaseUrl() {
+  if (typeof window !== 'undefined') {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      if (window.location.port !== String(BACKEND_PORT)) {
+        return `http://${window.location.hostname}:${BACKEND_PORT}/api`;
+      }
+    }
+  }
+  return '/api';
+}
+
+const BASE_URL = getBaseUrl();
 
 function getAuthHeaders() {
   const token = typeof window !== 'undefined' ? localStorage.getItem('cm_jwt_token') : null;
@@ -13,16 +25,34 @@ function getAuthHeaders() {
 
 async function fetchJson(endpoint, options = {}) {
   try {
-    const res = await fetch(`${BASE_URL}${endpoint}`, {
-      ...options,
-      headers: {
-        ...getAuthHeaders(),
-        ...(options.headers || {})
+    let url = `${BASE_URL}${endpoint}`;
+    let res;
+    try {
+      res = await fetch(url, {
+        ...options,
+        headers: {
+          ...getAuthHeaders(),
+          ...(options.headers || {})
+        }
+      });
+    } catch (directErr) {
+      if (url.startsWith('http')) {
+        url = `/api${endpoint}`;
+        res = await fetch(url, {
+          ...options,
+          headers: {
+            ...getAuthHeaders(),
+            ...(options.headers || {})
+          }
+        });
+      } else {
+        throw directErr;
       }
-    });
+    }
+
     const json = await res.json().catch(() => ({}));
     if (!res.ok) {
-      throw new Error(json.error || `HTTP error! status: ${res.status}`);
+      throw new Error(json.message || json.error || `HTTP error! status: ${res.status}`);
     }
     return json;
   } catch (err) {
