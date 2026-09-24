@@ -12,7 +12,34 @@ const ORAL_HISTORY_FILE = path.join(__dirname, '..', 'data_oral_history.json');
 class RealtimeDatabase {
   constructor() {
     this.data = {};
+    this.isSaving = false;
+    this.saveTimeout = null;
+    this.memberIdMap = new Map();
+    this.memberEmailMap = new Map();
+    this.memberPhoneMap = new Map();
     this.load();
+    this.rebuildIndices();
+
+    // Ensure pending writes flush synchronously on process termination
+    process.on('beforeExit', () => this.flushSync());
+    process.on('SIGINT', () => { this.flushSync(); process.exit(0); });
+    process.on('SIGTERM', () => { this.flushSync(); process.exit(0); });
+  }
+
+  rebuildIndices() {
+    this.memberIdMap.clear();
+    this.memberEmailMap.clear();
+    this.memberPhoneMap.clear();
+
+    const members = this.data.members || [];
+    for (const m of members) {
+      if (m.id) this.memberIdMap.set(String(m.id).toLowerCase(), m);
+      if (m.email) this.memberEmailMap.set(String(m.email).toLowerCase(), m);
+      if (m.phone) {
+        const cleanP = String(m.phone).replace(/[\s-]/g, '');
+        this.memberPhoneMap.set(cleanP, m);
+      }
+    }
   }
 
   load() {
@@ -242,11 +269,49 @@ class RealtimeDatabase {
   }
 
   save() {
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+    }
+    this.saveTimeout = setTimeout(() => {
+      this.flushAsync();
+    }, 50);
+    return true;
+  }
+
+  flushAsync() {
     try {
-      fs.writeFileSync(DB_FILE, JSON.stringify(this.data, null, 2), 'utf8');
+      const tmpFile = `${DB_FILE}.${Date.now()}.${Math.floor(Math.random() * 10000)}.tmp`;
+      const payload = JSON.stringify(this.data, null, 2);
+      fs.writeFile(tmpFile, payload, 'utf8', (err) => {
+        if (err) {
+          console.error('[RealtimeDB] Error writing temp db file:', err.message);
+          return;
+        }
+        fs.rename(tmpFile, DB_FILE, (renameErr) => {
+          if (renameErr) {
+            console.error('[RealtimeDB] Error atomically updating db.json:', renameErr.message);
+          }
+        });
+      });
       return true;
     } catch (err) {
-      console.error('[RealtimeDB] Error writing to db.json:', err.message);
+      console.error('[RealtimeDB] Async flush error:', err.message);
+      return false;
+    }
+  }
+
+  flushSync() {
+    try {
+      if (this.saveTimeout) {
+        clearTimeout(this.saveTimeout);
+        this.saveTimeout = null;
+      }
+      const tmpFile = `${DB_FILE}.sync.tmp`;
+      fs.writeFileSync(tmpFile, JSON.stringify(this.data, null, 2), 'utf8');
+      fs.renameSync(tmpFile, DB_FILE);
+      return true;
+    } catch (err) {
+      console.error('[RealtimeDB] Error flushing sync:', err.message);
       return false;
     }
   }
@@ -259,6 +324,11 @@ class RealtimeDatabase {
   }
 
   findById(name, id) {
+    if (!id) return null;
+    if (name === 'members') {
+      const indexed = this.memberIdMap.get(String(id).toLowerCase());
+      if (indexed) return indexed;
+    }
     const col = this.getCollection(name);
     return col.find(item => String(item.id) === String(id) || String(item._id) === String(id));
   }
@@ -272,6 +342,13 @@ class RealtimeDatabase {
       item.createdAt = new Date().toISOString();
     }
     col.unshift(item);
+
+    if (name === 'members') {
+      if (item.id) this.memberIdMap.set(String(item.id).toLowerCase(), item);
+      if (item.email) this.memberEmailMap.set(String(item.email).toLowerCase(), item);
+      if (item.phone) this.memberPhoneMap.set(String(item.phone).replace(/[\s-]/g, ''), item);
+    }
+
     this.save();
     return item;
   }
@@ -286,6 +363,14 @@ class RealtimeDatabase {
       ...updates,
       updatedAt: new Date().toISOString()
     };
+
+    if (name === 'members') {
+      const updated = col[index];
+      if (updated.id) this.memberIdMap.set(String(updated.id).toLowerCase(), updated);
+      if (updated.email) this.memberEmailMap.set(String(updated.email).toLowerCase(), updated);
+      if (updated.phone) this.memberPhoneMap.set(String(updated.phone).replace(/[\s-]/g, ''), updated);
+    }
+
     this.save();
     return col[index];
   }
@@ -295,7 +380,13 @@ class RealtimeDatabase {
     const index = col.findIndex(item => String(item.id) === String(id) || String(item._id) === String(id));
     if (index === -1) return false;
 
-    col.splice(index, 1);
+    const removed = col.splice(index, 1)[0];
+    if (name === 'members' && removed) {
+      if (removed.id) this.memberIdMap.delete(String(removed.id).toLowerCase());
+      if (removed.email) this.memberEmailMap.delete(String(removed.email).toLowerCase());
+      if (removed.phone) this.memberPhoneMap.delete(String(removed.phone).replace(/[\s-]/g, ''));
+    }
+
     this.save();
     return true;
   }

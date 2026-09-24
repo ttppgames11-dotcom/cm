@@ -16,7 +16,11 @@
     "preview": "npm run preview --prefix frontend",
     "db:seed": "node database/seed.js",
     "client": "npm run dev --prefix frontend",
-    "server": "npm run dev --prefix backend"
+    "server": "npm run dev --prefix backend",
+    "cluster": "node backend/cluster.js",
+    "loadbalancer": "node loadbalancer/balancer.js",
+    "test:security": "node test-security-and-load.mjs",
+    "test:apis": "node test-all-apis.mjs"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
