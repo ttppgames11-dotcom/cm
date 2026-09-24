@@ -27,9 +27,14 @@ router.get('/metrics', authenticateToken, requireRole('admin', 'ceo', 'superadmi
     districtDistribution[dist] = (districtDistribution[dist] || 0) + 1;
   }
 
+  const now = Date.now();
+  const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
+  const activeUsersNow = members.filter(m => m.last_active_at && (now - new Date(m.last_active_at).getTime() <= FIFTEEN_MINUTES_MS)).length;
+
   const metrics = {
     overview: {
       totalRegisteredMembers: members.length,
+      activeUsersNow: activeUsersNow,
       verifiedMembersCount: members.filter(m => m.verified).length,
       pendingVerificationsCount: members.filter(m => !m.verified).length,
       registeredBusinessesCount: businesses.length,
@@ -280,8 +285,31 @@ router.post('/site-content/reset', authenticateToken, requireRole('admin', 'ceo'
 
 // GET /api/admin/users - List all users with filtering & statistics
 router.get('/users', authenticateToken, requireRole('superadmin', 'admin', 'ceo', 'district_admin'), (req, res) => {
-  const { search, role, verified, district, tier } = req.query;
+  const { search, role, verified, district, tier, active, online } = req.query;
   let members = db.getCollection('members');
+  const now = Date.now();
+  const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
+
+  // Formatting helper for user activity timestamp
+  const formatLastActive = (iso) => {
+    if (!iso) return 'काही वेळापूर्वी';
+    const diffMs = now - new Date(iso).getTime();
+    if (diffMs < 0 || diffMs < 2 * 60 * 1000) return 'आत्ताच सक्रिय (Online Now)';
+    const mins = Math.floor(diffMs / (60 * 1000));
+    if (mins < 60) return `${mins} मिनिटांपूर्वी`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours} तासांपूर्वी`;
+    const days = Math.floor(hours / 24);
+    return `${days} दिवसांपूर्वी`;
+  };
+
+  // Filter for active/online users if requested
+  if (active === 'true' || online === 'true' || active === true) {
+    members = members.filter(m => {
+      if (!m.last_active_at) return false;
+      return (now - new Date(m.last_active_at).getTime()) <= FIFTEEN_MINUTES_MS;
+    });
+  }
 
   if (role && role !== 'all') {
     members = members.filter(m => (m.role || 'member').toLowerCase() === role.toLowerCase());
@@ -313,13 +341,23 @@ router.get('/users', authenticateToken, requireRole('superadmin', 'admin', 'ceo'
     );
   }
 
-  // Safe members without password hashes
-  const safeMembers = members.map(({ password_hash, ...m }) => m);
+  // Safe members with online status tags
+  const safeMembers = members.map(({ password_hash, ...m }) => {
+    const isOnline = m.last_active_at ? (now - new Date(m.last_active_at).getTime() <= FIFTEEN_MINUTES_MS) : false;
+    return {
+      ...m,
+      isOnline,
+      lastActiveFormatted: formatLastActive(m.last_active_at)
+    };
+  });
 
   // Quick stats
   const allMembers = db.getCollection('members');
+  const activeCount = allMembers.filter(m => m.last_active_at && (now - new Date(m.last_active_at).getTime() <= FIFTEEN_MINUTES_MS)).length;
+
   const stats = {
     total: allMembers.length,
+    activeUsersNow: activeCount,
     superadmins: allMembers.filter(m => m.role === 'superadmin').length,
     admins: allMembers.filter(m => m.role === 'admin' || m.role === 'ceo').length,
     districtHeads: allMembers.filter(m => m.role === 'district_admin').length,
@@ -331,6 +369,7 @@ router.get('/users', authenticateToken, requireRole('superadmin', 'admin', 'ceo'
   return sendSuccess(res, 'वापरकर्ते यादी प्राप्त झाली', {
     users: safeMembers,
     count: safeMembers.length,
+    activeCount,
     stats
   });
 });

@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { sendError } from '../utils/response.js';
+import { db } from '../db/realtimeDb.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'connect_maratha_secret_key_2026';
 
@@ -16,6 +17,13 @@ export function authenticateToken(req, res, next) {
       return sendError(res, 'अवैध किंवा मुदत संपलेले टोकन (Invalid or expired token)', 'AUTH_TOKEN_INVALID', 403);
     }
     req.user = user;
+    if (user && user.id) {
+      try {
+        db.touchUserActivity(user.id);
+      } catch (e) {
+        // Silently continue
+      }
+    }
     next();
   });
 }
@@ -28,6 +36,13 @@ export function optionalToken(req, res, next) {
     jwt.verify(token, JWT_SECRET, (err, user) => {
       if (!err && user) {
         req.user = user;
+        if (user.id) {
+          try {
+            db.touchUserActivity(user.id);
+          } catch (e) {
+            // Silently continue
+          }
+        }
       }
       next();
     });

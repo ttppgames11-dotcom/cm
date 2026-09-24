@@ -171,8 +171,18 @@ class RealtimeDatabase {
         joined: new Date().toISOString().split('T')[0],
         verified: true,
         verificationStatus: 'प्रमाणित (Verified)',
+        last_active_at: new Date().toISOString(),
         created_at: new Date().toISOString()
       });
+    }
+
+    // Initialize active timestamps for core leadership accounts if missing
+    for (const m of (this.data.members || [])) {
+      if (!m.last_active_at) {
+        if (m.role === 'superadmin' || m.role === 'admin' || m.role === 'ceo' || m.role === 'district_admin') {
+          m.last_active_at = new Date().toISOString();
+        }
+      }
     }
 
     // Seed default hotels if empty
@@ -398,6 +408,15 @@ class RealtimeDatabase {
   findOne(name, predicate) {
     const col = this.getCollection(name);
     return col.find(predicate);
+  }
+
+  touchUserActivity(userId) {
+    if (!userId) return;
+    const member = this.memberIdMap.get(String(userId).toLowerCase()) || this.findById('members', userId);
+    if (member) {
+      member.last_active_at = new Date().toISOString();
+      this.save();
+    }
   }
 
   addAuditLog(action, performedBy, details = {}) {

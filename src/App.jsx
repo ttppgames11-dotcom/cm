@@ -38,6 +38,7 @@ import CEODashboardPage from './pages/admin/CEODashboardPage';
 import DistrictAdminCRM from './pages/admin/DistrictAdminCRM';
 import ChapterPresidentCRM from './pages/admin/ChapterPresidentCRM';
 import SevaHelpdeskCRM from './pages/admin/SevaHelpdeskCRM';
+import FinanceLedgerCRM from './pages/admin/FinanceLedgerCRM';
 import CRMRoleHubPage from './pages/admin/CRMRoleHubPage';
 import SiteContentEditorPage from './pages/admin/SiteContentEditorPage';
 import SuperAdminDashboardPage from './pages/admin/SuperAdminDashboardPage';
@@ -350,18 +351,33 @@ export default function App() {
             <Route path="/more" element={<MorePortalsPage />} />
             <Route path="/portals" element={<MorePortalsPage />} />
 
-            {/* Role-Specific Live Enterprise CRM Suite */}
-            <Route path="/crm" element={<AdminERPPage />} />
+            {/* Role-Specific Live Enterprise CRM Suite — Dedicated Dashboards for Every Role */}
+            <Route path="/crm" element={<CRMRoleHubPage />} />
             <Route path="/crm/roles" element={<CRMRoleHubPage />} />
-            <Route path="/admin" element={<AdminERPPage />} />
-            <Route path="/crm/admin" element={<AdminERPPage />} />
-            <Route path="/crm/ceo" element={<AdminERPPage />} />
-            <Route path="/ceo" element={<AdminERPPage />} />
-            <Route path="/ceo-dashboard" element={<AdminERPPage />} />
-            <Route path="/crm/district" element={<AdminERPPage />} />
-            <Route path="/crm/chapter" element={<AdminERPPage />} />
-            <Route path="/crm/helpdesk" element={<AdminERPPage />} />
-            <Route path="/crm/seva" element={<AdminERPPage />} />
+            <Route path="/admin" element={<CRMRoleHubPage />} />
+            <Route path="/crm/admin" element={<SuperAdminDashboardPage />} />
+            <Route path="/superadmin" element={<SuperAdminDashboardPage />} />
+            <Route path="/admin/superadmin" element={<SuperAdminDashboardPage />} />
+            <Route path="/admin/users" element={<SuperAdminDashboardPage />} />
+            <Route path="/crm/superadmin" element={<SuperAdminDashboardPage />} />
+
+            <Route path="/crm/ceo" element={<CEODashboardPage />} />
+            <Route path="/ceo" element={<CEODashboardPage />} />
+            <Route path="/ceo-dashboard" element={<CEODashboardPage />} />
+
+            <Route path="/crm/district" element={<DistrictAdminCRM />} />
+            <Route path="/admin/district" element={<DistrictAdminCRM />} />
+
+            <Route path="/crm/chapter" element={<ChapterPresidentCRM />} />
+            <Route path="/admin/chapter" element={<ChapterPresidentCRM />} />
+
+            <Route path="/crm/helpdesk" element={<SevaHelpdeskCRM />} />
+            <Route path="/crm/seva" element={<SevaHelpdeskCRM />} />
+            <Route path="/admin/seva" element={<SevaHelpdeskCRM />} />
+
+            <Route path="/crm/finance" element={<FinanceLedgerCRM />} />
+            <Route path="/admin/finance" element={<FinanceLedgerCRM />} />
+
             <Route path="/reports" element={<AdminERPPage />} />
             <Route path="/crm/reports" element={<AdminERPPage />} />
             <Route path="/admin/reports" element={<AdminERPPage />} />
@@ -369,10 +385,6 @@ export default function App() {
             <Route path="/admin/content" element={<SiteContentEditorPage />} />
             <Route path="/cms" element={<SiteContentEditorPage />} />
             <Route path="/crm/cms" element={<SiteContentEditorPage />} />
-            <Route path="/superadmin" element={<SuperAdminDashboardPage />} />
-            <Route path="/admin/superadmin" element={<SuperAdminDashboardPage />} />
-            <Route path="/admin/users" element={<SuperAdminDashboardPage />} />
-            <Route path="/crm/superadmin" element={<SuperAdminDashboardPage />} />
 
             {/* Newly Added Community Ecosystem Modules with Full URL Variations */}
             <Route path="/doctors" element={<DoctorsDirectoryPage />} />

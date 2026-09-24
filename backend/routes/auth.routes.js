@@ -116,6 +116,7 @@ router.post('/login', async (req, res) => {
     delete safeProfile.password_hash;
 
     const token = generateToken(safeProfile);
+    db.touchUserActivity(member.id);
     db.addAuditLog('MEMBER_LOGIN', member.id, { identifier });
 
     return sendSuccess(res, 'लॉगिन यशस्वी झाले!', {
@@ -126,6 +127,18 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     return sendError(res, err.message, 'LOGIN_FAILED', 500);
   }
+});
+
+// POST /api/auth/heartbeat
+// Client-side heartbeat to keep online status fresh
+router.post('/heartbeat', authenticateToken, (req, res) => {
+  if (req.user && req.user.id) {
+    db.touchUserActivity(req.user.id);
+  }
+  return sendSuccess(res, 'हार्टबीट यशस्वी (Heartbeat acknowledged)', {
+    userId: req.user?.id,
+    activeAt: new Date().toISOString()
+  });
 });
 
 // GET /api/auth/me

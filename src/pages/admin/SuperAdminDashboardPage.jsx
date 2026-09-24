@@ -37,6 +37,7 @@ export default function SuperAdminDashboardPage() {
   const [userSearch, setUserSearch] = useState('');
   const [userRoleFilter, setUserRoleFilter] = useState('all');
   const [userVerifiedFilter, setUserVerifiedFilter] = useState('all');
+  const [userActiveFilter, setUserActiveFilter] = useState('all'); // 'all' | 'online'
   const [itemSearch, setItemSearch] = useState('');
 
   // Modals state
@@ -54,7 +55,12 @@ export default function SuperAdminDashboardPage() {
     setLoading(true);
     try {
       const [usersRes, docsRes, srvsRes, htlsRes, infoRes, rolesRes] = await Promise.all([
-        apiClient.getAdminUsers({ search: userSearch, role: userRoleFilter, verified: userVerifiedFilter }).catch(() => ({ users: [], stats: {} })),
+        apiClient.getAdminUsers({
+          search: userSearch,
+          role: userRoleFilter,
+          verified: userVerifiedFilter,
+          active: userActiveFilter === 'online' ? 'true' : undefined
+        }).catch(() => ({ users: [], stats: {} })),
         apiClient.getAdminDoctors().catch(() => []),
         apiClient.getAdminServices().catch(() => []),
         apiClient.getAdminHotels().catch(() => []),
@@ -79,12 +85,35 @@ export default function SuperAdminDashboardPage() {
 
   useEffect(() => {
     loadAllData();
-  }, [userRoleFilter, userVerifiedFilter]);
+  }, [userRoleFilter, userVerifiedFilter, userActiveFilter]);
+
+  // Periodic polling to keep live active users fresh
+  useEffect(() => {
+    const pollInterval = setInterval(() => {
+      apiClient.getAdminUsers({
+        search: userSearch,
+        role: userRoleFilter,
+        verified: userVerifiedFilter,
+        active: userActiveFilter === 'online' ? 'true' : undefined
+      }).then(res => {
+        if (res && res.users) {
+          setUsers(res.users);
+          if (res.stats) setUserStats(res.stats);
+        }
+      }).catch(() => {});
+    }, 20000);
+    return () => clearInterval(pollInterval);
+  }, [userSearch, userRoleFilter, userVerifiedFilter, userActiveFilter]);
 
   // Handle user search on enter or debounce
   const handleUserSearchSubmit = (e) => {
     e.preventDefault();
-    apiClient.getAdminUsers({ search: userSearch, role: userRoleFilter, verified: userVerifiedFilter })
+    apiClient.getAdminUsers({
+      search: userSearch,
+      role: userRoleFilter,
+      verified: userVerifiedFilter,
+      active: userActiveFilter === 'online' ? 'true' : undefined
+    })
       .then(res => {
         setUsers(res.users || []);
         setUserStats(res.stats || {});
@@ -606,6 +635,42 @@ export default function SuperAdminDashboardPage() {
             <div style={{ fontSize: '1.9rem', fontWeight: 900, color: '#38BDF8', marginTop: '4px' }}>{userStats.total || users.length}</div>
             <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '4px' }}>प्रमाणित: {userStats.verifiedMembers || 0}</div>
           </div>
+          <div
+            onClick={() => setUserActiveFilter(prev => prev === 'online' ? 'all' : 'online')}
+            style={{
+              background: userActiveFilter === 'online'
+                ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(6, 78, 59, 0.6))'
+                : 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 78, 59, 0.35))',
+              padding: '18px',
+              borderRadius: '12px',
+              border: userActiveFilter === 'online' ? '2px solid #10B981' : '1px solid rgba(16, 185, 129, 0.45)',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              boxShadow: userActiveFilter === 'online' ? '0 0 20px rgba(16, 185, 129, 0.3)' : 'none'
+            }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ fontSize: '0.8rem', color: '#6EE7B7', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981', display: 'inline-block', boxShadow: '0 0 10px #10B981' }}></span>
+                🟢 थेट सक्रिय (Active Now)
+              </div>
+              <span style={{
+                fontSize: '0.7rem',
+                padding: '2px 8px',
+                borderRadius: '10px',
+                background: userActiveFilter === 'online' ? '#10B981' : 'rgba(16, 185, 129, 0.25)',
+                color: userActiveFilter === 'online' ? '#000' : '#A7F3D0',
+                fontWeight: 700
+              }}>
+                {userActiveFilter === 'online' ? 'फिल्टर सुरू ✓' : 'Live'}
+              </span>
+            </div>
+            <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#10B981', marginTop: '6px', letterSpacing: '-0.5px' }}>
+              {userStats.activeUsersNow ?? users.filter(u => u.isOnline).length}
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#A7F3D0', marginTop: '4px' }}>
+              {userActiveFilter === 'online' ? 'केवळ सक्रिय पाहत आहात (क्लिक करा)' : 'गेल्या १५ मिनिटांत ऑनलाइन (क्लिक करा)'}
+            </div>
+          </div>
           <div style={{ background: '#1E293B', padding: '18px', borderRadius: '12px', border: '1px solid #334155' }}>
             <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>👑 SuperAdmins & Heads</div>
             <div style={{ fontSize: '1.9rem', fontWeight: 900, color: '#FBBF24', marginTop: '4px' }}>
@@ -713,6 +778,22 @@ export default function SuperAdminDashboardPage() {
                   <option value="false">⏳ प्रलंबित (Pending)</option>
                 </select>
 
+                <select
+                  value={userActiveFilter}
+                  onChange={(e) => setUserActiveFilter(e.target.value)}
+                  style={{
+                    padding: '10px 14px',
+                    borderRadius: '8px',
+                    background: userActiveFilter === 'online' ? '#064E3B' : '#1E293B',
+                    border: userActiveFilter === 'online' ? '1px solid #10B981' : '1px solid #334155',
+                    color: userActiveFilter === 'online' ? '#6EE7B7' : '#FFF',
+                    fontWeight: userActiveFilter === 'online' ? 700 : 500,
+                    fontSize: '0.85rem'
+                  }}>
+                  <option value="all">सर्व स्थिती (All Users)</option>
+                  <option value="online">🟢 केवळ सक्रिय (Online Now Only)</option>
+                </select>
+
                 <button
                   onClick={handleOpenAddUser}
                   style={{
@@ -738,6 +819,7 @@ export default function SuperAdminDashboardPage() {
                 <thead>
                   <tr style={{ background: '#0F172A', color: '#94A3B8', borderBottom: '1px solid #334155' }}>
                     <th style={{ padding: '14px 16px' }}>वापरकर्ता (User)</th>
+                    <th style={{ padding: '14px 16px' }}>सक्रिय स्थिती (Status)</th>
                     <th style={{ padding: '14px 16px' }}>संपर्क व ईमेल</th>
                     <th style={{ padding: '14px 16px' }}>स्थान व कुळ</th>
                     <th style={{ padding: '14px 16px' }}>भूमिका (Role)</th>
@@ -749,7 +831,7 @@ export default function SuperAdminDashboardPage() {
                 <tbody>
                   {users.length === 0 ? (
                     <tr>
-                      <td colSpan="7" style={{ padding: '36px', textAlign: 'center', color: '#64748B' }}>
+                      <td colSpan="8" style={{ padding: '36px', textAlign: 'center', color: '#64748B' }}>
                         कोणताही वापरकर्ता सापडला नाही.
                       </td>
                     </tr>
@@ -757,11 +839,54 @@ export default function SuperAdminDashboardPage() {
                     users.map(u => (
                       <tr key={u.id} style={{ borderBottom: '1px solid #334155' }}>
                         <td style={{ padding: '14px 16px' }}>
-                          <div style={{ fontWeight: 700, color: '#F8FAFC', fontSize: '0.92rem' }}>
-                            {u.role === 'superadmin' ? '👑 ' : u.role === 'admin' ? '🏛️ ' : '👤 '}
-                            {u.name}
+                          <div style={{ fontWeight: 700, color: '#F8FAFC', fontSize: '0.92rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span>{u.role === 'superadmin' ? '👑 ' : u.role === 'admin' ? '🏛️ ' : '👤 '}</span>
+                            <span>{u.name}</span>
+                            {u.isOnline && (
+                              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981', display: 'inline-block' }} title="ऑनलाइन"></span>
+                            )}
                           </div>
                           <div style={{ fontSize: '0.75rem', color: '#64748B' }}>ID: {u.id}</div>
+                        </td>
+                        <td style={{ padding: '14px 16px' }}>
+                          {u.isOnline ? (
+                            <span style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              background: 'rgba(16, 185, 129, 0.2)',
+                              border: '1px solid rgba(16, 185, 129, 0.5)',
+                              color: '#34D399',
+                              padding: '4px 10px',
+                              borderRadius: '20px',
+                              fontSize: '0.78rem',
+                              fontWeight: 800
+                            }}>
+                              <span style={{
+                                width: '7px',
+                                height: '7px',
+                                borderRadius: '50%',
+                                background: '#10B981',
+                                display: 'inline-block',
+                                boxShadow: '0 0 8px #10B981'
+                              }}></span>
+                              🟢 सक्रिय (Active Now)
+                            </span>
+                          ) : (
+                            <span style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '5px',
+                              background: '#0F172A',
+                              border: '1px solid #334155',
+                              color: '#94A3B8',
+                              padding: '4px 8px',
+                              borderRadius: '20px',
+                              fontSize: '0.75rem'
+                            }}>
+                              ⚪ {u.lastActiveFormatted || 'काही वेळापूर्वी'}
+                            </span>
+                          )}
                         </td>
                         <td style={{ padding: '14px 16px' }}>
                           <div style={{ color: '#E2E8F0' }}>📞 {u.phone}</div>
