@@ -350,18 +350,18 @@ export default function App() {
             <Route path="/more" element={<MorePortalsPage />} />
             <Route path="/portals" element={<MorePortalsPage />} />
 
-            {/* Role-Specific Fully Separate CRM Suite */}
-            <Route path="/crm" element={<CRMRoleHubPage />} />
+            {/* Role-Specific Live Enterprise CRM Suite */}
+            <Route path="/crm" element={<AdminERPPage />} />
             <Route path="/crm/roles" element={<CRMRoleHubPage />} />
             <Route path="/admin" element={<AdminERPPage />} />
             <Route path="/crm/admin" element={<AdminERPPage />} />
-            <Route path="/crm/ceo" element={<CEODashboardPage />} />
-            <Route path="/ceo" element={<CEODashboardPage />} />
-            <Route path="/ceo-dashboard" element={<CEODashboardPage />} />
-            <Route path="/crm/district" element={<DistrictAdminCRM />} />
-            <Route path="/crm/chapter" element={<ChapterPresidentCRM />} />
-            <Route path="/crm/helpdesk" element={<SevaHelpdeskCRM />} />
-            <Route path="/crm/seva" element={<SevaHelpdeskCRM />} />
+            <Route path="/crm/ceo" element={<AdminERPPage />} />
+            <Route path="/ceo" element={<AdminERPPage />} />
+            <Route path="/ceo-dashboard" element={<AdminERPPage />} />
+            <Route path="/crm/district" element={<AdminERPPage />} />
+            <Route path="/crm/chapter" element={<AdminERPPage />} />
+            <Route path="/crm/helpdesk" element={<AdminERPPage />} />
+            <Route path="/crm/seva" element={<AdminERPPage />} />
             <Route path="/reports" element={<AdminERPPage />} />
             <Route path="/crm/reports" element={<AdminERPPage />} />
             <Route path="/admin/reports" element={<AdminERPPage />} />
