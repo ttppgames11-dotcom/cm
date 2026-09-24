@@ -94,5 +94,25 @@
     "language": "mr",
     "status": "Open",
     "timestamp": "2026-09-24T10:12:15.839Z"
+  },
+  {
+    "id": "TECH-REQ-078350",
+    "name": "वापरकर्ता",
+    "mobile": "+918805533476",
+    "email": "yashrajdyp@gmail.com",
+    "issue": "query",
+    "language": "mr",
+    "status": "Open",
+    "timestamp": "2026-09-24T10:17:58.350Z"
+  },
+  {
+    "id": "TECH-REQ-129005",
+    "name": "संभाजी मोरे",
+    "mobile": "+919876543210",
+    "email": "member@connectmaratha.org",
+    "issue": "सिंधुदुर्ग किल्ल्याच्या ऐतिहासिक तोफांची नोंद सापडत नाही.",
+    "language": "mr",
+    "status": "Open",
+    "timestamp": "2026-09-24T10:18:49.005Z"
   }
 ]

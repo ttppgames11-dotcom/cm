@@ -32,6 +32,45 @@ async function fetchJson(endpoint, options = {}) {
 }
 
 export const apiClient = {
+  // Generic HTTP Methods (used by AI agent & dynamic modules)
+  get: async (endpoint, options = {}) => {
+    return await fetchJson(endpoint.startsWith('/') ? endpoint : `/${endpoint}`, { method: 'GET', ...options });
+  },
+  post: async (endpoint, data = {}, options = {}) => {
+    return await fetchJson(endpoint.startsWith('/') ? endpoint : `/${endpoint}`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      ...options
+    });
+  },
+  put: async (endpoint, data = {}, options = {}) => {
+    return await fetchJson(endpoint.startsWith('/') ? endpoint : `/${endpoint}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      ...options
+    });
+  },
+  delete: async (endpoint, options = {}) => {
+    return await fetchJson(endpoint.startsWith('/') ? endpoint : `/${endpoint}`, { method: 'DELETE', ...options });
+  },
+
+  // Connect Maratha AI Agent API
+  aiChat: async (message, language = 'mr', history = []) => {
+    return await fetchJson('/ai/chat', {
+      method: 'POST',
+      body: JSON.stringify({ message, language, history })
+    });
+  },
+  aiSupport: async (supportData) => {
+    return await fetchJson('/ai/support', {
+      method: 'POST',
+      body: JSON.stringify(supportData)
+    });
+  },
+  aiHealth: async () => {
+    return await fetchJson('/ai/health');
+  },
+
   // Doctors API
   getDoctors: async (params = {}) => {
     const qs = new URLSearchParams(params).toString();
