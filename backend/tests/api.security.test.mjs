@@ -151,6 +151,16 @@ test('suspended members lose access immediately', async () => {
   await call('POST', `/admin/members/${c.member.id}/unsuspend`, { token: state.admin.token });
 });
 
+test('google sign-in rejects missing and forged tokens', async () => {
+  assert.equal((await call('POST', '/auth/google', { body: {} })).status, 400);
+  const forged = await call('POST', '/auth/google', { body: { idToken: 'not-a-real-token', register: true } });
+  assert.equal(forged.status, 401);
+  assert.equal(forged.json.code, 'INVALID_GOOGLE_TOKEN');
+  // register:true must not create anything without a verified token
+  const created = await call('POST', '/auth/login', { body: { identifier: 'not-a-real-token@x.com', password: 'x' } });
+  assert.equal(created.json.code, 'USER_NOT_FOUND');
+});
+
 test('donations cannot be faked', async () => {
   const r = await call('POST', '/donations/donate', { token: state.a.token, body: { amount: 5000, campaign_id: 'C01' } });
   assert.equal(r.status, 503);

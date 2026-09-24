@@ -153,8 +153,9 @@ async function verifyGoogleIdToken(idToken) {
 }
 
 // POST /api/auth/google  { idToken }
-// Verifies the Google ID token, then logs in the member with that email or
-// creates a new one (stored in the members table) on first sign-in.
+// Verifies the Google ID token and logs in the member with that email.
+// Unknown emails get 404 USER_NOT_FOUND (the app then offers registration);
+// sending { register: true } creates the member row from the verified Google profile.
 router.post('/google', loginLimiter, async (req, res, next) => {
   try {
     const idToken = str(req.body.idToken, 5000);
@@ -168,11 +169,22 @@ router.post('/google', loginLimiter, async (req, res, next) => {
     }
 
     const email = String(info.email).trim().toLowerCase();
-    let member = await get(`SELECT ${PUBLIC_MEMBER_COLUMNS}, status FROM members WHERE lower(email) = ?`, [email]);
+    let member = await get(`SELECT ${PUBLIC_MEMBER_COLUMNS}, status, auth_provider FROM members WHERE lower(email) = ?`, [email]);
     let isNewUser = false;
 
     if (member && member.status !== 'active') {
       return res.status(403).json({ success: false, code: 'ACCOUNT_SUSPENDED', error: 'आपले खाते निलंबित करण्यात आले आहे.' });
+    }
+
+    // A Google login must never take over an account that was created with a
+    // password (anyone could have pre-registered someone else's email).
+    if (member && member.auth_provider !== 'google') {
+      return res.status(409).json({ success: false, code: 'EMAIL_REGISTERED_WITH_PASSWORD', error: 'हा ईमेल पासवर्डसह नोंदणीकृत आहे. कृपया आयडी/ईमेल व पासवर्डने लॉगिन करा.' });
+    }
+
+    // Unknown Google account: only create it when the user explicitly chose to register.
+    if (!member && req.body.register !== true) {
+      return res.status(404).json({ success: false, code: 'USER_NOT_FOUND', error: 'वापरकर्त्याची माहिती आढळली नाही. कृपया नोंदणी करा.' });
     }
 
     if (!member) {
@@ -189,6 +201,7 @@ router.post('/google', loginLimiter, async (req, res, next) => {
     }
 
     delete member.status;
+    delete member.auth_provider;
     await sessionResponse(req, res, isNewUser ? 201 : 200,
       isNewUser ? 'नोंदणी यशस्वी झाली!' : 'लॉगिन यशस्वी झाले!', withParsedLists(member), { isNewUser });
   } catch (err) {
