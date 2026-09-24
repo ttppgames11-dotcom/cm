@@ -105,34 +105,80 @@ const SOCIAL_WORKERS = [
 ];
 
 import { useToast } from '../../context/ToastContext';
-import dataStore from '../../services/dataStore';
+import apiClient from '../../services/apiClient';
 
 export default function SocialWorkersPage() {
   const { showToast } = useToast();
+  const [workersList, setWorkersList] = useState(SOCIAL_WORKERS);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false);
-  const [form, setForm] = useState({ name: '', phone: '', city: '', fieldOfInterest: 'जलसंधारण व पर्यावरण', hoursPerWeek: '५ तास' });
+  const [form, setForm] = useState({ name: '', phone: '', city: 'पुणे', fieldOfInterest: 'जलसंधारण व पर्यावरण', hoursPerWeek: '५ तास' });
   const [submitted, setSubmitted] = useState(false);
 
-  const filteredWorkers = SOCIAL_WORKERS.filter(w => {
+  useEffect(() => {
+    apiClient.getVolunteers()
+      .then(volunteers => {
+        if (Array.isArray(volunteers) && volunteers.length > 0) {
+          const formatted = volunteers.map(v => ({
+            name: v.name,
+            field: v.field || 'सामाजिक कार्य',
+            location: v.district || 'महाराष्ट्र',
+            experience: 'सक्रिय स्वयंसेवक',
+            impact: 'मराठा महासंघ सेवा कक्ष स्वयंसेवक सहभाग',
+            icon: '🤝',
+            category: 'all',
+            phone: v.phone,
+            email: 'volunteer@connectmaratha.org',
+            awards: 'समाजमित्र'
+          }));
+          setWorkersList(prev => [...formatted, ...prev]);
+        }
+      })
+      .catch(err => console.warn('Could not load live volunteers:', err.message));
+  }, []);
+
+  const filteredWorkers = workersList.filter(w => {
     const matchesCategory = selectedCategory === 'all' || w.category === selectedCategory;
     const matchesSearch = w.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           w.field.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          w.location.toLowerCase().includes(searchQuery.toLowerCase());
+                          (w.location && w.location.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dataStore.addVolunteer(form);
-    setSubmitted(true);
-    showToast('🤝 स्वयंसेवक नोंदणी यशस्वीरीत्या पूर्ण झाली!', 'success');
-    setTimeout(() => {
-      setSubmitted(false);
-      setIsVolunteerModalOpen(false);
-      setForm({ name: '', phone: '', city: '', fieldOfInterest: 'जलसंधारण व पर्यावरण', hoursPerWeek: '५ तास' });
-    }, 1500);
+    try {
+      await apiClient.addVolunteer({
+        name: form.name,
+        phone: form.phone,
+        district: form.city,
+        field: form.fieldOfInterest,
+        availability: form.hoursPerWeek
+      });
+      const newWorker = {
+        name: form.name,
+        field: form.fieldOfInterest,
+        location: form.city,
+        experience: 'नवीन स्वयंसेवक',
+        impact: 'आताच नोंदणीकृत',
+        icon: '🤝',
+        category: 'all',
+        phone: form.phone,
+        email: 'volunteer@connectmaratha.org',
+        awards: 'नवीन स्वयंसेवक'
+      };
+      setWorkersList(prev => [newWorker, ...prev]);
+      setSubmitted(true);
+      showToast('🤝 स्वयंसेवक नोंदणी यशस्वीरीत्या पूर्ण झाली!', 'success');
+      setTimeout(() => {
+        setSubmitted(false);
+        setIsVolunteerModalOpen(false);
+        setForm({ name: '', phone: '', city: 'पुणे', fieldOfInterest: 'जलसंधारण व पर्यावरण', hoursPerWeek: '५ तास' });
+      }, 1500);
+    } catch (err) {
+      showToast(err.message || 'नोंदणी अयशस्वी', 'error');
+    }
   };
 
   return (

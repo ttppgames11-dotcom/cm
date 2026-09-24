@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 
 const orgsData = [
   {
@@ -112,18 +113,82 @@ const categories = [
 ];
 
 export default function MarathaOrganizationsPage() {
+  const [orgs, setOrgs] = useState(orgsData);
   const [selectedCat, setSelectedCat] = useState('सर्व संघटना');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const filtered = orgsData.filter((org) => {
+  useEffect(() => {
+    apiClient.getOrganizations().then((liveData) => {
+      if (liveData && liveData.length > 0) {
+        const mapped = liveData.map((o) => ({
+          id: o.id,
+          name: o.name,
+          category: o.category || 'सामाजिक',
+          established: o.regNo || o.established || 'नोंदणीकृत',
+          hq: o.city ? `${o.city}, महाराष्ट्र` : (o.hq || 'महाराष्ट्र'),
+          presence: o.district ? `${o.district} व इतर जिल्हे` : (o.presence || 'महाराष्ट्र'),
+          members: o.president ? `अध्यक्ष: ${o.president}` : (o.members || 'सक्रिय सदस्य'),
+          focus: o.workScope || o.focus || 'सामाजिक, शैक्षणिक व सांस्कृतिक कार्य',
+          icon: o.logo || o.icon || '🚩',
+          contact: o.contact || '+91 98220 99887'
+        }));
+        setOrgs(mapped);
+      }
+    }).catch(() => {});
+  }, []);
+
+  const handleAddOrg = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const form = e.target;
+    const name = form.elements['name'].value;
+    const cat = form.elements['category'].value;
+    const city = form.elements['city'].value;
+    const est = form.elements['est']?.value;
+    const phone = form.elements['phone'].value;
+    const scope = form.elements['scope']?.value;
+
+    try {
+      const res = await apiClient.addOrganization({
+        name,
+        regNo: est || 'संस्था क्र. MH-2026',
+        president: 'संस्थापक अध्यक्ष',
+        city,
+        district: city,
+        contact: phone.replace(/\D/g, '').slice(-10) || '9822011223',
+        workScope: scope || cat
+      });
+      const created = res.data?.organization || res.organization || {
+        id: `ORG-${Date.now().toString().slice(-4)}`,
+        name,
+        category: cat,
+        established: est || '२०२६',
+        hq: `${city}, महाराष्ट्र`,
+        presence: 'महाराष्ट्र',
+        members: 'सक्रिय सभासद',
+        focus: scope || 'सामाजिक व शैक्षणिक कार्य',
+        icon: '🚩',
+        contact: phone
+      };
+      setOrgs((prev) => [created, ...prev]);
+      setSubmitted(true);
+    } catch (err) {
+      alert(err.message || 'नोंदणी करताना त्रुटी आली.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const filtered = orgs.filter((org) => {
     const matchCat = selectedCat === 'सर्व संघटना' || org.category === selectedCat;
     const matchSearch =
-      org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      org.hq.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      org.focus.toLowerCase().includes(searchQuery.toLowerCase());
+      (org.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (org.hq || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (org.focus || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -475,22 +540,22 @@ export default function MarathaOrganizationsPage() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+              <form onSubmit={handleAddOrg}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <input required placeholder="संघटनेचे पूर्ण नाव *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                  <input name="name" required placeholder="संघटनेचे पूर्ण नाव *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <select style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}>
-                      {categories.filter(c => c !== 'सर्व संघटना').map(c => <option key={c}>{c}</option>)}
+                    <select name="category" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}>
+                      {categories.filter(c => c !== 'सर्व संघटना').map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
-                    <input required placeholder="मुख्यालय / शहर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                    <input name="city" required placeholder="मुख्यालय / शहर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <input placeholder="स्थापना वर्ष" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                    <input required type="tel" placeholder="अध्यक्ष / सचिव मोबाईल *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                    <input name="est" placeholder="स्थापना वर्ष" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                    <input name="phone" required type="tel" placeholder="अध्यक्ष / सचिव मोबाईल *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
                   </div>
-                  <textarea placeholder="संघटनेची मुख्य ध्येये व कार्यक्षेत्र" rows="3" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}></textarea>
-                  <button type="submit" style={{ background: '#B71C1C', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
-                    संघटना नोंदणी सादर करा
+                  <textarea name="scope" placeholder="संघटनेची मुख्य ध्येये व कार्यक्षेत्र" rows="3" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}></textarea>
+                  <button type="submit" disabled={isSubmitting} style={{ background: '#B71C1C', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', opacity: isSubmitting ? 0.7 : 1 }}>
+                    {isSubmitting ? 'नोंदणी सादर करत आहे...' : 'संघटना नोंदणी सादर करा'}
                   </button>
                 </div>
               </form>

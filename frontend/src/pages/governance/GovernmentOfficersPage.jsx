@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 
 const officersData = [
   {
@@ -115,19 +116,74 @@ const categories = [
 ];
 
 export default function GovernmentOfficersPage() {
+  const [officersList, setOfficersList] = useState(officersData);
   const [selectedCat, setSelectedCat] = useState('सर्व अधिकारी');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedOfficer, setSelectedOfficer] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [newOfficerForm, setNewOfficerForm] = useState({ name: '', category: 'IAS अधिकारी', designation: '', postingCity: 'मंत्रालय, मुंबई', department: 'सामान्य प्रशासन', contribution: '' });
 
-  const filtered = officersData.filter((o) => {
+  useEffect(() => {
+    apiClient.getOfficers()
+      .then(list => {
+        if (Array.isArray(list) && list.length > 0) {
+          const formatted = list.map(o => ({
+            id: o.id,
+            service: o.service || 'IAS',
+            name: o.name,
+            image: o.photo && o.photo.startsWith('http') ? o.photo : '/assets/images/officers/officer_tukaram.jpg',
+            cadre: o.batch || 'भारतीय प्रशासकीय सेवा',
+            designation: o.designation || 'वरिष्ठ अधिकारी',
+            location: o.postingCity || 'महाराष्ट्र',
+            department: o.department || 'सामान्य प्रशासन',
+            category: o.category || (o.designation && o.designation.includes('पोलीस') ? 'IPS अधिकारी' : 'IAS अधिकारी'),
+            icon: o.icon || '🏛️',
+            contribution: o.contribution || 'प्रशासकीय सेवा व जनकल्याण'
+          }));
+          setOfficersList(formatted);
+        }
+      })
+      .catch(err => console.warn('Could not load live officers:', err.message));
+  }, []);
+
+  const handleAddOfficerSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await apiClient.addOfficer({
+        name: newOfficerForm.name,
+        designation: newOfficerForm.designation,
+        department: newOfficerForm.department,
+        batch: newOfficerForm.category,
+        postingCity: newOfficerForm.postingCity
+      });
+      const added = {
+        id: 'OFF-' + Date.now(),
+        service: newOfficerForm.category.replace(' अधिकारी', ''),
+        name: newOfficerForm.name,
+        image: '/assets/images/officers/officer_tukaram.jpg',
+        cadre: newOfficerForm.category,
+        designation: newOfficerForm.designation,
+        location: newOfficerForm.postingCity,
+        department: newOfficerForm.department,
+        category: newOfficerForm.category,
+        icon: '🏛️',
+        contribution: newOfficerForm.contribution || 'प्रशासकीय सेवा'
+      };
+      setOfficersList(prev => [added, ...prev]);
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitted(true);
+    }
+  };
+
+  const filtered = officersList.filter((o) => {
     const matchCat = selectedCat === 'सर्व अधिकारी' || o.category === selectedCat;
     const matchSearch =
-      o.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      o.designation.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      o.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      o.location.toLowerCase().includes(searchQuery.toLowerCase());
+      (o.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (o.designation || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (o.department || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (o.location || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -481,11 +537,21 @@ export default function GovernmentOfficersPage() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+              <form onSubmit={handleAddOfficerSubmit}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <input required placeholder="अधिकाऱ्यांचे नाव *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                  <input
+                    required
+                    placeholder="अधिकाऱ्यांचे नाव *"
+                    value={newOfficerForm.name}
+                    onChange={(e) => setNewOfficerForm({ ...newOfficerForm, name: e.target.value })}
+                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+                  />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <select style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}>
+                    <select
+                      value={newOfficerForm.category}
+                      onChange={(e) => setNewOfficerForm({ ...newOfficerForm, category: e.target.value })}
+                      style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+                    >
                       <option>IAS अधिकारी</option>
                       <option>IPS अधिकारी</option>
                       <option>IFS अधिकारी</option>
@@ -493,12 +559,30 @@ export default function GovernmentOfficersPage() {
                       <option>महसूल व पोलीस</option>
                       <option>इतर</option>
                     </select>
-                    <input required placeholder="सध्याचे पद (Designation) *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                    <input
+                      required
+                      placeholder="सध्याचे पद (Designation) *"
+                      value={newOfficerForm.designation}
+                      onChange={(e) => setNewOfficerForm({ ...newOfficerForm, designation: e.target.value })}
+                      style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+                    />
                   </div>
-                  <input required placeholder="पोस्टिंगचे ठिकाण / शहर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                  <textarea placeholder="उल्लेखनीय कामगिरी व कार्य" rows="3" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}></textarea>
+                  <input
+                    required
+                    placeholder="पोस्टिंगचे ठिकाण / शहर *"
+                    value={newOfficerForm.postingCity}
+                    onChange={(e) => setNewOfficerForm({ ...newOfficerForm, postingCity: e.target.value })}
+                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+                  />
+                  <textarea
+                    placeholder="उल्लेखनीय कामगिरी व कार्य"
+                    rows="3"
+                    value={newOfficerForm.contribution}
+                    onChange={(e) => setNewOfficerForm({ ...newOfficerForm, contribution: e.target.value })}
+                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+                  ></textarea>
                   <button type="submit" style={{ background: '#1A237E', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
-                    माहिती पाठवा
+                    माहिती थेट सादर करा ✓
                   </button>
                 </div>
               </form>

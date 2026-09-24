@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import apiClient from '../../services/apiClient';
 
 const INITIAL_REFERRALS = [
   {
@@ -242,6 +243,38 @@ export default function ReferralsTrackerPage() {
     }
   });
 
+  useEffect(() => {
+    apiClient.getReferrals()
+      .then(liveRefs => {
+        if (Array.isArray(liveRefs) && liveRefs.length > 0) {
+          const normalized = liveRefs.map(r => {
+            const dateObj = r.date ? new Date(r.date) : (r.createdAt ? new Date(r.createdAt) : new Date());
+            return {
+              id: r.id,
+              year: r.year || String(dateObj.getFullYear()),
+              month: r.month || String(dateObj.getMonth() + 1).padStart(2, '0'),
+              week: r.week || `Week ${Math.ceil(dateObj.getDate() / 7)}`,
+              day: r.day || String(dateObj.getDate()).padStart(2, '0'),
+              userId: r.userId || r.giverId || 'CM-10291',
+              userName: r.userName || r.giverName || 'सदस्य',
+              state: r.state || 'महाराष्ट्र',
+              city: r.city || 'पुणे',
+              prospect: r.prospect || r.clientName || 'ग्राहक',
+              category: r.category || 'व्यवसाय',
+              requirement: r.requirement || r.title || 'व्यवसाय लीड',
+              estimatedValue: Number(r.estimatedValue || r.value || 0),
+              actualValue: Number(r.actualValue || (r.status === 'Won' ? r.estimatedValue || r.value : 0) || 0),
+              status: r.status || 'Won',
+              recipient: r.recipient || r.recipientName || 'सहकारी सदस्य',
+              date: r.date || dateObj.toISOString().slice(0, 10)
+            };
+          });
+          setReferrals(normalized);
+        }
+      })
+      .catch(err => console.warn('Could not load live referrals from API:', err.message));
+  }, []);
+
   const [viewMode, setViewMode] = useState('table'); // 'table' or 'cards'
 
   // Universal 7-Dimensional Filter State
@@ -332,12 +365,14 @@ export default function ReferralsTrackerPage() {
   };
 
   const handleStatusUpdate = (id, newStatus) => {
+    let targetVal = 0;
     const updated = referrals.map(r => {
       if (r.id === id) {
+        targetVal = newStatus === 'Won' ? (r.actualValue || r.estimatedValue) : r.actualValue;
         return {
           ...r,
           status: newStatus,
-          actualValue: newStatus === 'Won' ? (r.actualValue || r.estimatedValue) : r.actualValue
+          actualValue: targetVal
         };
       }
       return r;
@@ -348,6 +383,9 @@ export default function ReferralsTrackerPage() {
     } catch (e) {
       console.error(e);
     }
+    apiClient.updateReferralStatus(id, newStatus, targetVal).catch(err => {
+      console.warn('Could not sync referral status to API:', err.message);
+    });
   };
 
   const exportCSV = () => {

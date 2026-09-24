@@ -115,7 +115,7 @@ const SUCCESS_STORIES = [
 ];
 
 import { useToast } from '../../context/ToastContext';
-import dataStore from '../../services/dataStore';
+import apiClient from '../../services/apiClient';
 
 export default function WomenEmpowermentPage() {
   const { showToast } = useToast();
@@ -126,16 +126,26 @@ export default function WomenEmpowermentPage() {
   const [joinForm, setJoinForm] = useState({ name: '', phone: '', email: '', city: '', occupation: '', interest: 'मार्गदर्शक / मेंटॉर' });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleHelpSubmit = (e) => {
+  const handleHelpSubmit = async (e) => {
     e.preventDefault();
-    dataStore.addWomenHelpRequest(helpForm);
-    setSubmitted(true);
-    showToast('🚨 मदत व मार्गदर्शनाची विनंती नोंदवली गेली!', 'success');
-    setTimeout(() => {
-      setSubmitted(false);
-      setIsHelpModalOpen(false);
-      setHelpForm({ name: '', phone: '', city: '', needType: 'आर्थिक', description: '' });
-    }, 1500);
+    try {
+      await apiClient.addWomenHelpRequest({
+        name: helpForm.name,
+        subject: `${helpForm.name} (${helpForm.needType}) - ${helpForm.city}`,
+        category: helpForm.needType,
+        description: helpForm.description,
+        phone: helpForm.phone
+      });
+      setSubmitted(true);
+      showToast('🚨 मदत व मार्गदर्शनाची विनंती यशस्वीरीत्या नोंदवली गेली!', 'success');
+      setTimeout(() => {
+        setSubmitted(false);
+        setIsHelpModalOpen(false);
+        setHelpForm({ name: '', phone: '', city: '', needType: 'आर्थिक', description: '' });
+      }, 1500);
+    } catch (err) {
+      showToast(err.message || 'विनंती अयशस्वी', 'error');
+    }
   };
 
   const handleJoinSubmit = (e) => {

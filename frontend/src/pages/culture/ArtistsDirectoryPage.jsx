@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 
 const artistsData = [
   {
@@ -156,19 +157,72 @@ const categories = [
 ];
 
 export default function ArtistsDirectoryPage() {
+  const [artistsList, setArtistsList] = useState(artistsData);
   const [selectedCat, setSelectedCat] = useState('सर्व कलाकार');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [newArtistForm, setNewArtistForm] = useState({ name: '', category: 'अभिनेता', city: 'पुणे', popularWorks: '', phone: '', desc: '' });
 
-  const filtered = artistsData.filter((artist) => {
+  useEffect(() => {
+    apiClient.getArtists()
+      .then(list => {
+        if (Array.isArray(list) && list.length > 0) {
+          const formatted = list.map(a => ({
+            id: a.id,
+            name: a.name,
+            profession: a.field || a.profession || 'कलाकार',
+            category: a.category || (a.field && a.field.includes('गायक') ? 'गायक' : 'अभिनेते'),
+            avatar: a.avatar || a.photo || '🎭',
+            image: a.image || '/assets/images/artists/artist_subodh.jpg',
+            city: a.city || 'महाराष्ट्र',
+            popularWorks: a.popularWorks || a.field || 'विविध कलाकृती',
+            desc: a.desc || a.awards || 'मराठा कलावंत',
+            awards: a.awards || 'विशेष सन्मान'
+          }));
+          setArtistsList(formatted);
+        }
+      })
+      .catch(err => console.warn('Could not load live artists:', err.message));
+  }, []);
+
+  const handleAddArtistSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await apiClient.addArtist({
+        name: newArtistForm.name,
+        field: newArtistForm.category,
+        city: newArtistForm.city,
+        awards: newArtistForm.popularWorks,
+        phone: newArtistForm.phone
+      });
+      const added = {
+        id: 'ART-' + Date.now(),
+        name: newArtistForm.name,
+        profession: newArtistForm.category,
+        category: newArtistForm.category.includes('गायक') ? 'गायक' : 'अभिनेते',
+        avatar: '🎭',
+        image: '/assets/images/artists/artist_subodh.jpg',
+        city: newArtistForm.city,
+        popularWorks: newArtistForm.popularWorks,
+        desc: newArtistForm.desc || 'नवीन नोंदणीकृत कलाकार',
+        awards: 'नवीन नोंदणी'
+      };
+      setArtistsList(prev => [added, ...prev]);
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitted(true);
+    }
+  };
+
+  const filtered = artistsList.filter((artist) => {
     const matchCat = selectedCat === 'सर्व कलाकार' || artist.category === selectedCat;
     const matchSearch =
-      artist.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      artist.profession.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      artist.popularWorks.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      artist.city.toLowerCase().includes(searchQuery.toLowerCase());
+      (artist.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (artist.profession || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (artist.popularWorks || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (artist.city || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -524,11 +578,21 @@ export default function ArtistsDirectoryPage() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+              <form onSubmit={handleAddArtistSubmit}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <input required placeholder="कलाकाराचे पूर्ण नाव *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                  <input
+                    required
+                    placeholder="कलाकाराचे पूर्ण नाव *"
+                    value={newArtistForm.name}
+                    onChange={(e) => setNewArtistForm({ ...newArtistForm, name: e.target.value })}
+                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+                  />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <select style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}>
+                    <select
+                      value={newArtistForm.category}
+                      onChange={(e) => setNewArtistForm({ ...newArtistForm, category: e.target.value })}
+                      style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+                    >
                       <option>अभिनेता</option>
                       <option>अभिनेत्री</option>
                       <option>गायक / गायिका</option>
@@ -536,13 +600,37 @@ export default function ArtistsDirectoryPage() {
                       <option>निर्माते</option>
                       <option>संगीतकार</option>
                     </select>
-                    <input required placeholder="शहर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                    <input
+                      required
+                      placeholder="शहर *"
+                      value={newArtistForm.city}
+                      onChange={(e) => setNewArtistForm({ ...newArtistForm, city: e.target.value })}
+                      style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+                    />
                   </div>
-                  <input placeholder="प्रसिद्ध कामे / नाटक / चित्रपट / गाणी" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                  <input required type="tel" placeholder="मोबाईल नंबर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                  <textarea placeholder="थोडक्यात परिचय" rows="3" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}></textarea>
+                  <input
+                    placeholder="प्रसिद्ध कामे / नाटक / चित्रपट / गाणी"
+                    value={newArtistForm.popularWorks}
+                    onChange={(e) => setNewArtistForm({ ...newArtistForm, popularWorks: e.target.value })}
+                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+                  />
+                  <input
+                    required
+                    type="tel"
+                    placeholder="मोबाईल नंबर *"
+                    value={newArtistForm.phone}
+                    onChange={(e) => setNewArtistForm({ ...newArtistForm, phone: e.target.value })}
+                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+                  />
+                  <textarea
+                    placeholder="थोडक्यात परिचय"
+                    rows="3"
+                    value={newArtistForm.desc}
+                    onChange={(e) => setNewArtistForm({ ...newArtistForm, desc: e.target.value })}
+                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+                  ></textarea>
                   <button type="submit" style={{ background: '#6A1B9A', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
-                    प्रोफाइल सादर करा
+                    प्रोफाइल थेट सादर करा ✓
                   </button>
                 </div>
               </form>

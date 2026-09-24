@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import apiClient from '../../services/apiClient';
 
 const DEFAULT_MEMBERS = [
   { id: 'M-10291', name: 'राजेश पाटील', profession: 'Civil Infra & Earthmovers', company: 'पाटील इन्फ्रास्ट्रक्चर', city: 'पुणे', avatar: '👨‍💼', phone: '98221 44550' },
@@ -173,6 +174,35 @@ export default function MeetingsPortalPage() {
   const [toastMessage, setToastMessage] = useState(null);
 
   useEffect(() => {
+    apiClient.getMeetings()
+      .then(liveMeetings => {
+        if (Array.isArray(liveMeetings) && liveMeetings.length > 0) {
+          const formatted = liveMeetings.map(m => ({
+            id: m.id,
+            partnerName: m.recipientName || m.partnerName || 'व्यावसायिक सदस्य',
+            partnerCompany: m.partnerCompany || 'मराठा व्यावसायिक मंडळ',
+            partnerProfession: m.partnerProfession || 'उद्योजक',
+            partnerCity: m.partnerCity || 'पुणे',
+            partnerAvatar: m.partnerAvatar || '👨‍💼',
+            partnerPhone: m.partnerPhone || '98221 44550',
+            mode: m.mode || 'Offline',
+            category: m.category || '१-ते-१ भेट',
+            date: m.date,
+            time: m.time,
+            venue: m.venue || m.location || 'पुणे',
+            meetLink: m.meetLink || '',
+            purpose: m.purpose || m.topic || 'व्यवसाय चर्चा',
+            topics: m.topics || 'व्यवसाय वृद्धी',
+            status: m.status || 'Confirmed',
+            badge: 'नियोजित'
+          }));
+          setScheduledMeetings(formatted);
+        }
+      })
+      .catch(err => console.warn('Could not load live meetings:', err.message));
+  }, []);
+
+  useEffect(() => {
     try {
       localStorage.setItem('cm_scheduled_meetings', JSON.stringify(scheduledMeetings));
     } catch (e) {
@@ -193,7 +223,7 @@ export default function MeetingsPortalPage() {
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  const handleBookingSubmit = (e) => {
+  const handleBookingSubmit = async (e) => {
     e.preventDefault();
     const partner = DEFAULT_MEMBERS.find(m => m.id === bookingData.recipientId) || {
       name: recipientNameParam || 'व्यावसायिक सदस्य',
@@ -224,8 +254,21 @@ export default function MeetingsPortalPage() {
       badge: 'नियोजित'
     };
 
-    setScheduledMeetings([newMeeting, ...scheduledMeetings]);
+    setScheduledMeetings(prev => [newMeeting, ...prev]);
     showToast(`✓ '${partner.name}' यांच्यासोबत भेट यशस्वीरीत्या निश्चित झाली!`);
+
+    try {
+      await apiClient.createMeeting({
+        recipientId: bookingData.recipientId,
+        recipientName: partner.name,
+        date: bookingData.date,
+        time: bookingData.time,
+        topic: bookingData.purpose || '१-ते-१ व्यावसायिक बैठक',
+        location: newMeeting.venue
+      });
+    } catch (err) {
+      console.warn('Could not sync meeting to API:', err.message);
+    }
 
     // Optionally post confirmation message in localStorage messages
     try {

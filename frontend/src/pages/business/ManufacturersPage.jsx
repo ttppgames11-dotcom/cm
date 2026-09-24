@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 
 const mfgData = [
   {
@@ -71,19 +72,52 @@ const categories = [
 ];
 
 export default function ManufacturersPage() {
+  const [manufacturers, setManufacturers] = useState(mfgData);
   const [selectedCat, setSelectedCat] = useState('सर्व श्रेणी');
   const [searchQuery, setSearchQuery] = useState('');
   const [b2bModal, setB2bModal] = useState(false);
   const [selectedMfg, setSelectedMfg] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const filtered = mfgData.filter((m) => {
+  useEffect(() => {
+    apiClient.getManufacturers().then((liveData) => {
+      if (liveData && liveData.length > 0) {
+        const mapped = liveData.map((m) => ({
+          id: m.id,
+          name: m.companyName || m.name || 'मराठा इंडस्ट्रीज',
+          sector: m.industry || m.sector || 'उत्पादन व तंत्रज्ञान',
+          category: m.category || 'मशीनरी',
+          city: m.district ? `${m.district}, महाराष्ट्र` : (m.city || 'महाराष्ट्र'),
+          products: m.products || 'औद्योगिक उपकरणे व उत्पादने',
+          export: m.turnover ? `उलाढाल: ${m.turnover}` : (m.export || 'स्थानिक व आंतरराष्ट्रीय पुरवठा'),
+          employees: m.employees || '५०+ कामगार',
+          icon: m.icon || '⚙️',
+          contact: m.contact || ''
+        }));
+        setManufacturers(mapped);
+      }
+    }).catch(() => {});
+  }, []);
+
+  const handleInquiry = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await new Promise(r => setTimeout(r, 300));
+      setSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const filtered = manufacturers.filter((m) => {
     const matchCat = selectedCat === 'सर्व श्रेणी' || m.category === selectedCat;
     const matchSearch =
-      m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.sector.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.products.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.city.toLowerCase().includes(searchQuery.toLowerCase());
+      (m.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (m.sector || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (m.products || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (m.city || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -342,7 +376,7 @@ export default function ManufacturersPage() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+              <form onSubmit={handleInquiry}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <input required placeholder="आपले / कंपनीचे नाव *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
@@ -350,8 +384,8 @@ export default function ManufacturersPage() {
                     <input required placeholder="शहर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
                   </div>
                   <textarea required placeholder="आपली गरज / उत्पादनांची विचारणा (Quantity & Specifications) *" rows="3" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}></textarea>
-                  <button type="submit" style={{ background: '#37474F', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
-                    चौकशी पाठवा
+                  <button type="submit" disabled={isSubmitting} style={{ background: '#37474F', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', opacity: isSubmitting ? 0.7 : 1 }}>
+                    {isSubmitting ? 'पाठवत आहे...' : 'चौकशी पाठवा'}
                   </button>
                 </div>
               </form>

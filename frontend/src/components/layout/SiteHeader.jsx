@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useSiteContent } from '../../context/SiteContentContext';
 
 export default function SiteHeader({ onOpenSearch }) {
   const { user, logout } = useAuth();
+  const { getContent } = useSiteContent();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -19,10 +21,10 @@ export default function SiteHeader({ onOpenSearch }) {
           <div className="left-info">
             <span>🚩 <strong>जय जिजाऊ · जय शिवराय · जय शंभूराजे</strong></span>
             <span>|</span>
-            <span>Connect Maratha डिजिटल व्यासपीठ</span>
+            <span>{getContent('texts.tagline', 'Connect Maratha डिजिटल व्यासपीठ')}</span>
           </div>
           <div className="right-info">
-            <span>📞 हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
+            <span>📞 हेल्पलाईन: <strong>{getContent('forms.contactSupport.emergencyHelpline', '१८००-१२३-१६७४')}</strong></span>
             <span>|</span>
             <Link to="/about">संस्था परिचय</Link>
             <span>|</span>
@@ -35,13 +37,13 @@ export default function SiteHeader({ onOpenSearch }) {
       <header className="site-header">
         <div className="site-header-inner">
           <Link to="/" className="brand-desktop" onClick={handleLinkClick}>
-            <img src="/assets/images/logo.png" alt="Connect Maratha Logo" className="brand-logo" />
+            <img src={getContent('images.brandLogo', '/assets/images/logo.png')} alt="Connect Maratha Logo" className="brand-logo" />
             <div className="brand-titles">
               <div className="brand-main">
-                <span className="en">CONNECT</span>
-                <span className="mr">मराठा</span>
+                <span className="en">{getContent('header.brandTitle', 'CONNECT मराठा').split(' ')[0] || 'CONNECT'}</span>{' '}
+                <span className="mr">{getContent('header.brandTitle', 'CONNECT मराठा').split(' ').slice(1).join(' ') || 'मराठा'}</span>
               </div>
-              <span className="brand-sub">भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी</span>
+              <span className="brand-sub">{getContent('header.brandSubtitle', 'भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी')}</span>
             </div>
           </Link>
 
@@ -266,10 +268,12 @@ export default function SiteHeader({ onOpenSearch }) {
                   </div>
                   <div className="mega-col">
                     <div className="mega-col-title">⚖️ प्रशासन, ओळख व CRM</div>
+                    <Link to="/superadmin" onClick={handleLinkClick} style={{ color: '#F59E0B', fontWeight: '800' }}>👑 सर्वोच्च प्रशासक (SuperAdmin CRUD)</Link>
                     <Link to="/card" onClick={handleLinkClick}>🪪 डिजिटल सभासद ओळखपत्र</Link>
                     <Link to="/crm" onClick={handleLinkClick}>🚩 भूमिका आधारित CRM पोर्टल</Link>
+                    <Link to="/admin/cms" onClick={handleLinkClick} style={{ color: '#E65100', fontWeight: '700' }}>🎨 CMS वेबसाईट संपादक</Link>
                     <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
-                    <Link to="/admin" onClick={handleLinkClick}>👑 सुपर ॲडमिन कन्सोल</Link>
+                    <Link to="/admin" onClick={handleLinkClick}>🏛️ मुख्य ॲडमिन ईआरपी</Link>
                     <Link to="/crm/ceo" onClick={handleLinkClick}>🦅 CEO एक्झिक्युटिव्ह डॅशबोर्ड</Link>
                     <Link to="/crm/district" onClick={handleLinkClick}>📍 जिल्हा समन्वयक CRM</Link>
                     <Link to="/crm/chapter" onClick={handleLinkClick}>💼 चॅप्टर अध्यक्ष CRM</Link>
@@ -289,6 +293,29 @@ export default function SiteHeader({ onOpenSearch }) {
               title="शोध (Ctrl+K)">
               🔎 शोध
             </button>
+
+            {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo') && (
+              <div style={{ display: 'inline-flex', gap: '6px' }}>
+                {user.role === 'superadmin' && (
+                  <Link
+                    to="/superadmin"
+                    className="btn"
+                    onClick={handleLinkClick}
+                    style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)', color: '#000', border: 'none', fontWeight: '800', padding: '6px 12px', fontSize: '0.82rem' }}
+                    title="सर्वोच्च प्रशासक कन्सोल: वापरकर्ते, डॉक्टर्स, सेवा, हॉटेल्स CRUD">
+                    👑 SuperAdmin
+                  </Link>
+                )}
+                <Link
+                  to="/admin/cms"
+                  className="btn btn-outline"
+                  onClick={handleLinkClick}
+                  style={{ background: 'linear-gradient(135deg, #7C3AED, #4F46E5)', color: '#FFFFFF', border: 'none', fontWeight: '700', padding: '6px 12px', fontSize: '0.82rem' }}
+                  title="वेबसाईटचे मजकूर, चित्रे, बटणे आणि लिंक्स त्वरित संपादित करा">
+                  🎨 CMS
+                </Link>
+              </div>
+            )}
 
             {user && user.id ? (
               <div style={{ display: 'inline-flex', gap: '6px', alignItems: 'center' }}>

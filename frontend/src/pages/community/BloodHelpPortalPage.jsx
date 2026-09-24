@@ -86,11 +86,19 @@ export default function BloodHelpPortalPage() {
 
   useEffect(() => {
     apiClient.getBloodRequests()
-      .then(reqs => setActiveRequests(reqs && reqs.length > 0 ? reqs : ACTIVE_REQUESTS))
+      .then(reqs => {
+        if (Array.isArray(reqs) && reqs.length > 0) setActiveRequests(reqs);
+        else if (Array.isArray(reqs)) setActiveRequests(reqs);
+        else setActiveRequests(ACTIVE_REQUESTS);
+      })
       .catch(() => setActiveRequests(ACTIVE_REQUESTS));
 
     apiClient.getDonors()
-      .then(donors => setDonorsList(donors && donors.length > 0 ? donors : DONORS_SAMPLE))
+      .then(donors => {
+        if (Array.isArray(donors) && donors.length > 0) setDonorsList(donors);
+        else if (Array.isArray(donors)) setDonorsList(donors);
+        else setDonorsList(DONORS_SAMPLE);
+      })
       .catch(() => setDonorsList(DONORS_SAMPLE));
   }, []);
 
@@ -113,8 +121,9 @@ export default function BloodHelpPortalPage() {
 
     try {
       const res = await apiClient.addBloodRequest(payload);
-      if (res.request) setActiveRequests(prev => [res.request, ...prev]);
-      setReqStatusBanner('🚨 REST API Confirmation: ' + res.message);
+      const newReq = res.request || res.data?.request || { id: `REQ-${Date.now().toString().slice(-3)}`, time: 'आत्ताच', ...payload };
+      setActiveRequests(prev => [newReq, ...prev]);
+      setReqStatusBanner('🚨 REST API Confirmation: ' + (res.message || 'तातडीची रक्त मागणी प्रसारित झाली!'));
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
@@ -146,8 +155,9 @@ export default function BloodHelpPortalPage() {
 
     try {
       const res = await apiClient.addDonor(payload);
-      if (res.donor) setDonorsList(prev => [res.donor, ...prev]);
-      setDonorStatusBanner('❤️ REST API Confirmation: ' + res.message);
+      const newDonor = res.donor || res.data?.donor || { id: Date.now(), totalDonations: 1, lastDonated: 'आत्ताच', ...payload };
+      setDonorsList(prev => [newDonor, ...prev]);
+      setDonorStatusBanner('❤️ REST API Confirmation: ' + (res.message || 'रक्तदाता म्हणून नोंदणी यशस्वी झाली!'));
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);

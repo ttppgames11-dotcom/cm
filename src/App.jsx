@@ -222,6 +222,12 @@ export default function App() {
             {/* 100% Modern Clean React Routes */}
             <Route path="/" element={<HomePage />} />
             
+            {/* SuperAdmin Supreme Console */}
+            <Route path="/superadmin" element={<SuperAdminDashboardPage />} />
+            <Route path="/admin/superadmin" element={<SuperAdminDashboardPage />} />
+            <Route path="/admin/users" element={<SuperAdminDashboardPage />} />
+            <Route path="/crm/superadmin" element={<SuperAdminDashboardPage />} />
+            
             {/* History & Heritage */}
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/quiz" element={<MarathaQuizPage />} />

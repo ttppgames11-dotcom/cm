@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import SiteHeader from './SiteHeader';
 import SiteFooter from './SiteFooter';
 import CommandPalette from './CommandPalette';
 import MobileBottomNav from './MobileBottomNav';
 
 export default function AppLayout({ children }) {
+  const { user } = useAuth();
+  const isAdmin = user && (user.role === 'admin' || user.role === 'superadmin' || user.role === 'ceo');
   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
 
@@ -37,6 +40,62 @@ export default function AppLayout({ children }) {
       <SiteFooter />
       <MobileBottomNav />
       <CommandPalette isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      {user?.role === 'superadmin' && location.pathname !== '/superadmin' && (
+        <Link
+          to="/superadmin"
+          style={{
+            position: 'fixed',
+            bottom: '124px',
+            right: '20px',
+            zIndex: 9999,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '9px 16px',
+            background: 'linear-gradient(135deg, #F59E0B, #D97706)',
+            color: '#000000',
+            borderRadius: '50px',
+            fontWeight: '800',
+            fontSize: '0.82rem',
+            textDecoration: 'none',
+            boxShadow: '0 8px 24px rgba(245, 158, 11, 0.45)',
+            border: '2px solid rgba(255, 255, 255, 0.4)',
+            backdropFilter: 'blur(8px)',
+            transition: 'transform 0.2s ease'
+          }}
+          title="सर्वोच्च प्रशासक कन्सोल: वापरकर्ते, डॉक्टर्स, सेवा, हॉटेल्स CRUD">
+          <span>👑</span>
+          <span>SuperAdmin CRUD</span>
+        </Link>
+      )}
+      {isAdmin && location.pathname !== '/admin/cms' && (
+        <Link
+          to="/admin/cms"
+          style={{
+            position: 'fixed',
+            bottom: '76px',
+            right: '20px',
+            zIndex: 9999,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '9px 16px',
+            background: 'linear-gradient(135deg, #7C3AED, #4F46E5)',
+            color: '#FFFFFF',
+            borderRadius: '50px',
+            fontWeight: '700',
+            fontSize: '0.82rem',
+            textDecoration: 'none',
+            boxShadow: '0 8px 24px rgba(124, 58, 237, 0.45)',
+            border: '2px solid rgba(255, 255, 255, 0.35)',
+            backdropFilter: 'blur(8px)',
+            transition: 'transform 0.2s ease'
+          }}
+          title="वेबसाईटचे सर्व मजकूर, बटणे, चित्रे व लिंक्स संपादित करा">
+          <span>🎨</span>
+          <span>संपादित करा (CMS)</span>
+        </Link>
+      )}
     </div>
   );
 }

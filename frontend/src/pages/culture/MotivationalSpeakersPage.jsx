@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 
 const speakersData = [
   {
@@ -103,19 +104,98 @@ const categories = [
 ];
 
 export default function MotivationalSpeakersPage() {
+  const [speakers, setSpeakers] = useState(speakersData);
   const [selectedCat, setSelectedCat] = useState('सर्व वक्ते');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
 
-  const filtered = speakersData.filter((s) => {
+  useEffect(() => {
+    apiClient.getSpeakers().then((liveData) => {
+      if (liveData && liveData.length > 0) {
+        const mapped = liveData.map((s) => ({
+          id: s.id,
+          name: s.name,
+          title: s.expertise || s.title || 'ज्येष्ठ प्रेरणादायी वक्ते',
+          topics: s.topics || 'शिवचरित्र, व्यवस्थापन व सामाजिक प्रबोधन',
+          city: s.city || 'महाराष्ट्र',
+          category: s.category || 'प्रेरणादायी वक्ते',
+          avatar: s.avatar || s.photo || '🎙️',
+          sessions: s.sessions || '२५०+ व्याख्याने',
+          desc: s.desc || `${s.name} - प्रबोधनकार व समाज प्रबोधन मार्गदर्शक.`,
+          contact: s.contact || ''
+        }));
+        setSpeakers(mapped);
+      }
+    }).catch(() => {});
+  }, []);
+
+  const handleAddSpeaker = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const form = e.target;
+    const name = form.elements['name'].value;
+    const cat = form.elements['category'].value;
+    const city = form.elements['city'].value;
+    const topics = form.elements['topics'].value;
+    const phone = form.elements['phone'].value;
+    const intro = form.elements['intro']?.value;
+
+    try {
+      const res = await apiClient.addSpeaker({
+        name,
+        expertise: cat,
+        topics,
+        city,
+        contact: phone.replace(/\D/g, '').slice(-10) || '9822011223'
+      });
+      const created = res.data?.speaker || res.speaker || {
+        id: `SPK-${Date.now().toString().slice(-4)}`,
+        name,
+        title: cat,
+        topics,
+        city,
+        category: cat,
+        avatar: '🎤',
+        sessions: 'नवीन नोंदणी',
+        desc: intro || 'Connect Maratha विचारपीठ अधिकृत वक्ते.'
+      };
+      setSpeakers((prev) => [created, ...prev]);
+      setSubmitted(true);
+    } catch (err) {
+      alert(err.message || 'नोंदणी करताना त्रुटी आली.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleBookSpeaker = async (speaker) => {
+    try {
+      await apiClient.bookSpeaker({
+        speakerId: String(speaker.id),
+        speakerName: speaker.name,
+        eventDate: '२०२६ मधील नियोजित तारीख',
+        venue: speaker.city || 'महाराष्ट्र',
+        organizerPhone: '9822011223'
+      });
+      alert(`Connect Maratha व्याख्यान समन्वय कक्ष: ${speaker.name} यांच्यासाठी आपली विनंती नोंदवली गेली आहे!`);
+      setSelectedSpeaker(null);
+    } catch {
+      alert(`Connect Maratha व्याख्यान समन्वय कक्ष: ${speaker.name} यांच्या तारखा निश्चित करण्यासाठी लवकरच संपर्क होईल.`);
+      setSelectedSpeaker(null);
+    }
+  };
+
+  const filtered = speakers.filter((s) => {
     const matchCat = selectedCat === 'सर्व वक्ते' || s.category === selectedCat;
     const matchSearch =
-      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.topics.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.city.toLowerCase().includes(searchQuery.toLowerCase());
+      (s.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.topics || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.city || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -375,7 +455,7 @@ export default function MotivationalSpeakersPage() {
             </div>
             <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
               <button
-                onClick={() => alert(`Connect Maratha व्याख्यान समन्वय कक्ष: ${selectedSpeaker.name} यांच्या तारखा निश्चित करण्यासाठी लवकरच संपर्क होईल.`)}
+                onClick={() => handleBookSpeaker(selectedSpeaker)}
                 style={{ flex: 1, background: '#E65100', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
               >
                 व्याख्यानासाठी निमंत्रित करा
@@ -438,20 +518,20 @@ export default function MotivationalSpeakersPage() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+              <form onSubmit={handleAddSpeaker}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <input required placeholder="पूर्ण नाव *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                  <input name="name" required placeholder="पूर्ण नाव *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <select style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}>
-                      {categories.filter(c => c !== 'सर्व वक्ते').map(c => <option key={c}>{c}</option>)}
+                    <select name="category" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}>
+                      {categories.filter(c => c !== 'सर्व वक्ते').map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
-                    <input required placeholder="शहर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                    <input name="city" required placeholder="शहर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
                   </div>
-                  <input required placeholder="व्याख्यानाचे मुख्य विषय *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                  <input required type="tel" placeholder="मोबाईल नंबर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                  <textarea placeholder="अनुभव व थोडक्यात परिचय" rows="3" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}></textarea>
-                  <button type="submit" style={{ background: '#E65100', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
-                    प्रोफाइल सबमिट करा
+                  <input name="topics" required placeholder="व्याख्यानाचे मुख्य विषय *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                  <input name="phone" required type="tel" placeholder="मोबाईल नंबर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                  <textarea name="intro" placeholder="अनुभव व थोडक्यात परिचय" rows="3" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}></textarea>
+                  <button type="submit" disabled={isSubmitting} style={{ background: '#E65100', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', opacity: isSubmitting ? 0.7 : 1 }}>
+                    {isSubmitting ? 'नोंदणी करत आहे...' : 'प्रोफाइल सबमिट करा'}
                   </button>
                 </div>
               </form>

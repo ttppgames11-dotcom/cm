@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 
 const productsData = [
   { id: 1, name: 'ताजे गाईचे दूध (५०० मि.ली.)', size: '500 ml', price: '₹२८', category: 'दूध', icon: '🥛', fat: '३.८% फॅट' },
@@ -53,11 +54,67 @@ const collectionCentersData = [
 ];
 
 export default function MarathaDairyPage() {
+  const [centers, setCenters] = useState(collectionCentersData);
   const [activeTab, setActiveTab] = useState('products'); // 'products' or 'centers'
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [orderModal, setOrderModal] = useState(false);
   const [farmerModal, setFarmerModal] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    apiClient.getDairy().then((liveData) => {
+      if (liveData && liveData.length > 0) {
+        const mapped = liveData.map((d) => ({
+          id: d.id,
+          name: d.dairyName || 'संकलन केंद्र',
+          location: d.district ? `${d.district}, महाराष्ट्र` : 'महाराष्ट्र',
+          phone: d.contact || '9822011223',
+          timing: 'सकाळी ५:३० ते १०:३०',
+          dailyCollection: d.dailyCollection || '१,००० लिटर',
+          avgFat: d.milkRateCow || '४.२%',
+          farmers: d.centerHead ? `प्रमुख: ${d.centerHead}` : '२५० शेतकरी'
+        }));
+        setCenters(mapped);
+      }
+    }).catch(() => {});
+  }, []);
+
+  const handleFarmerSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const form = e.target;
+    const name = form.elements['name'].value;
+    const phone = form.elements['phone'].value;
+    const village = form.elements['village'].value;
+    const liters = form.elements['liters']?.value;
+
+    try {
+      const res = await apiClient.addDairy({
+        dairyName: `संकलन केंद्र (${village})`,
+        centerHead: name,
+        dailyCollection: `${liters || 50} लिटर/दिवस`,
+        district: village,
+        contact: phone.replace(/\D/g, '').slice(-10) || '9822011223'
+      });
+      const created = res.data?.dairyCenter || res.dairyCenter || {
+        id: `DRY-${Date.now().toString().slice(-4)}`,
+        name: `संकलन केंद्र - ${village}`,
+        location: `${village}, महाराष्ट्र`,
+        phone,
+        timing: 'सकाळी ५:३० ते १०:३०',
+        dailyCollection: `${liters || 50} लिटर`,
+        avgFat: '४.२%',
+        farmers: `प्रमुख: ${name}`
+      };
+      setCenters((prev) => [created, ...prev]);
+      setSubmitted(true);
+    } catch (err) {
+      alert(err.message || 'नोंदणी करताना त्रुटी आली.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="maratha-dairy-page" style={{ background: '#F8FBF8', minHeight: '100vh', paddingBottom: '60px' }}>
@@ -256,7 +313,7 @@ export default function MarathaDairyPage() {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
-            {collectionCentersData.map((center) => (
+            {centers.map((center) => (
               <div
                 key={center.id}
                 style={{
@@ -449,17 +506,17 @@ export default function MarathaDairyPage() {
                 <button onClick={() => { setFarmerModal(false); setSubmitted(false); }} style={{ background: '#1B5E20', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '6px', fontWeight: 700, cursor: 'pointer', marginTop: '12px' }}>पूर्ण झाले</button>
               </div>
             ) : (
-              <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+              <form onSubmit={handleFarmerSubmit}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <input required placeholder="शेतकऱ्याचे पूर्ण नाव *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                  <input required type="tel" placeholder="मोबाईल नंबर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                  <input required placeholder="गाव, तालुका व जिल्हा *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                  <input name="name" required placeholder="शेतकऱ्याचे पूर्ण नाव *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                  <input name="phone" required type="tel" placeholder="मोबाईल नंबर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                  <input name="village" required placeholder="गाव, तालुका व जिल्हा *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <input required placeholder="गाई/म्हशी संख्या *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                    <input required placeholder="अंदाजे दैनिक लिटर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                    <input name="cattle" placeholder="गाई/म्हशी संख्या" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                    <input name="liters" placeholder="अंदाजे दैनिक लिटर" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
                   </div>
-                  <button type="submit" style={{ background: '#1B5E20', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
-                    नोंदणी सबमिट करा
+                  <button type="submit" disabled={isSubmitting} style={{ background: '#1B5E20', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', opacity: isSubmitting ? 0.7 : 1 }}>
+                    {isSubmitting ? 'नोंदणी करत आहे...' : 'नोंदणी सबमिट करा'}
                   </button>
                 </div>
               </form>
