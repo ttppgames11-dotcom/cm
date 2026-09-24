@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const SCHEMA_FILE = path.join(__dirname, 'schema.sql');
+const MIGRATIONS_DIR = path.join(__dirname, 'migrations');
 
 // Load .env from the repo root (and cwd) so the API and the seed/migrate
 // scripts all read the same DATABASE_URL.
@@ -53,14 +53,56 @@ export function getPool() {
   return pool;
 }
 
-/** Connects and makes sure all tables exist (idempotent). */
+/**
+ * Applies pending SQL files from database/migrations in filename order, each
+ * inside its own transaction, and records them in schema_migrations.
+ * Migrations are additive; nothing here ever drops or truncates data.
+ */
+export async function runMigrations() {
+  const p = getPool();
+  const client = await p.connect();
+  try {
+    await client.query('SELECT pg_advisory_lock(727001)');
+    await client.query(
+      'CREATE TABLE IF NOT EXISTS schema_migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ DEFAULT now())'
+    );
+    const done = new Set((await client.query('SELECT name FROM schema_migrations')).rows.map((r) => r.name));
+    const files = fs.readdirSync(MIGRATIONS_DIR).filter((f) => f.endsWith('.sql')).sort();
+    const applied = [];
+    for (const file of files) {
+      if (done.has(file)) continue;
+      try {
+        await client.query('BEGIN');
+        await client.query(fs.readFileSync(path.join(MIGRATIONS_DIR, file), 'utf8'));
+        await client.query('INSERT INTO schema_migrations (name) VALUES ($1)', [file]);
+        await client.query('COMMIT');
+        applied.push(file);
+      } catch (err) {
+        await client.query('ROLLBACK');
+        throw new Error(`Migration ${file} failed: ${err.message}`);
+      }
+    }
+    return applied;
+  } finally {
+    await client.query('SELECT pg_advisory_unlock(727001)').catch(() => {});
+    client.release();
+  }
+}
+
+/**
+ * Connects to the database. Outside production, pending migrations are applied
+ * automatically. In production the schema is only changed by an explicit
+ * `npm run migrate` (or DB_AUTO_MIGRATE=true), never as a startup side effect.
+ */
 export async function getDatabase() {
   if (!ready) {
     ready = (async () => {
       const p = getPool();
-      if (fs.existsSync(SCHEMA_FILE)) {
-        await p.query(fs.readFileSync(SCHEMA_FILE, 'utf8'));
-      }
+      const auto =
+        process.env.DB_AUTO_MIGRATE === 'true' ||
+        (process.env.NODE_ENV !== 'production' && process.env.DB_AUTO_MIGRATE !== 'false');
+      if (auto) await runMigrations();
+      else await p.query('SELECT 1');
       return p;
     })().catch((err) => {
       ready = null;
@@ -68,6 +110,35 @@ export async function getDatabase() {
     });
   }
   return ready;
+}
+
+/**
+ * Runs `fn` inside a single transaction. `fn` receives { runQuery, all, get }
+ * bound to that transaction; any thrown error rolls everything back.
+ */
+export async function transaction(fn) {
+  const p = await getDatabase();
+  const client = await p.connect();
+  const q = (sql, params = []) => client.query(toPgSql(sql), params);
+  const tx = {
+    runQuery: async (sql, params) => {
+      const r = await q(sql, params);
+      return { success: true, rowCount: r.rowCount };
+    },
+    all: async (sql, params) => (await q(sql, params)).rows,
+    get: async (sql, params) => (await q(sql, params)).rows[0] || null,
+  };
+  try {
+    await client.query('BEGIN');
+    const result = await fn(tx);
+    await client.query('COMMIT');
+    return result;
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 /** Kept for backward compatibility: Postgres persists on its own. */
@@ -101,6 +172,8 @@ export async function closeDatabase() {
 
 export default {
   getDatabase,
+  runMigrations,
+  transaction,
   getPool,
   saveDatabase,
   closeDatabase,

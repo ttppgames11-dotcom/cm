@@ -1,5 +1,8 @@
 import { Router } from 'express';
+import crypto from 'crypto';
 import { all, get, runQuery } from '../../database/database.js';
+import { requireAuth } from '../middleware/auth.js';
+import { str, int } from '../middleware/validate.js';
 
 const router = Router();
 
@@ -150,38 +153,23 @@ router.get('/daily', async (req, res, next) => {
 });
 
 // POST /api/quiz/submit
-router.post('/submit', async (req, res, next) => {
+router.post('/submit', requireAuth, async (req, res, next) => {
   try {
-    const {
-      candidate_name,
-      city,
-      category = 'सर्वसमावेशक',
-      score = 0,
-      total = 10,
-      points = 0,
-      streak = 0,
-      rank_title = 'जागृत मावळा'
-    } = req.body;
-
-    const id = 'SUB-' + Date.now().toString().slice(-6);
-    const percentage = total > 0 ? Math.round((score / total) * 100) : 0;
+    // The result is reported by the client, so it is only accepted within
+    // plausible bounds and is not treated as authoritative for rewards.
+    const total = int(req.body.total, { min: 1, max: 100, fallback: 10 });
+    const score = int(req.body.score, { min: 0, max: total, fallback: 0 });
+    const points = int(req.body.points, { min: 0, max: total * 100, fallback: 0 });
+    const streak = int(req.body.streak, { min: 0, max: total, fallback: 0 });
+    const percentage = Math.round((score / total) * 100);
+    const id = 'SUB-' + crypto.randomBytes(6).toString('hex');
 
     await runQuery(`
       INSERT INTO quiz_submissions (
-        id, candidate_name, city, category, score, total, percentage, points, streak, rank_title, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
-    `, [
-      id,
-      candidate_name || 'मावळा',
-      city || 'महाराष्ट्र',
-      category,
-      score,
-      total,
-      percentage,
-      points,
-      streak,
-      rank_title
-    ]);
+        id, member_id, candidate_name, city, category, score, total, percentage, points, streak, rank_title, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    `, [id, req.user.id, req.user.name, str(req.body.city, 100) || 'महाराष्ट्र', str(req.body.category, 100) || 'सर्वसमावेशक',
+        score, total, percentage, points, streak, str(req.body.rank_title, 60) || 'जागृत मावळा']);
 
     const created = await get('SELECT * FROM quiz_submissions WHERE id = ?', [id]);
 

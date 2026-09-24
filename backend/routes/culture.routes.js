@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requireAuth } from '../middleware/auth.js';
 import { runQuery, all, get } from '../../database/database.js';
 import fs from 'fs';
 import path from 'path';
@@ -68,9 +69,12 @@ router.get('/oral-history', (req, res) => {
 });
 
 // POST /api/culture/oral-history
-router.post('/oral-history', (req, res) => {
+router.post('/oral-history', requireAuth, (req, res) => {
   try {
-    const { title, village, taluka, district, region, contributor, contributorClan, story, historicalReference } = req.body;
+    const clip = (v, n) => String(v === undefined || v === null ? '' : v).trim().slice(0, n);
+    const title = clip(req.body.title, 200), village = clip(req.body.village, 100), taluka = clip(req.body.taluka, 100);
+    const district = clip(req.body.district, 100), region = clip(req.body.region, 100), contributor = clip(req.body.contributor, 100);
+    const contributorClan = clip(req.body.contributorClan, 100), story = clip(req.body.story, 5000), historicalReference = clip(req.body.historicalReference, 300);
     
     if (!title || !story || !village) {
       return res.status(400).json({ success: false, error: 'शीर्षक, गाव आणि इतिहास कथा आवश्यक आहे.' });
@@ -102,7 +106,8 @@ router.post('/oral-history', (req, res) => {
       entry: newEntry
     });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    console.error('oral-history save failed:', err.message);
+    res.status(500).json({ success: false, code: 'SERVER_ERROR', error: 'सर्व्हर त्रुटी. कृपया पुन्हा प्रयत्न करा.' });
   }
 });
 

@@ -14,6 +14,12 @@ import jobsRoutes from './routes/jobs.routes.js';
 import communityRoutes from './routes/community.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import cultureRoutes from './routes/culture.routes.js';
+import helmet from 'helmet';
+import dotenv from 'dotenv';
+import { get } from '../database/database.js';
+import { requireAuth, ROLES } from './middleware/auth.js';
+import { apiLimiter, writeLimiter } from './middleware/security.js';
+import { errorHandler, notFound } from './middleware/errorHandler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,8 +28,48 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const DB_FILE = path.join(__dirname, 'db.json');
 
-app.use(cors());
-app.use(express.json());
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
+
+const isProd = process.env.NODE_ENV === 'production';
+if (process.env.TRUST_PROXY) app.set('trust proxy', Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY);
+app.disable('x-powered-by');
+app.use(helmet());
+
+// CORS: the mobile app does not need it; browsers may only call from the
+// origins listed in CORS_ORIGINS (comma separated). Dev also allows localhost.
+const allowedOrigins = (process.env.CORS_ORIGINS || '').split(',').map((o) => o.trim()).filter(Boolean);
+app.use(cors({
+  origin(origin, cb) {
+    if (!origin) return cb(null, true); // non-browser clients (mobile app, curl)
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    if (!isProd && origin.startsWith('http://localhost')) return cb(null, true);
+    if (!isProd && origin.startsWith('http://127.0.0.1')) return cb(null, true);
+    return cb(null, false);
+  }
+}));
+app.use(express.json({ limit: '100kb' }));
+app.use('/api', apiLimiter);
+app.use('/api', (req, res, next) => (req.method === 'GET' ? next() : writeLimiter(req, res, next)));
+
+// Reserved keys clients may not set on stored records; bounded size.
+function sanitizeBody(req, res, next) {
+  const body = req.body && typeof req.body === 'object' && !Array.isArray(req.body) ? req.body : {};
+  if (Object.keys(body).length > 40 || JSON.stringify(body).length > 20000) {
+    return res.status(413).json({ success: false, code: 'PAYLOAD_TOO_LARGE', error: 'विनंती खूप मोठी आहे.' });
+  }
+  for (const k of ['id', 'createdAt', 'submittedBy', '__proto__', 'constructor', 'prototype']) delete body[k];
+  body.submittedBy = req.user.id;
+  req.body = body;
+  next();
+}
+
+// Reads return only the caller's own submissions unless they are staff.
+function ownOrStaff(req, res, next) {
+  if ([ROLES.ADMIN, ROLES.MODERATOR].includes(req.user.role)) return next();
+  const json = res.json.bind(res);
+  res.json = (body) => json(Array.isArray(body) ? body.filter((i) => i.submittedBy === req.user.id) : body);
+  next();
+}
 
 // ==========================================
 // MOUNT ALL CONNECT MARATHA REST API ROUTERS
@@ -60,8 +106,13 @@ function writeData(data) {
 }
 
 // System Health Endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', system: 'Connect Maratha Express REST API Server', timestamp: new Date() });
+app.get('/api/health', async (req, res) => {
+  try {
+    await get('SELECT 1 AS ok');
+    res.json({ status: 'OK', timestamp: new Date() });
+  } catch {
+    res.status(503).json({ status: 'DEGRADED' });
+  }
 });
 
 // --- DOCTORS ---
@@ -70,7 +121,7 @@ app.get('/api/doctors', (req, res) => {
   res.json(db.doctors || []);
 });
 
-app.post('/api/doctors', (req, res) => {
+app.post('/api/doctors', requireAuth, sanitizeBody, (req, res) => {
   const db = readData();
   db.doctors = db.doctors || [];
   const newDoctor = {
@@ -85,12 +136,12 @@ app.post('/api/doctors', (req, res) => {
 });
 
 // --- BLOOD REQUESTS & DONORS ---
-app.get('/api/blood/requests', (req, res) => {
+app.get('/api/blood/requests', requireAuth, (req, res) => {
   const db = readData();
   res.json(db.bloodRequests || []);
 });
 
-app.post('/api/blood/requests', (req, res) => {
+app.post('/api/blood/requests', requireAuth, sanitizeBody, (req, res) => {
   const db = readData();
   db.bloodRequests = db.bloodRequests || [];
   const newReq = {
@@ -103,12 +154,12 @@ app.post('/api/blood/requests', (req, res) => {
   res.status(201).json({ success: true, message: '🚨 तातडीची रक्त मागणी प्रसारित करण्यात आली!', request: newReq });
 });
 
-app.get('/api/blood/donors', (req, res) => {
+app.get('/api/blood/donors', requireAuth, (req, res) => {
   const db = readData();
   res.json(db.bloodDonors || []);
 });
 
-app.post('/api/blood/donors', (req, res) => {
+app.post('/api/blood/donors', requireAuth, sanitizeBody, (req, res) => {
   const db = readData();
   db.bloodDonors = db.bloodDonors || [];
   const newDonor = {
@@ -123,12 +174,12 @@ app.post('/api/blood/donors', (req, res) => {
 });
 
 // --- MATRIMONY ---
-app.get('/api/matrimony', (req, res) => {
+app.get('/api/matrimony', requireAuth, (req, res) => {
   const db = readData();
   res.json(db.matrimony || []);
 });
 
-app.post('/api/matrimony', (req, res) => {
+app.post('/api/matrimony', requireAuth, sanitizeBody, (req, res) => {
   const db = readData();
   db.matrimony = db.matrimony || [];
   const newProfile = {
@@ -144,12 +195,12 @@ app.post('/api/matrimony', (req, res) => {
 });
 
 // --- POLITICAL GRIEVANCES / REPRESENTATIONS ---
-app.get('/api/political/grievances', (req, res) => {
+app.get('/api/political/grievances', requireAuth, ownOrStaff, (req, res) => {
   const db = readData();
   res.json(db.grievances || []);
 });
 
-app.post('/api/political/grievances', (req, res) => {
+app.post('/api/political/grievances', requireAuth, sanitizeBody, (req, res) => {
   const db = readData();
   db.grievances = db.grievances || [];
   const item = {
@@ -163,12 +214,12 @@ app.post('/api/political/grievances', (req, res) => {
 });
 
 // --- SOCIAL WORKERS & VOLUNTEERS ---
-app.get('/api/social/volunteers', (req, res) => {
+app.get('/api/social/volunteers', requireAuth, ownOrStaff, (req, res) => {
   const db = readData();
   res.json(db.volunteers || []);
 });
 
-app.post('/api/social/volunteers', (req, res) => {
+app.post('/api/social/volunteers', requireAuth, sanitizeBody, (req, res) => {
   const db = readData();
   db.volunteers = db.volunteers || [];
   const item = {
@@ -182,12 +233,12 @@ app.post('/api/social/volunteers', (req, res) => {
 });
 
 // --- WOMEN EMPOWERMENT HELP & MENTORS ---
-app.get('/api/women/help', (req, res) => {
+app.get('/api/women/help', requireAuth, ownOrStaff, (req, res) => {
   const db = readData();
   res.json(db.womenHelp || []);
 });
 
-app.post('/api/women/help', (req, res) => {
+app.post('/api/women/help', requireAuth, sanitizeBody, (req, res) => {
   const db = readData();
   db.womenHelp = db.womenHelp || [];
   const item = {
@@ -206,7 +257,7 @@ app.get('/api/builders', (req, res) => {
   res.json(db.builders || []);
 });
 
-app.post('/api/builders', (req, res) => {
+app.post('/api/builders', requireAuth, sanitizeBody, (req, res) => {
   const db = readData();
   db.builders = db.builders || [];
   const item = { id: `BLD-${Date.now().toString().slice(-4)}`, ...req.body };
@@ -216,12 +267,12 @@ app.post('/api/builders', (req, res) => {
 });
 
 // --- MARATHA BANK & LOANS ---
-app.get('/api/bank/loans', (req, res) => {
+app.get('/api/bank/loans', requireAuth, ownOrStaff, (req, res) => {
   const db = readData();
   res.json(db.bankLoans || []);
 });
 
-app.post('/api/bank/loans', (req, res) => {
+app.post('/api/bank/loans', requireAuth, sanitizeBody, (req, res) => {
   const db = readData();
   db.bankLoans = db.bankLoans || [];
   const item = { id: `LN-${Date.now().toString().slice(-4)}`, ...req.body };
@@ -229,6 +280,9 @@ app.post('/api/bank/loans', (req, res) => {
   writeData(db);
   res.status(201).json({ success: true, message: '🏦 कर्ज अर्ज यशस्वीरीत्या सादर केला गेला!', loan: item });
 });
+
+app.use('/api', notFound);
+app.use(errorHandler);
 
 // Start Express Server
 app.listen(PORT, () => {
