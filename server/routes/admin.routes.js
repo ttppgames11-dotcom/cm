@@ -205,4 +205,71 @@ router.get('/reports/export', authenticateToken, requireRole('admin', 'ceo', 'di
   });
 });
 
+// ==========================================
+// SITE CONTENT & CMS MANAGEMENT (/api/admin/site-content)
+// ==========================================
+// GET /api/admin/site-content
+router.get('/site-content', (req, res) => {
+  const content = db.getSiteContent();
+  return sendSuccess(res, 'वेबसाइट डेटा व मांडणी', { siteContent: content, content });
+});
+
+// PUT /api/admin/site-content
+router.put('/site-content', authenticateToken, requireRole('admin', 'ceo', 'superadmin', 'district_admin'), (req, res) => {
+  const updates = req.body;
+  if (!updates || typeof updates !== 'object') {
+    return sendError(res, 'कृपया अद्ययावत करण्यासाठी वैध डेटा पाठवा.', 'INVALID_PAYLOAD', 400);
+  }
+
+  const updated = db.updateSiteContent(updates);
+  db.addAuditLog('UPDATE_SITE_CONTENT', req.user?.id || 'ADMIN', {
+    sections: Object.keys(updates),
+    adminName: req.user?.name || 'व्यवस्थापक'
+  });
+
+  return sendSuccess(res, 'वेबसाइट डेटा यशस्वीरीत्या अद्यतनित व जतन करण्यात आला!', { siteContent: updated, content: updated });
+});
+
+// PUT /api/admin/site-content/:section
+router.put('/site-content/:section', authenticateToken, requireRole('admin', 'ceo', 'superadmin', 'district_admin'), (req, res) => {
+  const { section } = req.params;
+  const sectionData = req.body;
+
+  if (!sectionData || typeof sectionData !== 'object') {
+    return sendError(res, 'कृपया वैध सेक्शन डेटा पाठवा.', 'INVALID_PAYLOAD', 400);
+  }
+
+  const current = db.getSiteContent();
+  const updatedSection = {
+    ...current[section],
+    ...sectionData
+  };
+
+  const updated = db.updateSiteContent({ [section]: updatedSection });
+  db.addAuditLog('UPDATE_SITE_SECTION', req.user?.id || 'ADMIN', {
+    section,
+    adminName: req.user?.name || 'व्यवस्थापक'
+  });
+
+  return sendSuccess(res, `सेक्शन "${section}" अद्यतनित झाले!`, {
+    section,
+    data: updated[section],
+    siteContent: updated
+  });
+});
+
+// POST /api/admin/site-content/reset
+router.post('/site-content/reset', authenticateToken, requireRole('admin', 'ceo', 'superadmin'), (req, res) => {
+  const defaults = db.getDefaultSiteContent();
+  db.data.siteContent = defaults;
+  db.save();
+  db.syncSiteContentToSqlite(defaults);
+
+  db.addAuditLog('RESET_SITE_CONTENT', req.user?.id || 'ADMIN', {
+    adminName: req.user?.name || 'व्यवस्थापक'
+  });
+
+  return sendSuccess(res, 'वेबसाइट डेटा पूर्ववत (Default) करण्यात आला.', { siteContent: defaults });
+});
+
 export default router;

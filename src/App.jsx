@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ScopeProvider } from './context/ScopeContext';
+import { SiteContentProvider } from './context/SiteContentContext';
 import AppLayout from './components/layout/AppLayout';
 
 // Core React Pages
@@ -38,6 +39,7 @@ import DistrictAdminCRM from './pages/admin/DistrictAdminCRM';
 import ChapterPresidentCRM from './pages/admin/ChapterPresidentCRM';
 import SevaHelpdeskCRM from './pages/admin/SevaHelpdeskCRM';
 import CRMRoleHubPage from './pages/admin/CRMRoleHubPage';
+import SiteContentEditorPage from './pages/admin/SiteContentEditorPage';
 import GenericArticlePage from './pages/common/GenericArticlePage';
 
 // Specialized Converted Feature Pages
@@ -207,7 +209,8 @@ export default function App() {
     <ToastProvider>
       <AuthProvider>
         <ScopeProvider>
-          <Routes>
+          <SiteContentProvider>
+            <Routes>
           {/* Automatic Clean Redirects from legacy .html to clean React routes */}
           {legacyRedirects.map((r, i) => (
             <Route key={i} path={r.from} element={<Navigate to={r.to} replace />} />
@@ -355,6 +358,10 @@ export default function App() {
             <Route path="/reports" element={<AdminERPPage />} />
             <Route path="/crm/reports" element={<AdminERPPage />} />
             <Route path="/admin/reports" element={<AdminERPPage />} />
+            <Route path="/admin/cms" element={<SiteContentEditorPage />} />
+            <Route path="/admin/content" element={<SiteContentEditorPage />} />
+            <Route path="/cms" element={<SiteContentEditorPage />} />
+            <Route path="/crm/cms" element={<SiteContentEditorPage />} />
 
             {/* Newly Added Community Ecosystem Modules with Full URL Variations */}
             <Route path="/doctors" element={<DoctorsDirectoryPage />} />
@@ -447,8 +454,9 @@ export default function App() {
             <Route path="*" element={<GenericArticlePage />} />
           </Route>
         </Routes>
-      </ScopeProvider>
-    </AuthProvider>
-  </ToastProvider>
+          </SiteContentProvider>
+        </ScopeProvider>
+      </AuthProvider>
+    </ToastProvider>
   );
 }

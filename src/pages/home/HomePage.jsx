@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useSiteContent } from '../../context/SiteContentContext';
 
 const heroViews = {
   hero: {
@@ -47,6 +48,7 @@ const heroBgSlides = [
 ];
 
 export default function HomePage() {
+  const { getContent } = useSiteContent();
   const [heroView, setHeroView] = useState('hero');
   const [ecoTab, setEcoTab] = useState('tab-history');
   const [ecoQuery, setEcoQuery] = useState('');
@@ -54,6 +56,9 @@ export default function HomePage() {
   const [isPaused, setIsPaused] = useState(false);
 
   const activeHero = heroViews[heroView];
+  const displayHeroImg = (heroView === 'hero' && getContent('images.heroBanner')) 
+    ? getContent('images.heroBanner') 
+    : activeHero.img;
 
   // Continuously cycle hero background every 5 seconds
   useEffect(() => {
@@ -104,7 +109,7 @@ export default function HomePage() {
   <div className="war-cry-overlay" style={{"position":"absolute","inset":0,"zIndex":1,"background":"linear-gradient(90deg,rgba(199,56,0,.88) 0%,rgba(230,81,0,.58) 50%,rgba(199,56,0,.88) 100%)"}}></div>
   <div className="war-cry-text">
     <span>🔥</span>
-    <span>|| जय भवानी, जय शिवाजी || प्रौढ प्रताप पुरंधर क्षत्रियकुलावतंस सिंहासनाधीश्वर छत्रपती शिवाजी महाराज की जय!</span>
+    <span>{getContent('hero.announcementMarquee', '|| जय भवानी, जय शिवाजी || प्रौढ प्रताप पुरंधर क्षत्रियकुलावतंस सिंहासनाधीश्वर छत्रपती शिवाजी महाराज की जय!')}</span>
     <span>🔥</span>
   </div>
 </div>
@@ -166,15 +171,38 @@ export default function HomePage() {
   <div className="hero-content" style={{ position: 'relative', zIndex: 2, width: '100%' }}>
     <div className="hero-copy" data-reveal="left">
       <div className="eyebrow"><svg className="svg-flag" viewBox="0 0 24 24" fill="none"><path d="M4 2v20" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round"/><path d="M4 3.5c2.5-1.6 4.8-1.6 7 0s4.5 1.6 7 0v9c-2.5 1.6-4.8 1.6-7 0s-4.5-1.6-7 0V3.5z" fill="#F4511E"/></svg> अस्सल ऐतिहासिक वारसा · अखंड मराठा साम्राज्य</div>
-      <h1>संघटित मराठा,<br /><span className="gradient-text">शक्तिशाली महाराष्ट्र</span></h1>
+      <h1>
+        {getContent('hero.title', 'संघटित मराठा, शक्तिशाली महाराष्ट्र').split(',')[0]}
+        {getContent('hero.title', '').includes(',') ? (
+          <>,<br /><span className="gradient-text">{getContent('hero.title', '').split(',')[1]}</span></>
+        ) : (
+          <><br /><span className="gradient-text">{getContent('hero.subtitle', 'छत्रपती शिवरायांच्या विचारांनी प्रेरित')}</span></>
+        )}
+      </h1>
       <p className="tagline">
-        छत्रपती शिवरायांच्या स्वराज्याची जाज्वल्य निष्ठा, ३५० वर्षांची अखंड शौर्यपरंपरा आणि २१ व्या शतकातील तंत्रज्ञानावर आधारित मराठा समाजाचे राष्ट्रीय डिजिटल व्यासपीठ.
+        {getContent('hero.description', 'छत्रपती शिवरायांच्या स्वराज्याची जाज्वल्य निष्ठा, ३५० वर्षांची अखंड शौर्यपरंपरा आणि २१ व्या शतकातील तंत्रज्ञानावर आधारित मराठा समाजाचे राष्ट्रीय डिजिटल व्यासपीठ.')}
       </p>
       <div className="hero-ctas">
-        <Link to="/register" className="btn btn-primary">🚩 व्यासपीठावर सहभागी व्हा</Link>
-        <Link to="/login" className="btn-glass">👤 Demo लॉगिन</Link>
-        <Link to="/business/directory" className="btn-glass">🔎 सर्वत्र शोध</Link>
-        <Link to="/governance" className="btn-glass">🧭 Product Blueprint</Link>
+        {getContent('buttons.joinMember.visible', true) && (
+          <Link to={getContent('buttons.joinMember.link', '/register')} className="btn btn-primary">
+            {getContent('buttons.joinMember.label', '🚩 व्यासपीठावर सहभागी व्हा')}
+          </Link>
+        )}
+        {getContent('buttons.login.visible', true) && (
+          <Link to={getContent('buttons.login.link', '/login')} className="btn-glass">
+            {getContent('buttons.login.label', '👤 Demo लॉगिन')}
+          </Link>
+        )}
+        {getContent('buttons.directory.visible', true) && (
+          <Link to={getContent('buttons.directory.link', '/business/directory')} className="btn-glass">
+            {getContent('buttons.directory.label', '🔎 सर्वत्र शोध')}
+          </Link>
+        )}
+        {getContent('buttons.emergencyHelp.visible', true) && (
+          <Link to={getContent('buttons.emergencyHelp.link', '/governance')} className="btn-glass">
+            {getContent('buttons.emergencyHelp.label', '🧭 Product Blueprint')}
+          </Link>
+        )}
       </div>
       <div className="hero-stats-grid">
         <div className="stat-glass"><b data-countup="350" data-suffix="+">0</b><span>अभ्यासित गड-किल्ले</span></div>
@@ -185,7 +213,7 @@ export default function HomePage() {
     </div>
     <div className="hero-feature-card" data-reveal="right">
       <div className="card-img-wrap">
-        <img src={activeHero.img} alt={activeHero.title} id="heroCardImg" />
+        <img src={displayHeroImg} alt={activeHero.title} id="heroCardImg" />
       </div>
       <div className="card-body">
         <span className="card-tag" id="heroBadge">{activeHero.badge}</span>

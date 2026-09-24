@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useSiteContent } from '../../context/SiteContentContext';
 
 export default function SiteHeader({ onOpenSearch }) {
   const { user, logout } = useAuth();
+  const { getContent } = useSiteContent();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -19,10 +21,10 @@ export default function SiteHeader({ onOpenSearch }) {
           <div className="left-info">
             <span>🚩 <strong>जय जिजाऊ · जय शिवराय · जय शंभूराजे</strong></span>
             <span>|</span>
-            <span>Connect Maratha डिजिटल व्यासपीठ</span>
+            <span>{getContent('texts.tagline', 'Connect Maratha डिजिटल व्यासपीठ')}</span>
           </div>
           <div className="right-info">
-            <span>📞 हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
+            <span>📞 हेल्पलाईन: <strong>{getContent('forms.contactSupport.emergencyHelpline', '१८००-१२३-१६७४')}</strong></span>
             <span>|</span>
             <Link to="/about">संस्था परिचय</Link>
             <span>|</span>
@@ -35,13 +37,13 @@ export default function SiteHeader({ onOpenSearch }) {
       <header className="site-header">
         <div className="site-header-inner">
           <Link to="/" className="brand-desktop" onClick={handleLinkClick}>
-            <img src="/assets/images/logo.png" alt="Connect Maratha Logo" className="brand-logo" />
+            <img src={getContent('images.brandLogo', '/assets/images/logo.png')} alt="Connect Maratha Logo" className="brand-logo" />
             <div className="brand-titles">
               <div className="brand-main">
-                <span className="en">CONNECT</span>
-                <span className="mr">मराठा</span>
+                <span className="en">{getContent('header.brandTitle', 'CONNECT मराठा').split(' ')[0] || 'CONNECT'}</span>{' '}
+                <span className="mr">{getContent('header.brandTitle', 'CONNECT मराठा').split(' ').slice(1).join(' ') || 'मराठा'}</span>
               </div>
-              <span className="brand-sub">भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी</span>
+              <span className="brand-sub">{getContent('header.brandSubtitle', 'भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी')}</span>
             </div>
           </Link>
 
@@ -268,6 +270,7 @@ export default function SiteHeader({ onOpenSearch }) {
                     <div className="mega-col-title">⚖️ प्रशासन, ओळख व CRM</div>
                     <Link to="/card" onClick={handleLinkClick}>🪪 डिजिटल सभासद ओळखपत्र</Link>
                     <Link to="/crm" onClick={handleLinkClick}>🚩 भूमिका आधारित CRM पोर्टल</Link>
+                    <Link to="/admin/cms" onClick={handleLinkClick} style={{ color: '#E65100', fontWeight: '700' }}>🎨 CMS वेबसाईट संपादक</Link>
                     <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
                     <Link to="/admin" onClick={handleLinkClick}>👑 सुपर ॲडमिन कन्सोल</Link>
                     <Link to="/crm/ceo" onClick={handleLinkClick}>🦅 CEO एक्झिक्युटिव्ह डॅशबोर्ड</Link>
@@ -289,6 +292,17 @@ export default function SiteHeader({ onOpenSearch }) {
               title="शोध (Ctrl+K)">
               🔎 शोध
             </button>
+
+            {user && (user.role === 'admin' || user.role === 'superadmin' || user.role === 'ceo') && (
+              <Link
+                to="/admin/cms"
+                className="btn btn-outline"
+                onClick={handleLinkClick}
+                style={{ background: 'linear-gradient(135deg, #7C3AED, #4F46E5)', color: '#FFFFFF', border: 'none', fontWeight: '700', padding: '6px 12px', fontSize: '0.82rem' }}
+                title="वेबसाईटचे मजकूर, चित्रे, बटणे आणि लिंक्स त्वरित संपादित करा">
+                🎨 CMS
+              </Link>
+            )}
 
             {user && user.id ? (
               <div style={{ display: 'inline-flex', gap: '6px', alignItems: 'center' }}>

@@ -280,3 +280,10 @@ CREATE TABLE IF NOT EXISTS quiz_submissions (
 
 CREATE INDEX IF NOT EXISTS idx_quiz_submissions_points ON quiz_submissions (points DESC);
 
+CREATE TABLE IF NOT EXISTS site_content (
+  key TEXT PRIMARY KEY,
+  section TEXT NOT NULL,
+  value_json TEXT NOT NULL,
+  updated_at TEXT
+);
+

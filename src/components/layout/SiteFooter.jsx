@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSiteContent } from '../../context/SiteContentContext';
 
 export default function SiteFooter() {
+  const { getContent } = useSiteContent();
+
   return (
     <>
       {/* ========== QUOTE BANNER ========== */}
@@ -20,14 +23,14 @@ export default function SiteFooter() {
           {/* Column 1: Brand & Mission */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-              <img src="/assets/images/logo.png" alt="Connect Maratha" style={{ width: '44px', height: '44px', objectFit: 'contain', borderRadius: '50%' }} />
-              <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#FFFFFF' }}>CONNECT मराठा</span>
+              <img src={getContent('images.brandLogo', '/assets/images/logo.png')} alt="Connect Maratha" style={{ width: '44px', height: '44px', objectFit: 'contain', borderRadius: '50%' }} />
+              <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#FFFFFF' }}>{getContent('header.brandTitle', 'CONNECT मराठा')}</span>
             </div>
             <p className="footer-brand-copy" style={{ fontSize: '0.86rem', lineHeight: 1.6, marginBottom: '14px', color: '#FFFFFF', opacity: 0.95 }}>
-              भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी. अखंड मराठा इतिहास, संस्कृती, व्यवसाय आणि सामाजिक एकतेचे अधिकृत डिजिटल व्यासपीठ.
+              {getContent('texts.footerAbout', 'भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी. अखंड मराठा इतिहास, संस्कृती, व्यवसाय आणि सामाजिक एकतेचे अधिकृत डिजिटल व्यासपीठ.')}
             </p>
             <div style={{ background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,204,128,0.3)', borderRadius: '8px', padding: '10px 12px', fontSize: '0.8rem', color: '#FFF3E0' }}>
-              📞 समाज हेल्पलाईन: <strong>१८००-१२३-१६७४</strong><br />
+              📞 समाज हेल्पलाईन: <strong>{getContent('forms.contactSupport.emergencyHelpline', '१८००-१२३-१६७४')}</strong><br />
               🔒 <strong>DPDP Act, 2023 सुसंगत:</strong> डेटा गोपनीयता व एन्क्रिप्शन.
             </div>
           </div>
@@ -84,13 +87,13 @@ export default function SiteFooter() {
 
         <div className="footer-bottom">
           <p className="footer-copy" style={{ color: '#FFFFFF', opacity: 0.95, fontSize: '0.85rem' }}>
-            © २०२६ Connect Maratha · सर्व हक्क सुरक्षित
+            {getContent('footer.copyright', '© २०२६ Connect Maratha · सर्व हक्क सुरक्षित')}
           </p>
           <p className="footer-jai" style={{ color: '#FFFFFF', fontWeight: 700, margin: '6px 0' }}>
             ॥ जय भवानी, जय शिवाजी ॥ प्रौढ प्रताप पुरंधर क्षत्रियकुलावतंस सिंहासनाधीश्वर छत्रपती शिवाजी महाराज की जय!
           </p>
           <p className="footer-admin" style={{ fontSize: '0.75rem', marginTop: '8px' }}>
-            <Link to="/admin" style={{ color: '#FFF3E0', opacity: 0.9 }}>CRM Console</Link> | <Link to="/governance" style={{ color: '#FFF3E0', opacity: 0.9 }}>Master Blueprint</Link> | <Link to="/login" style={{ color: '#FFF3E0', opacity: 0.9 }}>लॉगिन</Link>
+            <Link to="/admin" style={{ color: '#FFF3E0', opacity: 0.9 }}>CRM Console</Link> | <Link to="/admin/cms" style={{ color: '#FFE082', fontWeight: 700 }}>🎨 CMS डेटा संपादन</Link> | <Link to="/governance" style={{ color: '#FFF3E0', opacity: 0.9 }}>Master Blueprint</Link> | <Link to="/login" style={{ color: '#FFF3E0', opacity: 0.9 }}>लॉगिन</Link>
           </p>
         </div>
       </footer>

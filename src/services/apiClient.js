@@ -193,6 +193,24 @@ export const apiClient = {
   },
   createMeeting: async (data) => {
     return await fetchJson('/sangam/meetings', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // Site Content & CMS Management API
+  getSiteContent: async () => {
+    const res = await fetchJson('/admin/site-content');
+    return res.data?.siteContent || res.siteContent || res.data || null;
+  },
+  updateSiteContent: async (content) => {
+    const res = await fetchJson('/admin/site-content', { method: 'PUT', body: JSON.stringify(content) });
+    return res.data?.siteContent || res.siteContent || res.data || content;
+  },
+  updateSiteSection: async (section, data) => {
+    const res = await fetchJson(`/admin/site-content/${section}`, { method: 'PUT', body: JSON.stringify(data) });
+    return res.data?.siteContent || res.siteContent || res.data || null;
+  },
+  resetSiteContent: async () => {
+    const res = await fetchJson('/admin/site-content/reset', { method: 'POST' });
+    return res.data?.siteContent || res.siteContent || res.data || null;
   }
 };
 

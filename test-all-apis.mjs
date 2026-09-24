@@ -432,6 +432,26 @@ async function runTests() {
   const exportRep = await request('/admin/reports/export?type=members');
   assert(exportRep.ok && exportRep.data.data.recordCount >= 1, 'GET /api/admin/reports/export');
 
+  // 47. CMS / SITE CONTENT (Admin edit website data)
+  const getContentRes = await request('/admin/site-content');
+  const initialContent = getContentRes.data.data?.siteContent || getContentRes.data.data?.content;
+  assert(getContentRes.ok && initialContent?.hero?.title, 'GET /api/admin/site-content', getContentRes.data);
+
+  const updateSectionRes = await request('/admin/site-content/texts', {
+    method: 'PUT',
+    body: JSON.stringify({ announcementMarquee: '|| जय भवानी जय शिवाजी || अखंड मराठा साम्राज्य' })
+  });
+  assert(updateSectionRes.ok && updateSectionRes.data.data.section === 'texts', 'PUT /api/admin/site-content/:section', updateSectionRes.data);
+
+  const updateFullRes = await request('/admin/site-content', {
+    method: 'PUT',
+    body: JSON.stringify({
+      hero: { title: 'संघटित मराठा, शक्तिशाली महाराष्ट्र' }
+    })
+  });
+  const updatedContent = updateFullRes.data.data?.siteContent || updateFullRes.data.data?.content;
+  assert(updateFullRes.ok && updatedContent?.hero?.title === 'संघटित मराठा, शक्तिशाली महाराष्ट्र', 'PUT /api/admin/site-content', updateFullRes.data);
+
   // 48. AUTH: LOGOUT
   const logoutRes = await request('/auth/logout', { method: 'POST' });
   assert(logoutRes.ok && logoutRes.data.data.loggedOut, 'POST /api/auth/logout');
