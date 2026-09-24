@@ -69,8 +69,24 @@
     }
   ],
   "bloodDonors": [
-    { "id": "DON-1", "name": "रोहन प्रकाश देशमुख", "group": "O+", "city": "पुणे (कोथरूड)", "lastDonated": "४ महिन्यांपूर्वी", "totalDonations": 8, "phone": "+91 98220 XXXXX" },
-    { "id": "DON-2", "name": "अजिंक्य तानाजी सावंत", "group": "O-", "city": "सातारा", "lastDonated": "५ महिन्यांपूर्वी", "totalDonations": 12, "phone": "+91 94211 XXXXX" }
+    {
+      "id": "DON-1",
+      "name": "रोहन प्रकाश देशमुख",
+      "group": "O+",
+      "city": "पुणे (कोथरूड)",
+      "lastDonated": "४ महिन्यांपूर्वी",
+      "totalDonations": 8,
+      "phone": "+91 98220 XXXXX"
+    },
+    {
+      "id": "DON-2",
+      "name": "अजिंक्य तानाजी सावंत",
+      "group": "O-",
+      "city": "सातारा",
+      "lastDonated": "५ महिन्यांपूर्वी",
+      "totalDonations": 12,
+      "phone": "+91 94211 XXXXX"
+    }
   ],
   "matrimony": [
     {
@@ -118,5 +134,101 @@
   "speakers": [],
   "officers": [],
   "organizations": [],
-  "news": []
+  "news": [],
+  "members": [
+    {
+      "id": "CM-96K-001",
+      "name": "अखिल भारतीय मराठा महासंघ मुख्य कार्यालय",
+      "email": "admin@connectmaratha.org",
+      "phone": "+91 98220 96000",
+      "password_hash": "$2a$08$91qQjU8XbF44O059O57DseK6yY44oXo7M9r/9lqB0n0yCqD9gq1ee",
+      "avatar": "🏛️",
+      "city": "मुंबई",
+      "district": "मुंबई शहर",
+      "state": "महाराष्ट्र",
+      "taluka": "दक्षिण मुंबई",
+      "kul": "९६ कुळी मराठा",
+      "gotra": "कश्यप",
+      "profession": "प्रशासन व संघटन",
+      "business": "अखिल भारतीय मराठा महासंघ",
+      "tier": "Royal Patron",
+      "role": "admin",
+      "joined": "2026-09-24",
+      "verified": true,
+      "created_at": "2026-09-24T04:16:00.580Z"
+    }
+  ],
+  "businesses": [],
+  "businessReviews": [],
+  "referrals": [],
+  "meetings": [],
+  "groups": [],
+  "posts": [],
+  "postComments": [],
+  "events": [],
+  "eventRsvps": [],
+  "campaigns": [],
+  "donations": [],
+  "jobs": [],
+  "jobApplications": [],
+  "services": [],
+  "serviceBookings": [],
+  "artists": [],
+  "speakerBookings": [],
+  "builderInquiries": [],
+  "oralHistory": [
+    {
+      "id": "oral_1790157661272",
+      "title": "शिवकालीन तोफगोळे निर्मितीचा कारखाना",
+      "village": "वाई",
+      "taluka": "वाई",
+      "district": "सातारा",
+      "region": "पश्चिम महाराष्ट्र",
+      "contributor": "संजयराव मोहिते",
+      "contributorClan": "मराठा कुळ",
+      "dateSubmitted": "२३/९/२०२६",
+      "story": "वाई येथील कृष्णा नदीकाठच्या जुन्या पेठेत तोफांचे गोळे बनवले जात असल्याची नोंद आहे.",
+      "historicalReference": "मौखिक कुटुंब परंपरा",
+      "tier": "Tier 4: मौखिक इतिहास व लोकपरंपरा",
+      "status": "पडताळणी अंतर्गत (Under Community Review)"
+    },
+    {
+      "id": "oral_01",
+      "title": "पाचाड येथील जिजाऊ वाड्याची विहीर व भुयारी पाण्याचा झरा",
+      "village": "पाचाड",
+      "taluka": "महाड",
+      "district": "रायगड",
+      "region": "कोकण",
+      "contributor": "बाळकृष्ण मोरे (वय ७८ वर्षे, स्थानिक रहिवासी)",
+      "contributorClan": "मोरे घराणे (पाचाड)",
+      "dateSubmitted": "१४ ऑगस्ट २०२६",
+      "story": "आमच्या आजोबांनी सांगितल्यानुसार, जिजाऊ वाड्यातून गडावरील गुप्त पहारेकऱ्यांना पाणी व संदेश पोहोचवण्यासाठी एका विशिष्ट झऱ्याचा वापर केला जाई. आजही त्या विहिरीचे पाणी बाराही महिने स्वच्छ आणि थंड असते.",
+      "historicalReference": "पाचाड ग्रामपंचायत दप्तर व स्थानिक मौखिक परंपरा",
+      "tier": "Tier 4: मौखिक इतिहास व लोकपरंपरा",
+      "status": "सत्यापित (Community Verified)"
+    },
+    {
+      "id": "oral_02",
+      "title": "पावनखिंडीच्या युद्धातील घोडखिंडीचे स्थानिक वाटाडे",
+      "village": "पांढरेपाणी",
+      "taluka": "शाहूवाडी",
+      "district": "कोल्हापूर",
+      "region": "पश्चिम महाराष्ट्र",
+      "contributor": "तानाजीराव खोत (वय ८२ वर्षे)",
+      "contributorClan": "खोत घराणे",
+      "dateSubmitted": "२१ जुलै २०२६",
+      "story": "बाजीप्रभू देशपांडे आणि शिवा काशिद यांनी सिद्धी जौहरच्या सैन्याला अडवण्यापूर्वी स्थानिक धनगर बांधवांनी जंगलातील चोरवाटा दाखवल्या होत्या. त्या वाटेला आजही \"मावळ्यांची वाट\" म्हटले जाते.",
+      "historicalReference": "विशाळगड परिसर स्थानिक कुटुंब नोंदी",
+      "tier": "Tier 4: मौखिक इतिहास व लोकपरंपरा",
+      "status": "सत्यापित (Community Verified)"
+    }
+  ],
+  "quizQuestions": [],
+  "quizSubmissions": [],
+  "quizLeaderboard": [],
+  "auditLogs": [],
+  "notifications": [],
+  "messages": [],
+  "otpCodes": [],
+  "tokenBlacklist": []
 }

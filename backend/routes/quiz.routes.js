@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { all, get, runQuery } from '../../database/database.js';
+import { sendSuccess, sendError } from '../utils/response.js';
 
 const router = Router();
 
@@ -56,27 +57,12 @@ router.get('/stats', async (req, res, next) => {
     const difficulties = {};
     diffRows.forEach(r => { difficulties[r.difficulty] = r.count; });
 
-    res.json({
-      success: true,
+    return sendSuccess(res, 'क्विझ सांख्यिकी', {
       total_questions: totalRow ? totalRow.total : 0,
-      target_architecture: 20000,
       categories,
       difficulties,
-      verification_status: '100% verified against Maharashtra State Gazetteers & Sabhasad Bakhar'
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// GET /api/quiz/categories
-router.get('/categories', async (req, res, next) => {
-  try {
-    const catRows = await all('SELECT category, COUNT(*) as count FROM quiz_questions GROUP BY category ORDER BY count DESC');
-    res.json({
-      success: true,
-      count: catRows.length,
-      categories: catRows
+      category_list: Object.keys(categories),
+      timestamp: new Date()
     });
   } catch (err) {
     next(err);
@@ -86,46 +72,39 @@ router.get('/categories', async (req, res, next) => {
 // GET /api/quiz/questions
 router.get('/questions', async (req, res, next) => {
   try {
-    const { category, difficulty, type, count } = req.query;
+    const { category, difficulty, count = 10, random = 'true' } = req.query;
 
     let sql = 'SELECT * FROM quiz_questions WHERE 1=1';
     const params = [];
 
     if (category && category !== 'सर्व' && category !== 'ALL') {
-      const dbCat = CATEGORY_MAP[category] || category;
+      const mappedCategory = CATEGORY_MAP[category] || category;
       sql += ' AND (category = ? OR category LIKE ?)';
-      params.push(dbCat, `%${category}%`);
+      params.push(mappedCategory, `%${category}%`);
     }
 
     if (difficulty && difficulty !== 'सर्व' && difficulty !== 'ALL') {
-      const dbDiff = DIFFICULTY_MAP[difficulty] || difficulty;
+      const mappedDiff = DIFFICULTY_MAP[difficulty] || difficulty;
       sql += ' AND difficulty = ?';
-      params.push(dbDiff);
+      params.push(mappedDiff);
     }
 
-    if (type && type !== 'all') {
-      sql += ' AND question_type = ?';
-      params.push(type);
-    }
-
-    if (count && count !== 'all') {
-      const parsed = parseInt(count, 10);
-      if (!isNaN(parsed) && parsed > 0) {
-        sql += ' ORDER BY RANDOM() LIMIT ?';
-        params.push(parsed);
-      } else {
-        sql += ' ORDER BY question_id ASC';
-      }
+    if (random === 'true') {
+      sql += ' ORDER BY RANDOM()';
     } else {
       sql += ' ORDER BY question_id ASC';
     }
 
+    if (count !== 'all') {
+      const limit = parseInt(count, 10) || 10;
+      sql += ` LIMIT ${limit}`;
+    }
+
     const questions = await all(sql, params);
 
-    res.json({
-      success: true,
-      count: questions.length,
-      questions
+    return sendSuccess(res, 'क्विझ प्रश्न प्राप्त झाले', {
+      questions,
+      count: questions.length
     });
   } catch (err) {
     next(err);
@@ -136,10 +115,8 @@ router.get('/questions', async (req, res, next) => {
 router.get('/daily', async (req, res, next) => {
   try {
     const today = new Date().toISOString().slice(0, 10);
-    // Deterministic seed query for the day
     const questions = await all('SELECT * FROM quiz_questions WHERE category = ? ORDER BY question_id ASC LIMIT 5', ['Chhatrapati Shivaji Maharaj']);
-    res.json({
-      success: true,
+    return sendSuccess(res, 'आजचा दैनिक ऐतिहासिक प्रश्न (Daily Swarajya Challenge)', {
       date: today,
       title: 'आजचा ऐतिहासिक प्रश्न व क्विझ (Daily Swarajya Challenge)',
       questions
@@ -185,11 +162,11 @@ router.post('/submit', async (req, res, next) => {
 
     const created = await get('SELECT * FROM quiz_submissions WHERE id = ?', [id]);
 
-    res.status(201).json({
-      success: true,
-      message: 'क्विझ निकाल यशस्वीरीत्या नोंदवला गेला!',
-      submission: created
-    });
+    return sendSuccess(res, 'क्विझ निकाल यशस्वीरीत्या नोंदवला गेला!', {
+      submission: created,
+      rank_title,
+      badgeEligibility: percentage >= 80 ? 'शिवकालीन इतिहास भूषण पदक' : 'सहभागी मावळा'
+    }, 201);
   } catch (err) {
     next(err);
   }
@@ -199,10 +176,9 @@ router.post('/submit', async (req, res, next) => {
 router.get('/leaderboard', async (req, res, next) => {
   try {
     const submissions = await all('SELECT * FROM quiz_submissions ORDER BY points DESC, created_at DESC LIMIT 20');
-    res.json({
-      success: true,
-      count: submissions.length,
-      leaderboard: submissions
+    return sendSuccess(res, 'इतिहास क्विझ लीडरबोर्ड', {
+      leaderboard: submissions,
+      count: submissions.length
     });
   } catch (err) {
     next(err);
@@ -210,4 +186,3 @@ router.get('/leaderboard', async (req, res, next) => {
 });
 
 export default router;
-

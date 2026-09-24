@@ -1,124 +1,198 @@
 import { Router } from 'express';
-import { all, get, runQuery } from '../../database/database.js';
+import { db } from '../db/realtimeDb.js';
+import { authenticateToken, optionalToken, requireRole } from '../middleware/auth.js';
+import { sendSuccess, sendError } from '../utils/response.js';
 
 const router = Router();
 
 // GET /api/community/posts
-router.get('/posts', async (req, res, next) => {
-  try {
-    const { groupId } = req.query;
-    let sql = 'SELECT * FROM posts WHERE 1=1';
-    const params = [];
+// Community discussion feed (with optional ?groupId= filter)
+router.get('/posts', (req, res) => {
+  const { groupId, tag } = req.query;
+  let posts = db.getCollection('posts');
 
-    if (groupId) {
-      sql += ' AND group_id = ?';
-      params.push(groupId);
-    }
-
-    sql += ' ORDER BY created_at DESC';
-    const posts = await all(sql, params);
-
-    // Fetch comments for each post
-    for (const post of posts) {
-      post.comments = await all('SELECT * FROM post_comments WHERE post_id = ? ORDER BY created_at ASC', [post.id]);
-    }
-
-    res.json({ success: true, count: posts.length, posts });
-  } catch (err) {
-    next(err);
+  if (posts.length === 0) {
+    // Seed initial welcome discussion
+    const seedPost = {
+      id: 'POST-001',
+      author: 'अखिल भारतीय मराठा महासंघ',
+      authorId: 'CM-96K-001',
+      avatar: '🏛️',
+      role: 'admin',
+      content: 'महाराष्ट्रातील सर्व मराठा उद्योजक, विद्यार्थी व समाजबांधवांचे महासंघाच्या डिजिटल मंचावर हार्दिक स्वागत!',
+      likes: 128,
+      likedBy: [],
+      comments: [
+        { id: 'C1', author: 'प्रदीप कदम', text: 'जय जिजाऊ! जय शिवराय!', createdAt: new Date().toISOString() }
+      ],
+      createdAt: new Date().toISOString()
+    };
+    db.insert('posts', seedPost);
+    posts = [seedPost];
   }
+
+  if (groupId) {
+    posts = posts.filter(p => p.groupId === groupId);
+  }
+  if (tag) {
+    posts = posts.filter(p => (p.tag || '').toLowerCase() === tag.toLowerCase());
+  }
+
+  return sendSuccess(res, 'चर्चा मंच पोस्ट्स प्राप्त झाल्या', { posts, count: posts.length });
 });
 
 // POST /api/community/posts
-router.post('/posts', async (req, res, next) => {
-  try {
-    const { author_id, author_name, author_avatar, group_id, text, image } = req.body;
-
-    if (!text) {
-      return res.status(400).json({ success: false, error: 'मजकूर आवश्यक आहे.' });
-    }
-
-    const id = 'P-' + Date.now();
-
-    await runQuery(`
-      INSERT INTO posts (id, author_id, author_name, author_avatar, group_id, text, image, likes_count, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 0, datetime('now'))
-    `, [id, author_id || 'M1001', author_name || 'अमोल जाधव', author_avatar || '👨', group_id || 'G09', text, image || '']);
-
-    const created = await get('SELECT * FROM posts WHERE id = ?', [id]);
-    created.comments = [];
-
-    res.status(201).json({ success: true, message: 'पोस्ट प्रसिद्ध झाली!', post: created });
-  } catch (err) {
-    next(err);
+// Create rich post with media, tag, category
+router.post('/posts', authenticateToken, (req, res) => {
+  const { content, mediaUrl, tag, groupId } = req.body;
+  if (!content) {
+    return sendError(res, 'कृपया पोस्टचा मजकूर प्रविष्ट करा.', 'MISSING_CONTENT', 400);
   }
+
+  const newPost = {
+    id: `POST-${Date.now().toString().slice(-5)}`,
+    author: req.user.name,
+    authorId: req.user.id,
+    avatar: req.user.avatar || '👤',
+    role: req.user.role || 'member',
+    content,
+    mediaUrl: mediaUrl || '',
+    tag: tag || 'सामान्य चर्चा',
+    groupId: groupId || null,
+    likes: 0,
+    likedBy: [],
+    comments: [],
+    createdAt: new Date().toISOString()
+  };
+
+  db.insert('posts', newPost);
+  db.addAuditLog('CREATE_POST', req.user.id, { postId: newPost.id });
+
+  return sendSuccess(res, 'आपली पोस्ट यशस्वीरीत्या प्रकाशित झाली!', { post: newPost }, 201);
 });
 
 // POST /api/community/posts/:id/like
-router.post('/posts/:id/like', async (req, res, next) => {
-  try {
-    await runQuery('UPDATE posts SET likes_count = likes_count + 1 WHERE id = ?', [req.params.id]);
-    const updated = await get('SELECT id, likes_count FROM posts WHERE id = ?', [req.params.id]);
-    res.json({ success: true, likes_count: updated.likes_count });
-  } catch (err) {
-    next(err);
+// Toggle like on a community post
+router.post('/posts/:id/like', authenticateToken, (req, res) => {
+  const post = db.findById('posts', req.params.id);
+  if (!post) {
+    return sendError(res, 'पोस्ट सापडली नाही.', 'POST_NOT_FOUND', 404);
   }
+
+  post.likedBy = post.likedBy || [];
+  const index = post.likedBy.indexOf(req.user.id);
+
+  let liked = false;
+  if (index === -1) {
+    post.likedBy.push(req.user.id);
+    post.likes = (post.likes || 0) + 1;
+    liked = true;
+  } else {
+    post.likedBy.splice(index, 1);
+    post.likes = Math.max(0, (post.likes || 1) - 1);
+    liked = false;
+  }
+
+  db.update('posts', req.params.id, { likes: post.likes, likedBy: post.likedBy });
+  return sendSuccess(res, liked ? 'पोस्ट पसंत केली (Liked)' : 'पसंती मागे घेतली (Unliked)', {
+    likes: post.likes,
+    liked
+  });
 });
 
 // POST /api/community/posts/:id/comments
-router.post('/posts/:id/comments', async (req, res, next) => {
-  try {
-    const { author_id, author_name, text } = req.body;
-    if (!text) {
-      return res.status(400).json({ success: false, error: 'प्रतिक्रिया आवश्यक आहे.' });
-    }
-
-    const id = 'CMM-' + Date.now();
-    await runQuery(`
-      INSERT INTO post_comments (id, post_id, author_id, author_name, text, created_at)
-      VALUES (?, ?, ?, ?, ?, datetime('now'))
-    `, [id, req.params.id, author_id || 'M1001', author_name || 'अमोल जाधव', text]);
-
-    const comments = await all('SELECT * FROM post_comments WHERE post_id = ? ORDER BY created_at ASC', [req.params.id]);
-    res.status(201).json({ success: true, message: 'प्रतिक्रिया जोडली!', comments });
-  } catch (err) {
-    next(err);
+// Add discussion comment to a post
+router.post('/posts/:id/comments', authenticateToken, (req, res) => {
+  const post = db.findById('posts', req.params.id);
+  if (!post) {
+    return sendError(res, 'पोस्ट सापडली नाही.', 'POST_NOT_FOUND', 404);
   }
+
+  const { text } = req.body;
+  if (!text) {
+    return sendError(res, 'कृपया प्रतिक्रिया प्रविष्ट करा.', 'MISSING_COMMENT', 400);
+  }
+
+  const newComment = {
+    id: `CMT-${Date.now().toString().slice(-4)}`,
+    author: req.user.name,
+    authorId: req.user.id,
+    text,
+    createdAt: new Date().toISOString()
+  };
+
+  post.comments = post.comments || [];
+  post.comments.push(newComment);
+  db.update('posts', req.params.id, { comments: post.comments });
+
+  return sendSuccess(res, 'प्रतिक्रिया यशस्वीरीत्या जोडली गेली!', {
+    comment: newComment,
+    comments: post.comments
+  }, 201);
 });
 
 // GET /api/community/groups
-router.get('/groups', async (req, res, next) => {
-  try {
-    const { type, district } = req.query;
-    let sql = 'SELECT * FROM groups WHERE 1=1';
-    const params = [];
-
-    if (type) {
-      sql += ' AND type = ?';
-      params.push(type);
-    }
-    if (district && district !== 'सर्व') {
-      sql += ' AND district = ?';
-      params.push(district);
-    }
-
-    sql += ' ORDER BY members_count DESC';
-    const groups = await all(sql, params);
-    res.json({ success: true, count: groups.length, groups });
-  } catch (err) {
-    next(err);
+// List district mandals, taluka samitis, interest groups
+router.get('/groups', (req, res) => {
+  let groups = db.getCollection('groups');
+  if (groups.length === 0) {
+    const defaultGroups = [
+      { id: 'GRP-PUNE', name: 'पुणे जिल्हा मराठा महासंघ', district: 'पुणे', membersCount: 1420, desc: 'पुणे जिल्ह्यातील सर्व तालुके व मंडळांचे अधिकृत व्यासपीठ' },
+      { id: 'GRP-THANE', name: 'ठाणे-मुंबई मराठा बिझनेस फोरम', district: 'ठाणे', membersCount: 980, desc: 'एमएमआर परिसरातील उद्योजक व व्यापारी बंधूंचे संघटन' },
+      { id: 'GRP-KOLHAPUR', name: 'कोल्हापूर ऐतिहासिक दुर्ग व वारसा संवर्धन', district: 'कोल्हापूर', membersCount: 750, desc: 'किल्ले संवर्धन, इतिहास संशोधन व सामाजिक कार्य' }
+    ];
+    for (const g of defaultGroups) db.insert('groups', g);
+    groups = defaultGroups;
   }
+
+  return sendSuccess(res, 'मंडळे व समूह यादी', { groups, count: groups.length });
 });
 
 // POST /api/community/groups/:id/join
-router.post('/groups/:id/join', async (req, res, next) => {
-  try {
-    await runQuery('UPDATE groups SET members_count = members_count + 1 WHERE id = ?', [req.params.id]);
-    res.json({ success: true, message: 'गटात यशस्वीरित्या सामील झालात!' });
-  } catch (err) {
-    next(err);
+// Join a group or apply for membership
+router.post('/groups/:id/join', authenticateToken, (req, res) => {
+  const group = db.findById('groups', req.params.id);
+  if (!group) {
+    return sendError(res, 'समूह सापडला नाही.', 'GROUP_NOT_FOUND', 404);
   }
+
+  group.membersCount = (group.membersCount || 0) + 1;
+  db.update('groups', req.params.id, { membersCount: group.membersCount });
+  db.addAuditLog('JOIN_GROUP', req.user.id, { groupId: req.params.id });
+
+  return sendSuccess(res, `आपण "${group.name}" मध्ये यशस्वीरीत्या सामील झाला आहात!`, { group });
+});
+
+// GET /api/community/news
+// Official press releases and verified Mahasangh news articles
+router.get('/news', (req, res) => {
+  const news = db.getCollection('news');
+  return sendSuccess(res, 'महासंघ वृत्त व घोषणा', { news, count: news.length });
+});
+
+// POST /api/community/news
+// Admin creates news announcement
+router.post('/news', authenticateToken, requireRole('admin', 'ceo'), (req, res) => {
+  const { title, summary, content, category, imageUrl } = req.body;
+  if (!title || !content) {
+    return sendError(res, 'शीर्षक व बातमीचा मजकूर आवश्यक आहे.', 'MISSING_FIELDS', 400);
+  }
+
+  const item = {
+    id: `NEWS-${Date.now().toString().slice(-4)}`,
+    title,
+    summary: summary || title,
+    content,
+    category: category || 'अधिकृत घोषणा',
+    imageUrl: imageUrl || '',
+    publishedBy: req.user.name,
+    publishedAt: new Date().toISOString()
+  };
+
+  db.insert('news', item);
+  db.addAuditLog('PUBLISH_NEWS', req.user.id, { newsId: item.id, title });
+
+  return sendSuccess(res, 'वृत्त यशस्वीरीत्या प्रकाशित केले!', { news: item }, 201);
 });
 
 export default router;
-
