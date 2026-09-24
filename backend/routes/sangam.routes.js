@@ -169,19 +169,25 @@ router.get('/metrics', authenticateToken, (req, res) => {
   const referrals = db.getCollection('referrals');
   const meetings = db.getCollection('meetings');
 
-  const totalValue = referrals.reduce((acc, r) => acc + (Number(r.value) || 0), 0);
-  const closedCount = referrals.filter(r => (r.status || '').includes('क्लोज') || (r.status || '').toLowerCase().includes('closed')).length;
-  const conversionRate = referrals.length > 0 ? Math.round((closedCount / referrals.length) * 100) : 78;
+  const totalValue = referrals.reduce((acc, r) => acc + (Number(r.value || r.actualValue || r.estimatedValue) || 0), 0);
+  const closedCount = referrals.filter(r => 
+    (r.status || '').includes('क्लोज') || 
+    (r.status || '').toLowerCase().includes('closed') ||
+    (r.status || '').toLowerCase().includes('won')
+  ).length;
+  const conversionRate = referrals.length > 0 ? Math.round((closedCount / referrals.length) * 100) : 0;
 
   return sendSuccess(res, 'बिझनेस संगम सांख्यिकी', {
     metrics: {
-      totalBusinessExchanged: totalValue || 45200000,
-      totalBusinessFormatted: `₹${((totalValue || 45200000) / 10000000).toFixed(2)} कोटी`,
-      activeReferralsCount: referrals.length || 184,
-      closedReferralsCount: closedCount || 142,
+      totalBusinessExchanged: totalValue,
+      totalBusinessFormatted: totalValue >= 10000000 
+        ? `₹${(totalValue / 10000000).toFixed(2)} कोटी` 
+        : (totalValue >= 100000 ? `₹${(totalValue / 100000).toFixed(2)} लाख` : `₹${totalValue}`),
+      activeReferralsCount: referrals.length,
+      closedReferralsCount: closedCount,
       conversionRate: `${conversionRate}%`,
-      meetingsCompleted: meetings.length || 312,
-      chapterRank: 'राज्यस्तरावर प्रथम क्रमांक'
+      meetingsCompleted: meetings.length,
+      chapterRank: 'सक्रिय चॅप्टर'
     }
   });
 });

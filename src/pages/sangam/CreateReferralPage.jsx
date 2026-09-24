@@ -1,41 +1,65 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import CMDB from '../../services/cmdb';
+import apiClient from '../../services/apiClient';
 
 export default function CreateReferralPage() {
   const [formData, setFormData] = useState({
     recipientId: 'M1002',
     prospect: '',
+    phone: '',
     requirement: '',
     category: 'बांधकाम व साहित्य',
     estimatedValue: '',
     location: 'पुणे'
   });
   const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
   const members = CMDB.raw ? CMDB.raw().members : [];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.prospect || !formData.requirement) {
       alert('कृपया ग्राहकाचे नाव व कामाचे स्वरूप प्रविष्ट करा.');
       return;
     }
 
-    if (CMDB.createReferral) {
-      CMDB.createReferral({
-        recipient: formData.recipientId,
+    try {
+      const cleanPhone = formData.phone ? formData.phone.replace(/[^0-9]/g, '').slice(-10) : '9822144550';
+      const payload = {
+        title: formData.requirement.slice(0, 60),
+        clientName: formData.prospect,
+        clientPhone: cleanPhone.length === 10 ? cleanPhone : '9822144550',
         recipientId: formData.recipientId,
-        prospect: formData.prospect,
-        requirement: formData.requirement,
         category: formData.category,
+        requirement: formData.requirement,
+        value: Number(formData.estimatedValue) || 50000,
         estimatedValue: Number(formData.estimatedValue) || 50000,
-        location: formData.location,
-        status: 'New'
-      });
-      setSuccessMsg('संदर्भ यशस्वीरीत्या नोंदवला गेला! आपल्या खात्यात +१० गुण जोडले गेले आहेत.');
+        prospect: formData.prospect,
+        city: formData.location
+      };
+
+      await apiClient.createReferral(payload);
+
+      if (CMDB.createReferral) {
+        CMDB.createReferral({
+          recipient: formData.recipientId,
+          recipientId: formData.recipientId,
+          prospect: formData.prospect,
+          requirement: formData.requirement,
+          category: formData.category,
+          estimatedValue: Number(formData.estimatedValue) || 50000,
+          location: formData.location,
+          status: 'New'
+        });
+      }
+
+      setSuccessMsg('संदर्भ थेट डेटाबेसमध्ये यशस्वीरीत्या नोंदवला गेला! आपल्या खात्यात +१० गुण जोडले गेले आहेत.');
       setTimeout(() => navigate('/referrals'), 1200);
+    } catch (err) {
+      setErrorMsg(err.message || 'संदर्भ नोंदवताना त्रुटी आली.');
     }
   };
 
@@ -54,6 +78,12 @@ export default function CreateReferralPage() {
         {successMsg && (
           <div style={{ background: '#E8F5E9', color: '#2E7D32', padding: '12px', borderRadius: '8px', fontSize: '0.9rem', marginBottom: '20px', fontWeight: 600 }}>
             ✅ {successMsg}
+          </div>
+        )}
+
+        {errorMsg && (
+          <div style={{ background: '#FFEBEE', color: '#C62828', padding: '12px', borderRadius: '8px', fontSize: '0.9rem', marginBottom: '20px', fontWeight: 600 }}>
+            ⚠️ {errorMsg}
           </div>
         )}
 
@@ -83,6 +113,20 @@ export default function CreateReferralPage() {
               placeholder="उदा. सह्याद्री इन्फ्रा (श्री. महेश पवार)"
               value={formData.prospect}
               onChange={(e) => setFormData({ ...formData, prospect: e.target.value })}
+              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #CCC', fontSize: '0.95rem' }}
+              required
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 600, marginBottom: '6px' }}>
+              ग्राहकाचा संपर्क नंबर (Client Phone) *
+            </label>
+            <input
+              type="tel"
+              placeholder="उदा. 9822144550"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #CCC', fontSize: '0.95rem' }}
               required
             />

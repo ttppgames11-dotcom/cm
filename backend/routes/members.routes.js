@@ -14,16 +14,16 @@ router.get('/stats/summary', (req, res) => {
   const donors = db.getCollection('bloodDonors');
   const groups = db.getCollection('groups');
 
-  const districtCount = new Set(members.map(m => m.district).filter(Boolean)).size || 36;
-  const verifiedCount = members.filter(m => m.verified).length || members.length;
+  const districtCount = new Set(members.map(m => m.district).filter(Boolean)).size;
+  const verifiedCount = members.filter(m => m.verified).length;
 
   return sendSuccess(res, 'एकत्रित सांख्यिकी माहिती', {
     totalMembers: members.length,
     verifiedMembers: verifiedCount,
-    activeMandals: groups.length || 48,
+    activeMandals: groups.length,
     districtSpread: districtCount,
-    bloodDonorsCount: donors.length || 120,
-    registeredBusinesses: businesses.length || 35
+    bloodDonorsCount: donors.length,
+    registeredBusinesses: businesses.length
   });
 });
 

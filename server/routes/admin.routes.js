@@ -15,8 +15,8 @@ router.get('/metrics', authenticateToken, requireRole('admin', 'ceo', 'superadmi
   const jobs = db.getCollection('jobs');
   const bloodRequests = db.getCollection('bloodRequests');
 
-  const totalReferralValue = referrals.reduce((sum, r) => sum + (Number(r.value) || 0), 0);
-  const totalDonationValue = donations.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+  const totalReferralValue = referrals.reduce((sum, r) => sum + (Number(r.value || r.actualValue || r.estimatedValue) || 0), 0);
+  const totalDonationValue = donations.reduce((sum, d) => sum + (Number(d.amount || d.donatedAmount) || 0), 0);
 
   // District distribution
   const districtDistribution = {};
@@ -31,8 +31,8 @@ router.get('/metrics', authenticateToken, requireRole('admin', 'ceo', 'superadmi
       verifiedMembersCount: members.filter(m => m.verified).length,
       pendingVerificationsCount: members.filter(m => !m.verified).length,
       registeredBusinessesCount: businesses.length,
-      totalBusinessExchangedINR: totalReferralValue || 45200000,
-      totalDonationsCollectedINR: totalDonationValue || 6715000,
+      totalBusinessExchangedINR: totalReferralValue,
+      totalDonationsCollectedINR: totalDonationValue,
       openJobPostingsCount: jobs.length,
       activeBloodSOSCount: bloodRequests.length
     },

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 
 const buildersData = [
   {
@@ -118,19 +119,83 @@ const categories = [
 ];
 
 export default function BuildersDirectoryPage() {
+  const [builders, setBuilders] = useState(buildersData);
   const [selectedCat, setSelectedCat] = useState('सर्व बिल्डर्स');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedBuilder, setSelectedBuilder] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const filtered = buildersData.filter((b) => {
+  useEffect(() => {
+    apiClient.getBuilders().then((liveData) => {
+      if (liveData && liveData.length > 0) {
+        const mapped = liveData.map((b) => ({
+          id: b.id,
+          name: b.developer || b.name || 'कन्स्ट्रक्शन्स',
+          specialty: b.configuration || b.specialty || 'गृहनिर्माण प्रकल्प तज्ज्ञ',
+          category: b.category || 'गृहनिर्माण',
+          city: b.location || b.city || 'महाराष्ट्र',
+          projects: b.projectName ? `${b.projectName} (${b.location || ''})` : (b.projects || 'प्रकल्प'),
+          experience: b.experience || '१०+ वर्षे',
+          rera: b.rera || (b.reraApproved ? 'RERA मान्यताप्राप्त' : 'नोंदणीकृत'),
+          icon: b.icon || '🏢',
+          phone: b.phone || '+91 98220 11445',
+          desc: b.discountForMembers || b.desc || 'विश्वासार्ह व दर्जेदार गृहप्रकल्प उभारणीतील अग्रगण्य मराठा ब्रँड.'
+        }));
+        setBuilders(mapped);
+      }
+    }).catch(() => {});
+  }, []);
+
+  const handleAddBuilder = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const form = e.target;
+    const devName = form.elements['developer'].value;
+    const cat = form.elements['category'].value;
+    const city = form.elements['city'].value;
+    const rera = form.elements['rera'].value;
+    const phone = form.elements['phone'].value;
+    const projects = form.elements['projects'].value;
+
+    try {
+      const res = await apiClient.addBuilder({
+        projectName: projects || `${devName} हाइट्स`,
+        developer: devName,
+        location: city,
+        configuration: cat,
+        phone: phone.replace(/\D/g, '').slice(-10) || '9822011223'
+      });
+      const created = res.data?.project || res.project || {
+        id: `BLD-${Date.now().toString().slice(-4)}`,
+        name: devName,
+        specialty: cat,
+        category: cat,
+        city: city,
+        projects: projects || `${devName} हाइट्स`,
+        experience: 'नवीन नोंदणी',
+        rera: rera || 'नोंदणीकृत',
+        icon: '🏢',
+        phone: phone,
+        desc: 'Connect Maratha नेटवर्कवर नव्याने नोंदणीकृत विकासक.'
+      };
+      setBuilders((prev) => [created, ...prev]);
+      setSubmitted(true);
+    } catch (err) {
+      alert(err.message || 'नोंदणी करताना त्रुटी आली.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const filtered = builders.filter((b) => {
     const matchCat = selectedCat === 'सर्व बिल्डर्स' || b.category === selectedCat;
     const matchSearch =
-      b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.projects.toLowerCase().includes(searchQuery.toLowerCase());
+      (b.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (b.specialty || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (b.city || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (b.projects || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -495,20 +560,20 @@ export default function BuildersDirectoryPage() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+              <form onSubmit={handleAddBuilder}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <input required placeholder="फर्म / कंपनीचे नाव *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                  <input name="developer" required placeholder="फर्म / कंपनीचे नाव *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <select style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}>
-                      {categories.filter(c => c !== 'सर्व बिल्डर्स').map(c => <option key={c}>{c}</option>)}
+                    <select name="category" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}>
+                      {categories.filter(c => c !== 'सर्व बिल्डर्स').map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
-                    <input required placeholder="शहर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                    <input name="city" required placeholder="शहर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
                   </div>
-                  <input placeholder="RERA नोंदणी क्रमांक" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                  <input required type="tel" placeholder="अधिकृत मोबाईल नंबर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                  <input placeholder="चालू प्रकल्पांची नावे" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                  <button type="submit" style={{ background: '#BF360C', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
-                    फर्म सबमिट करा
+                  <input name="rera" placeholder="RERA नोंदणी क्रमांक" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                  <input name="phone" required type="tel" placeholder="अधिकृत मोबाईल नंबर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                  <input name="projects" placeholder="चालू प्रकल्पांची नावे" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
+                  <button type="submit" disabled={isSubmitting} style={{ background: '#BF360C', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', opacity: isSubmitting ? 0.7 : 1 }}>
+                    {isSubmitting ? 'नोंदणी करत आहे...' : 'फर्म सबमिट करा'}
                   </button>
                 </div>
               </form>

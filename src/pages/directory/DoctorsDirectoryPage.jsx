@@ -158,8 +158,13 @@ export default function DoctorsDirectoryPage() {
   useEffect(() => {
     apiClient.getDoctors()
       .then(data => {
-        if (data && data.length > 0) setDoctorsList(data);
-        else setDoctorsList(doctorsData);
+        if (Array.isArray(data) && data.length > 0) {
+          setDoctorsList(data);
+        } else if (Array.isArray(data)) {
+          setDoctorsList(data);
+        } else {
+          setDoctorsList(doctorsData);
+        }
       })
       .catch(() => setDoctorsList(doctorsData));
   }, []);
@@ -182,10 +187,9 @@ export default function DoctorsDirectoryPage() {
 
     try {
       const res = await apiClient.addDoctor(payload);
-      if (res.doctor) {
-        setDoctorsList(prev => [res.doctor, ...prev]);
-      }
-      setApiStatusBanner({ type: 'success', text: '✅ REST API Confirmation: ' + res.message });
+      const newDoc = res.doctor || res.data?.doctor || { id: Date.now(), ...payload };
+      setDoctorsList(prev => [newDoc, ...prev]);
+      setApiStatusBanner({ type: 'success', text: '✅ REST API Confirmation: ' + (res.message || 'डॉक्टर प्रोफाइल यशस्वीरीत्या जोडले गेले!') });
       setTimeout(() => {
         setShowAddModal(false);
         setApiStatusBanner(null);

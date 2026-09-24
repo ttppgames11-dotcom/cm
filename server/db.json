@@ -1,7 +1,7 @@
 {
   "doctors": [
     {
-      "id": "DOC-6319",
+      "id": "DOC-3695",
       "name": "डॉ. विक्रम कदम",
       "specialty": "हृदयरोग",
       "degree": "M.B.B.S.",
@@ -15,142 +15,114 @@
       "rating": "5.0 ★ (नवीन नोंदणी)",
       "icon": "🩺",
       "verified": true,
-      "createdAt": "2026-09-24T04:33:56.319Z"
+      "createdAt": "2026-09-24T04:57:03.695Z"
     },
     {
-      "id": "DOC-4010",
-      "name": "डॉ. विक्रम कदम",
-      "specialty": "हृदयरोग",
-      "degree": "M.B.B.S.",
-      "category": "हृदयरोग",
-      "hospital": "सह्याद्री हॉस्पिटल",
-      "city": "पुणे",
-      "phone": "+919822011111",
-      "consultationFee": "₹५००",
-      "timing": "स. १० ते सायं. ६",
-      "experience": "१० वर्षे अनुभव",
-      "rating": "5.0 ★ (नवीन नोंदणी)",
-      "icon": "🩺",
-      "verified": true,
-      "createdAt": "2026-09-24T04:32:54.010Z"
-    },
-    {
-      "id": "DOC-8290",
-      "name": "डॉ. विक्रम कदम",
-      "specialty": "हृदयरोग",
-      "degree": "M.B.B.S.",
-      "category": "हृदयरोग",
-      "hospital": "सह्याद्री हॉस्पिटल",
-      "city": "पुणे",
-      "phone": "+919822011111",
-      "consultationFee": "₹५००",
-      "timing": "स. १० ते सायं. ६",
-      "experience": "१० वर्षे अनुभव",
-      "rating": "5.0 ★ (नवीन नोंदणी)",
-      "icon": "🩺",
-      "verified": true,
-      "createdAt": "2026-09-24T04:32:08.290Z"
-    },
-    {
-      "id": "DOC-7606",
-      "name": "डॉ. विक्रम कदम",
-      "specialty": "हृदयरोग",
-      "degree": "M.B.B.S.",
-      "category": "हृदयरोग",
-      "hospital": "सह्याद्री हॉस्पिटल",
-      "city": "पुणे",
-      "phone": "+91 98220 11111",
-      "consultationFee": "₹५००",
-      "timing": "स. १० ते सायं. ६",
-      "experience": "१० वर्षे अनुभव",
-      "rating": "5.0 ★ (नवीन नोंदणी)",
-      "icon": "🩺",
-      "verified": true,
-      "createdAt": "2026-09-24T04:23:07.606Z"
-    },
-    {
-      "id": "DOC-7087",
-      "name": "डॉ. विक्रम कदम",
-      "specialty": "हृदयरोग",
-      "degree": "M.B.B.S.",
-      "category": "हृदयरोग",
-      "hospital": "सह्याद्री हॉस्पिटल",
-      "city": "पुणे",
-      "phone": "+91 98220 11111",
-      "consultationFee": "₹५००",
-      "timing": "स. १० ते सायं. ६",
-      "experience": "१० वर्षे अनुभव",
-      "rating": "5.0 ★ (नवीन नोंदणी)",
-      "icon": "🩺",
-      "verified": true,
-      "createdAt": "2026-09-24T04:22:17.087Z"
-    },
-    {
-      "id": "DOC-9214",
-      "name": "डॉ. विक्रम कदम",
-      "specialty": "हृदयरोग",
-      "degree": "M.B.B.S.",
-      "category": "हृदयरोग",
-      "hospital": "सह्याद्री हॉस्पिटल",
-      "city": "पुणे",
-      "phone": "+91 98220 11111",
-      "consultationFee": "₹५००",
-      "timing": "स. १० ते सायं. ६",
-      "experience": "१० वर्षे अनुभव",
-      "rating": "5.0 ★ (नवीन नोंदणी)",
-      "icon": "🩺",
-      "verified": true,
-      "createdAt": "2026-09-24T04:21:19.214Z"
-    },
-    {
-      "id": "DOC-101",
-      "name": "डॉ. अमित संभाजीराव पाटील",
-      "degree": "M.B.B.S., M.S. (Orthopedics)",
-      "specialty": "अस्थिरोग व सांधेप्रत्यारोपण तज्ज्ञ",
-      "category": "हाडे व सांधे",
-      "icon": "🦴",
-      "experience": "१५ वर्षे अनुभव",
-      "hospital": "सह्याद्री सुपरस्पेशालिटी हॉस्पिटल",
-      "city": "पुणे (डेक्कन), महाराष्ट्र",
-      "phone": "+91 98220 12345",
-      "consultationFee": "₹७००",
-      "timing": "सोम ते शनि: स. १० ते सायं. ६",
-      "rating": "4.9 ★★★★★"
-    },
-    {
-      "id": "DOC-102",
-      "name": "डॉ. सौ. सानिका विक्रमराजे कदम",
-      "degree": "M.B.B.S., M.D. (Gynecology)",
-      "specialty": "स्त्रीरोग व प्रसूतीशास्त्र तज्ज्ञ",
-      "category": "स्त्रीरोग",
-      "icon": "👩‍⚕️",
-      "experience": "१२ वर्षे अनुभव",
-      "hospital": "दीनानाथ मंगेशकर रुग्णालय",
-      "city": "पुणे (एरंडवणे), महाराष्ट्र",
-      "phone": "+91 98901 67890",
-      "consultationFee": "₹८००",
-      "timing": "सोम ते शुक्र: स. ११ ते सायं. ५",
-      "rating": "4.8 ★★★★★"
-    },
-    {
-      "id": "DOC-103",
-      "name": "डॉ. प्रशांत जयसिंगराव गायकवाड",
-      "degree": "M.B.B.S., M.D. (Cardiology), D.N.B.",
+      "id": "DOC-1001",
+      "name": "डॉ. सचिन देशमुख",
       "specialty": "हृदयरोग तज्ज्ञ (Cardiologist)",
+      "degree": "MD, DM (Cardiology)",
       "category": "हृदय रोग",
+      "hospital": "दीनानाथ मंगेशकर रुग्णालय, एरंडवणे",
+      "city": "पुणे",
+      "phone": "+91 98220 12345",
+      "consultationFee": "₹८००",
+      "timing": "सकाळी १० ते सायं ५",
+      "experience": "१६+ वर्षे अनुभव",
+      "rating": "4.9 ★ (२४०+ पुनरावलोकने)",
       "icon": "❤️",
-      "experience": "१८ वर्षे अनुभव",
-      "hospital": "एशियन हार्ट इन्स्टिट्यूट",
-      "city": "मुंबई (बीकेसी), महाराष्ट्र",
-      "phone": "+91 98200 99887",
+      "verified": true,
+      "createdAt": "2026-09-24T04:48:33.450Z"
+    },
+    {
+      "id": "DOC-1002",
+      "name": "डॉ. अमोल पाटील",
+      "specialty": "मेंदू व मज्जारोग तज्ज्ञ (Neurosurgeon)",
+      "degree": "MCh (Neurosurgery)",
+      "category": "मेंदू व मज्जारोग",
+      "hospital": "केईएम व हिंदुजा रुग्णालय",
+      "city": "मुंबई",
+      "phone": "+91 98200 54321",
       "consultationFee": "₹१,०००",
-      "timing": "२४×७ आणीबाणी / सोम ते शनि",
-      "rating": "5.0 ★★★★★"
+      "timing": "सकाळी ११ ते सायं ६",
+      "experience": "१४+ वर्षे अनुभव",
+      "rating": "4.8 ★ (१९५+ पुनरावलोकने)",
+      "icon": "🧠",
+      "verified": true,
+      "createdAt": "2026-09-24T04:48:33.452Z"
+    },
+    {
+      "id": "DOC-1003",
+      "name": "डॉ. वैशाली कदम",
+      "specialty": "कॅन्सर तज्ज्ञ (Medical Oncologist)",
+      "degree": "MD, DM (Medical Oncology)",
+      "category": "कॅन्सर तज्ज्ञ",
+      "hospital": "अपोलो कॅन्सर सेंटर",
+      "city": "नाशिक",
+      "phone": "+91 98500 87654",
+      "consultationFee": "₹९००",
+      "timing": "सकाळी ९ ते दु. २",
+      "experience": "१२+ वर्षे अनुभव",
+      "rating": "4.9 ★ (३१०+ पुनरावलोकने)",
+      "icon": "🎗️",
+      "verified": true,
+      "createdAt": "2026-09-24T04:48:33.452Z"
+    },
+    {
+      "id": "DOC-1004",
+      "name": "डॉ. नितीन शिंदे",
+      "specialty": "हाडे व सांधे तज्ज्ञ (Orthopedic Surgeon)",
+      "degree": "MS (Orthopaedics), Joint Replacement",
+      "category": "हाडे व सांधे",
+      "hospital": "सह्याद्री ऑर्थो केअर",
+      "city": "सांगली",
+      "phone": "+91 94220 33445",
+      "consultationFee": "₹६००",
+      "timing": "सकाळी १० ते सायं ७",
+      "experience": "१८+ वर्षे अनुभव",
+      "rating": "4.7 ★ (१६०+ पुनरावलोकने)",
+      "icon": "🦴",
+      "verified": true,
+      "createdAt": "2026-09-24T04:48:33.452Z"
+    },
+    {
+      "id": "DOC-1005",
+      "name": "डॉ. प्रियांका मोहिते-पवार",
+      "specialty": "स्त्रीरोग व प्रसूतीतज्ज्ञ (Gynecologist)",
+      "degree": "MS (OBGYN), Fellowship Infertility",
+      "category": "स्त्रीरोग",
+      "hospital": "मातृसेवा सुपरस्पेशालिटी हॉस्पिटल",
+      "city": "कोल्हापूर",
+      "phone": "+91 91580 99887",
+      "consultationFee": "₹७००",
+      "timing": "सकाळी ९ ते सायं ४",
+      "experience": "१३+ वर्षे अनुभव",
+      "rating": "4.9 ★ (२८५+ पुनरावलोकने)",
+      "icon": "🌸",
+      "verified": true,
+      "createdAt": "2026-09-24T04:48:33.452Z"
+    },
+    {
+      "id": "DOC-1006",
+      "name": "डॉ. महेश सूर्यवंशी",
+      "specialty": "बालरोग तज्ज्ञ (Pediatrician)",
+      "degree": "MD (Pediatrics), DCH",
+      "category": "बालरोग",
+      "hospital": "छत्रपती शिवाजी महाराज चिल्ड्रन हॉस्पिटल",
+      "city": "सातारा",
+      "phone": "+91 98231 66554",
+      "consultationFee": "₹५००",
+      "timing": "सकाळी ९:३० ते सायं ६:३०",
+      "experience": "१५+ वर्षे अनुभव",
+      "rating": "4.8 ★ (२२०+ पुनरावलोकने)",
+      "icon": "👶",
+      "verified": true,
+      "createdAt": "2026-09-24T04:48:33.452Z"
     }
   ],
   "bloodRequests": [
     {
-      "id": "REQ-6391",
+      "id": "REQ-3780",
       "patient": "प्रशांत कदम",
       "hospital": "सिव्हिल हॉस्पिटल",
       "bloodGroup": "B+",
@@ -159,92 +131,45 @@
       "city": "पुणे/महाराष्ट्र",
       "contact": "+919822011111",
       "time": "आत्ताच",
-      "createdAt": "2026-09-24T04:33:56.391Z"
-    },
-    {
-      "id": "REQ-4074",
-      "patient": "प्रशांत कदम",
-      "hospital": "सिव्हिल हॉस्पिटल",
-      "bloodGroup": "B+",
-      "units": 1,
-      "urgency": "तात्काळ (Emergency)",
-      "city": "पुणे/महाराष्ट्र",
-      "contact": "+919822011111",
-      "time": "आत्ताच",
-      "createdAt": "2026-09-24T04:32:54.074Z"
-    },
-    {
-      "id": "REQ-8350",
-      "patient": "प्रशांत कदम",
-      "hospital": "सिव्हिल हॉस्पिटल",
-      "bloodGroup": "B+",
-      "units": 1,
-      "urgency": "तात्काळ (Emergency)",
-      "city": "पुणे/महाराष्ट्र",
-      "contact": "+919822011111",
-      "time": "आत्ताच",
-      "createdAt": "2026-09-24T04:32:08.350Z"
-    },
-    {
-      "id": "REQ-7658",
-      "patient": "प्रशांत कदम",
-      "hospital": "सिव्हिल हॉस्पिटल",
-      "bloodGroup": "B+",
-      "units": 1,
-      "urgency": "तात्काळ (Emergency)",
-      "city": "पुणे/महाराष्ट्र",
-      "contact": "9822011111",
-      "time": "आत्ताच",
-      "createdAt": "2026-09-24T04:23:07.658Z"
-    },
-    {
-      "id": "REQ-7145",
-      "patient": "प्रशांत कदम",
-      "hospital": "सिव्हिल हॉस्पिटल",
-      "bloodGroup": "B+",
-      "units": 1,
-      "urgency": "तात्काळ (Emergency)",
-      "city": "पुणे/महाराष्ट्र",
-      "contact": "9822011111",
-      "time": "आत्ताच",
-      "createdAt": "2026-09-24T04:22:17.145Z"
-    },
-    {
-      "id": "REQ-9268",
-      "patient": "प्रशांत कदम",
-      "hospital": "सिव्हिल हॉस्पिटल",
-      "bloodGroup": "B+",
-      "units": 1,
-      "urgency": "तात्काळ (Emergency)",
-      "city": "पुणे/महाराष्ट्र",
-      "contact": "9822011111",
-      "time": "आत्ताच",
-      "createdAt": "2026-09-24T04:21:19.269Z"
+      "createdAt": "2026-09-24T04:57:03.780Z"
     },
     {
       "id": "REQ-101",
-      "patient": "प्रशांत संभाजी जाधव",
-      "hospital": "ससून सर्वोपचार रुग्णालय, पुणे",
-      "bloodGroup": "O Negative (O-)",
+      "patient": "श्रीमती सुनंदा चंद्रकांत पाटील (वय ५८)",
+      "hospital": "दीनानाथ मंगेशकर रुग्णालय, पुणे",
+      "bloodGroup": "O+",
       "units": 2,
-      "urgency": "तात्काळ (Emergency)",
+      "urgency": "अत्यंत तातडीचे (१ तासात)",
+      "contact": "+91 98220 11992",
       "time": "१० मिनिटांपूर्वी",
-      "contact": "+91 98221 11223"
+      "status": "सक्रिय (Active SOS)"
     },
     {
       "id": "REQ-102",
-      "patient": "सौ. सुमित्रा बाजीराव गायकवाड",
-      "hospital": "के.ई.एम. रुग्णालय, परळ, मुंबई",
-      "bloodGroup": "AB Positive (AB+)",
+      "patient": "मा. तानाजीराव गायकवाड (वय ६४, बायपास सर्जरी)",
+      "hospital": "ज्युपिटर हॉस्पिटल, ठाणे",
+      "bloodGroup": "A-",
       "units": 3,
-      "urgency": "पुढील ४ तासांत",
-      "time": "२५ मिनिटांपूर्वी",
-      "contact": "+91 99203 44556"
+      "urgency": "तातडीचे (४ तासांत)",
+      "contact": "+91 98200 44881",
+      "time": "३५ मिनिटांपूर्वी",
+      "status": "सक्रिय (Active SOS)"
+    },
+    {
+      "id": "REQ-103",
+      "patient": "कु. संस्कृती सचिन शिंदे (वय १२, थॅलेसेमिया)",
+      "hospital": "घाटी शासकीय रुग्णालय, छत्रपती संभाजीनगर",
+      "bloodGroup": "B+",
+      "units": 1,
+      "urgency": "आज संध्याकाळपर्यंत",
+      "contact": "+91 94220 77331",
+      "time": "१ तासापूर्वी",
+      "status": "सक्रिय (Active SOS)"
     }
   ],
   "bloodDonors": [
     {
-      "id": "DON-6403",
+      "id": "DON-3798",
       "name": "संदीप सावंत",
       "group": "O+",
       "city": "पुणे",
@@ -252,86 +177,73 @@
       "lastDonated": "नवीन नोंदणी",
       "totalDonations": 1,
       "verified": true,
-      "createdAt": "2026-09-24T04:33:56.403Z"
+      "createdAt": "2026-09-24T04:57:03.798Z"
     },
     {
-      "id": "DON-4087",
-      "name": "संदीप सावंत",
-      "group": "O+",
-      "city": "पुणे",
-      "phone": "+919822022222",
-      "lastDonated": "नवीन नोंदणी",
-      "totalDonations": 1,
-      "verified": true,
-      "createdAt": "2026-09-24T04:32:54.087Z"
-    },
-    {
-      "id": "DON-8362",
-      "name": "संदीप सावंत",
-      "group": "O+",
-      "city": "पुणे",
-      "phone": "+919822022222",
-      "lastDonated": "नवीन नोंदणी",
-      "totalDonations": 1,
-      "verified": true,
-      "createdAt": "2026-09-24T04:32:08.362Z"
-    },
-    {
-      "id": "DON-7669",
-      "name": "संदीप सावंत",
-      "group": "O+",
-      "city": "पुणे",
-      "phone": "9822022222",
-      "lastDonated": "नवीन नोंदणी",
-      "totalDonations": 1,
-      "verified": true,
-      "createdAt": "2026-09-24T04:23:07.669Z"
-    },
-    {
-      "id": "DON-7154",
-      "name": "संदीप सावंत",
-      "group": "O+",
-      "city": "पुणे",
-      "phone": "9822022222",
-      "lastDonated": "नवीन नोंदणी",
-      "totalDonations": 1,
-      "verified": true,
-      "createdAt": "2026-09-24T04:22:17.154Z"
-    },
-    {
-      "id": "DON-9278",
-      "name": "संदीप सावंत",
-      "group": "O+",
-      "city": "पुणे",
-      "phone": "9822022222",
-      "lastDonated": "नवीन नोंदणी",
-      "totalDonations": 1,
-      "verified": true,
-      "createdAt": "2026-09-24T04:21:19.278Z"
-    },
-    {
-      "id": "DON-1",
-      "name": "रोहन प्रकाश देशमुख",
+      "id": "DON-01",
+      "name": "अभिजीत संभाजी पाटील",
       "group": "O+",
       "city": "पुणे (कोथरूड)",
-      "lastDonated": "४ महिन्यांपूर्वी",
-      "totalDonations": 8,
-      "phone": "+91 98220 XXXXX"
+      "phone": "+91 98221 44550",
+      "lastDonated": "२ महिन्यांपूर्वी",
+      "totalDonations": 12,
+      "readyEmergency": true
     },
     {
-      "id": "DON-2",
-      "name": "अजिंक्य तानाजी सावंत",
-      "group": "O-",
-      "city": "सातारा",
+      "id": "DON-02",
+      "name": "योगेश विठ्ठल चव्हाण",
+      "group": "A+",
+      "city": "मुंबई (दादर)",
+      "phone": "+91 98201 33441",
+      "lastDonated": "३ महिन्यांपूर्वी",
+      "totalDonations": 15,
+      "readyEmergency": true
+    },
+    {
+      "id": "DON-03",
+      "name": "विशाल विजयराव मोहिते",
+      "group": "AB+",
+      "city": "नाशिक",
+      "phone": "+91 91580 22119",
+      "lastDonated": "७ महिन्यांपूर्वी",
+      "totalDonations": 5,
+      "readyEmergency": true
+    },
+    {
+      "id": "DON-04",
+      "name": "महेंद्र सयाजीराव कदम",
+      "group": "A-",
+      "city": "छत्रपती संभाजीनगर",
+      "phone": "+91 94030 55667",
+      "lastDonated": "४ महिन्यांपूर्वी",
+      "totalDonations": 9,
+      "readyEmergency": true
+    },
+    {
+      "id": "DON-05",
+      "name": "सागर दादासाहेब पवार",
+      "group": "B-",
+      "city": "सोलापूर",
+      "phone": "+91 98224 88771",
       "lastDonated": "५ महिन्यांपूर्वी",
-      "totalDonations": 12,
-      "phone": "+91 94211 XXXXX"
+      "totalDonations": 7,
+      "readyEmergency": true
+    },
+    {
+      "id": "DON-06",
+      "name": "दिलीप नारायण भोसले",
+      "group": "Bombay Blood Group (hh)",
+      "city": "पुणे",
+      "phone": "+91 98233 11224",
+      "lastDonated": "८ महिन्यांपूर्वी",
+      "totalDonations": 4,
+      "readyEmergency": true
     }
   ],
   "matrimony": [
     {
-      "id": "CM-M-6416",
-      "memberId": "CM-96K-0008",
+      "id": "CM-M-3814",
+      "memberId": "CM-96K-0009",
       "name": "इंजि. अनिकेत कदम",
       "gender": "वर (Groom)",
       "age": 28,
@@ -347,142 +259,73 @@
       "photo": "👨‍💼",
       "expectations": "सुशिक्षित, सुसंस्कृत अनुरूप जोडीदार.",
       "contact": "",
-      "createdAt": "2026-09-24T04:33:56.416Z"
+      "createdAt": "2026-09-24T04:57:03.815Z"
     },
     {
-      "id": "CM-M-4098",
-      "memberId": "CM-96K-0007",
-      "name": "इंजि. अनिकेत कदम",
+      "id": "MAT-201",
+      "name": "डॉ. स्वप्नील विक्रमराव कदम",
       "gender": "वर (Groom)",
       "age": 28,
-      "height": "5' 8\"",
-      "caste": "९६ कुळी मराठा",
-      "kul": "पाटील / कदम / जाधव",
-      "gotra": "कश्यप",
-      "education": "पदवीधर",
-      "profession": "व्यवसायिक / सेवा",
-      "income": "उत्पन्न खुलासेवार",
-      "city": "सातारा",
+      "height": "5' 11\"",
+      "kul": "९६ कुळी मराठा - कदम (सूर्यवंश)",
+      "gotra": "भारद्वाज",
+      "education": "M.D. (Medicine) - KEM Hospital Mumbai",
+      "profession": "कन्सल्टंट फिजिशियन, रुबी हॉल क्लिनिक पुणे",
+      "income": "₹२८ लाख / वर्ष",
+      "city": "पुणे / सातारे",
+      "phone": "+91 98221 00201",
       "verified": true,
-      "photo": "👨‍💼",
-      "expectations": "सुशिक्षित, सुसंस्कृत अनुरूप जोडीदार.",
-      "contact": "",
-      "createdAt": "2026-09-24T04:32:54.098Z"
+      "expectations": "सुशिक्षित (डॉक्टर/अभियांत्रिकी/CA) मराठा वधू.",
+      "createdAt": "2026-09-24T04:48:33.509Z"
     },
     {
-      "id": "CM-M-8374",
-      "memberId": "CM-96K-0006",
-      "name": "इंजि. अनिकेत कदम",
-      "gender": "वर (Groom)",
-      "age": 28,
-      "height": "5' 8\"",
-      "caste": "९६ कुळी मराठा",
-      "kul": "पाटील / कदम / जाधव",
-      "gotra": "कश्यप",
-      "education": "पदवीधर",
-      "profession": "व्यवसायिक / सेवा",
-      "income": "उत्पन्न खुलासेवार",
-      "city": "सातारा",
-      "verified": true,
-      "photo": "👨‍💼",
-      "expectations": "सुशिक्षित, सुसंस्कृत अनुरूप जोडीदार.",
-      "contact": "",
-      "createdAt": "2026-09-24T04:32:08.374Z"
-    },
-    {
-      "id": "CM-M-7686",
-      "memberId": "CM-96K-0005",
-      "name": "इंजि. अनिकेत कदम",
-      "gender": "वर (Groom)",
-      "age": 28,
-      "height": "5' 8\"",
-      "caste": "९६ कुळी मराठा",
-      "kul": "पाटील / कदम / जाधव",
-      "gotra": "कश्यप",
-      "education": "पदवीधर",
-      "profession": "व्यवसायिक / सेवा",
-      "income": "उत्पन्न खुलासेवार",
-      "city": "सातारा",
-      "verified": true,
-      "photo": "👨‍💼",
-      "expectations": "सुशिक्षित, सुसंस्कृत अनुरूप जोडीदार.",
-      "contact": "",
-      "createdAt": "2026-09-24T04:23:07.686Z"
-    },
-    {
-      "id": "CM-M-7164",
-      "memberId": "CM-96K-0004",
-      "name": "इंजि. अनिकेत कदम",
-      "gender": "वर (Groom)",
-      "age": 28,
-      "height": "5' 8\"",
-      "caste": "९६ कुळी मराठा",
-      "kul": "पाटील / कदम / जाधव",
-      "gotra": "कश्यप",
-      "education": "पदवीधर",
-      "profession": "व्यवसायिक / सेवा",
-      "income": "उत्पन्न खुलासेवार",
-      "city": "सातारा",
-      "verified": true,
-      "photo": "👨‍💼",
-      "expectations": "सुशिक्षित, सुसंस्कृत अनुरूप जोडीदार.",
-      "contact": "",
-      "createdAt": "2026-09-24T04:22:17.164Z"
-    },
-    {
-      "id": "CM-M-9288",
-      "memberId": "CM-96K-0003",
-      "name": "इंजि. अनिकेत कदम",
-      "gender": "वर (Groom)",
-      "age": 28,
-      "height": "5' 8\"",
-      "caste": "९६ कुळी मराठा",
-      "kul": "पाटील / कदम / जाधव",
-      "gotra": "कश्यप",
-      "education": "पदवीधर",
-      "profession": "व्यवसायिक / सेवा",
-      "income": "उत्पन्न खुलासेवार",
-      "city": "सातारा",
-      "verified": true,
-      "photo": "👨‍💼",
-      "expectations": "सुशिक्षित, सुसंस्कृत अनुरूप जोडीदार.",
-      "contact": "",
-      "createdAt": "2026-09-24T04:21:19.288Z"
-    },
-    {
-      "id": "CM-M-801",
-      "name": "इंजि. रोहन संभाजीराव कदम",
-      "gender": "वर (Groom)",
-      "age": 28,
-      "height": "5' 10\"",
-      "caste": "९६ कुळी मराठा",
-      "kul": "कदम (भारद्वाज गोत्र)",
-      "education": "B.Tech (Computer Science), COEP",
-      "profession": "Senior Software Engineer, MNC Pune",
-      "income": "₹२२ लाख वार्षिक",
-      "city": "पुणे (मूळ: कराड, सातारा)",
-      "verified": true,
-      "photo": "👨‍💼",
-      "expectations": "सुशिक्षित, पदवीधर, कौटुंबिक मूल्यांची जाण असणारी अनुरूप वधू."
-    },
-    {
-      "id": "CM-F-802",
-      "name": "डॉ. स्नेहल विक्रमराव पाटील",
+      "id": "MAT-202",
+      "name": "सौ. सायली संभाजी पाटील",
       "gender": "वधू (Bride)",
       "age": 26,
       "height": "5' 5\"",
-      "caste": "९६ कुळी मराठा",
-      "kul": "पाटील (वसिष्ठ गोत्र)",
-      "education": "M.B.B.S., D.G.O. (Gynecologist)",
-      "profession": "वैद्यकीय अधिकारी, शासकीय रुग्णालय",
-      "income": "₹१५ लाख वार्षिक",
-      "city": "कोल्हापूर",
+      "kul": "९६ कुळी मराठा - पाटील (शिशोदिया)",
+      "gotra": "कौशिक",
+      "education": "B.E. (Computer Engineering), MBA (IIM Indore)",
+      "profession": "प्रॉडक्ट मॅनेजर, मल्टीनॅशनल टेक कंपनी मुंबई",
+      "income": "₹२२ लाख / वर्ष",
+      "city": "मुंबई / कोल्हापूर",
+      "phone": "+91 98200 00202",
       "verified": true,
-      "photo": "👩‍⚕️",
-      "expectations": "डॉक्टर किंवा उच्चशिक्षित मराठा वर, व्यसनमुक्त, सुसंस्कृत."
+      "expectations": "उच्चशिक्षित, सुसंस्कृत व्यवसाय किंवा नोकरीतील मराठा वर.",
+      "createdAt": "2026-09-24T04:48:33.509Z"
+    },
+    {
+      "id": "MAT-203",
+      "name": "इंजि. अजिंक्य दादासाहेब मोहिते",
+      "gender": "वर (Groom)",
+      "age": 29,
+      "height": "6' 0\"",
+      "kul": "९६ कुळी मराठा - मोहिते",
+      "gotra": "गर्ग",
+      "education": "M.S. (Mechanical Engineering) - जर्मनी",
+      "profession": "सिनिअर ऑटोमोटिव्ह डिझाईन इंजिनिअर, पुणे",
+      "income": "₹२६ लाख / वर्ष",
+      "city": "पुणे",
+      "phone": "+91 98230 00203",
+      "verified": true,
+      "expectations": "अनुकूल विचारांची, पदवीधर मराठा वधू.",
+      "createdAt": "2026-09-24T04:48:33.509Z"
     }
   ],
   "grievances": [
+    {
+      "id": "GRV-3858",
+      "applicantId": "CM-96K-0009",
+      "applicantName": "यशवंतराव कदम 1283",
+      "title": "दुर्ग संवर्धन निधी वाढवणेबाबत",
+      "targetAuthority": "जिल्हाधिकारी / लोकप्रतिनिधी",
+      "district": "सातारा",
+      "description": "स्थानिक किल्ल्यांच्या तटबंदी दुरुस्ती निधी.",
+      "phone": "",
+      "status": "सादर केले (Forwarded to Cell)",
+      "createdAt": "2026-09-24T04:57:03.858Z"
+    },
     {
       "id": "GRV-6452",
       "applicantId": "CM-96K-0008",
@@ -558,6 +401,16 @@
   ],
   "volunteers": [
     {
+      "id": "VOL-3848",
+      "name": "अजिंक्य घोरपडे",
+      "field": "आपत्ती व्यवस्थापन व सामाजिक मदत",
+      "district": "पुणे",
+      "phone": "+919822033333",
+      "bloodGroup": "O+",
+      "availability": "आणीबाणी / वीकेंड",
+      "createdAt": "2026-09-24T04:57:03.848Z"
+    },
+    {
       "id": "VOL-6444",
       "name": "अजिंक्य घोरपडे",
       "field": "आपत्ती व्यवस्थापन व सामाजिक मदत",
@@ -619,6 +472,19 @@
     }
   ],
   "womenHelp": [
+    {
+      "id": "WHELP-3834",
+      "applicantId": "CM-96K-0009",
+      "applicantName": "यशवंतराव कदम 1283",
+      "subject": "स्वयंरोजगार मार्गदर्शन",
+      "category": "कायदेशीर व समुपदेशन",
+      "description": "महिला बचतगट गृहउद्योग कर्ज मार्गदर्शन.",
+      "phone": "",
+      "preferredTime": "सकाळी ११ ते दुपारी २",
+      "urgent": false,
+      "status": "समीक्षेत (Under Counselor Review)",
+      "createdAt": "2026-09-24T04:57:03.834Z"
+    },
     {
       "id": "WHELP-6432",
       "applicantId": "CM-96K-0008",
@@ -700,6 +566,18 @@
   ],
   "builders": [
     {
+      "id": "BLD-3740",
+      "projectName": "शिवतीर्थ हाइट्स",
+      "developer": "कदम डेव्हलपर्स",
+      "location": "सातारा",
+      "configuration": "2 & 3 BHK Premium Homes",
+      "priceRange": "₹६५ लाख ते ₹१.५ कोटी",
+      "phone": "",
+      "reraApproved": true,
+      "discountForMembers": "मराठा महासंघ सदस्यांसाठी विशेष ३% सवलत",
+      "createdAt": "2026-09-24T04:57:03.740Z"
+    },
+    {
       "id": "BLD-6360",
       "projectName": "शिवतीर्थ हाइट्स",
       "developer": "कदम डेव्हलपर्स",
@@ -774,6 +652,19 @@
   ],
   "bankLoans": [
     {
+      "id": "LN-3759",
+      "applicantId": "CM-96K-0009",
+      "applicantName": "यशवंतराव कदम 1283",
+      "schemeName": "अण्णासाहेब पाटील महामंडळ बिनव्याजी कर्ज योजना",
+      "loanAmount": "₹१०,००,०००",
+      "purpose": "नवीन फॅब्रिकेशन वर्कशॉप विस्तार",
+      "businessName": "नवीन व्यवसाय",
+      "annualIncome": "₹५ लाख",
+      "contact": "",
+      "status": "कागदपत्र पडताळणी अंतर्गत (In Review)",
+      "createdAt": "2026-09-24T04:57:03.759Z"
+    },
+    {
       "id": "LN-6378",
       "applicantId": "CM-96K-0008",
       "applicantName": "यशवंतराव कदम 249",
@@ -839,15 +730,277 @@
       "createdAt": "2026-09-24T04:21:19.255Z"
     }
   ],
-  "dairy": [],
-  "manufacturers": [],
+  "dairy": [
+    {
+      "id": "DRY-601",
+      "brandName": "गोकुळ (कोल्हापूर जिल्हा दूध संघ)",
+      "type": "सहकारी दूध उत्पादक संघ",
+      "dailyProcurement": "१४ लाख लिटर्स प्रतिदिन",
+      "headquarters": "ताराबाई पार्क, कोल्हापूर",
+      "products": "गोकुळ गाय/म्हैस दूध, तूप, लोणी, श्रीखंड, पनीर",
+      "phone": "0231-2652200",
+      "website": "https://gokulmilk.coop",
+      "createdAt": "2026-09-24T04:48:33.453Z"
+    },
+    {
+      "id": "DRY-602",
+      "brandName": "चितळे डेअरी",
+      "type": "खाजगी / मराठा उद्योगसमूह",
+      "dailyProcurement": "८ लाख लिटर्स प्रतिदिन",
+      "headquarters": "भिलवडी, सांगली",
+      "products": "दूध, बासुंदी, श्रीखंड, पेढे, अम्रखंड",
+      "phone": "02346-232233",
+      "website": "https://chitalebandhu.in",
+      "createdAt": "2026-09-24T04:48:33.453Z"
+    },
+    {
+      "id": "DRY-603",
+      "brandName": "कात्रज डेअरी (पुणे जिल्हा सहकारी दूध संघ)",
+      "type": "सहकारी संस्था",
+      "dailyProcurement": "४ लाख लिटर्स प्रतिदिन",
+      "headquarters": "कात्रज, पुणे",
+      "products": "गाईचे दूध, आईस्क्रीम, ताक, दही, लस्सी",
+      "phone": "020-24370901",
+      "website": "https://katrajdairy.com",
+      "createdAt": "2026-09-24T04:48:33.453Z"
+    }
+  ],
+  "manufacturers": [
+    {
+      "id": "MFG-501",
+      "name": "सह्याद्री ऑटो कॉम्पोनंट्स प्रायव्हेट लिमिटेड",
+      "owner": "विक्रम संभाजी सावंत",
+      "category": "ऑटोमोबाईल व सीएनसी मशीनिंग",
+      "products": "गिअरबॉक्सेस, क्रँकशाफ्ट्स, ऑटो स्पेअर्स",
+      "location": "चाकण एमआयडीसी, पुणे",
+      "district": "पुणे",
+      "phone": "+91 98500 12340",
+      "turnover": "₹३५ कोटी",
+      "employees": 140,
+      "established": "2008",
+      "createdAt": "2026-09-24T04:48:33.453Z"
+    },
+    {
+      "id": "MFG-502",
+      "name": "मराठा ॲग्रोटेक सोल्युशन्स",
+      "owner": "तानाजी विठ्ठलराव जाधव",
+      "category": "कृषी अवजारे व सोलर सिंचन",
+      "products": "ट्रॅक्टर ट्रॉलीज, ठिबक सिंचन युनिट्स, सोलर वॉटर पंप",
+      "location": "शिरोली एमआयडीसी, कोल्हापूर",
+      "district": "कोल्हापूर",
+      "phone": "+91 94220 98760",
+      "turnover": "₹१८ कोटी",
+      "employees": 75,
+      "established": "2014",
+      "createdAt": "2026-09-24T04:48:33.453Z"
+    },
+    {
+      "id": "MFG-503",
+      "name": "स्वराज्य स्टील अँड अलॉय्स",
+      "owner": "महेश दादासाहेब कदम",
+      "category": "धातू व अवजड फॅब्रिकेशन",
+      "products": "स्ट्रक्चरल गर्डर्स, सोलर माउंटिंग स्ट्रक्चर्स, इंडस्ट्रियल शेड्स",
+      "location": "कुर्डुवाडी MIDC, सोलापूर",
+      "district": "सोलापूर",
+      "phone": "+91 98221 44332",
+      "turnover": "₹२२ कोटी",
+      "employees": 90,
+      "established": "2011",
+      "createdAt": "2026-09-24T04:48:33.453Z"
+    }
+  ],
   "books": [],
   "movies": [],
-  "speakers": [],
-  "officers": [],
-  "organizations": [],
-  "news": [],
+  "speakers": [
+    {
+      "id": "SPK-301",
+      "name": "प्रा. नितीन बानगुडे-पाटील",
+      "expertise": "छत्रपती शिवराय व मराठा साम्राज्य इतिहास",
+      "topics": "शिवकालीन व्यवस्थापन, गनिमी कावा व आजचा युवक, स्वराज्य प्रेरणा",
+      "city": "सातारा / महाराष्ट्र दौरा",
+      "contact": "+91 94220 77112",
+      "photo": "🎤",
+      "createdAt": "2026-09-24T04:48:33.453Z"
+    },
+    {
+      "id": "SPK-302",
+      "name": "डॉ. सुधीर निरगुडकर",
+      "expertise": "मराठा आरमार व सागरी युद्धशास्त्र",
+      "topics": "कान्होजी आंग्रे, सिंधुदुर्ग व छत्रपती शिवरायांचे नौदल व्हिजन",
+      "city": "पुणे",
+      "contact": "+91 98221 88223",
+      "photo": "🚢",
+      "createdAt": "2026-09-24T04:48:33.453Z"
+    },
+    {
+      "id": "SPK-303",
+      "name": "श्री. विजय मोरे",
+      "expertise": "मराठा उद्योजकता व बिझनेस लीडरशिप",
+      "topics": "सहकार ते कॉर्पोरेट: मराठा तरुणांसाठी उद्योग संधी आणि स्टार्ट-अप",
+      "city": "मुंबई",
+      "contact": "+91 98200 99334",
+      "photo": "💼",
+      "createdAt": "2026-09-24T04:48:33.453Z"
+    }
+  ],
+  "officers": [
+    {
+      "id": "OFF-201",
+      "name": "श्री. आदित्य देशमुख",
+      "service": "IAS",
+      "cadre": "भारतीय प्रशासकीय सेवा (IAS - 2004)",
+      "designation": "अपर मुख्य सचिव, नियोजन व विकास",
+      "department": "सामान्य प्रशासन व नियोजन",
+      "batch": "IAS 2004",
+      "postingCity": "मंत्रालय, मुंबई",
+      "photo": "🏛️",
+      "contribution": "डिजिटल गव्हर्नन्स आणि ग्रामीण पाणीपुरवठा योजनांची प्रभावी अंमलबजावणी.",
+      "createdAt": "2026-09-24T04:48:33.452Z"
+    },
+    {
+      "id": "OFF-202",
+      "name": "श्री. विश्वास पाटील",
+      "service": "IPS",
+      "cadre": "भारतीय पोलीस सेवा (IPS - 2008)",
+      "designation": "महानिरीक्षक पोलिस (CID/DGP कार्यालय)",
+      "department": "गृह व कायदा सुव्यवस्था",
+      "batch": "IPS 2008",
+      "postingCity": "महाराष्ट्र राज्य मुख्यालय, मुंबई",
+      "photo": "⭐",
+      "contribution": "सायबर गुन्हेगारी नियंत्रण आणि महामार्ग सुरक्षा टास्क फोर्स उभारणी.",
+      "createdAt": "2026-09-24T04:48:33.452Z"
+    },
+    {
+      "id": "OFF-203",
+      "name": "सौ. अश्विनी भोसले",
+      "service": "IFS",
+      "cadre": "भारतीय वन सेवा (IFS - 2011)",
+      "designation": "मुख्य वनसंरक्षक (CCF)",
+      "department": "पर्यावरण व वन संवर्धन",
+      "batch": "IFS 2011",
+      "postingCity": "सह्याद्री वनक्षेत्र, नागपूर/सातारा",
+      "photo": "🌲",
+      "contribution": "सह्याद्री व्याघ्र प्रकल्प संवर्धन व गडकिल्ले परिसर हरितीकरण प्रकल्प.",
+      "createdAt": "2026-09-24T04:48:33.452Z"
+    },
+    {
+      "id": "OFF-204",
+      "name": "श्री. सचिन पवार",
+      "service": "राज्यसेवा",
+      "cadre": "महाराष्ट्र नागरी सेवा (MPSC State Service)",
+      "designation": "जिल्हाधिकारी व जिल्हा दंडाधिकारी",
+      "department": "महसूल व जिल्हा प्रशासन",
+      "batch": "MPSC 2010",
+      "postingCity": "पुणे जिल्हा",
+      "photo": "⚖️",
+      "contribution": "जिल्ह्यातील शेतकरी सन्मान निधी, जमीन फेरफार गतिमानता व युवा रोजगार उपक्रम.",
+      "createdAt": "2026-09-24T04:48:33.452Z"
+    }
+  ],
+  "organizations": [
+    {
+      "id": "ORG-401",
+      "name": "अखिल भारतीय मराठा महासंघ",
+      "regNo": "MAH/BOM/1981/GBPSD",
+      "president": "ॲड. शशिकांत पवार / दिलीप जगताप",
+      "city": "मुंबई",
+      "district": "मुंबई शहर",
+      "contact": "+91 98200 11990",
+      "workScope": "मराठा समाज संघटन, शैक्षणिक शिष्यवृत्ती, आरक्षण न्यायालयीन पाठपुरावा व उद्योजकता.",
+      "logo": "🚩",
+      "createdAt": "2026-09-24T04:48:33.453Z"
+    },
+    {
+      "id": "ORG-402",
+      "name": "मराठा क्रांती मोर्चा समन्वय समिती",
+      "regNo": "STATE/COORD/2016",
+      "president": "राज्य समन्वयक समिती",
+      "city": "पुणे",
+      "district": "पुणे",
+      "contact": "+91 98220 55443",
+      "workScope": "५८ ऐतिहासिक मूक मोर्चे, सारथी संस्था स्वायत्तता, वसतिगृहे व विद्यार्थी हक्क.",
+      "logo": "✊",
+      "createdAt": "2026-09-24T04:48:33.453Z"
+    },
+    {
+      "id": "ORG-403",
+      "name": "छत्रपती संभाजी महाराज प्रतिष्ठान",
+      "regNo": "PUNE/TRUST/2004",
+      "president": "विक्रमसिंह जाधव",
+      "city": "पुणे",
+      "district": "पुणे",
+      "contact": "+91 94220 66778",
+      "workScope": "गडकिल्ले संवर्धन, बलिदान मास प्रबोधन, ग्रंथालय व स्पर्धा परीक्षा अभ्यासिका.",
+      "logo": "🏰",
+      "createdAt": "2026-09-24T04:48:33.453Z"
+    }
+  ],
+  "news": [
+    {
+      "id": "NEWS-701",
+      "title": "अखिल भारतीय मराठा महासंघाच्या राज्यस्तरीय उद्योग संमेलनाची घोषणा",
+      "category": "उद्योग व व्यापार",
+      "author": "केंद्रीय कार्यालय, मुंबई",
+      "date": "२४/९/२०२६",
+      "summary": "पुणे येथे आगामी महिन्यात 'मराठा बिझनेस एक्सपो २०२६' चे आयोजन. १,००० हून अधिक उद्योजकांचा सहभाग अपेक्षित.",
+      "readTime": "३ मिनिटे वाचन",
+      "image": "/assets/images/sangam.jpg",
+      "createdAt": "2026-09-24T04:48:33.509Z"
+    },
+    {
+      "id": "NEWS-702",
+      "title": "सारथी (SARTHI) संस्थेमार्फत परदेशी शिक्षणासाठी २०० नवीन पूर्ण शिष्यवृत्ती मंजूर",
+      "category": "शिक्षण व करिअर",
+      "author": "उच्च शिक्षण कक्ष",
+      "date": "२४/९/२०२६",
+      "summary": "मराठा, कुणबी समाजातील गुणवंत विद्यार्थ्यांसाठी जगातील टॉप १०० विद्यापीठांमध्ये मोफत पदव्युत्तर शिक्षणाची संधी.",
+      "readTime": "२ मिनिटे वाचन",
+      "image": "/assets/images/sarthi.jpg",
+      "createdAt": "2026-09-24T04:48:33.509Z"
+    },
+    {
+      "id": "NEWS-703",
+      "title": "छत्रपती शिवरायांच्या १२ अजिंक्य गडकिल्ल्यांचा युनेस्को जागतिक वारसा यादीत समावेशाचा अंतिम टप्पा",
+      "category": "इतिहास व संस्कृती",
+      "author": "दुर्ग संवर्धन समिती",
+      "date": "२४/९/२०२६",
+      "summary": "रायगड, राजगड, शिवनेरी, सिंधुदुर्गसह १२ शिवकालीन किल्ल्यांचे आंतरराष्ट्रीय युनेस्को प्रतिनिधीमंडळाकडून पाहणी अहवाल सकारात्मक.",
+      "readTime": "४ मिनिटे वाचन",
+      "image": "/assets/images/forts.jpg",
+      "createdAt": "2026-09-24T04:48:33.509Z"
+    }
+  ],
   "members": [
+    {
+      "id": "CM-96K-0009",
+      "name": "यशवंतराव कदम 1283",
+      "phone": "+919822001283",
+      "email": "yashwant1283@maratha.org",
+      "password_hash": "$2a$08$PCXJKdr70RJVvoeim63paOGtlqCwbWMPdgvO1T9/1GHIh6xKj4qTC",
+      "district": "सातारा",
+      "taluka": "कराड",
+      "city": "सातारा",
+      "state": "महाराष्ट्र",
+      "country": "भारत",
+      "kul": "९६ कुळी मराठा कदम",
+      "gotra": "भारद्वाज",
+      "profession": "व्यवसायिक / नोकरी",
+      "about": "उद्योग व समाजकार्य",
+      "avatar": "👤",
+      "tier": "Gold",
+      "role": "chapter_president",
+      "verified": true,
+      "joined": "2026-09-24",
+      "createdAt": "2026-09-24T04:57:03.457Z",
+      "updatedAt": "2026-09-24T04:57:04.628Z",
+      "verificationStatus": "प्रमाणित (Verified)",
+      "verifiedBy": "अखिल भारतीय मराठा महासंघ मुख्य कार्यालय",
+      "verificationRemarks": "सर्व कागदपत्रे वैध आहेत",
+      "verifiedAt": "2026-09-24T04:57:04.610Z",
+      "assignedScope": "सातारा",
+      "roleAssignedBy": "अखिल भारतीय मराठा महासंघ मुख्य कार्यालय",
+      "roleAssignedAt": "2026-09-24T04:57:04.628Z"
+    },
     {
       "id": "CM-96K-0008",
       "name": "यशवंतराव कदम 249",
@@ -1068,6 +1221,28 @@
   ],
   "businesses": [
     {
+      "id": "BIZ-23607",
+      "name": "शिवशक्ती इंजिनिअरिंग वर्क्स 1283",
+      "owner": "यशवंतराव कदम 1283",
+      "ownerId": "CM-96K-0009",
+      "cat": "मॅन्युफॅक्चरिंग व फॅब्रिकेशन",
+      "city": "कराड",
+      "district": "सातारा",
+      "phone": "+919822054321",
+      "whatsapp": "+919822054321",
+      "website": "",
+      "services": [],
+      "offers": "",
+      "gstNumber": "",
+      "udyamNo": "",
+      "rating": 5,
+      "reviewCount": 1,
+      "photo": "🏢",
+      "verified": true,
+      "createdAt": "2026-09-24T04:57:03.607Z",
+      "updatedAt": "2026-09-24T04:57:03.631Z"
+    },
+    {
       "id": "BIZ-36238",
       "name": "शिवशक्ती इंजिनिअरिंग वर्क्स 249",
       "owner": "यशवंतराव कदम 249",
@@ -1223,6 +1398,15 @@
   ],
   "businessReviews": [
     {
+      "id": "REV-3626",
+      "businessId": "BIZ-23607",
+      "reviewerId": "CM-96K-0009",
+      "memberName": "यशवंतराव कदम 1283",
+      "rating": 5,
+      "text": "अतिशय दर्जेदार काम!",
+      "createdAt": "2026-09-24T04:57:03.626Z"
+    },
+    {
       "id": "REV-6257",
       "businessId": "BIZ-36238",
       "reviewerId": "CM-96K-0008",
@@ -1279,11 +1463,11 @@
   ],
   "referrals": [
     {
-      "id": "REF-36275",
+      "id": "REF-23641",
       "title": "CNC मशीन फॅब्रिकेशन काम",
       "category": "व्यापार संदर्भ",
-      "giverId": "CM-96K-0008",
-      "giverName": "यशवंतराव कदम 249",
+      "giverId": "CM-96K-0009",
+      "giverName": "यशवंतराव कदम 1283",
       "recipientId": "",
       "recipientName": "मराठा व्यवसाय बंधू",
       "clientName": "महेश जाधव",
@@ -1293,105 +1477,96 @@
       "status": "यशस्वी क्लोज (Success)",
       "value": 150000,
       "notes": "",
-      "createdAt": "2026-09-24T04:33:56.275Z",
-      "updatedAt": "2026-09-24T04:33:56.291Z"
+      "createdAt": "2026-09-24T04:57:03.641Z",
+      "updatedAt": "2026-09-24T04:57:03.661Z"
     },
     {
-      "id": "REF-73968",
-      "title": "CNC मशीन फॅब्रिकेशन काम",
-      "category": "व्यापार संदर्भ",
-      "giverId": "CM-96K-0007",
-      "giverName": "यशवंतराव कदम 49",
-      "recipientId": "",
-      "recipientName": "मराठा व्यवसाय बंधू",
-      "clientName": "महेश जाधव",
-      "clientPhone": "+919822100000",
-      "clientEmail": "",
-      "urgency": "मध्यम (Medium)",
-      "status": "यशस्वी क्लोज (Success)",
-      "value": 150000,
-      "notes": "",
-      "createdAt": "2026-09-24T04:32:53.968Z",
-      "updatedAt": "2026-09-24T04:32:53.983Z"
+      "id": "REF-2026-091",
+      "year": "2026",
+      "month": "09",
+      "week": "Week 38",
+      "day": "19",
+      "userId": "CM-10291",
+      "userName": "राजेश कदम",
+      "giverId": "CM-10291",
+      "giverName": "राजेश कदम",
+      "recipientId": "CM-4081",
+      "recipientName": "संजय माने (माने इंजिनिअरिंग)",
+      "state": "महाराष्ट्र",
+      "city": "पुणे",
+      "clientName": "सह्याद्री ॲग्रो फूड्स प्रायव्हेट लिमिटेड",
+      "clientPhone": "+91 98221 44550",
+      "category": "अन्न प्रक्रिया व पॅकेजिंग",
+      "title": "सोलर कोल्ड स्टोरेज व ३० HP चिलर युनिट कंत्राट",
+      "requirement": "नवीन सोलर कोल्ड स्टोरेजसाठी ३० HP चिलर युनिट व वेअरहाऊस डिझाइन कंत्राट.",
+      "estimatedValue": 850000,
+      "actualValue": 850000,
+      "value": 850000,
+      "status": "Won",
+      "recipient": "संजय माने (माने इंजिनिअरिंग)",
+      "date": "2026-09-19",
+      "createdAt": "2026-09-24T04:48:33.509Z"
     },
     {
-      "id": "REF-28253",
-      "title": "CNC मशीन फॅब्रिकेशन काम",
-      "category": "व्यापार संदर्भ",
-      "giverId": "CM-96K-0006",
-      "giverName": "यशवंतराव कदम 6763",
-      "recipientId": "",
-      "recipientName": "मराठा व्यवसाय बंधू",
-      "clientName": "महेश जाधव",
-      "clientPhone": "+919822100000",
-      "clientEmail": "",
-      "urgency": "मध्यम (Medium)",
-      "status": "यशस्वी क्लोज (Success)",
-      "value": 150000,
-      "notes": "",
-      "createdAt": "2026-09-24T04:32:08.253Z",
-      "updatedAt": "2026-09-24T04:32:08.268Z"
+      "id": "REF-2026-088",
+      "year": "2026",
+      "month": "09",
+      "week": "Week 38",
+      "day": "18",
+      "userId": "CM-4081",
+      "userName": "सुनील साळुंखे",
+      "giverId": "CM-4081",
+      "giverName": "सुनील साळुंखे",
+      "recipientId": "CM-9012",
+      "recipientName": "अमोल शिंदे (शिंदे फ्लीट)",
+      "state": "महाराष्ट्र",
+      "city": "मुंबई",
+      "clientName": "मराठा लॉजिस्टिक्स कॉर्पोरेशन",
+      "clientPhone": "+91 98200 55441",
+      "category": "वाहतूक व पुरवठा साखळी",
+      "title": "५० ट्रेलर वाहनांची वार्षिक ट्रान्सपोर्ट लीज",
+      "requirement": "जेएनपीटी ते चाकण दरम्यान ५० ट्रेलर वाहनांची वार्षिक ट्रान्सपोर्ट लीज.",
+      "estimatedValue": 2400000,
+      "actualValue": 0,
+      "value": 2400000,
+      "status": "Proposal",
+      "recipient": "अमोल शिंदे (शिंदे फ्लीट)",
+      "date": "2026-09-18",
+      "createdAt": "2026-09-24T04:48:33.509Z"
     },
     {
-      "id": "REF-87575",
-      "title": "CNC मशीन फॅब्रिकेशन काम",
-      "category": "व्यापार संदर्भ",
-      "giverId": "CM-96K-0005",
-      "giverName": "यशवंतराव कदम 4477",
-      "recipientId": "",
-      "recipientName": "मराठा व्यवसाय बंधू",
-      "clientName": "महेश जाधव",
-      "clientPhone": "+91 98221 00000",
-      "clientEmail": "",
-      "urgency": "मध्यम (Medium)",
-      "status": "यशस्वी क्लोज (Success)",
-      "value": 150000,
-      "notes": "",
-      "createdAt": "2026-09-24T04:23:07.575Z",
-      "updatedAt": "2026-09-24T04:23:07.586Z"
-    },
-    {
-      "id": "REF-37053",
-      "title": "CNC मशीन फॅब्रिकेशन काम",
-      "category": "व्यापार संदर्भ",
-      "giverId": "CM-96K-0004",
-      "giverName": "यशवंतराव कदम 1833",
-      "recipientId": "",
-      "recipientName": "मराठा व्यवसाय बंधू",
-      "clientName": "महेश जाधव",
-      "clientPhone": "+91 98221 00000",
-      "clientEmail": "",
-      "urgency": "मध्यम (Medium)",
-      "status": "यशस्वी क्लोज (Success)",
-      "value": 150000,
-      "notes": "",
-      "createdAt": "2026-09-24T04:22:17.053Z",
-      "updatedAt": "2026-09-24T04:22:17.066Z"
-    },
-    {
-      "id": "REF-79181",
-      "title": "CNC मशीन फॅब्रिकेशन काम",
-      "category": "व्यापार संदर्भ",
-      "giverId": "CM-96K-0003",
-      "giverName": "यशवंतराव कदम 8353",
-      "recipientId": "",
-      "recipientName": "मराठा व्यवसाय बंधू",
-      "clientName": "महेश जाधव",
-      "clientPhone": "+91 98221 00000",
-      "clientEmail": "",
-      "urgency": "मध्यम (Medium)",
-      "status": "यशस्वी क्लोज (Success)",
-      "value": 150000,
-      "notes": "",
-      "createdAt": "2026-09-24T04:21:19.181Z",
-      "updatedAt": "2026-09-24T04:21:19.194Z"
+      "id": "REF-2026-075",
+      "year": "2026",
+      "month": "09",
+      "week": "Week 37",
+      "day": "14",
+      "userId": "CM-9012",
+      "userName": "विकास पाटील",
+      "giverId": "CM-9012",
+      "giverName": "विकास पाटील",
+      "recipientId": "CM-10291",
+      "recipientName": "दीपक चव्हाण (चव्हाण मेटल्स)",
+      "state": "महाराष्ट्र",
+      "city": "कोल्हापूर",
+      "clientName": "राजाराम इंजिनिअरिंग वर्क्स",
+      "clientPhone": "+91 94220 99881",
+      "category": "औद्योगिक उत्पादन व लेथ",
+      "title": "अलॉय स्टील बिलेट्सचा ३ महिन्यांचा सप्लाय",
+      "requirement": "सीएनसी मशीनिंगसाठी उच्च दर्जाचे अलॉय स्टील बिलेट्सचा ३ महिन्यांचा सप्लाय.",
+      "estimatedValue": 620000,
+      "actualValue": 620000,
+      "value": 620000,
+      "status": "Won",
+      "recipient": "दीपक चव्हाण (चव्हाण मेटल्स)",
+      "date": "2026-09-14",
+      "createdAt": "2026-09-24T04:48:33.509Z"
     }
   ],
   "meetings": [
     {
-      "id": "MEET-6303",
-      "requesterId": "CM-96K-0008",
-      "requesterName": "यशवंतराव कदम 249",
+      "id": "MEET-3674",
+      "requesterId": "CM-96K-0009",
+      "requesterName": "यशवंतराव कदम 1283",
       "recipientId": "",
       "recipientName": "आनंदराव देशमुख",
       "date": "२८ सप्टेंबर २०२६",
@@ -1400,77 +1575,51 @@
       "location": "मराठा संगम दालन / ऑनलाइन",
       "status": "निश्चित (Confirmed)",
       "notes": "",
-      "createdAt": "2026-09-24T04:33:56.303Z"
+      "createdAt": "2026-09-24T04:57:03.674Z"
     },
     {
-      "id": "MEET-3995",
-      "requesterId": "CM-96K-0007",
-      "requesterName": "यशवंतराव कदम 49",
-      "recipientId": "",
-      "recipientName": "आनंदराव देशमुख",
-      "date": "२८ सप्टेंबर २०२६",
-      "time": "सकाळी १०:००",
-      "topic": "व्यवसाय संगम १-टू-१ संवाद",
-      "location": "मराठा संगम दालन / ऑनलाइन",
-      "status": "निश्चित (Confirmed)",
-      "notes": "",
-      "createdAt": "2026-09-24T04:32:53.995Z"
+      "id": "MTG-881",
+      "requesterId": "CM-10291",
+      "requesterName": "अमोल तुकाराम जाधव",
+      "recipientId": "M-10291",
+      "recipientName": "राजेश पाटील",
+      "partnerCompany": "पाटील इन्फ्रास्ट्रक्चर",
+      "partnerProfession": "Civil Infra & Earthmovers",
+      "partnerCity": "पुणे",
+      "partnerAvatar": "👨‍💼",
+      "partnerPhone": "98221 44550",
+      "mode": "Offline",
+      "category": "१-ते-१ व्यावसायिक विश्वास भेट",
+      "date": "2026-09-25",
+      "time": "स. १०:३० वाजता",
+      "venue": "हॉटेल प्राइड एक्झिक्युटिव्ह, शिवाजीनगर, पुणे",
+      "meetLink": "",
+      "purpose": "नवीन रेसिडेन्शियल कमर्शियल टॉवरसाठी ERP व CCTV नेटवर्क पुरवठा चर्चा",
+      "topics": "प्रोजेक्ट व्याप्ती, अंदाजपत्रक (Budget ₹४.५ लाख), डिलिव्हरी टाइमलाइन",
+      "status": "Confirmed",
+      "badge": "नियोजित"
     },
     {
-      "id": "MEET-8278",
-      "requesterId": "CM-96K-0006",
-      "requesterName": "यशवंतराव कदम 6763",
-      "recipientId": "",
-      "recipientName": "आनंदराव देशमुख",
-      "date": "२८ सप्टेंबर २०२६",
-      "time": "सकाळी १०:००",
-      "topic": "व्यवसाय संगम १-टू-१ संवाद",
-      "location": "मराठा संगम दालन / ऑनलाइन",
-      "status": "निश्चित (Confirmed)",
-      "notes": "",
-      "createdAt": "2026-09-24T04:32:08.278Z"
-    },
-    {
-      "id": "MEET-7594",
-      "requesterId": "CM-96K-0005",
-      "requesterName": "यशवंतराव कदम 4477",
-      "recipientId": "",
-      "recipientName": "आनंदराव देशमुख",
-      "date": "२८ सप्टेंबर २०२६",
-      "time": "सकाळी १०:००",
-      "topic": "व्यवसाय संगम १-टू-१ संवाद",
-      "location": "मराठा संगम दालन / ऑनलाइन",
-      "status": "निश्चित (Confirmed)",
-      "notes": "",
-      "createdAt": "2026-09-24T04:23:07.594Z"
-    },
-    {
-      "id": "MEET-7076",
-      "requesterId": "CM-96K-0004",
-      "requesterName": "यशवंतराव कदम 1833",
-      "recipientId": "",
-      "recipientName": "आनंदराव देशमुख",
-      "date": "२८ सप्टेंबर २०२६",
-      "time": "सकाळी १०:००",
-      "topic": "व्यवसाय संगम १-टू-१ संवाद",
-      "location": "मराठा संगम दालन / ऑनलाइन",
-      "status": "निश्चित (Confirmed)",
-      "notes": "",
-      "createdAt": "2026-09-24T04:22:17.076Z"
-    },
-    {
-      "id": "MEET-9202",
-      "requesterId": "CM-96K-0003",
-      "requesterName": "यशवंतराव कदम 8353",
-      "recipientId": "",
-      "recipientName": "आनंदराव देशमुख",
-      "date": "२८ सप्टेंबर २०२६",
-      "time": "सकाळी १०:००",
-      "topic": "व्यवसाय संगम १-टू-१ संवाद",
-      "location": "मराठा संगम दालन / ऑनलाइन",
-      "status": "निश्चित (Confirmed)",
-      "notes": "",
-      "createdAt": "2026-09-24T04:21:19.202Z"
+      "id": "MTG-882",
+      "requesterId": "CM-10291",
+      "requesterName": "अमोल तुकाराम जाधव",
+      "recipientId": "M-10292",
+      "recipientName": "सुप्रिया मोहिते (CA)",
+      "partnerCompany": "मोहिते & असोसिएट्स",
+      "partnerProfession": "Chartered Accountant (CA)",
+      "partnerCity": "मुंबई",
+      "partnerAvatar": "👩‍💼",
+      "partnerPhone": "98200 99881",
+      "mode": "Online",
+      "category": "कंपनी व्हॅल्यूएशन व GST सल्ला",
+      "date": "2026-09-27",
+      "time": "दु. ०३:०० वाजता",
+      "venue": "Google Meet व्हिडीओ कॉल",
+      "meetLink": "https://meet.google.com/cm-oto-882",
+      "purpose": "स्टार्टअप व्हॅल्यूएशन ऑडिट आणि आयकर सवलत मार्गदर्शन",
+      "topics": "बॅलन्स शीट स्क्रूटिनी, शेअर्स वाटप, कंपनी नोंदणी दाखले",
+      "status": "Confirmed",
+      "badge": "ऑनलाइन"
     }
   ],
   "groups": [
@@ -1500,6 +1649,32 @@
     }
   ],
   "posts": [
+    {
+      "id": "POST-23872",
+      "author": "यशवंतराव कदम 1283",
+      "authorId": "CM-96K-0009",
+      "avatar": "👤",
+      "role": "member",
+      "content": "जय भवानी जय शिवाजी! सर्व मराठा बांधवांना एकत्र आणणारा मंच.",
+      "mediaUrl": "",
+      "tag": "सामान्य चर्चा",
+      "groupId": null,
+      "likes": 1,
+      "likedBy": [
+        "CM-96K-0009"
+      ],
+      "comments": [
+        {
+          "id": "CMT-3909",
+          "author": "यशवंतराव कदम 1283",
+          "authorId": "CM-96K-0009",
+          "text": "अतिशय सुंदर उपक्रम!",
+          "createdAt": "2026-09-24T04:57:03.909Z"
+        }
+      ],
+      "createdAt": "2026-09-24T04:57:03.872Z",
+      "updatedAt": "2026-09-24T04:57:03.909Z"
+    },
     {
       "id": "POST-36468",
       "author": "यशवंतराव कदम 249",
@@ -1660,6 +1835,23 @@
   "postComments": [],
   "events": [
     {
+      "id": "EVT-3926",
+      "title": "कराड तालुका मराठा मेळावा",
+      "date": "१५ ऑक्टोबर २०२६",
+      "time": "सकाळी १०:००",
+      "location": "कराड",
+      "district": "सातारा",
+      "category": "सामाजिक व सांस्कृतिक",
+      "description": "",
+      "chiefGuests": "स्थानिक महासंघ पदाधिकारी",
+      "capacity": 500,
+      "attendeesCount": 1,
+      "createdBy": "CM-96K-0009",
+      "creatorName": "यशवंतराव कदम 1283",
+      "createdAt": "2026-09-24T04:57:03.926Z",
+      "updatedAt": "2026-09-24T04:57:03.945Z"
+    },
+    {
       "id": "EVT-6502",
       "title": "कराड तालुका मराठा मेळावा",
       "date": "१५ ऑक्टोबर २०२६",
@@ -1764,6 +1956,16 @@
   ],
   "eventRsvps": [
     {
+      "id": "RSVP-3941",
+      "eventId": "EVT-3926",
+      "eventTitle": "कराड तालुका मराठा मेळावा",
+      "memberId": "CM-96K-0009",
+      "memberName": "यशवंतराव कदम 1283",
+      "phone": "",
+      "timestamp": "2026-09-24T04:57:03.941Z",
+      "createdAt": "2026-09-24T04:57:03.941Z"
+    },
+    {
       "id": "RSVP-6514",
       "eventId": "EVT-6502",
       "eventTitle": "कराड तालुका मराठा मेळावा",
@@ -1867,6 +2069,22 @@
   ],
   "donations": [
     {
+      "id": "DONAT-23968",
+      "campaignId": "CAMP-01",
+      "donorId": "CM-96K-0009",
+      "donorName": "यशवंतराव कदम",
+      "email": "",
+      "phone": "",
+      "amount": 5000,
+      "pan": "ABCDE1234F",
+      "paymentMethod": "UPI / QR",
+      "status": "यशस्वी (Success)",
+      "receiptNo": "80G-823968",
+      "taxExemption80G": true,
+      "timestamp": "2026-09-24T04:57:03.968Z",
+      "createdAt": "2026-09-24T04:57:03.968Z"
+    },
+    {
       "id": "DONAT-36532",
       "campaignId": "CAMP-01",
       "donorId": "CM-96K-0008",
@@ -1964,6 +2182,23 @@
     }
   ],
   "jobs": [
+    {
+      "id": "JOB-3986",
+      "title": "उत्पादन व्यवस्थापक",
+      "company": "कदम इंडस्ट्रीज",
+      "location": "सातारा एमआयडीसी",
+      "district": "सातारा",
+      "industry": "इतर उद्योग",
+      "salary": "चर्चेनुसार (Negotiable)",
+      "type": "पूर्णवेळ",
+      "experience": "१-३ वर्षे",
+      "description": "",
+      "contactEmail": "",
+      "posterId": "CM-96K-0009",
+      "posterName": "यशवंतराव कदम 1283",
+      "postedAt": "2026-09-24T04:57:03.986Z",
+      "createdAt": "2026-09-24T04:57:03.986Z"
+    },
     {
       "id": "JOB-6549",
       "title": "उत्पादन व्यवस्थापक",
@@ -2068,6 +2303,21 @@
     }
   ],
   "jobApplications": [
+    {
+      "id": "APP-4001",
+      "jobId": "JOB-3986",
+      "jobTitle": "उत्पादन व्यवस्थापक",
+      "company": "कदम इंडस्ट्रीज",
+      "applicantId": "CM-96K-0009",
+      "applicantName": "यशवंतराव कदम 1283",
+      "applicantEmail": "",
+      "applicantPhone": "",
+      "resumeUrl": "https://connectmaratha.org/resumes/kadam.pdf",
+      "coverNote": "मी इच्छुक आहे",
+      "status": "अर्ज सादर झाला (Applied)",
+      "appliedAt": "2026-09-24T04:57:04.001Z",
+      "createdAt": "2026-09-24T04:57:04.001Z"
+    },
     {
       "id": "APP-6564",
       "jobId": "JOB-6549",
@@ -2199,6 +2449,20 @@
   ],
   "serviceBookings": [
     {
+      "id": "SBK-4020",
+      "serviceId": "",
+      "serviceCategory": "इलेक्ट्रिशियन",
+      "professionalName": "नजीकचा मराठा सेवा व्यावसायिक",
+      "customerName": "यशवंतराव कदम 1283",
+      "customerId": "CM-96K-0009",
+      "phone": "+919822012345",
+      "address": "सातारा",
+      "requestedDate": "लवकरात लवकर (ASAP)",
+      "notes": "",
+      "status": "बुकिंग निश्चित - व्यावसायिक संपर्क साधतील",
+      "createdAt": "2026-09-24T04:57:04.020Z"
+    },
+    {
       "id": "SBK-6580",
       "serviceId": "",
       "serviceCategory": "इलेक्ट्रिशियन",
@@ -2283,8 +2547,87 @@
       "createdAt": "2026-09-24T04:21:19.416Z"
     }
   ],
-  "artists": [],
+  "artists": [
+    {
+      "id": "ART-101",
+      "name": "सुबोध भावे",
+      "profession": "अभिनेता, दिग्दर्शक",
+      "category": "अभिनेते",
+      "field": "चित्रपट, रंगभूमी व दिग्दर्शन",
+      "avatar": "🎭",
+      "city": "पुणे",
+      "popularWorks": "बालगंधर्व, डॉ. काशिनाथ घाणेकर, हर हर महादेव",
+      "awards": "फिल्मफेअर, महाराष्ट्र राज्य चित्रपट पुरस्कार",
+      "phone": "+91 98220 11001",
+      "createdAt": "2026-09-24T04:48:33.452Z"
+    },
+    {
+      "id": "ART-102",
+      "name": "अंकुश चौधरी",
+      "profession": "अभिनेता, दिग्दर्शक",
+      "category": "अभिनेते",
+      "field": "चित्रपट अभिनय",
+      "avatar": "🎬",
+      "city": "मुंबई",
+      "popularWorks": "दुनियादारी, क्लासमेट्स, दगडी चाळ, महाराष्ट्र शाहीर",
+      "awards": "झी चित्र गौरव, अनेक पुरस्कार सन्मान",
+      "phone": "+91 98200 22002",
+      "createdAt": "2026-09-24T04:48:33.452Z"
+    },
+    {
+      "id": "ART-103",
+      "name": "प्रसाद ओक",
+      "profession": "अभिनेता, दिग्दर्शक",
+      "category": "दिग्दर्शक",
+      "field": "चित्रपट दिग्दर्शन व अभिनय",
+      "avatar": "🎞️",
+      "city": "पुणे",
+      "popularWorks": "धर्मवीर (आनंद दिघे भूमिका), हिरकणी (दिग्दर्शन), चंद्रमुखी",
+      "awards": "राष्ट्रीय चित्रपट पुरस्कार (कच्चा लिंबू)",
+      "phone": "+91 98230 33003",
+      "createdAt": "2026-09-24T04:48:33.452Z"
+    },
+    {
+      "id": "ART-104",
+      "name": "अजिंक्य राऊत",
+      "profession": "गायक व संगीतकार",
+      "category": "गायक",
+      "field": "पारंपरिक शिववंदना व आधुनिक सुगम संगीत",
+      "avatar": "🎶",
+      "city": "पुणे",
+      "popularWorks": "शिववंदना, पोवाडा, गर्जा महाराष्ट्र माझा",
+      "awards": "युवा संगीत भूषण",
+      "phone": "+91 94220 44004",
+      "createdAt": "2026-09-24T04:48:33.452Z"
+    },
+    {
+      "id": "ART-105",
+      "name": "मुक्ता बर्वे",
+      "profession": "अभिनेत्री, निर्माती",
+      "category": "अभिनेत्री",
+      "field": "रंगभूमी व चित्रपट",
+      "avatar": "🌟",
+      "city": "पुणे",
+      "popularWorks": "जोगवा, डबल सीट, मुंबई-पुणे-मुंबई",
+      "awards": "राष्ट्रीय पुरस्कार (जोगवा), फिल्मफेअर",
+      "phone": "+91 98500 55005",
+      "createdAt": "2026-09-24T04:48:33.452Z"
+    }
+  ],
   "speakerBookings": [
+    {
+      "id": "SBK-3724",
+      "speakerId": "",
+      "speakerName": "प्रा. नितीन बानगुडे पाटील",
+      "requesterId": "CM-96K-0009",
+      "requesterName": "यशवंतराव कदम 1283",
+      "eventDate": "१९ फेब्रुवारी",
+      "eventTopic": "शिवजयंती व्याख्यान",
+      "venue": "महाराष्ट्र",
+      "organizerPhone": "+919822012345",
+      "status": "प्रलंबित (Pending Approval)",
+      "createdAt": "2026-09-24T04:57:03.724Z"
+    },
     {
       "id": "SBK-6348",
       "speakerId": "",
@@ -2366,6 +2709,24 @@
   ],
   "builderInquiries": [],
   "oralHistory": [
+    {
+      "id": "oral_1790225824036",
+      "title": "कराड परिसरातील मावळ्यांची परंपरा",
+      "village": "अज्ञात",
+      "taluka": "",
+      "district": "महाराष्ट्र",
+      "region": "महाराष्ट्र",
+      "contributor": "यशवंतराव कदम 1283",
+      "contributorId": "CM-96K-0009",
+      "contributorClan": "मराठा कुळ",
+      "dateSubmitted": "२४/९/२०२६",
+      "story": "आमच्या पूर्वजांनी शिवकाळात सैन्यात सेवा केली.",
+      "historicalReference": "मौखिक कुटुंब परंपरा व वृद्ध व्यक्तींची स्मृती",
+      "tier": "Tier 4: मौखिक इतिहास व लोकपरंपरा",
+      "status": "पडताळणी अंतर्गत (Under Community Review)",
+      "audioUrl": null,
+      "createdAt": "2026-09-24T04:57:04.092Z"
+    },
     {
       "id": "oral_1790224436592",
       "title": "कराड परिसरातील मावळ्यांची परंपरा",
@@ -2524,6 +2885,295 @@
   "quizSubmissions": [],
   "quizLeaderboard": [],
   "auditLogs": [
+    {
+      "id": "LOG-1790225831719-900",
+      "action": "MEMBER_LOGIN",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "identifier": "admin@connectmaratha.org"
+      },
+      "timestamp": "2026-09-24T04:57:11.719Z"
+    },
+    {
+      "id": "LOG-1790225824662-960",
+      "action": "MEMBER_LOGOUT",
+      "performedBy": "CM-96K-001",
+      "details": {},
+      "timestamp": "2026-09-24T04:57:04.662Z"
+    },
+    {
+      "id": "LOG-1790225824632-38",
+      "action": "ASSIGN_ROLE",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "memberId": "CM-96K-0009",
+        "newRole": "chapter_president",
+        "assignedScope": "सातारा"
+      },
+      "timestamp": "2026-09-24T04:57:04.632Z"
+    },
+    {
+      "id": "LOG-1790225824615-730",
+      "action": "VERIFY_MEMBER",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "memberId": "CM-96K-0009",
+        "status": "approved",
+        "remarks": "सर्व कागदपत्रे वैध आहेत"
+      },
+      "timestamp": "2026-09-24T04:57:04.615Z"
+    },
+    {
+      "id": "LOG-1790225824572-197",
+      "action": "MEMBER_LOGIN",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "identifier": "admin@connectmaratha.org"
+      },
+      "timestamp": "2026-09-24T04:57:04.572Z"
+    },
+    {
+      "id": "LOG-1790225824097-361",
+      "action": "SUBMIT_ORAL_HISTORY",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "title": "कराड परिसरातील मावळ्यांची परंपरा",
+        "village": "अज्ञात"
+      },
+      "timestamp": "2026-09-24T04:57:04.097Z"
+    },
+    {
+      "id": "LOG-1790225824024-252",
+      "action": "BOOK_SERVICE",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "bookingId": "SBK-4020",
+        "serviceCategory": "इलेक्ट्रिशियन"
+      },
+      "timestamp": "2026-09-24T04:57:04.024Z"
+    },
+    {
+      "id": "LOG-1790225824006-412",
+      "action": "APPLY_JOB",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "jobId": "JOB-3986",
+        "applicationId": "APP-4001"
+      },
+      "timestamp": "2026-09-24T04:57:04.006Z"
+    },
+    {
+      "id": "LOG-1790225823990-698",
+      "action": "POST_JOB",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "jobId": "JOB-3986",
+        "title": "उत्पादन व्यवस्थापक"
+      },
+      "timestamp": "2026-09-24T04:57:03.990Z"
+    },
+    {
+      "id": "LOG-1790225823972-116",
+      "action": "PROCESS_DONATION",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "amount": 5000,
+        "receiptNo": "80G-823968"
+      },
+      "timestamp": "2026-09-24T04:57:03.972Z"
+    },
+    {
+      "id": "LOG-1790225823953-975",
+      "action": "EVENT_RSVP",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "eventId": "EVT-3926"
+      },
+      "timestamp": "2026-09-24T04:57:03.953Z"
+    },
+    {
+      "id": "LOG-1790225823931-952",
+      "action": "CREATE_EVENT",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "eventId": "EVT-3926",
+        "title": "कराड तालुका मराठा मेळावा"
+      },
+      "timestamp": "2026-09-24T04:57:03.931Z"
+    },
+    {
+      "id": "LOG-1790225823877-588",
+      "action": "CREATE_POST",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "postId": "POST-23872"
+      },
+      "timestamp": "2026-09-24T04:57:03.877Z"
+    },
+    {
+      "id": "LOG-1790225823861-946",
+      "action": "SUBMIT_GRIEVANCE",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "grievanceId": "GRV-3858",
+        "title": "दुर्ग संवर्धन निधी वाढवणेबाबत"
+      },
+      "timestamp": "2026-09-24T04:57:03.861Z"
+    },
+    {
+      "id": "LOG-1790225823838-659",
+      "action": "WOMEN_HELP_REQUEST",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "helpId": "WHELP-3834"
+      },
+      "timestamp": "2026-09-24T04:57:03.838Z"
+    },
+    {
+      "id": "LOG-1790225823819-474",
+      "action": "REGISTER_MATRIMONY",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "profileId": "CM-M-3814"
+      },
+      "timestamp": "2026-09-24T04:57:03.819Z"
+    },
+    {
+      "id": "LOG-1790225823801-880",
+      "action": "REGISTER_BLOOD_DONOR",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "bloodGroup": "O+"
+      },
+      "timestamp": "2026-09-24T04:57:03.801Z"
+    },
+    {
+      "id": "LOG-1790225823784-517",
+      "action": "SOS_BLOOD_REQUEST",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "bloodGroup": "B+",
+        "hospital": "सिव्हिल हॉस्पिटल"
+      },
+      "timestamp": "2026-09-24T04:57:03.784Z"
+    },
+    {
+      "id": "LOG-1790225823764-487",
+      "action": "APPLY_LOAN",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "loanId": "LN-3759",
+        "amount": "₹१०,००,०००"
+      },
+      "timestamp": "2026-09-24T04:57:03.764Z"
+    },
+    {
+      "id": "LOG-1790225823727-678",
+      "action": "BOOK_SPEAKER",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "speakerName": "प्रा. नितीन बानगुडे पाटील",
+        "eventDate": "१९ फेब्रुवारी"
+      },
+      "timestamp": "2026-09-24T04:57:03.727Z"
+    },
+    {
+      "id": "LOG-1790225823699-659",
+      "action": "REGISTER_DOCTOR",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "name": "डॉ. विक्रम कदम",
+        "phone": "+919822011111"
+      },
+      "timestamp": "2026-09-24T04:57:03.699Z"
+    },
+    {
+      "id": "LOG-1790225823678-251",
+      "action": "SCHEDULE_MEETING",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "meetingId": "MEET-3674",
+        "recipientName": "आनंदराव देशमुख"
+      },
+      "timestamp": "2026-09-24T04:57:03.678Z"
+    },
+    {
+      "id": "LOG-1790225823665-436",
+      "action": "UPDATE_REFERRAL_STATUS",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "referralId": "REF-23641",
+        "status": "यशस्वी क्लोज (Success)",
+        "value": 150000
+      },
+      "timestamp": "2026-09-24T04:57:03.665Z"
+    },
+    {
+      "id": "LOG-1790225823645-504",
+      "action": "CREATE_REFERRAL",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "referralId": "REF-23641",
+        "value": 150000
+      },
+      "timestamp": "2026-09-24T04:57:03.645Z"
+    },
+    {
+      "id": "LOG-1790225823611-789",
+      "action": "REGISTER_BUSINESS",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "businessId": "BIZ-23607",
+        "name": "शिवशक्ती इंजिनिअरिंग वर्क्स 1283"
+      },
+      "timestamp": "2026-09-24T04:57:03.611Z"
+    },
+    {
+      "id": "LOG-1790225823590-21",
+      "action": "SEND_MESSAGE",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "recipientId": "CM-96K-001"
+      },
+      "timestamp": "2026-09-24T04:57:03.591Z"
+    },
+    {
+      "id": "LOG-1790225823569-770",
+      "action": "PROFILE_UPDATE",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "memberId": "CM-96K-0009"
+      },
+      "timestamp": "2026-09-24T04:57:03.569Z"
+    },
+    {
+      "id": "LOG-1790225823526-366",
+      "action": "OTP_REQUESTED",
+      "performedBy": "yashwant1283@maratha.org",
+      "details": {
+        "otp": "937434"
+      },
+      "timestamp": "2026-09-24T04:57:03.526Z"
+    },
+    {
+      "id": "LOG-1790225823507-289",
+      "action": "MEMBER_LOGIN",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "identifier": "yashwant1283@maratha.org"
+      },
+      "timestamp": "2026-09-24T04:57:03.507Z"
+    },
+    {
+      "id": "LOG-1790225823460-459",
+      "action": "MEMBER_REGISTER",
+      "performedBy": "CM-96K-0009",
+      "details": {
+        "name": "यशवंतराव कदम 1283",
+        "district": "सातारा"
+      },
+      "timestamp": "2026-09-24T04:57:03.460Z"
+    },
     {
       "id": "LOG-1790224437075-50",
       "action": "MEMBER_LOGOUT",
@@ -4246,6 +4896,36 @@
   ],
   "notifications": [
     {
+      "recipientId": "CM-96K-0009",
+      "title": "🎖️ महासंघ नवीन जबाबदारी व पद नियुक्ती",
+      "message": "आपणास महासंघामध्ये \"chapter_president\" पदाची जबाबदारी सोपवण्यात आली आहे. कार्यक्षेत्र: सातारा.",
+      "type": "role_assignment",
+      "read": false,
+      "timestamp": "2026-09-24T04:57:04.635Z",
+      "id": "NOT-824635",
+      "createdAt": "2026-09-24T04:57:04.636Z"
+    },
+    {
+      "recipientId": "CM-96K-0009",
+      "title": "✅ डिजिटल ओळखपत्र प्रमाणित झाले!",
+      "message": "अभिनंदन! आपले मराठा महासंघ डिजिटल ओळखपत्र अखिल भारतीय मराठा महासंघ मुख्य कार्यालय यांच्याद्वारे प्रमाणित करण्यात आले आहे.",
+      "type": "verification",
+      "read": false,
+      "timestamp": "2026-09-24T04:57:04.619Z",
+      "id": "NOT-824619",
+      "createdAt": "2026-09-24T04:57:04.619Z"
+    },
+    {
+      "id": "NOTIF-1790225823579",
+      "recipientId": "CM-96K-0009",
+      "title": "अखिल भारतीय मराठा महासंघात आपले स्वागत आहे!",
+      "message": "आपले डिजिटल ओळखपत्र तयार झाले आहे. प्रोफाइल पूर्ण करून विविध सेवांचा लाभ घ्या.",
+      "type": "welcome",
+      "read": false,
+      "timestamp": "2026-09-24T04:57:03.579Z",
+      "createdAt": "2026-09-24T04:57:03.579Z"
+    },
+    {
       "recipientId": "CM-96K-0008",
       "title": "🎖️ महासंघ नवीन जबाबदारी व पद नियुक्ती",
       "message": "आपणास महासंघामध्ये \"chapter_president\" पदाची जबाबदारी सोपवण्यात आली आहे. कार्यक्षेत्र: सातारा.",
@@ -4418,6 +5098,18 @@
   ],
   "messages": [
     {
+      "id": "MSG-1790225823588-517",
+      "senderId": "CM-96K-0009",
+      "senderName": "यशवंतराव कदम 1283",
+      "recipientId": "CM-96K-001",
+      "subject": "जय जिजाऊ",
+      "message": "महासंघ कार्यात सहभागाबाबत.",
+      "attachments": [],
+      "read": false,
+      "timestamp": "2026-09-24T04:57:03.588Z",
+      "createdAt": "2026-09-24T04:57:03.588Z"
+    },
+    {
       "id": "MSG-1790224436219-731",
       "senderId": "CM-96K-0008",
       "senderName": "यशवंतराव कदम 249",
@@ -4504,6 +5196,13 @@
   ],
   "otpCodes": [
     {
+      "identifier": "yashwant1283@maratha.org",
+      "otp": "937434",
+      "expiresAt": 1790226423523,
+      "id": "OTP-823523",
+      "createdAt": "2026-09-24T04:57:03.523Z"
+    },
+    {
       "identifier": "yashwant249@maratha.org",
       "otp": "799527",
       "expiresAt": 1790225036153,
@@ -4554,6 +5253,12 @@
     }
   ],
   "tokenBlacklist": [
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNNLTk2Sy0wMDEiLCJuYW1lIjoi4KSF4KSW4KS_4KSyIOCkreCkvuCksOCkpOClgOCkryDgpK7gpLDgpL7gpKDgpL4g4KSu4KS54KS-4KS44KSC4KSYIOCkruClgeCkluCljeCkryDgpJXgpL7gpLDgpY3gpK_gpL7gpLLgpK8iLCJyb2xlIjoiYWRtaW4iLCJ0aWVyIjoiUm95YWwgUGF0cm9uIiwiZGlzdHJpY3QiOiLgpK7gpYHgpILgpKzgpIgg4KS24KS54KSwIiwiaWF0IjoxNzkwMjI1ODI0LCJleHAiOjE3OTI4MTc4MjR9.cStc-SSbrEcA6ITHFLEsES7-THnJWzrQ-NXIyqosqAM",
+      "blacklistedAt": "2026-09-24T04:57:04.657Z",
+      "id": "TOK-824657",
+      "createdAt": "2026-09-24T04:57:04.657Z"
+    },
     {
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNNLTk2Sy0wMDEiLCJuYW1lIjoi4KSF4KSW4KS_4KSyIOCkreCkvuCksOCkpOClgOCkryDgpK7gpLDgpL7gpKDgpL4g4KSu4KS54KS-4KS44KSC4KSYIOCkruClgeCkluCljeCkryDgpJXgpL7gpLDgpY3gpK_gpL7gpLLgpK8iLCJyb2xlIjoiYWRtaW4iLCJ0aWVyIjoiUm95YWwgUGF0cm9uIiwiZGlzdHJpY3QiOiLgpK7gpYHgpILgpKzgpIgg4KS24KS54KSwIiwiaWF0IjoxNzkwMjI0NDM3LCJleHAiOjE3OTI4MTY0Mzd9.1GVYjrk1hupHBnQAe-f4Tk-oXzwDiFoRYMJ4_RAvyYs",
       "blacklistedAt": "2026-09-24T04:33:57.072Z",

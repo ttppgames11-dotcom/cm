@@ -159,24 +159,24 @@ router.get('/women/help', authenticateToken, (req, res) => {
   return sendSuccess(res, 'महिला मदत व मार्गदर्शन विनंत्या', { requests: userHelp });
 });
 
-router.post('/women/help', authenticateToken, (req, res) => {
-  const { subject, category, description, phone, preferredTime, urgent } = req.body;
-  const cleanSubject = sanitize(subject);
+router.post('/women/help', optionalToken, (req, res) => {
+  const { name, subject, category, description, phone, preferredTime, urgent } = req.body;
+  const cleanSubject = sanitize(subject) || sanitize(name) || 'महिला साहाय्य विनंती';
   const cleanDesc = sanitize(description);
 
-  if (!cleanSubject || !cleanDesc) {
-    return sendError(res, 'कृपया विषय व माहिती प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  if (!cleanDesc) {
+    return sendError(res, 'कृपया मदतीची सविस्तर माहिती प्रविष्ट करा.', 'MISSING_FIELDS', 400);
   }
 
-  let cleanPhoneNum = phone ? cleanPhone(phone) : (req.user.phone || '');
+  let cleanPhoneNum = phone ? cleanPhone(phone) : (req.user?.phone || '');
   if (cleanPhoneNum && !isValidPhone(cleanPhoneNum)) {
     return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
   }
 
   const item = {
     id: `WHELP-${Date.now().toString().slice(-4)}`,
-    applicantId: req.user.id,
-    applicantName: req.user.name,
+    applicantId: req.user?.id || 'GUEST',
+    applicantName: req.user?.name || sanitize(name) || 'नागरिक',
     subject: cleanSubject,
     category: sanitize(category) || 'कायदेशीर व समुपदेशन',
     description: cleanDesc,
