@@ -40,6 +40,7 @@ import ChapterPresidentCRM from './pages/admin/ChapterPresidentCRM';
 import SevaHelpdeskCRM from './pages/admin/SevaHelpdeskCRM';
 import CRMRoleHubPage from './pages/admin/CRMRoleHubPage';
 import SiteContentEditorPage from './pages/admin/SiteContentEditorPage';
+import SuperAdminDashboardPage from './pages/admin/SuperAdminDashboardPage';
 import GenericArticlePage from './pages/common/GenericArticlePage';
 
 // Specialized Converted Feature Pages
@@ -362,6 +363,10 @@ export default function App() {
             <Route path="/admin/content" element={<SiteContentEditorPage />} />
             <Route path="/cms" element={<SiteContentEditorPage />} />
             <Route path="/crm/cms" element={<SiteContentEditorPage />} />
+            <Route path="/superadmin" element={<SuperAdminDashboardPage />} />
+            <Route path="/admin/superadmin" element={<SuperAdminDashboardPage />} />
+            <Route path="/admin/users" element={<SuperAdminDashboardPage />} />
+            <Route path="/crm/superadmin" element={<SuperAdminDashboardPage />} />
 
             {/* Newly Added Community Ecosystem Modules with Full URL Variations */}
             <Route path="/doctors" element={<DoctorsDirectoryPage />} />

@@ -40,6 +40,34 @@ export default function AppLayout({ children }) {
       <SiteFooter />
       <MobileBottomNav />
       <CommandPalette isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      {user?.role === 'superadmin' && location.pathname !== '/superadmin' && (
+        <Link
+          to="/superadmin"
+          style={{
+            position: 'fixed',
+            bottom: '124px',
+            right: '20px',
+            zIndex: 9999,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '9px 16px',
+            background: 'linear-gradient(135deg, #F59E0B, #D97706)',
+            color: '#000000',
+            borderRadius: '50px',
+            fontWeight: '800',
+            fontSize: '0.82rem',
+            textDecoration: 'none',
+            boxShadow: '0 8px 24px rgba(245, 158, 11, 0.45)',
+            border: '2px solid rgba(255, 255, 255, 0.4)',
+            backdropFilter: 'blur(8px)',
+            transition: 'transform 0.2s ease'
+          }}
+          title="सर्वोच्च प्रशासक कन्सोल: वापरकर्ते, डॉक्टर्स, सेवा, हॉटेल्स CRUD">
+          <span>👑</span>
+          <span>SuperAdmin CRUD</span>
+        </Link>
+      )}
       {isAdmin && location.pathname !== '/admin/cms' && (
         <Link
           to="/admin/cms"

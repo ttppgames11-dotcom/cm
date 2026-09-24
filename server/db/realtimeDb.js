@@ -72,7 +72,9 @@ class RealtimeDatabase {
       'notifications',
       'messages',
       'otpCodes',
-      'tokenBlacklist'
+      'tokenBlacklist',
+      'hotels',
+      'information'
     ];
 
     for (const col of collections) {
@@ -94,7 +96,7 @@ class RealtimeDatabase {
       console.warn('[RealtimeDB] Oral history sync warning:', e.message);
     }
 
-    // Seed default admin and initial sample data if members empty
+    // Seed default admin if members empty
     if (this.data.members.length === 0) {
       this.data.members.push({
         id: 'CM-96K-001',
@@ -117,6 +119,123 @@ class RealtimeDatabase {
         verified: true,
         created_at: new Date().toISOString()
       });
+    }
+
+    // Ensure dedicated SuperAdmin account exists
+    const hasSuperAdmin = this.data.members.some(m => m.role === 'superadmin' || m.email === 'superadmin@connectmaratha.org');
+    if (!hasSuperAdmin) {
+      this.data.members.push({
+        id: 'CM-SUPER-001',
+        name: 'छत्रपती शासन सर्वोच्च प्रशासक (SuperAdmin)',
+        email: 'superadmin@connectmaratha.org',
+        phone: '+91 98220 99999',
+        password_hash: '$2a$08$91qQjU8XbF44O059O57DseK6yY44oXo7M9r/9lqB0n0yCqD9gq1ee', // 'password123'
+        avatar: '👑',
+        city: 'पुणे',
+        district: 'पुणे',
+        state: 'महाराष्ट्र',
+        taluka: 'हवेली',
+        kul: '९६ कुळी भोसले',
+        gotra: 'कौशिक',
+        profession: 'सर्वोच्च प्रशासकीय नियामक',
+        business: 'कनेक्ट मराठा केंद्रीय नियामक मंडळ',
+        tier: 'Supreme Council',
+        role: 'superadmin',
+        joined: new Date().toISOString().split('T')[0],
+        verified: true,
+        verificationStatus: 'प्रमाणित (Verified)',
+        created_at: new Date().toISOString()
+      });
+    }
+
+    // Seed default hotels if empty
+    if (!this.data.hotels || this.data.hotels.length === 0) {
+      this.data.hotels = [
+        {
+          id: 'HTL-001',
+          name: 'शिवसमर्थ हेरिटेज पॅलेस',
+          city: 'पुणे',
+          district: 'पुणे',
+          category: 'हेरिटेज हॉटेल व रिसॉर्ट',
+          star_rating: 4.8,
+          address: 'शिवाजीनगर, जंगली महाराज रोड, पुणे',
+          phone: '+91 98220 11001',
+          email: 'contact@shivsamarthhotel.com',
+          website: 'https://shivsamarthhotel.com',
+          rooms_count: 45,
+          amenities: ['शाही मराठा भोजनालय', 'स्विमिंग पूल', 'कॉन्फरन्स हॉल', 'मोफत वायफाय'],
+          price_range: '₹२,५०० - ₹६,००० प्रति रात्र',
+          photo: '🏨',
+          verified: true,
+          created_at: new Date().toISOString()
+        },
+        {
+          id: 'HTL-002',
+          name: 'दुर्गराज रायगड व्हॅली रिसॉर्ट',
+          city: 'महाड',
+          district: 'रायगड',
+          category: 'किल्ले पर्यटन रिसॉर्ट',
+          star_rating: 4.6,
+          address: 'पाचाड पायथा, किल्ले रायगड रोड, महाड',
+          phone: '+91 98220 11002',
+          email: 'info@raigadresort.in',
+          website: 'https://raigadresort.in',
+          rooms_count: 28,
+          amenities: ['ट्रेकिंग गाइड', 'पारंपरिक चूल जेवण', 'पार्किंग', 'एसी रूम्स'],
+          price_range: '₹१,८०० - ₹४,००० प्रति रात्र',
+          photo: '🏰',
+          verified: true,
+          created_at: new Date().toISOString()
+        },
+        {
+          id: 'HTL-003',
+          name: 'राजमाता जिजाऊ एक्झिक्युटिव्ह लॉज',
+          city: 'छत्रपती संभाजीनगर',
+          district: 'छत्रपती संभाजीनगर',
+          category: 'बिझनेस हॉटेल',
+          star_rating: 4.5,
+          address: 'जालना रोड, सिडको, छ. संभाजीनगर',
+          phone: '+91 98220 11003',
+          email: 'stay@jijauhotel.com',
+          website: 'https://jijauhotel.com',
+          rooms_count: 35,
+          amenities: ['बिझनेस सेंटर', 'शुद्ध शाकाहारी रेस्टॉरंट', 'जिम', '२४x७ रूम सर्व्हिस'],
+          price_range: '₹२,००० - ₹४,५०० प्रति रात्र',
+          photo: '🏨',
+          verified: true,
+          created_at: new Date().toISOString()
+        }
+      ];
+    }
+
+    // Seed default information articles if empty
+    if (!this.data.information || this.data.information.length === 0) {
+      this.data.information = [
+        {
+          id: 'INFO-001',
+          title: 'दुर्गराज रायगड: मराठा साम्राज्याची राजधानी व स्थापत्य वैभव',
+          category: 'गड-किल्ले इतिहास',
+          author: 'इतिहास संशोधन मंडळ',
+          summary: 'रायगडाची अभेद्य तटबंदी, महादरवाजा आणि ३२ मण सुवर्ण सिंहासनावर झालेला शिवराज्याभिषेक सोहळा.',
+          content: 'दुर्गराज रायगड हा सह्याद्रीच्या पर्वतरांगेतील सार्वभौम मराठा साम्राज्याची राजधानी असलेला अद्वितीय दुर्ग आहे. छत्रपती शिवाजी महाराजांनी १६७४ मध्ये याच गडावर वैदिक शिवराज्याभिषेक केला.',
+          tags: ['रायगड', 'शिवराज्याभिषेक', 'सह्याद्री', 'इतिहास'],
+          image_url: '/assets/images/real-raigad-panoramic.jpg',
+          featured: 1,
+          created_at: new Date().toISOString()
+        },
+        {
+          id: 'INFO-002',
+          title: 'मराठा नवउद्योजक मार्गदर्शन व एमएसएमई योजना',
+          category: 'उद्योग व वित्त',
+          author: 'बिझनेस संगम प्रकोष्ठ',
+          summary: 'महाराष्ट्र शासनाच्या अण्णासाहेब पाटील आर्थिक मागास विकास महामंडळाच्या व्याज परतावा योजना व लाभ घेण्याची प्रक्रिया.',
+          content: 'मराठा समाजातील तरुणांना उद्योग व व्यवसायात स्वतःच्या पायावर उभे राहण्यासाठी शासन व महासंघ विविध अर्थसाहाय्य व कौशल्य प्रशिक्षण योजना राबवत आहे.',
+          tags: ['उद्योग', 'कर्ज', 'अनुदान', 'स्टार्टअप'],
+          image_url: '/assets/images/generated/business_sangam_hero.jpg',
+          featured: 1,
+          created_at: new Date().toISOString()
+        }
+      ];
     }
 
     this.save();
@@ -179,6 +298,15 @@ class RealtimeDatabase {
     col.splice(index, 1);
     this.save();
     return true;
+  }
+
+  remove(name, id) {
+    return this.delete(name, id);
+  }
+
+  findOne(name, predicate) {
+    const col = this.getCollection(name);
+    return col.find(predicate);
   }
 
   addAuditLog(action, performedBy, details = {}) {

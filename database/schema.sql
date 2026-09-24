@@ -287,3 +287,35 @@ CREATE TABLE IF NOT EXISTS site_content (
   updated_at TEXT
 );
 
+CREATE TABLE IF NOT EXISTS hotels (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  city TEXT,
+  district TEXT,
+  category TEXT DEFAULT 'Hotel',
+  star_rating REAL DEFAULT 4.0,
+  address TEXT,
+  phone TEXT,
+  email TEXT,
+  website TEXT,
+  rooms_count INTEGER DEFAULT 10,
+  amenities TEXT DEFAULT '[]',
+  price_range TEXT,
+  photo TEXT DEFAULT '🏨',
+  verified INTEGER DEFAULT 1,
+  created_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS information_articles (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  category TEXT,
+  author TEXT,
+  summary TEXT,
+  content TEXT,
+  tags TEXT DEFAULT '[]',
+  image_url TEXT,
+  featured INTEGER DEFAULT 0,
+  created_at TEXT
+);
+

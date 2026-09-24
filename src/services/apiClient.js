@@ -211,6 +211,99 @@ export const apiClient = {
   resetSiteContent: async () => {
     const res = await fetchJson('/admin/site-content/reset', { method: 'POST' });
     return res.data?.siteContent || res.siteContent || res.data || null;
+  },
+
+  // =========================================================================
+  // SUPERADMIN & ADMIN MASTER CRUD API
+  // =========================================================================
+  // Users CRUD
+  getAdminUsers: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/admin/users${qs ? '?' + qs : ''}`);
+    return res.data || { users: [], count: 0, stats: {} };
+  },
+  createAdminUser: async (data) => {
+    return await fetchJson('/admin/users', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getAdminUser: async (id) => {
+    const res = await fetchJson(`/admin/users/${id}`);
+    return res.data?.user || res.user || null;
+  },
+  updateAdminUser: async (id, data) => {
+    return await fetchJson(`/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+  deleteAdminUser: async (id) => {
+    return await fetchJson(`/admin/users/${id}`, { method: 'DELETE' });
+  },
+  assignAdminRole: async (memberId, newRole, assignedScope, remarks) => {
+    return await fetchJson('/admin/assign-role', {
+      method: 'PUT',
+      body: JSON.stringify({ memberId, newRole, assignedScope, remarks })
+    });
+  },
+  getRolesMatrix: async () => {
+    const res = await fetchJson('/admin/roles-matrix');
+    return res.data?.rolesMatrix || [];
+  },
+
+  // Doctors CRUD
+  getAdminDoctors: async () => {
+    const res = await fetchJson('/admin/doctors');
+    return res.data?.doctors || res.doctors || [];
+  },
+  createAdminDoctor: async (data) => {
+    return await fetchJson('/admin/doctors', { method: 'POST', body: JSON.stringify(data) });
+  },
+  updateAdminDoctor: async (id, data) => {
+    return await fetchJson(`/admin/doctors/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+  deleteAdminDoctor: async (id) => {
+    return await fetchJson(`/admin/doctors/${id}`, { method: 'DELETE' });
+  },
+
+  // Services & Providers CRUD
+  getAdminServices: async () => {
+    const res = await fetchJson('/admin/services');
+    return res.data?.services || res.services || [];
+  },
+  createAdminService: async (data) => {
+    return await fetchJson('/admin/services', { method: 'POST', body: JSON.stringify(data) });
+  },
+  updateAdminService: async (id, data) => {
+    return await fetchJson(`/admin/services/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+  deleteAdminService: async (id) => {
+    return await fetchJson(`/admin/services/${id}`, { method: 'DELETE' });
+  },
+
+  // Hotels & Hospitality CRUD
+  getAdminHotels: async () => {
+    const res = await fetchJson('/admin/hotels');
+    return res.data?.hotels || res.hotels || [];
+  },
+  createAdminHotel: async (data) => {
+    return await fetchJson('/admin/hotels', { method: 'POST', body: JSON.stringify(data) });
+  },
+  updateAdminHotel: async (id, data) => {
+    return await fetchJson(`/admin/hotels/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+  deleteAdminHotel: async (id) => {
+    return await fetchJson(`/admin/hotels/${id}`, { method: 'DELETE' });
+  },
+
+  // Information & Articles CRUD
+  getAdminInformation: async () => {
+    const res = await fetchJson('/admin/information');
+    return res.data?.information || res.information || [];
+  },
+  createAdminInformation: async (data) => {
+    return await fetchJson('/admin/information', { method: 'POST', body: JSON.stringify(data) });
+  },
+  updateAdminInformation: async (id, data) => {
+    return await fetchJson(`/admin/information/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+  deleteAdminInformation: async (id) => {
+    return await fetchJson(`/admin/information/${id}`, { method: 'DELETE' });
   }
 };
 

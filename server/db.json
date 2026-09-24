@@ -1,6 +1,55 @@
 {
   "doctors": [
     {
+      "id": "DOC-7711",
+      "name": "डॉ. अमित भोसले",
+      "specialty": "मेंदूरोग तज्ज्ञ (Neurologist)",
+      "degree": "M.B.B.S.",
+      "hospital": "दीनानाथ मंगेशकर हॉस्पिटल",
+      "city": "पुणे",
+      "district": "पुणे",
+      "phone": "+919822112233",
+      "experience": "१०+ वर्षे",
+      "consultationFee": "₹५००",
+      "avatar": "🩺",
+      "verified": true,
+      "created_at": "2026-09-24T05:41:37.711Z"
+    },
+    {
+      "id": "DOC-6701",
+      "name": "डॉ. विक्रम कदम",
+      "specialty": "हृदयरोग",
+      "degree": "M.B.B.S.",
+      "category": "हृदयरोग",
+      "hospital": "सह्याद्री हॉस्पिटल",
+      "city": "पुणे",
+      "phone": "+919822011111",
+      "consultationFee": "₹५००",
+      "timing": "स. १० ते सायं. ६",
+      "experience": "१० वर्षे अनुभव",
+      "rating": "5.0 ★ (नवीन नोंदणी)",
+      "icon": "🩺",
+      "verified": true,
+      "createdAt": "2026-09-24T05:41:36.701Z"
+    },
+    {
+      "id": "DOC-0670",
+      "name": "डॉ. विक्रम कदम",
+      "specialty": "हृदयरोग",
+      "degree": "M.B.B.S.",
+      "category": "हृदयरोग",
+      "hospital": "सह्याद्री हॉस्पिटल",
+      "city": "पुणे",
+      "phone": "+919822011111",
+      "consultationFee": "₹५००",
+      "timing": "स. १० ते सायं. ६",
+      "experience": "१० वर्षे अनुभव",
+      "rating": "5.0 ★ (नवीन नोंदणी)",
+      "icon": "🩺",
+      "verified": true,
+      "createdAt": "2026-09-24T05:27:30.670Z"
+    },
+    {
       "id": "DOC-9416",
       "name": "डॉ. विक्रम कदम",
       "specialty": "हृदयरोग",
@@ -156,6 +205,30 @@
   ],
   "bloodRequests": [
     {
+      "id": "REQ-6790",
+      "patient": "प्रशांत कदम",
+      "hospital": "सिव्हिल हॉस्पिटल",
+      "bloodGroup": "B+",
+      "units": 1,
+      "urgency": "तात्काळ (Emergency)",
+      "city": "पुणे/महाराष्ट्र",
+      "contact": "+919822011111",
+      "time": "आत्ताच",
+      "createdAt": "2026-09-24T05:41:36.790Z"
+    },
+    {
+      "id": "REQ-0743",
+      "patient": "प्रशांत कदम",
+      "hospital": "सिव्हिल हॉस्पिटल",
+      "bloodGroup": "B+",
+      "units": 1,
+      "urgency": "तात्काळ (Emergency)",
+      "city": "पुणे/महाराष्ट्र",
+      "contact": "+919822011111",
+      "time": "आत्ताच",
+      "createdAt": "2026-09-24T05:27:30.743Z"
+    },
+    {
       "id": "REQ-9468",
       "patient": "प्रशांत कदम",
       "hospital": "सिव्हिल हॉस्पिटल",
@@ -226,6 +299,28 @@
     }
   ],
   "bloodDonors": [
+    {
+      "id": "DON-6808",
+      "name": "संदीप सावंत",
+      "group": "O+",
+      "city": "पुणे",
+      "phone": "+919822022222",
+      "lastDonated": "नवीन नोंदणी",
+      "totalDonations": 1,
+      "verified": true,
+      "createdAt": "2026-09-24T05:41:36.808Z"
+    },
+    {
+      "id": "DON-0760",
+      "name": "संदीप सावंत",
+      "group": "O+",
+      "city": "पुणे",
+      "phone": "+919822022222",
+      "lastDonated": "नवीन नोंदणी",
+      "totalDonations": 1,
+      "verified": true,
+      "createdAt": "2026-09-24T05:27:30.761Z"
+    },
     {
       "id": "DON-9479",
       "name": "संदीप सावंत",
@@ -321,6 +416,46 @@
     }
   ],
   "matrimony": [
+    {
+      "id": "CM-M-6828",
+      "memberId": "CM-96K-0014",
+      "name": "इंजि. अनिकेत कदम",
+      "gender": "वर (Groom)",
+      "age": 28,
+      "height": "5' 8\"",
+      "caste": "९६ कुळी मराठा",
+      "kul": "पाटील / कदम / जाधव",
+      "gotra": "कश्यप",
+      "education": "पदवीधर",
+      "profession": "व्यवसायिक / सेवा",
+      "income": "उत्पन्न खुलासेवार",
+      "city": "सातारा",
+      "verified": true,
+      "photo": "👨‍💼",
+      "expectations": "सुशिक्षित, सुसंस्कृत अनुरूप जोडीदार.",
+      "contact": "",
+      "createdAt": "2026-09-24T05:41:36.828Z"
+    },
+    {
+      "id": "CM-M-0776",
+      "memberId": "CM-96K-0012",
+      "name": "इंजि. अनिकेत कदम",
+      "gender": "वर (Groom)",
+      "age": 28,
+      "height": "5' 8\"",
+      "caste": "९६ कुळी मराठा",
+      "kul": "पाटील / कदम / जाधव",
+      "gotra": "कश्यप",
+      "education": "पदवीधर",
+      "profession": "व्यवसायिक / सेवा",
+      "income": "उत्पन्न खुलासेवार",
+      "city": "सातारा",
+      "verified": true,
+      "photo": "👨‍💼",
+      "expectations": "सुशिक्षित, सुसंस्कृत अनुरूप जोडीदार.",
+      "contact": "",
+      "createdAt": "2026-09-24T05:27:30.776Z"
+    },
     {
       "id": "CM-M-9491",
       "memberId": "CM-96K-0011",
@@ -435,6 +570,30 @@
   ],
   "grievances": [
     {
+      "id": "GRV-6883",
+      "applicantId": "CM-96K-0014",
+      "applicantName": "यशवंतराव कदम 4447",
+      "title": "दुर्ग संवर्धन निधी वाढवणेबाबत",
+      "targetAuthority": "जिल्हाधिकारी / लोकप्रतिनिधी",
+      "district": "सातारा",
+      "description": "स्थानिक किल्ल्यांच्या तटबंदी दुरुस्ती निधी.",
+      "phone": "",
+      "status": "सादर केले (Forwarded to Cell)",
+      "createdAt": "2026-09-24T05:41:36.883Z"
+    },
+    {
+      "id": "GRV-0817",
+      "applicantId": "CM-96K-0012",
+      "applicantName": "यशवंतराव कदम 2476",
+      "title": "दुर्ग संवर्धन निधी वाढवणेबाबत",
+      "targetAuthority": "जिल्हाधिकारी / लोकप्रतिनिधी",
+      "district": "सातारा",
+      "description": "स्थानिक किल्ल्यांच्या तटबंदी दुरुस्ती निधी.",
+      "phone": "",
+      "status": "सादर केले (Forwarded to Cell)",
+      "createdAt": "2026-09-24T05:27:30.817Z"
+    },
+    {
       "id": "GRV-9518",
       "applicantId": "CM-96K-0011",
       "applicantName": "यशवंतराव कदम 1260",
@@ -545,6 +704,26 @@
   ],
   "volunteers": [
     {
+      "id": "VOL-6871",
+      "name": "अजिंक्य घोरपडे",
+      "field": "आपत्ती व्यवस्थापन व सामाजिक मदत",
+      "district": "पुणे",
+      "phone": "+919822033333",
+      "bloodGroup": "O+",
+      "availability": "आणीबाणी / वीकेंड",
+      "createdAt": "2026-09-24T05:41:36.871Z"
+    },
+    {
+      "id": "VOL-0807",
+      "name": "अजिंक्य घोरपडे",
+      "field": "आपत्ती व्यवस्थापन व सामाजिक मदत",
+      "district": "पुणे",
+      "phone": "+919822033333",
+      "bloodGroup": "O+",
+      "availability": "आणीबाणी / वीकेंड",
+      "createdAt": "2026-09-24T05:27:30.807Z"
+    },
+    {
       "id": "VOL-9512",
       "name": "अजिंक्य घोरपडे",
       "field": "आपत्ती व्यवस्थापन व सामाजिक मदत",
@@ -636,6 +815,32 @@
     }
   ],
   "womenHelp": [
+    {
+      "id": "WHELP-6851",
+      "applicantId": "CM-96K-0014",
+      "applicantName": "यशवंतराव कदम 4447",
+      "subject": "स्वयंरोजगार मार्गदर्शन",
+      "category": "कायदेशीर व समुपदेशन",
+      "description": "महिला बचतगट गृहउद्योग कर्ज मार्गदर्शन.",
+      "phone": "",
+      "preferredTime": "सकाळी ११ ते दुपारी २",
+      "urgent": false,
+      "status": "समीक्षेत (Under Counselor Review)",
+      "createdAt": "2026-09-24T05:41:36.851Z"
+    },
+    {
+      "id": "WHELP-0794",
+      "applicantId": "CM-96K-0012",
+      "applicantName": "यशवंतराव कदम 2476",
+      "subject": "स्वयंरोजगार मार्गदर्शन",
+      "category": "कायदेशीर व समुपदेशन",
+      "description": "महिला बचतगट गृहउद्योग कर्ज मार्गदर्शन.",
+      "phone": "",
+      "preferredTime": "सकाळी ११ ते दुपारी २",
+      "urgent": false,
+      "status": "समीक्षेत (Under Counselor Review)",
+      "createdAt": "2026-09-24T05:27:30.794Z"
+    },
     {
       "id": "WHELP-9503",
       "applicantId": "CM-96K-0011",
@@ -756,6 +961,30 @@
   ],
   "builders": [
     {
+      "id": "BLD-6749",
+      "projectName": "शिवतीर्थ हाइट्स",
+      "developer": "कदम डेव्हलपर्स",
+      "location": "सातारा",
+      "configuration": "2 & 3 BHK Premium Homes",
+      "priceRange": "₹६५ लाख ते ₹१.५ कोटी",
+      "phone": "",
+      "reraApproved": true,
+      "discountForMembers": "मराठा महासंघ सदस्यांसाठी विशेष ३% सवलत",
+      "createdAt": "2026-09-24T05:41:36.749Z"
+    },
+    {
+      "id": "BLD-0710",
+      "projectName": "शिवतीर्थ हाइट्स",
+      "developer": "कदम डेव्हलपर्स",
+      "location": "सातारा",
+      "configuration": "2 & 3 BHK Premium Homes",
+      "priceRange": "₹६५ लाख ते ₹१.५ कोटी",
+      "phone": "",
+      "reraApproved": true,
+      "discountForMembers": "मराठा महासंघ सदस्यांसाठी विशेष ३% सवलत",
+      "createdAt": "2026-09-24T05:27:30.710Z"
+    },
+    {
       "id": "BLD-9443",
       "projectName": "शिवतीर्थ हाइट्स",
       "developer": "कदम डेव्हलपर्स",
@@ -865,6 +1094,32 @@
     }
   ],
   "bankLoans": [
+    {
+      "id": "LN-6768",
+      "applicantId": "CM-96K-0014",
+      "applicantName": "यशवंतराव कदम 4447",
+      "schemeName": "अण्णासाहेब पाटील महामंडळ बिनव्याजी कर्ज योजना",
+      "loanAmount": "₹१०,००,०००",
+      "purpose": "नवीन फॅब्रिकेशन वर्कशॉप विस्तार",
+      "businessName": "नवीन व्यवसाय",
+      "annualIncome": "₹५ लाख",
+      "contact": "",
+      "status": "कागदपत्र पडताळणी अंतर्गत (In Review)",
+      "createdAt": "2026-09-24T05:41:36.768Z"
+    },
+    {
+      "id": "LN-0727",
+      "applicantId": "CM-96K-0012",
+      "applicantName": "यशवंतराव कदम 2476",
+      "schemeName": "अण्णासाहेब पाटील महामंडळ बिनव्याजी कर्ज योजना",
+      "loanAmount": "₹१०,००,०००",
+      "purpose": "नवीन फॅब्रिकेशन वर्कशॉप विस्तार",
+      "businessName": "नवीन व्यवसाय",
+      "annualIncome": "₹५ लाख",
+      "contact": "",
+      "status": "कागदपत्र पडताळणी अंतर्गत (In Review)",
+      "createdAt": "2026-09-24T05:27:30.727Z"
+    },
     {
       "id": "LN-9456",
       "applicantId": "CM-96K-0011",
@@ -1212,6 +1467,66 @@
   ],
   "members": [
     {
+      "id": "CM-96K-0014",
+      "name": "यशवंतराव कदम 4447",
+      "phone": "+919822004447",
+      "email": "yashwant4447@maratha.org",
+      "password_hash": "$2a$08$3sR1DykACysIPtM0byuHw.BggY2yIG3YHYnwLl0//dcFB0KiiIGK6",
+      "district": "सातारा",
+      "taluka": "कराड",
+      "city": "सातारा",
+      "state": "महाराष्ट्र",
+      "country": "भारत",
+      "kul": "९६ कुळी मराठा कदम",
+      "gotra": "भारद्वाज",
+      "profession": "व्यवसायिक / नोकरी",
+      "about": "उद्योग व समाजकार्य",
+      "avatar": "👤",
+      "tier": "Gold",
+      "role": "chapter_president",
+      "verified": true,
+      "joined": "2026-09-24",
+      "createdAt": "2026-09-24T05:41:36.295Z",
+      "updatedAt": "2026-09-24T05:41:37.631Z",
+      "verificationStatus": "प्रमाणित (Verified)",
+      "verifiedBy": "अखिल भारतीय मराठा महासंघ मुख्य कार्यालय",
+      "verificationRemarks": "सर्व कागदपत्रे वैध आहेत",
+      "verifiedAt": "2026-09-24T05:41:37.611Z",
+      "assignedScope": "सातारा",
+      "roleAssignedBy": "अखिल भारतीय मराठा महासंघ मुख्य कार्यालय",
+      "roleAssignedAt": "2026-09-24T05:41:37.631Z"
+    },
+    {
+      "id": "CM-96K-0012",
+      "name": "यशवंतराव कदम 2476",
+      "phone": "+919822002476",
+      "email": "yashwant2476@maratha.org",
+      "password_hash": "$2a$08$/pZuMaMPsB2H76e4xdAPwO5NIntaIUK5CZ9TG3MVa/wWd6QTDv/5q",
+      "district": "सातारा",
+      "taluka": "कराड",
+      "city": "सातारा",
+      "state": "महाराष्ट्र",
+      "country": "भारत",
+      "kul": "९६ कुळी मराठा कदम",
+      "gotra": "भारद्वाज",
+      "profession": "व्यवसायिक / नोकरी",
+      "about": "उद्योग व समाजकार्य",
+      "avatar": "👤",
+      "tier": "Gold",
+      "role": "chapter_president",
+      "verified": true,
+      "joined": "2026-09-24",
+      "createdAt": "2026-09-24T05:27:30.421Z",
+      "updatedAt": "2026-09-24T05:27:31.640Z",
+      "verificationStatus": "प्रमाणित (Verified)",
+      "verifiedBy": "अखिल भारतीय मराठा महासंघ मुख्य कार्यालय",
+      "verificationRemarks": "सर्व कागदपत्रे वैध आहेत",
+      "verifiedAt": "2026-09-24T05:27:31.624Z",
+      "assignedScope": "सातारा",
+      "roleAssignedBy": "अखिल भारतीय मराठा महासंघ मुख्य कार्यालय",
+      "roleAssignedAt": "2026-09-24T05:27:31.640Z"
+    },
+    {
       "id": "CM-96K-0011",
       "name": "यशवंतराव कदम 1260",
       "phone": "+919822001260",
@@ -1517,9 +1832,75 @@
       "joined": "2026-09-24",
       "verified": true,
       "created_at": "2026-09-24T04:16:00.580Z"
+    },
+    {
+      "id": "CM-SUPER-001",
+      "name": "छत्रपती शासन सर्वोच्च प्रशासक (SuperAdmin)",
+      "email": "superadmin@connectmaratha.org",
+      "phone": "+91 98220 99999",
+      "password_hash": "$2a$08$91qQjU8XbF44O059O57DseK6yY44oXo7M9r/9lqB0n0yCqD9gq1ee",
+      "avatar": "👑",
+      "city": "पुणे",
+      "district": "पुणे",
+      "state": "महाराष्ट्र",
+      "taluka": "हवेली",
+      "kul": "९६ कुळी भोसले",
+      "gotra": "कौशिक",
+      "profession": "सर्वोच्च प्रशासकीय नियामक",
+      "business": "कनेक्ट मराठा केंद्रीय नियामक मंडळ",
+      "tier": "Supreme Council",
+      "role": "superadmin",
+      "joined": "2026-09-24",
+      "verified": true,
+      "verificationStatus": "प्रमाणित (Verified)",
+      "created_at": "2026-09-24T05:35:09.434Z"
     }
   ],
   "businesses": [
+    {
+      "id": "BIZ-96596",
+      "name": "शिवशक्ती इंजिनिअरिंग वर्क्स 4447",
+      "owner": "यशवंतराव कदम 4447",
+      "ownerId": "CM-96K-0014",
+      "cat": "मॅन्युफॅक्चरिंग व फॅब्रिकेशन",
+      "city": "कराड",
+      "district": "सातारा",
+      "phone": "+919822054321",
+      "whatsapp": "+919822054321",
+      "website": "",
+      "services": [],
+      "offers": "",
+      "gstNumber": "",
+      "udyamNo": "",
+      "rating": 5,
+      "reviewCount": 1,
+      "photo": "🏢",
+      "verified": true,
+      "createdAt": "2026-09-24T05:41:36.596Z",
+      "updatedAt": "2026-09-24T05:41:36.628Z"
+    },
+    {
+      "id": "BIZ-50580",
+      "name": "शिवशक्ती इंजिनिअरिंग वर्क्स 2476",
+      "owner": "यशवंतराव कदम 2476",
+      "ownerId": "CM-96K-0012",
+      "cat": "मॅन्युफॅक्चरिंग व फॅब्रिकेशन",
+      "city": "कराड",
+      "district": "सातारा",
+      "phone": "+919822054321",
+      "whatsapp": "+919822054321",
+      "website": "",
+      "services": [],
+      "offers": "",
+      "gstNumber": "",
+      "udyamNo": "",
+      "rating": 5,
+      "reviewCount": 1,
+      "photo": "🏢",
+      "verified": true,
+      "createdAt": "2026-09-24T05:27:30.580Z",
+      "updatedAt": "2026-09-24T05:27:30.606Z"
+    },
     {
       "id": "BIZ-89358",
       "name": "शिवशक्ती इंजिनिअरिंग वर्क्स 1260",
@@ -1742,6 +2123,24 @@
   ],
   "businessReviews": [
     {
+      "id": "REV-6620",
+      "businessId": "BIZ-96596",
+      "reviewerId": "CM-96K-0014",
+      "memberName": "यशवंतराव कदम 4447",
+      "rating": 5,
+      "text": "अतिशय दर्जेदार काम!",
+      "createdAt": "2026-09-24T05:41:36.620Z"
+    },
+    {
+      "id": "REV-0600",
+      "businessId": "BIZ-50580",
+      "reviewerId": "CM-96K-0012",
+      "memberName": "यशवंतराव कदम 2476",
+      "rating": 5,
+      "text": "अतिशय दर्जेदार काम!",
+      "createdAt": "2026-09-24T05:27:30.600Z"
+    },
+    {
       "id": "REV-9373",
       "businessId": "BIZ-89358",
       "reviewerId": "CM-96K-0011",
@@ -1824,6 +2223,42 @@
     }
   ],
   "referrals": [
+    {
+      "id": "REF-96642",
+      "title": "CNC मशीन फॅब्रिकेशन काम",
+      "category": "व्यापार संदर्भ",
+      "giverId": "CM-96K-0014",
+      "giverName": "यशवंतराव कदम 4447",
+      "recipientId": "",
+      "recipientName": "मराठा व्यवसाय बंधू",
+      "clientName": "महेश जाधव",
+      "clientPhone": "+919822100000",
+      "clientEmail": "",
+      "urgency": "मध्यम (Medium)",
+      "status": "यशस्वी क्लोज (Success)",
+      "value": 150000,
+      "notes": "",
+      "createdAt": "2026-09-24T05:41:36.642Z",
+      "updatedAt": "2026-09-24T05:41:36.661Z"
+    },
+    {
+      "id": "REF-50620",
+      "title": "CNC मशीन फॅब्रिकेशन काम",
+      "category": "व्यापार संदर्भ",
+      "giverId": "CM-96K-0012",
+      "giverName": "यशवंतराव कदम 2476",
+      "recipientId": "",
+      "recipientName": "मराठा व्यवसाय बंधू",
+      "clientName": "महेश जाधव",
+      "clientPhone": "+919822100000",
+      "clientEmail": "",
+      "urgency": "मध्यम (Medium)",
+      "status": "यशस्वी क्लोज (Success)",
+      "value": 150000,
+      "notes": "",
+      "createdAt": "2026-09-24T05:27:30.620Z",
+      "updatedAt": "2026-09-24T05:27:30.638Z"
+    },
     {
       "id": "REF-89384",
       "title": "CNC मशीन फॅब्रिकेशन काम",
@@ -1962,6 +2397,34 @@
   ],
   "meetings": [
     {
+      "id": "MEET-6677",
+      "requesterId": "CM-96K-0014",
+      "requesterName": "यशवंतराव कदम 4447",
+      "recipientId": "",
+      "recipientName": "आनंदराव देशमुख",
+      "date": "२८ सप्टेंबर २०२६",
+      "time": "सकाळी १०:००",
+      "topic": "व्यवसाय संगम १-टू-१ संवाद",
+      "location": "मराठा संगम दालन / ऑनलाइन",
+      "status": "निश्चित (Confirmed)",
+      "notes": "",
+      "createdAt": "2026-09-24T05:41:36.677Z"
+    },
+    {
+      "id": "MEET-0652",
+      "requesterId": "CM-96K-0012",
+      "requesterName": "यशवंतराव कदम 2476",
+      "recipientId": "",
+      "recipientName": "आनंदराव देशमुख",
+      "date": "२८ सप्टेंबर २०२६",
+      "time": "सकाळी १०:००",
+      "topic": "व्यवसाय संगम १-टू-१ संवाद",
+      "location": "मराठा संगम दालन / ऑनलाइन",
+      "status": "निश्चित (Confirmed)",
+      "notes": "",
+      "createdAt": "2026-09-24T05:27:30.652Z"
+    },
+    {
       "id": "MEET-9405",
       "requesterId": "CM-96K-0011",
       "requesterName": "यशवंतराव कदम 1260",
@@ -2075,6 +2538,58 @@
     }
   ],
   "posts": [
+    {
+      "id": "POST-96904",
+      "author": "यशवंतराव कदम 4447",
+      "authorId": "CM-96K-0014",
+      "avatar": "👤",
+      "role": "member",
+      "content": "जय भवानी जय शिवाजी! सर्व मराठा बांधवांना एकत्र आणणारा मंच.",
+      "mediaUrl": "",
+      "tag": "सामान्य चर्चा",
+      "groupId": null,
+      "likes": 1,
+      "likedBy": [
+        "CM-96K-0014"
+      ],
+      "comments": [
+        {
+          "id": "CMT-6934",
+          "author": "यशवंतराव कदम 4447",
+          "authorId": "CM-96K-0014",
+          "text": "अतिशय सुंदर उपक्रम!",
+          "createdAt": "2026-09-24T05:41:36.934Z"
+        }
+      ],
+      "createdAt": "2026-09-24T05:41:36.904Z",
+      "updatedAt": "2026-09-24T05:41:36.934Z"
+    },
+    {
+      "id": "POST-50829",
+      "author": "यशवंतराव कदम 2476",
+      "authorId": "CM-96K-0012",
+      "avatar": "👤",
+      "role": "member",
+      "content": "जय भवानी जय शिवाजी! सर्व मराठा बांधवांना एकत्र आणणारा मंच.",
+      "mediaUrl": "",
+      "tag": "सामान्य चर्चा",
+      "groupId": null,
+      "likes": 1,
+      "likedBy": [
+        "CM-96K-0012"
+      ],
+      "comments": [
+        {
+          "id": "CMT-0849",
+          "author": "यशवंतराव कदम 2476",
+          "authorId": "CM-96K-0012",
+          "text": "अतिशय सुंदर उपक्रम!",
+          "createdAt": "2026-09-24T05:27:30.849Z"
+        }
+      ],
+      "createdAt": "2026-09-24T05:27:30.829Z",
+      "updatedAt": "2026-09-24T05:27:30.849Z"
+    },
     {
       "id": "POST-89527",
       "author": "यशवंतराव कदम 1260",
@@ -2313,6 +2828,40 @@
   "postComments": [],
   "events": [
     {
+      "id": "EVT-6950",
+      "title": "कराड तालुका मराठा मेळावा",
+      "date": "१५ ऑक्टोबर २०२६",
+      "time": "सकाळी १०:००",
+      "location": "कराड",
+      "district": "सातारा",
+      "category": "सामाजिक व सांस्कृतिक",
+      "description": "",
+      "chiefGuests": "स्थानिक महासंघ पदाधिकारी",
+      "capacity": 500,
+      "attendeesCount": 1,
+      "createdBy": "CM-96K-0014",
+      "creatorName": "यशवंतराव कदम 4447",
+      "createdAt": "2026-09-24T05:41:36.950Z",
+      "updatedAt": "2026-09-24T05:41:36.974Z"
+    },
+    {
+      "id": "EVT-0863",
+      "title": "कराड तालुका मराठा मेळावा",
+      "date": "१५ ऑक्टोबर २०२६",
+      "time": "सकाळी १०:००",
+      "location": "कराड",
+      "district": "सातारा",
+      "category": "सामाजिक व सांस्कृतिक",
+      "description": "",
+      "chiefGuests": "स्थानिक महासंघ पदाधिकारी",
+      "capacity": 500,
+      "attendeesCount": 1,
+      "createdBy": "CM-96K-0012",
+      "creatorName": "यशवंतराव कदम 2476",
+      "createdAt": "2026-09-24T05:27:30.863Z",
+      "updatedAt": "2026-09-24T05:27:30.878Z"
+    },
+    {
       "id": "EVT-9552",
       "title": "कराड तालुका मराठा मेळावा",
       "date": "१५ ऑक्टोबर २०२६",
@@ -2468,6 +3017,26 @@
   ],
   "eventRsvps": [
     {
+      "id": "RSVP-6969",
+      "eventId": "EVT-6950",
+      "eventTitle": "कराड तालुका मराठा मेळावा",
+      "memberId": "CM-96K-0014",
+      "memberName": "यशवंतराव कदम 4447",
+      "phone": "",
+      "timestamp": "2026-09-24T05:41:36.969Z",
+      "createdAt": "2026-09-24T05:41:36.969Z"
+    },
+    {
+      "id": "RSVP-0874",
+      "eventId": "EVT-0863",
+      "eventTitle": "कराड तालुका मराठा मेळावा",
+      "memberId": "CM-96K-0012",
+      "memberName": "यशवंतराव कदम 2476",
+      "phone": "",
+      "timestamp": "2026-09-24T05:27:30.874Z",
+      "createdAt": "2026-09-24T05:27:30.874Z"
+    },
+    {
       "id": "RSVP-9560",
       "eventId": "EVT-9552",
       "eventTitle": "कराड तालुका मराठा मेळावा",
@@ -2600,6 +3169,38 @@
     }
   ],
   "donations": [
+    {
+      "id": "DONAT-96993",
+      "campaignId": "CAMP-01",
+      "donorId": "CM-96K-0014",
+      "donorName": "यशवंतराव कदम",
+      "email": "",
+      "phone": "",
+      "amount": 5000,
+      "pan": "ABCDE1234F",
+      "paymentMethod": "UPI / QR",
+      "status": "यशस्वी (Success)",
+      "receiptNo": "80G-496993",
+      "taxExemption80G": true,
+      "timestamp": "2026-09-24T05:41:36.993Z",
+      "createdAt": "2026-09-24T05:41:36.993Z"
+    },
+    {
+      "id": "DONAT-50894",
+      "campaignId": "CAMP-01",
+      "donorId": "CM-96K-0012",
+      "donorName": "यशवंतराव कदम",
+      "email": "",
+      "phone": "",
+      "amount": 5000,
+      "pan": "ABCDE1234F",
+      "paymentMethod": "UPI / QR",
+      "status": "यशस्वी (Success)",
+      "receiptNo": "80G-650894",
+      "taxExemption80G": true,
+      "timestamp": "2026-09-24T05:27:30.894Z",
+      "createdAt": "2026-09-24T05:27:30.894Z"
+    },
     {
       "id": "DONAT-89575",
       "campaignId": "CAMP-01",
@@ -2746,6 +3347,40 @@
     }
   ],
   "jobs": [
+    {
+      "id": "JOB-7010",
+      "title": "उत्पादन व्यवस्थापक",
+      "company": "कदम इंडस्ट्रीज",
+      "location": "सातारा एमआयडीसी",
+      "district": "सातारा",
+      "industry": "इतर उद्योग",
+      "salary": "चर्चेनुसार (Negotiable)",
+      "type": "पूर्णवेळ",
+      "experience": "१-३ वर्षे",
+      "description": "",
+      "contactEmail": "",
+      "posterId": "CM-96K-0014",
+      "posterName": "यशवंतराव कदम 4447",
+      "postedAt": "2026-09-24T05:41:37.010Z",
+      "createdAt": "2026-09-24T05:41:37.010Z"
+    },
+    {
+      "id": "JOB-0910",
+      "title": "उत्पादन व्यवस्थापक",
+      "company": "कदम इंडस्ट्रीज",
+      "location": "सातारा एमआयडीसी",
+      "district": "सातारा",
+      "industry": "इतर उद्योग",
+      "salary": "चर्चेनुसार (Negotiable)",
+      "type": "पूर्णवेळ",
+      "experience": "१-३ वर्षे",
+      "description": "",
+      "contactEmail": "",
+      "posterId": "CM-96K-0012",
+      "posterName": "यशवंतराव कदम 2476",
+      "postedAt": "2026-09-24T05:27:30.910Z",
+      "createdAt": "2026-09-24T05:27:30.910Z"
+    },
     {
       "id": "JOB-9588",
       "title": "उत्पादन व्यवस्थापक",
@@ -2902,6 +3537,36 @@
   ],
   "jobApplications": [
     {
+      "id": "APP-7026",
+      "jobId": "JOB-7010",
+      "jobTitle": "उत्पादन व्यवस्थापक",
+      "company": "कदम इंडस्ट्रीज",
+      "applicantId": "CM-96K-0014",
+      "applicantName": "यशवंतराव कदम 4447",
+      "applicantEmail": "",
+      "applicantPhone": "",
+      "resumeUrl": "https://connectmaratha.org/resumes/kadam.pdf",
+      "coverNote": "मी इच्छुक आहे",
+      "status": "अर्ज सादर झाला (Applied)",
+      "appliedAt": "2026-09-24T05:41:37.026Z",
+      "createdAt": "2026-09-24T05:41:37.026Z"
+    },
+    {
+      "id": "APP-0923",
+      "jobId": "JOB-0910",
+      "jobTitle": "उत्पादन व्यवस्थापक",
+      "company": "कदम इंडस्ट्रीज",
+      "applicantId": "CM-96K-0012",
+      "applicantName": "यशवंतराव कदम 2476",
+      "applicantEmail": "",
+      "applicantPhone": "",
+      "resumeUrl": "https://connectmaratha.org/resumes/kadam.pdf",
+      "coverNote": "मी इच्छुक आहे",
+      "status": "अर्ज सादर झाला (Applied)",
+      "appliedAt": "2026-09-24T05:27:30.923Z",
+      "createdAt": "2026-09-24T05:27:30.923Z"
+    },
+    {
       "id": "APP-9599",
       "jobId": "JOB-9588",
       "jobTitle": "उत्पादन व्यवस्थापक",
@@ -3039,6 +3704,18 @@
   ],
   "services": [
     {
+      "id": "SRV-7735",
+      "name": "स्वराज्य आयटी सोल्यूशन्स",
+      "category": "सॉफ्टवेअर व वेब डिझाइन",
+      "location": "पुणे",
+      "phone": "+919822334455",
+      "rating": "4.9 ★",
+      "experience": "५+ वर्षे",
+      "pricing": "कामाच्या स्वरूपानुसार",
+      "description": "",
+      "created_at": "2026-09-24T05:41:37.735Z"
+    },
+    {
       "id": "SRV-04",
       "name": "सह्याद्री इंटिरिअर व प्लंबिंग सोल्यूशन्स",
       "category": "प्लंबिंग व इंटिरिअर वर्क",
@@ -3076,6 +3753,34 @@
     }
   ],
   "serviceBookings": [
+    {
+      "id": "SBK-7044",
+      "serviceId": "",
+      "serviceCategory": "इलेक्ट्रिशियन",
+      "professionalName": "नजीकचा मराठा सेवा व्यावसायिक",
+      "customerName": "यशवंतराव कदम 4447",
+      "customerId": "CM-96K-0014",
+      "phone": "+919822012345",
+      "address": "सातारा",
+      "requestedDate": "लवकरात लवकर (ASAP)",
+      "notes": "",
+      "status": "बुकिंग निश्चित - व्यावसायिक संपर्क साधतील",
+      "createdAt": "2026-09-24T05:41:37.044Z"
+    },
+    {
+      "id": "SBK-0939",
+      "serviceId": "",
+      "serviceCategory": "इलेक्ट्रिशियन",
+      "professionalName": "नजीकचा मराठा सेवा व्यावसायिक",
+      "customerName": "यशवंतराव कदम 2476",
+      "customerId": "CM-96K-0012",
+      "phone": "+919822012345",
+      "address": "सातारा",
+      "requestedDate": "लवकरात लवकर (ASAP)",
+      "notes": "",
+      "status": "बुकिंग निश्चित - व्यावसायिक संपर्क साधतील",
+      "createdAt": "2026-09-24T05:27:30.939Z"
+    },
     {
       "id": "SBK-9611",
       "serviceId": "",
@@ -3272,6 +3977,32 @@
   ],
   "speakerBookings": [
     {
+      "id": "SBK-6731",
+      "speakerId": "",
+      "speakerName": "प्रा. नितीन बानगुडे पाटील",
+      "requesterId": "CM-96K-0014",
+      "requesterName": "यशवंतराव कदम 4447",
+      "eventDate": "१९ फेब्रुवारी",
+      "eventTopic": "शिवजयंती व्याख्यान",
+      "venue": "महाराष्ट्र",
+      "organizerPhone": "+919822012345",
+      "status": "प्रलंबित (Pending Approval)",
+      "createdAt": "2026-09-24T05:41:36.731Z"
+    },
+    {
+      "id": "SBK-0694",
+      "speakerId": "",
+      "speakerName": "प्रा. नितीन बानगुडे पाटील",
+      "requesterId": "CM-96K-0012",
+      "requesterName": "यशवंतराव कदम 2476",
+      "eventDate": "१९ फेब्रुवारी",
+      "eventTopic": "शिवजयंती व्याख्यान",
+      "venue": "महाराष्ट्र",
+      "organizerPhone": "+919822012345",
+      "status": "प्रलंबित (Pending Approval)",
+      "createdAt": "2026-09-24T05:27:30.694Z"
+    },
+    {
       "id": "SBK-9432",
       "speakerId": "",
       "speakerName": "प्रा. नितीन बानगुडे पाटील",
@@ -3391,6 +4122,42 @@
   ],
   "builderInquiries": [],
   "oralHistory": [
+    {
+      "id": "oral_1790228497063",
+      "title": "कराड परिसरातील मावळ्यांची परंपरा",
+      "village": "अज्ञात",
+      "taluka": "",
+      "district": "महाराष्ट्र",
+      "region": "महाराष्ट्र",
+      "contributor": "यशवंतराव कदम 4447",
+      "contributorId": "CM-96K-0014",
+      "contributorClan": "मराठा कुळ",
+      "dateSubmitted": "२४/९/२०२६",
+      "story": "आमच्या पूर्वजांनी शिवकाळात सैन्यात सेवा केली.",
+      "historicalReference": "मौखिक कुटुंब परंपरा व वृद्ध व्यक्तींची स्मृती",
+      "tier": "Tier 4: मौखिक इतिहास व लोकपरंपरा",
+      "status": "पडताळणी अंतर्गत (Under Community Review)",
+      "audioUrl": null,
+      "createdAt": "2026-09-24T05:41:37.098Z"
+    },
+    {
+      "id": "oral_1790227650951",
+      "title": "कराड परिसरातील मावळ्यांची परंपरा",
+      "village": "अज्ञात",
+      "taluka": "",
+      "district": "महाराष्ट्र",
+      "region": "महाराष्ट्र",
+      "contributor": "यशवंतराव कदम 2476",
+      "contributorId": "CM-96K-0012",
+      "contributorClan": "मराठा कुळ",
+      "dateSubmitted": "२४/९/२०२६",
+      "story": "आमच्या पूर्वजांनी शिवकाळात सैन्यात सेवा केली.",
+      "historicalReference": "मौखिक कुटुंब परंपरा व वृद्ध व्यक्तींची स्मृती",
+      "tier": "Tier 4: मौखिक इतिहास व लोकपरंपरा",
+      "status": "पडताळणी अंतर्गत (Under Community Review)",
+      "audioUrl": null,
+      "createdAt": "2026-09-24T05:27:30.991Z"
+    },
     {
       "id": "oral_1790227589621",
       "title": "कराड परिसरातील मावळ्यांची परंपरा",
@@ -3603,6 +4370,650 @@
   "quizSubmissions": [],
   "quizLeaderboard": [],
   "auditLogs": [
+    {
+      "id": "LOG-1790228497803-438",
+      "action": "MEMBER_LOGOUT",
+      "performedBy": "CM-96K-001",
+      "details": {},
+      "timestamp": "2026-09-24T05:41:37.803Z"
+    },
+    {
+      "id": "LOG-1790228497782-889",
+      "action": "SUPERADMIN_ADD_INFO",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "articleId": "INFO-7778",
+        "title": "सह्याद्रीच्या कड्यांवरील ऐतिहासिक बुरुज रचना"
+      },
+      "timestamp": "2026-09-24T05:41:37.782Z"
+    },
+    {
+      "id": "LOG-1790228497761-860",
+      "action": "SUPERADMIN_ADD_HOTEL",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "hotelId": "HTL-7756",
+        "name": "शिवमुद्रा हेरिटेज लॉज"
+      },
+      "timestamp": "2026-09-24T05:41:37.761Z"
+    },
+    {
+      "id": "LOG-1790228497740-515",
+      "action": "SUPERADMIN_ADD_SERVICE",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "serviceId": "SRV-7735",
+        "name": "स्वराज्य आयटी सोल्यूशन्स"
+      },
+      "timestamp": "2026-09-24T05:41:37.740Z"
+    },
+    {
+      "id": "LOG-1790228497717-51",
+      "action": "SUPERADMIN_ADD_DOCTOR",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "doctorId": "DOC-7711",
+        "name": "डॉ. अमित भोसले"
+      },
+      "timestamp": "2026-09-24T05:41:37.717Z"
+    },
+    {
+      "id": "LOG-1790228497682-490",
+      "action": "UPDATE_SITE_CONTENT",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "sections": [
+          "hero"
+        ],
+        "adminName": "अखिल भारतीय मराठा महासंघ मुख्य कार्यालय"
+      },
+      "timestamp": "2026-09-24T05:41:37.682Z"
+    },
+    {
+      "id": "LOG-1790228497666-472",
+      "action": "UPDATE_SITE_SECTION",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "section": "texts",
+        "adminName": "अखिल भारतीय मराठा महासंघ मुख्य कार्यालय"
+      },
+      "timestamp": "2026-09-24T05:41:37.666Z"
+    },
+    {
+      "id": "LOG-1790228497636-281",
+      "action": "ASSIGN_ROLE",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "memberId": "CM-96K-0014",
+        "newRole": "chapter_president",
+        "assignedScope": "सातारा"
+      },
+      "timestamp": "2026-09-24T05:41:37.636Z"
+    },
+    {
+      "id": "LOG-1790228497616-726",
+      "action": "VERIFY_MEMBER",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "memberId": "CM-96K-0014",
+        "status": "approved",
+        "remarks": "सर्व कागदपत्रे वैध आहेत"
+      },
+      "timestamp": "2026-09-24T05:41:37.616Z"
+    },
+    {
+      "id": "LOG-1790228497586-635",
+      "action": "MEMBER_LOGIN",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "identifier": "admin@connectmaratha.org"
+      },
+      "timestamp": "2026-09-24T05:41:37.586Z"
+    },
+    {
+      "id": "LOG-1790228497103-227",
+      "action": "SUBMIT_ORAL_HISTORY",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "title": "कराड परिसरातील मावळ्यांची परंपरा",
+        "village": "अज्ञात"
+      },
+      "timestamp": "2026-09-24T05:41:37.103Z"
+    },
+    {
+      "id": "LOG-1790228497050-117",
+      "action": "BOOK_SERVICE",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "bookingId": "SBK-7044",
+        "serviceCategory": "इलेक्ट्रिशियन"
+      },
+      "timestamp": "2026-09-24T05:41:37.050Z"
+    },
+    {
+      "id": "LOG-1790228497030-584",
+      "action": "APPLY_JOB",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "jobId": "JOB-7010",
+        "applicationId": "APP-7026"
+      },
+      "timestamp": "2026-09-24T05:41:37.030Z"
+    },
+    {
+      "id": "LOG-1790228497015-216",
+      "action": "POST_JOB",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "jobId": "JOB-7010",
+        "title": "उत्पादन व्यवस्थापक"
+      },
+      "timestamp": "2026-09-24T05:41:37.015Z"
+    },
+    {
+      "id": "LOG-1790228496998-783",
+      "action": "PROCESS_DONATION",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "amount": 5000,
+        "receiptNo": "80G-496993"
+      },
+      "timestamp": "2026-09-24T05:41:36.998Z"
+    },
+    {
+      "id": "LOG-1790228496979-60",
+      "action": "EVENT_RSVP",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "eventId": "EVT-6950"
+      },
+      "timestamp": "2026-09-24T05:41:36.979Z"
+    },
+    {
+      "id": "LOG-1790228496957-719",
+      "action": "CREATE_EVENT",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "eventId": "EVT-6950",
+        "title": "कराड तालुका मराठा मेळावा"
+      },
+      "timestamp": "2026-09-24T05:41:36.957Z"
+    },
+    {
+      "id": "LOG-1790228496911-97",
+      "action": "CREATE_POST",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "postId": "POST-96904"
+      },
+      "timestamp": "2026-09-24T05:41:36.911Z"
+    },
+    {
+      "id": "LOG-1790228496890-705",
+      "action": "SUBMIT_GRIEVANCE",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "grievanceId": "GRV-6883",
+        "title": "दुर्ग संवर्धन निधी वाढवणेबाबत"
+      },
+      "timestamp": "2026-09-24T05:41:36.890Z"
+    },
+    {
+      "id": "LOG-1790228496858-502",
+      "action": "WOMEN_HELP_REQUEST",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "helpId": "WHELP-6851"
+      },
+      "timestamp": "2026-09-24T05:41:36.858Z"
+    },
+    {
+      "id": "LOG-1790228496834-962",
+      "action": "REGISTER_MATRIMONY",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "profileId": "CM-M-6828"
+      },
+      "timestamp": "2026-09-24T05:41:36.834Z"
+    },
+    {
+      "id": "LOG-1790228496813-599",
+      "action": "REGISTER_BLOOD_DONOR",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "bloodGroup": "O+"
+      },
+      "timestamp": "2026-09-24T05:41:36.813Z"
+    },
+    {
+      "id": "LOG-1790228496795-408",
+      "action": "SOS_BLOOD_REQUEST",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "bloodGroup": "B+",
+        "hospital": "सिव्हिल हॉस्पिटल"
+      },
+      "timestamp": "2026-09-24T05:41:36.795Z"
+    },
+    {
+      "id": "LOG-1790228496774-316",
+      "action": "APPLY_LOAN",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "loanId": "LN-6768",
+        "amount": "₹१०,००,०००"
+      },
+      "timestamp": "2026-09-24T05:41:36.774Z"
+    },
+    {
+      "id": "LOG-1790228496736-66",
+      "action": "BOOK_SPEAKER",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "speakerName": "प्रा. नितीन बानगुडे पाटील",
+        "eventDate": "१९ फेब्रुवारी"
+      },
+      "timestamp": "2026-09-24T05:41:36.736Z"
+    },
+    {
+      "id": "LOG-1790228496707-270",
+      "action": "REGISTER_DOCTOR",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "name": "डॉ. विक्रम कदम",
+        "phone": "+919822011111"
+      },
+      "timestamp": "2026-09-24T05:41:36.707Z"
+    },
+    {
+      "id": "LOG-1790228496682-441",
+      "action": "SCHEDULE_MEETING",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "meetingId": "MEET-6677",
+        "recipientName": "आनंदराव देशमुख"
+      },
+      "timestamp": "2026-09-24T05:41:36.682Z"
+    },
+    {
+      "id": "LOG-1790228496666-216",
+      "action": "UPDATE_REFERRAL_STATUS",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "referralId": "REF-96642",
+        "status": "यशस्वी क्लोज (Success)",
+        "value": 150000
+      },
+      "timestamp": "2026-09-24T05:41:36.666Z"
+    },
+    {
+      "id": "LOG-1790228496647-286",
+      "action": "CREATE_REFERRAL",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "referralId": "REF-96642",
+        "value": 150000
+      },
+      "timestamp": "2026-09-24T05:41:36.647Z"
+    },
+    {
+      "id": "LOG-1790228496602-877",
+      "action": "REGISTER_BUSINESS",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "businessId": "BIZ-96596",
+        "name": "शिवशक्ती इंजिनिअरिंग वर्क्स 4447"
+      },
+      "timestamp": "2026-09-24T05:41:36.602Z"
+    },
+    {
+      "id": "LOG-1790228496580-676",
+      "action": "SEND_MESSAGE",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "recipientId": "CM-96K-001"
+      },
+      "timestamp": "2026-09-24T05:41:36.580Z"
+    },
+    {
+      "id": "LOG-1790228496547-862",
+      "action": "PROFILE_UPDATE",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "memberId": "CM-96K-0014"
+      },
+      "timestamp": "2026-09-24T05:41:36.547Z"
+    },
+    {
+      "id": "LOG-1790228496484-868",
+      "action": "OTP_REQUESTED",
+      "performedBy": "yashwant4447@maratha.org",
+      "details": {
+        "otp": "287668"
+      },
+      "timestamp": "2026-09-24T05:41:36.484Z"
+    },
+    {
+      "id": "LOG-1790228496455-694",
+      "action": "MEMBER_LOGIN",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "identifier": "yashwant4447@maratha.org"
+      },
+      "timestamp": "2026-09-24T05:41:36.455Z"
+    },
+    {
+      "id": "LOG-1790228496307-775",
+      "action": "MEMBER_REGISTER",
+      "performedBy": "CM-96K-0014",
+      "details": {
+        "name": "यशवंतराव कदम 4447",
+        "district": "सातारा"
+      },
+      "timestamp": "2026-09-24T05:41:36.307Z"
+    },
+    {
+      "id": "LOG-1790227651697-945",
+      "action": "MEMBER_LOGOUT",
+      "performedBy": "CM-96K-001",
+      "details": {},
+      "timestamp": "2026-09-24T05:27:31.697Z"
+    },
+    {
+      "id": "LOG-1790227651684-477",
+      "action": "UPDATE_SITE_CONTENT",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "sections": [
+          "hero"
+        ],
+        "adminName": "अखिल भारतीय मराठा महासंघ मुख्य कार्यालय"
+      },
+      "timestamp": "2026-09-24T05:27:31.684Z"
+    },
+    {
+      "id": "LOG-1790227651670-179",
+      "action": "UPDATE_SITE_SECTION",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "section": "texts",
+        "adminName": "अखिल भारतीय मराठा महासंघ मुख्य कार्यालय"
+      },
+      "timestamp": "2026-09-24T05:27:31.670Z"
+    },
+    {
+      "id": "LOG-1790227651644-872",
+      "action": "ASSIGN_ROLE",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "memberId": "CM-96K-0012",
+        "newRole": "chapter_president",
+        "assignedScope": "सातारा"
+      },
+      "timestamp": "2026-09-24T05:27:31.644Z"
+    },
+    {
+      "id": "LOG-1790227651628-631",
+      "action": "VERIFY_MEMBER",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "memberId": "CM-96K-0012",
+        "status": "approved",
+        "remarks": "सर्व कागदपत्रे वैध आहेत"
+      },
+      "timestamp": "2026-09-24T05:27:31.628Z"
+    },
+    {
+      "id": "LOG-1790227651601-809",
+      "action": "MEMBER_LOGIN",
+      "performedBy": "CM-96K-001",
+      "details": {
+        "identifier": "admin@connectmaratha.org"
+      },
+      "timestamp": "2026-09-24T05:27:31.601Z"
+    },
+    {
+      "id": "LOG-1790227650996-723",
+      "action": "SUBMIT_ORAL_HISTORY",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "title": "कराड परिसरातील मावळ्यांची परंपरा",
+        "village": "अज्ञात"
+      },
+      "timestamp": "2026-09-24T05:27:30.996Z"
+    },
+    {
+      "id": "LOG-1790227650942-813",
+      "action": "BOOK_SERVICE",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "bookingId": "SBK-0939",
+        "serviceCategory": "इलेक्ट्रिशियन"
+      },
+      "timestamp": "2026-09-24T05:27:30.942Z"
+    },
+    {
+      "id": "LOG-1790227650927-196",
+      "action": "APPLY_JOB",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "jobId": "JOB-0910",
+        "applicationId": "APP-0923"
+      },
+      "timestamp": "2026-09-24T05:27:30.927Z"
+    },
+    {
+      "id": "LOG-1790227650914-594",
+      "action": "POST_JOB",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "jobId": "JOB-0910",
+        "title": "उत्पादन व्यवस्थापक"
+      },
+      "timestamp": "2026-09-24T05:27:30.914Z"
+    },
+    {
+      "id": "LOG-1790227650898-628",
+      "action": "PROCESS_DONATION",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "amount": 5000,
+        "receiptNo": "80G-650894"
+      },
+      "timestamp": "2026-09-24T05:27:30.898Z"
+    },
+    {
+      "id": "LOG-1790227650883-986",
+      "action": "EVENT_RSVP",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "eventId": "EVT-0863"
+      },
+      "timestamp": "2026-09-24T05:27:30.883Z"
+    },
+    {
+      "id": "LOG-1790227650866-623",
+      "action": "CREATE_EVENT",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "eventId": "EVT-0863",
+        "title": "कराड तालुका मराठा मेळावा"
+      },
+      "timestamp": "2026-09-24T05:27:30.867Z"
+    },
+    {
+      "id": "LOG-1790227650833-815",
+      "action": "CREATE_POST",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "postId": "POST-50829"
+      },
+      "timestamp": "2026-09-24T05:27:30.833Z"
+    },
+    {
+      "id": "LOG-1790227650821-918",
+      "action": "SUBMIT_GRIEVANCE",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "grievanceId": "GRV-0817",
+        "title": "दुर्ग संवर्धन निधी वाढवणेबाबत"
+      },
+      "timestamp": "2026-09-24T05:27:30.821Z"
+    },
+    {
+      "id": "LOG-1790227650799-760",
+      "action": "WOMEN_HELP_REQUEST",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "helpId": "WHELP-0794"
+      },
+      "timestamp": "2026-09-24T05:27:30.799Z"
+    },
+    {
+      "id": "LOG-1790227650781-986",
+      "action": "REGISTER_MATRIMONY",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "profileId": "CM-M-0776"
+      },
+      "timestamp": "2026-09-24T05:27:30.781Z"
+    },
+    {
+      "id": "LOG-1790227650765-654",
+      "action": "REGISTER_BLOOD_DONOR",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "bloodGroup": "O+"
+      },
+      "timestamp": "2026-09-24T05:27:30.765Z"
+    },
+    {
+      "id": "LOG-1790227650747-861",
+      "action": "SOS_BLOOD_REQUEST",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "bloodGroup": "B+",
+        "hospital": "सिव्हिल हॉस्पिटल"
+      },
+      "timestamp": "2026-09-24T05:27:30.747Z"
+    },
+    {
+      "id": "LOG-1790227650730-477",
+      "action": "APPLY_LOAN",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "loanId": "LN-0727",
+        "amount": "₹१०,००,०००"
+      },
+      "timestamp": "2026-09-24T05:27:30.730Z"
+    },
+    {
+      "id": "LOG-1790227650700-444",
+      "action": "BOOK_SPEAKER",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "speakerName": "प्रा. नितीन बानगुडे पाटील",
+        "eventDate": "१९ फेब्रुवारी"
+      },
+      "timestamp": "2026-09-24T05:27:30.700Z"
+    },
+    {
+      "id": "LOG-1790227650674-903",
+      "action": "REGISTER_DOCTOR",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "name": "डॉ. विक्रम कदम",
+        "phone": "+919822011111"
+      },
+      "timestamp": "2026-09-24T05:27:30.674Z"
+    },
+    {
+      "id": "LOG-1790227650656-942",
+      "action": "SCHEDULE_MEETING",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "meetingId": "MEET-0652",
+        "recipientName": "आनंदराव देशमुख"
+      },
+      "timestamp": "2026-09-24T05:27:30.656Z"
+    },
+    {
+      "id": "LOG-1790227650642-35",
+      "action": "UPDATE_REFERRAL_STATUS",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "referralId": "REF-50620",
+        "status": "यशस्वी क्लोज (Success)",
+        "value": 150000
+      },
+      "timestamp": "2026-09-24T05:27:30.642Z"
+    },
+    {
+      "id": "LOG-1790227650625-629",
+      "action": "CREATE_REFERRAL",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "referralId": "REF-50620",
+        "value": 150000
+      },
+      "timestamp": "2026-09-24T05:27:30.625Z"
+    },
+    {
+      "id": "LOG-1790227650585-652",
+      "action": "REGISTER_BUSINESS",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "businessId": "BIZ-50580",
+        "name": "शिवशक्ती इंजिनिअरिंग वर्क्स 2476"
+      },
+      "timestamp": "2026-09-24T05:27:30.585Z"
+    },
+    {
+      "id": "LOG-1790227650566-836",
+      "action": "SEND_MESSAGE",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "recipientId": "CM-96K-001"
+      },
+      "timestamp": "2026-09-24T05:27:30.566Z"
+    },
+    {
+      "id": "LOG-1790227650540-692",
+      "action": "PROFILE_UPDATE",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "memberId": "CM-96K-0012"
+      },
+      "timestamp": "2026-09-24T05:27:30.540Z"
+    },
+    {
+      "id": "LOG-1790227650492-77",
+      "action": "OTP_REQUESTED",
+      "performedBy": "yashwant2476@maratha.org",
+      "details": {
+        "otp": "431175"
+      },
+      "timestamp": "2026-09-24T05:27:30.492Z"
+    },
+    {
+      "id": "LOG-1790227650470-866",
+      "action": "MEMBER_LOGIN",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "identifier": "yashwant2476@maratha.org"
+      },
+      "timestamp": "2026-09-24T05:27:30.470Z"
+    },
+    {
+      "id": "LOG-1790227650424-391",
+      "action": "MEMBER_REGISTER",
+      "performedBy": "CM-96K-0012",
+      "details": {
+        "name": "यशवंतराव कदम 2476",
+        "district": "सातारा"
+      },
+      "timestamp": "2026-09-24T05:27:30.424Z"
+    },
     {
       "id": "LOG-1790227590087-24",
       "action": "MEMBER_LOGOUT",
@@ -6224,6 +7635,66 @@
   ],
   "notifications": [
     {
+      "recipientId": "CM-96K-0014",
+      "title": "🎖️ महासंघ नवीन जबाबदारी व पद नियुक्ती",
+      "message": "आपणास महासंघामध्ये \"chapter_president\" पदाची जबाबदारी सोपवण्यात आली आहे. कार्यक्षेत्र: सातारा.",
+      "type": "role_assignment",
+      "read": false,
+      "timestamp": "2026-09-24T05:41:37.641Z",
+      "id": "NOT-497641",
+      "createdAt": "2026-09-24T05:41:37.641Z"
+    },
+    {
+      "recipientId": "CM-96K-0014",
+      "title": "✅ डिजिटल ओळखपत्र प्रमाणित झाले!",
+      "message": "अभिनंदन! आपले मराठा महासंघ डिजिटल ओळखपत्र अखिल भारतीय मराठा महासंघ मुख्य कार्यालय यांच्याद्वारे प्रमाणित करण्यात आले आहे.",
+      "type": "verification",
+      "read": false,
+      "timestamp": "2026-09-24T05:41:37.621Z",
+      "id": "NOT-497621",
+      "createdAt": "2026-09-24T05:41:37.621Z"
+    },
+    {
+      "id": "NOTIF-1790228496560",
+      "recipientId": "CM-96K-0014",
+      "title": "अखिल भारतीय मराठा महासंघात आपले स्वागत आहे!",
+      "message": "आपले डिजिटल ओळखपत्र तयार झाले आहे. प्रोफाइल पूर्ण करून विविध सेवांचा लाभ घ्या.",
+      "type": "welcome",
+      "read": false,
+      "timestamp": "2026-09-24T05:41:36.560Z",
+      "createdAt": "2026-09-24T05:41:36.560Z"
+    },
+    {
+      "recipientId": "CM-96K-0012",
+      "title": "🎖️ महासंघ नवीन जबाबदारी व पद नियुक्ती",
+      "message": "आपणास महासंघामध्ये \"chapter_president\" पदाची जबाबदारी सोपवण्यात आली आहे. कार्यक्षेत्र: सातारा.",
+      "type": "role_assignment",
+      "read": false,
+      "timestamp": "2026-09-24T05:27:31.648Z",
+      "id": "NOT-651648",
+      "createdAt": "2026-09-24T05:27:31.648Z"
+    },
+    {
+      "recipientId": "CM-96K-0012",
+      "title": "✅ डिजिटल ओळखपत्र प्रमाणित झाले!",
+      "message": "अभिनंदन! आपले मराठा महासंघ डिजिटल ओळखपत्र अखिल भारतीय मराठा महासंघ मुख्य कार्यालय यांच्याद्वारे प्रमाणित करण्यात आले आहे.",
+      "type": "verification",
+      "read": false,
+      "timestamp": "2026-09-24T05:27:31.632Z",
+      "id": "NOT-651632",
+      "createdAt": "2026-09-24T05:27:31.632Z"
+    },
+    {
+      "id": "NOTIF-1790227650550",
+      "recipientId": "CM-96K-0012",
+      "title": "अखिल भारतीय मराठा महासंघात आपले स्वागत आहे!",
+      "message": "आपले डिजिटल ओळखपत्र तयार झाले आहे. प्रोफाइल पूर्ण करून विविध सेवांचा लाभ घ्या.",
+      "type": "welcome",
+      "read": false,
+      "timestamp": "2026-09-24T05:27:30.550Z",
+      "createdAt": "2026-09-24T05:27:30.550Z"
+    },
+    {
       "recipientId": "CM-96K-0011",
       "title": "🎖️ महासंघ नवीन जबाबदारी व पद नियुक्ती",
       "message": "आपणास महासंघामध्ये \"chapter_president\" पदाची जबाबदारी सोपवण्यात आली आहे. कार्यक्षेत्र: सातारा.",
@@ -6486,6 +7957,30 @@
   ],
   "messages": [
     {
+      "id": "MSG-1790228496573-359",
+      "senderId": "CM-96K-0014",
+      "senderName": "यशवंतराव कदम 4447",
+      "recipientId": "CM-96K-001",
+      "subject": "जय जिजाऊ",
+      "message": "महासंघ कार्यात सहभागाबाबत.",
+      "attachments": [],
+      "read": false,
+      "timestamp": "2026-09-24T05:41:36.573Z",
+      "createdAt": "2026-09-24T05:41:36.573Z"
+    },
+    {
+      "id": "MSG-1790227650561-406",
+      "senderId": "CM-96K-0012",
+      "senderName": "यशवंतराव कदम 2476",
+      "recipientId": "CM-96K-001",
+      "subject": "जय जिजाऊ",
+      "message": "महासंघ कार्यात सहभागाबाबत.",
+      "attachments": [],
+      "read": false,
+      "timestamp": "2026-09-24T05:27:30.561Z",
+      "createdAt": "2026-09-24T05:27:30.561Z"
+    },
+    {
       "id": "MSG-1790227589344-325",
       "senderId": "CM-96K-0011",
       "senderName": "यशवंतराव कदम 1260",
@@ -6608,6 +8103,20 @@
   ],
   "otpCodes": [
     {
+      "identifier": "yashwant4447@maratha.org",
+      "otp": "287668",
+      "expiresAt": 1790229096478,
+      "id": "OTP-496478",
+      "createdAt": "2026-09-24T05:41:36.478Z"
+    },
+    {
+      "identifier": "yashwant2476@maratha.org",
+      "otp": "431175",
+      "expiresAt": 1790228250488,
+      "id": "OTP-650488",
+      "createdAt": "2026-09-24T05:27:30.488Z"
+    },
+    {
       "identifier": "yashwant1260@maratha.org",
       "otp": "720018",
       "expiresAt": 1790228189287,
@@ -6679,6 +8188,18 @@
     }
   ],
   "tokenBlacklist": [
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNNLTk2Sy0wMDEiLCJuYW1lIjoi4KSF4KSW4KS_4KSyIOCkreCkvuCksOCkpOClgOCkryDgpK7gpLDgpL7gpKDgpL4g4KSu4KS54KS-4KS44KSC4KSYIOCkruClgeCkluCljeCkryDgpJXgpL7gpLDgpY3gpK_gpL7gpLLgpK8iLCJyb2xlIjoiYWRtaW4iLCJ0aWVyIjoiUm95YWwgUGF0cm9uIiwiZGlzdHJpY3QiOiLgpK7gpYHgpILgpKzgpIgg4KS24KS54KSwIiwiaWF0IjoxNzkwMjI4NDk3LCJleHAiOjE3OTI4MjA0OTd9.2QQ9K1OwWxlT3UFDYVY9n9qmW5BrSpD2ue_6ljFPILg",
+      "blacklistedAt": "2026-09-24T05:41:37.796Z",
+      "id": "TOK-497796",
+      "createdAt": "2026-09-24T05:41:37.796Z"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNNLTk2Sy0wMDEiLCJuYW1lIjoi4KSF4KSW4KS_4KSyIOCkreCkvuCksOCkpOClgOCkryDgpK7gpLDgpL7gpKDgpL4g4KSu4KS54KS-4KS44KSC4KSYIOCkruClgeCkluCljeCkryDgpJXgpL7gpLDgpY3gpK_gpL7gpLLgpK8iLCJyb2xlIjoiYWRtaW4iLCJ0aWVyIjoiUm95YWwgUGF0cm9uIiwiZGlzdHJpY3QiOiLgpK7gpYHgpILgpKzgpIgg4KS24KS54KSwIiwiaWF0IjoxNzkwMjI3NjUxLCJleHAiOjE3OTI4MTk2NTF9.ejSDFNCbMWHzWiMz8qLQYyWSLKnzMSC3DrYHTqpdNw4",
+      "blacklistedAt": "2026-09-24T05:27:31.693Z",
+      "id": "TOK-651693",
+      "createdAt": "2026-09-24T05:27:31.693Z"
+    },
     {
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNNLTk2Sy0wMDEiLCJuYW1lIjoi4KSF4KSW4KS_4KSyIOCkreCkvuCksOCkpOClgOCkryDgpK7gpLDgpL7gpKDgpL4g4KSu4KS54KS-4KS44KSC4KSYIOCkruClgeCkluCljeCkryDgpJXgpL7gpLDgpY3gpK_gpL7gpLLgpK8iLCJyb2xlIjoiYWRtaW4iLCJ0aWVyIjoiUm95YWwgUGF0cm9uIiwiZGlzdHJpY3QiOiLgpK7gpYHgpILgpKzgpIgg4KS24KS54KSwIiwiaWF0IjoxNzkwMjI3NTkwLCJleHAiOjE3OTI4MTk1OTB9.A9V7W0Uo-3EJkrONIXvgMU0a7AReDHG30mzkMcdWPaM",
       "blacklistedAt": "2026-09-24T05:26:30.084Z",
@@ -6932,6 +8453,149 @@
       "copyright": "© २०२६ Connect Maratha (कनेक्ट मराठा) • सर्व हक्क राखीव",
       "poweredBy": "अखिल भारतीय मराठा महासंघ डिजिटल मिशन"
     },
-    "updatedAt": "2026-09-24T05:26:30.074Z"
-  }
+    "updatedAt": "2026-09-24T05:41:37.677Z"
+  },
+  "hotels": [
+    {
+      "id": "HTL-7756",
+      "name": "शिवमुद्रा हेरिटेज लॉज",
+      "city": "सातारा",
+      "district": "सातारा",
+      "category": "हेरिटेज रिसॉर्ट",
+      "star_rating": 4.5,
+      "address": "महाराष्ट्र",
+      "phone": "+919822556677",
+      "website": "",
+      "rooms_count": 20,
+      "price_range": "₹२,००० - ₹५,०००",
+      "amenities": [
+        "वायफाय",
+        "पार्किंग",
+        "भोजनालय"
+      ],
+      "photo": "🏨",
+      "verified": true,
+      "created_at": "2026-09-24T05:41:37.756Z"
+    },
+    {
+      "id": "HTL-001",
+      "name": "शिवसमर्थ हेरिटेज पॅलेस",
+      "city": "पुणे",
+      "district": "पुणे",
+      "category": "हेरिटेज हॉटेल व रिसॉर्ट",
+      "star_rating": 4.8,
+      "address": "शिवाजीनगर, जंगली महाराज रोड, पुणे",
+      "phone": "+91 98220 11001",
+      "email": "contact@shivsamarthhotel.com",
+      "website": "https://shivsamarthhotel.com",
+      "rooms_count": 45,
+      "amenities": [
+        "शाही मराठा भोजनालय",
+        "स्विमिंग पूल",
+        "कॉन्फरन्स हॉल",
+        "मोफत वायफाय"
+      ],
+      "price_range": "₹२,५०० - ₹६,००० प्रति रात्र",
+      "photo": "🏨",
+      "verified": true,
+      "created_at": "2026-09-24T05:35:09.434Z"
+    },
+    {
+      "id": "HTL-002",
+      "name": "दुर्गराज रायगड व्हॅली रिसॉर्ट",
+      "city": "महाड",
+      "district": "रायगड",
+      "category": "किल्ले पर्यटन रिसॉर्ट",
+      "star_rating": 4.6,
+      "address": "पाचाड पायथा, किल्ले रायगड रोड, महाड",
+      "phone": "+91 98220 11002",
+      "email": "info@raigadresort.in",
+      "website": "https://raigadresort.in",
+      "rooms_count": 28,
+      "amenities": [
+        "ट्रेकिंग गाइड",
+        "पारंपरिक चूल जेवण",
+        "पार्किंग",
+        "एसी रूम्स"
+      ],
+      "price_range": "₹१,८०० - ₹४,००० प्रति रात्र",
+      "photo": "🏰",
+      "verified": true,
+      "created_at": "2026-09-24T05:35:09.434Z"
+    },
+    {
+      "id": "HTL-003",
+      "name": "राजमाता जिजाऊ एक्झिक्युटिव्ह लॉज",
+      "city": "छत्रपती संभाजीनगर",
+      "district": "छत्रपती संभाजीनगर",
+      "category": "बिझनेस हॉटेल",
+      "star_rating": 4.5,
+      "address": "जालना रोड, सिडको, छ. संभाजीनगर",
+      "phone": "+91 98220 11003",
+      "email": "stay@jijauhotel.com",
+      "website": "https://jijauhotel.com",
+      "rooms_count": 35,
+      "amenities": [
+        "बिझनेस सेंटर",
+        "शुद्ध शाकाहारी रेस्टॉरंट",
+        "जिम",
+        "२४x७ रूम सर्व्हिस"
+      ],
+      "price_range": "₹२,००० - ₹४,५०० प्रति रात्र",
+      "photo": "🏨",
+      "verified": true,
+      "created_at": "2026-09-24T05:35:09.434Z"
+    }
+  ],
+  "information": [
+    {
+      "id": "INFO-7778",
+      "title": "सह्याद्रीच्या कड्यांवरील ऐतिहासिक बुरुज रचना",
+      "category": "दुर्ग स्थापत्य",
+      "author": "अखिल भारतीय मराठा महासंघ मुख्य कार्यालय",
+      "summary": "मराठा गनिमी काव्यात बुरुज आणि गुप्त वाटांचे महत्त्व.",
+      "content": "छत्रपती शिवाजी महाराजांच्या गडकोट रचनेमध्ये बुरुज केवळ संरक्षणासाठी नसून दूरवर नजर ठेवण्यासाठी वापरले जात.",
+      "tags": [
+        "माहिती",
+        "इतिहास"
+      ],
+      "image_url": "/assets/images/real-raigad-panoramic.jpg",
+      "featured": 0,
+      "created_at": "2026-09-24T05:41:37.778Z"
+    },
+    {
+      "id": "INFO-001",
+      "title": "दुर्गराज रायगड: मराठा साम्राज्याची राजधानी व स्थापत्य वैभव",
+      "category": "गड-किल्ले इतिहास",
+      "author": "इतिहास संशोधन मंडळ",
+      "summary": "रायगडाची अभेद्य तटबंदी, महादरवाजा आणि ३२ मण सुवर्ण सिंहासनावर झालेला शिवराज्याभिषेक सोहळा.",
+      "content": "दुर्गराज रायगड हा सह्याद्रीच्या पर्वतरांगेतील सार्वभौम मराठा साम्राज्याची राजधानी असलेला अद्वितीय दुर्ग आहे. छत्रपती शिवाजी महाराजांनी १६७४ मध्ये याच गडावर वैदिक शिवराज्याभिषेक केला.",
+      "tags": [
+        "रायगड",
+        "शिवराज्याभिषेक",
+        "सह्याद्री",
+        "इतिहास"
+      ],
+      "image_url": "/assets/images/real-raigad-panoramic.jpg",
+      "featured": 1,
+      "created_at": "2026-09-24T05:35:09.434Z"
+    },
+    {
+      "id": "INFO-002",
+      "title": "मराठा नवउद्योजक मार्गदर्शन व एमएसएमई योजना",
+      "category": "उद्योग व वित्त",
+      "author": "बिझनेस संगम प्रकोष्ठ",
+      "summary": "महाराष्ट्र शासनाच्या अण्णासाहेब पाटील आर्थिक मागास विकास महामंडळाच्या व्याज परतावा योजना व लाभ घेण्याची प्रक्रिया.",
+      "content": "मराठा समाजातील तरुणांना उद्योग व व्यवसायात स्वतःच्या पायावर उभे राहण्यासाठी शासन व महासंघ विविध अर्थसाहाय्य व कौशल्य प्रशिक्षण योजना राबवत आहे.",
+      "tags": [
+        "उद्योग",
+        "कर्ज",
+        "अनुदान",
+        "स्टार्टअप"
+      ],
+      "image_url": "/assets/images/generated/business_sangam_hero.jpg",
+      "featured": 1,
+      "created_at": "2026-09-24T05:35:09.434Z"
+    }
+  ]
 }

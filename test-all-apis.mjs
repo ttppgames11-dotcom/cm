@@ -452,7 +452,110 @@ async function runTests() {
   const updatedContent = updateFullRes.data.data?.siteContent || updateFullRes.data.data?.content;
   assert(updateFullRes.ok && updatedContent?.hero?.title === 'संघटित मराठा, शक्तिशाली महाराष्ट्र', 'PUT /api/admin/site-content', updateFullRes.data);
 
-  // 48. AUTH: LOGOUT
+  // 48. SUPERADMIN CRUD: USERS (Create, Read, Update, Delete)
+  const adminUsersRes = await request('/admin/users');
+  assert(adminUsersRes.ok && Array.isArray(adminUsersRes.data.data.users), 'GET /api/admin/users', adminUsersRes.data);
+
+  const testUserPhone = `99770${Math.floor(Math.random() * 90000 + 10000)}`;
+  const createAdminUserRes = await request('/admin/users', {
+    method: 'POST',
+    body: JSON.stringify({
+      name: 'संभाजीराव गायकवाड (SuperAdmin Test)',
+      phone: testUserPhone,
+      email: `sambhajirao${Math.floor(Math.random() * 90000)}@maratha.org`,
+      role: 'chapter_president',
+      district: 'कोल्हापूर',
+      taluka: 'करवीर',
+      verified: true
+    })
+  });
+  assert(createAdminUserRes.status === 201 && createAdminUserRes.data.data.user?.id, 'POST /api/admin/users', createAdminUserRes.data);
+  const createdAdminUserId = createAdminUserRes.data.data?.user?.id;
+
+  if (createdAdminUserId) {
+    const updateAdminUserRes = await request(`/admin/users/${createdAdminUserId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ tier: 'Royal Patron', profession: 'उद्योगपती' })
+    });
+    assert(updateAdminUserRes.ok && updateAdminUserRes.data.data.user.tier === 'Royal Patron', 'PUT /api/admin/users/:id');
+
+    const deleteAdminUserRes = await request(`/admin/users/${createdAdminUserId}`, {
+      method: 'DELETE'
+    });
+    assert(deleteAdminUserRes.ok && deleteAdminUserRes.data.data.deletedId === createdAdminUserId, 'DELETE /api/admin/users/:id');
+  }
+
+  // 49. SUPERADMIN CRUD: DOCTORS
+  const createDocRes = await request('/admin/doctors', {
+    method: 'POST',
+    body: JSON.stringify({
+      name: 'डॉ. अमित भोसले',
+      specialty: 'मेंदूरोग तज्ज्ञ (Neurologist)',
+      hospital: 'दीनानाथ मंगेशकर हॉस्पिटल',
+      city: 'पुणे',
+      phone: '9822112233'
+    })
+  });
+  assert(createDocRes.status === 201 && createDocRes.data.data.doctor?.id, 'POST /api/admin/doctors');
+  const testDocId = createDocRes.data.data?.doctor?.id;
+  if (testDocId) {
+    const delDocRes = await request(`/admin/doctors/${testDocId}`, { method: 'DELETE' });
+    assert(delDocRes.ok, 'DELETE /api/admin/doctors/:id');
+  }
+
+  // 50. SUPERADMIN CRUD: SERVICES
+  const createSrvRes = await request('/admin/services', {
+    method: 'POST',
+    body: JSON.stringify({
+      name: 'स्वराज्य आयटी सोल्यूशन्स',
+      category: 'सॉफ्टवेअर व वेब डिझाइन',
+      location: 'पुणे',
+      phone: '9822334455'
+    })
+  });
+  assert(createSrvRes.status === 201 && createSrvRes.data.data.service?.id, 'POST /api/admin/services');
+  const testSrvId = createSrvRes.data.data?.service?.id;
+  if (testSrvId) {
+    const delSrvRes = await request(`/admin/services/${testSrvId}`, { method: 'DELETE' });
+    assert(delSrvRes.ok, 'DELETE /api/admin/services/:id');
+  }
+
+  // 51. SUPERADMIN CRUD: HOTELS
+  const createHtlRes = await request('/admin/hotels', {
+    method: 'POST',
+    body: JSON.stringify({
+      name: 'शिवमुद्रा हेरिटेज लॉज',
+      city: 'सातारा',
+      district: 'सातारा',
+      category: 'हेरिटेज रिसॉर्ट',
+      phone: '9822556677'
+    })
+  });
+  assert(createHtlRes.status === 201 && createHtlRes.data.data.hotel?.id, 'POST /api/admin/hotels');
+  const testHtlId = createHtlRes.data.data?.hotel?.id;
+  if (testHtlId) {
+    const delHtlRes = await request(`/admin/hotels/${testHtlId}`, { method: 'DELETE' });
+    assert(delHtlRes.ok, 'DELETE /api/admin/hotels/:id');
+  }
+
+  // 52. SUPERADMIN CRUD: INFORMATION
+  const createInfoRes = await request('/admin/information', {
+    method: 'POST',
+    body: JSON.stringify({
+      title: 'सह्याद्रीच्या कड्यांवरील ऐतिहासिक बुरुज रचना',
+      category: 'दुर्ग स्थापत्य',
+      summary: 'मराठा गनिमी काव्यात बुरुज आणि गुप्त वाटांचे महत्त्व.',
+      content: 'छत्रपती शिवाजी महाराजांच्या गडकोट रचनेमध्ये बुरुज केवळ संरक्षणासाठी नसून दूरवर नजर ठेवण्यासाठी वापरले जात.'
+    })
+  });
+  assert(createInfoRes.status === 201 && createInfoRes.data.data.article?.id, 'POST /api/admin/information');
+  const testInfoId = createInfoRes.data.data?.article?.id;
+  if (testInfoId) {
+    const delInfoRes = await request(`/admin/information/${testInfoId}`, { method: 'DELETE' });
+    assert(delInfoRes.ok, 'DELETE /api/admin/information/:id');
+  }
+
+  // 53. AUTH: LOGOUT
   const logoutRes = await request('/auth/logout', { method: 'POST' });
   assert(logoutRes.ok && logoutRes.data.data.loggedOut, 'POST /api/auth/logout');
 

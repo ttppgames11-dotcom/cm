@@ -268,11 +268,12 @@ export default function SiteHeader({ onOpenSearch }) {
                   </div>
                   <div className="mega-col">
                     <div className="mega-col-title">⚖️ प्रशासन, ओळख व CRM</div>
+                    <Link to="/superadmin" onClick={handleLinkClick} style={{ color: '#F59E0B', fontWeight: '800' }}>👑 सर्वोच्च प्रशासक (SuperAdmin CRUD)</Link>
                     <Link to="/card" onClick={handleLinkClick}>🪪 डिजिटल सभासद ओळखपत्र</Link>
                     <Link to="/crm" onClick={handleLinkClick}>🚩 भूमिका आधारित CRM पोर्टल</Link>
                     <Link to="/admin/cms" onClick={handleLinkClick} style={{ color: '#E65100', fontWeight: '700' }}>🎨 CMS वेबसाईट संपादक</Link>
                     <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
-                    <Link to="/admin" onClick={handleLinkClick}>👑 सुपर ॲडमिन कन्सोल</Link>
+                    <Link to="/admin" onClick={handleLinkClick}>🏛️ मुख्य ॲडमिन ईआरपी</Link>
                     <Link to="/crm/ceo" onClick={handleLinkClick}>🦅 CEO एक्झिक्युटिव्ह डॅशबोर्ड</Link>
                     <Link to="/crm/district" onClick={handleLinkClick}>📍 जिल्हा समन्वयक CRM</Link>
                     <Link to="/crm/chapter" onClick={handleLinkClick}>💼 चॅप्टर अध्यक्ष CRM</Link>
@@ -293,15 +294,27 @@ export default function SiteHeader({ onOpenSearch }) {
               🔎 शोध
             </button>
 
-            {user && (user.role === 'admin' || user.role === 'superadmin' || user.role === 'ceo') && (
-              <Link
-                to="/admin/cms"
-                className="btn btn-outline"
-                onClick={handleLinkClick}
-                style={{ background: 'linear-gradient(135deg, #7C3AED, #4F46E5)', color: '#FFFFFF', border: 'none', fontWeight: '700', padding: '6px 12px', fontSize: '0.82rem' }}
-                title="वेबसाईटचे मजकूर, चित्रे, बटणे आणि लिंक्स त्वरित संपादित करा">
-                🎨 CMS
-              </Link>
+            {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo') && (
+              <div style={{ display: 'inline-flex', gap: '6px' }}>
+                {user.role === 'superadmin' && (
+                  <Link
+                    to="/superadmin"
+                    className="btn"
+                    onClick={handleLinkClick}
+                    style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)', color: '#000', border: 'none', fontWeight: '800', padding: '6px 12px', fontSize: '0.82rem' }}
+                    title="सर्वोच्च प्रशासक कन्सोल: वापरकर्ते, डॉक्टर्स, सेवा, हॉटेल्स CRUD">
+                    👑 SuperAdmin
+                  </Link>
+                )}
+                <Link
+                  to="/admin/cms"
+                  className="btn btn-outline"
+                  onClick={handleLinkClick}
+                  style={{ background: 'linear-gradient(135deg, #7C3AED, #4F46E5)', color: '#FFFFFF', border: 'none', fontWeight: '700', padding: '6px 12px', fontSize: '0.82rem' }}
+                  title="वेबसाईटचे मजकूर, चित्रे, बटणे आणि लिंक्स त्वरित संपादित करा">
+                  🎨 CMS
+                </Link>
+              </div>
             )}
 
             {user && user.id ? (

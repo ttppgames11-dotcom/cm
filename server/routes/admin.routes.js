@@ -1,7 +1,9 @@
 import { Router } from 'express';
+import bcrypt from 'bcryptjs';
 import { db } from '../db/realtimeDb.js';
 import { authenticateToken, requireRole } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
+import { sanitize, isValidEmail, isValidPhone, cleanPhone } from '../utils/validator.js';
 
 const router = Router();
 
@@ -270,6 +272,473 @@ router.post('/site-content/reset', authenticateToken, requireRole('admin', 'ceo'
   });
 
   return sendSuccess(res, 'वेबसाइट डेटा पूर्ववत (Default) करण्यात आला.', { siteContent: defaults });
+});
+
+// =========================================================================
+// SUPERADMIN & ADMIN: USER MANAGEMENT CRUD (/api/admin/users)
+// =========================================================================
+
+// GET /api/admin/users - List all users with filtering & statistics
+router.get('/users', authenticateToken, requireRole('superadmin', 'admin', 'ceo', 'district_admin'), (req, res) => {
+  const { search, role, verified, district, tier } = req.query;
+  let members = db.getCollection('members');
+
+  if (role && role !== 'all') {
+    members = members.filter(m => (m.role || 'member').toLowerCase() === role.toLowerCase());
+  }
+
+  if (verified !== undefined && verified !== 'all') {
+    const isV = verified === 'true' || verified === true;
+    members = members.filter(m => Boolean(m.verified) === isV);
+  }
+
+  if (district && district !== 'all') {
+    members = members.filter(m => (m.district || '').toLowerCase().includes(district.toLowerCase()));
+  }
+
+  if (tier && tier !== 'all') {
+    members = members.filter(m => (m.tier || '').toLowerCase() === tier.toLowerCase());
+  }
+
+  if (search) {
+    const q = search.toLowerCase().trim();
+    members = members.filter(m => 
+      (m.name || '').toLowerCase().includes(q) ||
+      (m.email || '').toLowerCase().includes(q) ||
+      (m.phone || '').toLowerCase().includes(q) ||
+      (m.district || '').toLowerCase().includes(q) ||
+      (m.taluka || '').toLowerCase().includes(q) ||
+      (m.kul || '').toLowerCase().includes(q) ||
+      (m.id || '').toLowerCase().includes(q)
+    );
+  }
+
+  // Safe members without password hashes
+  const safeMembers = members.map(({ password_hash, ...m }) => m);
+
+  // Quick stats
+  const allMembers = db.getCollection('members');
+  const stats = {
+    total: allMembers.length,
+    superadmins: allMembers.filter(m => m.role === 'superadmin').length,
+    admins: allMembers.filter(m => m.role === 'admin' || m.role === 'ceo').length,
+    districtHeads: allMembers.filter(m => m.role === 'district_admin').length,
+    chapterPresidents: allMembers.filter(m => m.role === 'chapter_president').length,
+    verifiedMembers: allMembers.filter(m => m.verified).length,
+    pendingVerifications: allMembers.filter(m => !m.verified).length
+  };
+
+  return sendSuccess(res, 'वापरकर्ते यादी प्राप्त झाली', {
+    users: safeMembers,
+    count: safeMembers.length,
+    stats
+  });
+});
+
+// POST /api/admin/users - Superadmin creates a new user
+router.post('/users', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const { name, email, phone, password, role, district, taluka, kul, gotra, tier, profession, business, verified } = req.body;
+  const cleanName = sanitize(name);
+  const cleanedPhone = cleanPhone(phone);
+
+  if (!cleanName || !cleanedPhone) {
+    return sendError(res, 'कृपया नाव आणि संपर्क नंबर प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  }
+
+  if (!isValidPhone(cleanedPhone)) {
+    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
+  }
+
+  const existingPhone = db.findOne('members', m => m.phone === cleanedPhone || m.phone === `+91 ${cleanedPhone}`);
+  if (existingPhone) {
+    return sendError(res, 'हा फोन नंबर अगोदरच नोंदणीकृत आहे.', 'PHONE_EXISTS', 409);
+  }
+
+  const cleanRole = sanitize(role) || 'member';
+  const isVerified = verified === true || verified === 'true';
+
+  const salt = bcrypt.genSaltSync(8);
+  const passwordHash = bcrypt.hashSync(password || 'password123', salt);
+
+  const newMember = {
+    id: `CM-96K-${Date.now().toString().slice(-5)}`,
+    name: cleanName,
+    email: sanitize(email) || `${cleanedPhone}@connectmaratha.org`,
+    phone: cleanedPhone,
+    password_hash: passwordHash,
+    avatar: '👤',
+    city: sanitize(district) || 'पुणे',
+    district: sanitize(district) || 'पुणे',
+    taluka: sanitize(taluka) || 'हवेली',
+    state: 'महाराष्ट्र',
+    country: 'भारत',
+    kul: sanitize(kul) || '९६ कुळी मराठा',
+    gotra: sanitize(gotra) || 'भारद्वाज',
+    profession: sanitize(profession) || 'व्यावसायिक',
+    business: sanitize(business) || '',
+    tier: sanitize(tier) || 'Gold',
+    role: cleanRole,
+    verified: isVerified,
+    verificationStatus: isVerified ? 'प्रमाणित (Verified)' : 'पडताळणी प्रलंबित',
+    verifiedBy: isVerified ? req.user.name : null,
+    joined: new Date().toISOString().split('T')[0],
+    created_at: new Date().toISOString()
+  };
+
+  db.insert('members', newMember);
+  db.addAuditLog('SUPERADMIN_CREATE_USER', req.user.id, {
+    newUserId: newMember.id,
+    newUserName: cleanName,
+    role: cleanRole
+  });
+
+  const { password_hash, ...safeResult } = newMember;
+  return sendSuccess(res, 'नवीन वापरकर्ता यशस्वीरीत्या तयार करण्यात आला!', { user: safeResult }, 201);
+});
+
+// GET /api/admin/users/:id - Get specific user profile details
+router.get('/users/:id', authenticateToken, requireRole('superadmin', 'admin', 'ceo', 'district_admin'), (req, res) => {
+  const member = db.findById('members', req.params.id);
+  if (!member) {
+    return sendError(res, 'वापरकर्ता सापडला नाही.', 'USER_NOT_FOUND', 404);
+  }
+  const { password_hash, ...safeUser } = member;
+  return sendSuccess(res, 'वापरकर्ता तपशील', { user: safeUser });
+});
+
+// PUT /api/admin/users/:id - Superadmin updates any user
+router.put('/users/:id', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const member = db.findById('members', req.params.id);
+  if (!member) {
+    return sendError(res, 'वापरकर्ता सापडला नाही.', 'USER_NOT_FOUND', 404);
+  }
+
+  const updates = { ...req.body };
+  delete updates.id;
+
+  if (updates.name) updates.name = sanitize(updates.name);
+  if (updates.email) updates.email = sanitize(updates.email);
+  if (updates.phone) updates.phone = cleanPhone(updates.phone);
+  if (updates.district) updates.district = sanitize(updates.district);
+  if (updates.taluka) updates.taluka = sanitize(updates.taluka);
+  if (updates.kul) updates.kul = sanitize(updates.kul);
+  if (updates.gotra) updates.gotra = sanitize(updates.gotra);
+  if (updates.tier) updates.tier = sanitize(updates.tier);
+  if (updates.profession) updates.profession = sanitize(updates.profession);
+  if (updates.business) updates.business = sanitize(updates.business);
+
+  if (updates.password) {
+    const salt = bcrypt.genSaltSync(8);
+    updates.password_hash = bcrypt.hashSync(updates.password, salt);
+    delete updates.password;
+  }
+
+  if (updates.verified !== undefined) {
+    updates.verified = Boolean(updates.verified);
+    updates.verificationStatus = updates.verified ? 'प्रमाणित (Verified)' : 'नाकारले / प्रलंबित';
+  }
+
+  const updated = db.update('members', req.params.id, updates);
+  db.addAuditLog('SUPERADMIN_UPDATE_USER', req.user.id, {
+    targetUserId: req.params.id,
+    updatedFields: Object.keys(updates)
+  });
+
+  const { password_hash, ...safeResult } = updated;
+  return sendSuccess(res, 'वापरकर्ता माहिती अद्यतनित करण्यात आली!', { user: safeResult });
+});
+
+// DELETE /api/admin/users/:id - Superadmin deletes a user
+router.delete('/users/:id', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const { id } = req.params;
+  const member = db.findById('members', id);
+
+  if (!member) {
+    return sendError(res, 'वापरकर्ता सापडला नाही.', 'USER_NOT_FOUND', 404);
+  }
+
+  // Prevent self-deletion or deletion of root superadmin
+  if (id === req.user.id) {
+    return sendError(res, 'तुम्ही तुमचे स्वतःचे खाते हटवू शकत नाही.', 'CANNOT_DELETE_SELF', 400);
+  }
+
+  if (id === 'CM-SUPER-001') {
+    return sendError(res, 'मूळ सर्वोच्च प्रशासक (Root SuperAdmin) खाते हटवता येत नाही.', 'ROOT_PROTECTED', 403);
+  }
+
+  db.remove('members', id);
+  db.addAuditLog('SUPERADMIN_DELETE_USER', req.user.id, {
+    deletedUserId: id,
+    deletedUserName: member.name
+  });
+
+  return sendSuccess(res, `वापरकर्ता "${member.name}" यशस्वीरीत्या काढून टाकण्यात आला.`, { deletedId: id });
+});
+
+// =========================================================================
+// SUPERADMIN & ADMIN: DOCTORS CRUD (/api/admin/doctors)
+// =========================================================================
+router.get('/doctors', authenticateToken, requireRole('superadmin', 'admin', 'ceo'), (req, res) => {
+  const doctors = db.getCollection('doctors');
+  return sendSuccess(res, 'डॉक्टर्स यादी', { doctors, count: doctors.length });
+});
+
+router.post('/doctors', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const { name, specialty, degree, hospital, city, district, phone, experience, consultationFee, avatar } = req.body;
+  const cleanName = sanitize(name);
+  const cleanedPhone = cleanPhone(phone);
+
+  if (!cleanName || !cleanedPhone) {
+    return sendError(res, 'कृपया डॉक्टरचे नाव व फोन नंबर प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  }
+
+  const newDoc = {
+    id: `DOC-${Date.now().toString().slice(-4)}`,
+    name: cleanName,
+    specialty: sanitize(specialty) || 'जनरल फिजिशियन',
+    degree: sanitize(degree) || 'M.B.B.S.',
+    hospital: sanitize(hospital) || 'सह्याद्री हॉस्पिटल',
+    city: sanitize(city) || 'पुणे',
+    district: sanitize(district) || sanitize(city) || 'पुणे',
+    phone: cleanedPhone,
+    experience: sanitize(experience) || '१०+ वर्षे',
+    consultationFee: sanitize(consultationFee) || '₹५००',
+    avatar: avatar || '🩺',
+    verified: true,
+    created_at: new Date().toISOString()
+  };
+
+  db.insert('doctors', newDoc);
+  db.addAuditLog('SUPERADMIN_ADD_DOCTOR', req.user.id, { doctorId: newDoc.id, name: cleanName });
+
+  return sendSuccess(res, 'डॉक्टर यशस्वीरीत्या जोडण्यात आले!', { doctor: newDoc }, 201);
+});
+
+router.put('/doctors/:id', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const doc = db.findById('doctors', req.params.id);
+  if (!doc) {
+    return sendError(res, 'डॉक्टर सापडले नाहीत.', 'DOCTOR_NOT_FOUND', 404);
+  }
+
+  const updates = { ...req.body };
+  delete updates.id;
+  if (updates.name) updates.name = sanitize(updates.name);
+  if (updates.phone) updates.phone = cleanPhone(updates.phone);
+
+  const updated = db.update('doctors', req.params.id, updates);
+  db.addAuditLog('SUPERADMIN_UPDATE_DOCTOR', req.user.id, { doctorId: req.params.id });
+
+  return sendSuccess(res, 'डॉक्टर माहिती अद्यतनित करण्यात आली!', { doctor: updated });
+});
+
+router.delete('/doctors/:id', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const doc = db.findById('doctors', req.params.id);
+  if (!doc) {
+    return sendError(res, 'डॉक्टर सापडले नाहीत.', 'DOCTOR_NOT_FOUND', 404);
+  }
+
+  db.remove('doctors', req.params.id);
+  db.addAuditLog('SUPERADMIN_DELETE_DOCTOR', req.user.id, { doctorId: req.params.id, name: doc.name });
+
+  return sendSuccess(res, `डॉक्टर "${doc.name}" यादीतून काढून टाकण्यात आले.`, { deletedId: req.params.id });
+});
+
+// =========================================================================
+// SUPERADMIN & ADMIN: SERVICES & PROVIDERS CRUD (/api/admin/services)
+// =========================================================================
+router.get('/services', authenticateToken, requireRole('superadmin', 'admin', 'ceo'), (req, res) => {
+  const services = db.getCollection('services');
+  return sendSuccess(res, 'सेवा व व्यावसायिक यादी', { services, count: services.length });
+});
+
+router.post('/services', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const { name, category, location, phone, rating, experience, pricing, description } = req.body;
+  const cleanName = sanitize(name);
+  const cleanedPhone = cleanPhone(phone);
+
+  if (!cleanName) {
+    return sendError(res, 'कृपया सेवा प्रदात्याचे नाव प्रविष्ट करा.', 'MISSING_NAME', 400);
+  }
+
+  const newService = {
+    id: `SRV-${Date.now().toString().slice(-4)}`,
+    name: cleanName,
+    category: sanitize(category) || 'स्थानिक सेवा',
+    location: sanitize(location) || 'महाराष्ट्र',
+    phone: cleanedPhone || '+91 98220 00000',
+    rating: sanitize(rating) || '4.9 ★',
+    experience: sanitize(experience) || '५+ वर्षे',
+    pricing: sanitize(pricing) || 'कामाच्या स्वरूपानुसार',
+    description: sanitize(description) || '',
+    created_at: new Date().toISOString()
+  };
+
+  db.insert('services', newService);
+  db.addAuditLog('SUPERADMIN_ADD_SERVICE', req.user.id, { serviceId: newService.id, name: cleanName });
+
+  return sendSuccess(res, 'नवीन सेवा प्रदाता यशस्वीरीत्या जोडण्यात आला!', { service: newService }, 201);
+});
+
+router.put('/services/:id', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const srv = db.findById('services', req.params.id);
+  if (!srv) {
+    return sendError(res, 'सेवा प्रदाता सापडला नाही.', 'SERVICE_NOT_FOUND', 404);
+  }
+
+  const updates = { ...req.body };
+  delete updates.id;
+  if (updates.name) updates.name = sanitize(updates.name);
+  if (updates.phone) updates.phone = cleanPhone(updates.phone);
+
+  const updated = db.update('services', req.params.id, updates);
+  db.addAuditLog('SUPERADMIN_UPDATE_SERVICE', req.user.id, { serviceId: req.params.id });
+
+  return sendSuccess(res, 'सेवा माहिती अद्यतनित करण्यात आली!', { service: updated });
+});
+
+router.delete('/services/:id', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const srv = db.findById('services', req.params.id);
+  if (!srv) {
+    return sendError(res, 'सेवा प्रदाता सापडला नाही.', 'SERVICE_NOT_FOUND', 404);
+  }
+
+  db.remove('services', req.params.id);
+  db.addAuditLog('SUPERADMIN_DELETE_SERVICE', req.user.id, { serviceId: req.params.id, name: srv.name });
+
+  return sendSuccess(res, `सेवा "${srv.name}" काढून टाकण्यात आली.`, { deletedId: req.params.id });
+});
+
+// =========================================================================
+// SUPERADMIN & ADMIN: HOTELS & HOSPITALITY CRUD (/api/admin/hotels)
+// =========================================================================
+router.get('/hotels', authenticateToken, requireRole('superadmin', 'admin', 'ceo'), (req, res) => {
+  const hotels = db.getCollection('hotels');
+  return sendSuccess(res, 'हॉटेल्स यादी', { hotels, count: hotels.length });
+});
+
+router.post('/hotels', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const { name, city, district, category, star_rating, address, phone, website, rooms_count, price_range, amenities } = req.body;
+  const cleanName = sanitize(name);
+  const cleanedPhone = cleanPhone(phone);
+
+  if (!cleanName) {
+    return sendError(res, 'कृपया हॉटेलचे नाव प्रविष्ट करा.', 'MISSING_NAME', 400);
+  }
+
+  const newHotel = {
+    id: `HTL-${Date.now().toString().slice(-4)}`,
+    name: cleanName,
+    city: sanitize(city) || 'पुणे',
+    district: sanitize(district) || sanitize(city) || 'पुणे',
+    category: sanitize(category) || 'हॉटेल व लॉजिंग',
+    star_rating: Number(star_rating) || 4.5,
+    address: sanitize(address) || 'महाराष्ट्र',
+    phone: cleanedPhone || '+91 98220 11000',
+    website: sanitize(website) || '',
+    rooms_count: Number(rooms_count) || 20,
+    price_range: sanitize(price_range) || '₹२,००० - ₹५,०००',
+    amenities: Array.isArray(amenities) ? amenities : ['वायफाय', 'पार्किंग', 'भोजनालय'],
+    photo: '🏨',
+    verified: true,
+    created_at: new Date().toISOString()
+  };
+
+  db.insert('hotels', newHotel);
+  db.addAuditLog('SUPERADMIN_ADD_HOTEL', req.user.id, { hotelId: newHotel.id, name: cleanName });
+
+  return sendSuccess(res, 'नवीन हॉटेल यशस्वीरीत्या जोडण्यात आले!', { hotel: newHotel }, 201);
+});
+
+router.put('/hotels/:id', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const htl = db.findById('hotels', req.params.id);
+  if (!htl) {
+    return sendError(res, 'हॉटेल सापडले नाही.', 'HOTEL_NOT_FOUND', 404);
+  }
+
+  const updates = { ...req.body };
+  delete updates.id;
+  if (updates.name) updates.name = sanitize(updates.name);
+  if (updates.phone) updates.phone = cleanPhone(updates.phone);
+
+  const updated = db.update('hotels', req.params.id, updates);
+  db.addAuditLog('SUPERADMIN_UPDATE_HOTEL', req.user.id, { hotelId: req.params.id });
+
+  return sendSuccess(res, 'हॉटेल माहिती अद्यतनित करण्यात आली!', { hotel: updated });
+});
+
+router.delete('/hotels/:id', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const htl = db.findById('hotels', req.params.id);
+  if (!htl) {
+    return sendError(res, 'हॉटेल सापडले नाही.', 'HOTEL_NOT_FOUND', 404);
+  }
+
+  db.remove('hotels', req.params.id);
+  db.addAuditLog('SUPERADMIN_DELETE_HOTEL', req.user.id, { hotelId: req.params.id, name: htl.name });
+
+  return sendSuccess(res, `हॉटेल "${htl.name}" काढून टाकण्यात आले.`, { deletedId: req.params.id });
+});
+
+// =========================================================================
+// SUPERADMIN & ADMIN: INFORMATION ARTICLES CRUD (/api/admin/information)
+// =========================================================================
+router.get('/information', authenticateToken, requireRole('superadmin', 'admin', 'ceo'), (req, res) => {
+  const info = db.getCollection('information');
+  return sendSuccess(res, 'माहिती व ज्ञानकोश लेख यादी', { information: info, count: info.length });
+});
+
+router.post('/information', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const { title, category, author, summary, content, tags, image_url, featured } = req.body;
+  const cleanTitle = sanitize(title);
+
+  if (!cleanTitle) {
+    return sendError(res, 'कृपया लेखाचे शीर्षक प्रविष्ट करा.', 'MISSING_TITLE', 400);
+  }
+
+  const newArticle = {
+    id: `INFO-${Date.now().toString().slice(-4)}`,
+    title: cleanTitle,
+    category: sanitize(category) || 'मराठा इतिहास व वारसा',
+    author: sanitize(author) || req.user.name,
+    summary: sanitize(summary) || '',
+    content: sanitize(content) || '',
+    tags: Array.isArray(tags) ? tags : ['माहिती', 'इतिहास'],
+    image_url: sanitize(image_url) || '/assets/images/real-raigad-panoramic.jpg',
+    featured: featured ? 1 : 0,
+    created_at: new Date().toISOString()
+  };
+
+  db.insert('information', newArticle);
+  db.addAuditLog('SUPERADMIN_ADD_INFO', req.user.id, { articleId: newArticle.id, title: cleanTitle });
+
+  return sendSuccess(res, 'नवीन माहिती लेख यशस्वीरीत्या जोडण्यात आला!', { article: newArticle }, 201);
+});
+
+router.put('/information/:id', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const item = db.findById('information', req.params.id);
+  if (!item) {
+    return sendError(res, 'माहिती लेख सापडला नाही.', 'INFO_NOT_FOUND', 404);
+  }
+
+  const updates = { ...req.body };
+  delete updates.id;
+  if (updates.title) updates.title = sanitize(updates.title);
+
+  const updated = db.update('information', req.params.id, updates);
+  db.addAuditLog('SUPERADMIN_UPDATE_INFO', req.user.id, { articleId: req.params.id });
+
+  return sendSuccess(res, 'माहिती लेख अद्यतनित करण्यात आला!', { article: updated });
+});
+
+router.delete('/information/:id', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
+  const item = db.findById('information', req.params.id);
+  if (!item) {
+    return sendError(res, 'माहिती लेख सापडला नाही.', 'INFO_NOT_FOUND', 404);
+  }
+
+  db.remove('information', req.params.id);
+  db.addAuditLog('SUPERADMIN_DELETE_INFO', req.user.id, { articleId: req.params.id, title: item.title });
+
+  return sendSuccess(res, `माहिती लेख "${item.title}" काढून टाकण्यात आला.`, { deletedId: req.params.id });
 });
 
 export default router;

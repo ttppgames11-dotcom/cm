@@ -409,4 +409,127 @@ router.post('/bank/loans', authenticateToken, (req, res) => {
   return sendSuccess(res, 'कर्ज अर्ज यशस्वीरीत्या सादर केला गेला!', { loanApplication: item }, 201);
 });
 
+// ==========================================
+// 10. HOTELS & HOSPITALITY DIRECTORY (/api/hotels)
+// ==========================================
+router.get('/hotels', (req, res) => {
+  const { city, district, search } = req.query;
+  let list = db.getCollection('hotels');
+
+  if (city && city !== 'सर्व') {
+    list = list.filter(h => (h.city || '').includes(city));
+  }
+  if (district && district !== 'सर्व') {
+    list = list.filter(h => (h.district || '').includes(district));
+  }
+  if (search) {
+    const q = search.toLowerCase();
+    list = list.filter(h => 
+      (h.name || '').toLowerCase().includes(q) ||
+      (h.city || '').toLowerCase().includes(q) ||
+      (h.category || '').toLowerCase().includes(q)
+    );
+  }
+
+  return sendSuccess(res, 'हॉटेल्स व लॉजिंग यादी प्राप्त झाली', { hotels: list, count: list.length });
+});
+
+router.get('/hotels/:id', (req, res) => {
+  const hotel = db.findById('hotels', req.params.id);
+  if (!hotel) {
+    return sendError(res, 'हॉटेल सापडले नाही.', 'HOTEL_NOT_FOUND', 404);
+  }
+  return sendSuccess(res, 'हॉटेल तपशील', { hotel });
+});
+
+router.post('/hotels', optionalToken, (req, res) => {
+  const { name, city, district, category, address, phone, website, rooms_count, price_range, star_rating } = req.body;
+  const cleanName = sanitize(name);
+  const cleanedPhone = cleanPhone(phone);
+
+  if (!cleanName || !cleanedPhone) {
+    return sendError(res, 'कृपया हॉटेलचे नाव आणि संपर्क नंबर प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  }
+
+  const newHotel = {
+    id: `HTL-${Date.now().toString().slice(-4)}`,
+    name: cleanName,
+    city: sanitize(city) || 'पुणे',
+    district: sanitize(district) || 'पुणे',
+    category: sanitize(category) || 'हॉटेल',
+    star_rating: Number(star_rating) || 4.2,
+    address: sanitize(address) || 'महाराष्ट्र',
+    phone: cleanedPhone,
+    website: sanitize(website) || '',
+    rooms_count: Number(rooms_count) || 12,
+    amenities: req.body.amenities || ['वायफाय', 'पार्किंग', 'भोजनालय'],
+    price_range: sanitize(price_range) || '₹२,००० - ₹४,०००',
+    photo: '🏨',
+    verified: true,
+    created_at: new Date().toISOString()
+  };
+
+  db.insert('hotels', newHotel);
+  db.addAuditLog('ADD_HOTEL', req.user?.id || 'GUEST', { hotelId: newHotel.id, name: cleanName });
+
+  return sendSuccess(res, 'नवीन हॉटेल यशस्वीरीत्या जोडण्यात आले!', { hotel: newHotel }, 201);
+});
+
+// ==========================================
+// 11. INFORMATION & HERITAGE ARTICLES (/api/information)
+// ==========================================
+router.get('/information', (req, res) => {
+  const { category, search } = req.query;
+  let list = db.getCollection('information');
+
+  if (category && category !== 'सर्व') {
+    list = list.filter(i => (i.category || '').includes(category));
+  }
+  if (search) {
+    const q = search.toLowerCase();
+    list = list.filter(i => 
+      (i.title || '').toLowerCase().includes(q) ||
+      (i.summary || '').toLowerCase().includes(q) ||
+      (i.author || '').toLowerCase().includes(q)
+    );
+  }
+
+  return sendSuccess(res, 'माहिती व ज्ञानकोश लेख यादी प्राप्त झाली', { information: list, count: list.length });
+});
+
+router.get('/information/:id', (req, res) => {
+  const item = db.findById('information', req.params.id);
+  if (!item) {
+    return sendError(res, 'माहिती लेख सापडला नाही.', 'INFO_NOT_FOUND', 404);
+  }
+  return sendSuccess(res, 'माहिती लेख तपशील', { article: item });
+});
+
+router.post('/information', optionalToken, (req, res) => {
+  const { title, category, author, summary, content, tags, image_url } = req.body;
+  const cleanTitle = sanitize(title);
+
+  if (!cleanTitle) {
+    return sendError(res, 'कृपया लेखाचे शीर्षक प्रविष्ट करा.', 'MISSING_TITLE', 400);
+  }
+
+  const newArticle = {
+    id: `INFO-${Date.now().toString().slice(-4)}`,
+    title: cleanTitle,
+    category: sanitize(category) || 'मराठा वारसा व इतिहास',
+    author: sanitize(author) || req.user?.name || 'संपादकीय मंडळ',
+    summary: sanitize(summary) || '',
+    content: sanitize(content) || '',
+    tags: Array.isArray(tags) ? tags : ['माहिती', 'इतिहास'],
+    image_url: sanitize(image_url) || '/assets/images/real-raigad-panoramic.jpg',
+    featured: req.body.featured ? 1 : 0,
+    created_at: new Date().toISOString()
+  };
+
+  db.insert('information', newArticle);
+  db.addAuditLog('ADD_INFORMATION', req.user?.id || 'GUEST', { articleId: newArticle.id, title: cleanTitle });
+
+  return sendSuccess(res, 'नवीन माहिती लेख यशस्वीरीत्या जोडण्यात आला!', { article: newArticle }, 201);
+});
+
 export default router;
