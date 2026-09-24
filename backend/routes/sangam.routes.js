@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/realtimeDb.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
+import { validateReferral, sanitize } from '../utils/validator.js';
 
 const router = Router();
 
@@ -35,27 +36,29 @@ router.get('/referrals', authenticateToken, (req, res) => {
 // POST /api/sangam/referrals
 // Create warm business referral with contact, deal size, urgency
 router.post('/referrals', authenticateToken, (req, res) => {
-  const { title, category, recipientId, recipientName, clientName, clientPhone, clientEmail, urgency, value, notes } = req.body;
-
-  if (!title || !clientName || !clientPhone) {
-    return sendError(res, 'कृपया संदर्भ शीर्षक, क्लायंटचे नाव व फोन नंबर प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  const { isValid, errors, sanitized } = validateReferral(req.body);
+  if (!isValid) {
+    return sendError(res, errors[0]?.error || 'अवैध रेफरल माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
   }
+
+  const { title, clientName, clientPhone } = sanitized;
+  const { category, recipientId, recipientName, clientEmail, urgency, value, notes } = req.body;
 
   const newRef = {
     id: `REF-${Date.now().toString().slice(-5)}`,
     title,
-    category: category || 'व्यापार संदर्भ',
+    category: sanitize(category) || 'व्यापार संदर्भ',
     giverId: req.user.id,
     giverName: req.user.name,
-    recipientId: recipientId || '',
-    recipientName: recipientName || 'मराठा व्यवसाय बंधू',
+    recipientId: sanitize(recipientId) || '',
+    recipientName: sanitize(recipientName) || 'मराठा व्यवसाय बंधू',
     clientName,
     clientPhone,
-    clientEmail: clientEmail || '',
-    urgency: urgency || 'मध्यम (Medium)',
+    clientEmail: clientEmail ? sanitize(clientEmail) : '',
+    urgency: sanitize(urgency) || 'मध्यम (Medium)',
     status: 'नवीन (New)',
     value: Number(value) || 0,
-    notes: notes || '',
+    notes: sanitize(notes) || '',
     createdAt: new Date().toISOString()
   };
 
@@ -87,8 +90,14 @@ router.put('/referrals/:id/status', authenticateToken, (req, res) => {
 
   const { status, value } = req.body;
   const updates = {};
-  if (status) updates.status = status;
-  if (value !== undefined) updates.value = Number(value);
+  if (status) updates.status = sanitize(status);
+  if (value !== undefined) {
+    const num = Number(value);
+    if (isNaN(num) || num < 0) {
+      return sendError(res, 'रेफरल मूल्य अयोग्य आहे.', 'INVALID_VALUE', 400);
+    }
+    updates.value = num;
+  }
 
   const updated = db.update('referrals', req.params.id, updates);
   db.addAuditLog('UPDATE_REFERRAL_STATUS', req.user.id, { referralId: req.params.id, status, value });
@@ -115,7 +124,10 @@ router.get('/meetings', authenticateToken, (req, res) => {
 router.post('/meetings', authenticateToken, (req, res) => {
   const { recipientId, recipientName, date, time, topic, location, notes } = req.body;
 
-  if (!recipientName || !date) {
+  const cleanRecipientName = sanitize(recipientName);
+  const cleanDate = sanitize(date);
+
+  if (!cleanRecipientName || !cleanDate) {
     return sendError(res, 'कृपया बैठक कोणासोबत आहे आणि तारीख निवडा.', 'MISSING_FIELDS', 400);
   }
 
@@ -123,25 +135,25 @@ router.post('/meetings', authenticateToken, (req, res) => {
     id: `MEET-${Date.now().toString().slice(-4)}`,
     requesterId: req.user.id,
     requesterName: req.user.name,
-    recipientId: recipientId || '',
-    recipientName,
-    date,
-    time: time || 'सकाळी १०:००',
-    topic: topic || 'व्यवसाय संगम १-टू-१ संवाद',
-    location: location || 'मराठा संगम दालन / ऑनलाइन',
+    recipientId: sanitize(recipientId) || '',
+    recipientName: cleanRecipientName,
+    date: cleanDate,
+    time: sanitize(time) || 'सकाळी १०:००',
+    topic: sanitize(topic) || 'व्यवसाय संगम १-टू-१ संवाद',
+    location: sanitize(location) || 'मराठा संगम दालन / ऑनलाइन',
     status: 'निश्चित (Confirmed)',
-    notes: notes || '',
+    notes: sanitize(notes) || '',
     createdAt: new Date().toISOString()
   };
 
   db.insert('meetings', newMeeting);
-  db.addAuditLog('SCHEDULE_MEETING', req.user.id, { meetingId: newMeeting.id, recipientName });
+  db.addAuditLog('SCHEDULE_MEETING', req.user.id, { meetingId: newMeeting.id, recipientName: cleanRecipientName });
 
   if (recipientId) {
     db.insert('notifications', {
       recipientId,
       title: '🤝 नवीन १-टू-१ बैठक विनंती',
-      message: `${req.user.name} यांनी ${date} रोजी ${newMeeting.time} वाजता बिझनेस १-टू-१ बैठकीचे आयोजन केले आहे.`,
+      message: `${req.user.name} यांनी ${cleanDate} रोजी ${newMeeting.time} वाजता बिझनेस १-टू-१ बैठकीचे आयोजन केले आहे.`,
       type: 'meeting',
       read: false,
       timestamp: new Date().toISOString()

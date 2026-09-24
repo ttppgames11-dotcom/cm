@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/realtimeDb.js';
 import { optionalToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
+import { validateDonation, sanitize, cleanPhone } from '../utils/validator.js';
 
 const router = Router();
 
@@ -78,24 +79,25 @@ router.get('/campaigns/:id', (req, res) => {
 // POST /api/donations/donate
 // Process donation payment (Razorpay/UPI integration), 80G receipt
 router.post('/donate', optionalToken, (req, res) => {
-  const { campaignId, donorName, email, phone, amount, pan, paymentMethod, anonymous } = req.body;
-
-  const numAmount = Number(amount);
-  if (!numAmount || numAmount <= 0) {
-    return sendError(res, 'कृपया योग्य देणगी रक्कम प्रविष्ट करा.', 'INVALID_AMOUNT', 400);
+  const { isValid, errors, sanitized } = validateDonation(req.body);
+  if (!isValid) {
+    return sendError(res, errors[0]?.error || 'अवैध देणगी माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
   }
+
+  const { amount, pan, email } = sanitized;
+  const { campaignId, donorName, phone, paymentMethod, anonymous } = req.body;
 
   const receiptNo = `80G-${Date.now().toString().slice(-6)}`;
   const donation = {
     id: `DONAT-${Date.now().toString().slice(-5)}`,
-    campaignId: campaignId || 'CAMP-01',
+    campaignId: sanitize(campaignId) || 'CAMP-01',
     donorId: req.user?.id || 'GUEST',
-    donorName: anonymous ? 'मराठा हितचिंतक (गुप्तदान)' : (donorName || req.user?.name || 'मराठा समाजबांधव'),
+    donorName: anonymous ? 'मराठा हितचिंतक (गुप्तदान)' : (sanitize(donorName) || req.user?.name || 'मराठा समाजबांधव'),
     email: email || req.user?.email || '',
-    phone: phone || req.user?.phone || '',
-    amount: numAmount,
+    phone: phone ? cleanPhone(phone) : (req.user?.phone || ''),
+    amount,
     pan: pan || '',
-    paymentMethod: paymentMethod || 'UPI / QR',
+    paymentMethod: sanitize(paymentMethod) || 'UPI / QR',
     status: 'यशस्वी (Success)',
     receiptNo,
     taxExemption80G: true,
@@ -108,13 +110,13 @@ router.post('/donate', optionalToken, (req, res) => {
   if (campaignId) {
     const campaign = db.findById('campaigns', campaignId);
     if (campaign) {
-      const newRaised = (Number(campaign.raisedAmount) || 0) + numAmount;
+      const newRaised = (Number(campaign.raisedAmount) || 0) + amount;
       const newCount = (Number(campaign.donorsCount) || 0) + 1;
       db.update('campaigns', campaignId, { raisedAmount: newRaised, donorsCount: newCount });
     }
   }
 
-  db.addAuditLog('PROCESS_DONATION', req.user?.id || 'GUEST', { amount: numAmount, receiptNo });
+  db.addAuditLog('PROCESS_DONATION', req.user?.id || 'GUEST', { amount, receiptNo });
 
   return sendSuccess(res, 'देणगी यशस्वीरीत्या स्वीकारली गेली! ८०-जी पावती उपलब्ध आहे.', {
     donation,

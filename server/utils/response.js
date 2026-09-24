@@ -23,11 +23,12 @@ export function sendSuccess(res, message = 'यशस्वीरीत्या
   return res.status(statusCode).json(payload);
 }
 
-export function sendError(res, error = 'अनधिकृत प्रवेश किंवा अयोग्य माहिती!', code = 'ERROR', statusCode = 400) {
+export function sendError(res, error = 'अनधिकृत प्रवेश किंवा अयोग्य माहिती!', code = 'ERROR', statusCode = 400, extra = {}) {
   return res.status(statusCode).json({
     success: false,
     error,
-    code
+    code,
+    ...extra
   });
 }
 

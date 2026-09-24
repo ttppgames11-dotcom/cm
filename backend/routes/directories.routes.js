@@ -2,6 +2,14 @@ import { Router } from 'express';
 import { db } from '../db/realtimeDb.js';
 import { authenticateToken, optionalToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
+import { 
+  sanitize, 
+  isValidPhone, 
+  cleanPhone, 
+  isPositiveNumber, 
+  validateLoan, 
+  validateSpeakerBooking 
+} from '../utils/validator.js';
 
 const router = Router();
 
@@ -32,22 +40,29 @@ router.get('/doctors', (req, res) => {
 
 router.post('/doctors', optionalToken, (req, res) => {
   const { name, specialty, hospital, city, phone, consultationFee, degree } = req.body;
-  if (!name || !phone) {
+  const cleanName = sanitize(name);
+  const cleanedPhone = cleanPhone(phone);
+
+  if (!cleanName || !cleanedPhone) {
     return sendError(res, 'कृपया नाव आणि फोन नंबर प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  }
+
+  if (!isValidPhone(cleanedPhone)) {
+    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
   }
 
   const newDoc = {
     id: `DOC-${Date.now().toString().slice(-4)}`,
-    name,
-    specialty: specialty || 'सामान्य चिकित्सक',
-    degree: degree || 'M.B.B.S.',
-    category: specialty || 'सामान्य',
-    hospital: hospital || 'सह्याद्री हॉस्पिटल',
-    city: city || 'पुणे',
-    phone,
-    consultationFee: consultationFee || '₹५००',
-    timing: req.body.timing || 'स. १० ते सायं. ६',
-    experience: req.body.experience || '१० वर्षे अनुभव',
+    name: cleanName,
+    specialty: sanitize(specialty) || 'सामान्य चिकित्सक',
+    degree: sanitize(degree) || 'M.B.B.S.',
+    category: sanitize(specialty) || 'सामान्य',
+    hospital: sanitize(hospital) || 'सह्याद्री हॉस्पिटल',
+    city: sanitize(city) || 'पुणे',
+    phone: cleanedPhone,
+    consultationFee: sanitize(consultationFee) || '₹५००',
+    timing: sanitize(req.body.timing) || 'स. १० ते सायं. ६',
+    experience: sanitize(req.body.experience) || '१० वर्षे अनुभव',
     rating: '5.0 ★ (नवीन नोंदणी)',
     icon: '🩺',
     verified: true,
@@ -55,7 +70,7 @@ router.post('/doctors', optionalToken, (req, res) => {
   };
 
   db.insert('doctors', newDoc);
-  db.addAuditLog('REGISTER_DOCTOR', req.user?.id || 'GUEST', { name, phone });
+  db.addAuditLog('REGISTER_DOCTOR', req.user?.id || 'GUEST', { name: cleanName, phone: cleanedPhone });
 
   return sendSuccess(res, 'डॉक्टर प्रोफाइल यशस्वीरीत्या जोडले गेले!', { doctor: newDoc }, 201);
 });
@@ -70,17 +85,24 @@ router.get('/artists', (req, res) => {
 
 router.post('/artists', optionalToken, (req, res) => {
   const { name, field, awards, city, phone } = req.body;
-  if (!name) {
+  const cleanName = sanitize(name);
+
+  if (!cleanName) {
     return sendError(res, 'कलाकाराचे नाव आवश्यक आहे.', 'MISSING_FIELDS', 400);
+  }
+
+  const cleanedPhone = phone ? cleanPhone(phone) : '';
+  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
+    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
   }
 
   const item = {
     id: `ART-${Date.now().toString().slice(-4)}`,
-    name,
-    field: field || 'नाट्य व चित्रपट / शाहिरी',
-    awards: awards || 'महाराष्ट्र राज्य गौरव',
-    city: city || 'पुणे/मुंबई',
-    phone: phone || '',
+    name: cleanName,
+    field: sanitize(field) || 'नाट्य व चित्रपट / शाहिरी',
+    awards: sanitize(awards) || 'महाराष्ट्र राज्य गौरव',
+    city: sanitize(city) || 'पुणे/मुंबई',
+    phone: cleanedPhone,
     photo: '🎭',
     createdAt: new Date().toISOString()
   };
@@ -99,17 +121,20 @@ router.get('/officers', (req, res) => {
 
 router.post('/officers', optionalToken, (req, res) => {
   const { name, designation, department, batch, postingCity } = req.body;
-  if (!name || !designation) {
+  const cleanName = sanitize(name);
+  const cleanDesignation = sanitize(designation);
+
+  if (!cleanName || !cleanDesignation) {
     return sendError(res, 'नाव व पद आवश्यक आहे.', 'MISSING_FIELDS', 400);
   }
 
   const item = {
     id: `OFF-${Date.now().toString().slice(-4)}`,
-    name,
-    designation,
-    department: department || 'सामान्य प्रशासन',
-    batch: batch || 'IAS / IPS / MPSC',
-    postingCity: postingCity || 'महाराष्ट्र शासन',
+    name: cleanName,
+    designation: cleanDesignation,
+    department: sanitize(department) || 'सामान्य प्रशासन',
+    batch: sanitize(batch) || 'IAS / IPS / MPSC',
+    postingCity: sanitize(postingCity) || 'महाराष्ट्र शासन',
     photo: '🏛️',
     createdAt: new Date().toISOString()
   };
@@ -128,17 +153,24 @@ router.get('/speakers', (req, res) => {
 
 router.post('/speakers', optionalToken, (req, res) => {
   const { name, expertise, topics, city, contact } = req.body;
-  if (!name) {
+  const cleanName = sanitize(name);
+
+  if (!cleanName) {
     return sendError(res, 'नाव आवश्यक आहे.', 'MISSING_FIELDS', 400);
+  }
+
+  const cleanedPhone = contact ? cleanPhone(contact) : '';
+  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
+    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
   }
 
   const item = {
     id: `SPK-${Date.now().toString().slice(-4)}`,
-    name,
-    expertise: expertise || 'शिवचरित्र व मराठा इतिहास',
-    topics: topics || 'शिवकालीन व्यवस्थापन व स्वराज्य प्रेरणा',
-    city: city || 'महाराष्ट्र',
-    contact: contact || '',
+    name: cleanName,
+    expertise: sanitize(expertise) || 'शिवचरित्र व मराठा इतिहास',
+    topics: sanitize(topics) || 'शिवकालीन व्यवस्थापन व स्वराज्य प्रेरणा',
+    city: sanitize(city) || 'महाराष्ट्र',
+    contact: cleanedPhone,
     photo: '🎤',
     createdAt: new Date().toISOString()
   };
@@ -148,20 +180,23 @@ router.post('/speakers', optionalToken, (req, res) => {
 });
 
 router.post('/speakers/book', authenticateToken, (req, res) => {
-  const { speakerId, speakerName, eventDate, eventTopic, venue, organizerPhone } = req.body;
-  if (!speakerName || !eventDate || !organizerPhone) {
-    return sendError(res, 'कृपया वक्त्याचे नाव, तारीख व संपर्क प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  const { isValid, errors, sanitized } = validateSpeakerBooking(req.body);
+  if (!isValid) {
+    return sendError(res, errors[0]?.error || 'अवैध व्याख्यान बुकिंग माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
   }
+
+  const { speakerName, eventDate, organizerPhone } = sanitized;
+  const { speakerId, eventTopic, venue } = req.body;
 
   const booking = {
     id: `SBK-${Date.now().toString().slice(-4)}`,
-    speakerId: speakerId || '',
+    speakerId: sanitize(speakerId) || '',
     speakerName,
     requesterId: req.user.id,
     requesterName: req.user.name,
     eventDate,
-    eventTopic: eventTopic || 'शिवजयंती व्याख्यान',
-    venue: venue || 'महाराष्ट्र',
+    eventTopic: sanitize(eventTopic) || 'शिवजयंती व्याख्यान',
+    venue: sanitize(venue) || 'महाराष्ट्र',
     organizerPhone,
     status: 'प्रलंबित (Pending Approval)',
     createdAt: new Date().toISOString()
@@ -183,19 +218,26 @@ router.get('/organizations', (req, res) => {
 
 router.post('/organizations', optionalToken, (req, res) => {
   const { name, regNo, president, city, district, contact, workScope } = req.body;
-  if (!name) {
+  const cleanName = sanitize(name);
+
+  if (!cleanName) {
     return sendError(res, 'संस्थेचे नाव आवश्यक आहे.', 'MISSING_FIELDS', 400);
+  }
+
+  const cleanedPhone = contact ? cleanPhone(contact) : '';
+  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
+    return sendError(res, 'कृपया संस्थेचा वैध संपर्क क्रमांक प्रविष्ट करा.', 'INVALID_PHONE', 400);
   }
 
   const item = {
     id: `ORG-${Date.now().toString().slice(-4)}`,
-    name,
-    regNo: regNo || 'संस्था नोंदणी क्र.',
-    president: president || 'मा. अध्यक्ष',
-    city: city || 'पुणे',
-    district: district || 'पुणे',
-    contact: contact || '',
-    workScope: workScope || 'सामाजिक, शैक्षणिक व सांस्कृतिक',
+    name: cleanName,
+    regNo: sanitize(regNo) || 'संस्था नोंदणी क्र.',
+    president: sanitize(president) || 'मा. अध्यक्ष',
+    city: sanitize(city) || 'पुणे',
+    district: sanitize(district) || 'पुणे',
+    contact: cleanedPhone,
+    workScope: sanitize(workScope) || 'सामाजिक, शैक्षणिक व सांस्कृतिक',
     logo: '🚩',
     createdAt: new Date().toISOString()
   };
@@ -214,18 +256,26 @@ router.get('/builders', (req, res) => {
 
 router.post('/builders', optionalToken, (req, res) => {
   const { projectName, developer, location, configuration, priceRange, phone } = req.body;
-  if (!projectName || !developer) {
+  const cleanProj = sanitize(projectName);
+  const cleanDev = sanitize(developer);
+
+  if (!cleanProj || !cleanDev) {
     return sendError(res, 'प्रकल्प व विकासकाचे नाव आवश्यक आहे.', 'MISSING_FIELDS', 400);
+  }
+
+  const cleanedPhone = phone ? cleanPhone(phone) : '';
+  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
+    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
   }
 
   const item = {
     id: `BLD-${Date.now().toString().slice(-4)}`,
-    projectName,
-    developer,
-    location: location || 'पुणे / मुंबई',
-    configuration: configuration || '2 & 3 BHK Premium Homes',
-    priceRange: priceRange || '₹६५ लाख ते ₹१.५ कोटी',
-    phone: phone || '',
+    projectName: cleanProj,
+    developer: cleanDev,
+    location: sanitize(location) || 'पुणे / मुंबई',
+    configuration: sanitize(configuration) || '2 & 3 BHK Premium Homes',
+    priceRange: sanitize(priceRange) || '₹६५ लाख ते ₹१.५ कोटी',
+    phone: cleanedPhone,
     reraApproved: true,
     discountForMembers: 'मराठा महासंघ सदस्यांसाठी विशेष ३% सवलत',
     createdAt: new Date().toISOString()
@@ -245,18 +295,25 @@ router.get('/manufacturers', (req, res) => {
 
 router.post('/manufacturers', optionalToken, (req, res) => {
   const { companyName, industry, products, district, contact, turnover } = req.body;
-  if (!companyName) {
+  const cleanCompany = sanitize(companyName);
+
+  if (!cleanCompany) {
     return sendError(res, 'कंपनीचे नाव आवश्यक आहे.', 'MISSING_FIELDS', 400);
+  }
+
+  const cleanedPhone = contact ? cleanPhone(contact) : '';
+  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
+    return sendError(res, 'कृपया वैध संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
   }
 
   const item = {
     id: `MFG-${Date.now().toString().slice(-4)}`,
-    companyName,
-    industry: industry || 'इंजिनिअरिंग / ऑटोमोबाईल',
-    products: products || 'पार्ट्स व मेकॅनिकल उपकरणे',
-    district: district || 'चाकण, पुणे',
-    contact: contact || '',
-    turnover: turnover || '₹१० कोटी+',
+    companyName: cleanCompany,
+    industry: sanitize(industry) || 'इंजिनिअरिंग / ऑटोमोबाईल',
+    products: sanitize(products) || 'पार्ट्स व मेकॅनिकल उपकरणे',
+    district: sanitize(district) || 'चाकण, पुणे',
+    contact: cleanedPhone,
+    turnover: sanitize(turnover) || '₹१० कोटी+',
     createdAt: new Date().toISOString()
   };
 
@@ -274,19 +331,26 @@ router.get('/dairy', (req, res) => {
 
 router.post('/dairy', optionalToken, (req, res) => {
   const { dairyName, centerHead, dailyCollection, district, milkRateCow, milkRateBuffalo, contact } = req.body;
-  if (!dairyName) {
+  const cleanDairy = sanitize(dairyName);
+
+  if (!cleanDairy) {
     return sendError(res, 'डेअरीचे नाव आवश्यक आहे.', 'MISSING_FIELDS', 400);
+  }
+
+  const cleanedPhone = contact ? cleanPhone(contact) : '';
+  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
+    return sendError(res, 'कृपया वैध संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
   }
 
   const item = {
     id: `DRY-${Date.now().toString().slice(-4)}`,
-    dairyName,
-    centerHead: centerHead || 'केंद्र प्रमुख',
-    dailyCollection: dailyCollection || '२,५०० लिटर/दिवस',
-    district: district || 'कोल्हापूर/सांगली',
-    milkRateCow: milkRateCow || '₹३६ / लिटर',
-    milkRateBuffalo: milkRateBuffalo || '₹५४ / लिटर',
-    contact: contact || '',
+    dairyName: cleanDairy,
+    centerHead: sanitize(centerHead) || 'केंद्र प्रमुख',
+    dailyCollection: sanitize(dailyCollection) || '२,५०० लिटर/दिवस',
+    district: sanitize(district) || 'कोल्हापूर/सांगली',
+    milkRateCow: sanitize(milkRateCow) || '₹३६ / लिटर',
+    milkRateBuffalo: sanitize(milkRateBuffalo) || '₹५४ / लिटर',
+    contact: cleanedPhone,
     createdAt: new Date().toISOString()
   };
 
@@ -312,21 +376,29 @@ router.get('/bank/loans', authenticateToken, (req, res) => {
 });
 
 router.post('/bank/loans', authenticateToken, (req, res) => {
-  const { schemeName, loanAmount, purpose, businessName, annualIncome, contact } = req.body;
-  if (!loanAmount || !purpose) {
-    return sendError(res, 'कृपया कर्जाची रक्कम व उद्देश प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  const { isValid, errors, sanitized } = validateLoan(req.body);
+  if (!isValid) {
+    return sendError(res, errors[0]?.error || 'अवैध कर्ज अर्ज माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
+  }
+
+  const { loanAmount, purpose } = sanitized;
+  const { schemeName, businessName, annualIncome, contact } = req.body;
+
+  const cleanedPhone = contact ? cleanPhone(contact) : (req.user.phone ? cleanPhone(req.user.phone) : '');
+  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
+    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
   }
 
   const item = {
     id: `LN-${Date.now().toString().slice(-4)}`,
     applicantId: req.user.id,
     applicantName: req.user.name,
-    schemeName: schemeName || 'अण्णासाहेब पाटील महामंडळ बिनव्याजी कर्ज योजना',
-    loanAmount: loanAmount,
+    schemeName: sanitize(schemeName) || 'अण्णासाहेब पाटील महामंडळ बिनव्याजी कर्ज योजना',
+    loanAmount,
     purpose,
-    businessName: businessName || 'नवीन व्यवसाय',
-    annualIncome: annualIncome || '₹५ लाख',
-    contact: contact || req.user.phone || '',
+    businessName: sanitize(businessName) || 'नवीन व्यवसाय',
+    annualIncome: sanitize(annualIncome) || '₹५ लाख',
+    contact: cleanedPhone,
     status: 'कागदपत्र पडताळणी अंतर्गत (In Review)',
     createdAt: new Date().toISOString()
   };

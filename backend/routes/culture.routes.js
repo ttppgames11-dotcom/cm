@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/realtimeDb.js';
 import { optionalToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
+import { sanitize } from '../utils/validator.js';
 
 const router = Router();
 
@@ -15,32 +16,34 @@ router.get('/oral-history', (req, res) => {
 
 router.post('/oral-history', optionalToken, (req, res) => {
   const { title, village, taluka, district, region, contributor, contributorClan, story, historicalReference, audioUrl } = req.body;
+  const cleanTitle = sanitize(title);
+  const cleanStory = sanitize(story);
 
-  if (!title || !story) {
-    return sendError(res, 'कथेचे शीर्षक आणि सविस्तर माहिती आवश्यक आहे.', 'MISSING_FIELDS', 400);
+  if (!cleanTitle || !cleanStory || cleanStory.length < 5) {
+    return sendError(res, 'कथेचे शीर्षक आणि सविस्तर माहिती (किमान ५ अक्षरे) आवश्यक आहे.', 'MISSING_FIELDS', 400);
   }
 
   const newStory = {
     id: `oral_${Date.now()}`,
-    title,
-    village: village || 'अज्ञात',
-    taluka: taluka || '',
-    district: district || 'महाराष्ट्र',
-    region: region || 'महाराष्ट्र',
-    contributor: contributor || req.user?.name || 'अनामिक इतिहासप्रेमी',
+    title: cleanTitle,
+    village: sanitize(village) || 'अज्ञात',
+    taluka: sanitize(taluka) || '',
+    district: sanitize(district) || 'महाराष्ट्र',
+    region: sanitize(region) || 'महाराष्ट्र',
+    contributor: sanitize(contributor) || req.user?.name || 'अनामिक इतिहासप्रेमी',
     contributorId: req.user?.id || 'GUEST',
-    contributorClan: contributorClan || 'मराठा कुळ',
+    contributorClan: sanitize(contributorClan) || 'मराठा कुळ',
     dateSubmitted: new Date().toLocaleDateString('mr-IN'),
-    story,
-    historicalReference: historicalReference || 'मौखिक कुटुंब परंपरा व वृद्ध व्यक्तींची स्मृती',
+    story: cleanStory,
+    historicalReference: sanitize(historicalReference) || 'मौखिक कुटुंब परंपरा व वृद्ध व्यक्तींची स्मृती',
     tier: 'Tier 4: मौखिक इतिहास व लोकपरंपरा',
     status: 'पडताळणी अंतर्गत (Under Community Review)',
-    audioUrl: audioUrl || null,
+    audioUrl: sanitize(audioUrl) || null,
     createdAt: new Date().toISOString()
   };
 
   db.insert('oralHistory', newStory);
-  db.addAuditLog('SUBMIT_ORAL_HISTORY', req.user?.id || 'GUEST', { title, village });
+  db.addAuditLog('SUBMIT_ORAL_HISTORY', req.user?.id || 'GUEST', { title: cleanTitle, village: newStory.village });
 
   return sendSuccess(res, 'आपली मौखिक परंपरा नोंद यशस्वीरीत्या जतन करण्यात आली!', { story: newStory }, 201);
 });

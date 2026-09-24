@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/realtimeDb.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
+import { sanitize, isValidPhone, cleanPhone, isValidBloodGroup } from '../utils/validator.js';
 
 const router = Router();
 
@@ -68,9 +69,17 @@ router.get('/messages', authenticateToken, (req, res) => {
 // POST /api/members/messages
 // Send direct peer-to-peer or chapter message
 router.post('/messages', authenticateToken, (req, res) => {
-  const { recipientId, subject, message, attachments } = req.body;
+  const recipientId = sanitize(req.body.recipientId);
+  const subject = sanitize(req.body.subject) || 'सामान्य संदेश';
+  const message = sanitize(req.body.message);
+  const attachments = Array.isArray(req.body.attachments) ? req.body.attachments : [];
+
   if (!recipientId || !message) {
     return sendError(res, 'कृपया प्राप्तकर्ता व संदेश प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  }
+
+  if (message.length < 2) {
+    return sendError(res, 'संदेश किमान २ अक्षरांचा असावा.', 'MESSAGE_TOO_SHORT', 400);
   }
 
   const newMsg = {
@@ -78,9 +87,9 @@ router.post('/messages', authenticateToken, (req, res) => {
     senderId: req.user.id,
     senderName: req.user.name,
     recipientId,
-    subject: subject || 'सामान्य संदेश',
+    subject,
     message,
-    attachments: attachments || [],
+    attachments,
     read: false,
     timestamp: new Date().toISOString()
   };
@@ -186,9 +195,25 @@ router.put('/:id', authenticateToken, (req, res) => {
 
   const allowedFields = ['name', 'phone', 'city', 'district', 'taluka', 'profession', 'business', 'education', 'skills', 'about', 'avatar', 'kul', 'gotra', 'bloodGroup', 'privacy'];
   const updates = {};
+
+  if (req.body.phone !== undefined) {
+    const cleaned = cleanPhone(req.body.phone);
+    if (cleaned && !isValidPhone(cleaned)) {
+      return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
+    }
+    updates.phone = cleaned;
+  }
+
+  if (req.body.bloodGroup !== undefined && req.body.bloodGroup) {
+    if (!isValidBloodGroup(req.body.bloodGroup)) {
+      return sendError(res, 'कृपया वैध रक्तगट निवडा.', 'INVALID_BLOOD_GROUP', 400);
+    }
+    updates.bloodGroup = sanitize(req.body.bloodGroup);
+  }
+
   for (const f of allowedFields) {
-    if (req.body[f] !== undefined) {
-      updates[f] = req.body[f];
+    if (req.body[f] !== undefined && f !== 'phone' && f !== 'bloodGroup') {
+      updates[f] = typeof req.body[f] === 'string' ? sanitize(req.body[f]) : req.body[f];
     }
   }
 

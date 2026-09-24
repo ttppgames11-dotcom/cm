@@ -3,6 +3,14 @@ import bcrypt from 'bcryptjs';
 import { db } from '../db/realtimeDb.js';
 import { generateToken, authenticateToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
+import { 
+  validateRegister, 
+  validateLogin, 
+  validateForgotPassword, 
+  validateVerifyOtp, 
+  validateResetPassword, 
+  sanitize 
+} from '../utils/validator.js';
 
 const router = Router();
 
@@ -10,11 +18,12 @@ const router = Router();
 // Register new member (name, phone, email, district, taluka, password, kul, gotra)
 router.post('/register', async (req, res) => {
   try {
-    const { name, phone, email, district, taluka, password, kul, gotra, profession, city, about } = req.body;
-
-    if (!name || (!phone && !email)) {
-      return sendError(res, 'कृपया नाव आणि फोन नंबर किंवा ईमेल प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+    const { isValid, errors, sanitized } = validateRegister(req.body);
+    if (!isValid) {
+      return sendError(res, errors[0]?.error || 'अवैध नोंदणी माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
     }
+
+    const { name, phone, email, district, taluka, password, kul, gotra, profession, city, about } = sanitized;
 
     const members = db.getCollection('members');
     const existing = members.find(m => 
@@ -37,15 +46,15 @@ router.post('/register', async (req, res) => {
       phone: phone || '',
       email: email || '',
       password_hash: passwordHash,
-      district: district || 'पुणे',
-      taluka: taluka || '',
-      city: city || district || 'पुणे',
+      district: sanitize(district) || 'पुणे',
+      taluka: sanitize(taluka) || '',
+      city: sanitize(city) || sanitize(district) || 'पुणे',
       state: 'महाराष्ट्र',
       country: 'भारत',
-      kul: kul || '९६ कुळी मराठा',
-      gotra: gotra || '',
-      profession: profession || 'व्यवसायिक / नोकरी',
-      about: about || '',
+      kul: sanitize(kul) || '९६ कुळी मराठा',
+      gotra: sanitize(gotra) || '',
+      profession: sanitize(profession) || 'व्यवसायिक / नोकरी',
+      about: sanitize(about) || '',
       avatar: '👤',
       tier: 'Gold',
       role: 'member',
@@ -55,7 +64,7 @@ router.post('/register', async (req, res) => {
     };
 
     db.insert('members', newMember);
-    db.addAuditLog('MEMBER_REGISTER', newMember.id, { name, district });
+    db.addAuditLog('MEMBER_REGISTER', newMember.id, { name, district: newMember.district });
 
     const safeProfile = { ...newMember };
     delete safeProfile.password_hash;
@@ -76,11 +85,12 @@ router.post('/register', async (req, res) => {
 // Login via phone/email/memberId and password
 router.post('/login', async (req, res) => {
   try {
-    const { identifier, password } = req.body;
-
-    if (!identifier) {
-      return sendError(res, 'कृपया सदस्य आयडी, ईमेल किंवा फोन नंबर प्रविष्ट करा.', 'MISSING_CREDENTIALS', 400);
+    const { isValid, errors, sanitized } = validateLogin(req.body);
+    if (!isValid) {
+      return sendError(res, errors[0]?.error || 'अवैध लॉगिन माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
     }
+
+    const { identifier, password } = sanitized;
 
     const members = db.getCollection('members');
     const member = members.find(m => 
@@ -154,10 +164,12 @@ router.post('/logout', authenticateToken, (req, res) => {
 // POST /api/auth/forgot-password
 // Trigger SMS/Email OTP for password reset
 router.post('/forgot-password', (req, res) => {
-  const { identifier } = req.body;
-  if (!identifier) {
-    return sendError(res, 'कृपया आपला फोन किंवा ईमेल प्रविष्ट करा.', 'MISSING_IDENTIFIER', 400);
+  const { isValid, errors, sanitized } = validateForgotPassword(req.body);
+  if (!isValid) {
+    return sendError(res, errors[0]?.error || 'कृपया ओळख प्रविष्ट करा.', 'MISSING_IDENTIFIER', 400, { validationErrors: errors });
   }
+
+  const { identifier } = sanitized;
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   db.insert('otpCodes', {
@@ -177,10 +189,12 @@ router.post('/forgot-password', (req, res) => {
 
 // POST /api/auth/verify-otp
 router.post('/verify-otp', (req, res) => {
-  const { identifier, otp } = req.body;
-  if (!identifier || !otp) {
-    return sendError(res, 'कृपया ओळख व OTP दोन्ही प्रविष्ट करा.', 'MISSING_OTP', 400);
+  const { isValid, errors, sanitized } = validateVerifyOtp(req.body);
+  if (!isValid) {
+    return sendError(res, errors[0]?.error || 'कृपया ओळख व OTP दोन्ही प्रविष्ट करा.', 'MISSING_OTP', 400, { validationErrors: errors });
   }
+
+  const { identifier, otp } = sanitized;
 
   const otps = db.getCollection('otpCodes');
   const valid = otps.find(o => o.identifier === identifier && o.otp === String(otp) && o.expiresAt > Date.now());
@@ -198,10 +212,13 @@ router.post('/verify-otp', (req, res) => {
 
 // PUT /api/auth/reset-password
 router.put('/reset-password', (req, res) => {
-  const { identifier, newPassword } = req.body;
-  if (!identifier || !newPassword) {
-    return sendError(res, 'कृपया नवीन पासवर्ड प्रविष्ट करा.', 'MISSING_NEW_PASSWORD', 400);
+  const { isValid, errors, sanitized } = validateResetPassword(req.body);
+  if (!isValid) {
+    return sendError(res, errors[0]?.error || 'कृपया नवीन पासवर्ड प्रविष्ट करा.', 'MISSING_NEW_PASSWORD', 400, { validationErrors: errors });
   }
+
+  const { identifier } = sanitized;
+  const { newPassword } = req.body;
 
   const members = db.getCollection('members');
   const member = members.find(m => 

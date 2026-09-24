@@ -140,8 +140,18 @@ router.post('/submit', async (req, res, next) => {
       rank_title = 'जागृत मावळा'
     } = req.body;
 
+    const numScore = Math.max(0, Number(score) || 0);
+    const numTotal = Math.max(1, Number(total) || 10);
+    const numPoints = Math.max(0, Number(points) || 0);
+    const numStreak = Math.max(0, Number(streak) || 0);
+
     const id = 'SUB-' + Date.now().toString().slice(-6);
-    const percentage = total > 0 ? Math.round((score / total) * 100) : 0;
+    const percentage = Math.round((numScore / numTotal) * 100);
+
+    const safeName = typeof candidate_name === 'string' ? candidate_name.trim().slice(0, 100) : 'मावळा';
+    const safeCity = typeof city === 'string' ? city.trim().slice(0, 100) : 'महाराष्ट्र';
+    const safeCat = typeof category === 'string' ? category.trim().slice(0, 100) : 'सर्वसमावेशक';
+    const safeRank = typeof rank_title === 'string' ? rank_title.trim().slice(0, 100) : 'जागृत मावळा';
 
     await runQuery(`
       INSERT INTO quiz_submissions (
@@ -149,22 +159,22 @@ router.post('/submit', async (req, res, next) => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
     `, [
       id,
-      candidate_name || 'मावळा',
-      city || 'महाराष्ट्र',
-      category,
-      score,
-      total,
+      safeName || 'मावळा',
+      safeCity || 'महाराष्ट्र',
+      safeCat,
+      numScore,
+      numTotal,
       percentage,
-      points,
-      streak,
-      rank_title
+      numPoints,
+      numStreak,
+      safeRank
     ]);
 
     const created = await get('SELECT * FROM quiz_submissions WHERE id = ?', [id]);
 
     return sendSuccess(res, 'क्विझ निकाल यशस्वीरीत्या नोंदवला गेला!', {
       submission: created,
-      rank_title,
+      rank_title: safeRank,
       badgeEligibility: percentage >= 80 ? 'शिवकालीन इतिहास भूषण पदक' : 'सहभागी मावळा'
     }, 201);
   } catch (err) {

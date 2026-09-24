@@ -2,6 +2,15 @@ import { Router } from 'express';
 import { db } from '../db/realtimeDb.js';
 import { authenticateToken, optionalToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
+import { 
+  validateBloodRequest, 
+  validateBloodDonor, 
+  validateMatrimony, 
+  sanitize, 
+  isValidPhone, 
+  cleanPhone, 
+  isValidBloodGroup 
+} from '../utils/validator.js';
 
 const router = Router();
 
@@ -14,10 +23,13 @@ router.get('/blood/requests', (req, res) => {
 });
 
 router.post('/blood/requests', optionalToken, (req, res) => {
-  const { patient, hospital, bloodGroup, units, urgency, contact, city } = req.body;
-  if (!patient || !hospital || !bloodGroup || !contact) {
-    return sendError(res, 'कृपया रुग्ण, रुग्णालय, रक्तगट आणि संपर्क क्रमांक प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  const { isValid, errors, sanitized } = validateBloodRequest(req.body);
+  if (!isValid) {
+    return sendError(res, errors[0]?.error || 'अवैध रक्त मागणी माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
   }
+
+  const { patient, hospital, bloodGroup, contact, units } = sanitized;
+  const { urgency, city } = req.body;
 
   const newReq = {
     id: `REQ-${Date.now().toString().slice(-4)}`,
@@ -25,8 +37,8 @@ router.post('/blood/requests', optionalToken, (req, res) => {
     hospital,
     bloodGroup,
     units: units || 1,
-    urgency: urgency || 'तात्काळ (Emergency)',
-    city: city || 'पुणे/महाराष्ट्र',
+    urgency: sanitize(urgency) || 'तात्काळ (Emergency)',
+    city: sanitize(city) || 'पुणे/महाराष्ट्र',
     contact,
     time: 'आत्ताच',
     createdAt: new Date().toISOString()
@@ -53,18 +65,21 @@ router.get('/blood/donors', (req, res) => {
 });
 
 router.post('/blood/donors', optionalToken, (req, res) => {
-  const { name, bloodGroup, city, phone, lastDonated } = req.body;
-  if (!name || !phone) {
-    return sendError(res, 'नाव आणि फोन नंबर आवश्यक आहे.', 'MISSING_FIELDS', 400);
+  const { isValid, errors, sanitized } = validateBloodDonor(req.body);
+  if (!isValid) {
+    return sendError(res, errors[0]?.error || 'अवैध रक्तदाता माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
   }
+
+  const { name, bloodGroup, phone } = sanitized;
+  const { city, lastDonated } = req.body;
 
   const newDonor = {
     id: `DON-${Date.now().toString().slice(-4)}`,
     name,
-    group: bloodGroup || 'O+',
-    city: city || 'पुणे',
+    group: bloodGroup,
+    city: sanitize(city) || 'पुणे',
     phone,
-    lastDonated: lastDonated || 'नवीन नोंदणी',
+    lastDonated: sanitize(lastDonated) || 'नवीन नोंदणी',
     totalDonations: 1,
     verified: true,
     createdAt: new Date().toISOString()
@@ -97,30 +112,35 @@ router.get('/matrimony', authenticateToken, (req, res) => {
 });
 
 router.post('/matrimony', authenticateToken, (req, res) => {
-  const { name, gender, age, height, education, profession, income, city, kul, gotra, expectations, phone } = req.body;
-  if (!name || !gender || !age) {
-    return sendError(res, 'नाव, लिंग आणि वय आवश्यक आहे.', 'MISSING_FIELDS', 400);
+  const { isValid, errors, sanitized } = validateMatrimony(req.body);
+  if (!isValid) {
+    return sendError(res, errors[0]?.error || 'अवैध विवाह प्रोफाइल माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
   }
 
+  const { name, age } = sanitized;
+  const { gender, height, education, profession, income, city, kul, gotra, expectations, phone } = req.body;
+
   const isGroom = (gender || '').includes('वर');
+  const cleanPhoneNum = phone ? cleanPhone(phone) : (req.user.phone ? cleanPhone(req.user.phone) : '');
+
   const newProfile = {
     id: `CM-${isGroom ? 'M' : 'F'}-${Date.now().toString().slice(-4)}`,
     memberId: req.user.id,
     name,
     gender: isGroom ? 'वर (Groom)' : 'वधू (Bride)',
-    age: Number(age) || 26,
-    height: height || "5' 8\"",
+    age,
+    height: sanitize(height) || "5' 8\"",
     caste: '९६ कुळी मराठा',
-    kul: kul || 'पाटील / कदम / जाधव',
-    gotra: gotra || 'कश्यप',
-    education: education || 'पदवीधर',
-    profession: profession || 'व्यवसायिक / सेवा',
-    income: income || 'उत्पन्न खुलासेवार',
-    city: city || req.user.district || 'पुणे',
+    kul: sanitize(kul) || 'पाटील / कदम / जाधव',
+    gotra: sanitize(gotra) || 'कश्यप',
+    education: sanitize(education) || 'पदवीधर',
+    profession: sanitize(profession) || 'व्यवसायिक / सेवा',
+    income: sanitize(income) || 'उत्पन्न खुलासेवार',
+    city: sanitize(city) || req.user.district || 'पुणे',
     verified: true,
     photo: isGroom ? '👨‍💼' : '👩‍💼',
-    expectations: expectations || 'सुशिक्षित, सुसंस्कृत अनुरूप जोडीदार.',
-    contact: phone || req.user.phone || '',
+    expectations: sanitize(expectations) || 'सुशिक्षित, सुसंस्कृत अनुरूप जोडीदार.',
+    contact: cleanPhoneNum,
     createdAt: new Date().toISOString()
   };
 
@@ -141,19 +161,27 @@ router.get('/women/help', authenticateToken, (req, res) => {
 
 router.post('/women/help', authenticateToken, (req, res) => {
   const { subject, category, description, phone, preferredTime, urgent } = req.body;
-  if (!subject || !description) {
+  const cleanSubject = sanitize(subject);
+  const cleanDesc = sanitize(description);
+
+  if (!cleanSubject || !cleanDesc) {
     return sendError(res, 'कृपया विषय व माहिती प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  }
+
+  let cleanPhoneNum = phone ? cleanPhone(phone) : (req.user.phone || '');
+  if (cleanPhoneNum && !isValidPhone(cleanPhoneNum)) {
+    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
   }
 
   const item = {
     id: `WHELP-${Date.now().toString().slice(-4)}`,
     applicantId: req.user.id,
     applicantName: req.user.name,
-    subject,
-    category: category || 'कायदेशीर व समुपदेशन',
-    description,
-    phone: phone || req.user.phone || '',
-    preferredTime: preferredTime || 'सकाळी ११ ते दुपारी २',
+    subject: cleanSubject,
+    category: sanitize(category) || 'कायदेशीर व समुपदेशन',
+    description: cleanDesc,
+    phone: cleanPhoneNum,
+    preferredTime: sanitize(preferredTime) || 'सकाळी ११ ते दुपारी २',
     urgent: Boolean(urgent),
     status: 'समीक्षेत (Under Counselor Review)',
     createdAt: new Date().toISOString()
@@ -175,18 +203,29 @@ router.get('/social/volunteers', (req, res) => {
 
 router.post('/social/volunteers', optionalToken, (req, res) => {
   const { name, field, district, phone, bloodGroup, availability } = req.body;
-  if (!name || !phone) {
+  const cleanName = sanitize(name);
+  const cleanedPhone = cleanPhone(phone);
+
+  if (!cleanName || !cleanedPhone) {
     return sendError(res, 'नाव व संपर्क नंबर आवश्यक आहे.', 'MISSING_FIELDS', 400);
+  }
+
+  if (!isValidPhone(cleanedPhone)) {
+    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
+  }
+
+  if (bloodGroup && !isValidBloodGroup(bloodGroup)) {
+    return sendError(res, 'कृपया वैध रक्तगट निवडा.', 'INVALID_BLOOD_GROUP', 400);
   }
 
   const item = {
     id: `VOL-${Date.now().toString().slice(-4)}`,
-    name,
-    field: field || 'आपत्ती व्यवस्थापन व सामाजिक मदत',
-    district: district || 'पुणे',
-    phone,
-    bloodGroup: bloodGroup || 'O+',
-    availability: availability || 'आणीबाणी / वीकेंड',
+    name: cleanName,
+    field: sanitize(field) || 'आपत्ती व्यवस्थापन व सामाजिक मदत',
+    district: sanitize(district) || 'पुणे',
+    phone: cleanedPhone,
+    bloodGroup: bloodGroup ? sanitize(bloodGroup) : 'O+',
+    availability: sanitize(availability) || 'आणीबाणी / वीकेंड',
     createdAt: new Date().toISOString()
   };
 
@@ -205,25 +244,33 @@ router.get('/political/grievances', authenticateToken, (req, res) => {
 
 router.post('/political/grievances', authenticateToken, (req, res) => {
   const { title, targetAuthority, district, description, phone } = req.body;
-  if (!title || !description) {
+  const cleanTitle = sanitize(title);
+  const cleanDesc = sanitize(description);
+
+  if (!cleanTitle || !cleanDesc) {
     return sendError(res, 'कृपया निवेदनाचे शीर्षक व सविस्तर माहिती प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  }
+
+  const cleanedPhone = phone ? cleanPhone(phone) : (req.user.phone || '');
+  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
+    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
   }
 
   const item = {
     id: `GRV-${Date.now().toString().slice(-4)}`,
     applicantId: req.user.id,
     applicantName: req.user.name,
-    title,
-    targetAuthority: targetAuthority || 'जिल्हाधिकारी / लोकप्रतिनिधी',
-    district: district || req.user.district || 'पुणे',
-    description,
-    phone: phone || req.user.phone || '',
+    title: cleanTitle,
+    targetAuthority: sanitize(targetAuthority) || 'जिल्हाधिकारी / लोकप्रतिनिधी',
+    district: sanitize(district) || req.user.district || 'पुणे',
+    description: cleanDesc,
+    phone: cleanedPhone,
     status: 'सादर केले (Forwarded to Cell)',
     createdAt: new Date().toISOString()
   };
 
   db.insert('grievances', item);
-  db.addAuditLog('SUBMIT_GRIEVANCE', req.user.id, { grievanceId: item.id, title });
+  db.addAuditLog('SUBMIT_GRIEVANCE', req.user.id, { grievanceId: item.id, title: cleanTitle });
 
   return sendSuccess(res, '📜 मागणी/निवेदन यशस्वीरीत्या सादर केले गेले!', { grievance: item }, 201);
 });

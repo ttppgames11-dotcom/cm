@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/realtimeDb.js';
 import { authenticateToken, optionalToken, requireRole } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
+import { sanitize } from '../utils/validator.js';
 
 const router = Router();
 
@@ -44,9 +45,13 @@ router.get('/posts', (req, res) => {
 // POST /api/community/posts
 // Create rich post with media, tag, category
 router.post('/posts', authenticateToken, (req, res) => {
-  const { content, mediaUrl, tag, groupId } = req.body;
-  if (!content) {
-    return sendError(res, 'कृपया पोस्टचा मजकूर प्रविष्ट करा.', 'MISSING_CONTENT', 400);
+  const content = sanitize(req.body.content);
+  const mediaUrl = sanitize(req.body.mediaUrl);
+  const tag = sanitize(req.body.tag);
+  const groupId = req.body.groupId ? sanitize(req.body.groupId) : null;
+
+  if (!content || content.length < 2) {
+    return sendError(res, 'कृपया पोस्टचा योग्य मजकूर प्रविष्ट करा (किमान २ अक्षरे).', 'MISSING_CONTENT', 400);
   }
 
   const newPost = {
@@ -58,7 +63,7 @@ router.post('/posts', authenticateToken, (req, res) => {
     content,
     mediaUrl: mediaUrl || '',
     tag: tag || 'सामान्य चर्चा',
-    groupId: groupId || null,
+    groupId,
     likes: 0,
     likedBy: [],
     comments: [],
@@ -108,7 +113,7 @@ router.post('/posts/:id/comments', authenticateToken, (req, res) => {
     return sendError(res, 'पोस्ट सापडली नाही.', 'POST_NOT_FOUND', 404);
   }
 
-  const { text } = req.body;
+  const text = sanitize(req.body.text);
   if (!text) {
     return sendError(res, 'कृपया प्रतिक्रिया प्रविष्ट करा.', 'MISSING_COMMENT', 400);
   }
@@ -174,23 +179,26 @@ router.get('/news', (req, res) => {
 // Admin creates news announcement
 router.post('/news', authenticateToken, requireRole('admin', 'ceo'), (req, res) => {
   const { title, summary, content, category, imageUrl } = req.body;
-  if (!title || !content) {
+  const cleanTitle = sanitize(title);
+  const cleanContent = sanitize(content);
+
+  if (!cleanTitle || !cleanContent) {
     return sendError(res, 'शीर्षक व बातमीचा मजकूर आवश्यक आहे.', 'MISSING_FIELDS', 400);
   }
 
   const item = {
     id: `NEWS-${Date.now().toString().slice(-4)}`,
-    title,
-    summary: summary || title,
-    content,
-    category: category || 'अधिकृत घोषणा',
-    imageUrl: imageUrl || '',
+    title: cleanTitle,
+    summary: sanitize(summary) || cleanTitle,
+    content: cleanContent,
+    category: sanitize(category) || 'अधिकृत घोषणा',
+    imageUrl: sanitize(imageUrl) || '',
     publishedBy: req.user.name,
     publishedAt: new Date().toISOString()
   };
 
   db.insert('news', item);
-  db.addAuditLog('PUBLISH_NEWS', req.user.id, { newsId: item.id, title });
+  db.addAuditLog('PUBLISH_NEWS', req.user.id, { newsId: item.id, title: cleanTitle });
 
   return sendSuccess(res, 'वृत्त यशस्वीरीत्या प्रकाशित केले!', { news: item }, 201);
 });

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/realtimeDb.js';
 import { optionalToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
+import { sanitize, isValidPhone, cleanPhone } from '../utils/validator.js';
 
 const router = Router();
 
@@ -28,28 +29,34 @@ router.get('/', (req, res) => {
 // Book a local professional service for home/office
 router.post('/booking', optionalToken, (req, res) => {
   const { serviceId, serviceCategory, professionalName, requestedDate, address, phone, requirementNotes } = req.body;
+  const cleanCat = sanitize(serviceCategory);
+  const cleanedPhone = cleanPhone(phone);
 
-  if (!phone || !serviceCategory) {
+  if (!cleanedPhone || !cleanCat) {
     return sendError(res, 'कृपया सेवा प्रकार व संपर्क नंबर प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  }
+
+  if (!isValidPhone(cleanedPhone)) {
+    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
   }
 
   const booking = {
     id: `SBK-${Date.now().toString().slice(-4)}`,
-    serviceId: serviceId || '',
-    serviceCategory,
-    professionalName: professionalName || 'नजीकचा मराठा सेवा व्यावसायिक',
-    customerName: req.user?.name || req.body.customerName || 'सन्माननीय ग्राहक',
+    serviceId: sanitize(serviceId) || '',
+    serviceCategory: cleanCat,
+    professionalName: sanitize(professionalName) || 'नजीकचा मराठा सेवा व्यावसायिक',
+    customerName: req.user?.name || sanitize(req.body.customerName) || 'सन्माननीय ग्राहक',
     customerId: req.user?.id || 'GUEST',
-    phone,
-    address: address || 'महाराष्ट्र',
-    requestedDate: requestedDate || 'लवकरात लवकर (ASAP)',
-    notes: requirementNotes || '',
+    phone: cleanedPhone,
+    address: sanitize(address) || 'महाराष्ट्र',
+    requestedDate: sanitize(requestedDate) || 'लवकरात लवकर (ASAP)',
+    notes: sanitize(requirementNotes) || '',
     status: 'बुकिंग निश्चित - व्यावसायिक संपर्क साधतील',
     createdAt: new Date().toISOString()
   };
 
   db.insert('serviceBookings', booking);
-  db.addAuditLog('BOOK_SERVICE', req.user?.id || 'GUEST', { bookingId: booking.id, serviceCategory });
+  db.addAuditLog('BOOK_SERVICE', req.user?.id || 'GUEST', { bookingId: booking.id, serviceCategory: cleanCat });
 
   return sendSuccess(res, 'सेवा बुकिंग यशस्वी! आमचे व्यावसायिक लवकरच आपल्याशी संपर्क करतील.', { booking }, 201);
 });

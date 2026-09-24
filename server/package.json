@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js",
+    "dev": "node --watch-path=server.js --watch-path=routes --watch-path=middleware --watch-path=utils --watch-path=db/realtimeDb.js server.js",
     "seed": "node ../database/seed.js"
   },
   "dependencies": {

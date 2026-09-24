@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/realtimeDb.js';
 import { authenticateToken, optionalToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
+import { validateEvent, sanitize } from '../utils/validator.js';
 
 const router = Router();
 
@@ -83,21 +84,24 @@ router.get('/:id', (req, res) => {
 // POST /api/events
 // Create sanctioned event with registration capacity
 router.post('/', authenticateToken, (req, res) => {
-  const { title, date, time, location, district, category, description, capacity, chiefGuests } = req.body;
-  if (!title || !date || !location) {
-    return sendError(res, 'कृपया कार्यक्रमाचे नाव, तारीख व ठिकाण प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  const { isValid, errors, sanitized } = validateEvent(req.body);
+  if (!isValid) {
+    return sendError(res, errors[0]?.error || 'अवैध कार्यक्रम माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
   }
+
+  const { title, date, location } = sanitized;
+  const { time, district, category, description, capacity, chiefGuests } = req.body;
 
   const newEvent = {
     id: `EVT-${Date.now().toString().slice(-4)}`,
     title,
     date,
-    time: time || 'सकाळी १०:००',
+    time: sanitize(time) || 'सकाळी १०:००',
     location,
-    district: district || req.user.district || 'पुणे',
-    category: category || 'सामाजिक व सांस्कृतिक',
-    description: description || '',
-    chiefGuests: chiefGuests || 'स्थानिक महासंघ पदाधिकारी',
+    district: sanitize(district) || req.user.district || 'पुणे',
+    category: sanitize(category) || 'सामाजिक व सांस्कृतिक',
+    description: sanitize(description) || '',
+    chiefGuests: sanitize(chiefGuests) || 'स्थानिक महासंघ पदाधिकारी',
     capacity: Number(capacity) || 500,
     attendeesCount: 0,
     createdBy: req.user.id,

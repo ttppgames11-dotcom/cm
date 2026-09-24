@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/realtimeDb.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
+import { validateJob, sanitize, isValidPhone, cleanPhone } from '../utils/validator.js';
 
 const router = Router();
 
@@ -88,22 +89,25 @@ router.get('/:id', (req, res) => {
 // POST /api/jobs
 // Post job listing by Maratha entrepreneur/business
 router.post('/', authenticateToken, (req, res) => {
-  const { title, company, location, district, industry, salary, type, experience, description, contactEmail } = req.body;
-  if (!title || !company || !location) {
-    return sendError(res, 'कृपया नोकरीचे पद, कंपनी आणि ठिकाण प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  const { isValid, errors, sanitized } = validateJob(req.body);
+  if (!isValid) {
+    return sendError(res, errors[0]?.error || 'अवैध नोकरी जाहिरात माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
   }
+
+  const { title, company, location, contactEmail } = sanitized;
+  const { district, industry, salary, type, experience, description } = req.body;
 
   const newJob = {
     id: `JOB-${Date.now().toString().slice(-4)}`,
     title,
     company,
     location,
-    district: district || req.user.district || 'पुणे',
-    industry: industry || 'इतर उद्योग',
-    salary: salary || 'चर्चेनुसार (Negotiable)',
-    type: type || 'पूर्णवेळ',
-    experience: experience || '१-३ वर्षे',
-    description: description || '',
+    district: sanitize(district) || req.user.district || 'पुणे',
+    industry: sanitize(industry) || 'इतर उद्योग',
+    salary: sanitize(salary) || 'चर्चेनुसार (Negotiable)',
+    type: sanitize(type) || 'पूर्णवेळ',
+    experience: sanitize(experience) || '१-३ वर्षे',
+    description: sanitize(description) || '',
     contactEmail: contactEmail || req.user.email || '',
     posterId: req.user.id,
     posterName: req.user.name,
@@ -125,6 +129,12 @@ router.post('/:id/apply', authenticateToken, (req, res) => {
   }
 
   const { resumeUrl, coverNote, phone } = req.body;
+  const cleanedPhone = phone ? cleanPhone(phone) : (req.user.phone ? cleanPhone(req.user.phone) : '');
+
+  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
+    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
+  }
+
   const application = {
     id: `APP-${Date.now().toString().slice(-4)}`,
     jobId: req.params.id,
@@ -133,9 +143,9 @@ router.post('/:id/apply', authenticateToken, (req, res) => {
     applicantId: req.user.id,
     applicantName: req.user.name,
     applicantEmail: req.user.email || '',
-    applicantPhone: phone || req.user.phone || '',
-    resumeUrl: resumeUrl || 'बायोडाटा संलग्न',
-    coverNote: coverNote || '',
+    applicantPhone: cleanedPhone,
+    resumeUrl: sanitize(resumeUrl) || 'बायोडाटा संलग्न',
+    coverNote: sanitize(coverNote) || '',
     status: 'अर्ज सादर झाला (Applied)',
     appliedAt: new Date().toISOString()
   };

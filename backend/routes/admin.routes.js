@@ -66,17 +66,22 @@ router.post('/verify-member/:id', authenticateToken, requireRole('admin', 'ceo',
   }
 
   const { status, remarks } = req.body; // status: 'approved' | 'rejected'
+  if (status === undefined || status === null) {
+    return sendError(res, 'कृपया पडताळणी स्थिती (approved / rejected) प्रविष्ट करा.', 'MISSING_STATUS', 400);
+  }
+
   const isApproved = status === 'approved' || status === true;
+  const cleanRemarks = remarks ? String(remarks).trim() : 'कागदपत्र पडताळणी पूर्ण झाली';
 
   const updated = db.update('members', req.params.id, {
     verified: isApproved,
     verificationStatus: isApproved ? 'प्रमाणित (Verified)' : 'नाकारले (Rejected)',
     verifiedBy: req.user.name,
-    verificationRemarks: remarks || 'कागदपत्र पडताळणी पूर्ण झाली',
+    verificationRemarks: cleanRemarks,
     verifiedAt: new Date().toISOString()
   });
 
-  db.addAuditLog('VERIFY_MEMBER', req.user.id, { memberId: req.params.id, status, remarks });
+  db.addAuditLog('VERIFY_MEMBER', req.user.id, { memberId: req.params.id, status, remarks: cleanRemarks });
 
   // Send notification to the member
   db.insert('notifications', {
@@ -84,7 +89,7 @@ router.post('/verify-member/:id', authenticateToken, requireRole('admin', 'ceo',
     title: isApproved ? '✅ डिजिटल ओळखपत्र प्रमाणित झाले!' : '⚠️ ओळखपत्र पडताळणी सूचना',
     message: isApproved 
       ? `अभिनंदन! आपले मराठा महासंघ डिजिटल ओळखपत्र ${req.user.name} यांच्याद्वारे प्रमाणित करण्यात आले आहे.`
-      : `आपली पडताळणी प्रलंबित आहे: ${remarks || 'कृपया कागदपत्रे पुन्हा तपासा.'}`,
+      : `आपली पडताळणी प्रलंबित आहे: ${cleanRemarks}`,
     type: 'verification',
     read: false,
     timestamp: new Date().toISOString()
@@ -148,6 +153,11 @@ router.put('/assign-role', authenticateToken, requireRole('admin', 'ceo', 'super
     return sendError(res, 'कृपया सदस्य आयडी आणि नवीन पद प्रविष्ट करा.', 'MISSING_FIELDS', 400);
   }
 
+  const validRoles = ['superadmin', 'ceo', 'admin', 'district_admin', 'chapter_president', 'seva_helpdesk', 'member'];
+  if (!validRoles.includes(newRole)) {
+    return sendError(res, `अवैध पद/भूमिका. वैध पदे: ${validRoles.join(', ')}`, 'INVALID_ROLE', 400);
+  }
+
   const member = db.findById('members', memberId);
   if (!member) {
     return sendError(res, 'सदस्य सापडला नाही.', 'MEMBER_NOT_FOUND', 404);
@@ -155,7 +165,7 @@ router.put('/assign-role', authenticateToken, requireRole('admin', 'ceo', 'super
 
   const updated = db.update('members', memberId, {
     role: newRole,
-    assignedScope: assignedScope || member.district || 'पुणे',
+    assignedScope: assignedScope ? String(assignedScope).trim() : (member.district || 'पुणे'),
     roleAssignedBy: req.user.name,
     roleAssignedAt: new Date().toISOString()
   });
