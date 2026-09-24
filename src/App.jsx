@@ -42,6 +42,7 @@ import FinanceLedgerCRM from './pages/admin/FinanceLedgerCRM';
 import CRMRoleHubPage from './pages/admin/CRMRoleHubPage';
 import SiteContentEditorPage from './pages/admin/SiteContentEditorPage';
 import SuperAdminDashboardPage from './pages/admin/SuperAdminDashboardPage';
+import ConnectMarathaAIAgentPage from './pages/ai/ConnectMarathaAIAgentPage';
 import GenericArticlePage from './pages/common/GenericArticlePage';
 
 // Specialized Converted Feature Pages
@@ -385,6 +386,12 @@ export default function App() {
             <Route path="/admin/content" element={<SiteContentEditorPage />} />
             <Route path="/cms" element={<SiteContentEditorPage />} />
             <Route path="/crm/cms" element={<SiteContentEditorPage />} />
+
+            {/* Connect Maratha AI Agent (Trilingual RAG, Forts, Swarajya, Support) */}
+            <Route path="/ai" element={<ConnectMarathaAIAgentPage />} />
+            <Route path="/ai-agent" element={<ConnectMarathaAIAgentPage />} />
+            <Route path="/assistant" element={<ConnectMarathaAIAgentPage />} />
+            <Route path="/crm/ai" element={<ConnectMarathaAIAgentPage />} />
 
             {/* Newly Added Community Ecosystem Modules with Full URL Variations */}
             <Route path="/doctors" element={<DoctorsDirectoryPage />} />

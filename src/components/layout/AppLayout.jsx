@@ -5,6 +5,7 @@ import SiteHeader from './SiteHeader';
 import SiteFooter from './SiteFooter';
 import CommandPalette from './CommandPalette';
 import MobileBottomNav from './MobileBottomNav';
+import AIAssistantWidget from '../common/AIAssistantWidget';
 
 export default function AppLayout({ children }) {
   const { user } = useAuth();
@@ -95,6 +96,11 @@ export default function AppLayout({ children }) {
           <span>🎨</span>
           <span>संपादित करा (CMS)</span>
         </Link>
+      )}
+
+      {/* Global Floating Connect Maratha AI Assistant Widget */}
+      {location.pathname !== '/ai' && location.pathname !== '/ai-agent' && (
+        <AIAssistantWidget />
       )}
     </div>
   );

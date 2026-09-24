@@ -1,0 +1,98 @@
+[
+  {
+    "id": "20260921093850741162",
+    "mobile": "8965471236",
+    "email": "ert@gmail.com",
+    "issue": "shivaji maharaj story",
+    "user_question": "shivaji maharaj story",
+    "language": "en",
+    "session_id": "session_1789963608226_yp6hsaf",
+    "created_at": "2026-09-21T09:38:50.741582"
+  },
+  {
+    "id": 2,
+    "mobile": "5698231452",
+    "email": "ert@gmail.com",
+    "issue": "संभाजी महाराज कौन थे?",
+    "user_question": "संभाजी महाराज कौन थे?",
+    "language": "hi",
+    "session_id": "session_1789981721904_fozac90",
+    "created_at": "2026-09-21T14:42:12.594904"
+  },
+  {
+    "mobile": "9865321478",
+    "email": "erd@gmail.com",
+    "issue": "career",
+    "language": "mr",
+    "session_id": "session_1789990847778_sfoz2jb",
+    "timestamp": "2026-09-21T17:43:26.668183"
+  },
+  {
+    "mobile": "9875412365",
+    "email": "opw@gmail.com",
+    "issue": "want more details regarding to shivaji maharaj",
+    "language": "en",
+    "session_id": "session_1790057105062_g1x4oo2",
+    "timestamp": "2026-09-22T11:37:47.769253"
+  },
+  {
+    "mobile": "5869321478",
+    "email": "ert@gmail.com",
+    "issue": "shivaji maharaj",
+    "language": "mr",
+    "session_id": "session_1790073158910_j3f21mn",
+    "timestamp": "2026-09-22T16:06:16.556727"
+  },
+  {
+    "mobile": "9321453628",
+    "email": "ght@gmail.com",
+    "issue": "शिवाजी महाराज कोण आहेत",
+    "language": "mr",
+    "session_id": "session_1790076142827_16fgg1s",
+    "timestamp": "2026-09-22T16:55:00.051240"
+  },
+  {
+    "mobile": "8545781236",
+    "email": "mnh@gmail.com",
+    "issue": "sambhaji maharaj",
+    "language": "mr",
+    "session_id": "session_1790076142827_16fgg1s",
+    "timestamp": "2026-09-22T17:04:28.761533"
+  },
+  {
+    "mobile": "9145854578",
+    "email": "qas@gmail.com",
+    "issue": "who is shivaji maharaj",
+    "language": "mr",
+    "session_id": "session_1790136597776_h5kixhk",
+    "timestamp": "2026-09-23T09:44:24.393235"
+  },
+  {
+    "mobile": "9847125863",
+    "email": "vcb@gmail.com",
+    "issue": "more details regarding shivaji maharaj",
+    "language": "mr",
+    "session_id": "session_1790223680555_2oewfzo",
+    "timestamp": "2026-09-24T09:53:07.379793"
+  },
+  {
+    "id": "TECH-REQ-719154",
+    "name": "संभाजी मोरे",
+    "mobile": "+919876543210",
+    "email": "member@connectmaratha.org",
+    "issue": "सिंधुदुर्ग किल्ल्याच्या ऐतिहासिक तोफांची नोंद सापडत नाही.",
+    "language": "mr",
+    "status": "Open",
+    "timestamp": "2026-09-24T10:11:59.154Z"
+  },
+  {
+    "id": "TECH-REQ-735839",
+    "name": "संभाजी मोरे",
+    "mobile": "+919876543210",
+    "email": "member@connectmaratha.org",
+    "issue": "सिंधुदुर्ग किल्ल्याच्या ऐतिहासिक तोफांची नोंद सापडत नाही.",
+    "language": "mr",
+    "status": "Open",
+    "timestamp": "2026-09-24T10:12:15.839Z"
+  }
+]

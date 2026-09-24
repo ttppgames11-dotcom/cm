@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 import { useAuth } from '../../context/AuthContext';
@@ -64,11 +64,12 @@ export default function AdminERPPage() {
     if (p.includes('/chapter')) return 'business';
     if (p.includes('/helpdesk') || p.includes('/seva')) return 'seva';
     if (p.includes('/ceo')) return 'ceo';
-    return 'dashboard';
+    return 'pipeline';
   };
 
   const [activeRole, setActiveRole] = useState(getInitialRole());
-  const [activeView, setActiveView] = useState(getInitialView());
+  const [activeView, setActiveView] = useState(getInitialView()); // 'pipeline' | 'members' | 'business' | 'seva' | 'reports' | 'logs'
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
 
@@ -138,62 +139,85 @@ export default function AdminERPPage() {
         showToast('यशस्वी! सुपर ॲडमिन अधिकार प्राप्त झाले.', 'success');
         setTimeout(() => loadRealtimeData(), 400);
       }
-    } catch (e) {
-      showToast('लॉगिन त्रुटी: ' + e.message, 'error');
+    } catch (err) {
+      showToast('सुपर ॲडमिन लॉगिन अयशस्वी: ' + (err.message || ''), 'error');
     }
   };
 
-  // 1-Click KYC Verification in Database
-  const handleToggleVerification = async (u) => {
+  // Toggle KYC Verification
+  const handleToggleVerification = async (targetUser) => {
     try {
-      const nextStatus = !u.verified;
-      const res = await apiClient.updateAdminUser(u.id, { verified: nextStatus });
-      if (res && res.success) {
-        showToast(`सदस्य "${u.name}" ${nextStatus ? 'प्रमाणित (KYC Approved)' : 'अ-प्रमाणित'} करण्यात आला.`);
-        setUsers(users.map(item => item.id === u.id ? { ...item, verified: nextStatus } : item));
-      } else {
-        showToast('पडताळणी बदलता आली नाही.', 'error');
-      }
+      const newStatus = !targetUser.verified;
+      await apiClient.updateAdminUser(targetUser.id, { verified: newStatus });
+      setUsers((prev) =>
+        prev.map((u) => (u.id === targetUser.id ? { ...u, verified: newStatus } : u))
+      );
+      showToast(`वापरकर्ता ${targetUser.name} पडताळणी स्थिती: ${newStatus ? 'प्रमाणित (Approved)' : 'प्रलंबित (Pending)'}`);
     } catch (err) {
-      showToast('सर्व्हर त्रुटी.', 'error');
+      showToast('पडताळणी बदलण्यात अडचण आली: ' + (err.message || ''), 'error');
     }
   };
 
-  // 1-Click Role Change in Database
-  const handleRoleChange = async (userId, newRole) => {
+  // Submit Referral
+  const handleCreateReferral = async (e) => {
+    e.preventDefault();
+    if (!newReferralData.title || !newReferralData.value) {
+      showToast('कृपया शीर्षक आणि अंदाजे मूल्य भरा.', 'error');
+      return;
+    }
     try {
-      const res = await apiClient.assignAdminRole(userId, newRole, 'महाराष्ट्र', 'CRM Console Update');
-      if (res && res.success) {
-        showToast(`भूमिका यशस्वीरीत्या "${newRole}" मध्ये बदलली!`);
-        setUsers(users.map(item => item.id === userId ? { ...item, role: newRole } : item));
+      const res = await apiClient.createReferral({
+        title: newReferralData.title,
+        estimatedValue: Number(newReferralData.value) || 50000,
+        giverName: newReferralData.giverName || user?.name || 'अध्यक्ष',
+        receiverName: newReferralData.receiverName || 'नोंदणीकृत व्यापारी',
+        status: newReferralData.status || 'active'
+      });
+      if (res && res.referral) {
+        setReferrals((prev) => [res.referral, ...prev]);
       } else {
-        showToast(res.message || 'भूमिका बदलता आली नाही.', 'error');
+        await loadRealtimeData();
       }
+      setNewReferralModal(false);
+      setNewReferralData({ title: '', value: '', giverName: '', receiverName: '', status: 'active' });
+      showToast('नवीन B2B रेफरल यशस्वीरीत्या नोंदवले!');
     } catch (err) {
-      showToast('भूमिका बदलताना त्रुटी.', 'error');
+      showToast('रेफरल नोंदवण्यात अडचण: ' + (err.message || ''), 'error');
     }
   };
 
   // Filtered Users
-  const filteredUsers = users.filter(u => {
-    const matchesSearch = !searchQuery || 
-      (u.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (u.phone || '').includes(searchQuery) ||
-      (u.email || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (u.district || '').toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredUsers = useMemo(() => {
+    return users.filter((u) => {
+      if (filterDistrict !== 'all' && u.district !== filterDistrict) return false;
+      if (filterVerified === 'verified' && !u.verified) return false;
+      if (filterVerified === 'unverified' && u.verified) return false;
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        return (
+          (u.name && u.name.toLowerCase().includes(q)) ||
+          (u.phone && u.phone.includes(q)) ||
+          (u.email && u.email.toLowerCase().includes(q)) ||
+          (u.id && u.id.toLowerCase().includes(q)) ||
+          (u.role && u.role.toLowerCase().includes(q))
+        );
+      }
+      return true;
+    });
+  }, [users, filterDistrict, filterVerified, searchQuery]);
 
-    const matchesDistrict = filterDistrict === 'all' || (u.district || '').toLowerCase() === filterDistrict.toLowerCase();
-    const matchesVerified = filterVerified === 'all' || 
-      (filterVerified === 'verified' && u.verified) || 
-      (filterVerified === 'unverified' && !u.verified);
+  // Kanban Stages for Pipeline
+  const kanbanStages = [
+    { id: 'inquiry', title: 'नवीन सदस्य (New Inquiries)', color: '#38BDF8', items: filteredUsers.filter(u => !u.verified).slice(0, 10) },
+    { id: 'kyc', title: 'KYC छाननी प्रलंबित (Under Review)', color: '#F59E0B', items: filteredUsers.filter(u => !u.verified && u.phone).slice(10, 20) },
+    { id: 'verified', title: 'प्रमाणित सदस्य (Verified Active)', color: '#10B981', items: filteredUsers.filter(u => u.verified).slice(0, 15) },
+    { id: 'enterprise', title: 'B2B व्यापारी संगम (Enterprise)', color: '#8B5CF6', items: businesses.slice(0, 10) }
+  ];
 
-    return matchesSearch && matchesDistrict && matchesVerified;
-  });
-
-  // Export to CSV
+  // Export CSV
   const handleExportCSV = () => {
-    const headers = ['ID', 'नाव', 'फोन', 'ईमेल', 'जिल्हा', 'भूमिका', 'पडताळणी'];
-    const rows = filteredUsers.map(u => [
+    const headers = ['ID', 'Name', 'Phone', 'Email', 'District', 'Role', 'Status'];
+    const rows = filteredUsers.map((u) => [
       u.id,
       `"${u.name || ''}"`,
       `"${u.phone || ''}"`,
@@ -202,20 +226,19 @@ export default function AdminERPPage() {
       `"${u.role || ''}"`,
       u.verified ? 'प्रमाणित' : 'प्रलंबित'
     ]);
-
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `Connect_Maratha_CRM_Export_${Date.now()}.csv`);
+    link.href = encodedUri;
+    link.download = `Connect_Maratha_CRM_Members_${Date.now()}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('CSV अहवाल यशस्वीरीत्या डाऊनलोड झाला!');
+    showToast('CSV अहवाल डाऊनलोड झाला!');
   };
 
   return (
-    <div style={{ background: '#090D16', minHeight: '100vh', color: '#E2E8F0', paddingBottom: '80px' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#090D16', color: '#F1F5F9', fontFamily: 'Inter, system-ui, sans-serif' }}>
       
       {/* Toast Alert */}
       {toast && (
@@ -226,7 +249,7 @@ export default function AdminERPPage() {
           zIndex: 99999,
           background: toast.type === 'error' ? '#EF4444' : '#10B981',
           color: '#FFFFFF',
-          padding: '14px 22px',
+          padding: '12px 20px',
           borderRadius: '10px',
           fontWeight: 800,
           boxShadow: '0 10px 30px rgba(0,0,0,0.6)',
@@ -239,521 +262,728 @@ export default function AdminERPPage() {
         </div>
       )}
 
-      {/* Top Royal Executive Header */}
-      <div style={{
-        background: 'linear-gradient(135deg, #0F172A 0%, #1E1B4B 60%, #312E81 100%)',
-        borderBottom: '2px solid rgba(245, 158, 11, 0.4)',
-        padding: '24px 24px 16px 24px',
-        boxShadow: '0 8px 30px rgba(0,0,0,0.5)'
+      {/* ============================================================ */}
+      {/* 1. LEFT CRM SIDEBAR (ENTERPRISE FORMAT) */}
+      {/* ============================================================ */}
+      <aside style={{
+        width: sidebarCollapsed ? '72px' : '260px',
+        background: '#0B0F19',
+        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+        display: 'flex',
+        flexDirection: 'column',
+        transition: 'width 0.25s ease',
+        flexShrink: 0,
+        position: 'sticky',
+        top: 0,
+        height: '100vh',
+        zIndex: 40
       }}>
-        <div style={{ maxWidth: '1440px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
-          <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(245, 158, 11, 0.15)', border: '1px solid #F59E0B', borderRadius: '30px', padding: '4px 14px', fontSize: '0.8rem', color: '#FDE68A', marginBottom: '8px' }}>
-              <span>🚩 अखिल भारतीय मराठा महासंघ</span>
-              <span>•</span>
-              <span>केंद्रीय CRM & ईआरपी कन्सोल</span>
-              <span>•</span>
-              <span style={{ color: '#34D399' }}>🟢 लाईव्ह REST API सिंक्रोनाइझेशन</span>
-            </div>
-            <h1 style={{ margin: '2px 0 6px 0', fontSize: '2.1rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.5px' }}>
-              एंटरप्राइज CRM कमांड सेंटर (Executive CRM Suite)
-            </h1>
-            <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.92rem' }}>
-              रिअल-टाइम डेटाबेस, डिजिटल KYC पडताळणी, B2B रेफरल्स, आपत्कालीन साहाय्य व थेट CMS व्यवस्थापन.
-            </p>
-          </div>
-
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <button
-              onClick={handleQuickSuperAdminLogin}
-              className="btn"
-              style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)', color: '#000', fontWeight: 900, border: 'none', padding: '9px 16px', borderRadius: '8px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span>👑</span>
-              <span>१-क्लिक SuperAdmin लॉगिन</span>
-            </button>
-            <Link
-              to="/admin/cms"
-              className="btn btn-outline"
-              style={{ background: '#7C3AED', color: '#FFF', border: 'none', fontWeight: 700, padding: '9px 16px', borderRadius: '8px', textDecoration: 'none' }}>
-              🎨 CMS वेबसाइट एडिटर
-            </Link>
-            <Link
-              to="/superadmin"
-              className="btn btn-outline"
-              style={{ borderColor: 'rgba(255,255,255,0.4)', color: '#FFFFFF', padding: '9px 16px', borderRadius: '8px', textDecoration: 'none' }}>
-              ⚙️ सुपर ॲडमिन CRUD
-            </Link>
-          </div>
-        </div>
-
-        {/* Role Switcher Toolbar */}
-        <div style={{ maxWidth: '1440px', margin: '20px auto 0 auto', display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '6px' }}>
-          {Object.values(ROLES).map(r => {
-            const isCurrent = activeRole === r.id;
-            return (
-              <button
-                key={r.id}
-                onClick={() => {
-                  setActiveRole(r.id);
-                  if (r.id === 'super_admin') setActiveView('dashboard');
-                  else if (r.id === 'ceo') setActiveView('ceo');
-                  else if (r.id === 'district_admin') setActiveView('members');
-                  else if (r.id === 'chapter_president') setActiveView('business');
-                  else if (r.id === 'seva_head') setActiveView('seva');
-                }}
-                style={{
-                  background: isCurrent ? r.color : '#1E293B',
-                  color: '#FFFFFF',
-                  border: isCurrent ? '1.5px solid #FFFFFF' : '1px solid #334155',
-                  borderRadius: '8px',
-                  padding: '8px 14px',
-                  fontSize: '0.85rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.2s ease',
-                  boxShadow: isCurrent ? '0 4px 15px rgba(0,0,0,0.4)' : 'none'
-                }}>
-                <span>{r.badge.split(' ')[0]}</span>
-                <span>{r.name.split(' ')[0]} {r.name.split(' ')[1]}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Main Container */}
-      <div style={{ maxWidth: '1440px', margin: '24px auto', padding: '0 20px' }}>
-        
-        {/* Metric Cards Row (REALTIME DATA) */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-          <div style={{ background: '#111827', border: '1px solid #1F2937', borderRadius: '12px', padding: '18px' }}>
-            <div style={{ fontSize: '0.8rem', color: '#9CA3AF', fontWeight: 700 }}>👥 एकूण नोंदणीकृत सदस्य (Live)</div>
-            <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#38BDF8', marginTop: '6px' }}>
-              {metrics.totalMembers || users.length || 0}
-            </div>
-            <div style={{ fontSize: '0.78rem', color: '#10B981', marginTop: '4px' }}>
-              ✓ प्रमाणित (KYC): {users.filter(u => u.verified).length} सदस्य
-            </div>
-          </div>
-
-          <div style={{ background: '#111827', border: '1px solid #1F2937', borderRadius: '12px', padding: '18px' }}>
-            <div style={{ fontSize: '0.8rem', color: '#9CA3AF', fontWeight: 700 }}>🏢 व्यवसाय संगम नोंदी</div>
-            <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#FBBF24', marginTop: '6px' }}>
-              {businesses.length || metrics.registeredBusinesses || 0}
-            </div>
-            <div style={{ fontSize: '0.78rem', color: '#94A3B8', marginTop: '4px' }}>
-              सक्रिय उद्योग व सेवा प्रदाते
-            </div>
-          </div>
-
-          <div style={{ background: '#111827', border: '1px solid #1F2937', borderRadius: '12px', padding: '18px' }}>
-            <div style={{ fontSize: '0.8rem', color: '#9CA3AF', fontWeight: 700 }}>🤝 B2B रेफरल देवाणघेवाण</div>
-            <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#34D399', marginTop: '6px' }}>
-              {referrals.length || 0}
-            </div>
-            <div style={{ fontSize: '0.78rem', color: '#34D399', marginTop: '4px' }}>
-              प्रत्यक्ष व्यवसाय संधी व सौदे
-            </div>
-          </div>
-
-          <div style={{ background: '#111827', border: '1px solid #1F2937', borderRadius: '12px', padding: '18px' }}>
-            <div style={{ fontSize: '0.8rem', color: '#9CA3AF', fontWeight: 700 }}>🩸 २४x७ आपत्कालीन रक्त विनंत्या</div>
-            <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#F87171', marginTop: '6px' }}>
-              {bloodRequests.length || 0}
-            </div>
-            <div style={{ fontSize: '0.78rem', color: '#F87171', marginTop: '4px' }}>
-              तात्काळ साहाय्य कक्ष सक्रिय
-            </div>
-          </div>
-        </div>
-
-        {/* View Navigation Tabs */}
-        <div style={{ display: 'flex', gap: '10px', borderBottom: '1px solid #334155', paddingBottom: '12px', marginBottom: '24px', overflowX: 'auto' }}>
-          {[
-            { id: 'dashboard', label: '📊 केंद्रीय नियंत्रण डॅशबोर्ड', icon: '📊' },
-            { id: 'members', label: '👥 सदस्य व KYC पडताळणी', icon: '👥' },
-            { id: 'business', label: '🤝 व्यवसाय संगम व रेफरल्स', icon: '🤝' },
-            { id: 'seva', label: '🩸 २४x७ साहाय्य व रक्तपेढी', icon: '🩸' },
-            { id: 'ceo', label: '🦅 CEO मॅक्रो रिपोर्ट (Cr)', icon: '🦅' },
-            { id: 'roles', label: '⚖️ भूमिका व अधिकार मॅट्रिक्स', icon: '⚖️' },
-            { id: 'audit', label: '🗂️ सिस्टीम ऑडिट ट्रेल्स', icon: '🗂️' }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveView(tab.id)}
-              style={{
-                background: activeView === tab.id ? '#F59E0B' : '#1E293B',
-                color: activeView === tab.id ? '#000000' : '#E2E8F0',
-                border: 'none',
+        {/* Brand */}
+        <div style={{
+          padding: '18px 16px',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: sidebarCollapsed ? 'center' : 'space-between'
+        }}>
+          {!sidebarCollapsed && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{
+                width: '36px',
+                height: '36px',
                 borderRadius: '8px',
-                padding: '9px 16px',
-                fontSize: '0.9rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                display: 'inline-flex',
+                background: 'linear-gradient(135deg, #F59E0B, #DC2626)',
+                display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                whiteSpace: 'nowrap',
+                justifyContent: 'center',
+                fontSize: '1.2rem',
+                fontWeight: 900
+              }}>
+                🚩
+              </div>
+              <div>
+                <strong style={{ fontSize: '0.88rem', color: '#FFFFFF', display: 'block', lineHeight: 1.2 }}>
+                  CONNECT MARATHA
+                </strong>
+                <span style={{ fontSize: '0.68rem', color: '#F59E0B', fontWeight: 700, letterSpacing: '0.5px' }}>
+                  EXECUTIVE CRM
+                </span>
+              </div>
+            </div>
+          )}
+
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            style={{
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '6px',
+              color: '#94A3B8',
+              width: '28px',
+              height: '28px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer'
+            }}>
+            {sidebarCollapsed ? '➔' : '←'}
+          </button>
+        </div>
+
+        {/* Role Switcher Pill */}
+        {!sidebarCollapsed && (
+          <div style={{ padding: '14px 16px', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+            <label style={{ display: 'block', fontSize: '0.68rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase', marginBottom: '6px' }}>
+              सक्रिय कार्यकारी भूमिका (Role)
+            </label>
+            <select
+              value={activeRole}
+              onChange={(e) => {
+                setActiveRole(e.target.value);
+                if (e.target.value === 'super_admin') setActiveView('pipeline');
+                else if (e.target.value === 'ceo') navigate('/crm/ceo');
+                else if (e.target.value === 'district_admin') setActiveView('members');
+                else if (e.target.value === 'chapter_president') setActiveView('business');
+                else if (e.target.value === 'seva_head') setActiveView('seva');
+              }}
+              style={{
+                width: '100%',
+                background: '#111827',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                color: '#FCD34D',
+                borderRadius: '6px',
+                padding: '7px 10px',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                outline: 'none',
+                cursor: 'pointer'
+              }}>
+              {Object.values(ROLES).map(r => (
+                <option key={r.id} value={r.id}>{r.name}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* CRM Navigation */}
+        <nav style={{ flex: 1, padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto' }}>
+          {[
+            { id: 'pipeline', label: 'पाईपलाईन व लीड्स (Kanban)', icon: '📊', count: users.length },
+            { id: 'members', label: 'सदस्य डॉसियर व KYC पडताळणी', icon: '📇', count: users.filter(u => u.verified).length },
+            { id: 'business', label: 'B2B रेफरल व उद्योग संगम', icon: '🤝', count: referrals.length },
+            { id: 'seva', label: '२४x७ आपत्कालीन साहाय्यता कक्ष', icon: '🩺', count: bloodRequests.length },
+            { id: 'reports', label: 'तपशीलवार मॅक्रो अहवाल', icon: '📈' },
+            { id: 'logs', label: 'सुरक्षा व ऑडिट ट्रेल', icon: '🛡️', count: auditLogs.length }
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveView(item.id)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                border: activeView === item.id ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid transparent',
+                background: activeView === item.id
+                  ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(220, 38, 38, 0.1))'
+                  : 'transparent',
+                color: activeView === item.id ? '#F59E0B' : '#94A3B8',
+                fontSize: '0.82rem',
+                fontWeight: activeView === item.id ? 800 : 600,
+                cursor: 'pointer',
+                textAlign: 'left',
+                width: '100%',
                 transition: 'all 0.15s ease'
               }}>
-              <span>{tab.icon}</span>
-              <span>{tab.label}</span>
+              <span style={{ fontSize: '1.15rem' }}>{item.icon}</span>
+              {!sidebarCollapsed && (
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', overflow: 'hidden' }}>
+                  <span style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                    {item.label}
+                  </span>
+                  {item.count !== undefined && (
+                    <span style={{
+                      background: activeView === item.id ? '#F59E0B' : 'rgba(255,255,255,0.08)',
+                      color: activeView === item.id ? '#000000' : '#CBD5E1',
+                      fontSize: '0.65rem',
+                      fontWeight: 800,
+                      padding: '2px 6px',
+                      borderRadius: '10px'
+                    }}>
+                      {item.count}
+                    </span>
+                  )}
+                </div>
+              )}
             </button>
           ))}
+
+          {/* Dedicated External Route Links */}
+          <div style={{ marginTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '10px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <Link
+              to="/ai"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                background: 'rgba(124, 58, 237, 0.15)',
+                border: '1px solid rgba(124, 58, 237, 0.3)',
+                color: '#C084FC',
+                fontSize: '0.82rem',
+                fontWeight: 700
+              }}>
+              <span style={{ fontSize: '1.15rem' }}>🤖</span>
+              {!sidebarCollapsed && <span>Connect Maratha AI</span>}
+            </Link>
+
+            <Link
+              to="/crm/ceo"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                color: '#94A3B8',
+                fontSize: '0.82rem',
+                fontWeight: 600
+              }}>
+              <span style={{ fontSize: '1.15rem' }}>🦅</span>
+              {!sidebarCollapsed && <span>राज्यस्तरीय CEO Cockpit</span>}
+            </Link>
+
+            <Link
+              to="/superadmin"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                color: '#F59E0B',
+                fontSize: '0.82rem',
+                fontWeight: 700
+              }}>
+              <span style={{ fontSize: '1.15rem' }}>👑</span>
+              {!sidebarCollapsed && <span>सुपर ॲडमिन CRUD</span>}
+            </Link>
+          </div>
+        </nav>
+
+        {/* Footer Active Admins indicator */}
+        <div style={{
+          padding: '14px 16px',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'rgba(0,0,0,0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          <div style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            background: '#F59E0B',
+            color: '#000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 900,
+            fontSize: '0.8rem'
+          }}>
+            CRM
+          </div>
+          {!sidebarCollapsed && (
+            <div style={{ overflow: 'hidden' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#FFFFFF', whiteSpace: 'nowrap' }}>
+                {user?.name || 'केंद्रीय ॲडमिन'}
+              </div>
+              <div style={{ fontSize: '0.68rem', color: '#10B981', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981' }} />
+                <span>🟢 ४ ॲडमिन सक्रिय</span>
+              </div>
+            </div>
+          )}
         </div>
+      </aside>
 
-        {/* ========================================================================= */}
-        {/* VIEW 1: CENTRAL OVERVIEW DASHBOARD */}
-        {/* ========================================================================= */}
-        {activeView === 'dashboard' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px' }}>
-            
-            {/* Realtime Members Feed */}
-            <div style={{ background: '#111827', border: '1px solid #1F2937', borderRadius: '14px', padding: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#F3F4F6', fontWeight: 800 }}>
-                  👥 नवीनतम सदस्य नोंदणी (Live Registrations)
-                </h3>
-                <span style={{ fontSize: '0.8rem', color: '#9CA3AF' }}>एकूण {users.length}</span>
+      {/* ============================================================ */}
+      {/* 2. MAIN CRM WORKSPACE BODY */}
+      {/* ============================================================ */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
+        
+        {/* Sticky Executive Top Bar */}
+        <header style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 30,
+          background: 'rgba(11, 15, 25, 0.95)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          padding: '12px 24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '12px'
+        }}>
+          {/* Universal Search */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#111827', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', padding: '8px 14px', flex: 1, maxWidth: '460px' }}>
+            <span style={{ color: '#64748B' }}>🔍</span>
+            <input
+              type="text"
+              placeholder="सभासद नाव, फोन, जिल्हा, किंवा आयडी शोधा (Ctrl+K)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ background: 'transparent', border: 'none', color: '#FFF', fontSize: '0.82rem', outline: 'none', width: '100%' }}
+            />
+            <span style={{ background: 'rgba(255,255,255,0.08)', color: '#94A3B8', fontSize: '0.68rem', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>
+              ⌘K
+            </span>
+          </div>
+
+          {/* Quick Actions */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => setNewReferralModal(true)}
+              style={{
+                background: 'linear-gradient(135deg, #10B981, #059669)',
+                color: '#FFF',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '8px 14px',
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}>
+              <span>+</span>
+              <span>नवीन B2B रेफरल</span>
+            </button>
+
+            <button
+              onClick={handleQuickSuperAdminLogin}
+              style={{
+                background: 'linear-gradient(135deg, #F59E0B, #D97706)',
+                color: '#000',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '8px 14px',
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}>
+              <span>👑</span>
+              <span>1-क्लिक SuperAdmin</span>
+            </button>
+
+            <button
+              onClick={handleExportCSV}
+              style={{
+                background: 'rgba(255,255,255,0.08)',
+                color: '#FFF',
+                border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: '8px',
+                padding: '8px 12px',
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}>
+              📥 Export CSV
+            </button>
+
+            <Link
+              to="/ai"
+              style={{
+                background: 'linear-gradient(135deg, #7C3AED, #4F46E5)',
+                color: '#FFFFFF',
+                borderRadius: '8px',
+                padding: '8px 12px',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}>
+              <span>🤖</span>
+              <span>AI सहाय्यक</span>
+            </Link>
+          </div>
+        </header>
+
+        {/* Main Content Area */}
+        <main style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          
+          {/* Executive Overview Ribbon */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '14px' }}>
+            {[
+              { label: 'एकूण नोंदणीकृत सदस्य', val: metrics.totalMembers || users.length || 0, sub: `✓ ${users.filter(u => u.verified).length} प्रमाणित (KYC)`, color: '#38BDF8', icon: '👥' },
+              { label: 'व्यवसाय संगम नोंदी', val: businesses.length || metrics.registeredBusinesses || 0, sub: 'सक्रिय व्यावसायिक', color: '#FBBF24', icon: '🏢' },
+              { label: 'B2B रेफरल्स व्यवहार', val: referrals.length || 0, sub: 'प्रत्यक्ष व्यवसाय संधी', color: '#34D399', icon: '🤝' },
+              { label: '२४x७ रक्त विनंत्या', val: bloodRequests.length || 0, sub: 'आपत्कालीन साहाय्य कक्ष', color: '#F87171', icon: '🩸' }
+            ].map((card, idx) => (
+              <div
+                key={idx}
+                style={{
+                  background: '#111827',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '6px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 600 }}>{card.label}</span>
+                  <span style={{ fontSize: '1.2rem' }}>{card.icon}</span>
+                </div>
+                <div style={{ fontSize: '1.7rem', fontWeight: 900, color: card.color, letterSpacing: '-0.5px' }}>
+                  {card.val}
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#64748B' }}>
+                  {card.sub}
+                </div>
               </div>
+            ))}
+          </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '420px', overflowY: 'auto' }}>
-                {users.slice(0, 8).map(u => (
-                  <div key={u.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#1F2937', padding: '12px 14px', borderRadius: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ fontSize: '1.4rem' }}>{u.avatar || '👤'}</span>
-                      <div>
-                        <div style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '0.92rem' }}>{u.name}</div>
-                        <div style={{ fontSize: '0.78rem', color: '#9CA3AF' }}>{u.district || 'महाराष्ट्र'} • {u.role || 'member'}</div>
-                      </div>
+          {/* View Tab Navigation */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '12px' }}>
+            {[
+              { id: 'pipeline', label: '📊 पाईपलाईन (Kanban)', desc: 'Leads & Stages' },
+              { id: 'members', label: '📇 सदस्य पडताळणी ग्रिड (KYC)', desc: 'Scrutiny Table' },
+              { id: 'business', label: '🤝 B2B रेफरल मॅनेजर', desc: 'Deals & Referrals' },
+              { id: 'seva', label: '🩸 आपत्कालीन रक्त साहाय्य', desc: 'Blood Helpdesk' },
+              { id: 'logs', label: '🛡️ सुरक्षा व ऑडिट ट्रेल', desc: 'Audit Logs' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveView(tab.id)}
+                style={{
+                  background: activeView === tab.id ? '#F59E0B' : 'rgba(255,255,255,0.04)',
+                  color: activeView === tab.id ? '#000000' : '#CBD5E1',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '8px 16px',
+                  fontSize: '0.8rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* ============================================================ */}
+          {/* TAB 1: PIPELINE KANBAN (TRUE CRM FORMAT) */}
+          {/* ============================================================ */}
+          {activeView === 'pipeline' && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', alignItems: 'flex-start' }}>
+              {kanbanStages.map((stg) => (
+                <div
+                  key={stg.id}
+                  style={{
+                    background: '#0F172A',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '12px',
+                    padding: '14px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px'
+                  }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: stg.color }} />
+                      <strong style={{ fontSize: '0.8rem', color: '#E2E8F0' }}>{stg.title}</strong>
                     </div>
-                    <span style={{
-                      padding: '4px 10px',
-                      borderRadius: '20px',
-                      fontSize: '0.75rem',
-                      fontWeight: 800,
-                      background: u.verified ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                      color: u.verified ? '#34D399' : '#F87171'
-                    }}>
-                      {u.verified ? '✓ प्रमाणित' : 'प्रलंबित'}
+                    <span style={{ background: 'rgba(255,255,255,0.08)', color: '#94A3B8', fontSize: '0.7rem', padding: '2px 8px', borderRadius: '10px' }}>
+                      {stg.items.length}
                     </span>
                   </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Realtime Audit Stream */}
-            <div style={{ background: '#111827', border: '1px solid #1F2937', borderRadius: '14px', padding: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#F3F4F6', fontWeight: 800 }}>
-                  🔒 सिस्टीम ऑडिट व सुरक्षा इव्हेंट्स (Live Audit Trail)
-                </h3>
-                <span style={{ fontSize: '0.8rem', color: '#9CA3AF' }}>{auditLogs.length} नोंदी</span>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '420px', overflowY: 'auto' }}>
-                {auditLogs.slice(0, 8).map((log, i) => (
-                  <div key={log.id || i} style={{ background: '#1F2937', padding: '10px 14px', borderRadius: '8px', fontSize: '0.85rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#9CA3AF', fontSize: '0.75rem' }}>
-                      <span>{log.performedBy || 'SYSTEM'}</span>
-                      <span>{log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : 'आत्ताच'}</span>
-                    </div>
-                    <div style={{ color: '#FBBF24', fontWeight: 700, marginTop: '4px' }}>
-                      ⚡ {log.action}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* VIEW 2: REALTIME MEMBERS & KYC SCRUTINY DESK */}
-        {/* ========================================================================= */}
-        {activeView === 'members' && (
-          <div style={{ background: '#111827', border: '1px solid #1F2937', borderRadius: '14px', padding: '24px' }}>
-            
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '20px' }}>
-              <div>
-                <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, color: '#FFFFFF' }}>
-                  👥 सदस्य निर्देशिका व डिजिटल KYC पडताळणी कक्ष
-                </h2>
-                <p style={{ margin: '4px 0 0 0', color: '#9CA3AF', fontSize: '0.88rem' }}>
-                  स्थानिक व जिल्हा समन्वयकांसाठी थेट डेटाबेस पडताळणी व भूमिका वाटप.
-                </p>
-              </div>
-
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <button
-                  onClick={handleExportCSV}
-                  className="btn"
-                  style={{ background: '#10B981', color: '#FFFFFF', fontWeight: 800, border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>
-                  📥 CSV अहवाल एक्सपोर्ट
-                </button>
-              </div>
-            </div>
-
-            {/* Filter Bar */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '20px' }}>
-              <input
-                type="text"
-                placeholder="🔍 नाव, फोन किंवा ईमेलने शोधा..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                style={{ background: '#1F2937', border: '1px solid #374151', borderRadius: '8px', padding: '9px 14px', color: '#FFFFFF', fontSize: '0.9rem' }}
-              />
-
-              <select
-                value={filterDistrict}
-                onChange={e => setFilterDistrict(e.target.value)}
-                style={{ background: '#1F2937', border: '1px solid #374151', borderRadius: '8px', padding: '9px 14px', color: '#FFFFFF', fontSize: '0.9rem' }}>
-                <option value="all">सर्व जिल्हे (All Districts)</option>
-                <option value="पुणे">पुणे</option>
-                <option value="सातारा">सातारा</option>
-                <option value="कोल्हापूर">कोल्हापूर</option>
-                <option value="मुंबई शहर">मुंबई</option>
-                <option value="छत्रपती संभाजीनगर">छत्रपती संभाजीनगर</option>
-                <option value="नागपूर">नागपूर</option>
-              </select>
-
-              <select
-                value={filterVerified}
-                onChange={e => setFilterVerified(e.target.value)}
-                style={{ background: '#1F2937', border: '1px solid #374151', borderRadius: '8px', padding: '9px 14px', color: '#FFFFFF', fontSize: '0.9rem' }}>
-                <option value="all">सर्व पडताळणी स्थिती</option>
-                <option value="verified">केवळ प्रमाणित (KYC Approved)</option>
-                <option value="unverified">प्रलंबित (Pending Scrutiny)</option>
-              </select>
-            </div>
-
-            {/* Table */}
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
-                <thead>
-                  <tr style={{ background: '#1F2937', borderBottom: '2px solid #374151', color: '#9CA3AF' }}>
-                    <th style={{ padding: '12px 14px' }}>सदस्य नाव व ID</th>
-                    <th style={{ padding: '12px 14px' }}>संपर्क व ईमेल</th>
-                    <th style={{ padding: '12px 14px' }}>जिल्हा व कुळ</th>
-                    <th style={{ padding: '12px 14px' }}>भूमिका (Role)</th>
-                    <th style={{ padding: '12px 14px' }}>KYC स्थिती</th>
-                    <th style={{ padding: '12px 14px' }}>कृती (Actions)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredUsers.map(u => (
-                    <tr key={u.id} style={{ borderBottom: '1px solid #1F2937' }}>
-                      <td style={{ padding: '12px 14px' }}>
-                        <div style={{ fontWeight: 800, color: '#FFFFFF' }}>{u.name}</div>
-                        <div style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>ID: {u.id}</div>
-                      </td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <div>{u.phone || '—'}</div>
-                        <div style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>{u.email || '—'}</div>
-                      </td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <div>{u.district || 'महाराष्ट्र'}</div>
-                        <div style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>{u.kul || '९६ कुळी'}</div>
-                      </td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <select
-                          value={u.role || 'member'}
-                          onChange={e => handleRoleChange(u.id, e.target.value)}
-                          style={{ background: '#0F172A', color: '#FBBF24', border: '1px solid #374151', borderRadius: '6px', padding: '4px 8px', fontSize: '0.8rem', fontWeight: 700 }}>
-                          <option value="member">सदस्य (Member)</option>
-                          <option value="chapter_president">चॅप्टर अध्यक्ष</option>
-                          <option value="district_admin">जिल्हा समन्वयक</option>
-                          <option value="ceo">कार्यकारी CEO</option>
-                          <option value="admin">ॲडमिन</option>
-                          <option value="superadmin">सुपर ॲडमिन</option>
-                        </select>
-                      </td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <button
-                          onClick={() => handleToggleVerification(u)}
-                          style={{
-                            padding: '4px 12px',
-                            borderRadius: '20px',
-                            border: 'none',
-                            fontSize: '0.78rem',
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {stg.items.map((item, idx) => (
+                      <div
+                        key={item.id || idx}
+                        onClick={() => setSelectedUser(item)}
+                        style={{
+                          background: '#1E293B',
+                          border: '1px solid rgba(255, 255, 255, 0.08)',
+                          borderRadius: '10px',
+                          padding: '12px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '6px'
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#F59E0B')}
+                        onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)')}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <span style={{ fontSize: '0.68rem', color: '#94A3B8', fontFamily: 'monospace' }}>
+                            {item.id}
+                          </span>
+                          <span style={{
+                            background: item.verified ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                            color: item.verified ? '#34D399' : '#FCD34D',
+                            fontSize: '0.65rem',
                             fontWeight: 800,
-                            cursor: 'pointer',
-                            background: u.verified ? '#065F46' : '#7F1D1D',
-                            color: u.verified ? '#34D399' : '#FCA5A5'
+                            padding: '2px 6px',
+                            borderRadius: '4px'
                           }}>
-                          {u.verified ? '✓ प्रमाणित' : '⏳ प्रलंबित (Click to Verify)'}
-                        </button>
-                      </td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <button
-                          onClick={() => setSelectedUser(u)}
-                          style={{ background: '#374151', color: '#FFFFFF', border: 'none', padding: '5px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}>
-                          तपशील पहा
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+                            {item.verified ? '✓ प्रमाणित' : '⏳ प्रलंबित'}
+                          </span>
+                        </div>
 
-        {/* ========================================================================= */}
-        {/* VIEW 3: BUSINESS SANGAM & REFERRALS ENGINE */}
-        {/* ========================================================================= */}
-        {activeView === 'business' && (
-          <div style={{ background: '#111827', border: '1px solid #1F2937', borderRadius: '14px', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <div>
-                <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, color: '#FFFFFF' }}>
-                  🤝 व्यवसाय संगम व B2B रेफरल इंजिन
-                </h2>
-                <p style={{ margin: '4px 0 0 0', color: '#9CA3AF', fontSize: '0.88rem' }}>
-                  स्थानिक मंडळे व चॅप्टर्समधील प्रत्यक्ष व्यवसाय, रेफरल्स व सौदे ट्रॅकिंग.
-                </p>
+                        <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FFF' }}>
+                          {item.name || item.businessName || 'अज्ञात सभासद'}
+                        </div>
+
+                        <div style={{ fontSize: '0.72rem', color: '#94A3B8' }}>
+                          📍 {item.district || item.city || 'पुणे'} • {item.phone || item.category || '—'}
+                        </div>
+                      </div>
+                    ))}
+
+                    {stg.items.length === 0 && (
+                      <div style={{ textAlign: 'center', padding: '24px', color: '#64748B', fontSize: '0.75rem' }}>
+                        कोणत्याही नोंदी नाहीत
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ============================================================ */}
+          {/* TAB 2: MEMBERS KYC SCRUTINY DATA GRID */}
+          {/* ============================================================ */}
+          {activeView === 'members' && (
+            <div style={{ background: '#111827', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', overflow: 'hidden' }}>
+              <div style={{ padding: '12px 16px', background: '#0F172A', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>पडताळणी फिल्टर:</span>
+                <select
+                  value={filterVerified}
+                  onChange={(e) => setFilterVerified(e.target.value)}
+                  style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.15)', color: '#FFF', borderRadius: '6px', padding: '5px 10px', fontSize: '0.75rem' }}>
+                  <option value="all">सर्व सदस्य (All)</option>
+                  <option value="verified">केवळ प्रमाणित (Verified)</option>
+                  <option value="unverified">केवळ प्रलंबित (Pending Scrutiny)</option>
+                </select>
+
+                <div style={{ marginLeft: 'auto', fontSize: '0.75rem', color: '#64748B' }}>
+                  एकूण आढळलेले: <strong>{filteredUsers.length}</strong>
+                </div>
+              </div>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: 'left' }}>
+                  <thead>
+                    <tr style={{ background: '#0B0F19', borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#94A3B8' }}>
+                      <th style={{ padding: '12px 16px' }}>सभासद आयडी</th>
+                      <th style={{ padding: '12px 16px' }}>पूर्ण नाव</th>
+                      <th style={{ padding: '12px 16px' }}>संपर्क नंबर</th>
+                      <th style={{ padding: '12px 16px' }}>जिल्हा</th>
+                      <th style={{ padding: '12px 16px' }}>भूमिका</th>
+                      <th style={{ padding: '12px 16px' }}>KYC पडताळणी</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'right' }}>कृती</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredUsers.map((u) => (
+                      <tr key={u.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                        <td style={{ padding: '12px 16px', fontFamily: 'monospace', color: '#F59E0B' }}>
+                          {u.id}
+                        </td>
+                        <td style={{ padding: '12px 16px', fontWeight: 700, color: '#FFF' }}>
+                          {u.name}
+                        </td>
+                        <td style={{ padding: '12px 16px', color: '#CBD5E1' }}>
+                          {u.phone || '—'}
+                        </td>
+                        <td style={{ padding: '12px 16px', color: '#94A3B8' }}>
+                          {u.district || 'पुणे'}
+                        </td>
+                        <td style={{ padding: '12px 16px' }}>
+                          <span style={{ background: 'rgba(255,255,255,0.08)', padding: '2px 8px', borderRadius: '4px', fontSize: '0.72rem' }}>
+                            {u.role || 'member'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px 16px' }}>
+                          <span style={{
+                            background: u.verified ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                            color: u.verified ? '#34D399' : '#FCD34D',
+                            padding: '3px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.72rem',
+                            fontWeight: 800
+                          }}>
+                            {u.verified ? '✓ प्रमाणित' : '⏳ प्रलंबित'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px 16px', textAlign: 'right' }}>
+                          <div style={{ display: 'inline-flex', gap: '6px' }}>
+                            <button
+                              onClick={() => handleToggleVerification(u)}
+                              style={{
+                                background: u.verified ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)',
+                                color: u.verified ? '#F87171' : '#34D399',
+                                border: `1px solid ${u.verified ? '#EF4444' : '#10B981'}`,
+                                borderRadius: '6px',
+                                padding: '4px 10px',
+                                fontSize: '0.72rem',
+                                fontWeight: 700,
+                                cursor: 'pointer'
+                              }}>
+                              {u.verified ? 'रद्द करा' : 'मंजूर करा'}
+                            </button>
+                            <button
+                              onClick={() => setSelectedUser(u)}
+                              style={{
+                                background: 'rgba(255,255,255,0.08)',
+                                border: '1px solid rgba(255,255,255,0.15)',
+                                color: '#FFF',
+                                borderRadius: '6px',
+                                padding: '4px 10px',
+                                fontSize: '0.72rem',
+                                cursor: 'pointer'
+                              }}>
+                              डॉसियर ➔
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
+          )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
-              {businesses.map(b => (
-                <div key={b.id} style={{ background: '#1F2937', padding: '18px', borderRadius: '10px', border: '1px solid #374151' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <h4 style={{ margin: 0, fontSize: '1.05rem', color: '#FFFFFF', fontWeight: 800 }}>{b.name}</h4>
-                    <span style={{ fontSize: '0.75rem', background: '#0F172A', color: '#FBBF24', padding: '3px 8px', borderRadius: '6px' }}>
-                      {b.category || 'व्यवसाय'}
-                    </span>
+          {/* ============================================================ */}
+          {/* TAB 3: B2B REFERRALS & BUSINESS SANGAM */}
+          {/* ============================================================ */}
+          {activeView === 'business' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
+                {referrals.map((r, i) => (
+                  <div
+                    key={r.id || i}
+                    style={{
+                      background: '#111827',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px'
+                    }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.68rem', color: '#F59E0B', fontFamily: 'monospace' }}>{r.id || `REF-${i}`}</span>
+                      <span style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#34D399', fontSize: '0.72rem', fontWeight: 800, padding: '2px 8px', borderRadius: '4px' }}>
+                        ₹{(r.estimatedValue || 50000).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#FFF' }}>
+                      {r.title}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>
+                      देणारा: <strong style={{ color: '#E2E8F0' }}>{r.giverName}</strong> ➔ घेणारा: <strong style={{ color: '#E2E8F0' }}>{r.receiverName}</strong>
+                    </div>
                   </div>
-                  <div style={{ fontSize: '0.85rem', color: '#9CA3AF', marginTop: '6px' }}>
-                    संचालक: {b.ownerName || 'नोंदणीकृत व्यावसायिक'} • {b.city || b.district || 'महाराष्ट्र'}
-                  </div>
-                  <div style={{ fontSize: '0.85rem', color: '#38BDF8', marginTop: '4px' }}>
-                    📞 {b.phone || 'उपलब्ध नाही'}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* ========================================================================= */}
-        {/* VIEW 4: 24x7 SEVA HELPDESK & EMERGENCY BLOOD */}
-        {/* ========================================================================= */}
-        {activeView === 'seva' && (
-          <div style={{ background: '#111827', border: '1px solid #1F2937', borderRadius: '14px', padding: '24px' }}>
-            <h2 style={{ margin: '0 0 16px 0', fontSize: '1.4rem', fontWeight: 900, color: '#FFFFFF' }}>
-              🩸 २४x७ आपत्कालीन साहाय्य व रक्तपेढी समन्वय
-            </h2>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
-              {bloodRequests.map(r => (
-                <div key={r.id} style={{ background: '#1F2937', padding: '18px', borderRadius: '10px', borderLeft: '4px solid #EF4444' }}>
+          {/* ============================================================ */}
+          {/* TAB 4: SEVA 24x7 EMERGENCY HELPDESK */}
+          {/* ============================================================ */}
+          {activeView === 'seva' && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '14px' }}>
+              {bloodRequests.map((b, i) => (
+                <div
+                  key={b.id || i}
+                  style={{
+                    background: '#111827',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px'
+                  }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '1.3rem', fontWeight: 900, color: '#F87171' }}>{r.bloodGroup}</span>
-                    <span style={{ fontSize: '0.75rem', background: '#7F1D1D', color: '#FCA5A5', padding: '3px 8px', borderRadius: '6px' }}>
-                      {r.urgency || 'तात्काळ'}
+                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#EF4444' }}>
+                      🩸 रक्तगट: {b.bloodGroup || 'सर्व रक्तगट'}
+                    </span>
+                    <span style={{ background: 'rgba(239,68,68,0.2)', color: '#FCA5A5', fontSize: '0.68rem', padding: '2px 6px', borderRadius: '4px' }}>
+                      तातडीची गरज
                     </span>
                   </div>
-                  <div style={{ fontWeight: 800, color: '#FFFFFF', marginTop: '8px' }}>{r.patientName || 'रुग्ण साहाय्य'}</div>
-                  <div style={{ fontSize: '0.85rem', color: '#9CA3AF' }}>{r.hospital}, {r.city}</div>
-                  <div style={{ fontSize: '0.85rem', color: '#34D399', marginTop: '6px' }}>📞 संपर्क: {r.contactPhone}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* VIEW 5: EXECUTIVE CEO MACRO METRICS */}
-        {/* ========================================================================= */}
-        {activeView === 'ceo' && (
-          <div style={{ background: '#111827', border: '1px solid #1F2937', borderRadius: '14px', padding: '24px' }}>
-            <h2 style={{ margin: '0 0 6px 0', fontSize: '1.4rem', fontWeight: 900, color: '#FFFFFF' }}>
-              🦅 राज्यस्तरीय CEO मॅक्रो रिपोर्ट व आर्थिक वृद्धी
-            </h2>
-            <p style={{ margin: '0 0 20px 0', color: '#9CA3AF', fontSize: '0.88rem' }}>
-              ६ महसूल विभाग, व्यवसाय मंडळे व आर्थिक उलाढालीचे राज्यव्यापी विश्लेषण.
-            </p>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
-              {[
-                { name: 'पुणे विभाग', districts: 'पुणे, सातारा, कोल्हापूर', rev: '₹५८.४ Cr', growth: '+१६.४%' },
-                { name: 'कोकण विभाग', districts: 'मुंबई, ठाणे, रायगड', rev: '₹६२.१ Cr', growth: '+१८.२%' },
-                { name: 'नाशिक विभाग', districts: 'नाशिक, अहमदनगर, जळगाव', rev: '₹२८.५ Cr', growth: '+११.८%' },
-                { name: 'संभाजीनगर विभाग', districts: 'संभाजीनगर, जालना, नांदेड', rev: '₹२१.२ Cr', growth: '+१४.१%' }
-              ].map((d, i) => (
-                <div key={i} style={{ background: '#1F2937', padding: '18px', borderRadius: '10px' }}>
-                  <div style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '1.1rem' }}>{d.name}</div>
-                  <div style={{ fontSize: '0.8rem', color: '#9CA3AF', marginTop: '4px' }}>{d.districts}</div>
-                  <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#FBBF24', marginTop: '10px' }}>{d.rev}</div>
-                  <div style={{ fontSize: '0.78rem', color: '#34D399', marginTop: '2px' }}>वृद्धी: {d.growth}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* VIEW 6: ROLES & ELIGIBILITY MATRIX */}
-        {/* ========================================================================= */}
-        {activeView === 'roles' && (
-          <div style={{ background: '#111827', border: '1px solid #1F2937', borderRadius: '14px', padding: '24px' }}>
-            <h2 style={{ margin: '0 0 16px 0', fontSize: '1.4rem', fontWeight: 900, color: '#FFFFFF' }}>
-              ⚖️ भूमिका व अधिकार मॅट्रिक्स (RBAC Matrix)
-            </h2>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
-                <thead>
-                  <tr style={{ background: '#1F2937', color: '#9CA3AF' }}>
-                    <th style={{ padding: '12px 14px' }}>भूमिका कोड</th>
-                    <th style={{ padding: '12px 14px' }}>पदनाम</th>
-                    <th style={{ padding: '12px 14px' }}>अधिकार क्षेत्र</th>
-                    <th style={{ padding: '12px 14px' }}>पात्रता निकष</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rolesMatrix.map((rm, idx) => (
-                    <tr key={idx} style={{ borderBottom: '1px solid #1F2937' }}>
-                      <td style={{ padding: '12px 14px', fontWeight: 800, color: '#FBBF24' }}>{rm.role_code || rm.roleCode}</td>
-                      <td style={{ padding: '12px 14px', fontWeight: 700, color: '#FFFFFF' }}>{rm.title_mr || rm.title}</td>
-                      <td style={{ padding: '12px 14px', color: '#9CA3AF' }}>{rm.scope}</td>
-                      <td style={{ padding: '12px 14px', color: '#9CA3AF' }}>{rm.criteria || 'सक्रिय सभासदत्व'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* VIEW 7: SECURITY AUDIT LOGS */}
-        {/* ========================================================================= */}
-        {activeView === 'audit' && (
-          <div style={{ background: '#111827', border: '1px solid #1F2937', borderRadius: '14px', padding: '24px' }}>
-            <h2 style={{ margin: '0 0 16px 0', fontSize: '1.4rem', fontWeight: 900, color: '#FFFFFF' }}>
-              🗂️ सिस्टीम ऑडिट व ॲक्सेस नोंदी (Live Security Audit Trail)
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {auditLogs.map((l, i) => (
-                <div key={l.id || i} style={{ background: '#1F2937', padding: '12px 16px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <span style={{ fontWeight: 800, color: '#38BDF8' }}>{l.action}</span>
-                    <span style={{ color: '#9CA3AF', marginLeft: '10px', fontSize: '0.85rem' }}>कर्ता: {l.performedBy}</span>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#FFF' }}>
+                    {b.patientName || 'अज्ञात रुग्ण'}
                   </div>
-                  <span style={{ color: '#6B7280', fontSize: '0.8rem' }}>
-                    {l.timestamp ? new Date(l.timestamp).toLocaleString() : 'आत्ताच'}
-                  </span>
+                  <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>
+                    रुग्णालय: {b.hospital || 'जिल्हा शासकीय रुग्णालय'} • {b.city || 'पुणे'}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: '#CBD5E1' }}>
+                    📞 संपर्क: {b.contactNumber || '१८००-१२३-१६७४'}
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          )}
 
+          {/* ============================================================ */}
+          {/* TAB 5: AUDIT TRAIL & SECURITY LOGS */}
+          {/* ============================================================ */}
+          {activeView === 'logs' && (
+            <div style={{ background: '#111827', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '16px' }}>
+              <h3 style={{ margin: '0 0 14px 0', fontSize: '0.95rem', fontWeight: 800, color: '#FFF' }}>
+                🛡️ रीअल-टाइम सुरक्षा व सिस्टम ॲक्टिव्हिटी लॉग (OWASP Audit)
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '450px', overflowY: 'auto' }}>
+                {auditLogs.map((log, i) => (
+                  <div
+                    key={log.id || i}
+                    style={{
+                      background: '#0F172A',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      fontSize: '0.78rem',
+                      borderLeft: '3px solid #10B981'
+                    }}>
+                    <div>
+                      <strong style={{ color: '#FCD34D' }}>[{log.action}]</strong>{' '}
+                      <span style={{ color: '#E2E8F0' }}>वापरकर्ता: {log.performedBy || 'System'}</span>
+                    </div>
+                    <span style={{ color: '#64748B', fontFamily: 'monospace' }}>
+                      {log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : 'आत्ताच'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </main>
       </div>
 
       {/* Member Details Modal */}
@@ -803,6 +1033,83 @@ export default function AdminERPPage() {
         </div>
       )}
 
+      {/* New Referral Modal */}
+      {newReferralModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.85)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+          padding: '20px'
+        }}>
+          <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: '16px', maxWidth: '480px', width: '100%', padding: '24px', color: '#FFFFFF' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>🤝 नवीन B2B रेफरल नोंदवा</h3>
+              <button onClick={() => setNewReferralModal(false)} style={{ background: 'transparent', border: 'none', color: '#9CA3AF', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
+            </div>
+            <form onSubmit={handleCreateReferral} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.78rem', color: '#94A3B8', marginBottom: '4px' }}>रेफरल / डील शीर्षक *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="उदा. औद्योगिक बांधकाम साहित्य पुरवठा"
+                  value={newReferralData.title}
+                  onChange={(e) => setNewReferralData({ ...newReferralData, title: e.target.value })}
+                  style={{ width: '100%', background: '#0F172A', border: '1px solid rgba(255,255,255,0.15)', color: '#FFF', padding: '8px 12px', borderRadius: '6px', boxSizing: 'border-box' }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.78rem', color: '#94A3B8', marginBottom: '4px' }}>अंदाजे डील मूल्य (₹) *</label>
+                <input
+                  type="number"
+                  required
+                  placeholder="उदा. 250000"
+                  value={newReferralData.value}
+                  onChange={(e) => setNewReferralData({ ...newReferralData, value: e.target.value })}
+                  style={{ width: '100%', background: '#0F172A', border: '1px solid rgba(255,255,255,0.15)', color: '#FFF', padding: '8px 12px', borderRadius: '6px', boxSizing: 'border-box' }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.78rem', color: '#94A3B8', marginBottom: '4px' }}>रेफरल देणारा सदस्य</label>
+                <input
+                  type="text"
+                  placeholder="उदा. तानाजी जाधव"
+                  value={newReferralData.giverName}
+                  onChange={(e) => setNewReferralData({ ...newReferralData, giverName: e.target.value })}
+                  style={{ width: '100%', background: '#0F172A', border: '1px solid rgba(255,255,255,0.15)', color: '#FFF', padding: '8px 12px', borderRadius: '6px', boxSizing: 'border-box' }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.78rem', color: '#94A3B8', marginBottom: '4px' }}>रेफरल घेणारा व्यापारी / भागीदार</label>
+                <input
+                  type="text"
+                  placeholder="उदा. प्रवीण भोसले"
+                  value={newReferralData.receiverName}
+                  onChange={(e) => setNewReferralData({ ...newReferralData, receiverName: e.target.value })}
+                  style={{ width: '100%', background: '#0F172A', border: '1px solid rgba(255,255,255,0.15)', color: '#FFF', padding: '8px 12px', borderRadius: '6px', boxSizing: 'border-box' }}
+                />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => setNewReferralModal(false)}
+                  style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#CBD5E1', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' }}>
+                  रद्द करा
+                </button>
+                <button
+                  type="submit"
+                  style={{ background: 'linear-gradient(135deg, #10B981, #059669)', color: '#FFF', border: 'none', padding: '8px 18px', borderRadius: '6px', fontWeight: 800, cursor: 'pointer' }}>
+                  रेफरल नोंदवा
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

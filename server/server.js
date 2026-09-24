@@ -25,6 +25,7 @@ import servicesRoutes from './routes/services.routes.js';
 import cultureRoutes from './routes/culture.routes.js';
 import quizRoutes from './routes/quiz.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import aiRoutes from './routes/ai.routes.js';
 import errorHandler from './middleware/errorHandler.js';
 import { sendSuccess } from './utils/response.js';
 
@@ -137,6 +138,9 @@ app.use('/api/quiz', quizRoutes);
 
 // 11. Role-Based CRM & Admin ERP
 app.use('/api/admin', adminRoutes);
+
+// 12. Connect Maratha AI Agent (Trilingual Knowledge Base, RAG & Support)
+app.use('/api/ai', aiRoutes);
 
 // Centralized Secure Error Handler (No stack trace leaks)
 app.use(errorHandler);

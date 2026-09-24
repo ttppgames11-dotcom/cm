@@ -270,6 +270,7 @@ export default function SiteHeader({ onOpenSearch }) {
                     <div className="mega-col-title">⚖️ प्रशासन, ओळख व CRM</div>
                     <Link to="/superadmin" onClick={handleLinkClick} style={{ color: '#F59E0B', fontWeight: '800' }}>👑 सर्वोच्च प्रशासक (SuperAdmin CRUD)</Link>
                     <Link to="/card" onClick={handleLinkClick}>🪪 डिजिटल सभासद ओळखपत्र</Link>
+                    <Link to="/ai" onClick={handleLinkClick} style={{ color: '#F59E0B', fontWeight: '700' }}>🤖 Connect Maratha AI सहाय्यक</Link>
                     <Link to="/crm" onClick={handleLinkClick}>🚩 भूमिका आधारित CRM पोर्टल</Link>
                     <Link to="/admin/cms" onClick={handleLinkClick} style={{ color: '#E65100', fontWeight: '700' }}>🎨 CMS वेबसाईट संपादक</Link>
                     <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
@@ -285,6 +286,28 @@ export default function SiteHeader({ onOpenSearch }) {
           </nav>
 
           <div className="header-actions">
+            <Link
+              to="/ai"
+              onClick={handleLinkClick}
+              className="btn"
+              style={{
+                background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #DC2626 100%)',
+                color: '#FFFFFF',
+                border: 'none',
+                fontWeight: 800,
+                padding: '7px 14px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 2px 10px rgba(245, 158, 11, 0.4)'
+              }}
+              title="Connect Maratha AI Agent (मराठा इतिहास, किल्ले, स्वराज्य व सहाय्य)">
+              <span>🤖</span>
+              <span>AI सहाय्यक</span>
+            </Link>
+
             <button
               type="button"
               onClick={onOpenSearch}
