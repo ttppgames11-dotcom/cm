@@ -73,7 +73,7 @@ router.post('/', async (req, res, next) => {
     const id = 'E' + Math.floor(10 + Math.random() * 90);
 
     await runQuery(`
-      INSERT INTO events (id, title, category, date, time, venue, district, desc, organizer, banner, rsvp_count, created_at)
+      INSERT INTO events (id, title, category, date, time, venue, district, "desc", organizer, banner, rsvp_count, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, datetime('now'))
     `, [id, title, category || 'सामाजिक मेळावा', date, time || 'सकाळी १०:००', venue, district || 'पुणे', desc || '', organizer || 'अखिल भारतीय मराठा महासंघ', banner || '/assets/images/meeting.jpg']);
 

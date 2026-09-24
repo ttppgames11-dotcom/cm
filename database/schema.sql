@@ -1,5 +1,5 @@
 -- ========================================================
--- Connect Maratha (कनेक्ट मराठा) SQLite Database Schema
+-- Connect Maratha (कनेक्ट मराठा) PostgreSQL Database Schema
 -- ========================================================
 
 CREATE TABLE IF NOT EXISTS members (
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS businesses (
   hours TEXT,
   services TEXT DEFAULT '[]',
   offers TEXT,
-  rating REAL DEFAULT 4.5,
+  rating DOUBLE PRECISION DEFAULT 4.5,
   created_at TEXT
 );
 
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS referrals (
   client_phone TEXT,
   client_email TEXT,
   status TEXT DEFAULT 'New',
-  value REAL DEFAULT 0,
+  value DOUBLE PRECISION DEFAULT 0,
   notes TEXT,
   created_at TEXT
 );
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS groups (
   type TEXT,
   category TEXT,
   district TEXT,
-  desc TEXT,
+  "desc" TEXT,
   cover TEXT,
   members_count INTEGER DEFAULT 0,
   created_at TEXT
@@ -137,11 +137,11 @@ CREATE TABLE IF NOT EXISTS campaigns (
   cat TEXT,
   title TEXT NOT NULL,
   icon TEXT DEFAULT '🚩',
-  target REAL DEFAULT 1000000,
-  collected REAL DEFAULT 0,
+  target DOUBLE PRECISION DEFAULT 1000000,
+  collected DOUBLE PRECISION DEFAULT 0,
   donors INTEGER DEFAULT 0,
   cover TEXT,
-  desc TEXT,
+  "desc" TEXT,
   expenses TEXT DEFAULT '[]',
   active INTEGER DEFAULT 1,
   created_at TEXT
@@ -153,7 +153,7 @@ CREATE TABLE IF NOT EXISTS donations (
   campaign_title TEXT,
   donor_name TEXT,
   donor_id TEXT,
-  amount REAL NOT NULL,
+  amount DOUBLE PRECISION NOT NULL,
   payment_method TEXT DEFAULT 'UPI',
   phone TEXT,
   is_anonymous INTEGER DEFAULT 0,
@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS events (
   time TEXT,
   venue TEXT,
   district TEXT,
-  desc TEXT,
+  "desc" TEXT,
   organizer TEXT,
   banner TEXT,
   rsvp_count INTEGER DEFAULT 0,
@@ -195,7 +195,7 @@ CREATE TABLE IF NOT EXISTS jobs (
   salary TEXT,
   job_type TEXT DEFAULT 'Full-time',
   experience TEXT,
-  desc TEXT,
+  "desc" TEXT,
   contact_email TEXT,
   phone TEXT,
   created_at TEXT

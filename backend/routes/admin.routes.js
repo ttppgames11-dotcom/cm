@@ -9,7 +9,7 @@ router.get('/metrics', async (req, res, next) => {
     const membersCount = await get('SELECT COUNT(*) as count FROM members');
     const businessesCount = await get('SELECT COUNT(*) as count FROM businesses');
     const referralsCount = await get('SELECT COUNT(*) as count FROM referrals');
-    const donationsSum = await get('SELECT SUM(collected) as totalCollected, SUM(donors) as totalDonors FROM campaigns');
+    const donationsSum = await get('SELECT SUM(collected) as "totalCollected", SUM(donors) as "totalDonors" FROM campaigns');
     const eventsCount = await get('SELECT COUNT(*) as count FROM events');
     const postsCount = await get('SELECT COUNT(*) as count FROM posts');
 
@@ -24,7 +24,7 @@ router.get('/metrics', async (req, res, next) => {
         totalEvents: eventsCount.count || 48,
         totalPosts: postsCount.count || 120,
         serverStatus: 'Online',
-        dbEngine: 'SQLite3 (Pure SQL Native / ACID Compliant)',
+        dbEngine: 'PostgreSQL',
         uptime: process.uptime()
       }
     });

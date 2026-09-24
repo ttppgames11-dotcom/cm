@@ -107,7 +107,7 @@ router.post('/meetings', async (req, res, next) => {
 router.get('/metrics', async (req, res, next) => {
   try {
     const totalReferrals = await get('SELECT COUNT(*) as count FROM referrals');
-    const wonDeals = await get("SELECT COUNT(*) as count, SUM(value) as totalValue FROM referrals WHERE status = 'Deal Won'");
+    const wonDeals = await get("SELECT COUNT(*) as count, SUM(value) as \"totalValue\" FROM referrals WHERE status = 'Deal Won'");
     const totalMeetings = await get('SELECT COUNT(*) as count FROM meetings');
 
     res.json({

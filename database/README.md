@@ -1,9 +1,9 @@
-# Connect Maratha — Database Layer (SQLite)
+# Connect Maratha — Database Layer (PostgreSQL)
 
 This directory contains the self-contained database engine, schema, and seed datasets for Connect Maratha.
 
 ## 📁 Files & Directories
-- `connect_maratha.db` — Persistent binary SQLite database file.
+- `connect_maratha.db` — legacy SQLite file, only used as the source for `migrate-from-sqlite.js`.
 - `schema.sql` — Relational schema definition (22 tables including members, businesses, referrals, events, donations, oral history, and quiz questions).
 - `database.js` — SQL.js query abstraction (`runQuery`, `all`, `get`, `saveDatabase`).
 - `seed.js` — Data seeder populating initial members, businesses, campaigns, and metrics.

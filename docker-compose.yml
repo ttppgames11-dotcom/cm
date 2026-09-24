@@ -1,0 +1,16 @@
+# Local PostgreSQL for development:  docker compose up -d
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cm-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cm_user
+      POSTGRES_PASSWORD: cm_password
+      POSTGRES_DB: connect_maratha
+    ports:
+      - "5442:5432"
+    volumes:
+      - cm_pgdata:/var/lib/postgresql/data
+volumes:
+  cm_pgdata:

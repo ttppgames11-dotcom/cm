@@ -14,6 +14,10 @@ router.post('/register', async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'नाव आणि ईमेल किंवा फोन नंबर आवश्यक आहे.' });
     }
 
+    if (!password || String(password).length < 8) {
+      return res.status(400).json({ success: false, error: 'संकेतशब्द किमान ८ अक्षरांचा असावा (Password must be at least 8 characters).' });
+    }
+
     // Check if user already exists
     const existing = await get('SELECT id FROM members WHERE email = ? OR phone = ?', [email || '', phone || '']);
     if (existing) {
@@ -21,7 +25,7 @@ router.post('/register', async (req, res, next) => {
     }
 
     const memberId = 'M' + Math.floor(1000 + Math.random() * 9000);
-    const passwordHash = password ? bcrypt.hashSync(password, 8) : bcrypt.hashSync('password123', 8);
+    const passwordHash = bcrypt.hashSync(password, 10);
     const skillsJson = Array.isArray(skills) ? JSON.stringify(skills) : JSON.stringify(skills ? [skills] : []);
 
     await runQuery(`
@@ -64,17 +68,10 @@ router.post('/login', async (req, res, next) => {
       WHERE id = ? OR email = ? OR phone = ?
     `, [identifier, identifier, identifier]);
 
-    if (!member) {
-      return res.status(401).json({ success: false, error: 'वापरकर्ता आढळला नाही. कृपया माहिती तपासा.' });
-    }
-
-    // If password provided, verify hash
-    if (password && member.password_hash) {
-      const isMatch = bcrypt.compareSync(password, member.password_hash);
-      // If default demo password or exact match
-      if (!isMatch && password !== 'password123') {
-        return res.status(401).json({ success: false, error: 'अवैध संकेतशब्द (Incorrect password).' });
-      }
+    // Password is mandatory and always verified against the stored bcrypt hash.
+    // The same generic error is returned for unknown user / wrong password.
+    if (!member || !password || !member.password_hash || !bcrypt.compareSync(password, member.password_hash)) {
+      return res.status(401).json({ success: false, error: 'अवैध आयडी किंवा संकेतशब्द (Invalid ID or password).' });
     }
 
     // Clean sensitive data

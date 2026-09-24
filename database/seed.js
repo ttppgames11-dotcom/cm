@@ -220,7 +220,7 @@ export async function seed() {
 
   for (const g of groups) {
     await runQuery(`
-      INSERT INTO groups (id, name, type, category, district, desc, cover, members_count, created_at)
+      INSERT INTO groups (id, name, type, category, district, "desc", cover, members_count, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
     `, [g.id, g.name, g.type, g.category, g.district, g.desc, g.cover, g.members_count]);
   }
@@ -278,7 +278,7 @@ export async function seed() {
 
   for (const c of campaigns) {
     await runQuery(`
-      INSERT INTO campaigns (id, cat, title, icon, target, collected, donors, cover, desc, active, created_at)
+      INSERT INTO campaigns (id, cat, title, icon, target, collected, donors, cover, "desc", active, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, datetime('now'))
     `, [c.id, c.cat, c.title, c.icon, c.target, c.collected, c.donors, c.cover, c.desc]);
   }
@@ -328,7 +328,7 @@ export async function seed() {
 
   for (const e of events) {
     await runQuery(`
-      INSERT INTO events (id, title, category, date, time, venue, district, desc, organizer, banner, rsvp_count, created_at)
+      INSERT INTO events (id, title, category, date, time, venue, district, "desc", organizer, banner, rsvp_count, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
     `, [e.id, e.title, e.category, e.date, e.time, e.venue, e.district, e.desc, e.organizer, e.banner, e.rsvp_count]);
   }
@@ -419,7 +419,7 @@ export async function seed() {
 
   for (const j of jobs) {
     await runQuery(`
-      INSERT INTO jobs (id, title, company, district, category, salary, job_type, experience, desc, contact_email, phone, created_at)
+      INSERT INTO jobs (id, title, company, district, category, salary, job_type, experience, "desc", contact_email, phone, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
     `, [j.id, j.title, j.company, j.district, j.category, j.salary, j.job_type, j.experience, j.desc, j.contact_email, j.phone]);
   }

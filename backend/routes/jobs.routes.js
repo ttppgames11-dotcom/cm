@@ -19,7 +19,7 @@ router.get('/', async (req, res, next) => {
       params.push(district);
     }
     if (search) {
-      sql += ' AND (title LIKE ? OR company LIKE ? OR desc LIKE ?)';
+      sql += ' AND (title LIKE ? OR company LIKE ? OR "desc" LIKE ?)';
       params.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
 
@@ -56,7 +56,7 @@ router.post('/', async (req, res, next) => {
     const id = 'JOB-' + Math.floor(10 + Math.random() * 90);
 
     await runQuery(`
-      INSERT INTO jobs (id, title, company, district, category, salary, job_type, experience, desc, contact_email, phone, created_at)
+      INSERT INTO jobs (id, title, company, district, category, salary, job_type, experience, "desc", contact_email, phone, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
     `, [id, title, company, district || 'पुणे', category || 'सामान्य', salary || 'चर्चेनुसार', job_type || 'Full-time', experience || '१-३ वर्षे', desc || '', contact_email || '', phone || '']);
 
