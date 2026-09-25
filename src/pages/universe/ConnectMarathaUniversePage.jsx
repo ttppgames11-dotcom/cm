@@ -182,6 +182,7 @@ const MASTER_MAP_LAYERS = [
   { id: 'saints', name: '🧘 संत स्थाने (Saints)', active: true, color: '#15803D' },
   { id: 'festivals', name: '🌺 सण व जत्रा (Festivals)', active: false, color: '#E11D48' },
   { id: 'battles', name: '⚔️ युद्धे व रणांगणे (Battles)', active: true, color: '#B91C1C' },
+  { id: 'weapons', name: '🗡️ शस्त्रास्त्रे व तोफा (Weapons)', active: true, color: '#DC2626' },
   { id: 'caves', name: '🏛️ लेणी व प्राचीन स्थळे (Caves)', active: false, color: '#7C3AED' },
   { id: 'museums', name: '🏛️ संग्रहालये (Museums)', active: false, color: '#4B5563' },
   { id: 'wadas', name: '🏘️ ऐतिहासिक वाडे (Wadas)', active: false, color: '#92400E' },
@@ -338,7 +339,8 @@ const CONNECTED_NODES_DATA = {
       dialects: ['रायगडी कोकणी बोली'],
       routes: ['महाड ते पाचाड दुर्गमार्ग', 'नाणे दरवाजा ते महादरवाजा पायवाट', 'रायगड ते प्रतापगड सह्याद्री ट्रेल'],
       waterSystems: ['गंगासागर तलाव', 'हत्ती तलाव', 'टाके व पाषाण गाळण यंत्रणा'],
-      documents: ['सभासद बखर', 'हेन्री ऑक्झिंडेन डायरी (इंग्रज दूत प्रत्यक्षदर्शी)', 'जेधे शकावली']
+      documents: ['सभासद बखर', 'हेन्री ऑक्झिंडेन डायरी (इंग्रज दूत प्रत्यक्षदर्शी)', 'जेधे शकावली'],
+      weapons: ['भवानी तलवार', 'कडकबिजली तोफ', 'चार-आईना चिलखत', 'तोफखाना दारूगोळा']
     }
   },
   shivaji_maharaj: {
@@ -356,7 +358,8 @@ const CONNECTED_NODES_DATA = {
       dialects: ['शिवकालीन मराठी', 'मावळी बोली'],
       routes: ['शिवनेरी ते रायगड मार्ग', 'आग्रा ते राजगढ परतीचा गुप्त मार्ग'],
       waterSystems: ['गडकिल्ल्यांचे जलव्यवस्थापन नियम (आज्ञापत्र)'],
-      documents: ['शिवभारत', 'आज्ञापत्र (रामचंद्रपंत अमात्य)', 'राजव्यवहार कोश']
+      documents: ['शिवभारत', 'आज्ञापत्र (रामचंद्रपंत अमात्य)', 'राजव्यवहार कोश'],
+      weapons: ['भवानी तलवार', 'जगदंबा तलवार', 'वाघनखे', 'दांडपट्टा', 'कट्यार']
     }
   },
   sindhudurg: {
@@ -374,7 +377,8 @@ const CONNECTED_NODES_DATA = {
       dialects: ['मालवणी बोली'],
       routes: ['मालवण ते विजयदुर्ग सागरी मार्ग', 'तारकर्ली खाडी जलमार्ग'],
       waterSystems: ['खऱ्या समुद्रातील गोड्या पाण्याच्या ३ विहिरी (दूधबाव, साखरबाव, दहीबाव)'],
-      documents: ['मुंबई फॅक्टरी रेकॉर्ड्स', 'मराठा आरमार दफ्तर']
+      documents: ['मुंबई फॅक्टरी रेकॉर्ड्स', 'मराठा आरमार दफ्तर'],
+      weapons: ['काळभैरव सागरी तोफ', 'मराठा नौदल बंदुका', 'जंबिया व भाले']
     }
   }
 };
@@ -704,40 +708,251 @@ const INSCRIPTIONS_DATA = [
 // FEATURE 16: ARMS & ARMOUR DATA
 const WEAPONS_DATA = [
   {
+    id: 'bhavani_talwar',
+    name: 'भवानी तलवार (Bhavani Sword)',
+    marathiName: 'भवानी तलवार',
+    englishName: 'Bhavani Talwar',
+    category: 'swords',
+    categoryName: 'तलवारी व पट्टे',
+    icon: '🗡️',
+    type: 'पवित्र सार्वभौम तलवार',
+    metal: 'अतिशुद्ध दमास्कस पोलाद (Wootz Steel) व सुवर्ण नक्षीकाम',
+    period: 'शिवकाल (इ.स. १६५० - १६८०)',
+    specs: { length: '४२ इंच (३.५ फूट)', weight: '१,१०० ग्रॅम', blade: 'सरळ दुधारी पाते व मराठा खांडा मुठ' },
+    design: 'सोन्याची बारीक जरतारी नक्षी असलेली पारंपरिक मराठा खांडा मुठ, सरळ धारदार पाते आणि मागे बोटांच्या संरक्षणासाठी मजबूत लोखंडी पट्टी.',
+    use: 'छत्रपती शिवाजी महाराजांचे व्यक्तिगत प्रमुख पूजनीय शस्त्र; स्वराज्य स्थापनेच्या अनेक युद्धांत शिवरायांच्या हातात लखलखलेली तलवार.',
+    fame: 'अखंड महाराष्ट्राचे कुलदैवत छत्रपती शिवाजी महाराज.',
+    significance: 'प्रत्यक्ष तुळजाभवानी मातेचा आशिर्वाद मानली जाणारी, मराठा साम्राज्याच्या सार्वभौम अस्तित्वाचे सर्वोच्च प्रतीक.',
+    museumExample: 'सातारा / कोल्हापूर छत्रपती घराणे संग्रह',
+    factStatus: 'fact'
+  },
+  {
+    id: 'jagdamba_talwar',
+    name: 'जगदंबा तलवार (Jagdamba Sword)',
+    marathiName: 'जगदंबा तलवार',
+    englishName: 'Jagdamba Sword',
+    category: 'swords',
+    categoryName: 'तलवारी व पट्टे',
+    icon: '⚔️',
+    type: 'ऐतिहासिक दुधारी तलवार',
+    metal: 'उच्च दर्जाचे लवचिक स्पॅनिश-पोर्तुगीज पोलाद व मराठा मुठ',
+    period: 'शिवकाल (१७ वे शतक)',
+    specs: { length: '४० इंच', weight: '१,१५० ग्रॅम', blade: 'वक्र टोक व रक्तवाहिन्या चर (Blood Groove)' },
+    design: 'मराठा हिल्टसह युरोपीय उत्कृष्ट पोलादाचे पाते; पात्यावर विशेष कोरीवकाम व टोकदार मारक रचना.',
+    use: 'छत्रपती शिवरायांच्या अत्यंत जवळची तलवार; पुढे छत्रपती संभाजी महाराज व छत्रपती राजाराम महाराजांकडे वारसा.',
+    fame: 'छत्रपती शिवाजी महाराज व करवीर (कोल्हापूर) छत्रपती घराणे.',
+    significance: '१८७५ मध्ये प्रिन्स ऑफ वेल्स यांच्या दौऱ्यात भेट दिली गेलेली व सध्या लंडनच्या रॉयल कलेक्शनमध्ये असलेली मराठ्यांची ऐतिहासिक संपदा.',
+    museumExample: 'रॉयल कलेक्शन ट्रस्ट, लंडन (यूके)',
+    factStatus: 'fact'
+  },
+  {
     id: 'dandpatta',
     name: 'दांडपट्टा (Dandpatta / Gauntlet Sword)',
-    type: 'पायदळ तलवार व संरक्षक कवच',
-    metal: 'दमास्कस उच्च दर्जाचे पोलाद',
+    marathiName: 'दांडपट्टा',
+    englishName: 'Dandpatta (Gauntlet Sword)',
+    category: 'swords',
+    categoryName: 'तलवारी व पट्टे',
+    icon: '🤺',
+    type: 'पायदळ तलवार व हस्तकवच',
+    metal: 'अत्यंत लवचिक स्प्रिंग पोलाद व लोखंडी मुठकवच',
+    period: '१६ वे ते १८ वे शतक (मराठा सेना)',
+    specs: { length: '४८ इंच (४ फूट)', weight: '१,८०० ग्रॅम', blade: 'अतिलवचिक गोल फिरणारे दुधारी पाते' },
+    design: 'हातात लोखंडी पंजासारखे कोपरापर्यंतचे चिलखती आवरण आणि पुढे ४ फूट लांब, वाकवले तरी न मोडणारे लवचिक पोलादी पाते.',
+    use: 'मावळे दोन्ही हातांत दोन पट्टे घेऊन चक्राकार गरगर फिरवून मुघल घोडदळाच्या घोड्यांचे पाय तोडत असत व एका वेळी डझनभर सैनिकांना रोखत.',
+    fame: 'बाजीप्रभू देशपांडे (पावनखिंड), तानाजी मालुसरे (सिंहगड) व मुरारबाजी देशपांडे.',
+    significance: 'जगातील शस्त्रास्त्रांच्या इतिहासात मराठ्यांचे सर्वात भयानक आणि प्रभावी पायदळ समोरासमोरील शस्त्र.',
     museumExample: 'किल्ले रायगड संग्रहालय, CSMVS मुंबई',
-    period: '१६ वे ते १८ वे शतक (मराठा सैन्य)',
-    design: 'हातात लोखंडी पंजासारखे कवच घालून ३ ते ४ फूट लांब लवचिक पोलादी पात्याची तलवार.',
-    use: 'घोडदळाविरुद्ध पायदळाचे आत्मरक्षण; चारी बाजूंना फिरवून एका वेळी अनेक शत्रूंचा संहार.',
-    fame: 'तानाजी मालुसरे, बाजीप्रभू देशपांडे व शिवकालीन मावळ्यांचे आवडते शस्त्र.',
-    significance: 'मराठ्यांचे अद्वितीय शस्त्र, ज्याच्या फिरत्या फेऱ्यासमोर मुघल घोडदळ कधीही टिकू शकत नसे.'
+    factStatus: 'fact'
   },
   {
     id: 'waghnakh',
     name: 'वाघनखे (Wagh Nakh / Tiger Claws)',
-    type: 'गुप्त अंगठी शस्त्र',
-    metal: 'पोलादी वाकडी नखे',
-    museumExample: 'व्हिक्टोरिया अँड अल्बर्ट म्युझियम (लंडन) / सातारा संग्रहालय',
-    period: 'शिवकाल (१६५९ प्रतापगड युद्ध)',
-    design: 'हाताच्या मुठीत सहज लपवता येणारी चार तीक्ष्ण वाकडी लोखंडी नखे आणि बोटांमध्ये अडकवायच्या दोन अंगठ्या.',
-    use: 'अनपेक्षित हल्ल्यात शत्रूचा कोथळा बाहेर काढण्यासाठी गुप्त शस्त्र.',
-    fame: '१० नोव्हेंबर १६५९ रोजी अफझलखानाने कपटी आलिंगन देताच शिवरायांनी याच वाघनख्यांनी त्याचा खात्मा केला.',
-    significance: 'दगाबाज शत्रूला प्रत्यक्ष युद्धात जागेवर धडा शिकवणारे ऐतिहासिक संरक्षक साधन.'
+    marathiName: 'वाघनखे',
+    englishName: 'Wagh Nakh (Tiger Claws)',
+    category: 'concealed',
+    categoryName: 'गुप्त शस्त्रे व कट्यारी',
+    icon: '🐾',
+    type: 'गुप्त आत्मरक्षण शस्त्र',
+    metal: 'कठीण बळकट पोलाद (Forged Steel)',
+    period: 'शिवकाल (१० नोव्हेंबर १६५९)',
+    specs: { length: '३.५ इंच', weight: '१६० ग्रॅम', blade: '४ वाकडी टोकदार पोलादी नखे' },
+    design: 'हाताच्या तळव्यात सहज लपवता येणारा पोलादी पट्टा आणि बोटांमध्ये घालण्यासाठी दोन बाजूंच्या अंगठ्या.',
+    use: 'अनपेक्षित हल्ल्यात अथवा मिठीत शत्रूचा कोथळा बाहेर काढण्यासाठी वापरले जाणारे अकल्पनीय गुप्त शस्त्र.',
+    fame: 'छत्रपती शिवाजी महाराज (प्रतापगड पायथ्याशी अफझलखान वध).',
+    significance: '१० नोव्हेंबर १६५९ रोजी दगाबाज अफझलखानाने मिठीत वार करताच शिवरायांनी याच वाघनख्यांनी त्याचा खात्मा करून इतिहास घडवला.',
+    museumExample: 'व्हिक्टोरिया अँड अल्बर्ट म्युझियम (लंडन) / सातारा छत्रपती संग्रहालय',
+    factStatus: 'fact'
   },
   {
     id: 'firangi',
     name: 'फिरंगी तलवार (Firangi Straight Sword)',
-    type: 'घोडदळ तलवार',
-    metal: 'युरोपीय पाते व मराठा खांडा मुठ',
+    marathiName: 'फिरंगी तलवार',
+    englishName: 'Firangi Straight Sword',
+    category: 'swords',
+    categoryName: 'तलवारी व पट्टे',
+    icon: '🗡️',
+    type: 'घोडदळ वेगवान तलवार',
+    metal: 'पोर्तुगीज/जर्मन आयात पोलाद व मराठा खांडा मुठ',
+    period: '१७ वे ते १८ वे शतक',
+    specs: { length: '४१ इंच', weight: '१,२०० ग्रॅम', blade: 'थेट सरळ एका बाजूने धारदार पाते' },
+    design: 'युरोपीय उच्च तंत्रज्ञानाचे सरळ पोलादी पाते, ज्यावर मराठा कारागिरांनी हाताच्या संरक्षणासाठी स्थानिक टोकदार खांडा मुठ बसवली.',
+    use: 'मराठा घोडदळाच्या वेगवान धडकेत शत्रूवर उंचावरून खोलवर वार करण्यासाठी.',
+    fame: 'हंबीरराव मोहिते, संताजी घोरपडे व मराठा घोडदळ.',
+    significance: 'विदेशी सर्वोत्तम धातूकाम आणि स्थानिक मराठा युद्धतंत्राचे परिपूर्ण आंतरराष्ट्रीय संमिश्रण.',
     museumExample: 'शिवाजी महाराज वस्तू संग्रहालय, पुणे',
+    factStatus: 'fact'
+  },
+  {
+    id: 'kadakbijli',
+    name: 'कडकबिजली तोफ (Kadakbijli Cannon)',
+    marathiName: 'कडकबिजली तोफ',
+    englishName: 'Kadakbijli Heavy Cannon',
+    category: 'artillery',
+    categoryName: 'तोफा व दारूगोळा',
+    icon: '💣',
+    type: 'दुर्ग संरक्षक महाकाय तोफ',
+    metal: 'पंचधातू (कांस्य, तांबे, पितळ, जस्त, लोखंड)',
+    period: '१७ वे शतक (किल्ले रायगड व पन्हाळा)',
+    specs: { length: '१२ फूट', weight: '३,८०० किलो', range: '३.५ ते ५ किलोमीटर' },
+    design: 'तोफेच्या तोंडावर सिंहमुखाचे कोरीव काम, जाड बळकट नळी आणि प्रचंड दारूगोळा पेलण्याची क्षमता.',
+    use: 'गडाच्या पायथ्याशी जमणाऱ्या शत्रूच्या फौजांवर व तोफखान्यावर लांबून महाभयंकर तोफगोळे डागण्यासाठी.',
+    fame: 'किल्ले रायगड बालेकिल्ला व शिवकालीन तोफखाना विभाग.',
+    significance: 'स्वराज्याच्या गडकोटांचे अभेद्य बुरुज राखणारी आणि १० मैल दूरपर्यंत प्रचंड गर्जना करणारी महाकाय तोफ.',
+    museumExample: 'किल्ले रायगड व पन्हाळगड बुरुज',
+    factStatus: 'fact'
+  },
+  {
+    id: 'khalbhairav',
+    name: 'काळभैरव सागरी तोफ (Khalbhairav Maritime Cannon)',
+    marathiName: 'काळभैरव सागरी तोफ',
+    englishName: 'Khalbhairav Naval Cannon',
+    category: 'artillery',
+    categoryName: 'तोफा व दारूगोळा',
+    icon: '⚓',
+    type: 'आरमारी सागरी तोफ',
+    metal: 'खाऱ्या पाण्याला न गंजणारा मरीन ब्राँझ (Marine Bronze)',
+    period: 'इ.स. १६६५ ते १७५०',
+    specs: { length: '९ फूट', weight: '२,४०० किलो', range: '२.५ सागरी मैल' },
+    design: 'अरबी समुद्रातील लाटा व खाऱ्या हवेत टिकाव धरू शकणाऱ्या विशेष मिश्रधातूत ओतलेली नौदल तोफ.',
+    use: 'मराठा गुराबा व गलबतांवरून इंग्रज, डच व पोर्तुगीज जहाजांचे डोलकाठ्या व तळ फोडण्यासाठी.',
+    fame: 'आरमारप्रमुख कान्होजी आंग्रे व मायनाक भंडारी.',
+    significance: 'अरबी समुद्रावर मराठा आरमाराचे निर्विवाद वर्चस्व प्रस्थापित करणारी सागरी युद्धशक्ती.',
+    museumExample: 'किल्ले सिंधुदुर्ग व विजयदुर्ग सागरी तटबंदी',
+    factStatus: 'fact'
+  },
+  {
+    id: 'char_aina',
+    name: 'चार-आईना चिलखत (Char-Aina Four Mirrors Armour)',
+    marathiName: 'चार-आईना चिलखत',
+    englishName: 'Char-Aina Body Armour',
+    category: 'armour',
+    categoryName: 'चिलखत व संरक्षण',
+    icon: '🛡️',
+    type: 'वक्षस्थल व शरीररक्षक चिलखत',
+    metal: 'दमास्कस पोलादी चकत्या व सुवर्ण नक्षीदार जिरहबख्तर',
+    period: '१७ वे ते १८ वे शतक',
+    specs: { weight: '९.५ किलो', coverage: 'छाती, पाठ व दोन्ही कुशी' },
+    design: 'चार पोलादी चकत्या (आईने) ज्यांवर सोनेरी नक्षी व कुराण/संस्कृत श्लोक कोरलेले असत, आतून मखमली व चामडी अस्तर.',
+    use: 'तलवार, भाला व तिरकमठ्यांचे वार थेट छातीवर होण्यापासून योद्ध्याचा प्राण वाचवण्यासाठी.',
+    fame: 'छत्रपती संभाजी महाराज, सेनापती संताजी घोरपडे.',
+    significance: 'मराठा सरदारांना रणांगणात प्रचंड हालचालींचे स्वातंत्र्य देणारे हलके व अतिबळकट चिलखत.',
+    museumExample: 'सातारा छत्रपती संग्रहालय व CSMVS मुंबई',
+    factStatus: 'fact'
+  },
+  {
+    id: 'katyar',
+    name: 'मराठा कट्यार (Maratha Katyar Push Dagger)',
+    marathiName: 'मराठा कट्यार',
+    englishName: 'Maratha Katyar (Push Dagger)',
+    category: 'concealed',
+    categoryName: 'गुप्त शस्त्रे व कट्यारी',
+    icon: '🗡️',
+    type: 'चिलखत भेदक कट्यार',
+    metal: 'उच्च घनतेचे वूट्झ पोलाद',
+    period: '१५ वे ते १८ वे शतक',
+    specs: { length: '१४ इंच', weight: '७०० ग्रॅम', blade: 'त्रिकोणी जाड चिलखतभेदक पाते' },
+    design: 'H-आकाराची आडवी दुहेरी मूठ, दोन्ही बाजूंना मनगटाचे रक्षण करणारे लोखंडी गज आणि टोकावर हिऱ्यासारखे टोक.',
+    use: 'समोरासमोरील निकराच्या लढाईत शत्रूच्या चिलखताच्या फटीतून आरपार भोसकण्यासाठी.',
+    fame: 'मराठा सरदार घराणी (जेधे, बांदल, मोहिते, कदम, कदमबांडे).',
+    significance: 'प्रत्येक मराठा योद्ध्याच्या कमरपट्ट्यात स्वाभिमान व शौर्याची खूण म्हणून अढळ स्थान.',
+    museumExample: 'राष्ट्रीय संग्रहालय नवी दिल्ली व प्रतापगड दरबार संग्रहालय',
+    factStatus: 'fact'
+  },
+  {
+    id: 'maratha_bhala',
+    name: 'मराठा भाला व बर्ची (Maratha Cavalry Spear / Barcha)',
+    marathiName: 'मराठा भाला व बर्ची',
+    englishName: 'Maratha Cavalry Spear',
+    category: 'polearms',
+    categoryName: 'लांब पल्ल्याची शस्त्रे',
+    icon: '🔱',
+    type: 'घोडदळ मुख्य शस्त्र',
+    metal: 'अतिबळकट पोलादी टोक व सागाचा/बांबूचा हलका दांडा',
+    period: '१६ वे ते १८ वे शतक',
+    specs: { length: '९ ते ११ फूट', weight: '२.२ किलो', range: 'वेगवान घोड्यावरून १० फूट पल्ला' },
+    design: 'लांब पानासारखे टोकदार पोलादी पाते, सुरेख पितळी जोड आणि वेगासाठी अत्यंत हलका व लवचिक बांबूचा दांडा.',
+    use: 'मराठा घोडदळाच्या तुफानी धडकेत शत्रूची पायदळ फळी दुरूनच भेदण्यासाठी.',
+    fame: 'धनाजी जाधव व मराठा बारगीर घोडदळ.',
+    significance: 'मुघल बादशहा औरंगजेबाच्या लाखोंच्या सैन्याला सळो की पळो करून सोडणारे मराठ्यांचे अस्त्र.',
+    museumExample: 'मराठा इतिहास संशोधन मंडळ, पुणे',
+    factStatus: 'fact'
+  },
+  {
+    id: 'dhal',
+    name: 'गेंड्याच्या कातड्याची ढाल (Rhinoceros Hide Shield)',
+    marathiName: 'गेंड्याच्या कातड्याची ढाल',
+    englishName: 'Rhino Hide Battle Shield',
+    category: 'armour',
+    categoryName: 'चिलखत व संरक्षण',
+    icon: '🛡️',
+    type: 'हात ढाल (संरक्षक)',
+    metal: 'प्रक्रिया केलेले गेंड्याचे कातडे, सुवर्ण व पितळी वाट्या (Bosses)',
     period: '१७ वे शतक',
-    design: 'पोर्तुगीज किंवा युरोपीय बनावटीचे थेट सपाट पाते, ज्यावर मराठ्यांनी स्वतःची स्थानिक मुठ (Khanda Hilt) बसवली.',
-    use: 'घोडदळाच्या वेगवान हल्ल्यात समोरासमोर जबरदस्त वार करण्यासाठी वापर.',
-    fame: 'छत्रपती शिवाजी महाराजांच्या पवित्र "भवानी" व "जगदंबा" तलवारी याच धाटणीच्या होत्या.',
-    significance: 'परकीय तंत्रज्ञान आत्मसात करून मराठा युद्धकलेनुसार त्याचे केलेले सर्वोत्तम स्वदेशी रूपांतर.'
+    specs: { diameter: '१८ इंच', weight: '१,२०० ग्रॅम' },
+    design: 'अर्धपारदर्शक कठीण कातडे, चार नक्षीदार पितळी/सुवर्ण वाट्या, आतून कापूस व मखमलीची मऊ पकड गादी.',
+    use: 'तलवारीचे, तोफांच्या ठिणग्यांचे व बंदुकीच्या छऱ्यांचे वार सहजतेने निसटवून लावण्यासाठी.',
+    fame: 'छत्रपती शिवाजी महाराज व मावळी सरदार.',
+    significance: 'लोखंडी ढालीपेक्षा निम्म्या वजनाची परंतु तलवारीच्या वाराने कधीही न तुटणारी आश्चर्यकारक ढाल.',
+    museumExample: 'CSMVS मुंबई व कोल्हापूर न्यू पॅलेस संग्रहालय',
+    factStatus: 'fact'
+  },
+  {
+    id: 'gupti',
+    name: 'गुप्ती (Gupti / Concealed Sword Cane)',
+    marathiName: 'गुप्ती',
+    englishName: 'Gupti (Concealed Sword Cane)',
+    category: 'concealed',
+    categoryName: 'गुप्त शस्त्रे व कट्यारी',
+    icon: '🦯',
+    type: 'गुप्तहेर व मुत्सद्दी शस्त्र',
+    metal: 'पातळ चपळ पोलाद व शिसवी लाकूड / पितळ',
+    period: '१७ वे ते १८ वे शतक',
+    specs: { length: '३६ इंच (३ फूट)', weight: '५५० ग्रॅम', blade: '२८ इंच लांब गुप्त पाते' },
+    design: 'बाहेरून साधी चालण्याची लाकडी किंवा हस्तिदंती काठी; मुठीला किंचित पीळ देताच आतून लखलखणारे धारदार पाते बाहेर पडते.',
+    use: 'दरबारात, गुप्तहेरांच्या मोहिमेवर किंवा प्रवासात शस्त्रबंदी असताना आत्मरक्षणासाठी गुप्त शस्त्र.',
+    fame: 'बहिरजी नाईक (गुप्तहेर प्रमुख) व मराठा वकील मुत्सद्दी.',
+    significance: 'मराठ्यांच्या अचूक बुद्धिमत्ता, चातुर्य व गनिमी काव्याचे सूक्ष्म प्रतीक.',
+    museumExample: 'शनिवारवाडा संग्रहालय, पुणे',
+    factStatus: 'fact'
+  },
+  {
+    id: 'dhanushya_baan',
+    name: 'शिवकालीन धनुष्य-बाण (Maratha Composite Bow & Arrows)',
+    marathiName: 'शिवकालीन धनुष्य-बाण',
+    englishName: 'Maratha Composite Bow',
+    category: 'polearms',
+    categoryName: 'लांब पल्ल्याची शस्त्रे',
+    icon: '🏹',
+    type: 'दुर्ग व जंगल तिरंदाजी शस्त्र',
+    metal: 'पोलादी बाणांची टोके, शिंग, बांबू व रेशमी दोरी',
+    period: 'प्राचीन ते शिवकाल',
+    specs: { range: '२०० ते २५० मीटर', weight: '८०० ग्रॅम' },
+    design: 'मजबूत शिंग व बांबूचे संमिश्र वळण, प्राण्यांच्या स्नायूंचे लेपन आणि विविध आकारांची पोलादी बाणाची टोके.',
+    use: 'रात्रीच्या वेळी किल्ल्यांवरून जाळपोळ करणारे अग्नीबाण सोडणे व जावळीच्या जंगलात दबा धरून शत्रूला टिपणे.',
+    fame: 'सह्याद्रीतील मावळे, रामोशी व महादेव कोळी तिरंदाज.',
+    significance: 'डोंगराळ सह्याद्रीच्या दऱ्याखोऱ्यांत तोफा व बंदुकांनाही लाजवणारे अचूक पारंपरिक शस्त्र.',
+    museumExample: 'अहिल्यानगर वस्तुसंग्रहालय व किल्ले तोरणा अवशेष',
+    factStatus: 'fact'
   }
 ];
 
@@ -789,6 +1004,8 @@ export default function ConnectMarathaUniversePage() {
   const [selectedCityEra, setSelectedCityEra] = useState('peshwa');
   const [selectedCoin, setSelectedCoin] = useState(COINS_DATA[0]);
   const [selectedWeapon, setSelectedWeapon] = useState(WEAPONS_DATA[0]);
+  const [selectedWeaponCategory, setSelectedWeaponCategory] = useState('all');
+  const [weaponSearch, setWeaponSearch] = useState('');
   const [selectedRiver, setSelectedRiver] = useState(RIVERS_DATA[0]);
   const [learningMode, setLearningMode] = useState('detailed'); // 'simple' | 'detailed' | 'academic'
   const [language, setLanguage] = useState('mr'); // 'mr' | 'en'
@@ -1026,6 +1243,12 @@ export default function ConnectMarathaUniversePage() {
               ⏳ टाईम मशीन (१२ कालखंड)
             </button>
             <button
+              onClick={() => setActiveTab('weapons')}
+              style={{ background: '#FFF1F2', color: '#BE123C', border: '1.5px solid #FECDD3', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(190,18,60,0.1)' }}
+            >
+              🗡️ शस्त्रास्त्र संग्रहालय
+            </button>
+            <button
               onClick={() => setActiveTab('battles')}
               style={{ background: '#FEE2E2', color: '#991B1B', border: 'none', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
             >
@@ -1064,7 +1287,8 @@ export default function ConnectMarathaUniversePage() {
             { id: 'time-machine', name: '⏳ टाईम मशीन (इ.स.पू. २३० ते आज)' },
             { id: 'cities-layers', name: '🏙️ १८ शहरे: येथे पूर्वी काय होते?' },
             { id: 'forts', name: '🏰 फोर्ट एक्सप्लोरर, वाडे व सिम्युलेटर' },
-            { id: 'battles', name: '⚔️ रणसंग्राम, आरमार व शस्त्रास्त्रे' },
+            { id: 'battles', name: '⚔️ रणसंग्राम व लढाया' },
+            { id: 'weapons', name: '🗡️ शस्त्रास्त्रे व चिलखत संग्रहालय' },
             { id: 'people', name: '👑 वीरांगना व महापुरुष' },
             { id: 'culture', name: '🎭 खाद्य संस्कृती (३६ जिल्हे), बोली व कला' },
             { id: 'numismatics', name: '🪙 नाणी, शिलालेख व मोडी वाचक' },
@@ -1713,7 +1937,15 @@ export default function ConnectMarathaUniversePage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
                 <div>
                   <span style={{ fontSize: '0.76rem', color: '#C2410C', fontWeight: 800, textTransform: 'uppercase' }}>वैशिष्ट्य १६ • ARMS, ARMOUR & MARATHA NAVY</span>
-                  <h4 style={{ margin: '2px 0 0', color: '#7C1D05', fontSize: '1.2rem', fontWeight: 800 }}>मराठा आरमार व ऐतिहासिक शस्त्रास्त्रे</h4>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                    <h4 style={{ margin: '2px 0 0', color: '#7C1D05', fontSize: '1.2rem', fontWeight: 800 }}>मराठा आरमार व ऐतिहासिक शस्त्रास्त्रे</h4>
+                    <button
+                      onClick={() => setActiveTab('weapons')}
+                      style={{ background: '#7C1D05', color: '#FFFFFF', border: 'none', padding: '6px 14px', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      🗡️ संपूर्ण शस्त्रास्त्रे, तोफा व चिलखत संग्रहालय पाहा ➔
+                    </button>
+                  </div>
                 </div>
                 <div style={{ display: 'flex', gap: '6px' }}>
                   {WEAPONS_DATA.map(w => (
@@ -1748,6 +1980,216 @@ export default function ConnectMarathaUniversePage() {
                 </div>
               </div>
             </div>
+          </section>
+        )}
+
+        
+        {/* ========================================================================= */}
+        {/* TAB: 🗡️ WEAPONS, ARTILLERY & ARMOUR MUSEUM (FEATURE 16)                    */}
+        {/* ========================================================================= */}
+        {activeTab === 'weapons' && (
+          <section style={{
+            background: '#FFFFFF',
+            border: '2px solid #FDA4AF',
+            borderRadius: '18px',
+            padding: '28px',
+            marginBottom: '36px',
+            boxShadow: '0 6px 24px rgba(190,18,60,0.08)'
+          }}>
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '14px', marginBottom: '22px' }}>
+              <div>
+                <span style={{ color: '#BE123C', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.82rem', letterSpacing: '1px' }}>
+                  वैशिष्ट्य १६ • ARMS, ARMOUR, CANNONS & MARATHA WEAPONRY MUSEUM
+                </span>
+                <h2 style={{ fontSize: '1.8rem', color: '#881337', fontWeight: 800, margin: '4px 0 0' }}>
+                  🗡️ मराठा शस्त्रास्त्रे, तोफा व चिलखत संग्रहालय
+                </h2>
+                <p style={{ color: '#9F1239', fontSize: '0.95rem', margin: '4px 0 0' }}>
+                  भवानी तलवार, वाघनखे, दांडपट्टा ते कडकबिजली तोफेपर्यंत—शिवकालीन युद्धकलेचे तंत्रज्ञान, धातूशास्त्र (Wootz Steel) आणि ऐतिहासिक पुरावे.
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ background: '#FFF1F2', color: '#BE123C', padding: '6px 14px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: 800, border: '1px solid #FECDD3' }}>
+                  एकूण संरक्षित शस्त्रे: {WEAPONS_DATA.length}
+                </span>
+                <span style={{ background: '#DCFCE7', color: '#15803D', padding: '6px 14px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: 800, border: '1px solid #86EFAC' }}>
+                  🟢 १००% सप्रमाण नोंदी
+                </span>
+              </div>
+            </div>
+
+            {/* Filter Categories Bar & Search */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {[
+                  { id: 'all', label: 'सर्व शस्त्रे (All)', icon: '⚔️' },
+                  { id: 'swords', label: 'तलवारी व पट्टे', icon: '🗡️' },
+                  { id: 'concealed', label: 'गुप्त शस्त्रे व कट्यारी', icon: '🐾' },
+                  { id: 'armour', label: 'चिलखत व ढाली', icon: '🛡️' },
+                  { id: 'artillery', label: 'तोफा व दारूगोळा', icon: '💣' },
+                  { id: 'polearms', label: 'भाले व धनुष्यबाण', icon: '🔱' }
+                ].map(cat => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedWeaponCategory(cat.id)}
+                    style={{
+                      padding: '7px 14px',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      border: selectedWeaponCategory === cat.id ? '2px solid #9F1239' : '1px solid #FECDD3',
+                      background: selectedWeaponCategory === cat.id ? '#9F1239' : '#FFF1F2',
+                      color: selectedWeaponCategory === cat.id ? '#FFFFFF' : '#9F1239',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <span>{cat.icon}</span>
+                    <span>{cat.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              <input
+                type="text"
+                placeholder="शस्त्राचे नाव शोधा (उदा. भवानी, वाघनखे, तोफ)..."
+                value={weaponSearch}
+                onChange={e => setWeaponSearch(e.target.value)}
+                style={{
+                  padding: '8px 14px',
+                  borderRadius: '8px',
+                  border: '1.5px solid #FECDD3',
+                  fontSize: '0.86rem',
+                  outline: 'none',
+                  minWidth: '240px'
+                }}
+              />
+            </div>
+
+            {/* Weapons Cards Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '14px', marginBottom: '26px' }}>
+              {WEAPONS_DATA
+                .filter(w => selectedWeaponCategory === 'all' || w.category === selectedWeaponCategory)
+                .filter(w => !weaponSearch || w.name.toLowerCase().includes(weaponSearch.toLowerCase()) || w.significance.toLowerCase().includes(weaponSearch.toLowerCase()))
+                .map(w => {
+                  const isSelected = selectedWeapon?.id === w.id;
+                  return (
+                    <div
+                      key={w.id}
+                      onClick={() => setSelectedWeapon(w)}
+                      style={{
+                        padding: '16px',
+                        borderRadius: '12px',
+                        cursor: 'pointer',
+                        border: isSelected ? '2.5px solid #9F1239' : '1.5px solid #FFE4E6',
+                        background: isSelected ? '#FFF1F2' : '#FFFFFF',
+                        boxShadow: isSelected ? '0 6px 16px rgba(159,18,57,0.15)' : '0 2px 6px rgba(0,0,0,0.03)',
+                        transition: 'all 0.2s ease',
+                        position: 'relative'
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '1.8rem' }}>{w.icon}</span>
+                        <span style={{ fontSize: '0.72rem', background: '#FFE4E6', color: '#9F1239', padding: '2px 8px', borderRadius: '10px', fontWeight: 800 }}>
+                          {w.categoryName}
+                        </span>
+                      </div>
+                      <h4 style={{ margin: '0 0 4px', fontSize: '1.05rem', color: '#881337', fontWeight: 800 }}>{w.name}</h4>
+                      <div style={{ fontSize: '0.78rem', color: '#BE123C', fontWeight: 700, marginBottom: '6px' }}>{w.type}</div>
+                      <p style={{ margin: 0, fontSize: '0.82rem', color: '#4C0519', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {w.significance}
+                      </p>
+                      <div style={{ marginTop: '10px', fontSize: '0.74rem', color: '#9F1239', fontWeight: 700, borderTop: '1px dashed #FECDD3', paddingTop: '6px' }}>
+                        📍 {w.museumExample}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+
+            {/* Selected Weapon Deep-Dive Inspector */}
+            {selectedWeapon && (
+              <div style={{
+                background: 'linear-gradient(135deg, #FFF1F2 0%, #FFFFFF 100%)',
+                border: '2px solid #FDA4AF',
+                borderRadius: '16px',
+                padding: '24px',
+                boxShadow: '0 4px 16px rgba(190,18,60,0.08)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ fontSize: '2.5rem' }}>{selectedWeapon.icon}</span>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#881337', fontWeight: 800 }}>
+                        {selectedWeapon.name}
+                      </h3>
+                      <span style={{ fontSize: '0.82rem', color: '#BE123C', fontWeight: 800 }}>
+                        {selectedWeapon.type} • {selectedWeapon.period}
+                      </span>
+                    </div>
+                  </div>
+                  <span style={{ background: '#DCFCE7', color: '#15803D', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800, border: '1px solid #86EFAC' }}>
+                    🟢 ऐतिहासिक पुरावा सत्यापित (Historical Fact)
+                  </span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                  {/* Left Column: Specifications */}
+                  <div style={{ background: '#FFFFFF', padding: '16px', borderRadius: '12px', border: '1px solid #FECDD3' }}>
+                    <h4 style={{ margin: '0 0 10px', fontSize: '0.95rem', color: '#881337', fontWeight: 800 }}>
+                      ⚙️ धातूशास्त्र व रचना वैशिष्ट्ये (Specifications)
+                    </h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem', color: '#4C0519' }}>
+                      <div><strong>धातू / पोलाद प्रकार:</strong> {selectedWeapon.metal}</div>
+                      {selectedWeapon.specs && (
+                        <>
+                          {selectedWeapon.specs.length && <div><strong>लांबी:</strong> {selectedWeapon.specs.length}</div>}
+                          {selectedWeapon.specs.weight && <div><strong>वजन:</strong> {selectedWeapon.specs.weight}</div>}
+                          {selectedWeapon.specs.range && <div><strong>मारक पल्ला:</strong> {selectedWeapon.specs.range}</div>}
+                          {selectedWeapon.specs.blade && <div><strong>पात्याची रचना:</strong> {selectedWeapon.specs.blade}</div>}
+                        </>
+                      )}
+                      <div><strong>रचना व घडण:</strong> {selectedWeapon.design}</div>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Tactical Use & Significance */}
+                  <div style={{ background: '#FFFFFF', padding: '16px', borderRadius: '12px', border: '1px solid #FECDD3' }}>
+                    <h4 style={{ margin: '0 0 10px', fontSize: '0.95rem', color: '#881337', fontWeight: 800 }}>
+                      🎯 रणांगणातील वापर व युद्धनीती (Tactical Use)
+                    </h4>
+                    <p style={{ margin: '0 0 10px', fontSize: '0.88rem', color: '#4C0519', lineHeight: 1.5 }}>
+                      {selectedWeapon.use}
+                    </p>
+                    <div style={{ background: '#FFF1F2', padding: '10px 12px', borderRadius: '8px', border: '1px solid #FECDD3', fontSize: '0.82rem', color: '#881337' }}>
+                      <strong>👑 प्रसिद्ध वापरकर्ते व संदर्भ:</strong> {selectedWeapon.fame}
+                    </div>
+                    <div style={{ marginTop: '8px', fontSize: '0.8rem', color: '#9F1239' }}>
+                      <strong>🏛️ सध्याचे संग्रहालय / जतन स्थळ:</strong> {selectedWeapon.museumExample}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Historic Impact Callout */}
+                <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+                  <div>
+                    <strong style={{ color: '#7C1D05', fontSize: '0.9rem' }}>📜 ऐतिहासिक निष्कर्ष व प्रभाव:</strong>
+                    <div style={{ fontSize: '0.86rem', color: '#78350F', marginTop: '2px' }}>{selectedWeapon.significance}</div>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('battles')}
+                    style={{ background: '#881337', color: '#FFFFFF', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 800, fontSize: '0.82rem', cursor: 'pointer' }}
+                  >
+                    ⚔️ या शस्त्रांशी संबंधित युद्धे पाहा ➔
+                  </button>
+                </div>
+              </div>
+            )}
           </section>
         )}
 
