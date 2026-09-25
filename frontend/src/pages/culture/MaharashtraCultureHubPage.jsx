@@ -120,6 +120,9 @@ export default function MaharashtraCultureHubPage() {
 
           {/* Quick Sub-Pillars Navigation Buttons */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+            <Link to="/universe" style={{ background: '#FFF7ED', color: '#C2410C', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, fontSize: '0.92rem', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 14px rgba(0,0,0,0.2)', border: '2px solid #F97316' }}>
+              🌌 संपूर्ण महाराष्ट्र महाविश्व (४९ वैशिष्ट्ये)
+            </Link>
             <Link to="/culture/shivkal-festivals" style={{ background: '#FEF3C7', color: '#92400E', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: '1.5px solid #F59E0B' }}>
               🚩 शिवकालीन उत्सव (१६३०-१६८०)
             </Link>
@@ -151,6 +154,55 @@ export default function MaharashtraCultureHubPage() {
       {/* Main Content Area */}
       <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '36px 20px' }}>
         
+        {/* MASTER FEATURE UNIVERSE BANNER */}
+        <section style={{ marginBottom: '32px' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #7C1D05 0%, #C2410C 50%, #EA580C 100%)',
+            borderRadius: '18px',
+            padding: '28px 32px',
+            color: '#FFFFFF',
+            boxShadow: '0 8px 24px rgba(124, 29, 5, 0.22)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '20px'
+          }}>
+            <div style={{ maxWidth: '800px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.18)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800, marginBottom: '10px' }}>
+                <span>✨ नवकल्पना महाप्रकल्प</span>
+                <span>•</span>
+                <span>४९ वैशिष्ट्ये • १२ जग • परस्पर जोडणी</span>
+              </div>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: 900, margin: '0 0 10px', color: '#FFFFFF' }}>
+                Connect Maratha — संपूर्ण महाराष्ट्र ज्ञानविश्व (Universe Hub)
+              </h2>
+              <p style={{ margin: 0, fontSize: '0.95rem', color: '#FED7AA', lineHeight: 1.6 }}>
+                २१ लेयर्सचा परस्परसंवादी नकाशा, १२ कालखंडांचे महाराष्ट्र टाइम मशीन, जलदुर्गांची जलव्यवस्था, गडकिल्ले २.०, रणांगण युद्धनीती, ३ अध्ययन स्तर (लहान मुलांसाठी, सविस्तर, संशोधक) आणि "सर्व काही जोडा" नॉलेज इंजिन!
+              </p>
+            </div>
+            <Link
+              to="/universe"
+              style={{
+                background: '#FFFFFF',
+                color: '#7C1D05',
+                padding: '12px 24px',
+                borderRadius: '12px',
+                fontWeight: 900,
+                fontSize: '1rem',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.2)'
+              }}
+            >
+              <span>🌌 महाविश्व उघडा</span>
+              <span>→</span>
+            </Link>
+          </div>
+        </section>
+
         {/* NEW SPOTLIGHT SECTION: SHIVKAL FESTIVALS & AGRI-KOLI SAMAJ */}
         <section style={{ marginBottom: '36px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '18px' }}>

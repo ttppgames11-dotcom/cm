@@ -183,6 +183,9 @@ export default function HomePage() {
         {getContent('hero.description', 'छत्रपती शिवरायांच्या स्वराज्याची जाज्वल्य निष्ठा, ३५० वर्षांची अखंड शौर्यपरंपरा आणि २१ व्या शतकातील तंत्रज्ञानावर आधारित मराठा समाजाचे राष्ट्रीय डिजिटल व्यासपीठ.')}
       </p>
       <div className="hero-ctas">
+        <Link to="/universe" className="btn btn-primary" style={{ background: 'linear-gradient(135deg, #7C1D05 0%, #C2410C 100%)', border: '1.5px solid #FED7AA', boxShadow: '0 4px 16px rgba(254, 215, 170, 0.4)' }}>
+          🌌 संपूर्ण महाराष्ट्र महाविश्व (४९ वैशिष्ट्ये)
+        </Link>
         {getContent('buttons.joinMember.visible', true) && (
           <Link to={getContent('buttons.joinMember.link', '/register')} className="btn btn-primary">
             {getContent('buttons.joinMember.label', '🚩 व्यासपीठावर सहभागी व्हा')}

@@ -24,6 +24,8 @@ export default function SiteHeader({ onOpenSearch }) {
             <span>{getContent('texts.tagline', 'Connect Maratha डिजिटल व्यासपीठ')}</span>
           </div>
           <div className="right-info">
+            <Link to="/universe" style={{ color: '#FED7AA', fontWeight: 700, textDecoration: 'none' }}>🌌 महाविश्व (Connect Everything)</Link>
+            <span>|</span>
             <span>📞 हेल्पलाईन: <strong>{getContent('forms.contactSupport.emergencyHelpline', '१८००-१२३-१६७४')}</strong></span>
             <span>|</span>
             <Link to="/about">संस्था परिचय</Link>
@@ -93,7 +95,8 @@ export default function SiteHeader({ onOpenSearch }) {
               <div className="mega-menu">
                 <div className="mega-menu-grid">
                   <div className="mega-col">
-                    <div className="mega-col-title">🌍 सांस्कृतिक विविधता व बोली</div>
+                    <div className="mega-col-title">🌍 सांस्कृतिक विविधता व महाविश्व</div>
+                    <Link to="/universe" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 800, background: '#FFEDD5', padding: '5px 8px', borderRadius: '6px', display: 'block', marginBottom: '5px' }}>🌌 संपूर्ण महाराष्ट्र महाविश्व (४९ वैशिष्ट्ये)</Link>
                     <Link to="/culture/shivkal-festivals" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 700 }}>🚩 शिवकालीन उत्सव (१६३०-१६८०)</Link>
                     <Link to="/culture/agri-koli" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 700 }}>🌊 आगरी-कोळी समाज व आरमार</Link>
                     <Link to="/culture" onClick={handleLinkClick}>🗺️ ८ प्रादेशिक सांस्कृतिक प्रोफाइल</Link>
@@ -288,6 +291,28 @@ export default function SiteHeader({ onOpenSearch }) {
           </nav>
 
           <div className="header-actions">
+            <Link
+              to="/universe"
+              onClick={handleLinkClick}
+              className="btn"
+              style={{
+                background: 'linear-gradient(135deg, #7C1D05 0%, #C2410C 100%)',
+                color: '#FFFFFF',
+                border: 'none',
+                fontWeight: 800,
+                padding: '7px 13px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 2px 8px rgba(124, 29, 5, 0.25)'
+              }}
+              title="Connect Maratha — Expanded Feature Universe (४९ वैशिष्ट्ये • १२ जग • परस्पर जोडणी)">
+              <span>🌌</span>
+              <span>महाविश्व</span>
+            </Link>
+
             <Link
               to="/ai"
               onClick={handleLinkClick}

@@ -100,6 +100,7 @@ import KnowledgeGraphExplorerPage from './pages/history/KnowledgeGraphExplorerPa
 import CommunityOralHistoryPage from './pages/community/CommunityOralHistoryPage';
 import ShivkalFestivalsPage from './pages/culture/ShivkalFestivalsPage';
 import AgriKoliSamajPage from './pages/culture/AgriKoliSamajPage';
+import ConnectMarathaUniversePage from './pages/universe/ConnectMarathaUniversePage';
 
 
 // Complete 100% Mapping for Every Legacy .html File (All 81 Files Covered)
@@ -336,6 +337,13 @@ export default function App() {
             <Route path="/culture/agri-koli" element={<AgriKoliSamajPage />} />
             <Route path="/agri-koli" element={<AgriKoliSamajPage />} />
             <Route path="/community/agri-koli" element={<AgriKoliSamajPage />} />
+
+            {/* Connect Maratha — Expanded Feature Universe (49 Features / 12 Worlds) */}
+            <Route path="/universe" element={<ConnectMarathaUniversePage />} />
+            <Route path="/master-map" element={<ConnectMarathaUniversePage />} />
+            <Route path="/time-machine" element={<ConnectMarathaUniversePage />} />
+            <Route path="/connect-everything" element={<ConnectMarathaUniversePage />} />
+            <Route path="/explore" element={<ConnectMarathaUniversePage />} />
 
             {/* Gallery, Symbols, Temples */}
             <Route path="/gallery" element={<PhotoGalleryPage />} />
