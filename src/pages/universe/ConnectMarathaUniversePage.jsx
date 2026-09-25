@@ -380,18 +380,114 @@ const CONNECTED_NODES_DATA = {
 };
 
 const CIVILIZATION_WORLDS = [
-  { id: 'graph', name: 'ज्ञानजाळे व कालपट', icon: '🧬', count: 'Features 1–4', desc: 'Civilization Graph, What Was Here Before?, City Explorer, Old Cities' },
-  { id: 'heritage', name: 'वारसा जतन व दस्तऐवज', icon: '🏚️', count: 'Features 5–8', desc: 'Vanishing Maharashtra, Heritage Home, Old Documents, Modi Reader' },
-  { id: 'numismatics', name: 'नाणी, शिलालेख व लेणी', icon: '🪙', count: 'Features 9–13', desc: 'Coins, Inscriptions, Rock Caves, Archaeology, Trade Routes' },
-  { id: 'military', name: 'आरमार, गडकोट व युद्धनीती', icon: '⚓', count: 'Features 14–20', desc: 'Maritime, Cavalry, Armour Museum, Fort Simulator, Strategy Game' },
-  { id: 'historiography', name: 'इतिहास संशोधन व पुरावे', icon: '⚖️', count: 'Features 21–25', desc: 'Historical Mystery, Find Source, Disputed Views, Data, Geography' },
-  { id: 'nature', name: 'सह्याद्री, नद्या व देवराई', icon: '⛰️', count: 'Features 26–30', desc: 'Sahyadri, Sacred Nature, Wildlife, Sacred Groves, River Civilization' },
-  { id: 'spirituality', name: 'वारी, तीर्थक्षेत्र व सण', icon: '🥁', count: 'Features 31–33', desc: 'Pilgrimage Network, Wari Live Mode, Festival Calendar Engine' },
-  { id: 'daily_life', name: 'दैनंदिन जीवन, वस्त्र व खाद्य', icon: '👨‍👩‍👧', count: 'Features 34–39', desc: 'How People Lived, Day in History, Fashion, Food, Education, Firsts' },
-  { id: 'industry', name: 'उद्योग, रेल्वे व वर्तमानपत्रे', icon: '🚂', count: 'Features 40–46', desc: 'Industrial History, Railway, Mill Heritage, Newspapers, Audio/Video' },
-  { id: 'research', name: 'संशोधक व डिजिटल ग्रंथ', icon: '🧑‍🔬', count: 'Features 47–53', desc: 'Ask Historian, Expert Profiles, Research Notebook, Digital Book, AI Doc' },
-  { id: 'platform', name: 'ओपन API व अचूकता इंजिन', icon: '🛡️', count: 'Features 54–58', desc: 'Open Heritage API, Standards, Accuracy Engine, Context Finder, Graph' },
-  { id: 'tourism', name: 'ट्रेकिंग, सुरक्षा व समुदाय', icon: '📱', count: 'Features 59–69', desc: 'QR Heritage, Audio Tours, Offline Trek, Safety, Awards, Marketplace' }
+  {
+    id: 'graph',
+    name: 'ज्ञानजाळे व कालपट',
+    icon: '🧬',
+    count: 'Features 1–4',
+    tagline: 'Civilization Graph & Time Layers',
+    desc: 'Civilization Graph, What Was Here Before?, City Explorer, Old Cities',
+    features: ['१. अखंड सभ्यता ज्ञानजाळे (Civilization Graph)', '२. येथे पूर्वी काय होते? (What Was Here Before?)', '३. बहुस्तरीय शहर शोधक (City Explorer)', '४. जुन्या शहरांचे कालखंड बदल (Old Cities Transformation)']
+  },
+  {
+    id: 'heritage',
+    name: 'वारसा जतन व दस्तऐवज',
+    icon: '🏚️',
+    count: 'Features 5–8',
+    tagline: 'Preservation & Archives',
+    desc: 'Vanishing Maharashtra, Heritage Home, Old Documents, Modi Reader',
+    features: ['५. लुप्त होणारा महाराष्ट्र दस्तऐवजीकरण', '६. माझे हेरिटेज होम नोंदणी', '७. दुर्मीळ दस्तऐवज व ताम्रपट संकलन', '८. मोडी लिपी वाचक व भाषांतरकार']
+  },
+  {
+    id: 'numismatics',
+    name: 'नाणी, शिलालेख व लेणी',
+    icon: '🪙',
+    count: 'Features 9–13',
+    tagline: 'Numismatics & Epigraphy',
+    desc: 'Coins, Inscriptions, Rock Caves, Archaeology, Trade Routes',
+    features: ['९. प्राचीन ते शिवकालीन नाणी भांडार', '१०. कातळ कोरीव शिलालेख डेटाबेस', '११. सह्याद्रीतील बौद्ध व हिंदू लेणी नकाशा', '१२. पुरातत्व उत्खनन शोधक', '१३. प्राचीन व्यापारी घाटमार्ग (Trade Routes)']
+  },
+  {
+    id: 'military',
+    name: 'आरमार, गडकोट व युद्धनीती',
+    icon: '⚓',
+    count: 'Features 14–20',
+    tagline: 'Military & Fort Architecture',
+    desc: 'Maritime, Cavalry, Armour Museum, Fort Simulator, Strategy Game',
+    features: ['१४. मराठा आरमार व सागरी दुर्ग इतिहास', '१५. भीमथडी घोडदळ व पायदळ रचना', '१६. शस्त्र व चिलखत संग्रहालय (Arms & Armour)', '१७. तोफा, दारूगोळा व बालेकिल्ला स्थापत्य', '१८. गडकोट आर्किटेक्चर सिम्युलेटर (3D Fort Builder)', '१९. गनिमी कावा युद्धनीती सिम्युलेटर', '२०. रणमैदान रणनीती विश्लेषक']
+  },
+  {
+    id: 'historiography',
+    name: 'इतिहास संशोधन व पुरावे',
+    icon: '⚖️',
+    count: 'Features 21–25',
+    tagline: 'Sources & Evidence Verification',
+    desc: 'Historical Mystery, Find Source, Disputed Views, Data, Geography',
+    features: ['२१. ऐतिहासिक रहस्ये व शोध', '२२. संदर्भ शोधा (Find Original Source)', '२३. वादग्रस्त मते व पुरावे तुलना', '२४. संख्याशास्त्रीय इतिहास डेटा व्हिज्युअलायझर', '२५. ऐतिहासिक भूगोल व सीमा बदल नकाशा']
+  },
+  {
+    id: 'nature',
+    name: 'सह्याद्री, नद्या व देवराई',
+    icon: '⛰️',
+    count: 'Features 26–30',
+    tagline: 'Ecology & Sacred Nature',
+    desc: 'Sahyadri, Sacred Nature, Wildlife, Sacred Groves, River Civilization',
+    features: ['२६. सह्याद्री पर्वत व घाटमाथा भूगोल', '२७. पवित्र वनस्पती व निसर्ग संवर्धन', '२८. ऐतिहासिक वन्यजीव व जंगलांचा नकाशा', '२९. ३०००+ देवराई (Sacred Groves) संवर्धन', '३०. नदी संस्कृती (गोदावरी, कृष्णा, भीमा, तापी, नर्मदा)']
+  },
+  {
+    id: 'spirituality',
+    name: 'वारी, तीर्थक्षेत्र व सण',
+    icon: '🥁',
+    count: 'Features 31–33',
+    tagline: 'Wari & Living Traditions',
+    desc: 'Pilgrimage Network, Wari Live Mode, Festival Calendar Engine',
+    features: ['३१. महावारी पंढरपूर पायी पालखी मार्ग', '३२. तीर्थक्षेत्र नेटवर्क व अन्नछत्र माहिती', '३३. शिवकालीन व पारंपरिक सण दिनदर्शिका']
+  },
+  {
+    id: 'daily_life',
+    name: 'दैनंदिन जीवन, वस्त्र व खाद्य',
+    icon: '👨‍👩‍👧',
+    count: 'Features 34–39',
+    tagline: 'Daily Life, Attire & Gastronomy',
+    desc: 'How People Lived, Day in History, Fashion, Food, Education, Firsts',
+    features: ['३४. त्या काळातील जनजीवन कसे होते?', '३५. इतिहासातील आजचा दिवस (Day in History)', '३६. पारंपारिक वस्त्रे (पैठणी, शालू, पगड्या, फेटे)', '३७. प्रादेशिक पाककला व खाद्य वारसा (३६ जिल्हे)', '३८. पारंपरिक शिक्षण पद्धती (पाठशाळा, मल्लविद्या)', '३९. महाराष्ट्रातील पहिली मानके (First in Maharashtra)']
+  },
+  {
+    id: 'industry',
+    name: 'उद्योग, रेल्वे व वर्तमानपत्रे',
+    icon: '🚂',
+    count: 'Features 40–46',
+    tagline: 'Industrial & Media Heritage',
+    desc: 'Industrial History, Railway, Mill Heritage, Newspapers, Audio/Video',
+    features: ['४०. महाराष्ट्रातील औद्योगिकीकरणाचा इतिहास', '४१. आशियातील पहिली रेल्वे (बोरीबंदर ते ठाणे १८५३)', '४२. मुंबई कापड गिरण्यांचा सुवर्णकाळ व वारसा', '४३. ऐतिहासिक वर्तमानपत्रे (दर्पण, केसरी, ज्ञानप्रकाश)', '४४. ऐतिहासिक ऑडिओ, भाषणे व संगीत रेकॉर्ड्स', '४५. जुनी छायाचित्रे व व्हिडियो पुराभिलेख', '४६. लोकसाहित्य, पोवाडे व गोंधळ परंपरा']
+  },
+  {
+    id: 'research',
+    name: 'संशोधक व डिजिटल ग्रंथ',
+    icon: '🧑‍🔬',
+    count: 'Features 47–53',
+    tagline: 'Research & Scholarly Tools',
+    desc: 'Ask Historian, Expert Profiles, Research Notebook, Digital Book, AI Doc',
+    features: ['४७. इतिहासकारांना विचारा (Ask a Historian)', '४८. इतिहास संशोधक व अभ्यासक प्रोफाइल', '४९. माझे वैयक्तिक संशोधन वही (Research Notebook)', '५०. दुर्मीळ ग्रंथालय व डिजिटल वाचनालय', '५१. मूळ समकालीन बखरी व साधनांचे लिप्यंतर', '५२. एआय ऐतिहासिक दस्तऐवज विश्लेषक', '५३. आंतरविद्याशाखीय अभ्यास मंच']
+  },
+  {
+    id: 'platform',
+    name: 'ओपन API व अचूकता इंजिन',
+    icon: '🛡️',
+    count: 'Features 54–58',
+    tagline: 'Standards & Platform API',
+    desc: 'Open Heritage API, Standards, Accuracy Engine, Context Finder, Graph',
+    features: ['५४. ओपन महाराष्ट्र हेरिटेज डेटा API (JSON/GraphQL)', '५५. इतिहास लेखन प्रमाणके व मेटाडेटा', '५६. ऐतिहासिक अचूकता पडताळणी इंजिन', '५७. ऐतिहासिक संदर्भ शोधक (Context Finder)', '५८. परस्परसंबंध ज्ञानजाळे व्हिज्युअलायझेशन']
+  },
+  {
+    id: 'tourism',
+    name: 'ट्रेकिंग, सुरक्षा व समुदाय',
+    icon: '📱',
+    count: 'Features 59–69',
+    tagline: 'Responsible Tourism & Safety',
+    desc: 'QR Heritage, Audio Tours, Offline Trek, Safety, Awards, Marketplace',
+    features: ['५९. ऐतिहासिक वास्तूंवर स्मार्ट क्यूआर कोड', '६०. बहुभाषिक ऑडिओ गाईड टूर्स', '६१. ऑफलाइन दुर्ग ट्रेकिंग नकाशे व GPS ट्रेल', '६२. गडकोट व ट्रेकर्स सुरक्षा नेटवर्क (SOS)', '६३. जबाबदार दुर्ग पर्यटन आचारसंहिता', '६४. स्थानिक हेरिटेज गाईड नेटवर्क', '६५. युवा इतिहासकार पुरस्कार व शिष्यवृत्ती', '६६. ऐतिहासिक वस्तू व हस्तकला मार्केटप्लेस', '६७. गडकोट स्वच्छता व संवर्धन मोहीम', '६८. शाळा व महाविद्यालयांसाठी हेरिटेज क्लब', '६९. जागतिक युनेस्को मराठा लष्करी वारसा ट्रॅक']
+  }
 ];
 
 // CITIES DATA (Feature 3 & 4)
@@ -399,6 +495,8 @@ const MAHA_CITIES = [
   {
     id: 'pune',
     name: 'पुणे (पुण्यनगरी / Punawadi)',
+    region: 'पश्चिम महाराष्ट्र',
+    ancientName: 'पुन्नक विषय (इ.स. ७५८) / कसबे पुणे',
     oldNames: 'पुन्नक विषय (इ.स. ७५८), कसबे पुणे, पेशवे राजधानी',
     eras: {
       today: 'भारताची आयटी, ऑटोमोबाईल व शैक्षणिक राजधानी (विद्येचे माहेरघर).',
@@ -407,6 +505,8 @@ const MAHA_CITIES = [
       maratha: 'लाल महाल, कसबा गणपती जिजाऊंनी स्थापन केला, दादोजी कोंडदेव (१६३०-१६८०).',
       earlier: 'राष्ट्रकूट राजवट (पुन्नक विषय), यादव काळ व पुणेश्वर-केदारेश्वर मंदिरे.'
     },
+    heritageSites: ['शनिवारवाडा', 'विश्रामबाग वाडा', 'लाल महाल', 'कसबा गणपती', 'सिंहगड किल्ला'],
+    famousFood: 'पुणेरी मिसळ, बाकरवडी, सुजाता मस्तानी, आंबा बर्फी',
     architecture: 'शनिवारवाडा, विश्रामबाग वाडा, ओंकारेश्वर मंदिर, चतुःशृंगी',
     food: 'पुणेरी मिसळ, बाकरवडी, सुजाता मस्तानी, आंबा बर्फी',
     industry: 'माहिती तंत्रज्ञान (Hinjawadi), ऑटोमोबाईल (Tata, Bajaj), शिक्षण'
@@ -414,6 +514,8 @@ const MAHA_CITIES = [
   {
     id: 'mumbai',
     name: 'मुंबई (बॉम्बे / Mumbai)',
+    region: 'कोकण किनारपट्टी',
+    ancientName: 'मुंबादेवी / हेप्टानेशिया (टॉलेमीची सात बेटे)',
     oldNames: 'मुंबादेवी बेट, हेप्टानेशिया (टॉलेमीची सात बेटे)',
     eras: {
       today: 'भारताची आर्थिक राजधानी, आंतरराष्ट्रीय बंदर, बॉलिवूड व तंत्रज्ञान केंद्र.',
@@ -422,6 +524,8 @@ const MAHA_CITIES = [
       maratha: 'छत्रपती शिवाजी महाराजांची खांदेरी-उंदेरी मोहीम, इंग्रजांशी मुत्सद्दी तह.',
       earlier: 'शिलाहार राजवट, वाळकेश्वर बाणगंगा, घारापुरी (एलिफंटा लेणी इ.स. ६००).'
     },
+    heritageSites: ['गेटवे ऑफ इंडिया', 'छत्रपती शिवाजी महाराज टर्मिनस (CST)', 'मुंबादेवी मंदिर', 'एलिफंटा लेणी'],
+    famousFood: 'वडापाव, उसळ-पाव, पावभाजी, बॉम्बे सँडविच',
     architecture: 'गेटवे ऑफ इंडिया, छत्रपती शिवाजी महाराज टर्मिनस, मुंबादेवी मंदिर, राजाबाई टॉवर',
     food: 'वडापाव, बॉम्बे सँडविच, उसळ-पाव, पावभाजी',
     industry: 'बँकिंग, वित्त (BSE/NSE), कापड गिरण्यांचा इतिहास, चित्रपट'
@@ -429,6 +533,8 @@ const MAHA_CITIES = [
   {
     id: 'chhatrapati_sambhajinagar',
     name: 'छत्रपती संभाजीनगर (औरंगाबाद / खडकी)',
+    region: 'मराठवाडा',
+    ancientName: 'राजतडाग / खडकी (मलिक अंबर १६१०)',
     oldNames: 'राजतडाग, खडकी (मलिक अंबर १६१०), औरंगाबाद, छत्रपती संभाजीनगर',
     eras: {
       today: 'महाराष्ट्राची पर्यटन राजधानी, ऑटो हब, फार्मास्युटिकल व शैक्षणिक केंद्र.',
@@ -437,6 +543,8 @@ const MAHA_CITIES = [
       maratha: 'छत्रपती संभाजी महाराजांचे मराठवाड्यातील पराक्रम, हंबीरराव मोहिते यांची गस्त.',
       earlier: 'सातवाहन काळ, वाकाटक, यादव देवगिरी राजधानी (११८०-१३१७), वेरूळ कैलास.'
     },
+    heritageSites: ['देवगिरी (दौलताबाद) किल्ला', 'वेरूळ कैलास लेणी', 'बीबी का मकबरा', 'नहरे अंबरी जलप्रणाली'],
+    famousFood: 'नानखलिया, मांडे, दाल बट्टी, सीताफळ रबडी',
     architecture: 'देवगिरी (दौलताबाद) किल्ला, वेरूळ लेणी, बीबी का मकबरा, नहरे अंबरी जलप्रणाली',
     food: 'नानखलिया, मांडे, दाल बट्टी, सीताफळ रबडी',
     industry: 'पर्यटन, हिमरू व पैठणी विणकाम, ऑटोमोबाईल'
@@ -444,6 +552,8 @@ const MAHA_CITIES = [
   {
     id: 'kolhapur',
     name: 'कोल्हापूर (करवीर / Dakshin Kashi)',
+    region: 'दक्षिण महाराष्ट्र',
+    ancientName: 'करवीर पीठ / कोल्लापूर (शिलाहार)',
     oldNames: 'करवीर पीठ, कोल्लापूर (शिलाहार राजधानी)',
     eras: {
       today: 'कुस्तीची पंढरी, साखर उद्योग, चित्रपटनिर्मिती व धार्मिक पर्यटन केंद्र.',
@@ -452,6 +562,8 @@ const MAHA_CITIES = [
       maratha: 'छत्रपती शिवरायांचा पन्हाळा वेढा, बाजीप्रभूंचा पावनखिंड लढा (१६६०).',
       earlier: 'शिलाहार राजवट, महालक्ष्मी (अंबाबाई) मंदिर निर्माण (इ.स. ७००), ब्रह्मपुरी उत्खनन.'
     },
+    heritageSites: ['श्री अंबाबाई महालक्ष्मी मंदिर', 'न्यू पॅलेस व संग्रहालय', 'रंकाळा तलाव', 'पन्हाळा गड'],
+    famousFood: 'तांबडा-पांढरा रस्सा, कोल्हापुरी मिसळ, भडंग, सेंद्रिय गूळ',
     architecture: 'न्यू पॅलेस, अंबाबाई मंदिर, रंकाळा तलाव, भवानी मंडप, पन्हाळा गड',
     food: 'तांबडा-पांढरा रस्सा, कोल्हापुरी मिसळ, भडंग, गूळ',
     industry: 'साखर कारखाने, फाउंड्री व अभियांत्रिकी, कोल्हापुरी चप्पल'
@@ -459,6 +571,8 @@ const MAHA_CITIES = [
   {
     id: 'nagpur',
     name: 'नागपूर (विदर्भाची राजधानी / Orange City)',
+    region: 'विदर्भ',
+    ancientName: 'नाग नदी काठ / भक्त बुलंद शाह गोंड राजधानी',
     oldNames: 'नाग नदी काठची वस्ती, गोंड राजधानी (भक्त बुलंद शाह १७०२)',
     eras: {
       today: 'महाराष्ट्राची उपराजधानी, भारताचा झिरो माईल केंद्रबिंदू, मेट्रो व लॉजिस्टिक हब.',
@@ -467,6 +581,8 @@ const MAHA_CITIES = [
       maratha: 'विदर्भातील मराठा जहागिरी, गोंड राजांशी मैत्री व संरक्षण संबंध.',
       earlier: 'वाकाटक राजवट (नंदीवर्धन रामटेक), मौर्य अवशेष (मनसर उत्खनन).'
     },
+    heritageSites: ['दीक्षाभूमी', 'रामटेक गडमंदिर', 'सीताबर्डी किल्ला', 'कस्तुरचंद पार्क'],
+    famousFood: 'सावजी मटण/चिकन, तर्री पोहे, संत्रा बर्फी, पाटवडी रस्सा',
     architecture: 'दीक्षाभूमी, रामटेक गडमंदिर, सीताबर्डी किल्ला, कस्तुरचंद पार्क',
     food: 'सावजी मटण/चिकन, पोहे-तर्री, संत्रा बर्फी, पाटवडी रस्सा',
     industry: 'लॉजिस्टिक, संत्रा प्रक्रिया, कापूस जिनिंग, MIHAN SEZ'
@@ -474,6 +590,8 @@ const MAHA_CITIES = [
   {
     id: 'nashik',
     name: 'नाशिक (पंचवटी / कुंभमेळा नगरी)',
+    region: 'उत्तर महाराष्ट्र / खान्देश सीमा',
+    ancientName: 'जनस्थान (रामायण) / नासिक्य (पतंजली महाभाष्य)',
     oldNames: 'पद्मनगरी, जनस्थान (रामायण), नासिक्य (पतंजली महाभाष्य)',
     eras: {
       today: 'भारताची वाइन कॅपिटल, कृषी निर्यात केंद्र, धार्मिक तीर्थ व डिफेन्स हब.',
@@ -482,6 +600,8 @@ const MAHA_CITIES = [
       maratha: 'साल्हेर-मुल्हेर लढाया (१६७२), त्र्यंबकेश्वर व बागलाणवर शिवशाही वर्चस्व.',
       earlier: 'सातवाहन काळ (पांडवलेणी शिलालेख), यादव काळ, राम-सीता-लक्ष्मण पंचवटी.'
     },
+    heritageSites: ['श्री काळाराम मंदिर', 'त्र्यंबकेश्वर ज्योतिर्लिंग', 'पांडवलेणी', 'पंचवटी सीतागुंफा'],
+    famousFood: 'नाशिक मिसळ पाव, द्राक्षे, चिवडा, खान्देशी वांग्याचे भरीत',
     architecture: 'काळाराम मंदिर, त्र्यंबकेश्वर ज्योतिर्लिंग, पांडवलेणी, सुंदरनारायण मंदिर',
     food: 'मिसळ पाव (तुकडा/तर्री), द्राक्षे, चिवडा, खांदेशी वांग्याचे भरीत',
     industry: 'द्राक्ष व वाइनरी, HAL ओझर (लढाऊ विमाने), करन्सी नोट प्रेस'
@@ -491,39 +611,55 @@ const MAHA_CITIES = [
 // FEATURE 9: COINS & CURRENCY DATABASE
 const COINS_DATA = [
   {
+    id: 'satavahana_potin',
     name: 'सातवाहन पोटिन नाणे (Satavahana Coin)',
+    era: 'सातवाहन कालखंड',
     period: 'इ.स.पूर्व १०० - इ.स. १००',
     metal: 'पोटिन / शिसे (Lead alloy)',
+    script: 'प्राचीन ब्राह्मी लिपी',
     ruler: 'गौतमीपुत्र सातकर्णी / वसिष्ठीपुत्र',
     front: 'हत्ती / सिंह आणि ब्राह्मी लिपीत राजाचे नाव',
     back: 'उज्जैन चिन्ह (चार वर्तुळांचे चक्र) व चैत्य प्रतीक',
+    significance: 'महाराष्ट्रातील सर्वात जुने स्थानिक राजवटीचे कोरीव नाणे व आंतरराष्ट्रीय व्यापाराचा पुरावा.',
     source: 'महाराष्ट्र राज्य पुरातत्व संग्रहालय व नाणेघाट शोध'
   },
   {
+    id: 'yadava_gadyana',
     name: 'यादव सुवर्ण गद्याण (Yadava Gold Gadyana)',
+    era: 'यादव कालखंड',
     period: 'इ.स. ११८० - १३१०',
     metal: 'शुद्ध सोने (Gold)',
+    script: 'नागरी / देवनागरी लिपी',
     ruler: 'सिंघणदेव यादव (देवगिरी)',
     front: 'गरुड मुद्रा अथवा शंख-चक्र-गदा-पद्म',
     back: 'नागरी लिपीत श्री सिंघणदेव असा स्पष्ट शिक्का',
+    significance: 'देवगिरीच्या वैभवशाली सुवर्णयुगाचा आणि मराठवाड्यातील आर्थिक समृद्धीचा प्रत्यक्ष पुरावा.',
     source: 'देवगिरी किल्ला उत्खनन व ब्रिटिश म्युझियम'
   },
   {
+    id: 'shivrai_copper',
     name: 'शिवराई नाणे (Chhatrapati Shivaji Maharaj Shivrai)',
+    era: 'शिवकाल (१६७४-१८१८)',
     period: 'इ.स. १६७४ - १८१८',
     metal: 'तांबे (Copper)',
+    script: 'देवनागरी लिपी',
     ruler: 'छत्रपती शिवाजी महाराज (६ जून १६७४ राज्याभिषेक)',
     front: 'नागरी लिपीत तीन ओळींमध्ये: "श्री / राजा / शिव"',
     back: 'नागरी लिपीत दोन ओळींमध्ये: "छत्र / पती"',
+    significance: 'स्वराज्याचे सार्वभौम चलन; परकीय सुलतानशाहीच्या चलनास दिलेले मराठ्यांचे अस्मितेचे उत्तर.',
     source: 'किल्ले रायगड संग्रहालय व पेशवे दफ्तर'
   },
   {
+    id: 'shivrai_hon',
     name: 'शिवकालीन सुवर्ण होन (Shivrai Hon)',
+    era: 'शिवकाल (१६७४)',
     period: 'इ.स. १६७४ - १६८०',
     metal: 'शुद्ध सोने (Gold - सुमारे २.८ ग्रॅम)',
+    script: 'देवनागरी लिपी',
     ruler: 'छत्रपती शिवाजी महाराज',
     front: 'देवनागरी अक्षरे: "श्री राजा शिव"',
     back: 'देवनागरी अक्षरे: "छत्रपती"',
+    significance: '६ जून १६७४ रोजी रायगडावर झालेल्या सुवर्ण राज्याभिषेकाप्रीत्यर्थ पाडलेले दुर्मिळ ऐतिहासिक सुवर्ण नाणे.',
     source: 'छत्रपती शिवाजी महाराज वस्तुसंग्रहालय (CSMVS), मुंबई'
   }
 ];
@@ -531,30 +667,36 @@ const COINS_DATA = [
 // FEATURE 10: HISTORIC INSCRIPTIONS
 const INSCRIPTIONS_DATA = [
   {
+    id: 'naneghat',
     name: 'नाणेघाट शिलालेख (Naneghat Inscription)',
     location: 'नाणेघाट खिंड, जुन्नर (पुणे-ठाणे सीमा)',
     script: 'प्राचीन ब्राह्मी लिपी',
     lang: 'महाराष्ट्री प्राकृत',
     period: 'इ.स.पूर्व पहिले शतक (सातवाहन)',
     desc: 'राणी नागनिका यांनी कोरलेला शिलालेख. सातवाहन साम्राज्यातील यज्ञ, दानधर्म आणि जगातील सर्वांत प्राचीन अंकांचे (१, २, ४, ६, ७, ९) कोरीव पुरावे.',
+    content: 'राणी नागनिका यांनी कोरलेला शिलालेख. सातवाहन साम्राज्यातील यज्ञ, दानधर्म आणि जगातील सर्वांत प्राचीन अंकांचे (१, २, ४, ६, ७, ९) कोरीव पुरावे.',
     evidence: '🟢 प्रत्यक्ष कातळात कोरलेला मूळ पुरावा (Archaeological In-situ)'
   },
   {
+    id: 'karla',
     name: 'कार्ले लेणी शिलालेख (Karla Caves Inscription)',
     location: 'कार्ले महाचैत्य, लोणावळा',
     script: 'ब्राह्मी लिपी',
     lang: 'प्राकृत',
     period: 'इ.स. पहिले शतक',
     desc: 'भारतातील सर्वात मोठ्या कातळ-खोदीव बौद्ध चैत्यगृहातील खांबांवर कोरलेले व्यापाऱ्यांचे व कारागिरांचे देणगी शिलालेख.',
+    content: 'भारतातील सर्वात मोठ्या कातळ-खोदीव बौद्ध चैत्यगृहातील खांबांवर कोरलेले व्यापाऱ्यांचे व कारागिरांचे देणगी शिलालेख.',
     evidence: '🟢 भारतीय पुरातत्व सर्वेक्षण (ASI) प्रमाणित'
   },
   {
+    id: 'raigad_jagdishwar',
     name: 'रायगड जगदीश्वर शिलालेख (Raigad Inscription)',
     location: 'श्री जगदीश्वर मंदिर, किल्ले रायगड पायरी',
     script: 'देवनागरी लिपी',
     lang: 'संस्कृत / जुनी मराठी',
     period: 'इ.स. १६७४ (राज्याभिषेक काळ)',
     desc: 'मुख्य स्थापत्यकार हिरोजी इंदुलकर यांनी नम्रतेने कोरलेली ओळ: "सेवेचे ठायी तत्पर हिरोजी इंदुलकर". गडावरील वास्तुरचनेचा ऐतिहासिक दस्तऐवज.',
+    content: 'मुख्य स्थापत्यकार हिरोजी इंदुलकर यांनी नम्रतेने कोरलेली ओळ: "सेवेचे ठायी तत्पर हिरोजी इंदुलकर". गडावरील वास्तुरचनेचा ऐतिहासिक दस्तऐवज.',
     evidence: '🟢 शिवकालीन समकालीन दगडी शिलालेख'
   }
 ];
@@ -562,50 +704,74 @@ const INSCRIPTIONS_DATA = [
 // FEATURE 16: ARMS & ARMOUR DATA
 const WEAPONS_DATA = [
   {
+    id: 'dandpatta',
     name: 'दांडपट्टा (Dandpatta / Gauntlet Sword)',
+    type: 'पायदळ तलवार व संरक्षक कवच',
+    metal: 'दमास्कस उच्च दर्जाचे पोलाद',
+    museumExample: 'किल्ले रायगड संग्रहालय, CSMVS मुंबई',
     period: '१६ वे ते १८ वे शतक (मराठा सैन्य)',
     design: 'हातात लोखंडी पंजासारखे कवच घालून ३ ते ४ फूट लांब लवचिक पोलादी पात्याची तलवार.',
     use: 'घोडदळाविरुद्ध पायदळाचे आत्मरक्षण; चारी बाजूंना फिरवून एका वेळी अनेक शत्रूंचा संहार.',
-    fame: 'तानाजी मालुसरे, बाजीप्रभू देशपांडे व शिवकालीन मावळ्यांचे आवडते शस्त्र.'
+    fame: 'तानाजी मालुसरे, बाजीप्रभू देशपांडे व शिवकालीन मावळ्यांचे आवडते शस्त्र.',
+    significance: 'मराठ्यांचे अद्वितीय शस्त्र, ज्याच्या फिरत्या फेऱ्यासमोर मुघल घोडदळ कधीही टिकू शकत नसे.'
   },
   {
+    id: 'waghnakh',
     name: 'वाघनखे (Wagh Nakh / Tiger Claws)',
+    type: 'गुप्त अंगठी शस्त्र',
+    metal: 'पोलादी वाकडी नखे',
+    museumExample: 'व्हिक्टोरिया अँड अल्बर्ट म्युझियम (लंडन) / सातारा संग्रहालय',
     period: 'शिवकाल (१६५९ प्रतापगड युद्ध)',
     design: 'हाताच्या मुठीत सहज लपवता येणारी चार तीक्ष्ण वाकडी लोखंडी नखे आणि बोटांमध्ये अडकवायच्या दोन अंगठ्या.',
     use: 'अनपेक्षित हल्ल्यात शत्रूचा कोथळा बाहेर काढण्यासाठी गुप्त शस्त्र.',
-    fame: '१० नोव्हेंबर १६५९ रोजी अफझलखानाने कपटी आलिंगन देताच शिवरायांनी याच वाघनख्यांनी त्याचा खात्मा केला.'
+    fame: '१० नोव्हेंबर १६५९ रोजी अफझलखानाने कपटी आलिंगन देताच शिवरायांनी याच वाघनख्यांनी त्याचा खात्मा केला.',
+    significance: 'दगाबाज शत्रूला प्रत्यक्ष युद्धात जागेवर धडा शिकवणारे ऐतिहासिक संरक्षक साधन.'
   },
   {
+    id: 'firangi',
     name: 'फिरंगी तलवार (Firangi Straight Sword)',
+    type: 'घोडदळ तलवार',
+    metal: 'युरोपीय पाते व मराठा खांडा मुठ',
+    museumExample: 'शिवाजी महाराज वस्तू संग्रहालय, पुणे',
     period: '१७ वे शतक',
     design: 'पोर्तुगीज किंवा युरोपीय बनावटीचे थेट सपाट पाते, ज्यावर मराठ्यांनी स्वतःची स्थानिक मुठ (Khanda Hilt) बसवली.',
     use: 'घोडदळाच्या वेगवान हल्ल्यात समोरासमोर जबरदस्त वार करण्यासाठी वापर.',
-    fame: 'छत्रपती शिवाजी महाराजांच्या पवित्र "भवानी" व "जगदंबा" तलवारी याच धाटणीच्या होत्या.'
+    fame: 'छत्रपती शिवाजी महाराजांच्या पवित्र "भवानी" व "जगदंबा" तलवारी याच धाटणीच्या होत्या.',
+    significance: 'परकीय तंत्रज्ञान आत्मसात करून मराठा युद्धकलेनुसार त्याचे केलेले सर्वोत्तम स्वदेशी रूपांतर.'
   }
 ];
 
 // FEATURE 30: RIVER CIVILIZATION DATA
 const RIVERS_DATA = [
   {
+    id: 'godavari',
     name: 'गोदावरी (दक्षिण गंगा)',
     origin: 'ब्रह्मगिरी, त्र्यंबकेश्वर (नाशिक)',
     course: 'नाशिक → कोपरगाव → पैठण → नांदेड → तेलंगणा/आंध्र प्रदेश → बंगालचा उपसागर',
     significance: 'महाराष्ट्राची जीवनवाहिनी. काठावर सातवाहनांची पैठण राजधानी, संत ज्ञानेश्वरांचे नेवासे, संत एकनाथांचे पैठण, गुरु गोबिंद सिंग यांचे नांदेड सचखंड गुरुद्वारा.',
-    crops: 'ऊस, द्राक्षे, कांदा, बाजरी'
+    crops: 'ऊस, द्राक्षे, कांदा, बाजरी',
+    sacredGhats: ['रामकुंड (नाशिक)', 'गोदावरी घाट (पैठण)', 'नांदेड सचखंड घाट'],
+    temples: ['त्र्यंबकेश्वर ज्योतिर्लिंग', 'कपालेश्वर मंदिर', 'सचखंड हुजूर साहिब गुरुद्वारा', 'पैठण एकनाथ मंदिर']
   },
   {
+    id: 'krishna',
     name: 'कृष्णा नदी',
     origin: 'महाबळेश्वर (सातारा)',
     course: 'महाबळेश्वर → वाई → सातारा → सांगली → कोल्हापूर सीमा → कर्नाटक',
     significance: 'पश्चिम महाराष्ट्राची जलसंस्कृती. वाईचे ऐतिहासिक घाट व गणपती मंदिर, सांगलीची हळद व शेती, नरसोबाची वाडी दत्त पीठ.',
-    crops: 'ऊस, हळद, केळी, तांदूळ'
+    crops: 'ऊस, हळद, केळी, तांदूळ',
+    sacredGhats: ['वाई महागणपती घाट', 'सांगली हरिपूर संगम घाट', 'नरसोबाची वाडी कृष्णा-पंचगंगा संगम'],
+    temples: ['महाबळेश्वर मंदिर', 'वाई ढोल्या गणपती', 'नरसोबाची वाडी दत्त मंदिर', 'सांगली गणेश मंदिर']
   },
   {
+    id: 'bhima',
     name: 'भीमा (चंद्रभागा)',
     origin: 'भीमाशंकर ज्योतिर्लिंग (पुणे)',
     course: 'भीमाशंकर → खेड → दौंड → पंढरपूर (येथे चंद्रकोरीसारखी वळते म्हणून चंद्रभागा) → कृष्णा संगम',
     significance: 'वारकरी संप्रदायाचे पवित्र तीर्थ. पंढरपूरचे विठ्ठल मंदिर, संत तुकाराम व संतांचे अभंग आणि आषाढी-कार्तिकी महावारी.',
-    crops: 'ज्वारी, डाळिंब, ऊस'
+    crops: 'ज्वारी, डाळिंब, ऊस',
+    sacredGhats: ['पंढरपूर चंद्रभागा घाट', 'पुंडलिक मंदिर वाळवंट घाट', 'भीमाशंकर गुप्त भीमा कुण्ड'],
+    temples: ['भीमाशंकर ज्योतिर्लिंग', 'पंढरपूर श्री विठ्ठल-रुक्मिणी मंदिर', 'आळंदी-देहू वारकरी मार्ग संगम']
   }
 ];
 
@@ -617,7 +783,8 @@ export default function ConnectMarathaUniversePage() {
   const [selectedCivilizationWorld, setSelectedCivilizationWorld] = useState(CIVILIZATION_WORLDS[0].id);
   const [selectedEpoch, setSelectedEpoch] = useState(TIME_MACHINE_EPOCHS[6]); // Shivkal (1630-1680)
   const [selectedBattle, setSelectedBattle] = useState(BATTLES_DATA[0]);
-  const [selectedConnectedNode, setSelectedConnectedNode] = useState('raigad');
+  const [selectedConnectedNode, setSelectedConnectedNode] = useState(CONNECTED_NODES_DATA.raigad);
+  const activeConnectedNode = (typeof selectedConnectedNode === 'object' && selectedConnectedNode !== null) ? selectedConnectedNode : (CONNECTED_NODES_DATA[selectedConnectedNode] || CONNECTED_NODES_DATA.raigad);
   const [selectedCity, setSelectedCity] = useState(MAHA_CITIES[0]);
   const [selectedCityEra, setSelectedCityEra] = useState('peshwa');
   const [selectedCoin, setSelectedCoin] = useState(COINS_DATA[0]);
@@ -1057,7 +1224,7 @@ export default function ConnectMarathaUniversePage() {
                   onClick={() => setSelectedConnectedNode(CONNECTED_NODES_DATA.raigad)}
                   style={{
                     background: '#FFFFFF',
-                    border: selectedConnectedNode.id === 'raigad' ? '2px solid #DC2626' : '1px solid #E5E7EB',
+                    border: activeConnectedNode.id === 'raigad' ? '2px solid #DC2626' : '1px solid #E5E7EB',
                     borderRadius: '12px',
                     padding: '14px',
                     cursor: 'pointer',
@@ -1075,7 +1242,7 @@ export default function ConnectMarathaUniversePage() {
                   onClick={() => setSelectedConnectedNode(CONNECTED_NODES_DATA.sindhudurg)}
                   style={{
                     background: '#FFFFFF',
-                    border: selectedConnectedNode.id === 'sindhudurg' ? '2px solid #0284C7' : '1px solid #E5E7EB',
+                    border: activeConnectedNode.id === 'sindhudurg' ? '2px solid #0284C7' : '1px solid #E5E7EB',
                     borderRadius: '12px',
                     padding: '14px',
                     cursor: 'pointer',
@@ -1093,7 +1260,7 @@ export default function ConnectMarathaUniversePage() {
                   onClick={() => setSelectedConnectedNode(CONNECTED_NODES_DATA.shivaji_maharaj)}
                   style={{
                     background: '#FFFFFF',
-                    border: selectedConnectedNode.id === 'shivaji_maharaj' ? '2px solid #C2410C' : '1px solid #E5E7EB',
+                    border: activeConnectedNode.id === 'shivaji_maharaj' ? '2px solid #C2410C' : '1px solid #E5E7EB',
                     borderRadius: '12px',
                     padding: '14px',
                     cursor: 'pointer',
@@ -1111,14 +1278,14 @@ export default function ConnectMarathaUniversePage() {
               {/* Active Node Detail Card: Feature 48 Connect Everything */}
               <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '14px', padding: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                  <span style={{ fontSize: '2rem' }}>{selectedConnectedNode.icon}</span>
+                  <span style={{ fontSize: '2rem' }}>{activeConnectedNode.icon}</span>
                   <div>
-                    <h3 style={{ margin: 0, fontSize: '1.4rem', color: '#7C1D05' }}>{selectedConnectedNode.title}</h3>
-                    <span style={{ fontSize: '0.8rem', color: '#C2410C', fontWeight: 700 }}>{selectedConnectedNode.type}</span>
+                    <h3 style={{ margin: 0, fontSize: '1.4rem', color: '#7C1D05' }}>{activeConnectedNode.title}</h3>
+                    <span style={{ fontSize: '0.8rem', color: '#C2410C', fontWeight: 700 }}>{activeConnectedNode.type}</span>
                   </div>
                 </div>
                 <p style={{ fontSize: '0.92rem', color: '#431407', lineHeight: 1.6, marginBottom: '16px' }}>
-                  {selectedConnectedNode.summary}
+                  {activeConnectedNode.summary}
                 </p>
 
                 {/* Multidimensional Linkages */}
@@ -1126,28 +1293,28 @@ export default function ConnectMarathaUniversePage() {
                   <div style={{ background: '#FFF7ED', padding: '10px 12px', borderRadius: '8px', border: '1px solid #FED7AA' }}>
                     <strong style={{ fontSize: '0.78rem', color: '#C2410C', textTransform: 'uppercase' }}>👑 संबंधित व्यक्ती:</strong>
                     <div style={{ fontSize: '0.82rem', marginTop: '4px', color: '#7C1D05' }}>
-                      {selectedConnectedNode.connections.persons.join(', ')}
+                      {(activeConnectedNode.connections?.persons || []).join(', ')}
                     </div>
                   </div>
 
                   <div style={{ background: '#FEF2F2', padding: '10px 12px', borderRadius: '8px', border: '1px solid #FECACA' }}>
                     <strong style={{ fontSize: '0.78rem', color: '#B91C1C', textTransform: 'uppercase' }}>⚔️ ऐतिहासिक घटना:</strong>
                     <div style={{ fontSize: '0.82rem', marginTop: '4px', color: '#991B1B' }}>
-                      {selectedConnectedNode.connections.events.join(', ')}
+                      {(activeConnectedNode.connections?.events || []).join(', ')}
                     </div>
                   </div>
 
                   <div style={{ background: '#F0FDFA', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CCFBF1' }}>
                     <strong style={{ fontSize: '0.78rem', color: '#0F766E', textTransform: 'uppercase' }}>💧 जलव्यवस्था (Water Heritage):</strong>
                     <div style={{ fontSize: '0.82rem', marginTop: '4px', color: '#115E59' }}>
-                      {selectedConnectedNode.connections.waterSystems ? selectedConnectedNode.connections.waterSystems.join(', ') : 'पाषाण टाक्या व पाणलोट'}
+                      {activeConnectedNode.connections?.waterSystems ? activeConnectedNode.connections.waterSystems.join(', ') : 'पाषाण टाक्या व पाणलोट'}
                     </div>
                   </div>
 
                   <div style={{ background: '#F3F4F6', padding: '10px 12px', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
                     <strong style={{ fontSize: '0.78rem', color: '#374151', textTransform: 'uppercase' }}>📜 ऐतिहासिक पुरावे (Sources):</strong>
                     <div style={{ fontSize: '0.82rem', marginTop: '4px', color: '#1F2937' }}>
-                      {selectedConnectedNode.connections.documents.join(', ')}
+                      {(activeConnectedNode.connections?.documents || []).join(', ')}
                     </div>
                   </div>
                 </div>
@@ -1339,24 +1506,24 @@ export default function ConnectMarathaUniversePage() {
             <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '14px', padding: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
                 <h3 style={{ fontSize: '1.4rem', color: '#7C1D05', fontWeight: 800, margin: 0 }}>
-                  {selectedCity.name} • {selectedCity.region}
+                  {selectedCity.name} • {selectedCity.region || 'महाराष्ट्र'}
                 </h3>
                 <span style={{ background: '#DCFCE7', color: '#166534', border: '1px solid #86EFAC', padding: '4px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 800 }}>
-                  पुरातन नाव: {selectedCity.ancientName}
+                  पुरातन नाव: {selectedCity.ancientName || selectedCity.oldNames}
                 </span>
               </div>
               <p style={{ color: '#431407', fontSize: '1rem', lineHeight: 1.6, marginBottom: '20px' }}>
-                {selectedCity.eras[selectedCityEra] || selectedCity.eras.peshwa}
+                {selectedCity.eras ? (selectedCity.eras[selectedCityEra] || selectedCity.eras.peshwa || selectedCity.eras.today) : ''}
               </p>
               
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
                 <div style={{ background: '#FFFFFF', padding: '14px', borderRadius: '10px', border: '1px solid #FED7AA' }}>
                   <span style={{ fontSize: '0.78rem', color: '#C2410C', fontWeight: 800 }}>प्रमुख वारसा वास्तू:</span>
-                  <div style={{ color: '#78350F', fontWeight: 700, marginTop: '4px' }}>{selectedCity.heritageSites.join(' • ')}</div>
+                  <div style={{ color: '#78350F', fontWeight: 700, marginTop: '4px' }}>{Array.isArray(selectedCity.heritageSites) ? selectedCity.heritageSites.join(' • ') : (selectedCity.architecture || 'ऐतिहासिक वास्तू')}</div>
                 </div>
                 <div style={{ background: '#FFFFFF', padding: '14px', borderRadius: '10px', border: '1px solid #FED7AA' }}>
                   <span style={{ fontSize: '0.78rem', color: '#C2410C', fontWeight: 800 }}>पारंपरिक खाद्य ओळख:</span>
-                  <div style={{ color: '#78350F', fontWeight: 700, marginTop: '4px' }}>{selectedCity.famousFood}</div>
+                  <div style={{ color: '#78350F', fontWeight: 700, marginTop: '4px' }}>{selectedCity.famousFood || selectedCity.food}</div>
                 </div>
                 <div style={{ background: '#FFFFFF', padding: '14px', borderRadius: '10px', border: '1px solid #FED7AA' }}>
                   <span style={{ fontSize: '0.78rem', color: '#C2410C', fontWeight: 800 }}>पारंपरिक उद्योग / हस्तकला:</span>
@@ -1768,10 +1935,10 @@ export default function ConnectMarathaUniversePage() {
                     boxShadow: selectedCoin.id === c.id ? '0 4px 12px rgba(124,29,5,0.1)' : 'none'
                   }}
                 >
-                  <div style={{ fontSize: '0.78rem', color: '#C2410C', fontWeight: 700 }}>{c.era}</div>
+                  <div style={{ fontSize: '0.78rem', color: '#C2410C', fontWeight: 700 }}>{c.era || c.period}</div>
                   <h4 style={{ fontSize: '1.05rem', color: '#7C1D05', fontWeight: 800, margin: '4px 0' }}>{c.name}</h4>
-                  <div style={{ fontSize: '0.82rem', color: '#78350F' }}>धातू: {c.metal} • लिपी: {c.script}</div>
-                  <p style={{ fontSize: '0.8rem', color: '#57534E', margin: '8px 0 0' }}>{c.significance}</p>
+                  <div style={{ fontSize: '0.82rem', color: '#78350F' }}>धातू: {c.metal} • लिपी: {c.script || 'ब्राह्मी / देवनागरी'}</div>
+                  <p style={{ fontSize: '0.8rem', color: '#57534E', margin: '8px 0 0' }}>{c.significance || c.source}</p>
                 </div>
               ))}
             </div>
@@ -1788,7 +1955,7 @@ export default function ConnectMarathaUniversePage() {
                     <span style={{ fontSize: '0.74rem', background: '#FEF3C7', color: '#92400E', padding: '2px 8px', borderRadius: '6px', fontWeight: 700 }}>{ins.period}</span>
                   </div>
                   <div style={{ fontSize: '0.82rem', color: '#C2410C', fontWeight: 700, margin: '4px 0' }}>स्थान: {ins.location} • लिपी: {ins.script}</div>
-                  <p style={{ fontSize: '0.84rem', color: '#431407', margin: '6px 0 0' }}>{ins.content}</p>
+                  <p style={{ fontSize: '0.84rem', color: '#431407', margin: '6px 0 0' }}>{ins.content || ins.desc}</p>
                 </div>
               ))}
             </div>
@@ -1823,8 +1990,8 @@ export default function ConnectMarathaUniversePage() {
                     <h4 style={{ margin: 0, color: '#166534', fontSize: '1.2rem', fontWeight: 800 }}>🌊 {r.name}</h4>
                     <span style={{ fontSize: '0.76rem', background: '#DCFCE7', color: '#15803D', padding: '2px 8px', borderRadius: '6px', fontWeight: 700 }}>उगम: {r.origin}</span>
                   </div>
-                  <div style={{ fontSize: '0.84rem', color: '#14532D', margin: '8px 0 4px' }}><strong>पवित्र घाट व शहरे:</strong> {r.sacredGhats.join(' • ')}</div>
-                  <div style={{ fontSize: '0.84rem', color: '#14532D', margin: '0 0 8px' }}><strong>प्रमुख मंदिरे:</strong> {r.temples.join(' • ')}</div>
+                  <div style={{ fontSize: '0.84rem', color: '#14532D', margin: '8px 0 4px' }}><strong>पवित्र घाट व शहरे:</strong> {Array.isArray(r.sacredGhats) ? r.sacredGhats.join(' • ') : r.course}</div>
+                  <div style={{ fontSize: '0.84rem', color: '#14532D', margin: '0 0 8px' }}><strong>प्रमुख मंदिरे:</strong> {Array.isArray(r.temples) ? r.temples.join(' • ') : 'प्रमुख तीर्थक्षेत्रे'}</div>
                   <p style={{ fontSize: '0.82rem', color: '#166534', margin: 0, lineHeight: 1.5 }}>{r.significance}</p>
                 </div>
               ))}
@@ -2171,11 +2338,11 @@ export default function ConnectMarathaUniversePage() {
                     <span style={{ fontSize: '1.8rem' }}>{w.icon}</span>
                     <div>
                       <h4 style={{ margin: 0, color: '#7C1D05', fontSize: '1.1rem', fontWeight: 800 }}>{w.name}</h4>
-                      <span style={{ fontSize: '0.74rem', color: '#C2410C', fontWeight: 700 }}>{w.tagline}</span>
+                      <span style={{ fontSize: '0.74rem', color: '#C2410C', fontWeight: 700 }}>{w.tagline || w.count}</span>
                     </div>
                   </div>
                   <ul style={{ margin: '10px 0 0', paddingLeft: '18px', fontSize: '0.84rem', color: '#78350F', lineHeight: 1.6 }}>
-                    {w.features.map((feat, idx) => (
+                    {(w.features || (w.desc ? w.desc.split(', ') : [])).map((feat, idx) => (
                       <li key={idx}>{feat}</li>
                     ))}
                   </ul>
@@ -2221,12 +2388,12 @@ export default function ConnectMarathaUniversePage() {
                     <span style={{ fontSize: '1.8rem' }}>{w.icon}</span>
                     <div>
                       <h4 style={{ margin: 0, color: '#7C1D05', fontSize: '1.1rem', fontWeight: 800 }}>{w.name}</h4>
-                      <span style={{ fontSize: '0.74rem', color: '#C2410C', fontWeight: 700 }}>{w.subtitle}</span>
+                      <span style={{ fontSize: '0.74rem', color: '#C2410C', fontWeight: 700 }}>{w.subtitle || w.sub}</span>
                     </div>
                   </div>
-                  <p style={{ fontSize: '0.84rem', color: '#78350F', margin: '0 0 10px', lineHeight: 1.4 }}>{w.desc}</p>
+                  <p style={{ fontSize: '0.84rem', color: '#78350F', margin: '0 0 10px', lineHeight: 1.4 }}>{w.desc || w.sub}</p>
                   <div style={{ background: '#FFF7ED', padding: '8px 12px', borderRadius: '8px', fontSize: '0.78rem', color: '#9A3412', fontWeight: 700 }}>
-                    समाविष्ट वैशिष्ट्ये: {w.featuresCount}
+                    समाविष्ट वैशिष्ट्ये: {w.featuresCount || '४ वैशिष्ट्ये'}
                   </div>
                 </div>
               ))}
