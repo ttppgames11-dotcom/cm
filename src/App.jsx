@@ -98,6 +98,8 @@ import GramdevatJatraPage from './pages/culture/GramdevatJatraPage';
 import InteractiveHeritageMapPage from './pages/culture/InteractiveHeritageMapPage';
 import KnowledgeGraphExplorerPage from './pages/history/KnowledgeGraphExplorerPage';
 import CommunityOralHistoryPage from './pages/community/CommunityOralHistoryPage';
+import ShivkalFestivalsPage from './pages/culture/ShivkalFestivalsPage';
+import AgriKoliSamajPage from './pages/culture/AgriKoliSamajPage';
 
 
 // Complete 100% Mapping for Every Legacy .html File (All 81 Files Covered)
@@ -328,6 +330,12 @@ export default function App() {
             <Route path="/knowledge-graph" element={<KnowledgeGraphExplorerPage />} />
             <Route path="/community/oral-history" element={<CommunityOralHistoryPage />} />
             <Route path="/oral-history" element={<CommunityOralHistoryPage />} />
+            <Route path="/culture/shivkal-festivals" element={<ShivkalFestivalsPage />} />
+            <Route path="/shivkal-festivals" element={<ShivkalFestivalsPage />} />
+            <Route path="/festivals" element={<ShivkalFestivalsPage />} />
+            <Route path="/culture/agri-koli" element={<AgriKoliSamajPage />} />
+            <Route path="/agri-koli" element={<AgriKoliSamajPage />} />
+            <Route path="/community/agri-koli" element={<AgriKoliSamajPage />} />
 
             {/* Gallery, Symbols, Temples */}
             <Route path="/gallery" element={<PhotoGalleryPage />} />

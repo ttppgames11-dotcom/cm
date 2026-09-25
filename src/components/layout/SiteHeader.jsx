@@ -94,6 +94,8 @@ export default function SiteHeader({ onOpenSearch }) {
                 <div className="mega-menu-grid">
                   <div className="mega-col">
                     <div className="mega-col-title">🌍 सांस्कृतिक विविधता व बोली</div>
+                    <Link to="/culture/shivkal-festivals" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 700 }}>🚩 शिवकालीन उत्सव (१६३०-१६८०)</Link>
+                    <Link to="/culture/agri-koli" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 700 }}>🌊 आगरी-कोळी समाज व आरमार</Link>
                     <Link to="/culture" onClick={handleLinkClick}>🗺️ ८ प्रादेशिक सांस्कृतिक प्रोफाइल</Link>
                     <Link to="/culture/dialects" onClick={handleLinkClick}>🗣️ महाराष्ट्राच्या बोली व उच्चार</Link>
                     <Link to="/culture/food" onClick={handleLinkClick}>🍲 खाद्यसंस्कृती व उगम इतिहास</Link>

@@ -120,6 +120,12 @@ export default function MaharashtraCultureHubPage() {
 
           {/* Quick Sub-Pillars Navigation Buttons */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+            <Link to="/culture/shivkal-festivals" style={{ background: '#FEF3C7', color: '#92400E', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: '1.5px solid #F59E0B' }}>
+              🚩 शिवकालीन उत्सव (१६३०-१६८०)
+            </Link>
+            <Link to="/culture/agri-koli" style={{ background: '#E0F2FE', color: '#0369A1', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: '1.5px solid #38BDF8' }}>
+              🌊 आगरी-कोळी समाज व आरमार
+            </Link>
             <Link to="/culture/dialects" style={{ background: '#FFFFFF', color: '#B91C1C', padding: '10px 18px', borderRadius: '10px', fontWeight: 700, fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
               🗣️ भाषा व बोली आर्काइव्ह
             </Link>
@@ -145,7 +151,104 @@ export default function MaharashtraCultureHubPage() {
       {/* Main Content Area */}
       <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '36px 20px' }}>
         
-        {/* Section 1: 8 Regional Cultural Profiles */}
+        {/* NEW SPOTLIGHT SECTION: SHIVKAL FESTIVALS & AGRI-KOLI SAMAJ */}
+        <section style={{ marginBottom: '36px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '18px' }}>
+            
+            {/* Spotlight 1: Shivkal Festivals */}
+            <div style={{
+              background: 'linear-gradient(135deg, #FFFFFF 0%, #FFFBEB 100%)',
+              border: '2px solid #F59E0B',
+              borderRadius: '16px',
+              padding: '24px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              boxShadow: '0 6px 18px rgba(217,119,6,0.1)'
+            }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '2rem' }}>🚩</span>
+                  <span style={{ background: '#DCFCE7', color: '#15803D', border: '1px solid #86EFAC', padding: '3px 10px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 800 }}>
+                    🟢 सप्रमाण ऐतिहासिक संशोधन
+                  </span>
+                </div>
+                <h3 style={{ fontSize: '1.45rem', color: '#7C1D05', fontWeight: 800, margin: '0 0 8px' }}>
+                  शिवकालीन उत्सव (इ.स. १६३०–१६८०)
+                </h3>
+                <p style={{ fontSize: '0.92rem', color: '#78350F', lineHeight: 1.55, margin: '0 0 14px' }}>
+                  १६७१ चा रायगड शिमगा (दांडपट्टा, कुस्ती, युद्धकला), १६७४ गुढीपाडवा, सुवर्ण राज्याभिषेक आणि शिवकालीन १३ उत्सवांचे समकालीन दस्तऐवजी पुरावे. "त्या काळात सण कसा दिसला असता?" समोरासमोर तुलना.
+                </p>
+              </div>
+              <Link
+                to="/culture/shivkal-festivals"
+                style={{
+                  background: '#C2410C',
+                  color: '#FFFFFF',
+                  padding: '10px 18px',
+                  borderRadius: '10px',
+                  fontWeight: 700,
+                  fontSize: '0.9rem',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <span>शिवकालीन उत्सव दालन उघडा</span>
+                <span>→</span>
+              </Link>
+            </div>
+
+            {/* Spotlight 2: Agri-Koli Samaj */}
+            <div style={{
+              background: 'linear-gradient(135deg, #FFFFFF 0%, #F0F9FF 100%)',
+              border: '2px solid #38BDF8',
+              borderRadius: '16px',
+              padding: '24px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              boxShadow: '0 6px 18px rgba(3,105,161,0.1)'
+            }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '2rem' }}>🌊</span>
+                  <span style={{ background: '#E0F2FE', color: '#0369A1', border: '1px solid #7DD3FC', padding: '3px 10px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 800 }}>
+                    ⚓ सागरी वारसा व समाज
+                  </span>
+                </div>
+                <h3 style={{ fontSize: '1.45rem', color: '#0C4A6E', fontWeight: 800, margin: '0 0 8px' }}>
+                  आगरी-कोळी समाज व आरमार
+                </h3>
+                <p style={{ fontSize: '0.92rem', color: '#075985', lineHeight: 1.55, margin: '0 0 14px' }}>
+                  खाडी, मिठागरे व भातशेतीचे वैभव ‘आगरी समाज’, अथांग समुद्राचे राजे ‘कोळी बांधव’, परस्परसंवादी कोळीवाडा, नारळी पौर्णिमा आणि छत्रपती शिवरायांच्या आरमारात मायनाक भंडारींनी गाजवलेला पराक्रम!
+                </p>
+              </div>
+              <Link
+                to="/culture/agri-koli"
+                style={{
+                  background: '#0284C7',
+                  color: '#FFFFFF',
+                  padding: '10px 18px',
+                  borderRadius: '10px',
+                  fontWeight: 700,
+                  fontSize: '0.9rem',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <span>आगरी-कोळी समाज दालन उघडा</span>
+                <span>→</span>
+              </Link>
+            </div>
+
+          </div>
+        </section>
         <div style={{ marginBottom: '40px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
             <div>
