@@ -963,7 +963,7 @@ export default function ShivkalFestivalsPage() {
           </div>
         </section>
 
-        {/* ================= CONNECTED PILLARS (AGRI-KOLI & CULTURE) ================= */}
+        {/* ================= CONNECTED PILLARS (CIVILIZATION UNIVERSE) ================= */}
         <section style={{
           background: 'linear-gradient(135deg, #FFF7ED 0%, #FED7AA 100%)',
           borderRadius: '16px',
@@ -977,19 +977,19 @@ export default function ShivkalFestivalsPage() {
         }}>
           <div style={{ maxWidth: '780px' }}>
             <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#C2410C', textTransform: 'uppercase', letterSpacing: '1px' }}>
-              पुढील महत्त्वाचा सांस्कृतिक विभाग
+              पुढील महत्त्वाचा महाप्रकल्प
             </span>
             <h3 style={{ fontSize: '1.6rem', color: '#7C1D05', fontWeight: 800, margin: '6px 0 8px' }}>
-              🌊 आगरी-कोळी समाज व सागरी वारसा
+              🌌 Connect Maratha — संपूर्ण महाराष्ट्र महाविश्व
             </h3>
             <p style={{ fontSize: '0.95rem', color: '#78350F', margin: 0, lineHeight: 1.5 }}>
-              कोकणच्या अथांग समुद्राचे राजे ‘कोळी बांधव’ आणि मिठागरे व भातशेतीचे वैभव ‘आगरी समाज’—त्यांचे स्वतंत्र जीवन, नारळी पौर्णिमा, कोळीवाडा, मायनाक भंडारी आणि मराठा आरमाराचा गौरवशाली इतिहास समजून घ्या.
+              १२ कालखंडांचे महाराष्ट्र टाइम मशीन, २१ लेयर्सचा परस्परसंवादी मास्टर मॅप, ३५०+ गडकिल्ल्यांचे जलव्यवस्थापन, रणसंग्राम व्यूहरचना आणि "सर्व काही जोडा" (Connect Everything) नॉलेज इंजिन!
             </p>
           </div>
 
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <Link
-              to="/culture/agri-koli"
+              to="/universe"
               style={{
                 background: '#7C1D05',
                 color: '#FFFFFF',
@@ -1003,7 +1003,7 @@ export default function ShivkalFestivalsPage() {
                 boxShadow: '0 4px 12px rgba(124,29,5,0.3)'
               }}
             >
-              <span>आगरी-कोळी दालन उघडा</span>
+              <span>🌌 महाविश्व दालन उघडा</span>
               <span>→</span>
             </Link>
             <Link

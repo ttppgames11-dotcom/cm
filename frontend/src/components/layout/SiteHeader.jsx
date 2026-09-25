@@ -97,8 +97,8 @@ export default function SiteHeader({ onOpenSearch }) {
                   <div className="mega-col">
                     <div className="mega-col-title">🌍 सांस्कृतिक विविधता व महाविश्व</div>
                     <Link to="/universe" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 800, background: '#FFEDD5', padding: '5px 8px', borderRadius: '6px', display: 'block', marginBottom: '5px' }}>🌌 संपूर्ण महाराष्ट्र महाविश्व (४९ वैशिष्ट्ये)</Link>
+                    <Link to="/time-machine" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 700 }}>⏳ महाराष्ट्र टाइम मशीन (१२ कालखंड)</Link>
                     <Link to="/culture/shivkal-festivals" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 700 }}>🚩 शिवकालीन उत्सव (१६३०-१६८०)</Link>
-                    <Link to="/culture/agri-koli" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 700 }}>🌊 आगरी-कोळी समाज व आरमार</Link>
                     <Link to="/culture" onClick={handleLinkClick}>🗺️ ८ प्रादेशिक सांस्कृतिक प्रोफाइल</Link>
                     <Link to="/culture/dialects" onClick={handleLinkClick}>🗣️ महाराष्ट्राच्या बोली व उच्चार</Link>
                     <Link to="/culture/food" onClick={handleLinkClick}>🍲 खाद्यसंस्कृती व उगम इतिहास</Link>

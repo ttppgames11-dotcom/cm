@@ -99,7 +99,6 @@ import InteractiveHeritageMapPage from './pages/culture/InteractiveHeritageMapPa
 import KnowledgeGraphExplorerPage from './pages/history/KnowledgeGraphExplorerPage';
 import CommunityOralHistoryPage from './pages/community/CommunityOralHistoryPage';
 import ShivkalFestivalsPage from './pages/culture/ShivkalFestivalsPage';
-import AgriKoliSamajPage from './pages/culture/AgriKoliSamajPage';
 import ConnectMarathaUniversePage from './pages/universe/ConnectMarathaUniversePage';
 
 
@@ -334,16 +333,29 @@ export default function App() {
             <Route path="/culture/shivkal-festivals" element={<ShivkalFestivalsPage />} />
             <Route path="/shivkal-festivals" element={<ShivkalFestivalsPage />} />
             <Route path="/festivals" element={<ShivkalFestivalsPage />} />
-            <Route path="/culture/agri-koli" element={<AgriKoliSamajPage />} />
-            <Route path="/agri-koli" element={<AgriKoliSamajPage />} />
-            <Route path="/community/agri-koli" element={<AgriKoliSamajPage />} />
 
-            {/* Connect Maratha — Expanded Feature Universe (49 Features / 12 Worlds) */}
+            {/* Connect Maratha — Expanded Maharashtra Civilization Explorer (49 Features / 12 Worlds) */}
             <Route path="/universe" element={<ConnectMarathaUniversePage />} />
+            <Route path="/civilization" element={<ConnectMarathaUniversePage />} />
             <Route path="/master-map" element={<ConnectMarathaUniversePage />} />
             <Route path="/time-machine" element={<ConnectMarathaUniversePage />} />
             <Route path="/connect-everything" element={<ConnectMarathaUniversePage />} />
             <Route path="/explore" element={<ConnectMarathaUniversePage />} />
+            <Route path="/fort-explorer" element={<ConnectMarathaUniversePage />} />
+            <Route path="/battle-explorer" element={<ConnectMarathaUniversePage />} />
+            <Route path="/personalities" element={<ConnectMarathaUniversePage />} />
+            <Route path="/women-in-history" element={<ConnectMarathaUniversePage />} />
+            <Route path="/family-heritage" element={<ConnectMarathaUniversePage />} />
+            <Route path="/villages" element={<ConnectMarathaUniversePage />} />
+            <Route path="/temple-encyclopedia" element={<ConnectMarathaUniversePage />} />
+            <Route path="/literature-library" element={<ConnectMarathaUniversePage />} />
+            <Route path="/water-heritage" element={<ConnectMarathaUniversePage />} />
+            <Route path="/wada-architecture" element={<ConnectMarathaUniversePage />} />
+            <Route path="/folk-art" element={<ConnectMarathaUniversePage />} />
+            <Route path="/performing-arts" element={<ConnectMarathaUniversePage />} />
+            <Route path="/powada-archive" element={<ConnectMarathaUniversePage />} />
+            <Route path="/heritage-passport" element={<ConnectMarathaUniversePage />} />
+            <Route path="/virtual-museum" element={<ConnectMarathaUniversePage />} />
 
             {/* Gallery, Symbols, Temples */}
             <Route path="/gallery" element={<PhotoGalleryPage />} />

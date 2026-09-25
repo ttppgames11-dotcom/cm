@@ -126,8 +126,8 @@ export default function MaharashtraCultureHubPage() {
             <Link to="/culture/shivkal-festivals" style={{ background: '#FEF3C7', color: '#92400E', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: '1.5px solid #F59E0B' }}>
               🚩 शिवकालीन उत्सव (१६३०-१६८०)
             </Link>
-            <Link to="/culture/agri-koli" style={{ background: '#E0F2FE', color: '#0369A1', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: '1.5px solid #38BDF8' }}>
-              🌊 आगरी-कोळी समाज व आरमार
+            <Link to="/time-machine" style={{ background: '#FEF2F2', color: '#991B1B', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: '1.5px solid #FCA5A5' }}>
+              ⏳ टाइम मशीन (१२ कालखंड)
             </Link>
             <Link to="/culture/dialects" style={{ background: '#FFFFFF', color: '#B91C1C', padding: '10px 18px', borderRadius: '10px', fontWeight: 700, fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
               🗣️ भाषा व बोली आर्काइव्ह
@@ -203,7 +203,7 @@ export default function MaharashtraCultureHubPage() {
           </div>
         </section>
 
-        {/* NEW SPOTLIGHT SECTION: SHIVKAL FESTIVALS & AGRI-KOLI SAMAJ */}
+        {/* SPOTLIGHT SECTION: SHIVKAL FESTIVALS & TIME MACHINE */}
         <section style={{ marginBottom: '36px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '18px' }}>
             
@@ -253,35 +253,35 @@ export default function MaharashtraCultureHubPage() {
               </Link>
             </div>
 
-            {/* Spotlight 2: Agri-Koli Samaj */}
+            {/* Spotlight 2: Maharashtra Time Machine & Master Map */}
             <div style={{
-              background: 'linear-gradient(135deg, #FFFFFF 0%, #F0F9FF 100%)',
-              border: '2px solid #38BDF8',
+              background: 'linear-gradient(135deg, #FFFFFF 0%, #FEF2F2 100%)',
+              border: '2px solid #EF4444',
               borderRadius: '16px',
               padding: '24px',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              boxShadow: '0 6px 18px rgba(3,105,161,0.1)'
+              boxShadow: '0 6px 18px rgba(185,28,28,0.1)'
             }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <span style={{ fontSize: '2rem' }}>🌊</span>
-                  <span style={{ background: '#E0F2FE', color: '#0369A1', border: '1px solid #7DD3FC', padding: '3px 10px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 800 }}>
-                    ⚓ सागरी वारसा व समाज
+                  <span style={{ fontSize: '2rem' }}>⏳</span>
+                  <span style={{ background: '#FEE2E2', color: '#991B1B', border: '1px solid #FCA5A5', padding: '3px 10px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 800 }}>
+                    🗺️ १२ कालखंड • २१ लेअर्स
                   </span>
                 </div>
-                <h3 style={{ fontSize: '1.45rem', color: '#0C4A6E', fontWeight: 800, margin: '0 0 8px' }}>
-                  आगरी-कोळी समाज व आरमार
+                <h3 style={{ fontSize: '1.45rem', color: '#7C1D05', fontWeight: 800, margin: '0 0 8px' }}>
+                  महाराष्ट्र टाइम मशीन व २१-लेयर मास्टर मॅप
                 </h3>
-                <p style={{ fontSize: '0.92rem', color: '#075985', lineHeight: 1.55, margin: '0 0 14px' }}>
-                  खाडी, मिठागरे व भातशेतीचे वैभव ‘आगरी समाज’, अथांग समुद्राचे राजे ‘कोळी बांधव’, परस्परसंवादी कोळीवाडा, नारळी पौर्णिमा आणि छत्रपती शिवरायांच्या आरमारात मायनाक भंडारींनी गाजवलेला पराक्रम!
+                <p style={{ fontSize: '0.92rem', color: '#7F1D1D', lineHeight: 1.55, margin: '0 0 14px' }}>
+                  सातवाहन, वाकाटक, यादव, शिवकाल ते संयुक्त महाराष्ट्र! कालखंड निवडा आणि एका क्लिकवर राजधानी, राज्यकर्ते, किल्ले, युद्धे, जलव्यवस्था व वास्तुकलेचे बदलणारे नकाशे थेट अनुभवा.
                 </p>
               </div>
               <Link
-                to="/culture/agri-koli"
+                to="/time-machine"
                 style={{
-                  background: '#0284C7',
+                  background: '#B91C1C',
                   color: '#FFFFFF',
                   padding: '10px 18px',
                   borderRadius: '10px',
@@ -294,7 +294,7 @@ export default function MaharashtraCultureHubPage() {
                   gap: '6px'
                 }}
               >
-                <span>आगरी-कोळी समाज दालन उघडा</span>
+                <span>टाइम मशीन सुरू करा</span>
                 <span>→</span>
               </Link>
             </div>
