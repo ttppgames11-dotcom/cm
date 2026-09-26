@@ -1,0 +1,17 @@
+{
+	email {$ACME_EMAIL}
+}
+
+# API: HTTPS certificate is issued automatically once DNS points here.
+api.{$DOMAIN} {
+	encode gzip
+	reverse_proxy api:5000
+}
+
+# Public pages required by Google Play (privacy policy, account deletion).
+{$DOMAIN}, www.{$DOMAIN} {
+	encode gzip
+	root * /srv/site
+	try_files {path} {path}.html {path}/index.html
+	file_server
+}
