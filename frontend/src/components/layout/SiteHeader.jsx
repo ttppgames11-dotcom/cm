@@ -409,23 +409,24 @@ export default function SiteHeader({ onOpenSearch }) {
               </div>
             ) : (
               <div className="guest-header-btns">
-                <Link to="/login" className="btn btn-outline" onClick={handleLinkClick}>
+                <Link to="/login" className="btn btn-outline header-login-btn" onClick={handleLinkClick} title="सभासद लॉगिन">
                   👤 <span className="header-btn-text">लॉगिन</span>
                 </Link>
-                <Link to="/register" className="btn btn-primary" onClick={handleLinkClick}>
+                <Link to="/register" className="btn btn-primary header-register-btn" onClick={handleLinkClick} title="नवीन नोंदणी">
                   🚩 <span className="header-btn-text">नोंदणी</span>
                 </Link>
               </div>
             )}
 
-            {/* Mobile Hamburger Toggle Button */}
+            {/* Mobile Hamburger Menu Toggle Button */}
             <button
               type="button"
               className="mobile-hamburger-btn"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label={mobileOpen ? "मेनू बंद करा" : "मेनू उघडा"}
               aria-expanded={mobileOpen}>
-              {mobileOpen ? '✕' : '☰'}
+              <span className="hamburger-icon">{mobileOpen ? '✕' : '☰'}</span>
+              <span className="hamburger-text">{mobileOpen ? 'बंद' : 'मेनू'}</span>
             </button>
           </div>
         </div>
@@ -433,6 +434,14 @@ export default function SiteHeader({ onOpenSearch }) {
         {/* Mobile / Responsive Horizontal Category Navigation Bar */}
         <nav className="site-mobile-subnav" aria-label="मुख्य विभाग नेव्हिगेशन">
           <div className="site-mobile-subnav-scroll">
+            <button
+              type="button"
+              className="subnav-pill subnav-pill-dropdown-trigger"
+              onClick={() => setMobileOpen(true)}
+              aria-label="सर्व ५०+ विभाग व दालने मेनू उघडा"
+            >
+              <span className="subnav-pill-icon">📑</span> सर्व विभाग ▾
+            </button>
             <NavLink to="/" end onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
               <span className="subnav-pill-icon">🏠</span> मुख्यपृष्ठ
             </NavLink>
