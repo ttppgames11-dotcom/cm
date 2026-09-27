@@ -23,50 +23,20 @@ export default function LoginPage() {
     setLoading(true);
 
     setTimeout(() => {
-      // Role mapping for name & profile
+      // Clean member profile mapping
       let roleUser = {
         name: 'अमोल तुकाराम जाधव',
         id: loginId || 'CM-MH-2026-8842',
-        role: roleMode,
+        role: roleMode === 'business' ? 'business' : 'member',
         tier: 'Gold',
         district: 'पुणे',
         city: 'पुणे',
         profession: roleMode === 'business' ? 'उद्योजक' : 'सॉफ्टवेअर आर्किटेक्ट'
       };
 
-      if (roleMode === 'crm') {
-        roleUser.name = 'प्रशासक अमोल जाधव';
-        roleUser.role = 'admin';
-      } else if (roleMode === 'ceo') {
-        roleUser.name = 'राजेश पाटील (CEO)';
-        roleUser.role = 'ceo';
-      } else if (roleMode === 'district') {
-        roleUser.name = 'आनंदराव देशमुख (जिल्हा समन्वयक)';
-        roleUser.role = 'district_admin';
-      } else if (roleMode === 'chapter') {
-        roleUser.name = 'राजेंद्र मोहिते (चॅप्टर अध्यक्ष)';
-        roleUser.role = 'chapter_president';
-      } else if (roleMode === 'helpdesk') {
-        roleUser.name = 'सुभाषराव मोरे (सेवा समन्वयक)';
-        roleUser.role = 'helpdesk_admin';
-      }
-
       login(roleUser.id, password || 'demo', roleUser);
       setLoading(false);
-
-      if (roleMode === 'crm') {
-        navigate('/admin');
-      } else if (roleMode === 'ceo') {
-        navigate('/crm/ceo');
-      } else if (roleMode === 'district') {
-        navigate('/crm/district');
-      } else if (roleMode === 'chapter') {
-        navigate('/crm/chapter');
-      } else if (roleMode === 'helpdesk') {
-        navigate('/crm/helpdesk');
-      } else {
-        navigate('/dashboard');
-      }
+      navigate('/dashboard');
     }, 400);
   };
 
@@ -81,13 +51,11 @@ export default function LoginPage() {
 
   const handleDemoLogin = (presetRole = 'member') => {
     setRoleMode(presetRole);
-    if (presetRole === 'crm') setLoginId('9876500011');
-    else if (presetRole === 'ceo') setLoginId('9876500088');
-    else if (presetRole === 'district') setLoginId('9876500022');
-    else if (presetRole === 'chapter') setLoginId('9876500033');
-    else if (presetRole === 'helpdesk') setLoginId('9876500044');
-    else if (presetRole === 'business') setLoginId('9876500055');
-    else setLoginId('9876543210');
+    if (presetRole === 'business') {
+      setLoginId('9876500055');
+    } else {
+      setLoginId('9876543210');
+    }
     setPassword('maratha1674');
     setTimeout(() => {
       handleLoginSubmit();
@@ -336,7 +304,7 @@ export default function LoginPage() {
 
                 <div style={{ marginBottom: '14px' }}>
                   <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, color: '#374151', marginBottom: '5px' }}>
-                    प्रवेश प्रकार (Role Mode)
+                    सभासद प्रकार (Member Type)
                   </label>
                   <select
                     value={roleMode}
@@ -352,12 +320,7 @@ export default function LoginPage() {
                       boxSizing: 'border-box'
                     }}>
                     <option value="member">सदस्य (General Member)</option>
-                    <option value="business">व्यावसायिक / उद्योजक (Business Owner)</option>
-                    <option value="crm">🛡️ केंद्रीय सुपर ॲडमिन (Super Admin CRM)</option>
-                    <option value="ceo">🦅 कार्याध्यक्ष / राज्य अध्यक्ष (CEO Dashboard)</option>
-                    <option value="district">📍 जिल्हा समन्वयक (District Coordinator CRM)</option>
-                    <option value="chapter">💼 चॅप्टर अध्यक्ष (Chapter President CRM)</option>
-                    <option value="helpdesk">🩺 समाज साहाय्यता कक्ष (Seva Helpdesk CRM)</option>
+                    <option value="business">व्यावसायिक / उद्योजक (Business Member)</option>
                   </select>
                 </div>
 
@@ -534,11 +497,28 @@ export default function LoginPage() {
               padding: '10px 14px',
               textAlign: 'center',
               fontSize: '0.80rem',
-              color: '#BF360C'
+              color: '#BF360C',
+              marginBottom: '12px'
             }}>
               🚀 <strong>ऑनबोर्डिंग स्टुडिओ:</strong> सर्व ९ परस्परसंवादी स्क्रीन पाहण्यासाठी{' '}
               <Link to="/register" style={{ color: '#C73800', fontWeight: 800, textDecoration: 'underline' }}>
                 येथे क्लिक करा →
+              </Link>
+            </div>
+
+            {/* Staff / Admin Portal Link */}
+            <div style={{
+              padding: '10px 14px',
+              background: '#FEF2F2',
+              border: '1px solid #FCA5A5',
+              borderRadius: '10px',
+              textAlign: 'center',
+              fontSize: '0.82rem',
+              color: '#991B1B'
+            }}>
+              🏛️ <strong>प्रशासकीय अधिकारी / CRM कर्मचारी आहात का?</strong>{' '}
+              <Link to="/crm/login" style={{ color: '#DC2626', fontWeight: 800, textDecoration: 'underline' }}>
+                स्वतंत्र CRM लॉगिन येथे करा →
               </Link>
             </div>
 

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 const DEFAULT_PILLARS = [
   {
     id: 'bp_1',
+    image: '/assets/images/handshake.jpg',
     category: 'digital',
     categoryLabel: 'डिजिटल ओळख व नागरिकत्व',
     title: '१. डिजिटल ओळख, बायोमेट्रिक स्मार्ट कार्ड व डिजिटल नागरिकत्व',
@@ -23,6 +24,7 @@ const DEFAULT_PILLARS = [
   },
   {
     id: 'bp_2',
+    image: '/assets/images/generated/maratha_bank_hero.jpg',
     category: 'business',
     categoryLabel: 'व्यवसाय संगम व उद्योग',
     title: '२. बिझनेस संगम, सह्याद्री इन्व्हेस्टमेंट फंड व औद्योगिक महामार्ग',
@@ -42,6 +44,7 @@ const DEFAULT_PILLARS = [
   },
   {
     id: 'bp_3',
+    image: '/assets/images/real-farmer-field.jpg',
     category: 'agriculture',
     categoryLabel: 'कृषी व शेतकरी समृद्धी',
     title: '३. बळीराजा समृद्धी, कृषी प्रक्रिया (FPO) व जागतिक निर्यात साखळी',
@@ -61,6 +64,7 @@ const DEFAULT_PILLARS = [
   },
   {
     id: 'bp_4',
+    image: '/assets/images/library.jpg',
     category: 'heritage',
     categoryLabel: 'गडकोट व वारसा संवर्धन',
     title: '४. सह्याद्री गडकोट पुनरुज्जीवन, 3D डिजिटल आर्काइव्ह व इतिहास संशोधन',
@@ -80,6 +84,7 @@ const DEFAULT_PILLARS = [
   },
   {
     id: 'bp_5',
+    image: '/assets/images/real-raigad-panoramic.jpg',
     category: 'education',
     categoryLabel: 'सारथी, शिक्षण व युवा',
     title: '५. सारथी युवा सक्षमीकरण, आंतरराष्ट्रीय फेलोशिप व करिअर महामार्ग',
@@ -99,6 +104,7 @@ const DEFAULT_PILLARS = [
   },
   {
     id: 'bp_6',
+    image: '/assets/images/generated/maratha_blood_help_hero.jpg',
     category: 'safety',
     categoryLabel: 'समाज सुरक्षा व विधी संरक्षण',
     title: '६. अखंड समाज सुरक्षा कवच, विनामूल्य विधी साहाय्य व आपत्कालीन आरोग्य साखळी',
@@ -427,6 +433,14 @@ export default function BlueprintVisionPage() {
                 boxShadow: '0 8px 30px rgba(42,8,8,0.06)',
                 overflow: 'hidden'
               }}>
+              {p.image && (
+                <div style={{ height: '170px', width: '100%', overflow: 'hidden', position: 'relative', background: '#1c1917' }}>
+                  <img src={p.image} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)', padding: '6px 16px' }}>
+                    <span style={{ color: '#FDE047', fontSize: '0.78rem', fontWeight: 800 }}>🏛️ स्वराज्य २०२६–२०३५ व्हिजन स्तंभ</span>
+                  </div>
+                </div>
+              )}
               {/* Header */}
               <div style={{
                 background: 'linear-gradient(135deg, #FFFDF8 0%, #FAF2E6 100%)',

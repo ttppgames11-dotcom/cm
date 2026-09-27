@@ -39,11 +39,11 @@ export default function AppLayout({ children }) {
         {children || <Outlet />}
       </main>
       <SiteFooter />
-      <MobileBottomNav />
       <CommandPalette isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       {user?.role === 'superadmin' && location.pathname !== '/superadmin' && (
         <Link
           to="/superadmin"
+          className="cm-superadmin-fab"
           style={{
             position: 'fixed',
             bottom: '124px',
@@ -72,6 +72,7 @@ export default function AppLayout({ children }) {
       {isAdmin && location.pathname !== '/admin/cms' && (
         <Link
           to="/admin/cms"
+          className="cm-cms-fab"
           style={{
             position: 'fixed',
             bottom: '76px',

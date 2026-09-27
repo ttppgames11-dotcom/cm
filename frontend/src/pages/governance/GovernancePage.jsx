@@ -21,7 +21,7 @@ export default function GovernancePage() {
         
         {/* Banner */}
         <div style={{
-          background: 'linear-gradient(135deg, #C73800, #E65100)',
+          background: "linear-gradient(rgba(199, 56, 0, 0.88), rgba(230, 81, 0, 0.92)), url('/assets/images/connect-maratha-council.jpg') center/cover no-repeat",
           borderRadius: '16px',
           color: '#fff',
           padding: '32px',

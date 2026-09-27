@@ -54,7 +54,7 @@ export default function MarathiDialectsArchivePage() {
       
       {/* Hero Header */}
       <section style={{
-        background: 'linear-gradient(135deg, #7C1D05 0%, #B91C1C 60%, #E65100 100%)',
+        background: "linear-gradient(rgba(124, 29, 5, 0.88), rgba(230, 81, 0, 0.92)), url('/assets/images/apla-maharashtra-gallery.jpg') center/cover no-repeat",
         color: '#FFFFFF',
         padding: '48px 20px 36px',
         borderBottom: '4px solid #F59E0B'

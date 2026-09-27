@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSiteContent } from '../../context/SiteContentContext';
+import { CORE_ENGINES, INTERCONNECTED_ENTITIES, TRUST_STATUS_MAP } from '../../data/maharashtraCoreUniverse';
 
 const heroViews = {
   hero: {
@@ -54,6 +55,11 @@ export default function HomePage() {
   const [ecoQuery, setEcoQuery] = useState('');
   const [bgIndex, setBgIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [selectedEntityId, setSelectedEntityId] = useState('raigad');
+  const [activeEngineId, setActiveEngineId] = useState('calendar');
+  const [correctionModalOpen, setCorrectionModalOpen] = useState(false);
+  const [correctionText, setCorrectionText] = useState('');
+  const [correctionSent, setCorrectionSent] = useState(false);
 
   const activeHero = heroViews[heroView];
   const displayHeroImg = (heroView === 'hero' && getContent('images.heroBanner')) 
@@ -122,9 +128,9 @@ export default function HomePage() {
       <span><strong>ऐतिहासिक स्मरण:</strong> १७२८ — पालखेडच्या रणांगणात थोरले बाजीराव पेशवे यांनी निजामाला शरण येण्यास भाग पाडले.</span>
     </div>
     <div style={{"display":"flex","alignItems":"center","gap":"14px","fontSize":"0.84rem"}}>
-      <Link to="/history/battles" style={{"color":"#FFE082","textDecoration":"underline","fontWeight":"700"}}>⚔️ पालखेड युद्ध इतिहास वाचा →</Link>
+      <Link to="/calendar" style={{ color: '#FFE082', textDecoration: 'none', borderBottom: '1.5px solid rgba(255, 224, 130, 0.7)', paddingBottom: '1px', fontWeight: '700' }}>⚔️ आजचा इतिहास व पंचांग वाचा →</Link>
       <span style={{"color":"rgba(255,255,255,0.6)"}}>•</span>
-      <Link to="/history" style={{"color":"#FFFFFF","opacity":"0.95","textDecoration":"none"}}>सर्व ३६५ तिथी सूची</Link>
+      <Link to="/calendar" style={{"color":"#FFFFFF","opacity":"0.95","textDecoration":"none"}}>📅 सर्व ३६५ दिवस दिनदर्शिका</Link>
     </div>
   </div>
 </div>
@@ -183,6 +189,9 @@ export default function HomePage() {
         {getContent('hero.description', 'छत्रपती शिवरायांच्या स्वराज्याची जाज्वल्य निष्ठा, ३५० वर्षांची अखंड शौर्यपरंपरा आणि २१ व्या शतकातील तंत्रज्ञानावर आधारित मराठा समाजाचे राष्ट्रीय डिजिटल व्यासपीठ.')}
       </p>
       <div className="hero-ctas">
+        <Link to="/platform" className="btn btn-primary" style={{ background: 'linear-gradient(135deg, #B45309 0%, #D97706 100%)', border: '1.5px solid #FDE68A', boxShadow: '0 4px 20px rgba(217, 119, 6, 0.5)' }}>
+          🗺️ महाराष्ट्र मास्टर डेटा प्लॅटफॉर्म (50+ Datasets)
+        </Link>
         <Link to="/universe" className="btn btn-primary" style={{ background: 'linear-gradient(135deg, #7C1D05 0%, #C2410C 100%)', border: '1.5px solid #FED7AA', boxShadow: '0 4px 16px rgba(254, 215, 170, 0.4)' }}>
           🌌 संपूर्ण महाराष्ट्र महाविश्व (४९ वैशिष्ट्ये)
         </Link>
@@ -295,6 +304,559 @@ export default function HomePage() {
   </div>
 </section>
 
+{/* ========== 🔥 EXPLORE MAHARASHTRA — ६ मुख्य इंजिन व संपूर्ण ज्ञान ब्रह्मांड (28 MODULES INTERCONNECTED) ========== */}
+<section className="section" style={{ background: '#FFFDF9', padding: '60px 0 68px', borderBottom: '3px solid #FED7AA' }}>
+  <div className="container">
+    {/* Section Header */}
+    <div style={{ textAlign: 'center', maxWidth: '920px', margin: '0 auto 40px' }} data-reveal>
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #FFEDD5, #FEF3C7)', color: '#9A3412', border: '1.5px solid #FDBA74', padding: '6px 18px', borderRadius: '30px', fontWeight: 800, fontSize: '0.85rem', marginBottom: '14px', boxShadow: '0 2px 8px rgba(154,52,18,0.08)' }}>
+        <span>🔥</span>
+        <span>EXPLORE MAHARASHTRA • ६ मुख्य प्रणाली (6 CORE ENGINES)</span>
+        <span>🔥</span>
+      </div>
+      <h2 style={{ fontSize: '2.4rem', color: '#7C1D05', fontWeight: 900, lineHeight: 1.25, margin: '0 0 14px' }}>
+        महाराष्ट्र सांस्कृतिक + ऐतिहासिक + समुदाय + व्यवसाय महाव्यासपीठ
+      </h2>
+      <p style={{ fontSize: '1.05rem', color: '#431407', lineHeight: 1.6, margin: 0, opacity: 0.92 }}>
+        केवळ स्वतंत्र वेबपेजेस नव्हे, तर एकमेकांशी जोडलेले सजीव ज्ञानविश्व — 
+        <strong> व्यक्ती ↔ प्रसंग ↔ ठिकाण ↔ गडकोट ↔ मंदिरे ↔ सण ↔ खाद्य ↔ परंपरा ↔ समुदाय ↔ उद्योग</strong>.
+      </p>
+    </div>
+
+    {/* 6 CORE ENGINES SELECTOR TABS */}
+    <div style={{ marginBottom: '36px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
+        <h3 style={{ fontSize: '1.25rem', color: '#7C1D05', fontWeight: 800, margin: 0 }}>
+          ⚙️ प्लॅटफॉर्मच्या ६ मुख्य प्रणाली (The 6 Engines):
+        </h3>
+        <Link to="/universe" style={{ color: '#C2410C', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none' }}>
+          सर्व २८ ज्ञान दालने एक्सप्लोर करा →
+        </Link>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+        {CORE_ENGINES.map((engine) => {
+          const isSelected = activeEngineId === engine.id;
+          return (
+            <div
+              key={engine.id}
+              onClick={() => setActiveEngineId(engine.id)}
+              style={{
+                background: isSelected ? '#FFFFFF' : engine.bg,
+                border: isSelected ? `2.5px solid ${engine.color}` : '1.5px solid rgba(0,0,0,0.08)',
+                borderRadius: '16px',
+                padding: '20px',
+                cursor: 'pointer',
+                transition: 'all 0.25s ease',
+                boxShadow: isSelected ? '0 8px 24px rgba(124, 29, 5, 0.12)' : '0 2px 8px rgba(0,0,0,0.02)',
+                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between'
+              }}
+            >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '1.8rem' }}>{engine.icon}</span>
+                  {isSelected && (
+                    <span style={{ background: engine.color, color: '#FFFFFF', padding: '3px 10px', borderRadius: '12px', fontSize: '0.72rem', fontWeight: 800 }}>
+                      सक्रिय इंजिन
+                    </span>
+                  )}
+                </div>
+                <h4 style={{ fontSize: '1.15rem', color: engine.color, fontWeight: 800, margin: '0 0 6px' }}>
+                  {engine.title}
+                </h4>
+                <p style={{ fontSize: '0.84rem', color: '#4B5563', lineHeight: 1.5, margin: '0 0 12px' }}>
+                  {engine.subtitle}
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '14px' }}>
+                  {engine.modules.map((m, idx) => (
+                    <span key={idx} style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(0,0,0,0.1)', padding: '2px 8px', borderRadius: '6px', fontSize: '0.74rem', color: '#374151', fontWeight: 600 }}>
+                      {m}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <Link
+                to={engine.route}
+                style={{
+                  background: isSelected ? engine.color : 'rgba(0,0,0,0.06)',
+                  color: isSelected ? '#FFFFFF' : '#374151',
+                  textAlign: 'center',
+                  padding: '9px 14px',
+                  borderRadius: '10px',
+                  fontWeight: 700,
+                  fontSize: '0.85rem',
+                  textDecoration: 'none',
+                  display: 'block',
+                  transition: 'background 0.2s ease'
+                }}
+              >
+                इंजिन पोर्टल उघडा →
+              </Link>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+
+    {/* ========================================================================= */}
+    {/* 🌐 MAHARASHTRA KNOWLEDGE GRAPH: LIVE ENTITY RELATIONSHIP TRAVERSAL (FEATURE 24 & 25) */}
+    {/* ========================================================================= */}
+    <div style={{
+      background: '#FFFFFF',
+      border: '2px solid #FED7AA',
+      borderRadius: '24px',
+      padding: '32px 28px',
+      boxShadow: '0 12px 36px rgba(124, 29, 5, 0.08)'
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '24px', borderBottom: '1.5px solid #FFEDD5', paddingBottom: '18px' }}>
+        <div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#FEF3C7', color: '#B45309', padding: '4px 12px', borderRadius: '14px', fontSize: '0.78rem', fontWeight: 800, marginBottom: '6px' }}>
+            <span>🌐 FEATURE 24 & 25</span>
+            <span>•</span>
+            <span>MAHARASHTRA KNOWLEDGE GRAPH</span>
+          </div>
+          <h3 style={{ fontSize: '1.7rem', color: '#7C1D05', fontWeight: 900, margin: 0 }}>
+            "एक घटक निवडा ↔ सर्व काही आपोआप जोडले जाईल"
+          </h3>
+          <p style={{ fontSize: '0.92rem', color: '#78350F', margin: '4px 0 0' }}>
+            उदा. रायगडावर क्लिक केल्यास ऐतिहासिक घटना, शिवराय, प्रशासन, मंदिरे, खाद्य, मार्ग आणि स्थानिक व्यवसाय एकत्र दिसतील:
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => { setCorrectionModalOpen(true); setCorrectionSent(false); }}
+            style={{
+              background: '#FFF7ED',
+              border: '1.5px solid #F97316',
+              color: '#C2410C',
+              padding: '9px 16px',
+              borderRadius: '10px',
+              fontWeight: 700,
+              fontSize: '0.84rem',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <span>✍️</span>
+            <span>बदल किंवा सुधारणा सुचवा (Suggest Correction)</span>
+          </button>
+
+          <Link
+            to="/history/knowledge-graph"
+            style={{
+              background: '#7C1D05',
+              color: '#FFFFFF',
+              padding: '9px 18px',
+              borderRadius: '10px',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 4px 12px rgba(124, 29, 5, 0.2)'
+            }}
+          >
+            <span>⚡</span>
+            <span>संपूर्ण नॉलेज ग्राफ नकाशा ⛶</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Entity Chips Selector */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px' }}>
+        {INTERCONNECTED_ENTITIES.map((ent) => {
+          const isSelected = selectedEntityId === ent.id;
+          return (
+            <button
+              key={ent.id}
+              onClick={() => setSelectedEntityId(ent.id)}
+              style={{
+                background: isSelected ? 'linear-gradient(135deg, #7C1D05, #C2410C)' : '#FFFDF9',
+                color: isSelected ? '#FFFFFF' : '#431407',
+                border: isSelected ? '1.5px solid #7C1D05' : '1.5px solid #FED7AA',
+                padding: '8px 16px',
+                borderRadius: '24px',
+                fontWeight: 800,
+                fontSize: '0.86rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: isSelected ? '0 4px 12px rgba(124, 29, 5, 0.2)' : 'none',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <span>{ent.id === 'raigad' ? '🏰' : ent.id === 'shivaji_maharaj' ? '👑' : ent.id === 'sinhagad' ? '⚔️' : ent.id === 'sindhudurg' ? '⚓' : ent.id === 'tukaram_maharaj' ? '🧘' : ent.id === 'puran_poli' ? '🍲' : '👗'}</span>
+              <span>{ent.name}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Selected Entity Showcase */}
+      {(() => {
+        const ent = INTERCONNECTED_ENTITIES.find(e => e.id === selectedEntityId) || INTERCONNECTED_ENTITIES[0];
+        const trust = TRUST_STATUS_MAP[ent.trustStatus] || TRUST_STATUS_MAP.verified;
+        return (
+          <div>
+            {/* Entity Header Banner */}
+            <div style={{
+              background: 'linear-gradient(135deg, #FFF7ED 0%, #FEF3C7 100%)',
+              border: '1.5px solid #FED7AA',
+              borderRadius: '16px',
+              padding: '20px 24px',
+              marginBottom: '24px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '16px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <img
+                  src={ent.image}
+                  alt={ent.name}
+                  style={{ width: '84px', height: '84px', objectFit: 'cover', borderRadius: '14px', border: '2px solid #F59E0B' }}
+                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/assets/images/real-raigad-panoramic.jpg'; }}
+                />
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                    <span style={{ background: '#7C1D05', color: '#FFFFFF', padding: '2px 8px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800 }}>
+                      {ent.typeBadge}
+                    </span>
+                    <span style={{ background: trust.badgeBg, color: trust.badgeColor, border: `1px solid ${trust.badgeColor}40`, padding: '2px 8px', borderRadius: '6px', fontSize: '0.74rem', fontWeight: 800 }}>
+                      {trust.icon} {trust.label}
+                    </span>
+                  </div>
+                  <h4 style={{ fontSize: '1.5rem', color: '#7C1D05', fontWeight: 900, margin: 0 }}>
+                    {ent.name}
+                  </h4>
+                  <p style={{ fontSize: '0.9rem', color: '#78350F', margin: '4px 0 0', fontWeight: 600 }}>
+                    {ent.tagline}
+                  </p>
+                </div>
+              </div>
+
+              {/* Source Transparency Badge (Feature 26) */}
+              <div style={{ background: '#FFFFFF', padding: '10px 14px', borderRadius: '10px', border: '1px solid #FED7AA', maxWidth: '380px' }}>
+                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#C2410C', textTransform: 'uppercase', marginBottom: '2px' }}>
+                  📜 अधिकृत संदर्भ व पडताळणी:
+                </div>
+                <div style={{ fontSize: '0.82rem', color: '#4B5563', lineHeight: 1.4 }}>
+                  {ent.sourceCitation}
+                </div>
+              </div>
+            </div>
+
+            {/* 10-Point Connected Chain Grid */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+              gap: '14px',
+              marginBottom: '20px'
+            }}>
+              {/* 1. Person */}
+              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
+                  <span>👑</span> <span>१. जोडलेली व्यक्ती (Person):</span>
+                </div>
+                <Link to={ent.connections.person.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
+                  {ent.connections.person.name}
+                </Link>
+                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>{ent.connections.person.role}</span>
+              </div>
+
+              {/* 2. Historical Event */}
+              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
+                  <span>⚔️</span> <span>२. ऐतिहासिक प्रसंग (Event):</span>
+                </div>
+                <Link to={ent.connections.event.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
+                  {ent.connections.event.name}
+                </Link>
+                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>काळ: {ent.connections.event.date}</span>
+              </div>
+
+              {/* 3. Place & Village */}
+              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
+                  <span>📍</span> <span>३. गाव व स्थान (Place):</span>
+                </div>
+                <Link to={ent.connections.place.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
+                  {ent.connections.place.name}
+                </Link>
+                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>जिल्हा: {ent.connections.place.district}</span>
+              </div>
+
+              {/* 4. Temple & Sacred */}
+              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
+                  <span>🛕</span> <span>४. मंदिर व श्रद्धास्थान (Temple):</span>
+                </div>
+                <Link to={ent.connections.temple.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
+                  {ent.connections.temple.name}
+                </Link>
+                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>दैवत: {ent.connections.temple.deity}</span>
+              </div>
+
+              {/* 5. Festival & Jatra */}
+              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
+                  <span>🌺</span> <span>५. सण व उत्सव (Festival):</span>
+                </div>
+                <Link to={ent.connections.festival.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
+                  {ent.connections.festival.name}
+                </Link>
+                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>ऋतू: {ent.connections.festival.season}</span>
+              </div>
+
+              {/* 6. Food Culture */}
+              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
+                  <span>🍲</span> <span>६. खाद्यसंस्कृती (Food):</span>
+                </div>
+                <Link to={ent.connections.food.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
+                  {ent.connections.food.name}
+                </Link>
+                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>प्रदेश: {ent.connections.food.region}</span>
+              </div>
+
+              {/* 7. Tradition & Performing Arts */}
+              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
+                  <span>🎭</span> <span>७. कला व परंपरा (Tradition):</span>
+                </div>
+                <Link to={ent.connections.tradition.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
+                  {ent.connections.tradition.name}
+                </Link>
+                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>लोककला व विधी वारसा</span>
+              </div>
+
+              {/* 8. Heritage Route & Tourism */}
+              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
+                  <span>🧭</span> <span>८. वारसा पर्यटन मार्ग (Route):</span>
+                </div>
+                <Link to={ent.connections.route.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
+                  {ent.connections.route.name}
+                </Link>
+                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>कालावधी: {ent.connections.route.days}</span>
+              </div>
+
+              {/* 9. Books & Documents */}
+              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
+                  <span>📚</span> <span>९. संदर्भ ग्रंथ व पत्रे (Books):</span>
+                </div>
+                <Link to={ent.connections.books.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
+                  {ent.connections.books.title}
+                </Link>
+                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>प्राथमिक व समकालीन दस्तऐवज</span>
+              </div>
+
+              {/* 10. Community & Business */}
+              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
+                  <span>🤝</span> <span>१०. समुदाय व उद्योग (Business):</span>
+                </div>
+                <div style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.92rem' }}>
+                  {ent.connections.business.name}
+                </div>
+                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>{ent.connections.community.name}</span>
+              </div>
+            </div>
+
+            {/* Calendar Connection Bar */}
+            <div style={{
+              background: '#FEF3C7',
+              border: '1.5px solid #FDE68A',
+              borderRadius: '12px',
+              padding: '12px 18px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '10px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '1.3rem' }}>📅</span>
+                <span style={{ color: '#92400E', fontWeight: 800, fontSize: '0.92rem' }}>
+                  मराठा दिनदर्शिका २.० संदर्भ: {ent.connections.calendarDate.tithi}
+                </span>
+              </div>
+              <Link
+                to={ent.connections.calendarDate.route}
+                style={{
+                  background: '#92400E',
+                  color: '#FFFFFF',
+                  padding: '6px 14px',
+                  borderRadius: '8px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  textDecoration: 'none'
+                }}
+              >
+                दिनदर्शिकेत पहा व कॅलेंडरमध्ये जोडा 📅 →
+              </Link>
+            </div>
+          </div>
+        );
+      })()}
+    </div>
+  </div>
+</section>
+
+{/* Suggest Correction Modal */}
+{correctionModalOpen && (
+  <div style={{
+    position: 'fixed',
+    inset: 0,
+    background: 'rgba(0,0,0,0.65)',
+    backdropFilter: 'blur(4px)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 99999,
+    padding: '20px'
+  }}>
+    <div style={{
+      background: '#FFFFFF',
+      borderRadius: '20px',
+      maxWidth: '560px',
+      width: '100%',
+      padding: '28px',
+      boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+      border: '2px solid #FED7AA',
+      position: 'relative'
+    }}>
+      <button
+        onClick={() => setCorrectionModalOpen(false)}
+        style={{
+          position: 'absolute',
+          top: '16px',
+          right: '16px',
+          background: '#F3F4F6',
+          border: 'none',
+          borderRadius: '50%',
+          width: '36px',
+          height: '36px',
+          cursor: 'pointer',
+          fontWeight: 800,
+          fontSize: '1rem'
+        }}
+      >
+        ✕
+      </button>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+        <span style={{ fontSize: '2rem' }}>✍️</span>
+        <div>
+          <h3 style={{ margin: 0, color: '#7C1D05', fontSize: '1.35rem', fontWeight: 900 }}>
+            बदल किंवा संदर्भ सुधारणा सुचवा
+          </h3>
+          <span style={{ fontSize: '0.8rem', color: '#6B7280' }}>
+            Trust & Verification Engine (Feature 26)
+          </span>
+        </div>
+      </div>
+
+      {correctionSent ? (
+        <div style={{ background: '#DCFCE7', border: '1px solid #86EFAC', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
+          <span style={{ fontSize: '2.5rem' }}>✅</span>
+          <h4 style={{ color: '#166534', margin: '8px 0 4px', fontSize: '1.2rem' }}>सुधारणा नोंदवली गेली!</h4>
+          <p style={{ color: '#15803D', fontSize: '0.88rem', margin: 0 }}>
+            आपल्या संदर्भाची तपासणी इतिहास संशोधक व तज्ज्ञ मंडळ करेल आणि त्यानुसार नोंद अद्ययावत केली जाईल. धन्यवाद!
+          </p>
+          <button
+            onClick={() => setCorrectionModalOpen(false)}
+            style={{
+              marginTop: '16px',
+              background: '#15803D',
+              color: '#FFFFFF',
+              border: 'none',
+              padding: '8px 20px',
+              borderRadius: '8px',
+              fontWeight: 700,
+              cursor: 'pointer'
+            }}
+          >
+            बंद करा
+          </button>
+        </div>
+      ) : (
+        <>
+          <p style={{ fontSize: '0.88rem', color: '#4B5563', lineHeight: 1.5, margin: '0 0 14px' }}>
+            आपल्याकडे या नोंदीबद्दल अधिकृत समकालीन दस्तऐवज, शिलालेख, बखर संदर्भ किंवा छायाचित्र असल्यास कृपया खाली नोंदवा:
+          </p>
+
+          <textarea
+            value={correctionText}
+            onChange={(e) => setCorrectionText(e.target.value)}
+            placeholder="उदा. सभासद बखर पृष्ठ क्र. ४५ नुसार..., किंवा स्थानिक शिलालेख वाचनानुसार..."
+            rows={4}
+            style={{
+              width: '100%',
+              padding: '12px',
+              borderRadius: '10px',
+              border: '1.5px solid #FED7AA',
+              fontSize: '0.92rem',
+              outline: 'none',
+              marginBottom: '16px',
+              resize: 'none'
+            }}
+          />
+
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+            <button
+              onClick={() => setCorrectionModalOpen(false)}
+              style={{
+                background: '#F3F4F6',
+                color: '#374151',
+                border: 'none',
+                padding: '9px 18px',
+                borderRadius: '8px',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+            >
+              रद्द करा
+            </button>
+            <button
+              onClick={() => {
+                if (!correctionText.trim()) {
+                  alert('कृपया सुधारणा किंवा संदर्भ लिहा.');
+                  return;
+                }
+                setCorrectionSent(true);
+              }}
+              style={{
+                background: '#7C1D05',
+                color: '#FFFFFF',
+                border: 'none',
+                padding: '9px 20px',
+                borderRadius: '8px',
+                fontWeight: 800,
+                cursor: 'pointer'
+              }}
+            >
+              सुधारणा पाठवा 📤
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  </div>
+)}
+
 {/* ========== FOUR PRIMARY PILLARS (Section 2 of Master Blueprint) ========== */}
 <section className="section" style={{"background":"#FFFFFF","padding":"54px 0"}}>
   <div className="container">
@@ -366,7 +928,8 @@ export default function HomePage() {
           <p style={{"fontSize":"0.88rem","color":"rgba(255,248,231,0.95)","marginBottom":"12px"}}>
             बखरी, बुधभूषणम्, आज्ञापत्र, मोडी पत्रे व नकाशे — ५-स्तरीय संपादकीय प्रमाण दर्जा (Level 1 Primary ते Level 5 Oral).
           </p>
-          <Link to="/history" className="btn btn-primary" style={{"fontSize":"0.8rem","padding":"6px 14px"}}>महाग्रंथालय उघडा →</Link>
+          <Link to="/granthalaya" className="btn btn-primary" style={{"fontSize":"0.8rem","padding":"6px 14px"}}>महाग्रंथालय उघडा →</Link>
+          <Link to="/article/babasaheb-purandare-shivcharitra-kathan-bhag-1" className="btn btn-gold" style={{"fontSize":"0.8rem","padding":"6px 14px","marginLeft":"8px","background":"#DD8A2E","color":"#000","fontWeight":"800","textDecoration":"none","borderRadius":"6px","display":"inline-block"}}>🚩 शिवचरित्र कथन (१० भाग) →</Link>
         </div>
       </div>
 

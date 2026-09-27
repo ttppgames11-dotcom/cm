@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSiteContent } from '../../context/SiteContentContext';
 
@@ -7,11 +7,39 @@ export default function SiteHeader({ onOpenSearch }) {
   const { user, logout } = useAuth();
   const { getContent } = useSiteContent();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [expandedPillar, setExpandedPillar] = useState(null);
   const navigate = useNavigate();
 
   const handleLinkClick = () => {
     setMobileOpen(false);
   };
+
+  const togglePillar = (pillarId) => {
+    setExpandedPillar((prev) => (prev === pillarId ? null : pillarId));
+  };
+
+  // Prevent background scrolling when mobile drawer is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
+
+  // Close drawer on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && mobileOpen) {
+        setMobileOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mobileOpen]);
 
   return (
     <>
@@ -20,36 +48,46 @@ export default function SiteHeader({ onOpenSearch }) {
         <div className="site-topbar-inner">
           <div className="left-info">
             <span>🚩 <strong>जय जिजाऊ · जय शिवराय · जय शंभूराजे</strong></span>
-            <span>|</span>
-            <span>{getContent('texts.tagline', 'Connect Maratha डिजिटल व्यासपीठ')}</span>
+            <span className="topbar-divider">|</span>
+            <span className="topbar-tagline">{getContent('texts.tagline', 'Connect Maratha डिजिटल व्यासपीठ')}</span>
           </div>
           <div className="right-info">
-            <Link to="/universe" style={{ color: '#FED7AA', fontWeight: 700, textDecoration: 'none' }}>🌌 महाविश्व (Connect Everything)</Link>
+            <Link to="/calendar" style={{ color: '#FDE68A', fontWeight: 800, textDecoration: 'none' }}>📅 दिनदर्शिका</Link>
             <span>|</span>
-            <span>📞 हेल्पलाईन: <strong>{getContent('forms.contactSupport.emergencyHelpline', '१८००-१२३-१६७४')}</strong></span>
+            <Link to="/universe" style={{ color: '#FED7AA', fontWeight: 700, textDecoration: 'none' }}>🌌 महाविश्व</Link>
             <span>|</span>
-            <Link to="/about">संस्था परिचय</Link>
-            <span>|</span>
-            <Link to="/governance">DPDP धोरण</Link>
+            <span>📞 <strong>{getContent('forms.contactSupport.emergencyHelpline', '१८००-१२३-१६७४')}</strong></span>
+            <span className="topbar-hide-tablet">|</span>
+            <Link to="/about" className="topbar-hide-tablet">संस्था परिचय</Link>
+            <span className="topbar-hide-tablet">|</span>
+            <Link to="/governance" className="topbar-hide-tablet">DPDP धोरण</Link>
           </div>
         </div>
       </div>
 
-      {/* ========== HEADER ========== */}
+      {/* ========== MAIN HEADER ========== */}
       <header className="site-header">
         <div className="site-header-inner">
-          <Link to="/" className="brand-desktop" onClick={handleLinkClick}>
-            <img src={getContent('images.brandLogo', '/assets/images/logo.png')} alt="Connect Maratha Logo" className="brand-logo" />
+          <Link to="/" className="brand-desktop" onClick={handleLinkClick} title="Connect Maratha - मुख्यपृष्ठ" aria-label="Connect Maratha Home">
+            <img
+              src={getContent('images.brandLogo', '/assets/images/logo.png')}
+              alt="Connect Maratha Logo"
+              className="brand-logo"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/assets/images/logo.png';
+              }}
+            />
             <div className="brand-titles">
               <div className="brand-main">
-                <span className="en">{getContent('header.brandTitle', 'CONNECT मराठा').split(' ')[0] || 'CONNECT'}</span>{' '}
-                <span className="mr">{getContent('header.brandTitle', 'CONNECT मराठा').split(' ').slice(1).join(' ') || 'मराठा'}</span>
+                <span className="en">CONNECT</span> <span className="mr">मराठा</span>
               </div>
-              <span className="brand-sub">{getContent('header.brandSubtitle', 'भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी')}</span>
+              <div className="brand-sub">अखिल भारतीय डिजिटल व्यासपीठ</div>
             </div>
           </Link>
 
-          <nav className={`desktop-nav ${mobileOpen ? 'mobile-nav-active' : ''}`}>
+          {/* Desktop Navigation (Hidden <= 1024px) */}
+          <nav className="desktop-nav">
             {/* Pillar 1: इतिहास व वारसा */}
             <div className="nav-item-has-mega">
               <Link to="/history" onClick={handleLinkClick}>⚔️ इतिहास व वारसा ▾</Link>
@@ -65,10 +103,11 @@ export default function SiteHeader({ onOpenSearch }) {
                   </div>
                   <div className="mega-col">
                     <div className="mega-col-title">🕯️ स्मृती व ग्रंथ संपदा</div>
+                    <Link to="/shivcharitra" onClick={handleLinkClick} style={{ color: '#C73800', fontWeight: 800 }}>🚩 शिवचरित्र कथन (१५ भाग)</Link>
                     <Link to="/history/balidan-maas" onClick={handleLinkClick}>🕯️ धर्मवीर बलिदान मास स्मरण</Link>
                     <Link to="/history/granthalaya" onClick={handleLinkClick}>📚 मराठा ग्रंथालय व बखरी</Link>
                     <Link to="/history/warriors" onClick={handleLinkClick}>👑 ९६ कुळे व सरदार घराणी</Link>
-                    <Link to="/culture" onClick={handleLinkClick}>🏷️ राजमुद्रा व मराठा चिन्हे</Link>
+                    <Link to="/article" onClick={handleLinkClick}>📖 सर्व इतिहास संशोधन आलेख</Link>
                   </div>
                   <div className="mega-col">
                     <div className="mega-col-title">✊ समाज लढा व वारसा</div>
@@ -96,6 +135,7 @@ export default function SiteHeader({ onOpenSearch }) {
                 <div className="mega-menu-grid">
                   <div className="mega-col">
                     <div className="mega-col-title">🌍 सांस्कृतिक विविधता व महाविश्व</div>
+                    <Link to="/platform" onClick={handleLinkClick} style={{ color: '#9A3412', fontWeight: 800, background: '#FEF3C7', padding: '5px 8px', borderRadius: '6px', display: 'block', marginBottom: '5px', border: '1px solid #FCD34D' }}>🗺️ महाराष्ट्र डेटा प्लॅटफॉर्म (50+ Datasets)</Link>
                     <Link to="/universe" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 800, background: '#FFEDD5', padding: '5px 8px', borderRadius: '6px', display: 'block', marginBottom: '5px' }}>🌌 संपूर्ण महाराष्ट्र महाविश्व (४९ वैशिष्ट्ये)</Link>
                     <Link to="/time-machine" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 700 }}>⏳ महाराष्ट्र टाइम मशीन (१२ कालखंड)</Link>
                     <Link to="/culture/shivkal-festivals" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 700 }}>🚩 शिवकालीन उत्सव (१६३०-१६८०)</Link>
@@ -266,35 +306,64 @@ export default function SiteHeader({ onOpenSearch }) {
                     <div className="mega-col-title">👥 समाज, संस्कृती व कल्याण</div>
                     <Link to="/community" onClick={handleLinkClick}>💬 मराठा डिजिटल कम्युनिटी</Link>
                     <Link to="/community" onClick={handleLinkClick}>🧑‍🤝‍🧑 उपक्रम गट व चर्चा मंच</Link>
+                    <Link to="/calendar" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800, background: '#FFF7ED', borderRadius: '6px', padding: '6px 8px' }}>📅 मराठा दिनदर्शिका (पंचांग • इतिहास)</Link>
                     <Link to="/events" onClick={handleLinkClick}>📅 आगामी मेळावे व दिनविशेष</Link>
                     <Link to="/donation" onClick={handleLinkClick}>❤️ दुर्ग संवर्धन व देणगी कोष</Link>
                     <Link to="/culture" onClick={handleLinkClick}>🎭 मराठी संस्कृती व सण परंपरा</Link>
                     <Link to="/gallery" onClick={handleLinkClick}>🖼️ आपुला महाराष्ट्र छायाचित्र दालन</Link>
                   </div>
                   <div className="mega-col">
-                    <div className="mega-col-title">⚖️ प्रशासन, ओळख व CRM</div>
-                    <Link to="/superadmin" onClick={handleLinkClick} style={{ color: '#F59E0B', fontWeight: '800' }}>👑 सर्वोच्च प्रशासक (SuperAdmin CRUD)</Link>
+                    <div className="mega-col-title">🏛️ ओळख, नागरिक व सनद</div>
                     <Link to="/card" onClick={handleLinkClick}>🪪 डिजिटल सभासद ओळखपत्र</Link>
-                    <Link to="/ai" onClick={handleLinkClick} style={{ color: '#F59E0B', fontWeight: '700' }}>🤖 Connect Maratha AI सहाय्यक</Link>
-                    <Link to="/crm" onClick={handleLinkClick}>🚩 भूमिका आधारित CRM पोर्टल</Link>
-                    <Link to="/admin/cms" onClick={handleLinkClick} style={{ color: '#E65100', fontWeight: '700' }}>🎨 CMS वेबसाईट संपादक</Link>
                     <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
-                    <Link to="/admin" onClick={handleLinkClick}>🏛️ मुख्य ॲडमिन ईआरपी</Link>
-                    <Link to="/crm/ceo" onClick={handleLinkClick}>🦅 CEO एक्झिक्युटिव्ह डॅशबोर्ड</Link>
-                    <Link to="/crm/district" onClick={handleLinkClick}>📍 जिल्हा समन्वयक CRM</Link>
-                    <Link to="/crm/chapter" onClick={handleLinkClick}>💼 चॅप्टर अध्यक्ष CRM</Link>
-                    <Link to="/crm/helpdesk" onClick={handleLinkClick}>🩺 समाज साहाय्यता कक्ष CRM</Link>
+                    <Link to="/about" onClick={handleLinkClick}>🏛️ संस्था परिचय व सल्लागार मंडळ</Link>
+                    <Link to="/governance" onClick={handleLinkClick}>🎯 व्हिजन व DPDP २०२३ धोरण</Link>
+                    <Link to="/blueprint" onClick={handleLinkClick}>🧭 ५० विभाग मास्टर ब्लूप्रिंट</Link>
+                    <Link to="/achievers" onClick={handleLinkClick}>🏆 राष्ट्रीय मराठा गौरव व अचीव्हर्स</Link>
+                    <Link to="/contact" onClick={handleLinkClick}>☎️ संपर्क व तक्रार निवारण</Link>
+                    {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo' || user.role === 'district_admin') && (
+                      <Link to="/crm" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800, marginTop: '8px', borderTop: '1px dashed #CBD5E1', paddingTop: '8px' }}>
+                        🛡️ अधिकारी CRM पोर्टल →
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
           </nav>
 
+          {/* Header Action Buttons */}
           <div className="header-actions">
+            {onOpenSearch && (
+              <button
+                type="button"
+                className="header-search-btn"
+                onClick={onOpenSearch}
+                title="शोध (Ctrl+K)"
+                aria-label="शोध"
+                style={{
+                  background: '#FFF8F0',
+                  border: '1.5px solid #FFCC80',
+                  borderRadius: '10px',
+                  width: '38px',
+                  height: '38px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  color: '#C2410C',
+                  flexShrink: 0
+                }}
+              >
+                🔍
+              </button>
+            )}
+
             <Link
               to="/universe"
               onClick={handleLinkClick}
-              className="btn"
+              className="btn universe-btn"
               style={{
                 background: 'linear-gradient(135deg, #7C1D05 0%, #C2410C 100%)',
                 color: '#FFFFFF',
@@ -310,101 +379,440 @@ export default function SiteHeader({ onOpenSearch }) {
               }}
               title="Connect Maratha — Expanded Feature Universe (४९ वैशिष्ट्ये • १२ जग • परस्पर जोडणी)">
               <span>🌌</span>
-              <span>महाविश्व</span>
+              <span className="universe-btn-text">महाविश्व</span>
             </Link>
-
-            <Link
-              to="/ai"
-              onClick={handleLinkClick}
-              className="btn"
-              style={{
-                background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #DC2626 100%)',
-                color: '#FFFFFF',
-                border: 'none',
-                fontWeight: 800,
-                padding: '7px 14px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                boxShadow: '0 2px 10px rgba(245, 158, 11, 0.4)'
-              }}
-              title="Connect Maratha AI Agent (मराठा इतिहास, किल्ले, स्वराज्य व सहाय्य)">
-              <span>🤖</span>
-              <span>AI सहाय्यक</span>
-            </Link>
-
-            <button
-              type="button"
-              onClick={onOpenSearch}
-              className="btn btn-outline"
-              style={{ background: '#FFF3E0', border: '1.5px solid #F4511E', color: '#E65100', cursor: 'pointer' }}
-              title="शोध (Ctrl+K)">
-              🔎 शोध
-            </button>
 
             {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo') && (
-              <div style={{ display: 'inline-flex', gap: '6px' }}>
+              <div className="admin-header-btns" style={{ display: 'inline-flex', gap: '6px' }}>
                 {user.role === 'superadmin' && (
                   <Link
                     to="/superadmin"
                     className="btn"
                     onClick={handleLinkClick}
-                    style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)', color: '#000', border: 'none', fontWeight: '800', padding: '6px 12px', fontSize: '0.82rem' }}
+                    style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)', color: '#000', border: 'none', fontWeight: '800', padding: '6px 10px', fontSize: '0.8rem' }}
                     title="सर्वोच्च प्रशासक कन्सोल: वापरकर्ते, डॉक्टर्स, सेवा, हॉटेल्स CRUD">
-                    👑 SuperAdmin
+                    👑 <span className="header-btn-text">Admin</span>
                   </Link>
                 )}
                 <Link
                   to="/admin/cms"
                   className="btn btn-outline"
                   onClick={handleLinkClick}
-                  style={{ background: 'linear-gradient(135deg, #7C3AED, #4F46E5)', color: '#FFFFFF', border: 'none', fontWeight: '700', padding: '6px 12px', fontSize: '0.82rem' }}
+                  style={{ background: 'linear-gradient(135deg, #7C3AED, #4F46E5)', color: '#FFFFFF', border: 'none', fontWeight: '700', padding: '6px 10px', fontSize: '0.8rem' }}
                   title="वेबसाईटचे मजकूर, चित्रे, बटणे आणि लिंक्स त्वरित संपादित करा">
-                  🎨 CMS
+                  🎨 <span className="header-btn-text">CMS</span>
                 </Link>
               </div>
             )}
 
             {user && user.id ? (
-              <div style={{ display: 'inline-flex', gap: '6px', alignItems: 'center' }}>
-                <Link to="/card" className="btn btn-outline" onClick={handleLinkClick} title="माझे डिजिटल सभासद ओळखपत्र">
-                  🪪 माझे कार्ड
+              <div className="user-header-btns" style={{ display: 'inline-flex', gap: '6px', alignItems: 'center' }}>
+                <Link to="/card" className="btn btn-outline header-card-btn" onClick={handleLinkClick} title="माझे डिजिटल सभासद ओळखपत्र">
+                  🪪 <span className="header-btn-text">माझे कार्ड</span>
                 </Link>
-                <Link to="/dashboard" className="btn btn-primary" onClick={handleLinkClick}>
-                  👤 {user.name?.split(' ')[0] || 'डॅशबोर्ड'}
+                <Link to="/dashboard" className="btn btn-primary header-dashboard-btn" onClick={handleLinkClick}>
+                  👤 <span>{user.name?.split(' ')[0] || 'डॅशबोर्ड'}</span>
                 </Link>
                 <button
                   onClick={logout}
-                  className="btn btn-outline"
-                  title="बाहेर पडा"
-                  style={{ padding: '7px 10px' }}>
-                  🚪
+                  className="btn btn-outline header-logout-btn"
+                  title="खात्यातून बाहेर पडा (Logout)"
+                  style={{
+                    padding: '7px 11px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    color: '#DC2626',
+                    borderColor: '#FCA5A5',
+                    background: '#FEF2F2',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}>
+                  🚪 <span className="header-btn-text">बाहेर पडा</span>
                 </button>
               </div>
             ) : (
-              <>
+              <div className="guest-header-btns" style={{ display: 'inline-flex', gap: '6px' }}>
                 <Link to="/login" className="btn btn-outline" onClick={handleLinkClick}>
-                  👤 लॉगिन
+                  👤 <span className="header-btn-text">लॉगिन</span>
                 </Link>
                 <Link to="/register" className="btn btn-primary" onClick={handleLinkClick}>
-                  🚩 नोंदणी
+                  🚩 <span className="header-btn-text">नोंदणी</span>
                 </Link>
-              </>
+              </div>
             )}
 
-            {/* Mobile Toggle Button */}
+            {/* Mobile Hamburger Toggle Button */}
             <button
+              type="button"
               className="mobile-hamburger-btn"
               onClick={() => setMobileOpen(!mobileOpen)}
-              style={{ display: 'none', background: 'none', border: '1px solid #FFCC80', borderRadius: '8px', padding: '6px 10px', fontSize: '1.2rem', cursor: 'pointer', color: '#E65100' }}
-              aria-label="मेनू">
-              ☰
+              aria-label={mobileOpen ? "मेनू बंद करा" : "मेनू उघडा"}
+              aria-expanded={mobileOpen}>
+              {mobileOpen ? '✕' : '☰'}
             </button>
           </div>
         </div>
+
+        {/* Mobile / Responsive Horizontal Category Navigation Bar */}
+        <nav className="site-mobile-subnav" aria-label="मुख्य विभाग नेव्हिगेशन">
+          <div className="site-mobile-subnav-scroll">
+            <NavLink to="/" end onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+              <span className="subnav-pill-icon">🏠</span> मुख्यपृष्ठ
+            </NavLink>
+            <NavLink to="/history" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+              <span className="subnav-pill-icon">⚔️</span> इतिहास
+            </NavLink>
+            <NavLink to="/culture" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+              <span className="subnav-pill-icon">🏛️</span> संस्कृती
+            </NavLink>
+            <NavLink to="/calendar" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-gold ${isActive ? 'active' : ''}`}>
+              <span className="subnav-pill-icon">📅</span> दिनदर्शिका
+            </NavLink>
+            <NavLink to="/business/directory" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+              <span className="subnav-pill-icon">💼</span> व्यवसाय
+            </NavLink>
+            <NavLink to="/community" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+              <span className="subnav-pill-icon">👥</span> समाज
+            </NavLink>
+            <NavLink to="/universe" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-universe ${isActive ? 'active' : ''}`}>
+              <span className="subnav-pill-icon">🌌</span> महाविश्व
+            </NavLink>
+            <NavLink to="/forts" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+              <span className="subnav-pill-icon">🏰</span> गड-किल्ले
+            </NavLink>
+            <NavLink to="/temples" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+              <span className="subnav-pill-icon">🛕</span> मंदिरे
+            </NavLink>
+            <NavLink to="/sangam" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+              <span className="subnav-pill-icon">🤝</span> संगम
+            </NavLink>
+            <NavLink to="/gallery" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+              <span className="subnav-pill-icon">🖼️</span> दालने
+            </NavLink>
+            <button
+              type="button"
+              className="subnav-pill subnav-pill-more"
+              onClick={() => setMobileOpen(true)}
+              aria-label="सर्व ५०+ विभाग व मेनू"
+            >
+              <span className="subnav-pill-icon">☰</span> सर्व मेनू
+            </button>
+          </div>
+        </nav>
       </header>
+
+      {/* ========== MOBILE SLIDE-OUT DRAWER & BACKDROP ========== */}
+      <div
+        className={`cm-mobile-drawer-backdrop ${mobileOpen ? 'active' : ''}`}
+        onClick={() => setMobileOpen(false)}
+        aria-hidden="true"
+      />
+
+      <aside
+        className={`cm-mobile-drawer ${mobileOpen ? 'active' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="मुख्य नेव्हिगेशन मेनू">
+        
+        {/* Drawer Header */}
+        <div className="cm-drawer-header">
+          <Link to="/" onClick={handleLinkClick} className="cm-drawer-brand">
+            <img
+              src={getContent('images.brandLogo', '/assets/images/logo.png')}
+              alt="Connect Maratha"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/assets/images/logo.png';
+              }}
+            />
+            <div>
+              <div className="cm-drawer-brand-title">CONNECT मराठा</div>
+              <div className="cm-drawer-brand-sub">अखिल भारतीय डिजिटल व्यासपीठ</div>
+            </div>
+          </Link>
+          <button
+            type="button"
+            className="cm-drawer-close-btn"
+            onClick={() => setMobileOpen(false)}
+            aria-label="मेनू बंद करा">
+            ✕
+          </button>
+        </div>
+
+        {/* Drawer Scrollable Body */}
+        <div className="cm-drawer-body">
+          {/* User Status / Auth Action Card */}
+          <div className="cm-drawer-user-card">
+            {user && user.id ? (
+              <>
+                <div className="cm-drawer-user-header">
+                  <div className="cm-drawer-user-avatar">👤</div>
+                  <div>
+                    <div className="cm-drawer-user-name">{user.name || 'सभासद'}</div>
+                    <span className="cm-drawer-user-badge">
+                      {user.role === 'superadmin' ? '👑 SuperAdmin' : user.role === 'admin' ? '🛡️ Admin' : user.role === 'business_member' ? '💼 व्यावसायिक सभासद' : '🚩 अधिकृत सभासद'}
+                    </span>
+                  </div>
+                </div>
+                <div className="cm-drawer-user-btns">
+                  <Link to="/dashboard" onClick={handleLinkClick} className="btn btn-primary">
+                    👤 डॅशबोर्ड
+                  </Link>
+                  <Link to="/card" onClick={handleLinkClick} className="btn btn-outline">
+                    🪪 ओळखपत्र
+                  </Link>
+                  <button
+                    onClick={() => { logout(); setMobileOpen(false); }}
+                    className="btn"
+                    style={{ background: '#FEE2E2', color: '#DC2626', border: '1px solid #FCA5A5', fontWeight: 700 }}>
+                    🚪 बाहेर पडा
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="cm-drawer-guest-btns">
+                <Link to="/login" onClick={handleLinkClick} className="btn btn-outline">
+                  👤 सभासद लॉगिन
+                </Link>
+                <Link to="/register" onClick={handleLinkClick} className="btn btn-primary">
+                  🚩 नवीन नोंदणी
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Featured Highlight: महाविश्व Banner */}
+          <Link to="/universe" onClick={handleLinkClick} className="cm-drawer-universe-banner">
+            <span className="banner-icon">🌌</span>
+            <div className="banner-text">
+              <strong>संपूर्ण महाराष्ट्र महाविश्व</strong>
+              <small>४९ वैशिष्ट्ये • १२ जग • परस्पर जोडणी</small>
+            </div>
+            <span className="banner-arrow">→</span>
+          </Link>
+
+          {/* Quick Jump Badges */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+            <Link
+              to="/calendar"
+              onClick={handleLinkClick}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '9px 12px',
+                background: '#FFFBEB',
+                border: '1px solid #FDE68A',
+                borderRadius: '8px',
+                color: '#92400E',
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                textDecoration: 'none'
+              }}>
+              <span>📅</span>
+              <span>दिनदर्शिका</span>
+            </Link>
+            <Link
+              to="/platform"
+              onClick={handleLinkClick}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '9px 12px',
+                background: '#FEF3C7',
+                border: '1px solid #FCD34D',
+                borderRadius: '8px',
+                color: '#78350F',
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                textDecoration: 'none'
+              }}>
+              <span>🗺️</span>
+              <span>डेटा प्लॅटफॉर्म</span>
+            </Link>
+          </div>
+
+          {/* Pillar 1: इतिहास व वारसा */}
+          <div className="cm-drawer-accordion-item">
+            <button
+              type="button"
+              className={`cm-drawer-accordion-btn ${expandedPillar === 'history' ? 'expanded' : ''}`}
+              onClick={() => togglePillar('history')}>
+              <span>⚔️ इतिहास व वारसा</span>
+              <span className="cm-drawer-accordion-chevron">{expandedPillar === 'history' ? '▲' : '▼'}</span>
+            </button>
+            {expandedPillar === 'history' && (
+              <div className="cm-drawer-accordion-panel">
+                <Link to="/history" onClick={handleLinkClick}>📜 मराठा कालपट (१६३०-१८१८)</Link>
+                <Link to="/history/battles" onClick={handleLinkClick}>⚔️ प्रमुख ७ रणांगणे व व्यूहरचना</Link>
+                <Link to="/forts" onClick={handleLinkClick}>🏰 सह्याद्रीचे गड-किल्ले (३५०+)</Link>
+                <Link to="/history/navy" onClick={handleLinkClick}>⚓ मराठा आरमार व जलदुर्ग</Link>
+                <Link to="/quiz" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 700 }}>🎯 स्वराज्य इतिहास महाक्विझ</Link>
+                <Link to="/history/balidan-maas" onClick={handleLinkClick}>🕯️ धर्मवीर बलिदान मास स्मरण</Link>
+                <Link to="/history/granthalaya" onClick={handleLinkClick}>📚 मराठा ग्रंथालय व बखरी</Link>
+                <Link to="/history/warriors" onClick={handleLinkClick}>👑 ९६ कुळे व सरदार घराणी</Link>
+                <Link to="/history/movements" onClick={handleLinkClick}>🚩 मराठा क्रांती मूक मोर्चे</Link>
+                <Link to="/history/dates" onClick={handleLinkClick}>📅 ऐतिहासिक दिनविशेष</Link>
+                <Link to="/history/shivaji-maharaj" onClick={handleLinkClick}>📖 विशेष संशोधन लेख</Link>
+              </div>
+            )}
+          </div>
+
+          {/* Pillar 2: संस्कृती व ज्ञानकोश */}
+          <div className="cm-drawer-accordion-item">
+            <button
+              type="button"
+              className={`cm-drawer-accordion-btn ${expandedPillar === 'culture' ? 'expanded' : ''}`}
+              onClick={() => togglePillar('culture')}>
+              <span>🏛️ संस्कृती व ज्ञानकोश</span>
+              <span className="cm-drawer-accordion-chevron">{expandedPillar === 'culture' ? '▲' : '▼'}</span>
+            </button>
+            {expandedPillar === 'culture' && (
+              <div className="cm-drawer-accordion-panel">
+                <Link to="/platform" onClick={handleLinkClick} style={{ color: '#9A3412', fontWeight: 700 }}>🗺️ महाराष्ट्र डेटा प्लॅटफॉर्म</Link>
+                <Link to="/universe" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 700 }}>🌌 संपूर्ण महाराष्ट्र महाविश्व</Link>
+                <Link to="/time-machine" onClick={handleLinkClick}>⏳ महाराष्ट्र टाइम मशीन (१२ कालखंड)</Link>
+                <Link to="/culture/shivkal-festivals" onClick={handleLinkClick}>🚩 शिवकालीन उत्सव (१६३०-१६८०)</Link>
+                <Link to="/culture" onClick={handleLinkClick}>🗺️ ८ प्रादेशिक सांस्कृतिक प्रोफाइल</Link>
+                <Link to="/culture/dialects" onClick={handleLinkClick}>🗣️ महाराष्ट्राच्या बोली व उच्चार</Link>
+                <Link to="/culture/food" onClick={handleLinkClick}>🍲 खाद्यसंस्कृती व उगम इतिहास</Link>
+                <Link to="/culture/symbols" onClick={handleLinkClick}>🏷️ राजमुद्रा व मराठा चिन्हे</Link>
+                <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🛕 ग्रामदैवत व कुलदैवत ज्ञानकार्ड</Link>
+                <Link to="/jatra" onClick={handleLinkClick}>🎪 जत्रा व वार्षिक यात्रा दिनदर्शिका</Link>
+                <Link to="/culture/heritage-map" onClick={handleLinkClick}>🗺️ बहुस्तरीय परस्परसंवादी नकाशा</Link>
+                <Link to="/history/knowledge-graph" onClick={handleLinkClick}>⚡ घटना ↔ स्थळे नॉलेज ग्राफ</Link>
+              </div>
+            )}
+          </div>
+
+          {/* Pillar 3: व्यवसाय व संधी */}
+          <div className="cm-drawer-accordion-item">
+            <button
+              type="button"
+              className={`cm-drawer-accordion-btn ${expandedPillar === 'business' ? 'expanded' : ''}`}
+              onClick={() => togglePillar('business')}>
+              <span>💼 व्यवसाय व संधी</span>
+              <span className="cm-drawer-accordion-chevron">{expandedPillar === 'business' ? '▲' : '▼'}</span>
+            </button>
+            {expandedPillar === 'business' && (
+              <div className="cm-drawer-accordion-panel">
+                <Link to="/business/directory" onClick={handleLinkClick}>🏢 व्यवसाय निर्देशिका</Link>
+                <Link to="/sangam" onClick={handleLinkClick}>🤝 बिझनेस संगम व चॅप्टर्स</Link>
+                <Link to="/referrals" onClick={handleLinkClick}>🔗 रेफरल व व्यवसाय देवाणघेवाण</Link>
+                <Link to="/meetings" onClick={handleLinkClick}>☕ 1-to-1 व्यावसायिक बैठका</Link>
+                <Link to="/jobs" onClick={handleLinkClick}>💼 रोजगार व करिअर केंद्र</Link>
+                <Link to="/bank" onClick={handleLinkClick}>🏦 मराठा बँक व वित्त संस्था</Link>
+                <Link to="/builders" onClick={handleLinkClick}>🏗️ मराठा बिल्डर्स व डेव्हलपर्स</Link>
+                <Link to="/dairy" onClick={handleLinkClick}>🥛 मराठा दूध व संकलन केंद्र</Link>
+                <Link to="/manufacturers" onClick={handleLinkClick}>🏭 मराठा मॅन्युफॅक्चरर्स</Link>
+              </div>
+            )}
+          </div>
+
+          {/* Pillar 4: समाज व उपक्रम */}
+          <div className="cm-drawer-accordion-item">
+            <button
+              type="button"
+              className={`cm-drawer-accordion-btn ${expandedPillar === 'community' ? 'expanded' : ''}`}
+              onClick={() => togglePillar('community')}>
+              <span>🚩 समाज व उपक्रम</span>
+              <span className="cm-drawer-accordion-chevron">{expandedPillar === 'community' ? '▲' : '▼'}</span>
+            </button>
+            {expandedPillar === 'community' && (
+              <div className="cm-drawer-accordion-panel">
+                <Link to="/community" onClick={handleLinkClick}>💬 मराठा डिजिटल कम्युनिटी</Link>
+                <Link to="/women" onClick={handleLinkClick}>🌸 महिला सक्षमीकरण कक्ष</Link>
+                <Link to="/blood" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 700 }}>🩸 २४×७ रक्त मदत केंद्र</Link>
+                <Link to="/matrimony" onClick={handleLinkClick}>💍 मराठा वधू-वर सूचक केंद्र</Link>
+                <Link to="/organizations" onClick={handleLinkClick}>🤝 मराठा सामाजिक संघटना</Link>
+                <Link to="/political" onClick={handleLinkClick}>🏛️ राजकीय नेतृत्व व पक्ष</Link>
+                <Link to="/social-workers" onClick={handleLinkClick}>🤝 मराठा निष्ठावंत समाजसेवक</Link>
+                <Link to="/officers" onClick={handleLinkClick}>⭐ मराठा सनदी अधिकारी (IAS/IPS)</Link>
+                <Link to="/doctors" onClick={handleLinkClick}>👨‍⚕️ मराठा तज्ज्ञ डॉक्टर्स</Link>
+                <Link to="/artists" onClick={handleLinkClick}>🎭 कलाकार, गायक व दिग्दर्शक</Link>
+              </div>
+            )}
+          </div>
+
+          {/* Pillar 5: महाराष्ट्र नेटवर्क */}
+          <div className="cm-drawer-accordion-item">
+            <button
+              type="button"
+              className={`cm-drawer-accordion-btn ${expandedPillar === 'network' ? 'expanded' : ''}`}
+              onClick={() => togglePillar('network')}>
+              <span>🗺️ महाराष्ट्र नेटवर्क</span>
+              <span className="cm-drawer-accordion-chevron">{expandedPillar === 'network' ? '▲' : '▼'}</span>
+            </button>
+            {expandedPillar === 'network' && (
+              <div className="cm-drawer-accordion-panel">
+                <Link to="/network" onClick={handleLinkClick}>🏛️ पुणे विभाग (पुणे, सातारा, कोल्हापूर)</Link>
+                <Link to="/network" onClick={handleLinkClick}>🌊 कोकण विभाग (मुंबई, ठाणे, पालघर)</Link>
+                <Link to="/network" onClick={handleLinkClick}>⛵ रायगड, रत्नागिरी, सिंधुदुर्ग</Link>
+                <Link to="/network" onClick={handleLinkClick}>🌄 छ. संभाजीनगर, जालना, बीड</Link>
+                <Link to="/network" onClick={handleLinkClick}>🌾 नाशिक, अहमदनगर, जळगाव, धुळे</Link>
+                <Link to="/network" onClick={handleLinkClick}>🌿 विदर्भ (अमरावती, नागपूर, चंद्रपूर)</Link>
+                <Link to="/network" onClick={handleLinkClick}>🚩 बेळगाव, कारवार सीमावर्ती शाखा</Link>
+                <Link to="/network" onClick={handleLinkClick}>🏢 ३६ जिल्हा समन्वय केंद्रे</Link>
+              </div>
+            )}
+          </div>
+
+          {/* Pillar 6: सर्व दालने, सनद व ओळख */}
+          <div className="cm-drawer-accordion-item">
+            <button
+              type="button"
+              className={`cm-drawer-accordion-btn ${expandedPillar === 'all' ? 'expanded' : ''}`}
+              onClick={() => togglePillar('all')}>
+              <span>📂 सर्व दालने व सनद</span>
+              <span className="cm-drawer-accordion-chevron">{expandedPillar === 'all' ? '▲' : '▼'}</span>
+            </button>
+            {expandedPillar === 'all' && (
+              <div className="cm-drawer-accordion-panel">
+                <Link to="/card" onClick={handleLinkClick}>🪪 डिजिटल सभासद ओळखपत्र</Link>
+                <Link to="/calendar" onClick={handleLinkClick}>📅 मराठा दिनदर्शिका</Link>
+                <Link to="/about" onClick={handleLinkClick}>🏛️ संस्था परिचय व सल्लागार मंडळ</Link>
+                <Link to="/governance" onClick={handleLinkClick}>🎯 व्हिजन व DPDP २०२३ धोरण</Link>
+                <Link to="/blueprint" onClick={handleLinkClick}>🧭 ५० विभाग मास्टर ब्लूप्रिंट</Link>
+                <Link to="/achievers" onClick={handleLinkClick}>🏆 राष्ट्रीय मराठा गौरव व अचीव्हर्स</Link>
+                <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
+                <Link to="/donation" onClick={handleLinkClick}>❤️ दुर्ग संवर्धन व देणगी कोष</Link>
+                <Link to="/contact" onClick={handleLinkClick}>☎️ संपर्क व तक्रार निवारण</Link>
+                {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo' || user.role === 'district_admin') && (
+                  <Link to="/crm" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800, borderTop: '1px dashed #CBD5E1', paddingTop: '8px' }}>
+                    🛡️ अधिकारी CRM पोर्टल →
+                  </Link>
+                )}
+                {user && user.role === 'superadmin' && (
+                  <Link to="/superadmin" onClick={handleLinkClick} style={{ color: '#D97706', fontWeight: 800 }}>
+                    👑 SuperAdmin कन्सोल →
+                  </Link>
+                )}
+                {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo') && (
+                  <Link to="/admin/cms" onClick={handleLinkClick} style={{ color: '#7C3AED', fontWeight: 800 }}>
+                    🎨 CMS संपादक →
+                  </Link>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Drawer Footer */}
+          <div className="cm-drawer-footer">
+            <div className="cm-drawer-helpline">
+              📞 २४×७ समाज हेल्पलाईन: <strong>{getContent('forms.contactSupport.emergencyHelpline', '१८००-१२३-१६७४')}</strong>
+            </div>
+            <div className="cm-drawer-footer-links">
+              <Link to="/governance" onClick={handleLinkClick}>DPDP धोरण</Link>
+              <span>•</span>
+              <Link to="/about" onClick={handleLinkClick}>संस्था परिचय</Link>
+              <span>•</span>
+              <Link to="/contact" onClick={handleLinkClick}>मदत व संपर्क</Link>
+            </div>
+          </div>
+        </div>
+      </aside>
     </>
   );
 }

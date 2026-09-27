@@ -7,6 +7,7 @@ const WARRIORS_DATA = [
     name: 'सुभेदार तानाजी मालुसरे',
     title: 'सिंहगडाचे अमर नायक · "गड आला पण सिंह गेला!"',
     role: 'सुभेदार व बालसखा',
+    image: '/assets/images/warriors/tanaji.jpg',
     deed: 'कोंढाणा किल्ल्यावर रात्रीच्या अंधारात द्रोणागिरी कड्यावरून यशवंती घोरपडीच्या साहाय्याने चढाई करून मुघल किल्लेदार उदयभानचा पराभव केला आणि स्वतः धारातीर्थी पडले.',
     icon: '🛡️'
   },
@@ -15,6 +16,7 @@ const WARRIORS_DATA = [
     name: 'वीर बाजी प्रभू देशपांडे व फुलाजी प्रभू',
     title: 'पावनखिंडीचे अमर संरक्षक · बांदल मावळे',
     role: 'सरनोबत व देशपांडे',
+    image: '/assets/images/warriors/bajiprabhu.jpg',
     deed: 'पन्हाळगडावरून विशाळगडाकडे कूच करताना घोडखिंडीत अवघ्या ३०० बांदल वीरांसह सिद्दी मसूदच्या ४,००० फौजेला तोफांचा आवाज ऐकू येईपर्यंत अडवून ठेवत सर्वोच्च बलिदान दिले.',
     icon: '🗡️'
   },
@@ -23,6 +25,7 @@ const WARRIORS_DATA = [
     name: 'मुरारबाजी देशपांडे',
     title: 'पुरंदरचे सिंह · "मावळ्यांचा एकही पाय मागे हटणार नाही!"',
     role: 'पुरंदरचे किल्लेदार',
+    image: '/assets/images/warriors/murarbaji.jpg',
     deed: 'दिलेरखानाच्या प्रचंड मोगल फौजेने पुरंदरला वेढा घातला असता, अवघ्या ७०० मावळ्यांसह वज्रगडावरून दिलेरखानाच्या तळावर तुटून पडले आणि छातीवर वार झेलत धारातीर्थी पडले.',
     icon: '🏰'
   },
@@ -31,6 +34,7 @@ const WARRIORS_DATA = [
     name: 'वीर शिवा काशिद (नाभिक)',
     title: 'शिवरायांचे प्रतिरूप · अमर बलिदान',
     role: 'विश्वासू अंगरक्षक',
+    image: '/assets/images/warriors/shivakashid.jpg',
     deed: 'पन्हाळगडाच्या वेढ्यात शिवरायांचे रूप घेऊन पालखीत बसले आणि शत्रूला भ्रमात ठेवत स्वतःचे प्राण स्वराज्यासाठी अर्पण केले, ज्यामुळे शिवरायांना निसटण्याची संधी मिळाली.',
     icon: '👑'
   },
@@ -39,6 +43,7 @@ const WARRIORS_DATA = [
     name: 'फिरंगोजी नरसाळा',
     title: 'चाकणच्या संग्रामदुर्गाचे झुंजार किल्लेदार',
     role: 'किल्लेदार',
+    image: '/assets/images/warriors/firangoji.jpg',
     deed: 'शाइस्तेखानाच्या लाखो फौजेविरुद्ध चाकणच्या भुईकोट किल्ल्यात अवघ्या ३०० जवानांसह तब्बल ५६ दिवस झुंज दिली. त्यांच्या शौर्याने मोगलही थक्क झाले.',
     icon: '🛡️'
   },
@@ -47,6 +52,7 @@ const WARRIORS_DATA = [
     name: 'हंबीरराव मोहिते',
     title: 'स्वराज्याचे सरसेनापती · शंभूराजांचे खंदे पाठीराखे',
     role: 'सरसेनापती',
+    image: '/assets/images/warriors/hambirrao.jpg',
     deed: 'छत्रपती शिवाजी महाराज व संभाजी महाराज या दोन्ही छत्रपतींच्या काळात अनेक महत्त्वाच्या मोहिमांचे यशस्वी नेतृत्व केले. वाईच्या लढाईत तोफगोळा लागून वीरमरण आले.',
     icon: '⚔️'
   },
@@ -55,6 +61,7 @@ const WARRIORS_DATA = [
     name: 'संताजी घोरपडे व धनाजी जाधव',
     title: 'मोगल फौजेचे कर्दनकाळ · "पाण्यात संताजी-धनाजी दिसतात!"',
     role: 'मराठा सरसेनापती',
+    image: '/assets/images/warriors/santaji_dhanaji.jpg',
     deed: 'छत्रपती राजाराम महाराजांच्या काळात मराठा स्वातंत्र्यसंग्रामात औरंगजेबाच्या प्रचंड मोगल सैन्याला सळो की पळो करून सोडणारे अद्वितीय गनिमी सेनापती.',
     icon: '🐎'
   },
@@ -63,6 +70,7 @@ const WARRIORS_DATA = [
     name: 'सरखेल कान्होजी आंग्रे',
     title: 'भारतीय आरमाराचे अजिंक्य सेनापती',
     role: 'आरमार प्रमुख',
+    image: '/assets/images/warriors/kanhoji_angre.jpg',
     deed: 'ब्रिटिश, डच, पोर्तुगीज आणि सिद्दी या सर्व सागरी सत्तांना आव्हान देत अरबी समुद्रावर ३० वर्षांहून अधिक काळ निर्विवाद मराठा सत्ता प्रस्थापित केली.',
     icon: '⚓'
   }
@@ -144,16 +152,34 @@ export default function WarriorsPage() {
               style={{
                 background: '#FFFFFF',
                 borderRadius: '16px',
-                padding: '24px',
-                border: '1px solid #E6DDCE',
-                boxShadow: '0 6px 20px rgba(199,56,0,0.06)',
+                overflow: 'hidden',
+                border: '1.5px solid #E6DDCE',
+                boxShadow: '0 8px 24px rgba(61,13,13,0.08)',
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease'
               }}>
+              {/* Relatable Historical Scene / Portrait Image */}
+              <div style={{ height: '200px', width: '100%', position: 'relative', background: '#1c1917', overflow: 'hidden' }}>
+                <img
+                  src={w.image}
+                  alt={w.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/history/coronation.jpg'; }}
+                />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(20,4,6,0.85) 0%, rgba(20,4,6,0.2) 60%, transparent 100%)' }} />
+                <div style={{ position: 'absolute', bottom: '10px', left: '14px', right: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                  <span style={{ background: '#DD8A2E', color: '#3D0D0D', fontSize: '0.72rem', fontWeight: 800, padding: '2px 8px', borderRadius: '4px' }}>
+                    {w.role}
+                  </span>
+                  <span style={{ fontSize: '1.5rem' }}>{w.icon}</span>
+                </div>
+              </div>
+
+              <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-                  <span style={{ fontSize: '32px' }}>{w.icon}</span>
+                <div style={{ marginBottom: '10px' }}>
                   <div>
                     <h3 style={{
                       fontFamily: "'Baloo 2', 'Noto Sans Devanagari', sans-serif",
@@ -205,7 +231,8 @@ export default function WarriorsPage() {
                 </Link>
               </div>
             </div>
-          ))}
+          </div>
+        ))}
         </div>
 
       </div>

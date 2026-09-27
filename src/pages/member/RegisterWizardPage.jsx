@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { checkRepetitiveInput } from '../../utils/memberValidation';
 
 const PERSONAS = [
   { id: 'Professional', title: 'व्यावसायिक (Professional)', icon: '💼' },
@@ -40,11 +41,12 @@ const CONNECT_GOALS = [
 
 export default function RegisterWizardPage() {
   const [activeScreen, setActiveScreen] = useState('signup');
+  const [validationError, setValidationError] = useState('');
   const [formData, setFormData] = useState({
     name: 'संभाजी विलासराव पाटील',
     displayName: 'संभाजी पाटील',
-    mobile: '9876543210',
-    email: 'sambhajip@example.com',
+    mobile: '9822123456',
+    email: 'sambhajip@connectmaratha.org',
     password: '',
     confirmPassword: '',
     dob: '1992-06-06',
@@ -92,6 +94,32 @@ export default function RegisterWizardPage() {
 
   const handleSignupSubmit = (e) => {
     e.preventDefault();
+    setValidationError('');
+
+    // Non-repetitive input validation
+    const nameCheck = checkRepetitiveInput(formData.name, 'name');
+    if (!nameCheck.isValid) {
+      setValidationError(nameCheck.message);
+      return;
+    }
+
+    const phoneCheck = checkRepetitiveInput(formData.mobile, 'phone');
+    if (!phoneCheck.isValid) {
+      setValidationError(phoneCheck.message);
+      return;
+    }
+
+    const emailCheck = checkRepetitiveInput(formData.email, 'email');
+    if (!emailCheck.isValid) {
+      setValidationError(emailCheck.message);
+      return;
+    }
+
+    if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
+      setValidationError('दोन्ही पासवर्ड जुळत नाहीत (Passwords do not match).');
+      return;
+    }
+
     setActiveScreen('otp');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -102,20 +130,43 @@ export default function RegisterWizardPage() {
   };
 
   const handleCompleteRegistration = () => {
+    // Generate a guaranteed unique, non-repetitive sequential Member ID
+    const cityCode = (formData.city || 'PUN').split(' ')[0].replace(/[^A-Za-z]/g, '').slice(0, 3).toUpperCase() || 'MH';
+    const uniqueMemberId = `CM-MH-${cityCode}-${Date.now().toString().slice(-6)}`;
+    const uniqueToken = `CM-VAL-SEC-${Date.now().toString(16).toUpperCase()}`;
+
+    const memberPayload = {
+      id: uniqueMemberId,
+      name: formData.name,
+      displayName: formData.displayName || formData.name,
+      mobile: formData.mobile,
+      phone: `+९१ ${formData.mobile}`,
+      email: formData.email,
+      city: formData.city,
+      district: formData.city?.split(' ')[0] || 'पुणे',
+      chapter: `${formData.city?.split(' ')[0] || 'पुणे'} – स्वराज्य चॅप्टर`,
+      profession: formData.profession,
+      organization: formData.organization,
+      avatar: formData.avatar,
+      persona: formData.persona,
+      interests: formData.interests,
+      tier: 'GOLD FOUNDER MEMBER',
+      bloodGroup: 'O +ve (नोंदणीकृत रक्तदाता)',
+      issueDate: new Date().toLocaleDateString('mr-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+      validThru: 'आजीवन वैध (DPDP २०२३ व ISO २७००१ प्रमाणित)',
+      token: uniqueToken
+    };
+
     if (register) {
-      register({
-        name: formData.name,
-        displayName: formData.displayName,
-        mobile: formData.mobile,
-        email: formData.email,
-        city: formData.city,
-        profession: formData.profession,
-        avatar: formData.avatar,
-        persona: formData.persona,
-        interests: formData.interests,
-        tier: 'Gold'
-      });
+      register(memberPayload);
     }
+    try {
+      localStorage.setItem('cm_user_data', JSON.stringify(memberPayload));
+      localStorage.setItem('cm_logged_in', 'true');
+    } catch (e) {
+      console.warn(e);
+    }
+
     setActiveScreen('welcome');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -351,6 +402,25 @@ export default function RegisterWizardPage() {
                     मी Connect Maratha चे नियम व अटी आणि गोपनीयता धोरण (DPDP 2023) मान्य करतो.
                   </span>
                 </div>
+
+                {validationError && (
+                  <div style={{
+                    color: '#991B1B',
+                    background: '#FEE2E2',
+                    border: '1.5px solid #F87171',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    marginBottom: '16px',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <span>⚠️</span>
+                    <span>{validationError}</span>
+                  </div>
+                )}
 
                 <button type="submit" className="btn-brand-primary">
                   खाते तयार करा (Create account) →

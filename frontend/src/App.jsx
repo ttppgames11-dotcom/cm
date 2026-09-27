@@ -26,6 +26,7 @@ import BusinessDirectoryPage from './pages/business/BusinessDirectoryPage';
 // Community, Events, Donations, Jobs
 import CommunityFeedPage from './pages/community/CommunityFeedPage';
 import EventsCalendarPage from './pages/events/EventsCalendarPage';
+import MarathaCalendarPage from './pages/calendar/MarathaCalendarPage';
 import DonationsPage from './pages/donation/DonationsPage';
 import PeopleDirectoryPage from './pages/directory/PeopleDirectoryPage';
 import JobsPortalPage from './pages/jobs/JobsPortalPage';
@@ -40,6 +41,9 @@ import ChapterPresidentCRM from './pages/admin/ChapterPresidentCRM';
 import SevaHelpdeskCRM from './pages/admin/SevaHelpdeskCRM';
 import FinanceLedgerCRM from './pages/admin/FinanceLedgerCRM';
 import CRMRoleHubPage from './pages/admin/CRMRoleHubPage';
+import CRMLoginPage from './pages/admin/CRMLoginPage';
+import CRMProtectedRoute from './components/auth/CRMProtectedRoute';
+import MemberProtectedRoute from './components/auth/MemberProtectedRoute';
 import SiteContentEditorPage from './pages/admin/SiteContentEditorPage';
 import SuperAdminDashboardPage from './pages/admin/SuperAdminDashboardPage';
 import ConnectMarathaAIAgentPage from './pages/ai/ConnectMarathaAIAgentPage';
@@ -49,6 +53,7 @@ import GenericArticlePage from './pages/common/GenericArticlePage';
 import SearchPage from './pages/common/SearchPage';
 import DnyankoshPage from './pages/history/DnyankoshPage';
 import GranthalayaPage from './pages/history/GranthalayaPage';
+import ShivcharitraKathanHubPage from './pages/history/ShivcharitraKathanHubPage';
 import BalidanMaasPage from './pages/history/BalidanMaasPage';
 import BattlesPage from './pages/history/BattlesPage';
 import WarriorsPage from './pages/history/WarriorsPage';
@@ -100,6 +105,7 @@ import KnowledgeGraphExplorerPage from './pages/history/KnowledgeGraphExplorerPa
 import CommunityOralHistoryPage from './pages/community/CommunityOralHistoryPage';
 import ShivkalFestivalsPage from './pages/culture/ShivkalFestivalsPage';
 import ConnectMarathaUniversePage from './pages/universe/ConnectMarathaUniversePage';
+import MaharashtraDataPlatformPage from './pages/platform/MaharashtraDataPlatformPage';
 
 
 // Complete 100% Mapping for Every Legacy .html File (All 81 Files Covered)
@@ -227,10 +233,10 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             
             {/* SuperAdmin Supreme Console */}
-            <Route path="/superadmin" element={<SuperAdminDashboardPage />} />
-            <Route path="/admin/superadmin" element={<SuperAdminDashboardPage />} />
-            <Route path="/admin/users" element={<SuperAdminDashboardPage />} />
-            <Route path="/crm/superadmin" element={<SuperAdminDashboardPage />} />
+            <Route path="/superadmin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/admin/superadmin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/admin/users" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/crm/superadmin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
             
             {/* History & Heritage */}
             <Route path="/history" element={<HistoryPage />} />
@@ -256,6 +262,9 @@ export default function App() {
             <Route path="/dnyankosh" element={<DnyankoshPage />} />
             <Route path="/history/granthalaya" element={<GranthalayaPage />} />
             <Route path="/granthalaya" element={<GranthalayaPage />} />
+            <Route path="/history/shivcharitra" element={<ShivcharitraKathanHubPage />} />
+            <Route path="/shivcharitra" element={<ShivcharitraKathanHubPage />} />
+            <Route path="/shivcharitra-kathan" element={<ShivcharitraKathanHubPage />} />
             <Route path="/history/movements" element={<MovementsPage />} />
             <Route path="/movements" element={<MovementsPage />} />
             <Route path="/history/:slug" element={<GenericArticlePage />} />
@@ -272,7 +281,17 @@ export default function App() {
             <Route path="/safety" element={<CommunitySafetyPage />} />
             <Route path="/groups" element={<CommunityFeedPage />} />
             <Route path="/news" element={<NewsAnnouncementsPage />} />
-            <Route path="/events" element={<EventsCalendarPage />} />
+            <Route path="/calendar" element={<MarathaCalendarPage />} />
+            <Route path="/calender" element={<MarathaCalendarPage />} />
+            <Route path="/dinadarshika" element={<MarathaCalendarPage />} />
+            <Route path="/dindadarshika" element={<MarathaCalendarPage />} />
+            <Route path="/panchang" element={<MarathaCalendarPage />} />
+            <Route path="/events" element={<MarathaCalendarPage />} />
+            <Route path="/events/calendar" element={<MarathaCalendarPage />} />
+            <Route path="/events/calender" element={<MarathaCalendarPage />} />
+            <Route path="/maratha-calendar" element={<MarathaCalendarPage />} />
+            <Route path="/history/calendar" element={<MarathaCalendarPage />} />
+            <Route path="/history/calender" element={<MarathaCalendarPage />} />
             <Route path="/donation" element={<DonationsPage />} />
             <Route path="/campaigns" element={<DonationsPage />} />
             <Route path="/directory" element={<PeopleDirectoryPage />} />
@@ -281,24 +300,30 @@ export default function App() {
             {/* Membership, Card & User Center */}
             <Route path="/card" element={<DigitalMemberCardPage />} />
             <Route path="/member/card" element={<DigitalMemberCardPage />} />
+            <Route path="/verify" element={<DigitalMemberCardPage defaultTab="verify" />} />
+            <Route path="/verify/qr" element={<DigitalMemberCardPage defaultTab="verify" />} />
+            <Route path="/verify/qr/:code" element={<DigitalMemberCardPage defaultTab="verify" />} />
+            <Route path="/verify/:code" element={<DigitalMemberCardPage defaultTab="verify" />} />
+            <Route path="/verify-member" element={<DigitalMemberCardPage defaultTab="verify" />} />
             <Route path="/register" element={<RegisterWizardPage />} />
             <Route path="/onboarding" element={<RegisterWizardPage />} />
             <Route path="/membership" element={<RegisterWizardPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/dashboard" element={<MemberDashboardPage />} />
-            <Route path="/profile" element={<UserProfilePage />} />
-            <Route path="/settings" element={<UserProfilePage />} />
-            <Route path="/notifications" element={<NotificationsPage />} />
-            <Route path="/messages" element={<MessagesPage />} />
+            {/* Private Member Center — Protected for Authenticated Members */}
+            <Route path="/dashboard" element={<MemberProtectedRoute><MemberDashboardPage /></MemberProtectedRoute>} />
+            <Route path="/profile" element={<MemberProtectedRoute><UserProfilePage /></MemberProtectedRoute>} />
+            <Route path="/settings" element={<MemberProtectedRoute><UserProfilePage /></MemberProtectedRoute>} />
+            <Route path="/notifications" element={<MemberProtectedRoute><NotificationsPage /></MemberProtectedRoute>} />
+            <Route path="/messages" element={<MemberProtectedRoute><MessagesPage /></MemberProtectedRoute>} />
 
             {/* Business Sangam, Meetings & Opportunities */}
             <Route path="/sangam" element={<BusinessSangamPage />} />
-            <Route path="/meetings" element={<MeetingsPortalPage />} />
-            <Route path="/business/meetings" element={<MeetingsPortalPage />} />
-            <Route path="/business-meetings" element={<MeetingsPortalPage />} />
-            <Route path="/referrals" element={<ReferralsTrackerPage />} />
-            <Route path="/create-referral" element={<CreateReferralPage />} />
-            <Route path="/referrals/create" element={<CreateReferralPage />} />
+            <Route path="/meetings" element={<MemberProtectedRoute><MeetingsPortalPage /></MemberProtectedRoute>} />
+            <Route path="/business/meetings" element={<MemberProtectedRoute><MeetingsPortalPage /></MemberProtectedRoute>} />
+            <Route path="/business-meetings" element={<MemberProtectedRoute><MeetingsPortalPage /></MemberProtectedRoute>} />
+            <Route path="/referrals" element={<MemberProtectedRoute><ReferralsTrackerPage /></MemberProtectedRoute>} />
+            <Route path="/create-referral" element={<MemberProtectedRoute><CreateReferralPage /></MemberProtectedRoute>} />
+            <Route path="/referrals/create" element={<MemberProtectedRoute><CreateReferralPage /></MemberProtectedRoute>} />
             <Route path="/business" element={<BusinessDirectoryPage />} />
             <Route path="/business/directory" element={<BusinessDirectoryPage />} />
             <Route path="/business/list" element={<BusinessDirectoryPage />} />
@@ -310,8 +335,8 @@ export default function App() {
             <Route path="/jobs" element={<JobsPortalPage />} />
             <Route path="/education" element={<JobsPortalPage />} />
             <Route path="/services" element={<JobsPortalPage />} />
-            <Route path="/services/booking" element={<ServiceBookingPage />} />
-            <Route path="/service-booking" element={<ServiceBookingPage />} />
+            <Route path="/services/booking" element={<MemberProtectedRoute><ServiceBookingPage /></MemberProtectedRoute>} />
+            <Route path="/service-booking" element={<MemberProtectedRoute><ServiceBookingPage /></MemberProtectedRoute>} />
 
             {/* Maharashtra Culture & Heritage Knowledge Graph */}
             <Route path="/culture" element={<MaharashtraCultureHubPage />} />
@@ -357,6 +382,18 @@ export default function App() {
             <Route path="/heritage-passport" element={<ConnectMarathaUniversePage />} />
             <Route path="/virtual-museum" element={<ConnectMarathaUniversePage />} />
 
+            {/* Maharashtra Master Data Platform (50+ Interconnected Datasets & Atlas) */}
+            <Route path="/platform" element={<MaharashtraDataPlatformPage />} />
+            <Route path="/atlas" element={<MaharashtraDataPlatformPage />} />
+            <Route path="/data-platform" element={<MaharashtraDataPlatformPage />} />
+            <Route path="/maharashtra-platform" element={<MaharashtraDataPlatformPage />} />
+            <Route path="/knowledge-platform" element={<MaharashtraDataPlatformPage />} />
+            <Route path="/modi-script" element={<MaharashtraDataPlatformPage />} />
+            <Route path="/audio-heritage" element={<MaharashtraDataPlatformPage />} />
+            <Route path="/qr-heritage" element={<MaharashtraDataPlatformPage />} />
+            <Route path="/trails" element={<MaharashtraDataPlatformPage />} />
+            <Route path="/api-docs" element={<MaharashtraDataPlatformPage />} />
+
             {/* Gallery, Symbols, Temples */}
             <Route path="/gallery" element={<PhotoGalleryPage />} />
             <Route path="/culture/gallery" element={<PhotoGalleryPage />} />
@@ -380,40 +417,40 @@ export default function App() {
             <Route path="/more" element={<MorePortalsPage />} />
             <Route path="/portals" element={<MorePortalsPage />} />
 
-            {/* Role-Specific Live Enterprise CRM Suite — Dedicated Dashboards for Every Role */}
-            <Route path="/crm" element={<CRMRoleHubPage />} />
-            <Route path="/crm/roles" element={<CRMRoleHubPage />} />
-            <Route path="/admin" element={<CRMRoleHubPage />} />
-            <Route path="/crm/admin" element={<SuperAdminDashboardPage />} />
-            <Route path="/superadmin" element={<SuperAdminDashboardPage />} />
-            <Route path="/admin/superadmin" element={<SuperAdminDashboardPage />} />
-            <Route path="/admin/users" element={<SuperAdminDashboardPage />} />
-            <Route path="/crm/superadmin" element={<SuperAdminDashboardPage />} />
+            {/* Dedicated Secure CRM Login Gateways */}
+            <Route path="/crm/login" element={<CRMLoginPage />} />
+            <Route path="/admin/login" element={<CRMLoginPage />} />
 
-            <Route path="/crm/ceo" element={<CEODashboardPage />} />
-            <Route path="/ceo" element={<CEODashboardPage />} />
-            <Route path="/ceo-dashboard" element={<CEODashboardPage />} />
+            {/* Role-Specific Live Enterprise CRM Suite — Protected for Authenticated Staff/Admins */}
+            <Route path="/crm" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
+            <Route path="/crm/roles" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
+            <Route path="/admin" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
+            <Route path="/crm/admin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
 
-            <Route path="/crm/district" element={<DistrictAdminCRM />} />
-            <Route path="/admin/district" element={<DistrictAdminCRM />} />
+            <Route path="/crm/ceo" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEODashboardPage /></CRMProtectedRoute>} />
+            <Route path="/ceo" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEODashboardPage /></CRMProtectedRoute>} />
+            <Route path="/ceo-dashboard" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEODashboardPage /></CRMProtectedRoute>} />
 
-            <Route path="/crm/chapter" element={<ChapterPresidentCRM />} />
-            <Route path="/admin/chapter" element={<ChapterPresidentCRM />} />
+            <Route path="/crm/district" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'district_admin', 'district']}><DistrictAdminCRM /></CRMProtectedRoute>} />
+            <Route path="/admin/district" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'district_admin', 'district']}><DistrictAdminCRM /></CRMProtectedRoute>} />
 
-            <Route path="/crm/helpdesk" element={<SevaHelpdeskCRM />} />
-            <Route path="/crm/seva" element={<SevaHelpdeskCRM />} />
-            <Route path="/admin/seva" element={<SevaHelpdeskCRM />} />
+            <Route path="/crm/chapter" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'chapter_president', 'chapter']}><ChapterPresidentCRM /></CRMProtectedRoute>} />
+            <Route path="/admin/chapter" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'chapter_president', 'chapter']}><ChapterPresidentCRM /></CRMProtectedRoute>} />
 
-            <Route path="/crm/finance" element={<FinanceLedgerCRM />} />
-            <Route path="/admin/finance" element={<FinanceLedgerCRM />} />
+            <Route path="/crm/helpdesk" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'seva_helpdesk', 'helpdesk_admin']}><SevaHelpdeskCRM /></CRMProtectedRoute>} />
+            <Route path="/crm/seva" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'seva_helpdesk', 'helpdesk_admin']}><SevaHelpdeskCRM /></CRMProtectedRoute>} />
+            <Route path="/admin/seva" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'seva_helpdesk', 'helpdesk_admin']}><SevaHelpdeskCRM /></CRMProtectedRoute>} />
 
-            <Route path="/reports" element={<AdminERPPage />} />
-            <Route path="/crm/reports" element={<AdminERPPage />} />
-            <Route path="/admin/reports" element={<AdminERPPage />} />
-            <Route path="/admin/cms" element={<SiteContentEditorPage />} />
-            <Route path="/admin/content" element={<SiteContentEditorPage />} />
-            <Route path="/cms" element={<SiteContentEditorPage />} />
-            <Route path="/crm/cms" element={<SiteContentEditorPage />} />
+            <Route path="/crm/finance" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'finance_officer', 'finance']}><FinanceLedgerCRM /></CRMProtectedRoute>} />
+            <Route path="/admin/finance" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'finance_officer', 'finance']}><FinanceLedgerCRM /></CRMProtectedRoute>} />
+
+            <Route path="/reports" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><AdminERPPage /></CRMProtectedRoute>} />
+            <Route path="/crm/reports" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><AdminERPPage /></CRMProtectedRoute>} />
+            <Route path="/admin/reports" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><AdminERPPage /></CRMProtectedRoute>} />
+            <Route path="/admin/cms" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SiteContentEditorPage /></CRMProtectedRoute>} />
+            <Route path="/admin/content" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SiteContentEditorPage /></CRMProtectedRoute>} />
+            <Route path="/cms" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SiteContentEditorPage /></CRMProtectedRoute>} />
+            <Route path="/crm/cms" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SiteContentEditorPage /></CRMProtectedRoute>} />
 
             {/* Connect Maratha AI Agent (Trilingual RAG, Forts, Swarajya, Support) */}
             <Route path="/ai" element={<ConnectMarathaAIAgentPage />} />
@@ -508,7 +545,10 @@ export default function App() {
             <Route path="/vadhu-var" element={<MatrimonyPortalPage />} />
 
             {/* Generic Article Route & Fallback */}
+            <Route path="/article" element={<GenericArticlePage />} />
+            <Route path="/articles" element={<GenericArticlePage />} />
             <Route path="/article/:slug" element={<GenericArticlePage />} />
+            <Route path="/history/maratha-navy" element={<MarathaNavyPage />} />
             <Route path="*" element={<GenericArticlePage />} />
           </Route>
         </Routes>

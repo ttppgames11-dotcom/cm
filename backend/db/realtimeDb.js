@@ -468,7 +468,7 @@ class RealtimeDatabase {
       },
       images: {
         heroBanner: "/assets/images/maratha-samrajya.jpg",
-        brandLogo: "/assets/images/maratha_samrajya_logo.png",
+        brandLogo: "/assets/images/logo.png",
         fortsBanner: "/assets/images/generated/forts_hero_banner.jpg",
         cultureHero: "/assets/images/generated/maratha_culture_hero.jpg",
         sangamHero: "/assets/images/generated/business_sangam_hero.jpg",

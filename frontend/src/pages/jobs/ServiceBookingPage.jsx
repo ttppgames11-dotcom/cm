@@ -3,21 +3,21 @@ import { Link } from 'react-router-dom';
 
 const PROVIDERS_BY_CATEGORY = {
   tech: [
-    { id: 'p1', name: 'अमोल जाधव', badge: 'Verified', agency: 'Jadhav Software', exp: '९+ वर्षे अनुभव', rating: '⭐ ४.९ (७५ पुनरावलोकने)', baseFee: 2500, projFee: 35000 },
-    { id: 'p2', name: 'विक्रम शिंदे', badge: 'Verified', agency: 'Shinde Tech Labs', exp: '६+ वर्षे अनुभव', rating: '⭐ ४.८ (४० पुनरावलोकने)', baseFee: 2000, projFee: 28000 }
+    { id: 'p1', image: '/assets/images/officers/officer_mahesh.jpg', name: 'अमोल जाधव', badge: 'Verified', agency: 'Jadhav Software', exp: '९+ वर्षे अनुभव', rating: '⭐ ४.९ (७५ पुनरावलोकने)', baseFee: 2500, projFee: 35000 },
+    { id: 'p2', image: '/assets/images/officers/officer_tukaram.jpg', name: 'विक्रम शिंदे', badge: 'Verified', agency: 'Shinde Tech Labs', exp: '६+ वर्षे अनुभव', rating: '⭐ ४.८ (४० पुनरावलोकने)', baseFee: 2000, projFee: 28000 }
   ],
   legal: [
-    { id: 'p3', name: 'ॲड. राजेश पाटील', badge: 'Verified', agency: 'पाटील विधी सल्लागार', exp: '१५+ वर्षे अनुभव', rating: '⭐ ४.९ (१२० पुनरावलोकने)', baseFee: 1500, projFee: 15000 },
-    { id: 'p4', name: 'ॲड. प्रियांका देशमुख', badge: 'Verified', agency: 'देशमुख लीगल असोसिएट्स', exp: '८+ वर्षे अनुभव', rating: '⭐ ४.८ (४५ पुनरावलोकने)', baseFee: 1200, projFee: 12000 }
+    { id: 'p3', image: '/assets/images/officers/officer_vishwas.jpg', name: 'ॲड. राजेश पाटील', badge: 'Verified', agency: 'पाटील विधी सल्लागार', exp: '१५+ वर्षे अनुभव', rating: '⭐ ४.९ (१२० पुनरावलोकने)', baseFee: 1500, projFee: 15000 },
+    { id: 'p4', image: '/assets/images/officers/officer_sujata.jpg', name: 'ॲड. प्रियांका देशमुख', badge: 'Verified', agency: 'देशमुख लीगल असोसिएट्स', exp: '८+ वर्षे अनुभव', rating: '⭐ ४.८ (४५ पुनरावलोकने)', baseFee: 1200, projFee: 12000 }
   ],
   ca: [
-    { id: 'p5', name: 'सीए स्मिता गायकवाड', badge: 'Verified CA', agency: 'गायकवाड अँड कंपनी', exp: '१०+ वर्षे अनुभव', rating: '⭐ ४.९ (९० पुनरावलोकने)', baseFee: 2000, projFee: 18000 }
+    { id: 'p5', image: '/assets/images/officers/officer_ashwini.jpg', name: 'सीए स्मिता गायकवाड', badge: 'Verified CA', agency: 'गायकवाड अँड कंपनी', exp: '१०+ वर्षे अनुभव', rating: '⭐ ४.९ (९० पुनरावलोकने)', baseFee: 2000, projFee: 18000 }
   ],
   trek: [
-    { id: 'p6', name: 'रोहित मोरे', badge: 'Certified Guide', agency: 'सह्याद्री ट्रेकर्स क्लब', exp: '१५०+ दुर्ग मोहीम अनुभव', rating: '⭐ ५.० (२००+ ट्रेकर्स)', baseFee: 1000, projFee: 8000 }
+    { id: 'p6', image: '/assets/images/warriors/bajiprabhu.jpg', name: 'रोहित मोरे', badge: 'Certified Guide', agency: 'सह्याद्री ट्रेकर्स क्लब', exp: '१५०+ दुर्ग मोहीम अनुभव', rating: '⭐ ५.० (२००+ ट्रेकर्स)', baseFee: 1000, projFee: 8000 }
   ],
   civil: [
-    { id: 'p7', name: 'आर्कि. राहुल कदम', badge: 'Verified Architect', agency: 'शिवनेरी डिझाइन स्टुडिओ', exp: '१२+ वर्षे अनुभव', rating: '⭐ ४.८ (६० प्रकल्प)', baseFee: 3000, projFee: 45000 }
+    { id: 'p7', image: '/assets/images/projects/proj_maratha_heights.jpg', name: 'आर्कि. राहुल कदम', badge: 'Verified Architect', agency: 'शिवनेरी डिझाइन स्टुडिओ', exp: '१२+ वर्षे अनुभव', rating: '⭐ ४.८ (६० प्रकल्प)', baseFee: 3000, projFee: 45000 }
   ]
 };
 

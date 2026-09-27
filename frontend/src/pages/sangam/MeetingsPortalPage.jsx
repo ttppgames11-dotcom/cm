@@ -4,12 +4,12 @@ import { useAuth } from '../../context/AuthContext';
 import apiClient from '../../services/apiClient';
 
 const DEFAULT_MEMBERS = [
-  { id: 'M-10291', name: 'राजेश पाटील', profession: 'Civil Infra & Earthmovers', company: 'पाटील इन्फ्रास्ट्रक्चर', city: 'पुणे', avatar: '👨‍💼', phone: '98221 44550' },
-  { id: 'M-10292', name: 'सुप्रिया मोहिते', profession: 'Chartered Accountant (CA)', company: 'मोहिते & असोसिएट्स', city: 'मुंबई', avatar: '👩‍💼', phone: '98200 99881' },
-  { id: 'M-10293', name: 'तानाजी जाधव', profession: 'Agri Processing & Export', company: 'सह्याद्री ॲग्रो फूड्स', city: 'सातारा', avatar: '👨‍🌾', phone: '98230 44556' },
-  { id: 'M-10294', name: 'विक्रम सावंत', profession: 'Automobile Components', company: 'प्रिसिजन ऑटो टेक', city: 'पिंपरी-चिंचवड', avatar: '👨‍🔧', phone: '98500 22334' },
-  { id: 'M-10295', name: 'महेश शिंदे', profession: 'Corporate Legal Counsel', company: 'शिंदे & चेंबर्स', city: 'पुणे', avatar: '⚖️', phone: '98663 32211' },
-  { id: 'M-10296', name: 'अमोल तुकाराम जाधव', profession: 'Cloud ERP Architect', company: 'स्वराज्य टेक सोल्यूशन्स', city: 'पुणे', avatar: '👨‍💻', phone: '98765 00011' }
+  { id: 'M-10291', image: '/assets/images/officers/officer_mahesh.jpg', name: 'राजेश पाटील', profession: 'Civil Infra & Earthmovers', company: 'पाटील इन्फ्रास्ट्रक्चर', city: 'पुणे', avatar: '👨‍💼', phone: '98221 44550' },
+  { id: 'M-10292', image: '/assets/images/officers/officer_sujata.jpg', name: 'सुप्रिया मोहिते', profession: 'Chartered Accountant (CA)', company: 'मोहिते & असोसिएट्स', city: 'मुंबई', avatar: '👩‍💼', phone: '98200 99881' },
+  { id: 'M-10293', image: '/assets/images/real-farmer-field.jpg', name: 'तानाजी जाधव', profession: 'Agri Processing & Export', company: 'सह्याद्री ॲग्रो फूड्स', city: 'सातारा', avatar: '👨‍🌾', phone: '98230 44556' },
+  { id: 'M-10294', image: '/assets/images/officers/officer_tukaram.jpg', name: 'विक्रम सावंत', profession: 'Automobile Components', company: 'प्रिसिजन ऑटो टेक', city: 'पिंपरी-चिंचवड', avatar: '👨‍🔧', phone: '98500 22334' },
+  { id: 'M-10295', image: '/assets/images/officers/officer_vishwas.jpg', name: 'महेश शिंदे', profession: 'Corporate Legal Counsel', company: 'शिंदे & चेंबर्स', city: 'पुणे', avatar: '⚖️', phone: '98663 32211' },
+  { id: 'M-10296', image: '/assets/images/officers/officer_ashwini.jpg', name: 'अमोल तुकाराम जाधव', profession: 'Cloud ERP Architect', company: 'स्वराज्य टेक सोल्यूशन्स', city: 'पुणे', avatar: '👨‍💻', phone: '98765 00011' }
 ];
 
 const INITIAL_SCHEDULED_MEETINGS = [

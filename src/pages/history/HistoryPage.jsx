@@ -39,6 +39,15 @@ const historicalFigures = [
     image: 'assets/images/real-bajirao-statue.jpg'
   },
   {
+    id: 'mahadji',
+    name: 'महादजी शिंदे (द ग्रेट मराठा)',
+    category: 'yodha',
+    badge: 'दौलतीचे खांब · वकील-ए-मुतालिक',
+    desc: 'पानिपतानंतर दिल्लीवर पुन्हा भगवा फडकवणारे, आधुनिक १ लाख कवायती सैन्याचे जनक व इंग्रजांना वडगावात नमवणारे युगपुरुष.',
+    link: '/history/mahadji-shinde',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Mahadji_Scindia_in_Darbar.jpg/1280px-Mahadji_Scindia_in_Darbar.jpg'
+  },
+  {
     id: 'tarabai',
     name: 'महाराणी ताराबाई भोसले',
     category: 'virangana',
@@ -53,7 +62,7 @@ const historicalFigures = [
     category: 'yodha',
     badge: 'सिंहगडाचा सिंह',
     desc: 'कोंढाणा पुनर्जय मोहीम — "आधी लगीन कोंढाण्याचं, मग माझ्या रायबाचं!" अमर बाणा.',
-    link: '/history/warriors',
+    link: '/article/tanaji-malusare',
     image: 'assets/images/real-sinhagad-fort.jpg'
   },
   {
@@ -62,7 +71,7 @@ const historicalFigures = [
     category: 'yodha',
     badge: 'पावनखिंड संग्राम',
     desc: 'घोडखिंडीतील अभेद्य ढाल — तोफांचे तीन आवाज होईपर्यंत सिद्धी मसूदच्या अफाट सेनेला रोखून धरले.',
-    link: '/history/warriors',
+    link: '/article/shiva-kashid-baji-prabhu',
     image: 'assets/images/real-panhala-fort.jpg'
   },
   {
@@ -73,7 +82,25 @@ const historicalFigures = [
     desc: 'मराठा सत्तेचा संपूर्ण हिंदुस्थानभर विस्तार करणारे मुत्सद्दी छत्रपती.',
     link: '/history/shahu-maharaj',
     image: 'assets/images/real-maratha-expansion-map.jpg'
-  }
+  },
+  {
+    id: 'hambirrao',
+    name: 'सरसेनापती हंबीरराव मोहिते',
+    category: 'yodha',
+    badge: 'बहादूरगड विजय व सरसेनापती',
+    desc: 'बहादूरगडावर २०० घोडदळाची गनिमी काव्याची खेळी करून १ कोटींचा मुघल खजिना व २०० अरबी घोडे स्वराज्यात आणणारे शूर सेनापती.',
+    link: '/article/hambirrao-mohite-bahadurgad',
+    image: '/assets/images/warriors/hambirrao.jpg'
+  },
+  {
+    id: 'shivakashid',
+    name: 'वीर शिवा काशिद (नाभिक)',
+    category: 'yodha',
+    badge: 'प्रतिशिवाजी बलिदान',
+    desc: 'पन्हाळगडाच्या वेढ्यात शिवरायांची राजवस्त्रे चढवून सिद्दी जोहरच्या छावणीत हसतमुखाने बलिदान देणारे अमर निष्ठावंत वीर.',
+    link: '/article/shiva-kashid-baji-prabhu',
+    image: '/assets/images/warriors/shivakashid.jpg'
+  },
 ];
 
 const timelineEvents = [
@@ -81,9 +108,13 @@ const timelineEvents = [
   { year: '१६४६', event: 'वयाच्या १६ व्या वर्षी तोरणा किल्ला जिंकून हिंदवी स्वराज्याची तोरणे बांधली' },
   { year: '१० नोव्हेंबर १६५९', event: 'प्रतापगड युद्ध — अफझलखानाचा वध व विजापूर सैन्याचा पराभव' },
   { year: '१३ जुलै १६६०', event: 'पावनखिंड युद्ध — बाजी प्रभू देशपांडे व बांदल मावळ्यांचे शौर्य' },
+  { year: '३ ऑक्टोबर १६७०', event: 'सुरत स्वारी व कांचनबारी विजय — प्रत्यक्ष लक्ष्मीपूजनाच्या दिवशी स्वराज्याचा खजिना संचय' },
+  { year: '६ मार्च १६७३', event: 'पन्हाळगड विजय — वीर कोंडाजी फर्जंद व ६० मावळ्यांचा सवाद्य रणसंग्राम' },
   { year: '६ जून १६७४', event: 'दुर्गराज रायगडावर ऐतिहासिक वैदिक शिवराज्याभिषेक सोहळा' },
   { year: '१६८१–१६८९', event: 'छत्रपती संभाजी महाराजांचे पराक्रमी राज्य व मोगलांविरुद्ध अखंड संघर्ष' },
   { year: '१७२८', event: 'पालखेडची लढाई — बाजीराव पेशव्यांची जागतिक युद्धशास्त्रातील आदर्श रणनीती' },
+  { year: '१० फेब्रुवारी १७७२', event: 'महादजी शिंदे यांच्या नेतृत्वाखाली दिल्लीवर पुन्हा मराठ्यांचा भगवा झेंडा फडकला' },
+  { year: 'जानेवारी १७७९', event: 'वडगावची लढाई — महादजी शिंदे यांनी इंग्रजांना नमवून शरणागती पत्करायला लावली' },
   { year: '१७५८', event: 'अटकेपार मराठा ध्वज — रघुनाथराव पेशवे व तुकोजी होळकरांचा पंजाब व लाहोर विजय' },
 ];
 
@@ -194,6 +225,41 @@ export default function HistoryPage() {
           </div>
         </section>
 
+        
+        {/* Special History Feature Banner - History Boring Watat Asel Tar */}
+        <section style={{ marginBottom: '40px' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, var(--maroon-950) 0%, #3e0b12 60%, var(--saffron-900) 100%)',
+            borderRadius: '16px',
+            padding: '36px',
+            color: '#FFFFFF',
+            boxShadow: 'var(--shadow-md)',
+            position: 'relative',
+            overflow: 'hidden',
+            border: '1px solid var(--gold-500)'
+          }}>
+            <div style={{ maxWidth: '850px' }}>
+              <span style={{ background: 'var(--gold-500)', color: '#000', padding: '4px 12px', borderRadius: '16px', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase' }}>
+                विशेष पॉडकास्ट चिंतन · मोहन शेटे सर
+              </span>
+              <h2 style={{ fontFamily: 'Baloo 2', fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)', color: 'var(--gold-200)', margin: '14px 0 10px' }}>
+                इतिहास Boring वाटत असेल तर? — भविष्य गगनी भरारी घेण्या भूतकाळाचे भान हवे!
+              </h2>
+              <p style={{ color: '#FFEBD6', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '20px' }}>
+                सिंहगडावर रात्री १२ वाजता कड्यावर इतिहास, दिवाळीतील किल्ले संस्कृतीतील तंत्रज्ञान, पुण्याचा हेरिटेज वॉक, आणि शाळांमधील कल्पक उपक्रम — २८ वर्षे मुलांना इतिहास जगवणाऱ्या मोहन शेटे सरांचे डोळे उघडणारे विचार.
+              </p>
+              <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+                <Link to="/history/history-boring" className="btn btn-gold" style={{ padding: '10px 24px', fontWeight: 800, fontSize: '0.95rem' }}>
+                  🎙️ संपूर्ण पॉडकास्ट संवाद वाचा →
+                </Link>
+                <Link to="/history/shivaji-yudhniti" className="btn btn-outline" style={{ padding: '10px 24px', color: '#FFFFFF', borderColor: 'var(--gold-400)', fontWeight: 700, fontSize: '0.95rem' }}>
+                  ⚔️ शिवरायांची युद्धनीती व गनिमी कावा →
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Category Tabs */}
         <section style={{ marginBottom: '32px' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
@@ -281,7 +347,172 @@ export default function HistoryPage() {
           </div>
         </section>
 
-        {/* Timeline of Empire */}
+                {/* Shivcharitra Kathan 10 Episodes Grand Showcase */}
+        <section style={{ marginTop: '50px', marginBottom: '40px' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #2A0709 0%, #4A0E17 50%, #5C1414 100%)',
+            borderRadius: '20px',
+            padding: '36px 30px',
+            color: '#FFFFFF',
+            border: '2px solid #DD8A2E',
+            boxShadow: '0 12px 36px rgba(61,13,13,0.3)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '24px', borderBottom: '1px solid rgba(221,138,46,0.35)', paddingBottom: '18px' }}>
+              <div>
+                <span style={{
+                  background: '#DD8A2E',
+                  color: '#2A0709',
+                  padding: '4px 12px',
+                  borderRadius: '16px',
+                  fontSize: '0.8rem',
+                  fontWeight: 800,
+                  textTransform: 'uppercase'
+                }}>
+                  🚩 विशेष ऐतिहासिक महागाथा · पुरंदरे प्रकाशन
+                </span>
+                <h2 style={{ fontFamily: 'Baloo 2', fontSize: 'clamp(1.6rem, 2.6vw, 2.2rem)', color: '#FDE047', margin: '10px 0 4px' }}>
+                  शिवशाहीर बाबासाहेब पुरंदरे — शिवचरित्र कथन (भाग १ ते १० अखंड व्याख्यानमाला)
+                </h2>
+                <p style={{ color: '#E6DDCE', fontSize: '0.96rem', margin: 0, maxWidth: '780px' }}>
+                  इतिहासमहर्षी पद्मविभूषण शिवशाहीर बाबासाहेब पुरंदरे यांच्या ओजस्वी अमृतवाणीतून उलगडलेली शिवचरित्राची सुवर्णगाथा — यादवांच्या अस्तापासून, शिवजन्म, अफजलखान वध, पावनखिंड ते लाल महालावरील सर्जिकल स्ट्राईक!
+                </p>
+              </div>
+              <Link
+                to="/shivcharitra"
+                style={{
+                  background: 'linear-gradient(135deg, #DD8A2E, #E65100)',
+                  color: '#FFF',
+                  padding: '10px 20px',
+                  borderRadius: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 800,
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 12px rgba(230,81,0,0.4)',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                🚩 सर्व १५ भाग एकाच पानावर वाचा →
+              </Link>
+            </div>
+
+            {/* 15 Episodes Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '16px' }}>
+              {[
+                { n: 1, title: 'भाग १: यादवांचा अस्त ते भातवडी संग्राम', time: '१२९४ ते १६२४', link: '/shivcharitra#bhag-1' },
+                { n: 2, title: 'भाग २: जिजाऊ स्वराज्य प्रेरणा व शिवजन्म', time: '१९ फेब्रुवारी १६३०', link: '/shivcharitra#bhag-2' },
+                { n: 3, title: 'भाग ३: रोहिडेश्वराची शपथ ते तोरणा विजय', time: '१६४५ ते १६५०', link: '/shivcharitra#bhag-3' },
+                { n: 4, title: 'भाग ४: पुरंदर संग्राम व शहाजीराजे सुटका', time: '१६४८ ते १६५५', link: '/shivcharitra#bhag-4' },
+                { n: 5, title: 'भाग ५: जावळी, प्रतापगड व खानाचा विडा', time: '१६५६ ते १६५९', link: '/shivcharitra#bhag-5' },
+                { n: 6, title: 'भाग ६: तुळजापूर, वाई ते कान्होजी जेधे', time: 'मे-ऑक्टो १६५९', link: '/shivcharitra#bhag-6' },
+                { n: 7, title: 'भाग ७: प्रतापगड युद्ध — अफजलखान वध', time: '१० नोव्हेंबर १६५९', link: '/shivcharitra#bhag-7' },
+                { n: 8, title: 'भाग ८: पन्हाळा वेढा व पावनखिंड झुंज', time: '१२-१३ जुलै १६६०', link: '/shivcharitra#bhag-8' },
+                { n: 9, title: 'भाग ९: चाकण वेढा, फिरंगोजी व जखमनामा', time: 'मे १६६० - जाने १६६१', link: '/shivcharitra#bhag-9' },
+                { n: 10, title: 'भाग १०: उंबरखिंड ते लाल महाल छापा', time: 'जाने १६६१ - एप्रिल १६६३', link: '/shivcharitra#bhag-10' },
+                { n: 11, title: 'भाग ११: सुरत स्वारी व सिंधुदुर्ग जलदुर्ग', time: '१६६४ ते १६६५', link: '/shivcharitra#bhag-11' },
+                { n: 12, title: 'भाग १२: पुरंदर संग्राम, मुरारबाजी व तह', time: 'जाने-सप्टें १६६५', link: '/shivcharitra#bhag-12' },
+                { n: 13, title: 'भाग १३: आग्रा दरबार व नजरकैदेतून सुटका', time: 'जाने-ऑगस्ट १६६६', link: '/shivcharitra#bhag-13' },
+                { n: 14, title: 'भाग १४: तानाजींचे बलिदान व सिंहगड विजय', time: '१६६६ ते १६७३', link: '/shivcharitra#bhag-14' },
+                { n: 15, title: 'भाग १५: ६ जून १६७४: शिवराज्याभिषेक सोहळा', time: '१६७३ ते १६७४', link: '/shivcharitra#bhag-15' }
+              ].map(ep => (
+                <Link
+                  key={ep.n}
+                  to={ep.link}
+                  style={{
+                    background: 'rgba(255,255,255,0.07)',
+                    border: '1px solid rgba(221,138,46,0.3)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    textDecoration: 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <span style={{ background: '#DD8A2E', color: '#2A0709', padding: '2px 8px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 800 }}>
+                        भाग {ep.n}
+                      </span>
+                      <span style={{ color: '#E6DDCE', fontSize: '0.75rem' }}>{ep.time}</span>
+                    </div>
+                    <h4 style={{ fontFamily: 'Baloo 2', color: '#FFFFFF', fontSize: '1.05rem', margin: '4px 0 8px', lineHeight: 1.35 }}>
+                      {ep.title}
+                    </h4>
+                  </div>
+                  <div style={{ color: '#FDE047', fontSize: '0.82rem', fontWeight: 700, marginTop: '8px' }}>
+                    व्याख्यान वाचा →
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* 3 Featured Character Cards */}
+            <div style={{ marginTop: '24px', paddingTop: '18px', borderTop: '1px solid rgba(221,138,46,0.3)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
+              <Link
+                to="/article/shiva-kashid-baji-prabhu"
+                style={{
+                  background: 'rgba(221,138,46,0.12)',
+                  border: '1px solid #DD8A2E',
+                  borderRadius: '10px',
+                  padding: '14px',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}
+              >
+                <span style={{ fontSize: '1.8rem' }}>🗡️</span>
+                <div>
+                  <strong style={{ color: '#FDE047', fontSize: '0.95rem', display: 'block' }}>शिवा काशिद व बाजीप्रभू देशपांडे</strong>
+                  <span style={{ color: '#E6DDCE', fontSize: '0.8rem' }}>पन्हाळा ते पावनखिंड अखंड रणसंग्राम सविस्तर वाचा →</span>
+                </div>
+              </Link>
+
+              <Link
+                to="/article/hambirrao-mohite-bahadurgad"
+                style={{
+                  background: 'rgba(221,138,46,0.12)',
+                  border: '1px solid #DD8A2E',
+                  borderRadius: '10px',
+                  padding: '14px',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}
+              >
+                <span style={{ fontSize: '1.8rem' }}>🏇</span>
+                <div>
+                  <strong style={{ color: '#FDE047', fontSize: '0.95rem', display: 'block' }}>सरसेनापती हंबीरराव मोहिते</strong>
+                  <span style={{ color: '#E6DDCE', fontSize: '0.8rem' }}>बहादूरगडावरील १ कोटींची गनिमी काव्याची लूट वाचा →</span>
+                </div>
+              </Link>
+
+              <Link
+                to="/article/babasaheb-purandare-shivrajyabhishek-mahasohala"
+                style={{
+                  background: 'rgba(221,138,46,0.12)',
+                  border: '1px solid #DD8A2E',
+                  borderRadius: '10px',
+                  padding: '14px',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}
+              >
+                <span style={{ fontSize: '1.8rem' }}>👑</span>
+                <div>
+                  <strong style={{ color: '#FDE047', fontSize: '0.95rem', display: 'block' }}>शिवराज्याभिषेक महासोहळा</strong>
+                  <span style={{ color: '#E6DDCE', fontSize: '0.8rem' }}>३२ मणांचे सुवर्णसिंहासन व स्वातंत्र्याची गाथा वाचा →</span>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+{/* Timeline of Empire */}
         <section style={{ marginTop: '50px' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
             <span style={{ color: 'var(--saffron-700)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>

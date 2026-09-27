@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 const INSPIRATIONAL_FIGURES = [
   {
     name: 'राष्ट्रमाता राजमाता जिजाऊ मासाहेब',
+    image: '/assets/images/people/jijau.jpg',
     title: 'स्वराज्य प्रेरिका व मार्गदर्शक',
     desc: 'छत्रपती शिवाजी महाराजांना स्वराज्याची प्रेरणा देणाऱ्या, न्यायप्रिय व कुशल प्रशासक राजमाता.',
     icon: '👑',
@@ -11,6 +12,7 @@ const INSPIRATIONAL_FIGURES = [
   },
   {
     name: 'महारानी ताराबाई भोसले',
+    image: '/assets/images/people/tarabai.jpg',
     title: 'मुघल सत्ता निष्प्रभ करणारी रणरागिणी',
     desc: 'छत्रपती राजाराम महाराजांनंतर मराठा साम्राज्याची धुरा सांभाळत मुघल बादशहा औरंगजेबाला जेरीस आणणाऱ्या पराक्रमी महाराणी.',
     icon: '⚔️',
@@ -18,6 +20,7 @@ const INSPIRATIONAL_FIGURES = [
   },
   {
     name: 'पुण्यश्लोक अहिल्याबाई होळकर',
+    image: '/assets/images/people/ahilyabai.jpg',
     title: 'धर्मरक्षक व लोककल्याणकारी राज्यकर्ती',
     desc: 'संपूर्ण भारतात मंदिरे, धर्मशाळा, घाट व विहिरी बांधून आदर्श लोककल्याणकारी कारभार करणाऱ्या तत्वज्ञानी राणी.',
     icon: '🛕',
@@ -25,6 +28,7 @@ const INSPIRATIONAL_FIGURES = [
   },
   {
     name: 'डॉ. आनंदीबाई जोशी',
+    image: '/assets/images/people/anandibai.jpg',
     title: 'भारतातील पहिल्या महिला डॉक्टर',
     desc: 'कठीण परिस्थितीत अमेरिकेत जाऊन वैद्यकीय पदवी संपादन करून भारतीय महिलांसाठी वैद्यकीय शिक्षणाचा मार्ग खुला करणाऱ्या विदुषी.',
     icon: '🩺',
@@ -248,8 +252,14 @@ export default function WomenEmpowermentPage() {
               padding: '1.5rem',
               boxShadow: '0 10px 15px -3px rgba(0,0,0,0.07)',
               border: '1px solid #fbcfe8',
-              position: 'relative'
+              position: 'relative',
+              overflow: 'hidden'
             }}>
+              {fig.image && (
+                <div style={{ height: '170px', margin: '-1.5rem -1.5rem 1rem -1.5rem', overflow: 'hidden' }}>
+                  <img src={fig.image} alt={fig.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
+                </div>
+              )}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
                 <span style={{ fontSize: '2rem' }}>{fig.icon}</span>
                 <div>

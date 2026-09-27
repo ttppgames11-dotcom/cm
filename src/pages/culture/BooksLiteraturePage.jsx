@@ -1,9 +1,39 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const booksData = [
   {
+    id: 101,
+    title: 'शिवचरित्र कथन — भाग १ ते १० (अखंड व्याख्यान ग्रंथ)',
+    image: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80',
+    author: 'शिवशाहीर बाबासाहेब पुरंदरे',
+    category: 'छत्रपती शिवाजी महाराज',
+    tag: '१० भागांची महागाथा',
+    rating: '⭐ ५.० (५.८K+ वाचक)',
+    price: 'मोफत वाचन',
+    pages: '१० सखोल प्रकरणे',
+    cover: '🚩',
+    link: '/article/babasaheb-purandare-shivcharitra-kathan-bhag-1',
+    desc: 'यादवांच्या अस्तापासून, शिवजन्म, अफजलखान वध, पावनखिंड ते लाल महालावरील थरारक छापा — बाबासाहेबांच्या अमृतवाणीतील समग्र शिवचरित्र.'
+  },
+  {
+    id: 102,
+    title: 'राजा शिवछत्रपती (पूर्वार्ध व उत्तरार्ध)',
+    image: '/assets/images/books/book_raja.jpg',
+    author: 'शिवशाहीर बाबासाहेब पुरंदरे',
+    category: 'छत्रपती शिवाजी महाराज',
+    tag: 'अभिजात शिवचरित्र',
+    rating: '⭐ ५.० (१०K+ वाचक)',
+    price: '₹९९०',
+    pages: '२ खंड (१,१५० पृष्ठे)',
+    cover: '👑',
+    link: '/history/granthalaya',
+    desc: 'महाराष्ट्राच्या घराघरांत पोहोचलेला सर्वाधिक वाचला जाणारा आणि प्रेरणा देणारा प्रमाण शिवचरित्र ग्रंथ.'
+  },
+  {
     id: 1,
     title: 'छत्रपती शिवाजी महाराज',
+    image: '/assets/images/books/book_raja.jpg',
     author: 'डॉ. जयसिंगराव पवार',
     category: 'छत्रपती शिवाजी महाराज',
     tag: 'शिवचरित्र',
@@ -16,6 +46,7 @@ const booksData = [
   {
     id: 2,
     title: 'शिवरायांची रणनिती',
+    image: '/assets/images/books/book_shriman.jpg',
     author: 'संपादक मंडळ (इतिहास संशोधन)',
     category: 'युद्ध आणि पराक्रम',
     tag: 'रणनिती व गनिमी कावा',
@@ -28,6 +59,7 @@ const booksData = [
   {
     id: 3,
     title: 'मराठ्यांचा इतिहास',
+    image: '/assets/images/books/book_panipat.jpg',
     author: 'गो. स. सरदेसाई (रियासतकार)',
     category: 'मराठा इतिहास',
     tag: 'अखंड इतिहास',
@@ -40,6 +72,7 @@ const booksData = [
   {
     id: 4,
     title: 'बाजीप्रभू देशपांडे — अमर बलिदान',
+    image: '/assets/images/books/book_swami.jpg',
     author: 'आशीष देशपांडे',
     category: 'युद्ध आणि पराक्रम',
     tag: 'अमर बलिदान',
@@ -52,6 +85,7 @@ const booksData = [
   {
     id: 5,
     title: 'सह्याद्रीची गड-किल्ले',
+    image: '/assets/images/real-raigad-bastions.jpg',
     author: 'दुर्गमित्र अभ्यास मंडळ',
     category: 'संस्कृती आणि वारसा',
     tag: 'गड-किल्ले मार्गदर्शक',
@@ -64,6 +98,7 @@ const booksData = [
   {
     id: 6,
     title: 'संभाजी महाराज — एक वादळ',
+    image: '/assets/images/books/book_chhava.jpg',
     author: 'श्री. नि. मराठे',
     category: 'चरित्र ग्रंथ',
     tag: 'शंभूराजे चरित्र',
@@ -76,6 +111,7 @@ const booksData = [
   {
     id: 7,
     title: 'मराठा संस्कृती आणि वारसा',
+    image: '/assets/images/books/book_yugandhar.jpg',
     author: 'डॉ. माधवी देशपांडे',
     category: 'संस्कृती आणि वारसा',
     tag: 'संस्कृती व इतिहास',
@@ -88,6 +124,7 @@ const booksData = [
   {
     id: 8,
     title: 'प्रेरणादायी मराठा विचार',
+    image: '/assets/images/library.jpg',
     author: 'संपादक मंडळ',
     category: 'प्रेरणादायी',
     tag: 'स्मरणे व विचार',
@@ -305,7 +342,16 @@ export default function BooksLiteraturePage() {
                 borderBottom: '1px solid #BCAAA4',
                 position: 'relative'
               }}>
-                <span style={{ fontSize: '3.5rem', display: 'block', marginBottom: '8px' }}>{book.cover}</span>
+                {book.image ? (
+                  <img
+                    src={book.image}
+                    alt={book.title}
+                    style={{ width: '130px', height: '170px', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 6px 14px rgba(0,0,0,0.25)', margin: '0 auto 8px', display: 'block' }}
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                ) : (
+                  <span style={{ fontSize: '3.5rem', display: 'block', marginBottom: '8px' }}>{book.cover}</span>
+                )}
                 <span style={{
                   position: 'absolute',
                   top: '12px',
@@ -340,21 +386,39 @@ export default function BooksLiteraturePage() {
                 <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#B71C1C' }}>
                   {book.price}
                 </div>
-                <button
-                  onClick={() => { setSelectedBook(book); setBuyModal(true); }}
-                  style={{
-                    background: '#6D4C41',
-                    color: '#FFFFFF',
-                    border: 'none',
-                    padding: '8px 18px',
-                    borderRadius: '8px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    fontSize: '0.88rem'
-                  }}
-                >
-                  पुस्तकाची मागणी करा
-                </button>
+                {book.link ? (
+                  <Link
+                    to={book.link}
+                    style={{
+                      background: 'linear-gradient(135deg, #DD8A2E, #E65100)',
+                      color: '#FFFFFF',
+                      textDecoration: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontWeight: 800,
+                      fontSize: '0.85rem',
+                      boxShadow: '0 2px 8px rgba(230,81,0,0.3)'
+                    }}
+                  >
+                    📖 ऑनलाईन वाचा →
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => { setSelectedBook(book); setBuyModal(true); }}
+                    style={{
+                      background: '#6D4C41',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      padding: '8px 18px',
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      fontSize: '0.88rem'
+                    }}
+                  >
+                    पुस्तकाची मागणी करा
+                  </button>
+                )}
               </div>
             </div>
           ))}

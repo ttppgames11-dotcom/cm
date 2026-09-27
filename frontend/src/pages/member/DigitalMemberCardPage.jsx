@@ -1,34 +1,72 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import {
+  VERIFIED_MEMBERS_DIRECTORY,
+  validateMemberCode,
+  getNextScanMember
+} from '../../utils/memberValidation';
 
-export default function DigitalMemberCardPage() {
+export default function DigitalMemberCardPage({ defaultTab }) {
   const { user } = useAuth();
   const navigate = useNavigate();
-  
+  const { code: routeCode } = useParams();
+  const [searchParams] = useSearchParams();
+  const queryCode = searchParams.get('code') || searchParams.get('id') || '';
+
+  // Determine active member to display on the card (defaults to logged-in user or first verified member)
+  const [selectedMemberId, setSelectedMemberId] = useState(() => {
+    return user?.id || 'CM-MH-PUN-1001';
+  });
+
+  const selectedMember = (user && user.id === selectedMemberId) 
+    ? user 
+    : (VERIFIED_MEMBERS_DIRECTORY.find(m => m.id === selectedMemberId) || VERIFIED_MEMBERS_DIRECTORY[0]);
+
   // Card Display Mode: 'certificate' (Royal Certificate Style) or 'smartcard' (Executive Metallic Smart Card)
   const [viewMode, setViewMode] = useState('certificate');
   const [isFlipped, setIsFlipped] = useState(false);
   const [scannerOpen, setScannerOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('member');
-  const [verifyCode, setVerifyCode] = useState('');
-  const [verifyResult, setVerifyResult] = useState(null);
+  const [activeTab, setActiveTab] = useState(defaultTab || (routeCode || queryCode ? 'verify' : 'member'));
+  const [verifyCode, setVerifyCode] = useState(routeCode || queryCode || 'CM-MH-KOL-2042');
+  const [verifyResult, setVerifyResult] = useState(() => {
+    const code = routeCode || queryCode || 'CM-MH-KOL-2042';
+    return validateMemberCode(code);
+  });
 
-  // Authenticated or default user data
-  const memberName = user?.name || user?.fullName || 'अमोल तुकाराम जाधव';
+  // Authenticated or selected user data (fully dynamic and non-repetitive)
+  const memberName = selectedMember?.name || selectedMember?.fullName || 'अमोल तुकाराम जाधव';
   const [candidateName, setCandidateName] = useState(memberName);
   
-  const memberRole = user?.profession || 'सॉफ्टवेअर आर्किटेक्ट व तंत्रज्ञान सल्लागार';
-  const memberCity = user?.city ? `${user.city} • महाराष्ट्र` : 'पुणे • महाराष्ट्र';
-  const memberChapter = user?.chapter || 'पुणे – शिवनेरी चॅप्टर';
-  const memberId = user?.id || 'CM-MH-9876543210';
-  const memberTier = user?.tier || 'GOLD FOUNDER MEMBER';
-  const bloodGroup = user?.bloodGroup || 'O +ve (नोंदणीकृत रक्तदाता)';
-  const emergencyPhone = user?.phone || '+९१ ९८२२० ११९२४';
-  const issueDate = '२३ सप्टेंबर २०२६';
+  // When selectedMemberId changes, synchronize candidateName
+  useEffect(() => {
+    if (selectedMember?.name) {
+      setCandidateName(selectedMember.name);
+    }
+  }, [selectedMemberId]);
 
-  // Professional real photograph instead of cartoon emoji
-  const [selectedPhoto, setSelectedPhoto] = useState('/assets/images/officers/officer_tukaram.jpg');
+  // Auto-validate if code supplied in URL
+  useEffect(() => {
+    const code = routeCode || queryCode;
+    if (code) {
+      setActiveTab('verify');
+      setVerifyCode(code);
+      const res = validateMemberCode(code);
+      setVerifyResult(res);
+    }
+  }, [routeCode, queryCode]);
+
+  const memberRole = selectedMember?.profession || 'सॉफ्टवेअर आर्किटेक्ट व तंत्रज्ञान सल्लागार';
+  const memberCity = selectedMember?.city ? `${selectedMember.city} • महाराष्ट्र` : `${selectedMember?.district || 'पुणे'} • महाराष्ट्र`;
+  const memberChapter = selectedMember?.chapter || 'पुणे – शिवनेरी चॅप्टर';
+  const memberId = selectedMember?.id || 'CM-MH-9876543210';
+  const memberTier = selectedMember?.tier || 'GOLD FOUNDER MEMBER';
+  const bloodGroup = selectedMember?.bloodGroup || 'O +ve (नोंदणीकृत रक्तदाता)';
+  const emergencyPhone = selectedMember?.phone || '+९१ ९८२२० ११९२४';
+  const issueDate = selectedMember?.issueDate || '२३ सप्टेंबर २०२४';
+
+  // Professional real photograph or high-res avatar
+  const selectedPhoto = selectedMember?.avatar || '/assets/images/officers/officer_tukaram.jpg';
 
   const handlePrintCertificate = () => {
     window.print();
@@ -44,23 +82,32 @@ export default function DigitalMemberCardPage() {
     }
   };
 
+  // Completely non-repetitive camera scanner simulation: cycles to a different verified member every time!
   const handleSimulateScan = () => {
     setScannerOpen(false);
-    alert(`✓ QR कोड यशस्वीरित्या पडताळला!\nसदस्य: ${candidateName}\nआयडी: ${memberId}\nस्थिती: अधिकृत व सक्रिय सभासद`);
+    const nextMember = getNextScanMember();
+    const verification = validateMemberCode(nextMember.id);
+    setVerifyResult(verification);
+    setVerifyCode(nextMember.id);
+    setActiveTab('verify');
+    alert(`✓ QR कोड पडताळणी यशस्वी!\n\nसदस्य: ${nextMember.name} (${nextMember.englishName})\nआयडी: ${nextMember.id}\nचॅप्टर: ${nextMember.chapter}\nरक्तगट: ${nextMember.bloodGroup}\nदर्जा: ${nextMember.tier}\nस्थिती: अधिकृत व सक्रिय सभासद (DPDP २०२३ व ISO २७००१ प्रमाणित)`);
   };
 
+  // Dynamic non-repetitive verification lookup
   const handleVerify = (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     if (!verifyCode.trim()) {
       alert('कृपया पडताळणीसाठी कोड प्रविष्ट करा');
       return;
     }
-    setVerifyResult({
-      code: verifyCode.trim(),
-      name: candidateName,
-      status: 'valid'
-    });
-    alert('✓ अधिकृत कोड वैध आढळला!');
+    const res = validateMemberCode(verifyCode.trim());
+    setVerifyResult(res);
+  };
+
+  const handleQuickSampleVerify = (code) => {
+    setVerifyCode(code);
+    const res = validateMemberCode(code);
+    setVerifyResult(res);
   };
 
   return (
@@ -302,20 +349,85 @@ export default function DigitalMemberCardPage() {
           border: '1px solid #E5E7EB',
           marginBottom: '28px',
           display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          flexDirection: 'column',
           gap: '16px',
           boxShadow: '0 4px 16px rgba(0,0,0,0.04)'
         }}>
-          {/* Name Customization Field */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            <label style={{ fontWeight: 800, color: '#1F2937', fontSize: '0.9rem' }}>
-              ओळखपत्रावरील नाव:
-            </label>
-            <input
-              type="text"
-              value={candidateName}
+          {/* Member Profile Switcher (Non-Repetitive Directory Selector) */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid #F1F5F9', paddingBottom: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <span style={{ fontWeight: 800, color: '#7C1D05', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span>👥</span>
+                <span>सभासद प्रोफाइल निवडा (Non-Repetitive Member Profiles):</span>
+              </span>
+              <select
+                value={selectedMemberId}
+                onChange={(e) => {
+                  const targetId = e.target.value;
+                  setSelectedMemberId(targetId);
+                  const mem = VERIFIED_MEMBERS_DIRECTORY.find(x => x.id === targetId);
+                  if (mem) {
+                    setCandidateName(mem.name);
+                  }
+                }}
+                style={{
+                  padding: '8px 14px',
+                  borderRadius: '8px',
+                  border: '1.5px solid #F59E0B',
+                  background: '#FFFBEB',
+                  fontWeight: 700,
+                  fontSize: '0.88rem',
+                  color: '#1F2937',
+                  cursor: 'pointer',
+                  outline: 'none'
+                }}
+              >
+                {user && user.id && (
+                  <option value={user.id}>👤 माझे वैयक्तिक प्रोफाइल ({user.name || 'User'})</option>
+                )}
+                {VERIFIED_MEMBERS_DIRECTORY.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    🚩 {m.name} — {m.district} ({m.profession.split(' ')[0]}) [{m.id}]
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              {VERIFIED_MEMBERS_DIRECTORY.slice(0, 5).map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedMemberId(m.id);
+                    setCandidateName(m.name);
+                  }}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: '12px',
+                    border: selectedMemberId === m.id ? '1.5px solid #C73800' : '1px solid #CBD5E1',
+                    background: selectedMemberId === m.id ? '#FEE2E2' : '#F8FAFC',
+                    color: selectedMemberId === m.id ? '#991B1B' : '#475569',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  {m.district}: {m.name.split(' ')[0]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+            {/* Name Customization Field */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <label style={{ fontWeight: 800, color: '#1F2937', fontSize: '0.9rem' }}>
+                ओळखपत्रावरील नाव:
+              </label>
+              <input
+                type="text"
+                value={candidateName}
               onChange={(e) => setCandidateName(e.target.value)}
               placeholder="आपले संपूर्ण नाव प्रविष्ट करा"
               style={{
@@ -503,11 +615,17 @@ export default function DigitalMemberCardPage() {
                     boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
                     position: 'relative'
                   }}>
-                    <img
-                      src={selectedPhoto}
-                      alt={candidateName}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                    />
+                    {selectedPhoto.startsWith('/') || selectedPhoto.startsWith('http') ? (
+                      <img
+                        src={selectedPhoto}
+                        alt={candidateName}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3.2rem', background: '#FEF3C7' }}>
+                        {selectedPhoto}
+                      </div>
+                    )}
                   </div>
                   <div style={{
                     marginTop: '6px',
@@ -724,11 +842,17 @@ export default function DigitalMemberCardPage() {
                       flexShrink: 0,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
                     }}>
-                      <img
-                        src={selectedPhoto}
-                        alt={candidateName}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                      />
+                      {selectedPhoto.startsWith('/') || selectedPhoto.startsWith('http') ? (
+                        <img
+                          src={selectedPhoto}
+                          alt={candidateName}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                        />
+                      ) : (
+                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', background: '#374151' }}>
+                          {selectedPhoto}
+                        </div>
+                      )}
                     </div>
 
                     <div style={{ flex: 1 }}>
@@ -1147,27 +1271,264 @@ export default function DigitalMemberCardPage() {
 
             {activeTab === 'verify' && (
               <div>
-                <h3 style={{ margin: '0 0 8px', fontSize: '1.25rem', color: '#1F2937' }}>
-                  🛡️ QR कोड पडताळणी केंद्र (/verify/qr/:code)
-                </h3>
-                <p style={{ color: '#4B5563', fontSize: '0.88rem', margin: '8px 0 16px', maxWidth: '640px', lineHeight: 1.5 }}>
-                  कोणत्याही कनेक्ट मराठा कार्ड, पावती किंवा प्रमाणपत्राचा १२-अंकी पडताळणी कोड टाका आणि सत्यता तपासा.
-                </p>
-                <form onSubmit={handleVerify} style={{ display: 'flex', gap: '10px', maxWidth: '500px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '18px' }}>
+                  <div>
+                    <h3 style={{ margin: '0 0 6px', fontSize: '1.35rem', color: '#7C1D05', fontFamily: 'Baloo 2', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>🛡️</span>
+                      <span>अखिल भारतीय मराठा महासंघ — केंद्रीय डिजिटल पडताळणी केंद्र</span>
+                    </h3>
+                    <p style={{ color: '#4B5563', fontSize: '0.88rem', margin: 0, lineHeight: 1.5 }}>
+                      कोणत्याही सभासद ओळखपत्र, पावती किंवा प्रमाणपत्राचा कोड/आयडी प्रविष्ट करा अथवा कॅमेरा स्कॅन करा.
+                    </p>
+                  </div>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '6px 14px', borderRadius: '20px', color: '#065F46', fontSize: '0.78rem', fontWeight: 800 }}>
+                    <span>🔒</span> DPDP Act 2023 & ISO/IEC 27001 Certified
+                  </div>
+                </div>
+
+                {/* Quick Non-Repetitive Test Pills */}
+                <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', padding: '14px 18px', borderRadius: '12px', marginBottom: '20px' }}>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#92400E', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>💡</span> जलद पडताळणीसाठी विविध जिल्ह्यांचे सभासद निवडा (Non-Repetitive Test Members):
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {VERIFIED_MEMBERS_DIRECTORY.slice(0, 8).map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => handleQuickSampleVerify(m.id)}
+                        style={{
+                          padding: '6px 12px',
+                          borderRadius: '16px',
+                          border: verifyCode === m.id ? '2px solid #C73800' : '1px solid #CBD5E1',
+                          background: verifyCode === m.id ? '#FEE2E2' : '#FFFFFF',
+                          color: verifyCode === m.id ? '#991B1B' : '#374151',
+                          fontWeight: 700,
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <span>📍</span>
+                        <span>{m.district}: {m.name.split(' ')[0]} {m.name.split(' ').slice(-1)[0]}</span>
+                        <code style={{ fontSize: '0.7rem', color: '#6B7280', background: 'rgba(0,0,0,0.05)', padding: '1px 4px', borderRadius: '4px' }}>{m.id.split('-').slice(-2).join('-')}</code>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Verification Form */}
+                <form onSubmit={handleVerify} style={{ display: 'flex', gap: '10px', maxWidth: '680px', marginBottom: '20px', flexWrap: 'wrap' }}>
                   <input
                     type="text"
                     value={verifyCode}
                     onChange={(e) => setVerifyCode(e.target.value)}
-                    placeholder="उदा. CM-MH-9876543210"
-                    style={{ flex: 1, padding: '10px 14px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '0.9rem' }}
+                    placeholder="उदा. CM-MH-KOL-2042 किंवा CM-MH-9876543210 किंवा 9822123456"
+                    style={{ flex: 1, minWidth: '260px', padding: '12px 16px', border: '1.5px solid #CBD5E1', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, color: '#1F2937', outline: 'none' }}
                   />
-                  <button type="submit" style={{ background: '#7C1D05', color: '#FFFFFF', border: 'none', borderRadius: '8px', padding: '10px 20px', fontWeight: 800, cursor: 'pointer' }}>
-                    पडताळा
+                  <button
+                    type="submit"
+                    style={{ background: 'linear-gradient(135deg, #7C1D05, #991B1B)', color: '#FFFFFF', border: 'none', borderRadius: '10px', padding: '12px 24px', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(124, 29, 5, 0.25)' }}
+                  >
+                    सत्यापित करा →
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSimulateScan}
+                    style={{ background: '#047857', color: '#FFFFFF', border: 'none', borderRadius: '10px', padding: '12px 18px', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+                    title="प्रत्येक वेळी नवीन वेगळा सदस्य स्कॅन करतो (Non-Repetitive Scanner)"
+                  >
+                    <span>📷</span> स्कॅन सिमुलेटर
                   </button>
                 </form>
-                {verifyResult && (
-                  <div style={{ marginTop: '16px', padding: '14px 18px', borderRadius: '8px', background: 'rgba(46,125,50,0.12)', border: '1px solid #2E7D32', color: '#2E7D32', fontWeight: 700 }}>
-                    ✓ अधिकृत व सत्य पडताळणी: <strong>{verifyResult.name}</strong> (पुणे चॅप्टर, कोड: {verifyResult.code}, सभासद वैध, DPDP २०२३ व ISO २७००१ नोंदणीकृत)
+
+                {/* Official Verification Certificate Result Card */}
+                {verifyResult && verifyResult.success && verifyResult.member && (
+                  <div style={{
+                    marginTop: '20px',
+                    borderRadius: '16px',
+                    background: '#FFFFFF',
+                    border: '2px solid #10B981',
+                    boxShadow: '0 10px 30px rgba(16, 185, 129, 0.12)',
+                    overflow: 'hidden'
+                  }}>
+                    {/* Header Banner */}
+                    <div style={{
+                      background: 'linear-gradient(90deg, #065F46, #047857)',
+                      color: '#FFFFFF',
+                      padding: '14px 22px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      flexWrap: 'wrap',
+                      gap: '10px'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '1.4rem' }}>✓</span>
+                        <div>
+                          <div style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '0.5px' }}>
+                            अधिकृत व सत्य पडताळणी यशस्वी (Official Verification Succeeded)
+                          </div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.9 }}>
+                            सत्यापन वेळ: {verifyResult.verifiedAt}
+                          </div>
+                        </div>
+                      </div>
+                      <span style={{
+                        background: '#A7F3D0',
+                        color: '#065F46',
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        fontWeight: 800,
+                        fontSize: '0.75rem',
+                        letterSpacing: '0.5px'
+                      }}>
+                        ACTIVE & VERIFIED
+                      </span>
+                    </div>
+
+                    {/* Certificate Body */}
+                    <div style={{ padding: '24px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
+                        {/* Member Identity Details */}
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+                            <div style={{
+                              width: '64px',
+                              height: '64px',
+                              borderRadius: '12px',
+                              border: '2px solid #F59E0B',
+                              background: '#FEF3C7',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '2rem',
+                              overflow: 'hidden',
+                              boxShadow: '0 4px 10px rgba(0,0,0,0.08)'
+                            }}>
+                              {verifyResult.member.avatar?.startsWith('/') ? (
+                                <img src={verifyResult.member.avatar} alt={verifyResult.member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              ) : (
+                                <span>{verifyResult.member.avatar || '👤'}</span>
+                              )}
+                            </div>
+                            <div>
+                              <h4 style={{ margin: '0 0 2px', fontSize: '1.35rem', color: '#1F2937', fontFamily: 'Baloo 2', fontWeight: 800 }}>
+                                {verifyResult.member.name}
+                              </h4>
+                              <div style={{ fontSize: '0.85rem', color: '#6B7280', fontWeight: 600 }}>
+                                {verifyResult.member.englishName}
+                              </div>
+                              <div style={{ display: 'inline-block', marginTop: '4px', background: '#FEF3C7', color: '#92400E', padding: '2px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800 }}>
+                                ⭐ {verifyResult.member.tier}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 16px', fontSize: '0.85rem', background: '#F8FAFC', padding: '14px', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+                            <div>
+                              <span style={{ color: '#64748B', fontSize: '0.72rem', display: 'block' }}>सभासद आयडी:</span>
+                              <strong style={{ color: '#0F172A', fontFamily: 'monospace', fontSize: '0.92rem' }}>{verifyResult.member.id}</strong>
+                            </div>
+                            <div>
+                              <span style={{ color: '#64748B', fontSize: '0.72rem', display: 'block' }}>संबद्ध जिल्हा:</span>
+                              <strong style={{ color: '#0F172A' }}>{verifyResult.member.district} • महाराष्ट्र</strong>
+                            </div>
+                            <div>
+                              <span style={{ color: '#64748B', fontSize: '0.72rem', display: 'block' }}>शाखा / चॅप्टर:</span>
+                              <strong style={{ color: '#0F172A' }}>{verifyResult.member.chapter}</strong>
+                            </div>
+                            <div>
+                              <span style={{ color: '#64748B', fontSize: '0.72rem', display: 'block' }}>रक्तगट (Blood Group):</span>
+                              <strong style={{ color: '#DC2626' }}>{verifyResult.member.bloodGroup}</strong>
+                            </div>
+                            <div style={{ gridColumn: 'span 2' }}>
+                              <span style={{ color: '#64748B', fontSize: '0.72rem', display: 'block' }}>व्यवसाय व भूमिका:</span>
+                              <strong style={{ color: '#0F172A' }}>{verifyResult.member.profession} ({verifyResult.member.role})</strong>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Security & Cryptographic Proof */}
+                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: '#F0FDF4', padding: '18px', borderRadius: '12px', border: '1px solid #BBF7D0' }}>
+                          <div>
+                            <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#166534', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span>🔐</span> क्रिप्टोग्राफिक पडताळणी स्वाक्षरी (Cryptographic Hash):
+                            </div>
+                            <div style={{
+                              fontFamily: 'monospace',
+                              fontSize: '0.78rem',
+                              background: '#FFFFFF',
+                              padding: '8px 12px',
+                              borderRadius: '6px',
+                              border: '1px dashed #86EFAC',
+                              color: '#14532D',
+                              wordBreak: 'break-all',
+                              marginBottom: '12px'
+                            }}>
+                              {verifyResult.hashSignature}
+                            </div>
+                            <div style={{ fontSize: '0.78rem', color: '#15803D', lineHeight: 1.5 }}>
+                              ✓ सदर सभासद Connect Maratha च्या केंद्रीय सुरक्षा डेटाबेसवर प्रमाणित असून <strong>DPDP कायदा २०२३</strong> व <strong>ISO/IEC २७००१:२०२२</strong> मानकांनुसार अधिकृत व सुरक्षित आहेत.
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'flex', gap: '10px', marginTop: '16px', flexWrap: 'wrap' }}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedMemberId(verifyResult.member.id);
+                                setCandidateName(verifyResult.member.name);
+                                setActiveTab('member');
+                                window.scrollTo({ top: 350, behavior: 'smooth' });
+                              }}
+                              style={{
+                                flex: 1,
+                                padding: '9px 14px',
+                                background: '#7C1D05',
+                                color: '#FFFFFF',
+                                border: 'none',
+                                borderRadius: '8px',
+                                fontWeight: 800,
+                                fontSize: '0.82rem',
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '6px'
+                              }}
+                            >
+                              <span>🪪</span> या सभासदाचे कार्ड पहा
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const certText = `✓ Connect Maratha अधिकृत पडताळणी\nसभासद: ${verifyResult.member.name}\nआयडी: ${verifyResult.member.id}\nचॅप्टर: ${verifyResult.member.chapter}\nस्थिती: अधिकृत सभासद\nटोकन: ${verifyResult.hashSignature}`;
+                                if (navigator.clipboard) {
+                                  navigator.clipboard.writeText(certText);
+                                  alert('📋 पडताळणी प्रमाणपत्र माहिती क्लिपबोर्डवर कॉपी केली!');
+                                }
+                              }}
+                              style={{
+                                padding: '9px 14px',
+                                background: '#FFFFFF',
+                                color: '#166534',
+                                border: '1.5px solid #166534',
+                                borderRadius: '8px',
+                                fontWeight: 700,
+                                fontSize: '0.82rem',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              📋 कॉपी
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -1176,6 +1537,7 @@ export default function DigitalMemberCardPage() {
         </div>
 
       </div>
+    </div>
 
       {/* SCAN & CONNECT CAMERA MODAL */}
       {scannerOpen && (

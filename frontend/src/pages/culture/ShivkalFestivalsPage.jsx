@@ -49,6 +49,7 @@ const EVIDENCE_LEVELS = {
 const SHIVKAL_FESTIVALS = [
   {
     id: 'gudhipadwa',
+    image: '/assets/images/history/coronation.jpg',
     title: 'गुढीपाडवा — चैत्र शुक्ल प्रतिपदा',
     subtitle: 'मराठी नववर्ष व शिवकालीन रायगडावरील संदर्भ',
     season: 'वसंत ऋतू (चैत्र)',
@@ -73,6 +74,7 @@ const SHIVKAL_FESTIVALS = [
   },
   {
     id: 'holi_shimga',
+    image: '/assets/images/weapons/dandpatta.jpg',
     title: 'होळी / शिमगा — शौर्य व लोककलांचा सोहळा',
     subtitle: 'इ.स. १६७१ रायगड नोंद: खेळ, सोंगे व युद्धकौशल्याचे प्रदर्शन',
     season: 'वसंत ऋतू (फाल्गुन पौर्णिमा)',
@@ -97,6 +99,7 @@ const SHIVKAL_FESTIVALS = [
   },
   {
     id: 'diwali',
+    image: '/assets/images/real-raigad-bastions.jpg',
     title: 'दिवाळी — दिव्यांचा व समृद्धीचा तेजोत्सव',
     subtitle: 'पणत्यांचा प्रकाश, लक्ष्मीपूजन व दुर्ग दीपोत्सव',
     season: 'शरद ऋतू (आश्विन-कार्तिक)',
@@ -802,6 +805,19 @@ export default function ShivkalFestivalsPage() {
               >
                 <div>
                   {/* Top Bar: Icon, Category & Evidence Badge */}
+                  {festival.image && (
+                    <div style={{ height: '180px', margin: '-22px -22px 16px -22px', overflow: 'hidden', position: 'relative', background: '#1c1917' }}>
+                      <img
+                        src={festival.image}
+                        alt={festival.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/history/coronation.jpg'; }}
+                      />
+                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)', padding: '6px 14px' }}>
+                        <span style={{ color: '#FDE047', fontSize: '0.75rem', fontWeight: 800 }}>🎨 शिवकालीन सांस्कृतिक चित्र संदर्भ</span>
+                      </div>
+                    </div>
+                  )}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px', marginBottom: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <span style={{ fontSize: '2rem', background: '#FFF7ED', padding: '6px 10px', borderRadius: '12px', border: '1px solid #FED7AA' }}>

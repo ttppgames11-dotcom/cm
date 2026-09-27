@@ -321,18 +321,27 @@ export default function SocialWorkersPage() {
             }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                  <div style={{
-                    width: '52px',
-                    height: '52px',
-                    borderRadius: '14px',
-                    background: '#ecfdf5',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '1.8rem'
-                  }}>
-                    {w.icon}
-                  </div>
+                  {w.image ? (
+                    <img
+                      src={w.image}
+                      alt={w.name}
+                      style={{ width: '56px', height: '56px', borderRadius: '14px', objectFit: 'cover', border: '2px solid #34d399' }}
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: '52px',
+                      height: '52px',
+                      borderRadius: '14px',
+                      background: '#ecfdf5',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.8rem'
+                    }}>
+                      {w.icon}
+                    </div>
+                  )}
                   <span style={{
                     background: '#fef3c7',
                     color: '#92400e',

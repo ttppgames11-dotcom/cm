@@ -2,27 +2,71 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const DNYANKOSH_ENTRIES = [
-  { id: '1', name: 'छत्रपती शिवाजी महाराज', cat: 'vyakti', icon: '🚩', meta: 'हिंदवी स्वराज्याचे संस्थापक — गडकोट, आरमार व अष्टप्रधान मंडळाचे शिल्पकार', link: '/history/shivaji-maharaj' },
-  { id: '2', name: 'छत्रपती संभाजी महाराज', cat: 'vyakti', icon: '⚔️', meta: 'धर्मवीर छत्रपती — १२८ लढायांतील अजिंक्य नेतृत्व व तुळापूरचे सर्वोच्च बलिदान', link: '/history/sambhaji-maharaj' },
-  { id: '3', name: 'श्रीमंत थोरले बाजीराव पेशवे', cat: 'peshwe', icon: '🐎', meta: '४१ लढाया, शून्य पराभव — मराठा साम्राज्याचा नर्मदेपलीकडे विस्तार करणारे पेशवे', link: '/history/bajirao-peshwa' },
-  { id: '4', name: 'राष्ट्रमाता जिजाऊ माँसाहेब', cat: 'vyakti', icon: '🌸', meta: 'स्वराज्याच्या संकल्पक, नीतीवंत न्यायकर्त्या व शिवरायांच्या मार्गदर्शक माता', link: '/history/rajmata-jijau' },
-  { id: '5', name: 'सुभेदार तानाजी मालुसरे', cat: 'sainya', icon: '🛡️', meta: 'कोंढाणा (सिंहगड) पुनर्जय मोहिमेचे नायक — "आधी लगीन कोंढाण्याचं, मग माझ्या रायबाचं!"', link: '/history/warriors' },
-  { id: '6', name: 'वीर बाजी प्रभू देशपांडे', cat: 'sainya', icon: '🗡️', meta: 'पावनखिंडीतील अजरामर बलिदानाचे अद्वितीय महानायक', link: '/forts/panhala-pavankhind' },
-  { id: '7', name: 'सरखेल कान्होजी आंग्रे', cat: 'aarmar', icon: '⚓', meta: 'मराठा आरमाराचे सर्वोच्च सेनापती — ३० वर्षे अजिंक्य सागरी वर्चस्व', link: '/history/navy' },
-  { id: '8', name: 'श्रीमंत महादजी शिंदे', cat: 'sainya', icon: '🏇', meta: 'दिल्लीचे तख्त नियंत्रक — आधुनिक कवायती सेनेचे (कंपू) संस्थापक व मराठा साम्राज्याचे रक्षक', link: '/history/warriors' },
-  { id: '9', name: 'पुण्यश्लोक अहिल्याबाई होळकर', cat: 'vyakti', icon: '🙏', meta: 'लोकमाता — न्यायप्रिय सुशासन, औद्योगिक विकास व भारतभर मंदिर जीर्णोद्धाराच्या प्रणेत्या', link: '/history/warriors' },
-  { id: '10', name: 'दुर्गराज रायगड', cat: 'killa', icon: '🏰', meta: 'स्वराज्याची राजधानी — शिवराज्याभिषेक सोहळ्याचे साक्षीदार व शिवतीर्थ', link: '/forts/raigad' },
-  { id: '11', name: 'किल्ले राजगड', cat: 'killa', icon: '⛰️', meta: 'स्वराज्याची पहिली राजधानी — छत्रपती शिवरायांच्या प्रारंभिक कारकिर्दीचे २५ वर्षे केंद्र', link: '/forts/rajgad' },
-  { id: '12', name: 'किल्ले सिंधुदुर्ग', cat: 'killa', icon: '🏝️', meta: 'अरबी समुद्रातील अजिंक्य जलदुर्ग — मराठा आरमाराचे केंद्र व UNESCO वारसा स्थळ', link: '/forts' },
+  { id: '1',
+    image: '/assets/images/real-shivaji-portrait.jpg', name: 'छत्रपती शिवाजी महाराज', cat: 'vyakti', icon: '🚩', meta: 'हिंदवी स्वराज्याचे संस्थापक — गडकोट, आरमार व अष्टप्रधान मंडळाचे शिल्पकार', link: '/history/shivaji-maharaj' },
+  { id: '2',
+    image: '/assets/images/real-sambhaji-photo.jpg', name: 'छत्रपती संभाजी महाराज', cat: 'vyakti', icon: '⚔️', meta: 'धर्मवीर छत्रपती — १२८ लढायांतील अजिंक्य नेतृत्व व तुळापूरचे सर्वोच्च बलिदान', link: '/history/sambhaji-maharaj' },
+  { id: '3',
+    image: '/assets/images/real-bajirao-statue.jpg', name: 'श्रीमंत थोरले बाजीराव पेशवे', cat: 'peshwe', icon: '🐎', meta: '४१ लढाया, शून्य पराभव — मराठा साम्राज्याचा नर्मदेपलीकडे विस्तार करणारे पेशवे', link: '/history/bajirao-peshwa' },
+  { id: '4',
+    image: '/assets/images/people/jijau.jpg', name: 'राष्ट्रमाता जिजाऊ माँसाहेब', cat: 'vyakti', icon: '🌸', meta: 'स्वराज्याच्या संकल्पक, नीतीवंत न्यायकर्त्या व शिवरायांच्या मार्गदर्शक माता', link: '/history/rajmata-jijau' },
+  { id: '5',
+    image: '/assets/images/warriors/tanaji.jpg', name: 'सुभेदार तानाजी मालुसरे', cat: 'sainya', icon: '🛡️', meta: 'कोंढाणा (सिंहगड) पुनर्जय मोहिमेचे नायक — "आधी लगीन कोंढाण्याचं, मग माझ्या रायबाचं!"', link: '/article/tanaji-malusare' },
+  { id: '6',
+    image: '/assets/images/warriors/bajiprabhu.jpg', name: 'वीर बाजी प्रभू देशपांडे', cat: 'sainya', icon: '🗡️', meta: 'पावनखिंडीतील अजरामर बलिदानाचे अद्वितीय महानायक', link: '/article/shiva-kashid-baji-prabhu' },
+  { id: '7',
+    image: '/assets/images/warriors/kanhoji_angre.jpg', name: 'सरखेल कान्होजी आंग्रे', cat: 'aarmar', icon: '⚓', meta: 'मराठा आरमाराचे सर्वोच्च सेनापती — ३० वर्षे अजिंक्य सागरी वर्चस्व', link: '/history/navy' },
+  { id: '8',
+    image: '/assets/images/real-mahadji-shinde.jpg', name: 'श्रीमंत महादजी शिंदे', cat: 'sainya', icon: '🏇', meta: 'दिल्लीचे तख्त नियंत्रक — आधुनिक कवायती सेनेचे (कंपू) संस्थापक व मराठा साम्राज्याचे रक्षक', link: '/history/warriors' },
+  { id: '9',
+    image: '/assets/images/people/ahilyabai.jpg', name: 'पुण्यश्लोक अहिल्याबाई होळकर', cat: 'vyakti', icon: '🙏', meta: 'लोकमाता — न्यायप्रिय सुशासन, औद्योगिक विकास व भारतभर मंदिर जीर्णोद्धाराच्या प्रणेत्या', link: '/history/warriors' },
+  { id: '10',
+    image: '/assets/images/real-raigad-panoramic.jpg', name: 'दुर्गराज रायगड', cat: 'killa', icon: '🏰', meta: 'स्वराज्याची राजधानी — शिवराज्याभिषेक सोहळ्याचे साक्षीदार व शिवतीर्थ', link: '/forts/raigad' },
+  { id: '11',
+    image: '/assets/images/real-raigad-bastions.jpg', name: 'किल्ले राजगड', cat: 'killa', icon: '⛰️', meta: 'स्वराज्याची पहिली राजधानी — छत्रपती शिवरायांच्या प्रारंभिक कारकिर्दीचे २५ वर्षे केंद्र', link: '/forts/rajgad' },
+  { id: '12',
+    image: '/assets/images/real-sindhudurg-fort.jpg', name: 'किल्ले सिंधुदुर्ग', cat: 'killa', icon: '🏝️', meta: 'अरबी समुद्रातील अजिंक्य जलदुर्ग — मराठा आरमाराचे केंद्र व UNESCO वारसा स्थळ', link: '/forts' },
   { id: '13', name: 'किल्ले विजयदुर्ग (घेरिया)', cat: 'killa', icon: '⚓', meta: 'आरमाराचे प्रमुख तळ, जहाजबांधणी गोदी व तिहेरी तटबंदीचा अभेद्य जलदुर्ग', link: '/forts' },
-  { id: '14', name: 'किल्ले सिंहगड (कोंढाणा)', cat: 'killa', icon: '🏔️', meta: 'तानाजी मालुसरेंच्या पराक्रमाने पावन झालेला पुण्याजवळील सामरिक गड', link: '/forts' },
-  { id: '15', name: 'किल्ले पन्हाळगड', cat: 'killa', icon: '🗻', meta: 'सिद्दी जौहरच्या वेढ्यातून शिवरायांच्या ऐतिहासिक सुटकेचे व शंभूराजांचे वास्तव्य स्थळ', link: '/forts/panhala-pavankhind' },
-  { id: '16', name: 'प्रतापगड युद्ध (१६५९)', cat: 'ladhai', icon: '⚔️', meta: 'अफझलखानाचा वध व विजापूरच्या बलाढ्य फौजेचा धुव्वा उडवणारी गनिमी काव्याची लढाई', link: '/history/battles' },
-  { id: '17', name: 'पालखेडची लढाई (१७२८)', cat: 'ladhai', icon: '🐎', meta: 'बाजीराव पेशव्यांची निजामाविरुद्ध गनिमी काव्याची जागतिक कीर्तीची रणनीती', link: '/history/battles' },
-  { id: '18', name: 'अष्टप्रधान मंडळ व्यवस्था', cat: 'prashasan', icon: '⚖️', meta: 'पंतप्रधान, अमात्य, सचिव, मंत्री, सेनापती, सुमंत, न्यायाधीश व पंडितराव', link: '/history/swarajya-administration' },
-  { id: '19', name: 'गनिमी कावा (Ganimi Kawa)', cat: 'shabdakosh', icon: '🏹', meta: 'सह्याद्रीच्या भौगोलिक रचनेचा वापर करून बलाढ्य शत्रूवर अचूक आघात करण्याची मराठा युद्धनीती', link: '/history/battles' },
-  { id: '20', name: 'मोडी लिपी व सनदा', cat: 'shabdakosh', icon: '📜', meta: 'मराठा साम्राज्याची अधिकृत जलद प्रशासकीय लिपी आणि ऐतिहासिक दस्तऐवज', link: '/granthalaya' },
-  { id: '21', name: '९६ कुळी मराठा घराणी', cat: 'gharane', icon: '🏛️', meta: 'भोसले, शिंदे, होळकर, गायकवाड, घोरपडे, मोरे, मोहिते, कदम, साळुंखे इत्यादी प्रमुख घराणी', link: '/history/warriors' }
+  { id: '14',
+    image: '/assets/images/real-sinhagad-fort.jpg', name: 'किल्ले सिंहगड (कोंढाणा)', cat: 'killa', icon: '🏔️', meta: 'तानाजी मालुसरेंच्या पराक्रमाने पावन झालेला पुण्याजवळील सामरिक गड', link: '/forts' },
+  { id: '15',
+    image: '/assets/images/real-panhala-fort.jpg', name: 'किल्ले पन्हाळगड', cat: 'killa', icon: '🗻', meta: 'सिद्दी जौहरच्या वेढ्यातून शिवरायांच्या ऐतिहासिक सुटकेचे व शंभूराजांचे वास्तव्य स्थळ', link: '/forts/panhala-pavankhind' },
+  { id: '16',
+    image: '/assets/images/battles/pratapgad.jpg', name: 'प्रतापगड युद्ध (१६५९)', cat: 'ladhai', icon: '⚔️', meta: 'अफझलखानाचा वध व विजापूरच्या बलाढ्य फौजेचा धुव्वा उडवणारी गनिमी काव्याची लढाई', link: '/history/battles' },
+  { id: '17',
+    image: '/assets/images/battles/palkhed.jpg', name: 'पालखेडची लढाई (१७२८)', cat: 'ladhai', icon: '🐎', meta: 'बाजीराव पेशव्यांची निजामाविरुद्ध गनिमी काव्याची जागतिक कीर्तीची रणनीती', link: '/history/battles' },
+  { id: '18',
+    image: '/assets/images/real-maratha-court-1792.jpg', name: 'अष्टप्रधान मंडळ व्यवस्था', cat: 'prashasan', icon: '⚖️', meta: 'पंतप्रधान, अमात्य, सचिव, मंत्री, सेनापती, सुमंत, न्यायाधीश व पंडितराव', link: '/history/swarajya-administration' },
+  { id: '19',
+    image: '/assets/images/battles/pavankhind.jpg', name: 'गनिमी कावा (Ganimi Kawa)', cat: 'shabdakosh', icon: '🏹', meta: 'सह्याद्रीच्या भौगोलिक रचनेचा वापर करून बलाढ्य शत्रूवर अचूक आघात करण्याची मराठा युद्धनीती', link: '/history/battles' },
+  { id: '20',
+    image: '/assets/images/maratha-granthalaya.jpg', name: 'मोडी लिपी व सनदा', cat: 'shabdakosh', icon: '📜', meta: 'मराठा साम्राज्याची अधिकृत जलद प्रशासकीय लिपी आणि ऐतिहासिक दस्तऐवज', link: '/granthalaya' },
+  { id: '21',
+    image: '/assets/images/history/coronation.jpg', name: '९६ कुळी मराठा घराणी', cat: 'gharane', icon: '🏛️', meta: 'भोसले, शिंदे, होळकर, गायकवाड, घोरपडे, मोरे, मोहिते, कदम, साळुंखे इत्यादी प्रमुख घराणी', link: '/history/warriors' },
+  { id: '22',
+    image: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80',
+    name: 'शिवशाहीर बाबासाहेब पुरंदरे (शिवचरित्र कथन)',
+    cat: 'granth',
+    icon: '🚩',
+    meta: 'इतिहासमहर्षी बाबासाहेब पुरंदरे यांची १० भागांची अखंड शिवचरित्र व्याख्यानमाला व ग्रंथ संग्रह',
+    link: '/article/babasaheb-purandare-shivcharitra-kathan-bhag-1'
+  },
+  { id: '23',
+    image: '/assets/images/warriors/hambirrao.jpg',
+    name: 'सरसेनापती हंबीरराव मोहिते',
+    cat: 'sainya',
+    icon: '🏇',
+    meta: 'बहादूरगडावरील १ कोटींची गनिमी काव्याची लूट व वाईच्या रणांगणावरील सर्वोच्च बलिदान',
+    link: '/article/hambirrao-mohite-bahadurgad'
+  },
+  { id: '24',
+    image: '/assets/images/history/coronation.jpg',
+    name: 'शिवराज्याभिषेक सोहळा (३२ मण सुवर्णसिंहासन)',
+    cat: 'ladhai',
+    icon: '👑',
+    meta: '६ जून १६७४ दुर्गराज रायगडावर संपन्न झालेला सार्वभौम वैदिक राज्याभिषेक महासोहळा',
+    link: '/article/babasaheb-purandare-shivrajyabhishek-mahasohala'
+  }
 ];
 
 export default function DnyankoshPage() {
@@ -110,7 +154,8 @@ export default function DnyankoshPage() {
             { id: 'sainya', label: '🛡️ सैन्य व शिलेदार' },
             { id: 'aarmar', label: '⚓ आरमार' },
             { id: 'prashasan', label: '⚖️ प्रशासन' },
-            { id: 'shabdakosh', label: '📖 शब्दकोश' }
+            { id: 'shabdakosh', label: '📖 शब्दकोश' },
+            { id: 'granth', label: '📜 ग्रंथ व व्याख्याने' }
           ].map(tab => (
             <button
               key={tab.id}
@@ -149,19 +194,35 @@ export default function DnyankoshPage() {
                 alignItems: 'flex-start',
                 transition: 'transform 0.2s, box-shadow 0.2s'
               }}>
-              <div style={{
-                fontSize: '28px',
-                width: '48px',
-                height: '48px',
-                borderRadius: '12px',
-                background: '#FDF3E6',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0
-              }}>
-                {item.icon}
-              </div>
+              {item.image ? (
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  style={{
+                    width: '54px',
+                    height: '54px',
+                    borderRadius: '12px',
+                    objectFit: 'cover',
+                    border: '1.5px solid #FED7AA',
+                    flexShrink: 0
+                  }}
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+              ) : (
+                <div style={{
+                  fontSize: '28px',
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  background: '#FDF3E6',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  {item.icon}
+                </div>
+              )}
               <div>
                 <h3 style={{
                   fontFamily: "'Baloo 2', 'Noto Sans Devanagari', sans-serif",

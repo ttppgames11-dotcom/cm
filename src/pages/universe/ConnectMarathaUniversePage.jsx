@@ -1,3 +1,4 @@
+import { CORE_ENGINES, MAHARASHTRA_TRIP_SUGGESTIONS, INTERCONNECTED_ENTITIES, TRUST_STATUS_MAP, CONTRIBUTOR_ROLES } from '../../data/maharashtraCoreUniverse';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -208,6 +209,7 @@ const BATTLES_DATA = [
     name: 'प्रतापगडचे युद्ध ( Battle of Pratapgad )',
     date: '१० नोव्हेंबर १६५९',
     location: 'किल्ले प्रतापगड पायथा, जावळीचे खोरे',
+    image: '/assets/images/battles/pratapgad.jpg',
     leaders: 'छत्रपती शिवाजी महाराज, कान्होजी जेधे, तानाजी मालुसरे वि. अफझलखान (आदिलशाही)',
     forces: 'शिवरायांचे ६,००० पायदळ व ३,००० घोडदळ वि. अफझलखानाचा १०,००० चा लवाजमा (विश्वसनीय समकालीन संदर्भ)',
     strategy: 'जावळीच्या अभेद्य घनदाट जंगलाचा भौगोलिक उपयोग; शत्रूला डोंगराळ भागात ओढून गनिमी काव्याने दोन्ही बाजूंनी कोंडी.',
@@ -221,6 +223,7 @@ const BATTLES_DATA = [
     name: 'पावनखिंडीचा लढा ( Battle of Pavan Khind )',
     date: '१३ जुलै १६६०',
     location: 'घोडखिंड (पावनखिंड), विशाळगड मार्ग',
+    image: '/assets/images/battles/pavankhind.jpg',
     leaders: 'बाजीप्रभू देशपांडे, फुलाजी देशपांडे, बांदल मावळे वि. सिद्दी मसूद',
     forces: '३०० निवडक बांदल मावळे वि. सिद्दी मसूदचे ४,००० चे घोडदळ',
     strategy: 'अरुंद खिंडीत एका वेळी मोजकेच सैनिक लढू शकतील अशा नैसर्गिक दरीचा फायदा घेऊन शिवराय विशाळगडावर पोहोचून तोफांचे आवाज होईपर्यंत प्राण पणाला लावून खिंड रोखणे.',
@@ -234,6 +237,7 @@ const BATTLES_DATA = [
     name: 'साल्हेरचे मैदानी युद्ध ( Battle of Salher )',
     date: 'जानेवारी १६७२',
     location: 'साल्हेर किल्ला व पायथा, बागलाण (नाशिक)',
+    image: '/assets/images/battles/salher.jpg',
     leaders: 'प्रतापराव गुजर (सरसेनापती), मोरोपंत पिंगळे वि. दिलेरखान व इखलासखान (मुघल)',
     forces: 'सुमारे २०,००० मराठा घोडदळ वि. २५,००० मुघल सैन्य (ऐतिहासिक दस्तावेजांनुसार)',
     strategy: 'मराठ्यांनी डोंगराळ गनिमी काव्याऐवजी खुल्या मैदानात मुघलांच्या बलाढ्य सैन्याला समोरासमोर धूळ चारली.',
@@ -247,6 +251,7 @@ const BATTLES_DATA = [
     name: 'पालखेडची लढाई ( Battle of Palkhed )',
     date: '२८ फेब्रुवारी १७२८',
     location: 'पालखेड (नाशिक जवळ)',
+    image: '/assets/images/battles/palkhed.jpg',
     leaders: 'श्रीमंत बाजीराव पेशवे प्रथम वि. निझाम-उल-मुल्क',
     forces: 'जलद मराठा घोडदळ वि. निझामाचे तोफखानासज्ज अफाट सैन्य',
     strategy: 'जागतिक युद्धशास्त्रात वाखाणलेली "हालचालींची युद्धनीती" (War of Maneuver); तोफखान्याला संधीच न देता निझामाची रसद तोडून पाण्यासाठी पाणी नसलेल्या जागी घेरले.',
@@ -260,6 +265,7 @@ const BATTLES_DATA = [
     name: 'पानिपतचे तिसरे युद्ध ( Third Battle of Panipat )',
     date: '१४ जानेवारी १७६१',
     location: 'पानिपतचे रणांगण (हरियाणा)',
+    image: '/assets/images/battles/panipat.jpg',
     leaders: 'सदाशिवराव भाऊ, विश्वासराव पेशवे, इब्राहिम खान गारदी वि. अहमदशाह अब्दाली',
     forces: 'मराठा सेना व तोफखाना वि. अब्दाली व रोहिला सैन्य',
     strategy: 'इब्राहिम खान गारदीच्या फ्रेंच पद्धतीचा तोफखाना; परंतु रसद तुटल्याने उपासमार व विश्वासरावांच्या हौतात्म्याने सैन्यात झालेली पीछेहाट.',
@@ -276,6 +282,7 @@ const WOMEN_IN_HISTORY = [
     name: 'राजमाता जिजाऊ माँसाहेब',
     period: '१५९८ - १६७४',
     role: 'स्वराज्य प्रेरक व प्रशासक',
+    image: '/assets/images/people/jijau.jpg',
     achievement: 'शिवरायांना न्याय, समता व सार्वभौम स्वराज्याचे संस्कार देणाऱ्या शिल्पकार; पुण्यात सोन्याचा नांगर फिरवून रयतेची पुनर्स्थापना; न्यायनिवाडे व जहागिरीचे निष्कलंक प्रशासन.',
     domains: ['प्रशासन', 'राजनीती', 'संस्कार'],
     places: ['सिंदखेड राजा', 'शिवनेरी', 'लाल महाल पुणे', 'पाचाड समाधी']
@@ -284,6 +291,7 @@ const WOMEN_IN_HISTORY = [
     name: 'महाराणी ताराबाई भोसले',
     period: '१६७५ - १७६१',
     role: 'मराठा साम्राज्याच्या सरसेनापती व राज्यकर्त्या',
+    image: '/assets/images/people/tarabai.jpg',
     achievement: 'छत्रपती राजाराम महाराजांच्या निधनानंतर (१७००) औरंगजेबाच्या ५ लाखांच्या मुघल आक्रमणाविरुद्ध ७ वर्षे अखंड लढा देऊन मुघल साम्राज्याला दख्खनमध्ये धूळ चारली.',
     domains: ['लष्करी नेतृत्व', 'साम्राज्य रक्षण', 'कूटनीती'],
     places: ['पन्हाळा', 'सातारा', 'कोल्हापूर', 'जिंजी']
@@ -292,6 +300,7 @@ const WOMEN_IN_HISTORY = [
     name: 'पुण्यश्लोक अहिल्याबाई होळकर',
     period: '१७२५ - १७९५',
     role: 'आदर्श लोककल्याणकारी राज्यकर्त्या व स्थापत्य शिल्पकार',
+    image: '/assets/images/people/ahilyabai.jpg',
     achievement: 'माळव्याची राजधानी महेश्वर येथून २८ वर्षे प्रजाहितदक्ष राज्यकारभार; संपूर्ण भारतात सोमनाथ ते काशी विश्वनाथ आणि बद्रीनाथ ते रामेश्वरम शेकडो मंदिरे, घाट, धर्मशाळा व बारवांची निर्मिती.',
     domains: ['प्रशासन', 'स्थापत्य', 'न्यायव्यवस्था', 'धर्मदाय'],
     places: ['चौंडी (जामखेड)', 'महेश्वर', 'त्र्यंबकेश्वर', 'काशी']
@@ -300,6 +309,7 @@ const WOMEN_IN_HISTORY = [
     name: 'महाराणी येसूबाई भोसले',
     period: '१६५८ - १७३०',
     role: 'स्वातंत्र्यसंग्रामातील मूक धैर्याचे प्रतीक',
+    image: '/assets/images/people/yesubai.jpg',
     achievement: 'छत्रपती संभाजी महाराजांच्या पाठीशी खंबीर उभ्या राहिल्या; रायगड वेढ्यावेळी राजाराम महाराजांना जिंजीला पाठवण्याचा मुत्सद्दी निर्णय घेतला; ३० वर्षे मुघल कैदेत राहूनही स्वराज्य निष्ठा ढळू दिली नाही.',
     domains: ['मुत्सद्देगिरी', 'धैर्य', 'त्याग'],
     places: ['रायगड', 'शृंगारपूर', 'दिल्ली मुघल छावणी']
@@ -308,6 +318,7 @@ const WOMEN_IN_HISTORY = [
     name: 'क्रांतिज्योती सावित्रीबाई फुले',
     period: '१८३१ - १८९७',
     role: 'भारतातील पहिल्या मुख्याध्यापिका व समाजसुधारक',
+    image: '/assets/images/people/savitribai.jpg',
     achievement: 'स्त्रीशिक्षणाची पहिली शाळा (भिडे वाडा १८४८), सत्यशोधक समाजाचे नेतृत्व, बालहत्या प्रतिबंधक गृह, प्लेगच्या साथीमध्ये रुग्णांची प्रत्यक्ष सेवा करताना आत्मसमर्पण.',
     domains: ['स्त्रीशिक्षण', 'साहित्य', 'समाजप्रबोधन'],
     places: ['नायगाव (सातारा)', 'भिडे वाडा पुणे', 'हडपसर']
@@ -316,6 +327,7 @@ const WOMEN_IN_HISTORY = [
     name: 'डॉ. आनंदीबाई गोपाळराव जोशी',
     period: '१८६५ - १८८७',
     role: 'भारतातील पहिल्या महिला डॉक्टर (M.D.)',
+    image: '/assets/images/people/anandibai.jpg',
     achievement: 'सर्व सामाजिक प्रतिकूलतेला तोंड देत अमेरिकेत जाऊन वैद्यकीय पदवी (M.D.) संपादन करणारी पहिली भारतीय महिला; आधुनिक विज्ञान क्षेत्रात महिलांसाठी मार्गदर्शक दीपस्तंभ.',
     domains: ['वैद्यकशास्त्र', 'उच्च शिक्षण', 'स्त्री मुक्ती'],
     places: ['कल्याण', 'पुणे', 'फिलाडेल्फिया (USA)']
@@ -330,6 +342,7 @@ const CONNECTED_NODES_DATA = {
     type: 'दुर्ग व राजधानी',
     icon: '🏰',
     summary: 'स्वराज्याची अजिंक्य राजधानी, जिथे छत्रपती शिवाजी महाराजांचा ६ जून १६७४ रोजी सुवर्ण राज्याभिषेक सोहळा संपन्न झाला.',
+    image: '/assets/images/history/coronation.jpg',
     connections: {
       persons: ['छत्रपती शिवाजी महाराज', 'जिजाऊ माँसाहेब', 'छत्रपती संभाजी महाराज', 'सोयराबाई', 'हिरोजी इंदुलकर (मुख्य स्थापत्यकार)'],
       events: ['६ जून १६७४ शिवराज्याभिषेक सोहळा', 'इ.स. १६७१ रायगड शिमगोत्सव', 'इ.स. १६८० शिवराय महाप्रयाण'],
@@ -349,6 +362,7 @@ const CONNECTED_NODES_DATA = {
     type: 'स्वराज्य संस्थापक व युगपुरुष',
     icon: '👑',
     summary: 'अखंड महाराष्ट्राचे कुलदैवत, रयतेचे राजे, आरमार जनक, ३५०+ गडकोटांचे निर्माते व गनिमी काव्याचे जनक.',
+    image: '/assets/images/history/rajyabhishek.jpg',
     connections: {
       persons: ['जिजाऊ माँसाहेब', 'शहाजीराजे', 'बाजीप्रभू देशपांडे', 'तानाजी मालुसरे', 'हंबीरराव मोहिते', 'संत तुकाराम', 'समर्थ रामदास'],
       events: ['१६४५ रोहिडेश्वर शपथ', '१६५९ प्रतापगड युद्ध', '१६६० पावनखिंड लढा', '१६६४ सुरत मोहीम', '१६७४ राज्याभिषेक'],
@@ -368,6 +382,7 @@ const CONNECTED_NODES_DATA = {
     type: 'जलदुर्ग व आरमार केंद्र',
     icon: '⚓',
     summary: 'अरबी समुद्रात कुरटे बेटावर शिवरायांनी स्वतः हाताने पायाभरणी केलेला अजिंक्य सागरी बालेकिल्ला; मराठा आरमाराचा पाया.',
+    image: '/assets/images/weapons/khalbhairav.jpg',
     connections: {
       persons: ['छत्रपती शिवाजी महाराज', 'मायनाक भंडारी', 'कान्होजी आंग्रे', 'स्थानिक खारवी व कोळी खलाशी'],
       events: ['इ.स. १६६४ जलदुर्ग पायाभरणी', 'मराठा आरमाराची सागरी गस्त', 'खांदेरीची सागरी लढाई (१६७९)'],
@@ -614,6 +629,7 @@ const MAHA_CITIES = [
 
 // FEATURE 9: COINS & CURRENCY DATABASE
 const COINS_DATA = [
+  // Equipped with museum authentic numismatic images
   {
     id: 'satavahana_potin',
     name: 'सातवाहन पोटिन नाणे (Satavahana Coin)',
@@ -1096,8 +1112,14 @@ const RIVERS_DATA = [
 
 
 export default function ConnectMarathaUniversePage() {
+  const [selectedTripPlan, setSelectedTripPlan] = useState('pune_2days');
+  const [selectedCoreEntity, setSelectedCoreEntity] = useState('raigad');
+  const [universeCorrectionModal, setUniverseCorrectionModal] = useState(false);
+  const [universeCorrectionText, setUniverseCorrectionText] = useState('');
+  const [universeCorrectionSent, setUniverseCorrectionSent] = useState(false);
+  const [activeEngineTab, setActiveEngineTab] = useState('calendar');
   // Navigation & View State
-  const [activeTab, setActiveTab] = useState('master-map');
+  const [activeTab, setActiveTab] = useState('core-engines-28');
   const [selectedWorld, setSelectedWorld] = useState(UNIVERSE_WORLDS[0].id);
   const [selectedCivilizationWorld, setSelectedCivilizationWorld] = useState(CIVILIZATION_WORLDS[0].id);
   const [selectedEpoch, setSelectedEpoch] = useState(TIME_MACHINE_EPOCHS[6]); // Shivkal (1630-1680)
@@ -1390,6 +1412,7 @@ export default function ConnectMarathaUniversePage() {
       <div style={{ background: '#FFFFFF', borderBottom: '2px solid #FED7AA', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '8px 20px', display: 'flex', gap: '8px', overflowX: 'auto', whiteSpace: 'nowrap' }}>
           {[
+            { id: 'core-engines-28', name: '⚡ ६ मुख्य प्रणाली व २८ ज्ञान दालने' },
             { id: 'master-map', name: '🗺️ मास्टर मॅप (२१ लेअर्स)' },
             { id: 'time-machine', name: '⏳ टाईम मशीन (इ.स.पू. २३० ते आज)' },
             { id: 'cities-layers', name: '🏙️ १८ शहरे: येथे पूर्वी काय होते?' },
@@ -1474,6 +1497,311 @@ export default function ConnectMarathaUniversePage() {
             </span>
           </div>
         </div>
+
+                {/* ========================================================================= */}
+        {/* CORE ARCHITECTURE: ६ मुख्य प्रणाली व २८ परस्पर जोडलेली ज्ञान दालने (FEATURES 1–28) */}
+        {/* ========================================================================= */}
+        {activeTab === 'core-engines-28' && (
+          <section style={{
+            background: '#FFFFFF',
+            border: '2.5px solid #FED7AA',
+            borderRadius: '24px',
+            padding: '32px 28px',
+            marginBottom: '40px',
+            boxShadow: '0 12px 36px rgba(124, 29, 5, 0.08)'
+          }}>
+            {/* Header */}
+            <div style={{ textAlign: 'center', maxWidth: '960px', margin: '0 auto 36px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #FFEDD5, #FEF3C7)', color: '#9A3412', border: '1.5px solid #FDBA74', padding: '6px 18px', borderRadius: '30px', fontWeight: 800, fontSize: '0.85rem', marginBottom: '14px' }}>
+                <span>🚩 CONNECT MARATHA ARCHITECTURE</span>
+                <span>•</span>
+                <span>६ मुख्य प्रणाली (6 CORE ENGINES) व २८ ज्ञान दालने</span>
+              </div>
+              <h2 style={{ fontSize: '2.2rem', color: '#7C1D05', fontWeight: 900, margin: '0 0 12px' }}>
+                महाराष्ट्र सांस्कृतिक + ऐतिहासिक + समुदाय + व्यवसाय महाव्यासपीठ
+              </h2>
+              <p style={{ fontSize: '1.02rem', color: '#78350F', lineHeight: 1.6, margin: 0 }}>
+                स्वतंत्र स्थिर पानांऐवजी ६ मध्यवर्ती प्रणालींवर आधारित संपूर्ण महाराष्ट्र ज्ञानविश्व — 
+                <strong> व्यक्ती ↔ प्रसंग ↔ ठिकाण ↔ गडकोट ↔ मंदिरे ↔ सण ↔ खाद्य ↔ परंपरा ↔ समुदाय ↔ उद्योग</strong>.
+              </p>
+            </div>
+
+            {/* PART 1: THE 6 CORE ENGINES */}
+            <div style={{ marginBottom: '40px' }}>
+              <h3 style={{ fontSize: '1.35rem', color: '#7C1D05', fontWeight: 800, marginBottom: '16px' }}>
+                ⚙️ १. प्लॅटफॉर्मच्या ६ मुख्य प्रणाली (The 6 Core Engines):
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+                {CORE_ENGINES.map((engine) => {
+                  const isSel = activeEngineTab === engine.id;
+                  return (
+                    <div
+                      key={engine.id}
+                      onClick={() => setActiveEngineTab(engine.id)}
+                      style={{
+                        background: isSel ? '#FFFFFF' : engine.bg,
+                        border: isSel ? '2.5px solid ' + engine.color : '1.5px solid rgba(0,0,0,0.08)',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        cursor: 'pointer',
+                        transition: 'all 0.25s ease',
+                        boxShadow: isSel ? '0 8px 24px rgba(124, 29, 5, 0.12)' : '0 2px 8px rgba(0,0,0,0.02)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between'
+                      }}
+                    >
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '1.8rem' }}>{engine.icon}</span>
+                          <span style={{ background: engine.color, color: '#FFFFFF', padding: '3px 10px', borderRadius: '12px', fontSize: '0.72rem', fontWeight: 800 }}>
+                            {isSel ? 'सक्रिय इंजिन' : 'क्लिक करा'}
+                          </span>
+                        </div>
+                        <h4 style={{ fontSize: '1.15rem', color: engine.color, fontWeight: 800, margin: '0 0 6px' }}>
+                          {engine.title}
+                        </h4>
+                        <p style={{ fontSize: '0.84rem', color: '#4B5563', lineHeight: 1.5, margin: '0 0 12px' }}>
+                          {engine.subtitle}
+                        </p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '14px' }}>
+                          {engine.modules.map((m, idx) => (
+                            <span key={idx} style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(0,0,0,0.1)', padding: '2px 8px', borderRadius: '6px', fontSize: '0.74rem', color: '#374151', fontWeight: 600 }}>
+                              {m}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <Link
+                        to={engine.route}
+                        style={{
+                          background: isSel ? engine.color : 'rgba(0,0,0,0.06)',
+                          color: isSel ? '#FFFFFF' : '#374151',
+                          textAlign: 'center',
+                          padding: '9px 14px',
+                          borderRadius: '10px',
+                          fontWeight: 700,
+                          fontSize: '0.85rem',
+                          textDecoration: 'none',
+                          display: 'block'
+                        }}
+                      >
+                        इंजिन पोर्टल उघडा →
+                      </Link>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* PART 2: THE 28 EXPANDED MODULES DIRECTORY */}
+            <div style={{ background: '#FFFDF9', border: '2px solid #FED7AA', borderRadius: '20px', padding: '28px', marginBottom: '40px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#C2410C', fontWeight: 800, textTransform: 'uppercase' }}>
+                    EXPANDED FEATURE UNIVERSE
+                  </span>
+                  <h3 style={{ fontSize: '1.5rem', color: '#7C1D05', fontWeight: 900, margin: '2px 0 0' }}>
+                    📚 २८ ज्ञान व समुदाय दालने (The 28 Modules Catalog)
+                  </h3>
+                </div>
+                <span style={{ background: '#FEF3C7', color: '#92400E', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800 }}>
+                  २८ पैकी २८ दालने पूर्णतः कार्यरत
+                </span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
+                {[
+                  { num: '१', title: 'Maratha Calendar 2.0', icon: '📅', desc: 'मराठी पंचांग, ३६५ दिवस इतिहास, संत दिनविशेष, सण', link: '/calendar' },
+                  { num: '२', title: 'Maharashtra History Explorer', icon: '🏰', desc: 'सातवाहन ते स्वराज्य १२ कालखंड टाइम मशीन', link: '/history' },
+                  { num: '३', title: 'Interactive Fort Map', icon: '🗺️', desc: '३५०+ सह्याद्री गडकोट, ३६०° टूर व वाटाड्या माहिती', link: '/forts' },
+                  { num: '४', title: '"Know the Person"', icon: '🧑‍🏫', desc: 'राजे, राण्या, सरदार, संत, समाजसुधारक व शास्त्रज्ञ', link: '/history/warriors' },
+                  { num: '५', title: 'Historical Documents Library', icon: '📜', desc: 'बखरी, पत्रे, आज्ञापत्र, मोडी सनदा व नकाशे डिजिटल अर्काईव्ह', link: '/history/granthalaya' },
+                  { num: '६', title: 'Marathi Language Explorer', icon: '🗣️', desc: 'महाराष्ट्रातील बोली — वऱ्हाडी, मालवणी, अहिराणी, मोडी', link: '/culture/dialects' },
+                  { num: '७', title: 'Maharashtra Food Atlas', icon: '🍲', desc: '३६ जिल्ह्यांची खाद्यसंस्कृती, उगम इतिहास व प्रादेशिक चव', link: '/culture/food' },
+                  { num: '८', title: 'Traditional Clothing & Craft', icon: '👗', desc: 'पैठणी, नऊवारी, पगडी, वारली चित्रकला व हस्तकला', link: '/universe' },
+                  { num: '९', title: 'Performing Arts', icon: '🎭', desc: 'पोवाडा, लावणी, तमाशा, भारुड, कीर्तन व पारंपरिक वाद्ये', link: '/culture/gramdevat-jatra' },
+                  { num: '१०', title: 'Temple & Sacred Heritage', icon: '🛕', desc: 'अष्टविनायक, १२ ज्योतिर्लिंगे, शक्तिपीठे व ग्रामदैवते', link: '/culture/temples' },
+                  { num: '११', title: 'Maharashtra Tourism', icon: '🌄', desc: '"Build My Maharashtra Trip" — सुलभ सहल नियोजन', link: '#trip-planner-section' },
+                  { num: '१२', title: 'Historical Route Explorer', icon: '🧭', desc: 'स्वराज्य राजधानी, वारी व अजिंठा-वेरूळ वारसा ट्रेल्स', link: '/forts/trails' },
+                  { num: '१३', title: 'Connect Community', icon: '👥', desc: 'मराठा डिजिटल समाज, चर्चा मंच व गट संवाद', link: '/community' },
+                  { num: '१४', title: 'Business Network (BNI-Style)', icon: '💼', desc: 'बिझनेस संगम, मराठा चॅप्टर्स व १-to-१ बैठका', link: '/sangam' },
+                  { num: '१५', title: 'Maharashtra Business Directory', icon: '🏢', desc: 'स्थानिक उद्योग, व्यावसायिक व तज्ज्ञ डिरेक्टरी', link: '/business/directory' },
+                  { num: '१६', title: 'Seva Platform', icon: '🤝', desc: '२४×७ रक्त मदत, शिक्षण साहाय्य व दुर्ग संवर्धन निधी', link: '/donation' },
+                  { num: '१७', title: 'Education & Knowledge', icon: '🎓', desc: 'करिअर, स्पर्धा परीक्षा व उच्च शिक्षण शिष्यवृत्ती', link: '/jobs' },
+                  { num: '१८', title: 'Maharashtra Knowledge Quiz', icon: '🧠', desc: 'दररोज ५ प्रश्न — इतिहास, किल्ले व संस्कृती महाक्विझ', link: '/quiz' },
+                  { num: '१९', title: 'Family History / Ancestry', icon: '🧬', desc: 'माझा कौटुंबिक इतिहास, कुलवृक्ष व मूळ गाव', link: '/universe' },
+                  { num: '२०', title: 'Oral History Archive', icon: '🎙️', desc: '"आमच्या गावात पूर्वी..." — मौखिक इतिहास व मुलाखती', link: '/community/oral-history' },
+                  { num: '२१', title: 'Maharashtra Memory Archive', icon: '📸', desc: 'दुर्मीळ छायाचित्रे, जुने दस्तऐवज व आठवणी दालन', link: '/gallery' },
+                  { num: '२२', title: 'Maharashtra Knowledge Feed', icon: '📰', desc: 'इतिहास आज, संशोधन व सांस्कृतिक वृत्तपत्रे', link: '/news' },
+                  { num: '२३', title: 'Digital Encyclopedia', icon: '📖', desc: 'मराठा महाज्ञानकोश — एका शोधात सर्व संबंधित माहिती', link: '/history/dnyankosh' },
+                  { num: '२४', title: 'Explore Maharashtra (Main Experience)', icon: '🔥', desc: 'सर्व घटकांची अखंड परस्पर जोडणी असणारे मुख्य दालन', link: '/universe' },
+                  { num: '२५', title: 'Maharashtra Knowledge Graph', icon: '🌐', desc: 'व्यक्ति ↔ प्रसंग ↔ ठिकाण ↔ गडकोट नातेसंबंध आलेख', link: '/history/knowledge-graph' },
+                  { num: '२६', title: 'Trust & Verification System', icon: '🔐', desc: 'Verified, Source-backed व "Suggest Correction"', link: '#trust-system-section' },
+                  { num: '२७', title: 'Contributor System', icon: '🏆', desc: 'इतिहास संशोधक, छायाचित्रकार व सेवा बॅजेस', link: '/dashboard' },
+                  { num: '२८', title: 'Connect Maratha Dashboard', icon: '📊', desc: 'जतन ठिकाणे, कॅलेंडर, व्यवसाय, रेफरल्स व गुण', link: '/dashboard' }
+                ].map((mod) => (
+                  <Link
+                    key={mod.num}
+                    to={mod.link.startsWith('#') ? undefined : mod.link}
+                    onClick={() => {
+                      if (mod.link === '#trip-planner-section') {
+                        document.getElementById('trip-planner-section')?.scrollIntoView({ behavior: 'smooth' });
+                      } else if (mod.link === '#trust-system-section') {
+                        document.getElementById('trust-system-section')?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    style={{
+                      background: '#FFFFFF',
+                      border: '1.5px solid #FED7AA',
+                      borderRadius: '12px',
+                      padding: '14px',
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <span style={{ fontSize: '1.6rem' }}>{mod.icon}</span>
+                        <span style={{ background: '#FFEDD5', color: '#C2410C', padding: '2px 8px', borderRadius: '12px', fontSize: '0.72rem', fontWeight: 800 }}>
+                          #{mod.num}
+                        </span>
+                      </div>
+                      <h4 style={{ margin: '0 0 4px', fontSize: '1rem', color: '#7C1D05', fontWeight: 800 }}>
+                        {mod.title}
+                      </h4>
+                      <p style={{ margin: 0, fontSize: '0.8rem', color: '#4B5563', lineHeight: 1.4 }}>
+                        {mod.desc}
+                      </p>
+                    </div>
+                    <div style={{ marginTop: '10px', fontSize: '0.78rem', color: '#C2410C', fontWeight: 800, textAlign: 'right' }}>
+                      उघडा →
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* PART 3: "BUILD MY MAHARASHTRA TRIP" (FEATURE 11) */}
+            <div id="trip-planner-section" style={{ background: '#FFFDF9', border: '2px solid #FED7AA', borderRadius: '20px', padding: '28px', marginBottom: '40px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#0F766E', fontWeight: 800, textTransform: 'uppercase' }}>
+                    FEATURE 11 • MAHARASHTRA TOURISM ITINERARY ENGINE
+                  </span>
+                  <h3 style={{ fontSize: '1.6rem', color: '#115E59', fontWeight: 900, margin: '2px 0 0' }}>
+                    🌄 "Build My Maharashtra Trip" — ऐतिहासिक व सांस्कृतिक सहल नियोजन
+                  </h3>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.9rem', color: '#134E4A' }}>
+                    कालावधी व विभाग निवडा आणि तयार वारसा मार्ग, किल्ले, राहण्याची ठिकाणे व खाद्यपदार्थांची शिफारस मिळवा:
+                  </p>
+                </div>
+              </div>
+
+              {/* Trip Selection Pills */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '22px' }}>
+                {MAHARASHTRA_TRIP_SUGGESTIONS.map((trip) => {
+                  const isSel = selectedTripPlan === trip.id;
+                  return (
+                    <button
+                      key={trip.id}
+                      onClick={() => setSelectedTripPlan(trip.id)}
+                      style={{
+                        background: isSel ? '#0F766E' : '#FFFFFF',
+                        color: isSel ? '#FFFFFF' : '#134E4A',
+                        border: isSel ? '1.5px solid #0F766E' : '1.5px solid #CCFBF1',
+                        padding: '10px 18px',
+                        borderRadius: '24px',
+                        fontWeight: 800,
+                        fontSize: '0.88rem',
+                        cursor: 'pointer',
+                        boxShadow: isSel ? '0 4px 12px rgba(15, 118, 110, 0.25)' : 'none'
+                      }}
+                    >
+                      {trip.title} ({trip.duration})
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Active Trip Details */}
+              {(() => {
+                const trip = MAHARASHTRA_TRIP_SUGGESTIONS.find(t => t.id === selectedTripPlan) || MAHARASHTRA_TRIP_SUGGESTIONS[0];
+                return (
+                  <div style={{ background: '#FFFFFF', border: '1.5px solid #CCFBF1', borderRadius: '16px', padding: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+                      <div>
+                        <h4 style={{ margin: 0, fontSize: '1.35rem', color: '#0F766E', fontWeight: 900 }}>{trip.title}</h4>
+                        <span style={{ fontSize: '0.84rem', color: '#6B7280' }}>प्रदेश: {trip.region} | शिफारस: {trip.idealFor}</span>
+                      </div>
+                      <Link to="/forts/trails" style={{ background: '#0F766E', color: '#FFFFFF', padding: '8px 16px', borderRadius: '8px', fontSize: '0.84rem', fontWeight: 700, textDecoration: 'none' }}>
+                        पूर्ण GPS ट्रेक मार्ग उघडा 🧭
+                      </Link>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px', marginBottom: '18px' }}>
+                      {trip.itinerary.map((d, i) => (
+                        <div key={i} style={{ background: '#F0FDFA', border: '1px solid #CCFBF1', borderRadius: '10px', padding: '14px' }}>
+                          <strong style={{ color: '#0F766E', fontSize: '0.95rem' }}>{d.day}:</strong>
+                          <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#134E4A', lineHeight: 1.5 }}>{d.spots}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '0.85rem', borderTop: '1px dashed #CCFBF1', paddingTop: '14px' }}>
+                      <div>🏨 <strong>मुक्काम शिफारस:</strong> {trip.stayRecommendation}</div>
+                      <div>🍲 <strong>खाद्य वैशिष्ट्ये:</strong> {trip.foodHighlights}</div>
+                      <div>🏰 <strong>समाविष्ट किल्ले:</strong> {trip.forts.join(', ')}</div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* PART 4: TRUST & VERIFICATION SYSTEM (FEATURE 26) */}
+            <div id="trust-system-section" style={{ background: '#FFFDF9', border: '2px solid #FED7AA', borderRadius: '20px', padding: '28px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '18px' }}>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#166534', fontWeight: 800, textTransform: 'uppercase' }}>
+                    FEATURE 26 • TRUST & VERIFICATION ENGINE
+                  </span>
+                  <h3 style={{ fontSize: '1.5rem', color: '#14532D', fontWeight: 900, margin: '2px 0 0' }}>
+                    🔐 सत्यनिष्ठ पडताळणी चौकट व संदर्भ मानांकन
+                  </h3>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.88rem', color: '#166534' }}>
+                    अपुऱ्या किंवा अनिश्चित ऐतिहासिक दाव्यांना वस्तुनिष्ठ पुराव्यांपासून वेगळे ठेवणारी ५-स्तरीय चौकट:
+                  </p>
+                </div>
+                <button
+                  onClick={() => { setUniverseCorrectionModal(true); setUniverseCorrectionSent(false); }}
+                  style={{ background: '#15803D', color: '#FFFFFF', border: 'none', padding: '9px 18px', borderRadius: '10px', fontWeight: 800, fontSize: '0.85rem', cursor: 'pointer' }}
+                >
+                  ✍️ सुधारणा / संदर्भ नोंदवा (Suggest Correction)
+                </button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+                {Object.entries(TRUST_STATUS_MAP).map(([k, v]) => (
+                  <div key={k} style={{ background: '#FFFFFF', border: '1.5px solid ' + v.badgeColor + '40', borderRadius: '12px', padding: '14px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                      <span>{v.icon}</span>
+                      <strong style={{ color: v.badgeColor, fontSize: '0.9rem' }}>{v.label}</strong>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '0.78rem', color: '#4B5563', lineHeight: 1.4 }}>
+                      {v.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
 
         {activeTab === 'master-map' && (
           <section style={{

@@ -4,6 +4,7 @@ const moviesData = [
   {
     id: 1,
     title: 'छावा (Chhaava)',
+    image: '/assets/images/real-sambhaji-photo.jpg',
     year: '२०२४',
     category: 'ऐतिहासिक',
     rating: '⭐ ४.७',
@@ -15,6 +16,7 @@ const moviesData = [
   {
     id: 2,
     title: 'संभाजी महाराज',
+    image: '/assets/images/real-sambhaji-portrait.png',
     year: '२०२३',
     category: 'शिवचरित्र',
     rating: '⭐ ४.६',
@@ -26,6 +28,7 @@ const moviesData = [
   {
     id: 3,
     title: 'मी शिवाजीराजे भोसले बोलतोय',
+    image: '/assets/images/history/coronation.jpg',
     year: '२००९',
     category: 'प्रेरणादायी',
     rating: '⭐ ९.०',
@@ -37,6 +40,7 @@ const moviesData = [
   {
     id: 4,
     title: 'नटसम्राट',
+    image: '/assets/images/movies/movie_natasamrat.jpg',
     year: '२०१६',
     category: 'ड्रामा',
     rating: '⭐ ९.१',
@@ -48,6 +52,7 @@ const moviesData = [
   {
     id: 5,
     title: 'सैराट',
+    image: '/assets/images/movies/movie_sairat.jpg',
     year: '२०१६',
     category: 'ड्रामा',
     rating: '⭐ ८.८',
@@ -59,6 +64,7 @@ const moviesData = [
   {
     id: 6,
     title: 'फर्जंद',
+    image: '/assets/images/movies/movie_farzand.jpg',
     year: '२०१८',
     category: 'युद्ध',
     rating: '⭐ ४.३',
@@ -70,6 +76,7 @@ const moviesData = [
   {
     id: 7,
     title: 'पानिपत',
+    image: '/assets/images/battles/panipat.jpg',
     year: '२०१९',
     category: 'युद्ध',
     rating: '⭐ ४.४',

@@ -5,6 +5,7 @@ const speakersData = [
   {
     id: 1,
     name: 'डॉ. अतुल जगदाळे',
+    image: '/assets/images/speakers/speaker_shivaji.jpg',
     title: 'ज्येष्ठ प्रेरणादायी वक्ते',
     topics: 'यश, आत्मविश्वास, नेतृत्व & व्यक्तिमत्व विकास',
     city: 'पुणे, महाराष्ट्र',
@@ -16,6 +17,7 @@ const speakersData = [
   {
     id: 2,
     name: 'सौ. मृणालिनी काठे',
+    image: '/assets/images/people/anandibai.jpg',
     title: 'युवा प्रेरक वक्त्या & समुपदेशक',
     topics: 'विद्यार्थी प्रेरणा, करिअर नियोजन, ध्येय निश्चिती',
     city: 'मुंबई, महाराष्ट्र',
@@ -27,6 +29,7 @@ const speakersData = [
   {
     id: 3,
     name: 'श्री. संदीप वाघ',
+    image: '/assets/images/speakers/speaker_sandip.jpg',
     title: 'बिझनेस मोटिवेशन & ग्रोथ कोच',
     topics: 'व्यवसाय वाढ, विक्री कौशल्य, उद्योजकीय मानसिकता',
     city: 'नाशिक, महाराष्ट्र',
@@ -38,6 +41,7 @@ const speakersData = [
   {
     id: 4,
     name: 'स्वामी समर्थानंद',
+    image: '/assets/images/speakers/speaker_indurikar.jpg',
     title: 'आध्यात्मिक मार्गदर्शक व विचारवंत',
     topics: 'जीवन परिवर्तन, मनःशांती, सकारात्मक विचारसरणी',
     city: 'कोल्हापूर, महाराष्ट्र',
@@ -49,6 +53,7 @@ const speakersData = [
   {
     id: 5,
     name: 'प्रा. विजय भोसले',
+    image: '/assets/images/speakers/speaker_vishwas.jpg',
     title: 'शिक्षण तज्ञ व स्पर्धा परीक्षा मार्गदर्शक',
     topics: 'UPSC/MPSC तयारी, गुणवत्तापूर्ण शिक्षण, प्रशासन',
     city: 'छत्रपती संभाजीनगर, महाराष्ट्र',

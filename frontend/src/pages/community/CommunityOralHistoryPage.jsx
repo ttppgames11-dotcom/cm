@@ -5,6 +5,7 @@ import { SOURCE_TIERS, CONFIDENCE_LEVELS } from '../../data/heritageKnowledgeGra
 const INITIAL_COMMUNITY_STORIES = [
   {
     id: 'comm_1',
+    image: '/assets/images/real-sahyadri-forest.jpg',
     title: 'किल्ले वासोटा परिसरातील चकवा आख्यायिका व गुराख्यांची लोककथा',
     author: 'आनंदराव मोरे (जावळी, सातारा)',
     village: 'बामणोली / वासोटा पायथा',
@@ -18,6 +19,7 @@ const INITIAL_COMMUNITY_STORIES = [
   },
   {
     id: 'comm_2',
+    image: '/assets/images/real-sindhudurg-fort.jpg',
     title: 'आंगणेवाडी भराडीदेवी मंदिराच्या जत्रेतील कौल लावण्याची १५० वर्षांची परंपरा',
     author: 'सुधाकर आंगणे (मालवण)',
     village: 'आंगणेवाडी, जि. सिंधुदुर्ग',
@@ -31,6 +33,7 @@ const INITIAL_COMMUNITY_STORIES = [
   },
   {
     id: 'comm_3',
+    image: '/assets/images/real-farmer-field.jpg',
     title: 'विदर्भातील पोळा सणात बैलांच्या झुलवर काढली जाणारी पारंपरिक चित्रे',
     author: 'गणेशराव देशमुख (अमरावती)',
     village: 'चांदूर बाजार, जि. अमरावती',
@@ -145,7 +148,7 @@ export default function CommunityOralHistoryPage() {
       
       {/* Hero Header */}
       <section style={{
-        background: 'linear-gradient(135deg, #7C1D05 0%, #B91C1C 60%, #E65100 100%)',
+        background: "linear-gradient(rgba(124, 29, 5, 0.88), rgba(230, 81, 0, 0.92)), url('/assets/images/apla-maharashtra-gallery.jpg') center/cover no-repeat",
         color: '#FFFFFF',
         padding: '48px 20px 36px',
         borderBottom: '4px solid #F59E0B'

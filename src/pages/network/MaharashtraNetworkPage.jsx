@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 const DEFAULT_NETWORK_DIVISIONS = [
   {
     id: 'pune',
+    image: '/assets/images/real-shaniwar-wada.jpg',
     name: 'पुणे विभाग (पश्चिम महाराष्ट्र)',
     hq: 'शनिवार वाडा परिसर, पुणे',
     totalMembers: '१,८५,०००+',
@@ -22,6 +23,7 @@ const DEFAULT_NETWORK_DIVISIONS = [
   },
   {
     id: 'kokan',
+    image: '/assets/images/real-sindhudurg-fort.jpg',
     name: 'कोकण विभाग (सागरी आरमार व मुंबई महाक्षेत्र)',
     hq: 'दादर / नरिमन पॉईंट, मुंबई',
     totalMembers: '१,४०,०००+',
@@ -40,6 +42,7 @@ const DEFAULT_NETWORK_DIVISIONS = [
   },
   {
     id: 'sambhajinagar',
+    image: '/assets/images/maratha-kranti-morcha.jpg',
     name: 'छत्रपती संभाजीनगर विभाग (मराठवाडा)',
     hq: 'सिडको, छत्रपती संभाजीनगर',
     totalMembers: '९५,०००+',

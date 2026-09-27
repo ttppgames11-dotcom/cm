@@ -26,7 +26,7 @@ export default function MarathaNavyPage() {
           position: 'relative',
           borderRadius: '20px',
           overflow: 'hidden',
-          background: 'linear-gradient(135deg, #0A192F 0%, #1E3A8A 50%, #0F172A 100%)',
+          background: "linear-gradient(rgba(10, 25, 47, 0.85), rgba(15, 23, 42, 0.9)), url('/assets/images/real-sindhudurg-fort.jpg') center/cover no-repeat",
           color: '#FFF',
           padding: '44px 32px',
           border: '2px solid #DD8A2E',
@@ -64,7 +64,12 @@ export default function MarathaNavyPage() {
         {/* Navy Leaders */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', marginBottom: '36px' }}>
           <div style={{ background: '#FFF', borderRadius: '16px', padding: '24px', border: '1px solid #E6DDCE', boxShadow: '0 4px 16px rgba(0,0,0,0.05)' }}>
-            <div style={{ fontSize: '2rem', marginBottom: '8px' }}>⚓</div>
+            <div style={{ height: '180px', margin: '-24px -24px 16px -24px', overflow: 'hidden', borderRadius: '16px 16px 0 0', position: 'relative' }}>
+              <img src="/assets/images/warriors/kanhoji_angre.jpg" alt="सरखेल कान्होजी आंग्रे" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/real-kanhoji-angre.jpg'; }} />
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)', padding: '6px 12px' }}>
+                <span style={{ color: '#FDE047', fontSize: '0.78rem', fontWeight: 800 }}>⚓ मराठा आरमाराचे सरखेल</span>
+              </div>
+            </div>
             <h3 style={{ fontFamily: "'Baloo 2', sans-serif", fontSize: '1.25rem', color: '#1E3A8A', margin: '0 0 6px' }}>
               सरखेल कान्होजी आंग्रे (१६६९–१७२९)
             </h3>
@@ -77,7 +82,12 @@ export default function MarathaNavyPage() {
           </div>
 
           <div style={{ background: '#FFF', borderRadius: '16px', padding: '24px', border: '1px solid #E6DDCE', boxShadow: '0 4px 16px rgba(0,0,0,0.05)' }}>
-            <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🗡️</div>
+            <div style={{ height: '180px', margin: '-24px -24px 16px -24px', overflow: 'hidden', borderRadius: '16px 16px 0 0', position: 'relative' }}>
+              <img src="/assets/images/real-kanhoji-angre.jpg" alt="मायनाक भंडारी" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/real-sindhudurg-fort.jpg'; }} />
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)', padding: '6px 12px' }}>
+                <span style={{ color: '#FDE047', fontSize: '0.78rem', fontWeight: 800 }}>⚔️ शिवकालीन आरमारी सेनापती</span>
+              </div>
+            </div>
             <h3 style={{ fontFamily: "'Baloo 2', sans-serif", fontSize: '1.25rem', color: '#1E3A8A', margin: '0 0 6px' }}>
               मायनाक भंडारी व दर्यासारंग दौलत खान
             </h3>

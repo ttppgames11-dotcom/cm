@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import apiClient from '../../services/apiClient';
 
 const productsData = [
-  { id: 1, name: 'ताजे गाईचे दूध (५०० मि.ली.)', size: '500 ml', price: '₹२८', category: 'दूध', icon: '🥛', fat: '३.८% फॅट' },
+  { id: 1, name: 'ताजे गाईचे दूध (५०० मि.ली.)',
+    image: '/assets/images/dairy/dairy_milk.jpg', size: '500 ml', price: '₹२८', category: 'दूध', icon: '🥛', fat: '३.८% फॅट' },
   { id: 2, name: 'ताजे गाईचे दूध (१ लिटर)', size: '1 Litre', price: '₹५४', category: 'दूध', icon: '🥛', fat: '३.८% फॅट' },
-  { id: 3, name: 'ताजे गोड दही (५०० ग्रॅम)', size: '500 gm', price: '₹३०', category: 'दही', icon: '🥣', fat: 'नैसर्गिक चव' },
-  { id: 4, name: 'शुद्ध मलाई पनीर (२०० ग्रॅम)', size: '200 gm', price: '₹३०', category: 'पनीर', icon: '🧀', fat: 'उच्च प्रोटिन' },
-  { id: 5, name: 'शुद्ध गाईचे तूप (५०० मि.ली.)', size: '500 ml', price: '₹३२०', category: 'तूप', icon: '🧈', fat: 'पारंपरिक दाणेदार' },
-  { id: 6, name: 'मसाला ताक / लस्सी (२५० मि.ली.)', size: '250 ml', price: '₹२५', category: 'लस्सी / ताक', icon: '🥤', fat: 'थंडगार पाचक' }
+  { id: 3, name: 'ताजे गोड दही (५०० ग्रॅम)',
+    image: '/assets/images/dairy/dairy_shrikhand.jpg', size: '500 gm', price: '₹३०', category: 'दही', icon: '🥣', fat: 'नैसर्गिक चव' },
+  { id: 4, name: 'शुद्ध मलाई पनीर (२०० ग्रॅम)',
+    image: '/assets/images/dairy/dairy_paneer.jpg', size: '200 gm', price: '₹३०', category: 'पनीर', icon: '🧀', fat: 'उच्च प्रोटिन' },
+  { id: 5, name: 'शुद्ध गाईचे तूप (५०० मि.ली.)',
+    image: '/assets/images/dairy/dairy_ghee.jpg', size: '500 ml', price: '₹३२०', category: 'तूप', icon: '🧈', fat: 'पारंपरिक दाणेदार' },
+  { id: 6, name: 'मसाला ताक / लस्सी (२५० मि.ली.)',
+    image: '/assets/images/dairy/dairy_butter.jpg', size: '250 ml', price: '₹२५', category: 'लस्सी / ताक', icon: '🥤', fat: 'थंडगार पाचक' }
 ];
 
 const collectionCentersData = [

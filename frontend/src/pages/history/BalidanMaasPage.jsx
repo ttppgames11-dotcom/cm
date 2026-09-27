@@ -21,7 +21,7 @@ export default function BalidanMaasPage() {
           position: 'relative',
           borderRadius: '20px',
           overflow: 'hidden',
-          background: 'linear-gradient(135deg, #2A0709 0%, #4A0E17 60%, #1A0407 100%)',
+          background: "linear-gradient(rgba(42, 7, 9, 0.88), rgba(26, 4, 7, 0.95)), url('/assets/images/balidan-maas-memorial.jpg') center/cover no-repeat",
           color: '#FFF',
           padding: '44px 32px',
           border: '2px solid #DD8A2E',
@@ -90,8 +90,10 @@ export default function BalidanMaasPage() {
         {/* 3 Pillars of Balidan Maas */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', marginBottom: '36px' }}>
           
-          <div style={{ background: '#FFF', borderRadius: '16px', padding: '24px', border: '1px solid #E6DDCE', boxShadow: '0 6px 20px rgba(0,0,0,0.05)', borderTop: '4px solid #DD8A2E' }}>
-            <div style={{ fontSize: '2.2rem', marginBottom: '10px' }}>⚔️</div>
+          <div style={{ background: '#FFF', borderRadius: '16px', padding: '24px', border: '1px solid #E6DDCE', boxShadow: '0 6px 20px rgba(0,0,0,0.05)', borderTop: '4px solid #DD8A2E', overflow: 'hidden' }}>
+            <div style={{ height: '160px', margin: '-24px -24px 16px -24px', overflow: 'hidden' }}>
+              <img src="/assets/images/real-sambhaji-photo.jpg" alt="छत्रपती संभाजी महाराज" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/balidan-maas-memorial.jpg'; }} />
+            </div>
             <h3 style={{ fontFamily: "'Baloo 2', sans-serif", fontSize: '1.25rem', color: '#3D0D0D', margin: '0 0 8px' }}>
               १२८ लढायांमध्ये अपराजित
             </h3>

@@ -219,6 +219,7 @@ export default function AIAssistantWidget() {
         <button
           onClick={() => setIsOpen(true)}
           title="Connect Maratha AI Agent"
+          className="cm-ai-assistant-fab"
           style={{
             position: 'fixed',
             bottom: '24px',
@@ -242,7 +243,7 @@ export default function AIAssistantWidget() {
           onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
           onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}>
           <span style={{ fontSize: '1.25rem' }}>🚩</span>
-          <span>विचारणा करा (AI सहाय्यक)</span>
+          <span className="cm-ai-fab-text">विचारणा करा (AI सहाय्यक)</span>
           <span style={{
             width: '10px',
             height: '10px',
@@ -255,23 +256,25 @@ export default function AIAssistantWidget() {
 
       {/* Floating Chat Modal (Strict White & Bhagwa Theme) */}
       {isOpen && (
-        <div style={{
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          width: '400px',
-          maxWidth: 'calc(100vw - 32px)',
-          height: '560px',
-          maxHeight: 'calc(100vh - 48px)',
-          zIndex: 9999,
-          background: '#FFFFFF',
-          border: '2px solid #EA580C',
-          borderRadius: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-          boxShadow: '0 20px 50px rgba(234, 88, 12, 0.25)',
-          overflow: 'hidden'
-        }}>
+        <div
+          className="cm-ai-chat-modal"
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            width: '400px',
+            maxWidth: 'calc(100vw - 32px)',
+            height: '560px',
+            maxHeight: 'calc(100vh - 48px)',
+            zIndex: 9999,
+            background: '#FFFFFF',
+            border: '2px solid #EA580C',
+            borderRadius: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            boxShadow: '0 20px 50px rgba(234, 88, 12, 0.25)',
+            overflow: 'hidden'
+          }}>
           {/* Header */}
           <div style={{
             background: 'linear-gradient(135deg, #EA580C 0%, #D97706 60%, #C2410C 100%)',

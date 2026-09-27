@@ -11,7 +11,7 @@ export default function SymbolsPage() {
       name: 'दांडपट्टा (The Gauntlet Sword)',
       subtitle: 'मराठा सैन्याचे सर्वात संहारक व अद्वितीय अस्त्र',
       icon: '🗡️',
-      image: 'https://images.unsplash.com/photo-1595590424283-b8f17842773f?w=600',
+      image: '/assets/images/weapons/dandpatta.jpg',
       description: 'दांडपट्टा हे मराठा पायदळाचे अत्यंत वेगवान व घातक शस्त्र होते. हाताच्या मनगटापासून कोपरापर्यंत पोलादी आवरण (Gauntlet) घालून फिरवले जाणारे हे शस्त्र एकाच वेळी शेकडो शत्रू फौजेत तुटून पडण्यासाठी वापरले जाई. बाजीप्रभू देशपांडे आणि तानाजी मालुसरे यांसारख्या वीरांनी दांडपट्ट्याच्या जोरावर अद्वितीय शौर्य गाजवले.',
       specs: [
         { label: 'लांबी', value: '३.५ ते ४.५ फूट लवचिक पोलाद' },
@@ -24,7 +24,7 @@ export default function SymbolsPage() {
       name: 'वाघनखे (Tiger Claws)',
       subtitle: 'प्रतापगडाच्या पायथ्याशी इतिहास घडवणारे गुप्त शस्त्र',
       icon: '🐾',
-      image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=600',
+      image: '/assets/images/weapons/waghnakh.jpg',
       description: 'हाताच्या तळव्यात सहज लपवून ठेवता येणारे चार पोलादी नख्यांचे हे शस्त्र. १० नोव्हेंबर १६५९ रोजी छत्रपती शिवाजी महाराजांनी बलाढ्य अफझलखानाचा कोथळा बाहेर काढण्यासाठी या अस्त्राचा वापर केला. अलीकडेच लंडनमधील व्हिक्टोरिया अँड अल्बर्ट संग्रहालयातून ही ऐतिहासिक वाघनखे महाराष्ट्रात प्रदर्शनासाठी आणली गेली आहेत.',
       specs: [
         { label: 'रचना', value: 'चार तीक्ष्ण वक्राकार पोलादी नखे व दोन अंगठ्या' },
@@ -37,7 +37,7 @@ export default function SymbolsPage() {
       name: 'भवानी तलवार (Bhavani Sword)',
       subtitle: 'छत्रपती शिवरायांची पवित्र व अजिंक्य तलवार',
       icon: '⚔️',
-      image: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600',
+      image: '/assets/images/weapons/bhavani_talwar.jpg',
       description: 'तुळजाभवानी मातेच्या आशीर्वादाने पूजलेली भवानी तलवार ही स्वराज्याची प्राणज्योत मानली जाते. उत्तम दर्जाच्या स्पॅनिश टोलेडो पोलादाची ही तलवार अत्यंत संतुलित व तीक्ष्ण होती. शिवरायांच्या हस्ते या तलवारीने अनेक लढाया जिंकल्या आणि अन्यायाचा निःपात केला.',
       specs: [
         { label: 'पोलाद', value: 'उच्च दर्जाचे दमास्कस / टोलेडो कार्बन स्टील' },
@@ -50,7 +50,7 @@ export default function SymbolsPage() {
       name: 'शिवराई व होन नाणी (Swarajya Coinage)',
       subtitle: 'सार्वभौम स्वतंत्र अर्थव्यवस्थेचे सुवर्ण चिन्ह',
       icon: '🪙',
-      image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600',
+      image: '/assets/images/real-shivrai-coin.jpg',
       description: '६ जून १६७४ रोजी झालेल्या शिवराज्याभिषेकानंतर शिवरायांनी मुघल व विजापुरी नाणी नाकारून स्वतःची सोन्याची "होन" आणि तांब्याची "शिवराई" ही स्वतंत्र नाणी पाडली. नाण्यांच्या एका बाजूला "श्री राजा शिव" आणि दुसऱ्या बाजूला "छत्रपति" ही देवनागरी अक्षरे कोरलेली होती.',
       specs: [
         { label: 'लिपी', value: 'शुद्ध देवनागरी अक्षरे' },
@@ -456,13 +456,13 @@ export default function SymbolsPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
             <div
               onClick={() => setLightboxImage({
-                url: 'https://wallpapercave.com/wp/wp4518353.jpg',
+                url: '/assets/images/history/coronation.jpg',
                 caption: 'शिवराज्याभिषेक सोहळा (६ जून १६७४)',
                 source: 'रायगडावरील सुवर्ण सिंहासनाधिष्ठित सोहळा — राजमुद्रेची अधिकृत घोषणा'
               })}
               style={{ background: '#fff', borderRadius: '14px', overflow: 'hidden', border: '1px solid #e7e5e4', cursor: 'pointer', transition: 'transform 0.2s' }}
             >
-              <img src="https://wallpapercave.com/wp/wp4518353.jpg" alt="शिवराज्याभिषेक" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
+              <img src="/assets/images/history/coronation.jpg" alt="शिवराज्याभिषेक" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
               <div style={{ padding: '14px 18px' }}>
                 <div style={{ fontWeight: 700, color: '#450a0a', fontSize: '1rem', fontFamily: 'Baloo 2' }}>
                   राज्याभिषेक सोहळा
@@ -475,13 +475,13 @@ export default function SymbolsPage() {
 
             <div
               onClick={() => setLightboxImage({
-                url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800',
+                url: '/assets/images/battles/pratapgad.jpg',
                 caption: 'अस्सल १८ व्या शतकातील भित्तीचित्र',
                 source: 'भगवा ध्वज घेऊन रणांगणात उतरलेले मराठा सैन्य'
               })}
               style={{ background: '#fff', borderRadius: '14px', overflow: 'hidden', border: '1px solid #e7e5e4', cursor: 'pointer', transition: 'transform 0.2s' }}
             >
-              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800" alt="भगवा ध्वज मोहीम" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
+              <img src="/assets/images/battles/pratapgad.jpg" alt="भगवा ध्वज मोहीम" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
               <div style={{ padding: '14px 18px' }}>
                 <div style={{ fontWeight: 700, color: '#450a0a', fontSize: '1rem', fontFamily: 'Baloo 2' }}>
                   भगवा ध्वज मोहीम
@@ -494,13 +494,13 @@ export default function SymbolsPage() {
 
             <div
               onClick={() => setLightboxImage({
-                url: 'https://images.unsplash.com/photo-1595590424283-b8f17842773f?w=800',
+                url: '/assets/images/weapons/dandpatta.jpg',
                 caption: 'राजा दिनकर केळकर संग्रहालय, पुणे',
                 source: 'अस्सल मराठा शस्त्रास्त्रे, दांडपट्टे, चिलखत व वाघनखे संग्रह'
               })}
               style={{ background: '#fff', borderRadius: '14px', overflow: 'hidden', border: '1px solid #e7e5e4', cursor: 'pointer', transition: 'transform 0.2s' }}
             >
-              <img src="https://images.unsplash.com/photo-1595590424283-b8f17842773f?w=800" alt="केळकर संग्रहालय" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
+              <img src="/assets/images/weapons/dandpatta.jpg" alt="केळकर संग्रहालय" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
               <div style={{ padding: '14px 18px' }}>
                 <div style={{ fontWeight: 700, color: '#450a0a', fontSize: '1rem', fontFamily: 'Baloo 2' }}>
                   तलवार-ढाल शस्त्रागार

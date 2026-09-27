@@ -41,6 +41,8 @@ export default function SiteFooter() {
               इतिहास व वारसा
             </h3>
             <ul style={{ listStyle: 'none', padding: 0 }}>
+              <li style={{ marginBottom: '8px' }}><Link to="/article/babasaheb-purandare-shivcharitra-kathan-bhag-1" style={{ color: '#FDE047', fontWeight: 700, textDecoration: 'none' }}>🚩 शिवचरित्र कथन (१० भाग)</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/history/granthalaya" style={{ color: '#FFFFFF', textDecoration: 'none' }}>📚 मराठा महाग्रंथालय व बखरी</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/history" style={{ color: '#FFFFFF', textDecoration: 'none' }}>📜 मराठा इतिहास कालपट</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/culture" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🌍 ८ प्रादेशिक सांस्कृतिक प्रोफाइल</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/culture/dialects" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🗣️ महाराष्ट्राच्या बोली व उच्चार</Link></li>
@@ -93,7 +95,7 @@ export default function SiteFooter() {
             ॥ जय भवानी, जय शिवाजी ॥ प्रौढ प्रताप पुरंधर क्षत्रियकुलावतंस सिंहासनाधीश्वर छत्रपती शिवाजी महाराज की जय!
           </p>
           <p className="footer-admin" style={{ fontSize: '0.75rem', marginTop: '8px' }}>
-            <Link to="/admin" style={{ color: '#FFF3E0', opacity: 0.9 }}>CRM Console</Link> | <Link to="/admin/cms" style={{ color: '#FFE082', fontWeight: 700 }}>🎨 CMS डेटा संपादन</Link> | <Link to="/governance" style={{ color: '#FFF3E0', opacity: 0.9 }}>Master Blueprint</Link> | <Link to="/login" style={{ color: '#FFF3E0', opacity: 0.9 }}>लॉगिन</Link>
+            <Link to="/governance" style={{ color: '#FFF3E0', opacity: 0.9 }}>DPDP धोरण व सनद</Link> | <Link to="/blueprint" style={{ color: '#FFF3E0', opacity: 0.9 }}>Master Blueprint</Link> | <Link to="/contact" style={{ color: '#FFF3E0', opacity: 0.9 }}>मदत व संपर्क</Link> | <Link to="/login" style={{ color: '#FFF3E0', opacity: 0.9 }}>सभासद लॉगिन</Link>
           </p>
         </div>
       </footer>
