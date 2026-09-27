@@ -364,26 +364,13 @@ export default function SiteHeader({ onOpenSearch }) {
               to="/universe"
               onClick={handleLinkClick}
               className="btn universe-btn"
-              style={{
-                background: 'linear-gradient(135deg, #7C1D05 0%, #C2410C 100%)',
-                color: '#FFFFFF',
-                border: 'none',
-                fontWeight: 800,
-                padding: '7px 13px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                boxShadow: '0 2px 8px rgba(124, 29, 5, 0.25)'
-              }}
               title="Connect Maratha — Expanded Feature Universe (४९ वैशिष्ट्ये • १२ जग • परस्पर जोडणी)">
               <span>🌌</span>
               <span className="universe-btn-text">महाविश्व</span>
             </Link>
 
             {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo') && (
-              <div className="admin-header-btns" style={{ display: 'inline-flex', gap: '6px' }}>
+              <div className="admin-header-btns">
                 {user.role === 'superadmin' && (
                   <Link
                     to="/superadmin"
@@ -406,7 +393,7 @@ export default function SiteHeader({ onOpenSearch }) {
             )}
 
             {user && user.id ? (
-              <div className="user-header-btns" style={{ display: 'inline-flex', gap: '6px', alignItems: 'center' }}>
+              <div className="user-header-btns">
                 <Link to="/card" className="btn btn-outline header-card-btn" onClick={handleLinkClick} title="माझे डिजिटल सभासद ओळखपत्र">
                   🪪 <span className="header-btn-text">माझे कार्ड</span>
                 </Link>
@@ -416,23 +403,12 @@ export default function SiteHeader({ onOpenSearch }) {
                 <button
                   onClick={logout}
                   className="btn btn-outline header-logout-btn"
-                  title="खात्यातून बाहेर पडा (Logout)"
-                  style={{
-                    padding: '7px 11px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                    color: '#DC2626',
-                    borderColor: '#FCA5A5',
-                    background: '#FEF2F2',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}>
+                  title="खात्यातून बाहेर पडा (Logout)">
                   🚪 <span className="header-btn-text">बाहेर पडा</span>
                 </button>
               </div>
             ) : (
-              <div className="guest-header-btns" style={{ display: 'inline-flex', gap: '6px' }}>
+              <div className="guest-header-btns">
                 <Link to="/login" className="btn btn-outline" onClick={handleLinkClick}>
                   👤 <span className="header-btn-text">लॉगिन</span>
                 </Link>

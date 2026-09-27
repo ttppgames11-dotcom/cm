@@ -1793,7 +1793,10 @@ h3, .h3 {
 
 @media (max-width: 768px) {
   .header-card-btn,
-  .header-logout-btn {
+  .header-logout-btn,
+  .universe-btn,
+  .admin-header-btns,
+  .guest-header-btns .btn-primary {
     display: none !important;
   }
 }
@@ -1802,29 +1805,39 @@ h3, .h3 {
   .site-header-inner {
     padding: 8px 12px;
     gap: 8px;
+    flex-wrap: nowrap;
+    justify-content: space-between;
   }
   .brand-logo {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
   }
   .brand-titles .brand-main {
-    font-size: 1.1rem !important;
+    font-size: 1.05rem !important;
   }
   .brand-titles .brand-sub {
-    font-size: 0.62rem !important;
+    font-size: 0.6rem !important;
   }
   .header-actions {
-    gap: 6px;
-  }
-  .universe-btn {
-    padding: 6px 10px !important;
-  }
-  .universe-btn-text {
-    display: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
   }
   .header-actions .btn {
     padding: 6px 10px !important;
     font-size: 0.78rem !important;
+  }
+  .header-search-btn {
+    width: 35px !important;
+    height: 35px !important;
+    font-size: 0.95rem !important;
+  }
+  .mobile-hamburger-btn {
+    display: inline-flex !important;
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 1.2rem !important;
   }
 }
 

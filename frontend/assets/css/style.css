@@ -3188,32 +3188,40 @@ section {
 
 @media (max-width: 640px) {
   .site-header-inner {
-    grid-template-columns: 1fr;
-    gap: 10px;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    padding: 8px 12px !important;
   }
 
   .brand-desktop {
-    width: 100%;
+    width: auto !important;
+    flex-shrink: 0 !important;
   }
 
   .header-actions {
-    width: 100%;
-    justify-content: flex-end;
+    width: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
   }
 
   .header-actions .btn {
-    padding-left: 14px !important;
-    padding-right: 14px !important;
-    font-size: 0.82rem !important;
+    padding: 6px 10px !important;
+    font-size: 0.78rem !important;
   }
 
   .brand-desktop .brand-main {
-    font-size: 1.2rem;
+    font-size: 1.05rem !important;
   }
 
   .brand-desktop .brand-sub {
-    max-width: 100%;
-    white-space: normal;
+    font-size: 0.6rem !important;
   }
 }
 
