@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { FORTS_DATABASE } from '../../data/forts350Data';
+import { FORT_HISTORICAL_DETAILS } from '../../data/fortHistoryDetails';
 
 const DIVISION_FILTERS = [
   { id: 'all', label: 'सर्व विभाग' },
@@ -190,9 +191,11 @@ export default function FortsMapPage() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
               {DIVISION_FILTERS.map((d) => {
                 const isSelected = selectedDiv === d.id;
-                const count = d.id === 'all' 
-                  ? FORTS_DATABASE.length 
-                  : FORTS_DATABASE.filter(f => f.division === d.id).length;
+                // Count forts in this division under current active category
+                const count = d.id === 'all'
+                  ? (activeType === 'all' ? FORTS_DATABASE.length : (activeType === 'unesco' ? FORTS_DATABASE.filter(f => f.isUnesco).length : FORTS_DATABASE.filter(f => f.type === activeType).length))
+                  : FORTS_DATABASE.filter(f => f.division === d.id && (activeType === 'all' || (activeType === 'unesco' ? f.isUnesco : f.type === activeType))).length;
+
                 return (
                   <button
                     key={d.id}
@@ -237,11 +240,13 @@ export default function FortsMapPage() {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
             {CATEGORY_TABS.map(t => {
               const isSelected = activeType === t.id;
-              const count = t.id === 'all' 
-                ? FORTS_DATABASE.length
-                : (t.id === 'unesco' 
-                    ? FORTS_DATABASE.filter(f => f.isUnesco).length 
-                    : FORTS_DATABASE.filter(f => f.type === t.id).length);
+              // Count forts in this category under currently selected division
+              const count = FORTS_DATABASE.filter(f => {
+                const matchesDiv = selectedDiv === 'all' || f.division === selectedDiv;
+                const matchesDistrict = selectedDistrict === 'all' || f.district === selectedDistrict;
+                const matchesCategory = t.id === 'all' || (t.id === 'unesco' ? f.isUnesco : f.type === t.id);
+                return matchesDiv && matchesDistrict && matchesCategory;
+              }).length;
 
               return (
                 <button
@@ -608,11 +613,11 @@ export default function FortsMapPage() {
                   </span>
                 </div>
                 <h2 style={{ margin: 0, fontSize: '1.8rem', fontFamily: 'Baloo 2', color: '#FFFFFF', textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>
-                  {selectedFort.name}
+                  {selectedFort.marathiName || selectedFort.name}
                 </h2>
-                {selectedFort.englishName && (
+                {selectedFort.marathiName && selectedFort.name !== selectedFort.marathiName && (
                   <p style={{ margin: '2px 0 0 0', fontSize: '0.95rem', color: '#f5d5b0', fontWeight: 500 }}>
-                    {selectedFort.englishName} Fort
+                    {selectedFort.name}
                   </p>
                 )}
               </div>
@@ -656,15 +661,109 @@ export default function FortsMapPage() {
                 </div>
               </div>
 
-              {/* Description */}
-              <div style={{ marginBottom: '20px' }}>
-                <h4 style={{ margin: '0 0 8px 0', color: 'var(--maroon-900)', fontFamily: 'Baloo 2', fontSize: '1.15rem' }}>
-                  📜 ऐतिहासिक महत्त्व व माहिती:
-                </h4>
-                <p style={{ margin: 0, fontSize: '0.98rem', color: 'var(--ink)', lineHeight: 1.7, background: 'var(--paper)', padding: '14px 18px', borderRadius: '10px', border: '1px solid var(--line)' }}>
-                  {selectedFort.desc || `${selectedFort.name} हा महाराष्ट्र राज्यातील ${selectedFort.district} जिल्ह्यातील एक ऐतिहासिक व महत्त्वाचा किल्ला आहे. सह्याद्रीच्या डोंगररांगांमध्ये आणि मराठा साम्राज्याच्या गौरवशाली इतिहासात या किल्ल्याला अनन्यसाधारण स्थान लाभले आहे.`}
-                </p>
-              </div>
+              {/* Rich Historical Information & Details */}
+              {(() => {
+                const details = FORT_HISTORICAL_DETAILS[selectedFort.id] || {};
+                const historyText = details.history || selectedFort.desc || `${selectedFort.marathiName || selectedFort.name} हा महाराष्ट्र राज्यातील ${selectedFort.district} जिल्ह्यातील एक ऐतिहासिक व महत्त्वाचा किल्ला आहे. सह्याद्रीच्या डोंगररांगांमध्ये आणि मराठा साम्राज्याच्या गौरवशाली इतिहासात या किल्ल्याला अनन्यसाधारण स्थान लाभले आहे.`;
+                const monumentsList = details.monuments || [];
+                const strategicValue = details.strategicImportance;
+                const bestSeason = details.bestTimeToVisit;
+
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '22px' }}>
+                    {/* Detailed History */}
+                    <div style={{
+                      background: 'linear-gradient(to bottom, #FFFDF8, #FFF9ED)',
+                      padding: '18px 20px',
+                      borderRadius: '12px',
+                      border: '1px solid #FED7AA',
+                      boxShadow: '0 2px 6px rgba(154, 52, 18, 0.05)'
+                    }}>
+                      <h4 style={{ margin: '0 0 10px 0', color: 'var(--maroon-900)', fontFamily: 'Baloo 2', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span>📜</span> ऐतिहासिक महत्त्व व सविस्तर माहिती:
+                      </h4>
+                      <p style={{ margin: 0, fontSize: '0.96rem', color: '#2b1108', lineHeight: 1.8, textAlign: 'justify' }}>
+                        {historyText}
+                      </p>
+                    </div>
+
+                    {/* Key Monuments & Attractions */}
+                    {monumentsList.length > 0 && (
+                      <div style={{
+                        background: '#FAFAFA',
+                        padding: '16px 20px',
+                        borderRadius: '12px',
+                        border: '1px solid var(--line)'
+                      }}>
+                        <h4 style={{ margin: '0 0 10px 0', color: 'var(--maroon-900)', fontFamily: 'Baloo 2', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span>🏰</span> गडावरील प्रमुख वास्तू, अवशेष व आकर्षणे:
+                        </h4>
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                          gap: '8px'
+                        }}>
+                          {monumentsList.map((m, idx) => (
+                            <div key={idx} style={{
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              gap: '8px',
+                              fontSize: '0.9rem',
+                              color: 'var(--ink)',
+                              background: '#FFFFFF',
+                              padding: '8px 12px',
+                              borderRadius: '8px',
+                              border: '1px solid #ECECEC'
+                            }}>
+                              <span style={{ color: 'var(--maroon-700)', fontWeight: 'bold' }}>✓</span>
+                              <span>{m}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Strategic Importance & Best Time Grid */}
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                      gap: '12px'
+                    }}>
+                      {strategicValue && (
+                        <div style={{
+                          background: '#FEF2F2',
+                          padding: '14px 16px',
+                          borderRadius: '10px',
+                          border: '1px solid #FEE2E2'
+                        }}>
+                          <div style={{ fontSize: '0.8rem', color: '#991B1B', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span>🛡️</span> लष्करी व सामरिक महत्त्व
+                          </div>
+                          <div style={{ fontSize: '0.9rem', color: '#450A0A', lineHeight: 1.6 }}>
+                            {strategicValue}
+                          </div>
+                        </div>
+                      )}
+
+                      {bestSeason && (
+                        <div style={{
+                          background: '#ECFDF5',
+                          padding: '14px 16px',
+                          borderRadius: '10px',
+                          border: '1px solid #D1FAE5'
+                        }}>
+                          <div style={{ fontSize: '0.8rem', color: '#065F46', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span>🌤️</span> भेट देण्यासाठी सर्वोत्तम वेळ
+                          </div>
+                          <div style={{ fontSize: '0.9rem', color: '#064E3B', lineHeight: 1.6 }}>
+                            {bestSeason}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Photo Source / License if available */}
               {selectedFort.imageSource && (
