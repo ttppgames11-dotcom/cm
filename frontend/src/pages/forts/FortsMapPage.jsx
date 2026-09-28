@@ -95,12 +95,12 @@ export default function FortsMapPage() {
             </h1>
             <div className="rule" style={{ background: 'var(--gold-500)', height: '4px', width: '80px', margin: '12px 0' }}></div>
             <p className="tagline" style={{ fontSize: '1.1rem', maxWidth: '65ch', color: '#FFF8F2', lineHeight: 1.6 }}>
-              प्रत्येक किल्ला जपणारा प्रत्येक मावळा आमचा अभिमान! महाराष्ट्रातील सर्व ३६५ ऐतिहासिक गडकोटांचे अस्सल छायाचित्रे आणि नावासह संपूर्ण डिजिटल दालन.
+              प्रत्येक किल्ला जपणारा प्रत्येक मावळा आमचा अभिमान! महाराष्ट्रातील सर्व १७१ ऐतिहासिक गडकोटांचे अस्सल छायाचित्रे आणि नावासह संपूर्ण डिजिटल दालन.
             </p>
 
             <div className="stats-glass" style={{ marginTop: '24px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <div className="stat-glass"><b>३६५</b><span>सर्व गडकोट एकाच ठिकाणी</span></div>
-              <div className="stat-glass"><b>३६</b><span>जिल्हे व्याप्ती</span></div>
+              <div className="stat-glass"><b>{FORTS_DATABASE.length}</b><span>सर्व गडकोट एकाच ठिकाणी</span></div>
+              <div className="stat-glass"><b>२१</b><span>जिल्हे व्याप्ती</span></div>
               <div className="stat-glass"><b>१२</b><span>UNESCO नामांकित किल्ले</span></div>
               <div className="stat-glass"><b>४००+ वर्षे</b><span>अजिंक्य वारसा</span></div>
             </div>

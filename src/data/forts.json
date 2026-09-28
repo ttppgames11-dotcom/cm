@@ -11,7 +11,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Ahmednagar_Fort_Ditch.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 2,
@@ -25,7 +27,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Ajinkyatara_fort_in_Satara.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 3,
@@ -39,7 +43,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/3/30/Akola_Fort.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "Public domain",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "विदर्भ व नागपूर",
+    "isUnesco": false
   },
   {
     "id": 4,
@@ -53,7 +59,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/9/99/Close_door_on_Alang_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 5,
@@ -67,7 +75,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Anjineri_fort_Nasik.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 6,
@@ -81,7 +91,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Gopalgad_Outer_Wall.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 7,
@@ -95,7 +107,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/7/72/Ankai_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 8,
@@ -109,7 +123,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/8/86/Antur_Fort_20180805162942_IMG_1178.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "छ. संभाजीनगर",
+    "isUnesco": false
   },
   {
     "id": 9,
@@ -123,7 +139,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/a/af/Arnala-fort-octagonal-reservoir.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 10,
@@ -137,7 +155,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Asheri_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 11,
@@ -151,7 +171,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/61/Patta5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 12,
@@ -165,7 +187,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/61/Reservoir_at_Avchitgad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 13,
@@ -179,7 +203,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/1/11/Flight_of_Sultan_Bahadur_During_Humayun%27s_Campaign_in_Gujarat_1535.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "Public domain",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 14,
@@ -193,7 +219,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Bankot_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 15,
@@ -207,7 +235,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Belapur_fort_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 16,
@@ -221,7 +251,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Bhairavgad%2C_Maharashtra%2C_India.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 17,
@@ -235,7 +267,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/9/94/Flag_at_Indian_fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 18,
@@ -249,7 +283,9 @@
     "imageSource": "https://commons.wikimedia.org/wiki/File:bhavangad-fort",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 19,
@@ -263,7 +299,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Fort_Bhushangad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 20,
@@ -277,7 +315,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Birwadi_fort%2C_seen_from_Birwadi_village.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 21,
@@ -291,7 +331,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Bombay_Castle%2C_1666.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "No restrictions",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 22,
@@ -305,7 +347,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Castella_de_Aguada_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 23,
@@ -319,7 +363,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/7/79/Chandan_Fort3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 24,
@@ -333,7 +379,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/3/31/Chandwad5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 25,
@@ -347,7 +395,9 @@
     "imageSource": "https://commons.wikimedia.org/wiki/File:chavand-fort",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 26,
@@ -361,7 +411,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Dategad_Fort_Talvar_Vihir.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 27,
@@ -375,7 +427,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Daulatabad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "छ. संभाजीनगर",
+    "isUnesco": false
   },
   {
     "id": 28,
@@ -389,7 +443,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Compound_wall_of_Fort_Devgad.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 29,
@@ -403,7 +459,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/7/70/Dhak_Bahiri_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 30,
@@ -417,7 +475,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Dhodap01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 31,
@@ -431,7 +491,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Dongri_Fort",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 32,
@@ -445,7 +507,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Dronagiri_1.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 33,
@@ -459,7 +523,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Durgadi_Fort_Enterance.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 34,
@@ -473,7 +539,9 @@
     "imageSource": "https://commons.wikimedia.org/wiki/File:fort-george-fort",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 35,
@@ -487,7 +555,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/65/0226_Hill_Fort_of_Galnah_%281804%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "Public domain",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 36,
@@ -501,7 +571,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Gambhirgad",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 37,
@@ -515,7 +587,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Gawilgarh_Fort_-_C.SHELARE.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "विदर्भ व नागपूर",
+    "isUnesco": false
   },
   {
     "id": 38,
@@ -529,7 +603,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/5/54/Ghanagad_1.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 39,
@@ -543,7 +619,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Ghodbunder_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 40,
@@ -557,7 +635,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Ghosale7.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 41,
@@ -571,7 +651,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Gorakhgad",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 42,
@@ -585,7 +667,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Gowalkot_estuary%2C_Ratnagiri.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 43,
@@ -599,7 +683,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/3/35/Hadsar_fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 44,
@@ -613,7 +699,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Hargad_Fort",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 45,
@@ -627,7 +715,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/8/85/Hariharfort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 46,
@@ -641,7 +731,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/5/5b/Kalbhairav_pinnacle_Scj.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "GFDL 1.2",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 47,
@@ -655,7 +747,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Hatgad_village_viewed_from_Hatgad_fort_%2851694602788%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 48,
@@ -669,7 +763,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Indori_fort6.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 49,
@@ -683,7 +779,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Indrai_fort_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 50,
@@ -697,7 +795,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/5/55/Irshalgad_fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 51,
@@ -711,7 +811,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/61/Fort_Jadhavgarh_Pune.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 52,
@@ -725,7 +827,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/4/4c/154jaigarh.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 53,
@@ -739,7 +843,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/3/3e/JJayagad_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 54,
@@ -753,7 +859,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Fort_Janjira_Unconquered.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 55,
@@ -767,7 +875,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Jivdhan_Fort_Junnar_Pune_%281%29_07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 56,
@@ -781,7 +891,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/0/0b/KALAVANTIN_DURG_%28FORT%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 57,
@@ -795,7 +907,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Kamalgad_fort5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 58,
@@ -809,7 +923,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Indien2012_1249_Kandhar_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "छ. संभाजीनगर",
+    "isUnesco": false
   },
   {
     "id": 59,
@@ -823,7 +939,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Kankrala3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 60,
@@ -837,7 +955,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Karnala_Fort_06.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 61,
@@ -851,7 +971,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Kavnai_fort",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 62,
@@ -865,7 +987,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Kelve_Fort_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 63,
@@ -879,7 +1003,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/3/32/Kenjalgad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 64,
@@ -893,7 +1019,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/3/3d/British_cannon_at_Khanderi_fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": true
   },
   {
     "id": 65,
@@ -907,7 +1035,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Viewed_from_Kohoj_fort_%282239770730%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 66,
@@ -921,7 +1051,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Kolaba_Fort",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 67,
@@ -935,7 +1067,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/5/51/Konkandiva.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 68,
@@ -949,7 +1083,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Korigad_sometimes.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 69,
@@ -963,7 +1099,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Portuguese_church_of_Korlai_fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 70,
@@ -977,7 +1115,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/1/14/Kothaligad_with_Cannon_gun.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 71,
@@ -991,7 +1131,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/5/54/Kulang_fort2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 72,
@@ -1005,7 +1147,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/3/36/Shiv_Temple%2C_kurdugad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 73,
@@ -1019,7 +1163,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/9/94/Laling_Fort%2C_Dhule.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 74,
@@ -1033,7 +1179,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Lingana_pinnacle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 75,
@@ -1047,7 +1195,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/a/aa/Bastions_of_Lohagad_Fort_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": true
   },
   {
     "id": 76,
@@ -1061,7 +1211,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/1/14/Madan.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "Public domain",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 77,
@@ -1075,7 +1227,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/69/Mahim_Fort_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 78,
@@ -1089,7 +1243,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/2/24/Mahimangad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 79,
@@ -1103,7 +1259,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/8/84/Mahipatgad5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 80,
@@ -1117,7 +1275,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Mahuli",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 81,
@@ -1131,7 +1291,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Mahur_Fort",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "छ. संभाजीनगर",
+    "isUnesco": false
   },
   {
     "id": 82,
@@ -1145,7 +1307,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Malanggad",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 83,
@@ -1159,7 +1323,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Malegaon_Fort_10_11_2012.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 84,
@@ -1173,7 +1339,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/62/Malhargad_pinnacle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 85,
@@ -1187,7 +1355,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/f/f7/Manranjan_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 86,
@@ -1201,7 +1371,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Bankot_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 87,
@@ -1215,7 +1387,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Photo_Of_Idol_Of_Goddess_Vinzai.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 88,
@@ -1229,7 +1403,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/5/57/Mangalgad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "Public domain",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 89,
@@ -1243,7 +1419,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Mangi-Tungi",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 90,
@@ -1257,7 +1435,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/65/Manikgad%28Raigad%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 91,
@@ -1271,7 +1451,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Mohandar_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 92,
@@ -1285,7 +1467,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/5/55/Mohangad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 93,
@@ -1299,7 +1483,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/3/33/Mora_fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 94,
@@ -1313,7 +1499,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/3/32/Mrugagad5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 95,
@@ -1327,7 +1515,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Mulher_view1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 96,
@@ -1341,7 +1531,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Naldurg_Fort",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "छ. संभाजीनगर",
+    "isUnesco": false
   },
   {
     "id": 97,
@@ -1355,7 +1547,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/9/93/Steps_of_Narayangad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 98,
@@ -1369,7 +1563,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/2/23/Mahakali_gate%2C_Narnala_fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "Public domain",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "विदर्भ व नागपूर",
+    "isUnesco": false
   },
   {
     "id": 99,
@@ -1383,7 +1579,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Nhavigad",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 100,
@@ -1397,7 +1595,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Nimgiri-Hanumantgad_Fort%2C_Pune%2C_Maharashtra%2C_India_%282017%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 101,
@@ -1411,7 +1611,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/8/81/Padargad_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 102,
@@ -1425,7 +1627,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Kasa_fort_sunset.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 103,
@@ -1439,7 +1643,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/7/77/Remotest_Rampart_on_Panhala.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": true
   },
   {
     "id": 104,
@@ -1453,7 +1659,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Paranda_Fort",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "छ. संभाजीनगर",
+    "isUnesco": false
   },
   {
     "id": 105,
@@ -1467,7 +1675,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Patta_Fort1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 106,
@@ -1481,7 +1691,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/2/26/Pisolksj05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 107,
@@ -1495,7 +1707,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Cajanus_plants_near_Prabalgad_fort_%282010%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 108,
@@ -1509,7 +1723,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Pratapgad_The_Fort_of_Valour.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": true
   },
   {
     "id": 109,
@@ -1523,7 +1739,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Purandar_Fort_44.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 110,
@@ -1537,7 +1755,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Purnagad-pathway.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 111,
@@ -1551,7 +1771,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Shivaji_Maharaj_Raigad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "GFDL 1.2",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": true
   },
   {
     "id": 112,
@@ -1565,7 +1787,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Rajgad_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": true
   },
   {
     "id": 113,
@@ -1579,7 +1803,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Raireshwar_temple.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 114,
@@ -1593,7 +1819,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Rajdher_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 115,
@@ -1607,7 +1835,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Ramshej_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 116,
@@ -1621,7 +1851,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/68/Rasalgad1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 117,
@@ -1635,7 +1867,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Ratangad_nedhe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 118,
@@ -1649,7 +1883,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Bhagwati_Mandir%2C_Ratnagiri.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 119,
@@ -1663,7 +1899,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/5/51/Revdanda_Fort_outer_walls_01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 120,
@@ -1677,7 +1915,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/5/56/Kala_killa_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 121,
@@ -1691,7 +1931,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Rohida_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 122,
@@ -1705,7 +1947,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/3/38/Sagargad_fort_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 123,
@@ -1719,7 +1963,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Sajjangad_Fort_and_around_-_vrvbsatara102k23pxl_%2852%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 124,
@@ -1733,7 +1979,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Salher_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": true
   },
   {
     "id": 125,
@@ -1747,7 +1995,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Salotafort.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 126,
@@ -1761,7 +2011,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/5/56/Sarasgad_-_Ruins_Of_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 127,
@@ -1775,7 +2027,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Sarjekot_of_Kolaba_fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 128,
@@ -1789,7 +2043,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Sewri_fort_courtyard.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 129,
@@ -1803,7 +2059,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/3/39/Shirgaon_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 130,
@@ -1817,7 +2075,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/4/45/Shivgad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 131,
@@ -1831,7 +2091,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Shivneri_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": true
   },
   {
     "id": 132,
@@ -1845,7 +2107,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Shrivardhan_Fort.%28sunday_19-9-2010%29..JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "Public domain",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 133,
@@ -1859,7 +2123,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Sindhudurg_fort_interior.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": true
   },
   {
     "id": 134,
@@ -1873,7 +2139,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Sinhagad_Fort_%2849146%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 135,
@@ -1887,7 +2155,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/9/9a/%40_Sion_Fort_-_panoramio_%288%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 136,
@@ -1901,7 +2171,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Sitabuldi_fort_gate.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "विदर्भ व नागपूर",
+    "isUnesco": false
   },
   {
     "id": 137,
@@ -1915,7 +2187,9 @@
     "imageSource": "https://commons.wikimedia.org/wiki/File:solapur-fort",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 138,
@@ -1929,7 +2203,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Songir",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 139,
@@ -1943,7 +2219,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Hiking_up_the_stairs_of_Sudhagad_fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 140,
@@ -1957,7 +2235,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/1/14/Surgad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 141,
@@ -1971,7 +2251,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/0/09/Suvarnadurg_fort.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": true
   },
   {
     "id": 142,
@@ -1985,7 +2267,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Takmak_First_Peak.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 143,
@@ -1999,7 +2283,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/7/79/Talagad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 144,
@@ -2013,7 +2299,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/63/Tandulwadi_fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 145,
@@ -2027,7 +2315,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/2/24/TankaiFort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 146,
@@ -2041,7 +2331,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/5/53/Historic_heritage_sites_of_Maharashtra_with_GPS_coordinates.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 147,
@@ -2055,7 +2347,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/a/aa/Terekhol_Fort_Entrance.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 148,
@@ -2069,7 +2363,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Thalner",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 149,
@@ -2083,7 +2379,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Tikona_fort_ramparts.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 150,
@@ -2097,7 +2395,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Torna_entrance.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": true
   },
   {
     "id": 151,
@@ -2111,7 +2411,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/65/Tringalwadi_fort_igatpuri.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 152,
@@ -2125,7 +2427,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Bhandardurg_Trek_in_Nashik.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 153,
@@ -2139,7 +2443,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Peek_a_boo.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 154,
@@ -2153,7 +2459,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/9/94/Cannons_at_Underi_fort_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 155,
@@ -2167,7 +2475,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/9/91/Agra_Fort_walls.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "विदर्भ व नागपूर",
+    "isUnesco": false
   },
   {
     "id": 156,
@@ -2181,7 +2491,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/0/0e/Vairatgad_from_Bhuinj_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 157,
@@ -2195,7 +2507,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/7/72/Vandan_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 158,
@@ -2209,7 +2523,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/0/09/Vardhangad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 159,
@@ -2223,7 +2539,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/d/df/Varugad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 160,
@@ -2237,7 +2555,9 @@
     "imageSource": "https://commons.wikimedia.org/wiki/File:vasai-fort",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 161,
@@ -2251,7 +2571,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/4/45/Vasota.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 162,
@@ -2265,7 +2587,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/1/10/Vijaydurg_Fort_20.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": true
   },
   {
     "id": 163,
@@ -2279,7 +2603,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/6/68/Pep_Fort%2C_Matheran_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 164,
@@ -2293,7 +2619,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/9/95/Visapur_fort_Ramparts.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 165,
@@ -2307,7 +2635,9 @@
     "imageSource": "https://en.wikipedia.org/wiki/Vishalgad",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 166,
@@ -2321,7 +2651,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Worli_Fort..jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   },
   {
     "id": 167,
@@ -2335,7 +2667,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Nice_Achal_Killa.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 168,
@@ -2349,7 +2683,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Ramshej_Fort.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "नाशिक विभाग",
+    "isUnesco": false
   },
   {
     "id": 169,
@@ -2363,7 +2699,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/5/54/Chakan_Fort-_Sangram_Durg_%287637611332%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY 2.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 170,
@@ -2377,7 +2715,9 @@
     "imageSource": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Rajmachi_Fort_Water_Storage.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "imageLicense": "CC BY-SA 3.0",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "पुणे विभाग",
+    "isUnesco": false
   },
   {
     "id": 171,
@@ -2391,6 +2731,8 @@
     "imageSource": "https://en.wikipedia.org/wiki/Hanumantgad",
     "imageLicense": "Wikimedia Commons",
     "verified": true,
-    "imageVerified": true
+    "imageVerified": true,
+    "division": "कोकण विभाग",
+    "isUnesco": false
   }
 ]

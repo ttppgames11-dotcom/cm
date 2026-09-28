@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FORTS_DATABASE } from '../../data/forts350Data';
 
 const DIVISION_FILTERS = [
-  { id: 'all', label: 'सर्व विभाग (३६५ गडकोट)' },
+  { id: 'all', label: 'सर्व विभाग' },
   { id: 'पुणे विभाग', label: 'पुणे विभाग' },
   { id: 'कोकण विभाग', label: 'कोकण विभाग' },
   { id: 'नाशिक विभाग', label: 'नाशिक विभाग' },
@@ -12,7 +12,7 @@ const DIVISION_FILTERS = [
 ];
 
 const CATEGORY_TABS = [
-  { id: 'all', label: 'सर्व ३५०+ किल्ले' },
+  { id: 'all', label: 'सर्व गड-किल्ले' },
   { id: 'giridurg', label: '⛰️ गिरीदुर्ग (Hill Forts)' },
   { id: 'jaladurg', label: '🌊 जलदुर्ग (Sea Forts)' },
   { id: 'bhuikot', label: '🏰 भुईकोट (Plain Forts)' },
@@ -51,9 +51,10 @@ export default function FortsMapPage() {
       const matchesSearch =
         !q ||
         f.name.toLowerCase().includes(q) ||
+        (f.englishName && f.englishName.toLowerCase().includes(q)) ||
         f.district.toLowerCase().includes(q) ||
         f.division.toLowerCase().includes(q) ||
-        f.desc.toLowerCase().includes(q);
+        (f.desc && f.desc.toLowerCase().includes(q));
 
       return matchesType && matchesDiv && matchesDistrict && matchesSearch;
     });
@@ -94,12 +95,12 @@ export default function FortsMapPage() {
             </h1>
             <div className="rule" style={{ background: 'var(--gold-500)', height: '4px', width: '80px', margin: '12px 0' }}></div>
             <p className="tagline" style={{ fontSize: '1.1rem', maxWidth: '65ch', color: '#FFF8F2', lineHeight: 1.6 }}>
-              प्रत्येक किल्ला जपणारा प्रत्येक मावळा आमचा अभिमान! महाराष्ट्रातील सर्व ३६५ ऐतिहासिक गडकोटांचे अस्सल छायाचित्रे आणि नावासह संपूर्ण डिजिटल दालन.
+              प्रत्येक किल्ला जपणारा प्रत्येक मावळा आमचा अभिमान! महाराष्ट्रातील सर्व १७१ ऐतिहासिक गडकोटांचे अस्सल छायाचित्रे आणि नावासह संपूर्ण डिजिटल दालन.
             </p>
 
             <div className="stats-glass" style={{ marginTop: '24px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <div className="stat-glass"><b>३६५</b><span>सर्व गडकोट एकाच ठिकाणी</span></div>
-              <div className="stat-glass"><b>३६</b><span>जिल्हे व्याप्ती</span></div>
+              <div className="stat-glass"><b>{FORTS_DATABASE.length}</b><span>सर्व गडकोट एकाच ठिकाणी</span></div>
+              <div className="stat-glass"><b>२१</b><span>जिल्हे व्याप्ती</span></div>
               <div className="stat-glass"><b>१२</b><span>UNESCO नामांकित किल्ले</span></div>
               <div className="stat-glass"><b>४००+ वर्षे</b><span>अजिंक्य वारसा</span></div>
             </div>
@@ -337,17 +338,38 @@ export default function FortsMapPage() {
                   >
                     {/* Fort Image */}
                     <div style={{ height: '170px', position: 'relative', overflow: 'hidden', background: '#1c0a05' }}>
-                      <img
-                        src={f.image}
-                        alt={f.name}
-                        loading="lazy"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease' }}
-                        onError={(e) => {
-                          e.target.src = f.type === 'jaladurg'
-                            ? '/assets/images/real-sindhudurg-fort.jpg'
-                            : (f.type === 'bhuikot' ? '/assets/images/real-bhuikot-fort.jpg' : '/assets/images/real-raigad-panoramic.jpg');
+                      {f.image ? (
+                        <img
+                          src={f.image}
+                          alt={f.name}
+                          loading="lazy"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease' }}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
+                          }}
+                        />
+                      ) : null}
+                      
+                      <div
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          display: f.image ? 'none' : 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: 'linear-gradient(135deg, #2b1108 0%, #150602 100%)',
+                          color: '#FFCC80',
+                          padding: '16px',
+                          textAlign: 'center',
+                          boxSizing: 'border-box'
                         }}
-                      />
+                      >
+                        <span style={{ fontSize: '1.8rem', marginBottom: '4px' }}>🏛️</span>
+                        <span style={{ fontSize: '0.80rem', fontWeight: 600, color: '#f3d9b1' }}>Verified image unavailable</span>
+                        <span style={{ fontSize: '0.68rem', color: '#bca188', marginTop: '2px' }}>अस्सल छायाचित्र उपलब्ध नाही</span>
+                      </div>
                       
                       {/* Top Badges */}
                       <div style={{
@@ -401,15 +423,22 @@ export default function FortsMapPage() {
 
                     {/* Fort Name & District */}
                     <div style={{ padding: '12px 14px', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
-                      <strong style={{
-                        fontSize: '1.05rem',
-                        fontFamily: 'Baloo 2',
-                        color: 'var(--maroon-950)',
-                        lineHeight: 1.35,
-                        display: 'block'
-                      }}>
-                        {f.name}
-                      </strong>
+                      <div>
+                        <strong style={{
+                          fontSize: '1.05rem',
+                          fontFamily: 'Baloo 2',
+                          color: 'var(--maroon-950)',
+                          lineHeight: 1.35,
+                          display: 'block'
+                        }}>
+                          {f.name}
+                        </strong>
+                        {f.englishName && (
+                          <span style={{ fontSize: '0.78rem', color: '#666', fontWeight: 500 }}>
+                            {f.englishName} Fort
+                          </span>
+                        )}
+                      </div>
 
                       <div style={{
                         fontSize: '0.78rem',
