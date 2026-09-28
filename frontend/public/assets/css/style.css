@@ -2746,10 +2746,19 @@ section {
 
   .nav-item-has-mega:nth-child(2) .mega-menu {
     left: 50%;
+    right: auto;
     transform: translateX(-42%) translateY(12px);
   }
 
   .nav-item-has-mega:nth-child(3) .mega-menu {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) translateY(12px);
+  }
+
+  .nav-item-has-mega:nth-child(4) .mega-menu,
+  .nav-item-has-mega:nth-child(5) .mega-menu,
+  .nav-item-has-mega:last-child .mega-menu {
     left: auto;
     right: 0;
     transform: translateY(12px);
@@ -2766,6 +2775,20 @@ section {
   .nav-item-has-mega:nth-child(2):hover .mega-menu,
   .nav-item-has-mega:nth-child(2):focus-within .mega-menu {
     transform: translateX(-42%) translateY(0);
+  }
+
+  .nav-item-has-mega:nth-child(3):hover .mega-menu,
+  .nav-item-has-mega:nth-child(3):focus-within .mega-menu {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .nav-item-has-mega:nth-child(4):hover .mega-menu,
+  .nav-item-has-mega:nth-child(4):focus-within .mega-menu,
+  .nav-item-has-mega:nth-child(5):hover .mega-menu,
+  .nav-item-has-mega:nth-child(5):focus-within .mega-menu,
+  .nav-item-has-mega:last-child:hover .mega-menu,
+  .nav-item-has-mega:last-child:focus-within .mega-menu {
+    transform: translateY(0);
   }
 
   .mega-menu-grid {
