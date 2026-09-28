@@ -24,6 +24,7 @@ export default function FortsMapPage() {
   const [search, setSearch] = useState('');
   const [selectedDiv, setSelectedDiv] = useState('all');
   const [selectedDistrict, setSelectedDistrict] = useState('all');
+  const [selectedFort, setSelectedFort] = useState(null);
 
   // Compute available districts for the selected division
   const availableDistricts = useMemo(() => {
@@ -334,6 +335,7 @@ export default function FortsMapPage() {
                 return (
                   <div
                     key={f.id}
+                    onClick={() => setSelectedFort(f)}
                     style={{
                       background: '#FFFFFF',
                       borderRadius: '12px',
@@ -342,7 +344,16 @@ export default function FortsMapPage() {
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       display: 'flex',
                       flexDirection: 'column',
+                      cursor: 'pointer',
                       transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow = '0 10px 24px rgba(0,0,0,0.12)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'none';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
                     }}
                   >
                     {/* Fort Image */}
@@ -453,13 +464,28 @@ export default function FortsMapPage() {
                         fontSize: '0.78rem',
                         color: '#c2410c',
                         fontWeight: 600,
-                        marginTop: '4px',
+                        marginTop: '6px',
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center'
                       }}>
                         <span>📍 {f.district}</span>
                         <span style={{ color: '#888' }}>{f.height}</span>
+                      </div>
+
+                      <div style={{
+                        marginTop: '8px',
+                        paddingTop: '8px',
+                        borderTop: '1px dashed #eee',
+                        fontSize: '0.76rem',
+                        color: 'var(--maroon-800)',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}>
+                        <span>सविस्तर माहिती पहा</span>
+                        <span>➔</span>
                       </div>
                     </div>
                   </div>
@@ -470,6 +496,234 @@ export default function FortsMapPage() {
         </section>
 
       </div>
+
+      {/* Fort Detail Modal */}
+      {selectedFort && (
+        <div
+          onClick={() => setSelectedFort(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 5, 2, 0.75)',
+            backdropFilter: 'blur(6px)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            animation: 'fadeIn 0.2s ease-out'
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#FFFFFF',
+              borderRadius: '20px',
+              maxWidth: '680px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
+              position: 'relative',
+              border: '1.5px solid var(--gold-500)'
+            }}
+          >
+            {/* Modal Image Header */}
+            <div style={{ position: 'relative', height: '280px', background: '#1c0a05', overflow: 'hidden', borderTopLeftRadius: '19px', borderTopRightRadius: '19px' }}>
+              {selectedFort.image ? (
+                <img
+                  src={selectedFort.image}
+                  alt={selectedFort.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f3d9b1', flexDirection: 'column' }}>
+                  <span style={{ fontSize: '3rem' }}>🏛️</span>
+                  <span>अस्सल छायाचित्र</span>
+                </div>
+              )}
+              
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(to top, rgba(20,5,2,0.92) 0%, rgba(20,5,2,0.2) 60%, rgba(0,0,0,0.4) 100%)'
+              }} />
+
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedFort(null)}
+                style={{
+                  position: 'absolute',
+                  top: '16px',
+                  right: '16px',
+                  background: 'rgba(0,0,0,0.6)',
+                  color: '#FFFFFF',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 2
+                }}
+              >
+                ✕
+              </button>
+
+              {/* Title & Badges on Image */}
+              <div style={{ position: 'absolute', bottom: '16px', left: '20px', right: '20px', color: '#FFF' }}>
+                <div style={{ display: 'flex', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                  <span style={{
+                    background: 'var(--gold-500)',
+                    color: '#2b1108',
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    padding: '3px 10px',
+                    borderRadius: '12px'
+                  }}>
+                    {selectedFort.type === 'giridurg' ? '⛰️ गिरीदुर्ग' : (selectedFort.type === 'jaladurg' ? '🌊 जलदुर्ग' : '🏰 भुईकोट')}
+                  </span>
+                  {selectedFort.isUnesco && (
+                    <span style={{
+                      background: '#d97706',
+                      color: '#FFF',
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      padding: '3px 10px',
+                      borderRadius: '12px'
+                    }}>
+                      ★ UNESCO World Heritage
+                    </span>
+                  )}
+                  <span style={{
+                    background: 'rgba(255,255,255,0.2)',
+                    backdropFilter: 'blur(4px)',
+                    color: '#FFF',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    padding: '3px 10px',
+                    borderRadius: '12px'
+                  }}>
+                    {selectedFort.division}
+                  </span>
+                </div>
+                <h2 style={{ margin: 0, fontSize: '1.8rem', fontFamily: 'Baloo 2', color: '#FFFFFF', textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>
+                  {selectedFort.name}
+                </h2>
+                {selectedFort.englishName && (
+                  <p style={{ margin: '2px 0 0 0', fontSize: '0.95rem', color: '#f5d5b0', fontWeight: 500 }}>
+                    {selectedFort.englishName} Fort
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: '24px' }}>
+              {/* Quick Info Grid */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+                gap: '12px',
+                marginBottom: '20px'
+              }}>
+                <div style={{ background: '#FFF7ED', padding: '12px', borderRadius: '10px', border: '1px solid #FFEDD5' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#9A3412', fontWeight: 600 }}>📍 जिल्हा</div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--maroon-950)', marginTop: '2px' }}>
+                    {selectedFort.district}
+                  </div>
+                </div>
+
+                <div style={{ background: '#FFF7ED', padding: '12px', borderRadius: '10px', border: '1px solid #FFEDD5' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#9A3412', fontWeight: 600 }}>🏛️ प्रशासकीय विभाग</div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--maroon-950)', marginTop: '2px' }}>
+                    {selectedFort.division}
+                  </div>
+                </div>
+
+                <div style={{ background: '#FFF7ED', padding: '12px', borderRadius: '10px', border: '1px solid #FFEDD5' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#9A3412', fontWeight: 600 }}>📐 किल्ला प्रकार</div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--maroon-950)', marginTop: '2px' }}>
+                    {selectedFort.type === 'giridurg' ? 'गिरीदुर्ग' : (selectedFort.type === 'jaladurg' ? 'जलदुर्ग' : 'भुईकोट')}
+                  </div>
+                </div>
+
+                <div style={{ background: '#FFF7ED', padding: '12px', borderRadius: '10px', border: '1px solid #FFEDD5' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#9A3412', fontWeight: 600 }}>⛰️ उंची / स्थान</div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--maroon-950)', marginTop: '2px' }}>
+                    {selectedFort.height || 'ऐतिहासिक तटबंदी'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div style={{ marginBottom: '20px' }}>
+                <h4 style={{ margin: '0 0 8px 0', color: 'var(--maroon-900)', fontFamily: 'Baloo 2', fontSize: '1.15rem' }}>
+                  📜 ऐतिहासिक महत्त्व व माहिती:
+                </h4>
+                <p style={{ margin: 0, fontSize: '0.98rem', color: 'var(--ink)', lineHeight: 1.7, background: 'var(--paper)', padding: '14px 18px', borderRadius: '10px', border: '1px solid var(--line)' }}>
+                  {selectedFort.desc || `${selectedFort.name} हा महाराष्ट्र राज्यातील ${selectedFort.district} जिल्ह्यातील एक ऐतिहासिक व महत्त्वाचा किल्ला आहे. सह्याद्रीच्या डोंगररांगांमध्ये आणि मराठा साम्राज्याच्या गौरवशाली इतिहासात या किल्ल्याला अनन्यसाधारण स्थान लाभले आहे.`}
+                </p>
+              </div>
+
+              {/* Photo Source / License if available */}
+              {selectedFort.imageSource && (
+                <div style={{ fontSize: '0.75rem', color: '#888', marginBottom: '20px', padding: '8px 12px', background: '#fafafa', borderRadius: '6px' }}>
+                  <span>📷 छायाचित्र स्रोत: </span>
+                  <a href={selectedFort.imageSource} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--maroon-800)', wordBreak: 'break-all' }}>
+                    Wikimedia Commons ({selectedFort.imageLicense || 'Verified'})
+                  </a>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedFort.name + ' ' + selectedFort.district + ' Maharashtra')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn"
+                  style={{
+                    padding: '10px 18px',
+                    borderRadius: '8px',
+                    background: '#FFFFFF',
+                    border: '1px solid var(--line)',
+                    color: 'var(--ink)',
+                    textDecoration: 'none',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  🗺️ Google Maps वर पहा
+                </a>
+                <button
+                  onClick={() => setSelectedFort(null)}
+                  className="btn btn-primary"
+                  style={{
+                    padding: '10px 24px',
+                    borderRadius: '8px',
+                    background: 'var(--maroon-900)',
+                    color: '#FFF',
+                    border: 'none',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  बंद करा
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
