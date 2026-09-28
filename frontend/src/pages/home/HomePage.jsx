@@ -8,7 +8,7 @@ const heroViews = {
     title: 'छत्रपती शिवाजी महाराज — हिंदवी स्वराज्य संस्थापक',
     desc: 'रयतेचे कल्याण, ३५०+ अभेद्य गडकोट, गनिमी काव्याचे जनक आणि सार्वभौम मराठा साम्राज्याची पायाभरणी करणारे युगपुरुष.',
     link: '/history/shivaji-maharaj',
-    img: '/assets/images/real-shivaji-portrait.jpg'
+    img: '/assets/images/maratha-hero.jpg'
   },
   samrajya: {
     badge: '⚔️ मराठा साम्राज्य',
@@ -29,7 +29,7 @@ const heroViews = {
     title: 'मराठा साम्राज्य विस्तार नकाशा (१७५८)',
     desc: 'पेशवे, शिंदे, होळकर, गायकवाड, भोसले यांच्या मांडलिक राज्यांसह संपूर्ण भारतभर पसरलेले साम्राज्य.',
     link: '/forts',
-    img: '/assets/images/real-maratha-peak-map.jpg'
+    img: '/assets/images/maratha-empire-accurate-map.jpg'
   }
 };
 
@@ -56,9 +56,7 @@ export default function HomePage() {
   const [isPaused, setIsPaused] = useState(false);
 
   const activeHero = heroViews[heroView];
-  const displayHeroImg = (heroView === 'hero' && getContent('images.heroBanner')) 
-    ? getContent('images.heroBanner') 
-    : activeHero.img;
+  const displayHeroImg = activeHero.img || getContent('images.heroBanner');
 
   // Continuously cycle hero background every 5 seconds
   useEffect(() => {
@@ -101,34 +99,6 @@ export default function HomePage() {
 
   return (
     <div className="home-page-root">
-{/* ========== WAR CRY (living bhagwa flag video banner) ========== */}
-<div className="war-cry-strip" style={{"position":"relative","overflow":"hidden","minHeight":"76px","display":"flex","justifyContent":"center","alignItems":"center","background":"linear-gradient(90deg,#F4511E,#E65100)","color":"#FFFFFF"}}>
-  <video className="war-cry-video" style={{"position":"absolute","top":0,"left":0,"width":"100%","height":"100%","objectFit":"cover","zIndex":0,"pointerEvents":"none","filter":"saturate(1.25) brightness(.92)"}} autoPlay muted loop playsInline aria-hidden="true" poster="/assets/images/real-raigad-panoramic.jpg">
-    <source src="/assets/videos/bhagwa-flag-waving.mp4" type="video/mp4" />
-  </video>
-  <div className="war-cry-overlay" style={{"position":"absolute","inset":0,"zIndex":1,"background":"linear-gradient(90deg,rgba(199,56,0,.88) 0%,rgba(230,81,0,.58) 50%,rgba(199,56,0,.88) 100%)"}}></div>
-  <div className="war-cry-text">
-    <span>🔥</span>
-    <span>{getContent('hero.announcementMarquee', '|| जय भवानी, जय शिवाजी || प्रौढ प्रताप पुरंधर क्षत्रियकुलावतंस सिंहासनाधीश्वर छत्रपती शिवाजी महाराज की जय!')}</span>
-    <span>🔥</span>
-  </div>
-</div>
-
-{/* ========== TODAY ON CONNECT MARATHA (Master Plan Section 8) ========== */}
-<div className="today-ribbon">
-  <div className="today-ribbon-inner">
-    <div style={{"display":"flex","alignItems":"center","gap":"12px","flexWrap":"wrap"}}>
-      <span className="today-pill">📅 आजचा दिवस</span>
-      <span><strong>ऐतिहासिक स्मरण:</strong> १७२८ — पालखेडच्या रणांगणात थोरले बाजीराव पेशवे यांनी निजामाला शरण येण्यास भाग पाडले.</span>
-    </div>
-    <div style={{"display":"flex","alignItems":"center","gap":"14px","fontSize":"0.84rem"}}>
-      <Link to="/history/battles" style={{"color":"#FFE082","textDecoration":"underline","fontWeight":"700"}}>⚔️ पालखेड युद्ध इतिहास वाचा →</Link>
-      <span style={{"color":"rgba(255,255,255,0.6)"}}>•</span>
-      <Link to="/history" style={{"color":"#FFFFFF","opacity":"0.95","textDecoration":"none"}}>सर्व ३६५ तिथी सूची</Link>
-    </div>
-  </div>
-</div>
-
 {/* ========== HERO SECTION (DYNAMIC CONTINUOUSLY CHANGING BACKGROUND) ========== */}
 <section 
   className="hero"
@@ -213,7 +183,17 @@ export default function HomePage() {
     </div>
     <div className="hero-feature-card" data-reveal="right">
       <div className="card-img-wrap">
-        <img src={displayHeroImg} alt={activeHero.title} id="heroCardImg" />
+        <img 
+          src={displayHeroImg} 
+          alt={activeHero.title} 
+          id="heroCardImg" 
+          style={{
+            objectFit: heroView === 'map' ? 'contain' : 'cover',
+            objectPosition: heroView === 'hero' ? 'center 8%' : (heroView === 'map' ? 'center center' : 'center top'),
+            backgroundColor: '#1a0803',
+            padding: heroView === 'map' ? '4px' : '0'
+          }}
+        />
       </div>
       <div className="card-body">
         <span className="card-tag" id="heroBadge">{activeHero.badge}</span>
@@ -234,16 +214,17 @@ export default function HomePage() {
 
   {/* Active Slide Badge & Controller Navigation */}
   <div 
+    className="hero-slider-bar"
     style={{
       position: 'absolute',
       bottom: '16px',
       left: '50%',
       transform: 'translateX(-50%)',
-      zIndex: 3,
+      zIndex: 12,
       display: 'flex',
       alignItems: 'center',
       gap: '12px',
-      background: 'rgba(20,5,5,0.78)',
+      background: 'rgba(20,5,5,0.85)',
       backdropFilter: 'blur(8px)',
       padding: '7px 18px',
       borderRadius: '30px',
@@ -291,6 +272,34 @@ export default function HomePage() {
     </button>
   </div>
 </section>
+
+{/* ========== WAR CRY (living bhagwa flag video banner) ========== */}
+<div className="war-cry-strip" style={{"position":"relative","overflow":"hidden","minHeight":"76px","display":"flex","justifyContent":"center","alignItems":"center","background":"linear-gradient(90deg,#F4511E,#E65100)","color":"#FFFFFF"}}>
+  <video className="war-cry-video" style={{"position":"absolute","top":0,"left":0,"width":"100%","height":"100%","objectFit":"cover","zIndex":0,"pointerEvents":"none","filter":"saturate(1.25) brightness(.92)"}} autoPlay muted loop playsInline aria-hidden="true" poster="/assets/images/real-raigad-panoramic.jpg">
+    <source src="/assets/videos/bhagwa-flag-waving.mp4" type="video/mp4" />
+  </video>
+  <div className="war-cry-overlay" style={{"position":"absolute","inset":0,"zIndex":1,"background":"linear-gradient(90deg,rgba(199,56,0,.88) 0%,rgba(230,81,0,.58) 50%,rgba(199,56,0,.88) 100%)"}}></div>
+  <div className="war-cry-text">
+    <span>🔥</span>
+    <span>{getContent('hero.announcementMarquee', '|| जय भवानी, जय शिवाजी || प्रौढ प्रताप पुरंधर क्षत्रियकुलावतंस सिंहासनाधीश्वर छत्रपती शिवाजी महाराज की जय!')}</span>
+    <span>🔥</span>
+  </div>
+</div>
+
+{/* ========== TODAY ON CONNECT MARATHA (Master Plan Section 8) ========== */}
+<div className="today-ribbon">
+  <div className="today-ribbon-inner">
+    <div style={{"display":"flex","alignItems":"center","gap":"12px","flexWrap":"wrap"}}>
+      <span className="today-pill">📅 आजचा दिवस</span>
+      <span><strong>ऐतिहासिक स्मरण:</strong> १७२८ — पालखेडच्या रणांगणात थोरले बाजीराव पेशवे यांनी निजामाला शरण येण्यास भाग पाडले.</span>
+    </div>
+    <div style={{"display":"flex","alignItems":"center","gap":"14px","fontSize":"0.84rem"}}>
+      <Link to="/history/battles" style={{"color":"#FFE082","textDecoration":"underline","fontWeight":"700"}}>⚔️ पालखेड युद्ध इतिहास वाचा →</Link>
+      <span style={{"color":"rgba(255,255,255,0.6)"}}>•</span>
+      <Link to="/history" style={{"color":"#FFFFFF","opacity":"0.95","textDecoration":"none"}}>सर्व ३६५ तिथी सूची</Link>
+    </div>
+  </div>
+</div>
 
 {/* ========== FOUR PRIMARY PILLARS (Section 2 of Master Blueprint) ========== */}
 <section className="section" style={{"background":"#FFFFFF","padding":"54px 0"}}>
@@ -392,19 +401,19 @@ export default function HomePage() {
       </div>
     </div>
     <div className="portrait-strip" data-reveal-group>
-      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-shivaji-raigad-statue.jpg')"}}>
+      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/maratha-hero.jpg')","backgroundPosition":"center 8%"}}>
         <div className="portrait-body"><h4>छत्रपती शिवाजी महाराज</h4><span>हिंदवी स्वराज्य संस्थापक</span></div>
       </div>
-      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-sambhaji-portrait.png')"}}>
+      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/Sambhaji_Maharaj.avif')","backgroundPosition":"center 8%","backgroundSize":"cover"}}>
         <div className="portrait-body"><h4>छत्रपती संभाजी महाराज</h4><span>अपराजित धर्मवीर</span></div>
       </div>
-      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-bajirao-statue.jpg')"}}>
+      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-bajirao-statue.jpg')","backgroundPosition":"center 4%","backgroundSize":"155%"}}>
         <div className="portrait-body"><h4>श्रीमंत बाजीराव पेशवे</h4><span>अपराजित सेनापती</span></div>
       </div>
-      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-maratha-confederacy-map.png')"}}>
+      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-maratha-confederacy-map.png')","backgroundPosition":"center"}}>
         <div className="portrait-body"><h4>मराठा साम्राज्य विस्तार</h4><span>अटकेपार पसरलेले साम्राज्य</span></div>
       </div>
-      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-raigad-mahadarwaja.jpg')"}}>
+      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-raigad-mahadarwaja.jpg')","backgroundPosition":"center"}}>
         <div className="portrait-body"><h4>दुर्गराज रायगड</h4><span>स्वराज्याची राजधानी</span></div>
       </div>
     </div>
@@ -431,32 +440,32 @@ export default function HomePage() {
       <Link to="/gallery" className="more-link">सर्व विभाग पहा →</Link>
     </div>
     <div className="quick-grid" data-reveal-group>
-      <Link to="/history" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-army-panoramic.jpg')"}}>
+      <Link to="/history" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-army-panoramic.jpg')","backgroundPosition":"center"}}>
         <span className="icon">⚔️</span>
         <h3>इतिहास</h3>
         <p>साम्राज्य, लढाया, कालपट आणि अस्सल संदर्भ.</p>
       </Link>
-      <Link to="/forts" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-raigad-panoramic.jpg')"}}>
+      <Link to="/forts" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-raigad-panoramic.jpg')","backgroundPosition":"center"}}>
         <span className="icon">🏰</span>
         <h3>गड-किल्ले</h3>
         <p>३५०+ किल्ल्यांचे दालन, माहिती आणि नकाशा.</p>
       </Link>
-      <Link to="/jobs" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-arms.jpg')"}}>
+      <Link to="/jobs" className="quick-card" style={{"backgroundImage":"url('/assets/images/maratha-services-care.jpg')","backgroundPosition":"center"}}>
         <span className="icon">🛠️</span>
         <h3>सेवा</h3>
         <p>समाजातील विश्वासू सेवा व तज्ज्ञ नेटवर्क.</p>
       </Link>
-      <Link to="/directory" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-sambhaji-photo.jpg')"}}>
+      <Link to="/directory" className="quick-card" style={{"backgroundImage":"url('/assets/images/connect-maratha-council.jpg')","backgroundPosition":"center 25%"}}>
         <span className="icon">👥</span>
         <h3>समुदाय</h3>
         <p>बांधव, नेटवर्किंग आणि सामाजिक जोडणी.</p>
       </Link>
-      <Link to="/sangam" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-shaniwar-wada.jpg')"}}>
+      <Link to="/sangam" className="quick-card" style={{"backgroundImage":"url('/assets/images/maratha-business-sangam.jpg')","backgroundPosition":"center 20%","backgroundSize":"cover"}}>
         <span className="icon">🤝</span>
         <h3>व्यवसाय संगम</h3>
         <p>व्यवसाय मंडळे, संधी, भेटी आणि विश्वासाधारित नेटवर्क.</p>
       </Link>
-      <Link to="/business/directory" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-expansion-map.jpg')"}}>
+      <Link to="/business/directory" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-expansion-map.jpg')","backgroundPosition":"center 20%"}}>
         <span className="icon">🔎</span>
         <h3>सर्वत्र शोध</h3>
         <p>सदस्य, व्यवसाय, मंडळे, कार्यक्रम आणि मोहिमा शोधा.</p>
@@ -518,8 +527,8 @@ export default function HomePage() {
       छत्रपती शिवाजी महाराजांनी १६७४ मध्ये स्थापन केलेले सार्वभौम स्वराज्य, छत्रपती संभाजी महाराजांचा अभेद्य लढा, आणि पेशवे, शिंदे, होळकर, भोसले, गायकवाड, पवार घराण्यांनी भारतभर फडकवलेला भगवा ध्वज. १८ व्या शतकात संपूर्ण हिंदुस्थानवर मराठा सत्तेचा एकछत्री दरारा होता.
     </p>
 
-    <div style={{"position":"relative","borderRadius":"var(--radius)","overflow":"hidden","marginBottom":"32px"}} data-reveal="zoom">
-      <img src="/assets/images/real-maratha-sowar.jpg" alt="मराठा सैन्य" style={{"width":"100%","height":"440px","objectFit":"cover","objectPosition":"50% 12%"}} />
+    <div style={{"position":"relative","borderRadius":"var(--radius)","overflow":"hidden","marginBottom":"32px","backgroundColor":"#1a0a04"}} data-reveal="zoom">
+      <img src="/assets/images/bhavya-maratha-army.jpg" alt="मराठा सैन्य" style={{"width":"100%","height":"420px","objectFit":"cover","objectPosition":"center 45%"}} />
       <div style={{"position":"absolute","bottom":"0","left":"0","right":"0","background":"linear-gradient(180deg, transparent 20%, rgba(18,9,3,0.5) 60%, rgba(15,7,3,0.92) 100%)","padding":"32px 24px"}}>
         <span className="card-tag">भव्य दृश्य</span>
         <h3 style={{"color":"#FFFFFF","margin":"8px 0 4px","fontSize":"1.5rem"}}>मराठा सैन्याची अजस्त्र घोडदौड</h3>
@@ -564,7 +573,7 @@ export default function HomePage() {
           <p>चिलखत, शिरस्त्राण, भाला (बर्ची), ढाल व तलवार सज्ज मराठा घोडेस्वार — ज्यांच्या वेगवान घोडदौडीने मुघल व युरोपीय सत्तांना पराभूत केले.</p>
         </div>
       </div>
-      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-maratha-arms.jpg')","backgroundPosition":"center 25%"}}>
+      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-maratha-arms.jpg')","backgroundPosition":"center 18%","backgroundSize":"cover"}}>
         <div className="card-bg-body">
           <span className="card-tag">शस्त्रागार</span>
           <h4>मराठा शस्त्रास्त्रे व चिलखत संग्रह</h4>
@@ -645,10 +654,12 @@ export default function HomePage() {
   <div className="container">
     <div className="section-head" data-reveal>
       <div>
-        <span className="eyebrow-sm">वास्तुरचना व लष्करी अभियांत्रिकी</span>
-        <h2>मराठा गडकोट स्थापत्यशास्त्र — त्रिविध वर्गीकरण</h2>
+        <span className="eyebrow-sm">सह्याद्रीचे गडकिल्ले · लष्करी अभियांत्रिकी</span>
+        <h2>सह्याद्रीचे गडकिल्ले — ३५०+ किल्ले व स्थापत्यशास्त्र</h2>
       </div>
-      <Link to="/forts" className="more-link">सर्व ३५०+ किल्ले पाहा →</Link>
+      <Link to="/forts" className="more-link" style={{ background: 'var(--maroon-900)', color: '#FFFFFF', padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 700 }}>
+        सर्व ३५०+ किल्ले पाहा →
+      </Link>
     </div>
     <div className="grid-3" data-reveal-group>
       <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-raigad-panoramic.jpg')","minHeight":"360px"}}>
@@ -667,7 +678,7 @@ export default function HomePage() {
           <div className="tag-list"><span className="tag">शिशाची जोडणी</span><span className="tag">५२ बुरुज</span><span className="tag">सुरक्षित गोदी</span><span className="tag">गुप्त भुयारी मार्ग</span></div>
         </div>
       </div>
-      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-shaniwar-wada.jpg')","minHeight":"360px"}}>
+      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-ahmednagar-main-gate.jpg')","minHeight":"360px"}}>
         <div className="card-bg-body">
           <span className="card-tag">🏰 भुईकोट</span>
           <h4>भुईकोट (Land / Plain Forts)</h4>
@@ -729,7 +740,7 @@ export default function HomePage() {
     </div>
     <p className="muted" style={{"marginBottom":"24px"}}>छत्रपती शिवाजी महाराजांनी १६५७ मध्ये कल्याण-भिवंडीत भारताच्या पहिल्या स्वतंत्र आरमाराची पायाभरणी केली. पोर्तुगीज, ब्रिटिश, डच व जंजिऱ्याच्या सिद्दीच्या समुद्री वर्चस्वाला सुरुंग लावून मराठ्यांनी पश्चिम किनारपट्टीवर स्वतःचे निर्विवाद प्रभुत्व प्रस्थापित केले.</p>
     <div className="grid-2" data-reveal-group>
-      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-kanhoji-angre.jpg')","minHeight":"400px"}}>
+      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-kanhoji-angre.jpg')","minHeight":"420px","backgroundPosition":"center 12%","backgroundSize":"cover"}}>
         <div className="card-bg-body">
           <span className="card-tag">दर्यासारंग (Grand Admiral)</span>
           <h4>सरखेल कान्होजी आंग्रे (१६६९ – १७२९)</h4>
@@ -767,11 +778,16 @@ export default function HomePage() {
       <Link to="/history" className="more-link">सविस्तर इतिहास →</Link>
     </div>
     <p className="muted" style={{"marginBottom":"24px"}}>१४ जानेवारी १७६१ रोजी पानिपतच्या तिसऱ्या युद्धात मोठा आघात सहन केल्यानंतर जगाला वाटले होते की मराठा सत्ता संपली. परंतु अवघ्या १० वर्षांत पेशवे माधवराव, महादजी शिंदे, तुकोजी होळकर आणि नाना फडणवीस यांनी पुन्हा दिल्लीवर भगवा फडकवून मुघल बादशहाला मराठ्यांचे मांडलिक बनवले.</p>
-    <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-maratha-court-1792.jpg')","minHeight":"400px","marginBottom":"32px"}} data-reveal="zoom">
-      <div className="card-bg-body">
+    <div style={{"position":"relative","borderRadius":"var(--radius)","overflow":"hidden","marginBottom":"32px","backgroundColor":"#1a0a04","minHeight":"460px"}} data-reveal="zoom">
+      <img 
+        src="/assets/images/real-maratha-court-1792.jpg" 
+        alt="मराठा राजदरबार १७९२" 
+        style={{"width":"100%","height":"480px","objectFit":"cover","objectPosition":"center 8%","display":"block"}} 
+      />
+      <div style={{"position":"absolute","bottom":"0","left":"0","right":"0","background":"linear-gradient(180deg, transparent 20%, rgba(18,9,3,0.65) 60%, rgba(15,7,3,0.95) 100%)","padding":"28px 24px"}}>
         <span className="card-tag">अस्सल ऐतिहासिक तैलचित्र · १७९२</span>
-        <h4>मराठा राजदरबार (The Maratha Durbar at Pune, 1792)</h4>
-        <p>ब्रिटिश चित्रकार जेम्स वेल्स याने शनिवार वाड्यामध्ये प्रत्यक्ष उपस्थित राहून रेखाटलेले ऐतिहासिक चित्र. यामध्ये पेशवे सवाई माधवराव, कारभारी नाना फडणवीस, महादजी शिंदे आणि मराठा मुत्सद्दी उपस्थित आहेत.</p>
+        <h4 style={{"color":"#FFFFFF","margin":"8px 0 6px","fontSize":"1.35rem"}}>मराठा राजदरबार (The Maratha Durbar at Pune, 1792)</h4>
+        <p style={{"color":"rgba(255,248,231,0.92)","fontSize":".9rem","lineHeight":"1.5","margin":"0"}}>ब्रिटिश चित्रकार जेम्स वेल्स याने शनिवार वाड्यामध्ये प्रत्यक्ष उपस्थित राहून रेखाटलेले ऐतिहासिक चित्र. यामध्ये पेशवे सवाई माधवराव, कारभारी नाना फडणवीस, महादजी शिंदे आणि मराठा मुत्सद्दी उपस्थित आहेत.</p>
       </div>
     </div>
     <div className="grid-3" data-reveal-group>
@@ -789,7 +805,7 @@ export default function HomePage() {
           <p>युरोपीय इतिहासकारांनी 'मराठ्यांचे मॅकियाव्हेली' संबोधलेले बुद्धिवंत राजकारणी. नारायणराव पेशव्यांच्या हत्येनंतर 'बारभाई कारस्थान' रचून स्वराज्याची धुरा सांभाळली. पहिल्या इंग्रज-मराठा युद्धात इंग्रजांना नमवून 'सालबाईचा तह' घडवून आणला.</p>
         </div>
       </div>
-      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-ahilyabai-holkar.jpg')","minHeight":"360px","backgroundPosition":"center 8%"}}>
+      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-ahilyabai-holkar.jpg')","minHeight":"380px","backgroundPosition":"center 6%","backgroundSize":"cover"}}>
         <div className="card-bg-body">
           <span className="card-tag">लोकमाता व तत्त्वज्ञ राणी</span>
           <h4>पुण्यश्लोक अहिल्याबाई होळकर</h4>
@@ -899,7 +915,7 @@ export default function HomePage() {
       <Link to="/history" className="more-link">सर्व इतिहास पाहा →</Link>
     </div>
     <div className="grid-3" data-reveal-group>
-      <Link to="/history/shivaji-maharaj" className="card-bg" style={{"backgroundImage":"url('/assets/images/real-shivaji-portrait.jpg')","minHeight":"320px","backgroundPosition":"center 15%"}}>
+      <Link to="/history/shivaji-maharaj" className="card-bg" style={{"backgroundImage":"url('/assets/images/maratha-hero.jpg')","minHeight":"350px","backgroundPosition":"center 8%","backgroundSize":"cover"}}>
         <div className="card-bg-body">
           <span className="card-tag">हिंदवी स्वराज्य संस्थापक</span>
           <h4>छत्रपती शिवाजी महाराज</h4>
@@ -907,7 +923,7 @@ export default function HomePage() {
           <span className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>सविस्तर चरित्र वाचा →</span>
         </div>
       </Link>
-      <Link to="/history/sambhaji-maharaj" className="card-bg" style={{"backgroundImage":"url('/assets/images/real-sambhaji-portrait.png')","minHeight":"320px","backgroundPosition":"center 15%"}}>
+      <Link to="/history/sambhaji-maharaj" className="card-bg" style={{"backgroundImage":"url('/assets/images/Sambhaji_Maharaj.avif')","minHeight":"350px","backgroundPosition":"center 8%","backgroundSize":"cover"}}>
         <div className="card-bg-body">
           <span className="card-tag">अपराजित धर्मवीर</span>
           <h4>छत्रपती संभाजी महाराज</h4>
@@ -915,7 +931,7 @@ export default function HomePage() {
           <span className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>सविस्तर चरित्र वाचा →</span>
         </div>
       </Link>
-      <Link to="/history/bajirao-peshwa" className="card-bg" style={{"backgroundImage":"url('/assets/images/real-bajirao-statue.jpg')","minHeight":"320px","backgroundPosition":"50% 8%"}}>
+      <Link to="/history/bajirao-peshwa" className="card-bg" style={{"backgroundImage":"url('/assets/images/real-bajirao-statue.jpg')","minHeight":"350px","backgroundPosition":"center 3%","backgroundSize":"160%"}}>
         <div className="card-bg-body">
           <span className="card-tag">अपराजित सेनापती</span>
           <h4>श्रीमंत बाजीराव पेशवे</h4>

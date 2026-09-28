@@ -36,15 +36,21 @@ export default function SiteHeader({ onOpenSearch }) {
       {/* ========== HEADER ========== */}
       <header className="site-header">
         <div className="site-header-inner">
-          <Link to="/" className="brand-desktop" onClick={handleLinkClick}>
-            <img src={getContent('images.brandLogo', '/assets/images/logo.png')} alt="Connect Maratha Logo" className="brand-logo" />
-            <div className="brand-titles">
-              <div className="brand-main">
-                <span className="en">{getContent('header.brandTitle', 'CONNECT मराठा').split(' ')[0] || 'CONNECT'}</span>{' '}
-                <span className="mr">{getContent('header.brandTitle', 'CONNECT मराठा').split(' ').slice(1).join(' ') || 'मराठा'}</span>
-              </div>
-              <span className="brand-sub">{getContent('header.brandSubtitle', 'भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी')}</span>
-            </div>
+          <Link to="/" className="brand-desktop" onClick={handleLinkClick} title="Connect Maratha (कनेक्ट मराठा)" style={{ display: 'flex', alignItems: 'center', height: '100%', padding: '2px 0' }}>
+            <img 
+              src={getContent('images.brandLogo', '/assets/images/logo.png') || '/assets/images/logo.png'} 
+              onError={(e) => { e.currentTarget.src = '/assets/images/logo.png'; }}
+              alt="Connect Maratha Logo" 
+              className="brand-logo" 
+              style={{
+                height: '66px',
+                width: '66px',
+                maxHeight: '66px',
+                maxWidth: '66px',
+                objectFit: 'contain',
+                display: 'block'
+              }}
+            />
           </Link>
 
           <nav className={`desktop-nav ${mobileOpen ? 'mobile-nav-active' : ''}`}>
