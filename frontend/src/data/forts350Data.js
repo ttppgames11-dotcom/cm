@@ -1384,7 +1384,7 @@ export const FORTS_DATABASE = [
     "height": "८७० फूट",
     "desc": "छत्रपती शिवरायांच्या काळातील निजामपूर परिसरातील संरक्षक ठाणे.",
     "image": "/assets/images/forts/mangad-fort.jpg",
-    "imageSource": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Photo_Of_Idol_Of_Goddess_Vinzai.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "imageSource": "https://upload.wikimedia.org/wikipedia/commons/7/77/Fort_Mangad.jpg",
     "imageLicense": "CC BY-SA 4.0",
     "verified": true,
     "imageVerified": true,
@@ -1704,8 +1704,8 @@ export const FORTS_DATABASE = [
     "height": "२,३०० फूट",
     "desc": "माथेरानच्या शेजारील विस्तीर्ण पठार व घनदाट अरण्याचा गड.",
     "image": "/assets/images/forts/prabalgad-fort.jpg",
-    "imageSource": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Cajanus_plants_near_Prabalgad_fort_%282010%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "imageLicense": "CC BY-SA 2.0",
+    "imageSource": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Prabalgad_Mahadarwaza.jpg",
+    "imageLicense": "CC BY-SA 4.0",
     "verified": true,
     "imageVerified": true,
     "division": "कोकण विभाग",
@@ -2736,5 +2736,3 @@ export const FORTS_DATABASE = [
     "isUnesco": false
   }
 ];
-export const forts350Data = FORTS_DATABASE;
-export default FORTS_DATABASE;
