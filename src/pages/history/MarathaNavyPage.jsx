@@ -206,76 +206,179 @@ export default function MarathaNavyPage() {
           position: 'relative',
           borderRadius: '24px',
           overflow: 'hidden',
-          backgroundImage: 'linear-gradient(135deg, rgba(7, 19, 38, 0.88) 0%, rgba(15, 45, 89, 0.82) 45%, rgba(10, 25, 47, 0.90) 100%), url("/assets/images/navy/maratha_navy_hero.jpg")',
+          backgroundImage: 'linear-gradient(135deg, rgba(7, 19, 38, 0.62) 0%, rgba(15, 45, 89, 0.48) 50%, rgba(7, 19, 38, 0.68) 100%), url("/assets/images/navy/maratha_navy_hero.jpg")',
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: 'center 35%',
           color: '#FFF',
-          padding: '48px 36px',
+          padding: '52px 36px',
           border: '2px solid #DD8A2E',
-          boxShadow: '0 20px 45px rgba(7,19,38,0.5)',
+          boxShadow: '0 20px 45px rgba(7,19,38,0.35)',
           marginBottom: '36px'
         }}>
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#DD8A2E', color: '#071326', padding: '6px 16px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '14px', boxShadow: '0 4px 12px rgba(221, 138, 46, 0.4)' }}>
+          <div style={{ position: 'relative', zIndex: 1, maxWidth: '860px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#DD8A2E', color: '#071326', padding: '6px 16px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '14px', boxShadow: '0 4px 14px rgba(0,0,0,0.4)' }}>
               <span>⚓</span> भारतीय आरमाराचे जनक (Father of Indian Navy)
             </div>
             <h1 style={{
               fontFamily: "'Baloo 2', 'Noto Sans Devanagari', sans-serif",
-              fontSize: 'clamp(2rem, 4.5vw, 3rem)',
+              fontSize: 'clamp(2.1rem, 4.8vw, 3.2rem)',
               fontWeight: 800,
               margin: '0 0 10px',
               color: '#FFF',
               lineHeight: 1.2,
-              textShadow: '0 2px 8px rgba(0,0,0,0.6)'
+              textShadow: '0 2px 10px rgba(0,0,0,0.85), 0 4px 20px rgba(0,0,0,0.7)'
             }}>
               मराठा आरमार व ऐतिहासिक जलदुर्ग
             </h1>
-            <p style={{ color: '#FDBA74', fontSize: '1.2rem', fontWeight: 700, margin: '0 0 14px', letterSpacing: '0.2px', textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+            <p style={{ color: '#FDBA74', fontSize: '1.25rem', fontWeight: 800, margin: '0 0 14px', letterSpacing: '0.2px', textShadow: '0 2px 8px rgba(0,0,0,0.85)' }}>
               "ज्यांचे आरमार त्याचा समुद्र!" — रामचंद्रपंत अमात्य (आज्ञापत्र)
             </p>
-            <p style={{ color: '#E2E8F0', fontSize: '1rem', maxWidth: '840px', lineHeight: 1.7, margin: 0, textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}>
+            <p style={{ color: '#F8FAFC', fontSize: '1.02rem', lineHeight: 1.7, margin: 0, textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)', background: 'rgba(7, 19, 38, 0.45)', padding: '12px 16px', borderRadius: '12px', backdropFilter: 'blur(3px)', border: '1px solid rgba(255,255,255,0.15)' }}>
               १७ व्या शतकात परकीय सागरी शक्तींचा (ब्रिटिश, पोर्तुगीज, डच आणि सिद्दी) धोका ओळखून छत्रपती शिवाजी महाराजांनी स्वतंत्र स्वदेशी जहाजांची निर्मिती, अजिंक्य सागरी जलदुर्ग आणि स्थानिक कोळी-भंडारी मावळ्यांचे अजिंक्य आरमार उभे केले. छत्रपती संभाजी महाराज आणि सरखेल कान्होजी आंग्रे यांनी हे साम्राज्य समुद्रावर अजेय ठेवले.
             </p>
           </div>
         </div>
 
-        {/* Navy Leaders Highlight */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '22px', marginBottom: '40px' }}>
-          <div style={{ background: '#FFF', borderRadius: '18px', padding: '24px', border: '1px solid #E6DDCE', boxShadow: '0 6px 20px rgba(0,0,0,0.06)', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, width: '6px', height: '100%', background: '#DD8A2E' }}></div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-              <div style={{ fontSize: '2.2rem', background: '#FEF3C7', padding: '8px 12px', borderRadius: '12px' }}>⚓</div>
-              <div>
-                <h3 style={{ fontFamily: "'Baloo 2', sans-serif", fontSize: '1.3rem', color: '#0F2D59', margin: 0, fontWeight: 800 }}>
-                  सरखेल कान्होजी आंग्रे (१६६९–१७२९)
+        {/* Navy Leaders Highlight Cards with Images & Deep Details */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px', marginBottom: '40px' }}>
+          
+          {/* Card 1: Kanhoji Angre */}
+          <div style={{
+            background: '#FFF',
+            borderRadius: '20px',
+            border: '1px solid #E6DDCE',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <div style={{ position: 'relative', width: '100%', height: '220px', background: '#0F172A', overflow: 'hidden' }}>
+              <img
+                src="/assets/images/navy/kanhoji_angre_admiral.jpg"
+                alt="सरखेल कान्होजी आंग्रे"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', display: 'block' }}
+                onError={(e) => { e.target.src = '/assets/images/real-kanhoji-angre.jpg'; }}
+              />
+              <div style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                background: 'rgba(15, 23, 42, 0.85)',
+                color: '#FDBA74',
+                padding: '4px 12px',
+                borderRadius: '12px',
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                border: '1px solid rgba(221, 138, 46, 0.5)'
+              }}>
+                ⚓ १६६९ – १७२९
+              </div>
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: 'linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.4) 60%, transparent 100%)',
+                padding: '24px 18px 10px'
+              }}>
+                <h3 style={{ fontFamily: "'Baloo 2', sans-serif", fontSize: '1.35rem', color: '#FFF', margin: 0, fontWeight: 800 }}>
+                  सरखेल कान्होजी आंग्रे
                 </h3>
-                <div style={{ fontSize: '0.82rem', color: '#DD8A2E', fontWeight: 800, marginTop: '2px' }}>
-                  मराठा आरमाराचे अजिंक्य नौदल प्रमुख (Grand Admiral)
+                <div style={{ fontSize: '0.82rem', color: '#FDBA74', fontWeight: 700 }}>
+                  मराठा आरमाराचे सर्वोच्च अजिंक्य सेनापती (Grand Admiral)
                 </div>
               </div>
             </div>
-            <p style={{ color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
-              ३० वर्षांच्या प्रदीर्घ कारकिर्दीत एकाही सागरी युद्धात पराभूत न झालेले मराठा अॅडमिरल. ब्रिटिश, पोर्तुगीज व डचांच्या संयुक्त आरमारी आक्रमणांना धुळीस मिळवून त्यांनी अरबी समुद्रावर मराठ्यांचे निर्विवाद सार्वभौमत्व प्रस्थापित केले.
-            </p>
+            
+            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flexGrow: 1, gap: '12px' }}>
+              <p style={{ color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
+                ३० वर्षांच्या प्रदीर्घ कारकिर्दीत एकाही सागरी युद्धात पराभूत न झालेले मराठा अॅडमिरल. ब्रिटिश, पोर्तुगीज व डच या तिन्ही बलाढ्य युरोपीय सत्तांना पराभूत करून त्यांनी पश्चिम किनारपट्टीवर (कोकण ते मुंबई) मराठ्यांचे अजेय वर्चस्व राखले.
+              </p>
+              
+              <div style={{ background: '#FFFBEB', borderRadius: '12px', padding: '12px', border: '1px solid #FEF3C7', fontSize: '0.82rem', color: '#92400E', lineHeight: 1.55 }}>
+                <div style={{ fontWeight: 800, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>🛡️</span> आरमारी पराक्रम व अधिकार:
+                </div>
+                <ul style={{ margin: 0, paddingLeft: '16px' }}>
+                  <li><strong>दस्तक पद्धत:</strong> इंग्रज व पोर्तुगीज जहाजांनाही कान्होजींची अधिकृत परवानगी (Pass/Dastak) घेतल्याशिवाय समुद्रात फिरता येत नव्हते.</li>
+                  <li><strong>प्रमुख आरमारी तळ:</strong> विजयदुर्ग (घेरिया), किल्ले कुलाबा (अलिबाग), सुवर्णदुर्ग.</li>
+                </ul>
+              </div>
+
+              <div style={{ fontSize: '0.82rem', color: '#0369A1', background: '#F0F9FF', padding: '10px 12px', borderRadius: '10px', marginTop: 'auto', border: '1px solid #BAE6FD' }}>
+                🚩 <strong>ऐतिहासिक गौरव:</strong> भारतीय नौदलाचे मुंबईतील मुख्य पश्चिम नौदल कमांडचे मुख्यालय त्यांच्या स्मरणार्थ <em>"INS Angre"</em> म्हणून ओळखले जाते.
+              </div>
+            </div>
           </div>
 
-          <div style={{ background: '#FFF', borderRadius: '18px', padding: '24px', border: '1px solid #E6DDCE', boxShadow: '0 6px 20px rgba(0,0,0,0.06)', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, width: '6px', height: '100%', background: '#0F2D59' }}></div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-              <div style={{ fontSize: '2.2rem', background: '#DBEAFE', padding: '8px 12px', borderRadius: '12px' }}>🗡️</div>
-              <div>
-                <h3 style={{ fontFamily: "'Baloo 2', sans-serif", fontSize: '1.3rem', color: '#0F2D59', margin: 0, fontWeight: 800 }}>
+          {/* Card 2: Maynak Bhandari & Daryasarang Daulat Khan */}
+          <div style={{
+            background: '#FFF',
+            borderRadius: '20px',
+            border: '1px solid #E6DDCE',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <div style={{ position: 'relative', width: '100%', height: '220px', background: '#0F172A', overflow: 'hidden' }}>
+              <img
+                src="/assets/images/navy/maynak_daryasarang.jpg"
+                alt="मायनाक भंडारी व दर्यासारंग दौलत खान"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 35%', display: 'block' }}
+              />
+              <div style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                background: 'rgba(15, 23, 42, 0.85)',
+                color: '#7DD3FC',
+                padding: '4px 12px',
+                borderRadius: '12px',
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                border: '1px solid rgba(56, 189, 248, 0.5)'
+              }}>
+                🗡️ शिवकालीन आरमारी शिलेदार
+              </div>
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: 'linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.4) 60%, transparent 100%)',
+                padding: '24px 18px 10px'
+              }}>
+                <h3 style={{ fontFamily: "'Baloo 2', sans-serif", fontSize: '1.35rem', color: '#FFF', margin: 0, fontWeight: 800 }}>
                   मायनाक भंडारी व दर्यासारंग दौलत खान
                 </h3>
-                <div style={{ fontSize: '0.82rem', color: '#0284C7', fontWeight: 800, marginTop: '2px' }}>
-                  शिवकालीन पहिले आरमारी सेनापती
+                <div style={{ fontSize: '0.82rem', color: '#7DD3FC', fontWeight: 700 }}>
+                  छत्रपती शिवाजी महाराजांचे पहिले आरमारी सेनापती
                 </div>
               </div>
             </div>
-            <p style={{ color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
-              छत्रपती शिवरायांच्या थेट मार्गदर्शनाखाली सिंधुदुर्ग, विजयदुर्ग व खांदेरीच्या समुद्रात शत्रूशी भिडणारे मायनाक भंडारी आणि आरमाराची उभारणी करणारे दर्यासारंग दौलत खान यांनी मराठा आरमाराचा भक्कम पाया रचला.
-            </p>
+            
+            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flexGrow: 1, gap: '12px' }}>
+              <p style={{ color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
+                छत्रपती शिवरायांच्या थेट विश्वासातील सेनापती. मायनाक भंडारींनी स्थानिक कुशल भंडारी-कोळी तरुणांना संघटित करून आरमाराची फळी उभी केली, तर दर्यासारंग दौलत खान यांनी मराठा आरमाराची पहिली गलबते व गुराबांची तोफखाना सज्ज तुकडी समुद्रात उतरवली.
+              </p>
+              
+              <div style={{ background: '#F0F9FF', borderRadius: '12px', padding: '12px', border: '1px solid #BAE6FD', fontSize: '0.82rem', color: '#0369A1', lineHeight: 1.55 }}>
+                <div style={{ fontWeight: 800, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>⚔️</span> खांदेरी-उंदेरी व जंजिरा मोहिमा:
+                </div>
+                <ul style={{ margin: 0, paddingLeft: '16px' }}>
+                  <li><strong>खांदेरीचा ऐतिहासिक संग्राम:</strong> १६७९ मध्ये मायनाक भंडारींनी ब्रिटिशांच्या अजस्त्र युध्दनौकांना लहान व वेगवान गलबतांच्या साहाय्याने धूळ चारून खांदेरीवर भगवा फडकवला.</li>
+                  <li><strong>पद्मदुर्ग उभारणी:</strong> सिद्दीच्या जंजिऱ्याला रोखण्यासाठी समुद्रात कासा बेटावर पद्मदुर्ग उभा करण्याचे नेतृत्व दौलत खान यांनी केले.</li>
+                </ul>
+              </div>
+
+              <div style={{ fontSize: '0.82rem', color: '#B45309', background: '#FEF3C7', padding: '10px 12px', borderRadius: '10px', marginTop: 'auto', border: '1px solid #FDE68A' }}>
+                🚩 <strong>ऐतिहासिक महत्त्व:</strong> स्थानिक दर्यावर्दी समाजाला एकत्र आणून जगातील पहिल्या देशी स्वातंत्र्य आरमाराचा पाया या दोन सेनापतींनी रचला.
+              </div>
+            </div>
           </div>
+
         </div>
 
         {/* Warships Section with Authentic Generated Illustrations */}
