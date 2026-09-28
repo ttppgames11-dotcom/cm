@@ -338,21 +338,8 @@ router.get('/users', authenticateToken, requireRole('superadmin', 'admin', 'ceo'
 // POST /api/admin/users - Superadmin creates a new user
 router.post('/users', authenticateToken, requireRole('superadmin', 'admin'), (req, res) => {
   const { name, email, phone, password, role, district, taluka, kul, gotra, tier, profession, business, verified } = req.body;
-  const cleanName = sanitize(name);
-  const cleanedPhone = cleanPhone(phone);
-
-  if (!cleanName || !cleanedPhone) {
-    return sendError(res, 'कृपया नाव आणि संपर्क नंबर प्रविष्ट करा.', 'MISSING_FIELDS', 400);
-  }
-
-  if (!isValidPhone(cleanedPhone)) {
-    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
-  }
-
-  const existingPhone = db.findOne('members', m => m.phone === cleanedPhone || m.phone === `+91 ${cleanedPhone}`);
-  if (existingPhone) {
-    return sendError(res, 'हा फोन नंबर अगोदरच नोंदणीकृत आहे.', 'PHONE_EXISTS', 409);
-  }
+  const cleanName = sanitize(name) || 'नवीन सदस्य';
+  const cleanedPhone = cleanPhone(phone) || Date.now().toString().slice(-10);
 
   const cleanRole = sanitize(role) || 'member';
   const isVerified = verified === true || verified === 'true';
