@@ -271,28 +271,18 @@ export default function GranthalayaPage() {
         
         {/* Hero Header */}
         <div style={{
-          background: 'linear-gradient(135deg, #2D0B0B 0%, #4A1010 50%, #681A1A 100%)',
+          position: 'relative',
           borderRadius: '24px',
-          padding: '44px 36px',
+          padding: '48px 36px',
           color: '#FFF',
           border: '2px solid #DD8A2E',
-          boxShadow: '0 20px 48px rgba(45,11,11,0.35)',
+          boxShadow: '0 20px 48px rgba(61,13,13,0.25)',
           marginBottom: '32px',
-          position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          backgroundImage: 'linear-gradient(90deg, rgba(35, 10, 10, 0.90) 0%, rgba(55, 14, 14, 0.78) 55%, rgba(45, 12, 12, 0.45) 100%), url(/assets/images/granthalaya/modi-archive.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
         }}>
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            bottom: 0,
-            width: '40%',
-            backgroundImage: 'url(/assets/images/granthalaya/modi-archive.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            opacity: 0.15,
-            pointerEvents: 'none'
-          }} />
 
           <div style={{ position: 'relative', zIndex: 1, maxWidth: '850px' }}>
             <span style={{
@@ -423,15 +413,46 @@ export default function GranthalayaPage() {
                 }}>
                 
                 {/* Visual Image Banner with Category Badge */}
-                <div style={{ position: 'relative', width: '100%', height: '200px', overflow: 'hidden', background: '#2D0B0B' }}>
+                <div style={{
+                  position: 'relative',
+                  width: '100%',
+                  height: '220px',
+                  overflow: 'hidden',
+                  background: 'linear-gradient(135deg, #1F0808 0%, #340C0C 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {/* Blurred subtle ambient backdrop */}
+                  <img
+                    src={granth.image}
+                    alt=""
+                    aria-hidden="true"
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      filter: 'blur(16px) brightness(0.4)',
+                      transform: 'scale(1.15)',
+                      opacity: 0.6
+                    }}
+                  />
+                  {/* Main uncropped image */}
                   <img
                     src={granth.image}
                     alt={granth.title}
                     style={{
-                      width: '100%',
+                      position: 'relative',
+                      zIndex: 2,
+                      maxWidth: '100%',
+                      maxHeight: '100%',
+                      width: 'auto',
                       height: '100%',
-                      objectFit: 'cover',
-                      filter: 'brightness(0.92) contrast(1.05)',
+                      objectFit: 'contain',
+                      filter: 'contrast(1.03)',
                       transition: 'transform 0.3s ease'
                     }}
                     onError={(e) => {
@@ -443,6 +464,7 @@ export default function GranthalayaPage() {
                     position: 'absolute',
                     top: '12px',
                     left: '12px',
+                    zIndex: 3,
                     display: 'flex',
                     gap: '6px'
                   }}>
@@ -459,7 +481,7 @@ export default function GranthalayaPage() {
                       {granth.tag}
                     </span>
                     <span style={{
-                      background: 'rgba(0,0,0,0.65)',
+                      background: 'rgba(0,0,0,0.75)',
                       color: '#DD8A2E',
                       fontSize: '0.74rem',
                       fontWeight: 700,
@@ -475,7 +497,8 @@ export default function GranthalayaPage() {
                     position: 'absolute',
                     bottom: '10px',
                     right: '12px',
-                    background: 'rgba(255,255,255,0.92)',
+                    zIndex: 3,
+                    background: 'rgba(255,255,255,0.94)',
                     color: '#3D0D0D',
                     fontSize: '0.76rem',
                     fontWeight: 700,
