@@ -369,8 +369,6 @@ const GRANTH_COLLECTION = [
 export default function GranthalayaPage() {
   const [selectedCat, setSelectedCat] = useState('सर्व');
   const [search, setSearch] = useState('');
-  const [expandedId, setExpandedId] = useState(null);
-  const [activeModalGranth, setActiveModalGranth] = useState(null);
 
   const categories = ['सर्व', 'बखर', 'ग्रंथ', 'प्रशासन', 'महाकाव्य', 'इतिहास संशोधन', 'मोडी लिपी'];
 
@@ -383,10 +381,6 @@ export default function GranthalayaPage() {
       (g.highlight && g.highlight.toLowerCase().includes(search.toLowerCase()));
     return matchCat && matchSearch;
   });
-
-  const toggleExpand = (id) => {
-    setExpandedId(prev => (prev === id ? null : id));
-  };
 
   return (
     <div style={{ background: '#F8F5F0', minHeight: 'calc(100vh - 120px)', padding: '36px 16px' }}>
@@ -678,60 +672,59 @@ export default function GranthalayaPage() {
                     </div>
                   )}
 
-                  {/* Expandable Key Details Section (Full 50+ lines information) */}
-                  <div style={{ marginTop: '4px' }}>
-                    <button
-                      onClick={() => toggleExpand(granth.id)}
-                      style={{
-                        background: '#FAF2E6',
-                        border: '1px solid #DD8A2E',
-                        color: '#5C1414',
-                        fontWeight: 700,
-                        fontSize: '0.84rem',
-                        cursor: 'pointer',
-                        padding: '6px 12px',
-                        borderRadius: '8px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        transition: 'background 0.2s'
-                      }}>
-                      <span>📜 सविस्तर ऐतिहासिक माहिती (५०+ ओळी)</span>
-                      <span>{isExpanded ? '▲ कमी करा' : '▼ संपूर्ण माहिती वाचा'}</span>
-                    </button>
+                  {/* Comprehensive 50+ lines detailed historical information displayed directly inside each card */}
+                  <div style={{
+                    marginTop: '8px',
+                    padding: '16px',
+                    background: '#FAF6F0',
+                    borderRadius: '12px',
+                    border: '1.5px solid #EADBCC',
+                    boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.03)'
+                  }}>
+                    <div style={{
+                      fontWeight: 800,
+                      fontSize: '0.9rem',
+                      color: '#3D0D0D',
+                      marginBottom: '10px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      borderBottom: '1.5px solid #E2D2BE',
+                      paddingBottom: '6px'
+                    }}>
+                      <span>📜 सविस्तर ऐतिहासिक माहिती व नोंदी:</span>
+                    </div>
 
-                    {isExpanded && (
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                      maxHeight: '340px',
+                      overflowY: 'auto',
+                      paddingRight: '6px'
+                    }}>
+                      {granth.detailedInfo && granth.detailedInfo.map((line, idx) => (
+                        <div key={idx} style={{
+                          fontSize: '0.84rem',
+                          color: '#3A3026',
+                          lineHeight: 1.62,
+                          paddingBottom: '6px',
+                          borderBottom: idx === granth.detailedInfo.length - 1 ? 'none' : '1px solid #EFE4D6'
+                        }}>
+                          {line}
+                        </div>
+                      ))}
+                    </div>
+
+                    {granth.preservation && (
                       <div style={{
-                        marginTop: '12px',
-                        padding: '16px',
-                        background: '#FAF6F0',
-                        borderRadius: '12px',
-                        border: '1.5px solid #EADBCC',
-                        maxHeight: '380px',
-                        overflowY: 'auto'
+                        marginTop: '10px',
+                        paddingTop: '8px',
+                        borderTop: '1px dashed #DCCBB5',
+                        fontSize: '0.8rem',
+                        color: '#6A5340'
                       }}>
-                        <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#3D0D0D', marginBottom: '10px' }}>
-                          📌 या ग्रंथाची सखोल ऐतिहासिक माहिती व नोंदी:
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                          {granth.detailedInfo && granth.detailedInfo.map((line, idx) => (
-                            <div key={idx} style={{
-                              fontSize: '0.83rem',
-                              color: '#3A3026',
-                              lineHeight: 1.6,
-                              paddingBottom: '6px',
-                              borderBottom: idx === granth.detailedInfo.length - 1 ? 'none' : '1px solid #EFE4D6'
-                            }}>
-                              {line}
-                            </div>
-                          ))}
-                        </div>
-                        {granth.preservation && (
-                          <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px dashed #DCCBB5', fontSize: '0.8rem', color: '#6A5340' }}>
-                            🏛️ <strong>मूळ प्रत / जतन स्थळ:</strong> {granth.preservation}
-                          </div>
-                        )}
+                        🏛️ <strong>मूळ प्रत / जतन स्थळ:</strong> {granth.preservation}
                       </div>
                     )}
                   </div>
@@ -749,8 +742,12 @@ export default function GranthalayaPage() {
                   display: 'flex',
                   gap: '10px'
                 }}>
-                  <button
-                    onClick={() => setActiveModalGranth(granth)}
+                  <a
+                    href="#download"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      alert(`'${granth.title}' ची सविस्तर डिजिटल संदर्भ आवृत्ती लवकरच पीडीएफ स्वरूपात उपलब्ध होईल.`);
+                    }}
                     style={{
                       flex: 1,
                       textAlign: 'center',
@@ -760,33 +757,14 @@ export default function GranthalayaPage() {
                       borderRadius: '10px',
                       fontWeight: 700,
                       fontSize: '0.88rem',
-                      border: 'none',
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 12px rgba(199,56,0,0.25)',
-                      transition: 'filter 0.2s'
-                    }}>
-                    📖 सविस्तर ग्रंथ अभ्यास
-                  </button>
-                  <a
-                    href="#download"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      alert(`'${granth.title}' ची सविस्तर डिजिटल संदर्भ आवृत्ती लवकरच पीडीएफ स्वरूपात उपलब्ध होईल.`);
-                    }}
-                    style={{
-                      padding: '10px 16px',
-                      background: '#FFF',
-                      border: '1.5px solid #DD8A2E',
-                      color: '#DD8A2E',
-                      borderRadius: '10px',
-                      fontWeight: 700,
-                      fontSize: '0.86rem',
                       textDecoration: 'none',
+                      boxShadow: '0 4px 12px rgba(199,56,0,0.25)',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '4px'
+                      justifyContent: 'center',
+                      gap: '6px'
                     }}>
-                    📥 PDF
+                    📥 संदर्भ प्रत डाउनलोड (PDF)
                   </a>
                 </div>
 
@@ -794,101 +772,6 @@ export default function GranthalayaPage() {
             );
           })}
         </div>
-
-        {/* Full Modal Viewer for Deep 50+ lines reading */}
-        {activeModalGranth && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.75)',
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px'
-          }}
-          onClick={() => setActiveModalGranth(null)}>
-            <div style={{
-              background: '#FFFFFF',
-              borderRadius: '20px',
-              maxWidth: '800px',
-              width: '100%',
-              maxHeight: '90vh',
-              overflowY: 'auto',
-              padding: '32px',
-              border: '2px solid #DD8A2E',
-              boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
-              position: 'relative'
-            }}
-            onClick={(e) => e.stopPropagation()}>
-              <button
-                onClick={() => setActiveModalGranth(null)}
-                style={{
-                  position: 'absolute',
-                  top: '18px',
-                  right: '20px',
-                  background: '#F0ECE4',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: '36px',
-                  height: '36px',
-                  fontSize: '1.2rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  color: '#3D0D0D'
-                }}>
-                ✕
-              </button>
-
-              <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '20px' }}>
-                <img
-                  src={activeModalGranth.image}
-                  alt={activeModalGranth.title}
-                  style={{ width: '100px', height: '100px', objectFit: 'contain', background: '#2D0B0B', borderRadius: '12px', padding: '4px' }}
-                />
-                <div>
-                  <span style={{ background: '#5C1414', color: '#FFF', fontSize: '0.75rem', fontWeight: 800, padding: '3px 10px', borderRadius: '6px' }}>
-                    {activeModalGranth.tag}
-                  </span>
-                  <h2 style={{ fontFamily: "'Baloo 2', sans-serif", fontSize: '1.6rem', color: '#3D0D0D', margin: '6px 0 2px' }}>
-                    {activeModalGranth.title}
-                  </h2>
-                  <div style={{ color: '#C9701C', fontWeight: 700, fontSize: '0.92rem' }}>
-                    ✍️ {activeModalGranth.author} | 📄 {activeModalGranth.pages}
-                  </div>
-                </div>
-              </div>
-
-              {activeModalGranth.highlight && (
-                <div style={{ background: '#FFF9F0', borderLeft: '4px solid #DD8A2E', padding: '12px 16px', borderRadius: '0 10px 10px 0', fontSize: '0.95rem', fontStyle: 'italic', color: '#6E4314', marginBottom: '20px' }}>
-                  {activeModalGranth.highlight}
-                </div>
-              )}
-
-              <h4 style={{ color: '#3D0D0D', borderBottom: '2px solid #EADBCC', paddingBottom: '8px', marginBottom: '14px', fontSize: '1.1rem' }}>
-                📜 संपूर्ण ऐतिहासिक सविस्तर संदर्भ व माहिती:
-              </h4>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {activeModalGranth.detailedInfo && activeModalGranth.detailedInfo.map((line, idx) => (
-                  <div key={idx} style={{ fontSize: '0.92rem', color: '#332A22', lineHeight: 1.7, paddingBottom: '8px', borderBottom: '1px solid #F2EBE1' }}>
-                    {line}
-                  </div>
-                ))}
-              </div>
-
-              {activeModalGranth.preservation && (
-                <div style={{ marginTop: '20px', padding: '12px', background: '#F8F5F0', borderRadius: '8px', fontSize: '0.88rem', color: '#685444' }}>
-                  🏛️ <strong>मूळ प्रत / जतन स्थळ:</strong> {activeModalGranth.preservation}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
       </div>
     </div>
   );
