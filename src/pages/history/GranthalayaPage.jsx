@@ -511,11 +511,9 @@ export default function GranthalayaPage() {
 
         {/* Granth Cards Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '26px' }}>
-          {filtered.map(granth => {
-            const isExpanded = expandedId === granth.id;
-            return (
-              <div
-                key={granth.id}
+          {filtered.map(granth => (
+            <div
+              key={granth.id}
                 style={{
                   background: '#FFFFFF',
                   borderRadius: '18px',
@@ -769,8 +767,7 @@ export default function GranthalayaPage() {
                 </div>
 
               </div>
-            );
-          })}
+            ))}
         </div>
       </div>
     </div>
