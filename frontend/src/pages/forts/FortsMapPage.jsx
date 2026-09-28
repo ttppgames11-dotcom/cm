@@ -189,15 +189,18 @@ export default function FortsMapPage() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
               {DIVISION_FILTERS.map((d) => {
                 const isSelected = selectedDiv === d.id;
-                const count = d.id === 'all' 
-                  ? FORTS_DATABASE.length 
-                  : FORTS_DATABASE.filter(f => f.division === d.id).length;
+                // Count forts in this division under current active category
+                const count = d.id === 'all'
+                  ? (activeType === 'all' ? FORTS_DATABASE.length : (activeType === 'unesco' ? FORTS_DATABASE.filter(f => f.isUnesco).length : FORTS_DATABASE.filter(f => f.type === activeType).length))
+                  : FORTS_DATABASE.filter(f => f.division === d.id && (activeType === 'all' || (activeType === 'unesco' ? f.isUnesco : f.type === activeType))).length;
+
                 return (
                   <button
                     key={d.id}
                     onClick={() => {
                       setSelectedDiv(d.id);
                       setSelectedDistrict('all');
+                      setActiveType('all');
                     }}
                     style={{
                       padding: '8px 16px',
@@ -235,16 +238,22 @@ export default function FortsMapPage() {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
             {CATEGORY_TABS.map(t => {
               const isSelected = activeType === t.id;
-              const count = t.id === 'all' 
-                ? FORTS_DATABASE.length
-                : (t.id === 'unesco' 
-                    ? FORTS_DATABASE.filter(f => f.isUnesco).length 
-                    : FORTS_DATABASE.filter(f => f.type === t.id).length);
+              // Count forts in this category under currently selected division
+              const count = FORTS_DATABASE.filter(f => {
+                const matchesDiv = selectedDiv === 'all' || f.division === selectedDiv;
+                const matchesDistrict = selectedDistrict === 'all' || f.district === selectedDistrict;
+                const matchesCategory = t.id === 'all' || (t.id === 'unesco' ? f.isUnesco : f.type === t.id);
+                return matchesDiv && matchesDistrict && matchesCategory;
+              }).length;
 
               return (
                 <button
                   key={t.id}
-                  onClick={() => setActiveType(t.id)}
+                  onClick={() => {
+                    setActiveType(t.id);
+                    setSelectedDiv('all');
+                    setSelectedDistrict('all');
+                  }}
                   className={`tab ${isSelected ? 'active' : ''}`}
                   style={{
                     padding: '10px 20px',

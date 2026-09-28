@@ -198,6 +198,7 @@ export default function FortsMapPage() {
                     onClick={() => {
                       setSelectedDiv(d.id);
                       setSelectedDistrict('all');
+                      setActiveType('all');
                     }}
                     style={{
                       padding: '8px 16px',
@@ -244,7 +245,11 @@ export default function FortsMapPage() {
               return (
                 <button
                   key={t.id}
-                  onClick={() => setActiveType(t.id)}
+                  onClick={() => {
+                    setActiveType(t.id);
+                    setSelectedDiv('all');
+                    setSelectedDistrict('all');
+                  }}
                   className={`tab ${isSelected ? 'active' : ''}`}
                   style={{
                     padding: '10px 20px',
