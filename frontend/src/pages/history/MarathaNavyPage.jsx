@@ -201,37 +201,42 @@ export default function MarathaNavyPage() {
     <div style={{ background: '#F8F5F0', minHeight: 'calc(100vh - 120px)', padding: '36px 16px' }}>
       <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
         
-        {/* Navy Hero Banner */}
+        {/* Navy Hero Banner with Background Image */}
         <div style={{
           position: 'relative',
           borderRadius: '24px',
           overflow: 'hidden',
-          background: 'linear-gradient(135deg, #071326 0%, #0F2D59 45%, #1B3B6F 75%, #0A192F 100%)',
+          backgroundImage: 'linear-gradient(135deg, rgba(7, 19, 38, 0.88) 0%, rgba(15, 45, 89, 0.82) 45%, rgba(10, 25, 47, 0.90) 100%), url("/assets/images/navy/maratha_navy_hero.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           color: '#FFF',
-          padding: '44px 32px',
+          padding: '48px 36px',
           border: '2px solid #DD8A2E',
-          boxShadow: '0 20px 45px rgba(7,19,38,0.45)',
+          boxShadow: '0 20px 45px rgba(7,19,38,0.5)',
           marginBottom: '36px'
         }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#DD8A2E', color: '#071326', padding: '6px 16px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '14px' }}>
-            <span>⚓</span> भारतीय आरमाराचे जनक (Father of Indian Navy)
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#DD8A2E', color: '#071326', padding: '6px 16px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '14px', boxShadow: '0 4px 12px rgba(221, 138, 46, 0.4)' }}>
+              <span>⚓</span> भारतीय आरमाराचे जनक (Father of Indian Navy)
+            </div>
+            <h1 style={{
+              fontFamily: "'Baloo 2', 'Noto Sans Devanagari', sans-serif",
+              fontSize: 'clamp(2rem, 4.5vw, 3rem)',
+              fontWeight: 800,
+              margin: '0 0 10px',
+              color: '#FFF',
+              lineHeight: 1.2,
+              textShadow: '0 2px 8px rgba(0,0,0,0.6)'
+            }}>
+              मराठा आरमार व ऐतिहासिक जलदुर्ग
+            </h1>
+            <p style={{ color: '#FDBA74', fontSize: '1.2rem', fontWeight: 700, margin: '0 0 14px', letterSpacing: '0.2px', textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+              "ज्यांचे आरमार त्याचा समुद्र!" — रामचंद्रपंत अमात्य (आज्ञापत्र)
+            </p>
+            <p style={{ color: '#E2E8F0', fontSize: '1rem', maxWidth: '840px', lineHeight: 1.7, margin: 0, textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}>
+              १७ व्या शतकात परकीय सागरी शक्तींचा (ब्रिटिश, पोर्तुगीज, डच आणि सिद्दी) धोका ओळखून छत्रपती शिवाजी महाराजांनी स्वतंत्र स्वदेशी जहाजांची निर्मिती, अजिंक्य सागरी जलदुर्ग आणि स्थानिक कोळी-भंडारी मावळ्यांचे अजिंक्य आरमार उभे केले. छत्रपती संभाजी महाराज आणि सरखेल कान्होजी आंग्रे यांनी हे साम्राज्य समुद्रावर अजेय ठेवले.
+            </p>
           </div>
-          <h1 style={{
-            fontFamily: "'Baloo 2', 'Noto Sans Devanagari', sans-serif",
-            fontSize: 'clamp(2rem, 4.5vw, 2.9rem)',
-            fontWeight: 800,
-            margin: '0 0 10px',
-            color: '#FFF',
-            lineHeight: 1.2
-          }}>
-            मराठा आरमार व ऐतिहासिक जलदुर्ग
-          </h1>
-          <p style={{ color: '#FDBA74', fontSize: '1.15rem', fontWeight: 700, margin: '0 0 14px', letterSpacing: '0.2px' }}>
-            "ज्यांचे आरमार त्याचा समुद्र!" — रामचंद्रपंत अमात्य (आज्ञापत्र)
-          </p>
-          <p style={{ color: '#E2E8F0', fontSize: '0.98rem', maxWidth: '820px', lineHeight: 1.65, margin: 0 }}>
-            १७ व्या शतकात परकीय सागरी शक्तींचा (ब्रिटिश, पोर्तुगीज, डच आणि सिद्दी) धोका ओळखून छत्रपती शिवाजी महाराजांनी स्वतंत्र स्वदेशी जहाजांची निर्मिती, अजिंक्य सागरी जलदुर्ग आणि स्थानिक कोळी-भंडारी मावळ्यांचे अजिंक्य आरमार उभे केले. छत्रपती संभाजी महाराज आणि सरखेल कान्होजी आंग्रे यांनी हे साम्राज्य समुद्रावर अजेय ठेवले.
-          </p>
         </div>
 
         {/* Navy Leaders Highlight */}
