@@ -252,11 +252,11 @@ export default function MarathaNavyPage() {
             display: 'flex',
             flexDirection: 'column'
           }}>
-            <div style={{ position: 'relative', width: '100%', height: '220px', background: '#0F172A', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', width: '100%', height: '230px', background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)', overflow: 'hidden' }}>
               <img
-                src="/assets/images/navy/kanhoji_angre_admiral.jpg"
+                src="/assets/images/navy/kanhoji_angre_banner.jpg"
                 alt="सरखेल कान्होजी आंग्रे"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', display: 'block' }}
+                style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', margin: '0 auto' }}
                 onError={(e) => { e.target.src = '/assets/images/real-kanhoji-angre.jpg'; }}
               />
               <div style={{
