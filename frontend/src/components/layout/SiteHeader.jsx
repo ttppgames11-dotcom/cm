@@ -72,7 +72,7 @@ export default function SiteHeader({ onOpenSearch }) {
                     <Link to="/history/balidan-maas" onClick={handleLinkClick}>🕯️ धर्मवीर बलिदान मास स्मरण</Link>
                     <Link to="/history/granthalaya" onClick={handleLinkClick}>📚 मराठा ग्रंथालय व बखरी</Link>
                     <Link to="/history/warriors" onClick={handleLinkClick}>👑 ९६ कुळे व सरदार घराणी</Link>
-                    <Link to="/culture" onClick={handleLinkClick}>🏷️ राजमुद्रा व मराठा चिन्हे</Link>
+                    <Link to="/culture/symbols" onClick={handleLinkClick}>🏷️ राजमुद्रा व मराठा चिन्हे</Link>
                   </div>
                   <div className="mega-col">
                     <div className="mega-col-title">✊ समाज लढा व वारसा</div>
