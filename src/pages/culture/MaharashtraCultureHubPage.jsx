@@ -36,9 +36,9 @@ export default function MaharashtraCultureHubPage() {
           { time: '०७:३० AM', place: 'महाड - किल्ले रायगड पायथा', desc: 'शिवराजधानी रायगड गडावर आगमन व रोपवे/पायरी चढाई.', tag: 'दुर्ग', icon: '🏰', image: '/assets/images/real-raigad-bastions.jpg' },
           { time: '०९:०० AM', place: 'राजसदर, नगारखाना व होळीचा माळ', desc: 'इ.स. १६७४ च्या छत्रपती शिवराय राज्याभिषेकाची प्रत्यक्ष भूमी.', tag: 'इतिहास', icon: '👑', image: '/assets/images/real-raigad-panoramic.jpg' },
           { time: '११:३० AM', place: 'श्री जगदीश्वर मंदिर व समाधी स्मारक', desc: 'शिवकालीन जगदीश्वर दर्शन व शिवरायांच्या पवित्र समाधीचे दर्शन.', tag: 'मंदिर', icon: '🛕', image: '/assets/images/real-raigad-mahadarwaja.jpg' },
-          { time: '०१:३० PM', place: 'स्थानिक कोकणी खानावळ (महाड)', desc: 'पारंपरिक मालवणी पद्धतीचे जेवण, तांदळाची भाकरी आणि अस्सल सोलकढी.', tag: 'खाद्यसंस्कृती', icon: '🍲', image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=80' },
+          { time: '०१:३० PM', place: 'स्थानिक कोकणी खानावळ (महाड)', desc: 'पारंपरिक मालवणी पद्धतीचे जेवण, तांदळाची भाकरी आणि अस्सल सोलकढी.', tag: 'खाद्यसंस्कृती', icon: '🍲', image: '/assets/images/real-solkadhi.jpg' },
           { time: '०३:३० PM', place: 'दासगाव व सावित्री नदी बंदर', desc: 'मराठा आरमाराची ऐतिहासिक व्यापारी व जहाजांची हालचाल अनुभवणे.', tag: 'आरमार', icon: '⚓', image: '/assets/images/real-kanhoji-angre.jpg' },
-          { time: '०६:०० PM', place: 'हरिहरेश्वर / श्रीवर्धन समुद्रकिनारा', desc: 'दक्षिण काशी हरिहरेश्वर कालभैरव दर्शन व सूर्यास्त.', tag: 'तीर्थक्षेत्र', icon: '🌊', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80' }
+          { time: '०६:०० PM', place: 'हरिहरेश्वर / श्रीवर्धन समुद्रकिनारा', desc: 'दक्षिण काशी हरिहरेश्वर कालभैरव दर्शन व सूर्यास्त.', tag: 'तीर्थक्षेत्र', icon: '🌊', image: '/assets/images/real-konkan-tarkarli.jpg' }
         ],
         references: 'महाराष्ट्र शासन गॅझेटिअर - कुलाबा (रायगड) जिल्हा; MTDC कोकण टूरिझम सर्किट.',
         confidence: CONFIDENCE_LEVELS.DOCUMENTED
@@ -49,11 +49,11 @@ export default function MaharashtraCultureHubPage() {
         region: 'मराठवाडा',
         duration: '१ ते २ दिवस',
         steps: [
-          { time: '०८:०० AM', place: 'वेरूळ (Ellora) लेणी संकुल', desc: 'युनेस्को जागतिक वारसा - राष्ट्रकूट कालीन कैलास मंदिर (गुंफा क्र. १६) अखंड पाषाण कोरीव काम.', tag: 'UNESCO वारसा', icon: '🏛️', image: 'https://images.unsplash.com/photo-1600100397608-f010f4439c28?auto=format&fit=crop&w=600&q=80' },
-          { time: '११:३० AM', place: 'श्री घृष्णेश्वर ज्योतिर्लिंग', desc: '१२ वे ज्योतिर्लिंग, पुण्यश्लोक अहिल्यादेवी होळकर यांनी केलेला जिर्णोद्धार.', tag: 'ज्योतिर्लिंग', icon: '🛕', image: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=600&q=80' },
-          { time: '०१:३० PM', place: 'स्थानिक मराठवाडी भोजनगृह', desc: 'ज्वारीची भाकरी, ठेचा, शेंगदाणा चटणी, डाळ बट्टी आणि आंबाडीची भाजी.', tag: 'खाद्यसंस्कृती', icon: '🍲', image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=600&q=80' },
-          { time: '०३:३० PM', place: 'दौलताबाद (देवगिरी) अजिंक्य किल्ला', desc: 'यादवकालीन राजधानी, भारत की अद्वितीय मध्ययुगीन संरक्षण स्थापत्य व खंदक.', tag: 'दुर्ग', icon: '🏰', image: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=600&q=80' },
-          { time: '०६:३० PM', place: 'तुळजापूर श्री भवानी माता महापीठ', desc: 'स्वराज्य संस्थापकांची कुलस्वामिनी तुळजाभवानी दर्शन व काकड आरती.', tag: 'शक्तिपीठ', icon: '🚩', image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80' }
+          { time: '०८:०० AM', place: 'वेरूळ (Ellora) लेणी संकुल', desc: 'युनेस्को जागतिक वारसा - राष्ट्रकूट कालीन कैलास मंदिर (गुंफा क्र. १६) अखंड पाषाण कोरीव काम.', tag: 'UNESCO वारसा', icon: '🏛️', image: '/assets/images/real-ellora-kailash.jpg' },
+          { time: '११:३० AM', place: 'श्री घृष्णेश्वर ज्योतिर्लिंग', desc: '१२ वे ज्योतिर्लिंग, पुण्यश्लोक अहिल्यादेवी होळकर यांनी केलेला जिर्णोद्धार.', tag: 'ज्योतिर्लिंग', icon: '🛕', image: '/assets/images/real-trimbakeshwar.jpg' },
+          { time: '०१:३० PM', place: 'स्थानिक मराठवाडी भोजनगृह', desc: 'ज्वारीची भाकरी, ठेचा, शेंगदाणा चटणी, डाळ बट्टी आणि आंबाडीची भाजी.', tag: 'खाद्यसंस्कृती', icon: '🍲', image: '/assets/images/real-misal-pav.jpg' },
+          { time: '०३:३० PM', place: 'दौलताबाद (देवगिरी) अजिंक्य किल्ला', desc: 'यादवकालीन राजधानी, भारत की अद्वितीय मध्ययुगीन संरक्षण स्थापत्य व खंदक.', tag: 'दुर्ग', icon: '🏰', image: '/assets/images/forts/daulatabad-fort.jpg' },
+          { time: '०६:३० PM', place: 'तुळजापूर श्री भवानी माता महापीठ', desc: 'स्वराज्य संस्थापकांची कुलस्वामिनी तुळजाभवानी दर्शन व काकड आरती.', tag: 'शक्तिपीठ', icon: '🚩', image: '/assets/images/real-ganesh-utsav.jpg' }
         ],
         references: 'UNESCO World Heritage Dossier 243; पुरातत्त्व व वस्तुसंग्रहालय संचालनालय, महाराष्ट्र शासन.',
         confidence: CONFIDENCE_LEVELS.DOCUMENTED
@@ -64,11 +64,11 @@ export default function MaharashtraCultureHubPage() {
         region: 'विदर्भ (नागपूर-वर्धा-चंद्रपूर)',
         duration: '१ ते २ दिवस',
         steps: [
-          { time: '०८:०० AM', place: 'रामटेक गडमंदिर (नागपूर)', desc: 'कालिदासाच्या मेघदूताची भूमी व प्रभू रामचंद्रांचे ऐतिहासिक गडमंदिर.', tag: 'तीर्थक्षेत्र', icon: '🛕', image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=600&q=80' },
-          { time: '११:३० AM', place: 'गावीलगड / नगरधन किल्ला', desc: 'प्राचीन वाकाटक कालीन स्थापत्य आणि मध्ययुगीन लष्करी ठाणे.', tag: 'दुर्ग', icon: '🏰', image: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=80' },
-          { time: '०१:३० PM', place: 'स्थानिक सावजी भोजनालय (नागपूर)', desc: '३२ खड्या मसाल्यांचे अस्सल सावजी मटण/पातोडी रस्सा व गरम भाकरी.', tag: 'खाद्यसंस्कृती', icon: '🍲', image: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=600&q=80' },
-          { time: '०४:०० PM', place: 'ताडोबा-अंधारी व्याघ्र प्रकल्प परिसर', desc: 'महाराष्ट्रातील सर्वात जुने राष्ट्रीय उद्यान, समृद्ध जैवविविधता व वनसंपदा.', tag: 'निसर्ग व अरण्य', icon: '🐅', image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=600&q=80' },
-          { time: '०७:३० PM', place: 'नागपूर संत्रा मार्केट व इतवारी', desc: 'विश्वप्रसिद्ध नागपुरी संत्रा बर्फी व विदर्भाचा प्रसिद्ध चिवडा आस्वाद.', tag: 'स्थानिक बाजार', icon: '🍊', image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=80' }
+          { time: '०८:०० AM', place: 'रामटेक गडमंदिर (नागपूर)', desc: 'कालिदासाच्या मेघदूताची भूमी व प्रभू रामचंद्रांचे ऐतिहासिक गडमंदिर.', tag: 'तीर्थक्षेत्र', icon: '🛕', image: '/assets/images/real-trimbakeshwar.jpg' },
+          { time: '११:३० AM', place: 'गावीलगड / नगरधन किल्ला', desc: 'प्राचीन वाकाटक कालीन स्थापत्य आणि मध्ययुगीन लष्करी ठाणे.', tag: 'दुर्ग', icon: '🏰', image: '/assets/images/forts/gawilghur-fort.jpg' },
+          { time: '०१:३० PM', place: 'स्थानिक सावजी भोजनालय (नागपूर)', desc: '३२ खड्या मसाल्यांचे अस्सल सावजी मटण/पातोडी रस्सा व गरम भाकरी.', tag: 'खाद्यसंस्कृती', icon: '🍲', image: '/assets/images/real-nagpur-orange.jpg' },
+          { time: '०४:०० PM', place: 'ताडोबा-अंधारी व्याघ्र प्रकल्प परिसर', desc: 'महाराष्ट्रातील सर्वात जुने राष्ट्रीय उद्यान, समृद्ध जैवविविधता व वनसंपदा.', tag: 'निसर्ग व अरण्य', icon: '🐅', image: '/assets/images/real-vidarbha-tadoba.jpg' },
+          { time: '०७:३० PM', place: 'नागपूर संत्रा मार्केट व इतवारी', desc: 'विश्वप्रसिद्ध नागपुरी संत्रा बर्फी व विदर्भाचा प्रसिद्ध चिवडा आस्वाद.', tag: 'स्थानिक बाजार', icon: '🍊', image: '/assets/images/real-nagpur-orange.jpg' }
         ],
         references: 'विदर्भ साहित्य संघ नोंदी व महाराष्ट्र पर्यटन विकास महामंडळ (MTDC) नागपूर सर्किट.',
         confidence: CONFIDENCE_LEVELS.DOCUMENTED
@@ -80,11 +80,11 @@ export default function MaharashtraCultureHubPage() {
         region: 'पश्चिम महाराष्ट्र (पुणे-सातारा-कोल्हापूर)',
         duration: '१ दिवस (सकाळी ६:०० ते रात्री ८:००)',
         steps: [
-          { time: '०६:३० AM', place: 'पुणे - कात्रज घाट ओलांडून जेजुरी', desc: 'महाराष्ट्राचे कुलदैवत खंडोबा मंदिर (सोन्याची जेजुरी), ऐतिहासिक पायऱ्या व दीपमाळा.', tag: 'कुलदैवत', icon: '☀️', image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=600&q=80' },
-          { time: '०९:०० AM', place: 'स्थानिक पारंपरिक नाश्ता (जेजुरी/सासवड)', desc: 'झणझणीत मटकी उसळ, गरमागरम पोहे व गुळाचा चहा.', tag: 'खाद्य', icon: '☕', image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?auto=format&fit=crop&w=600&q=80' },
-          { time: '१०:३० AM', place: 'किल्ले पुरंदर व वज्रगड', desc: 'छत्रपती संभाजी महाराज जन्मस्थान, मुरारबाजी देशपांडे यांचे अतुलनीय शौर्यपीठ.', tag: 'दुर्ग', icon: '🏰', image: '/assets/images/real-pratapgad-fort.jpg' },
-          { time: '०१:३० PM', place: 'सासवड / नारायणपूर अस्सल जेवण', desc: 'चुलीवरची बाजरीची भाकरी, पिठलं, लसूण चटणी आणि ताक.', tag: 'खाद्यसंस्कृती', icon: '🍲', image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80' },
-          { time: '०३:३० PM', place: 'श्री क्षेत्र भुलेश्वर हेमाडपंथी मंदिर', desc: 'यादवकालीन अत्यंत समृद्ध दगडी कोरीव शिल्पकाम, गुप्त भुयार रचना.', tag: 'प्राचीन वास्तुकला', icon: '🛕', image: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=600&q=80' },
+          { time: '०६:३० AM', place: 'पुणे - कात्रज घाट ओलांडून जेजुरी', desc: 'महाराष्ट्राचे कुलदैवत खंडोबा मंदिर (सोन्याची जेजुरी), ऐतिहासिक पायऱ्या व दीपमाळा.', tag: 'कुलदैवत', icon: '☀️', image: '/assets/images/real-jejuri-khandoba.jpg' },
+          { time: '०९:०० AM', place: 'स्थानिक पारंपरिक नाश्ता (जेजुरी/सासवड)', desc: 'झणझणीत मटकी उसळ, गरमागरम पोहे व गुळाचा चहा.', tag: 'खाद्य', icon: '☕', image: '/assets/images/real-misal-pav.jpg' },
+          { time: '१०:३० AM', place: 'किल्ले पुरंदर व वज्रगड', desc: 'छत्रपती संभाजी महाराज जन्मस्थान, मुरारबाजी देशपांडे यांचे अतुलनीय शौर्यपीठ.', tag: 'दुर्ग', icon: '🏰', image: '/assets/images/real-purandar-fort.jpg' },
+          { time: '०१:३० PM', place: 'सासवड / नारायणपूर अस्सल जेवण', desc: 'चुलीवरची बाजरीची भाकरी, पिठलं, लसूण चटणी आणि ताक.', tag: 'खाद्यसंस्कृती', icon: '🍲', image: '/assets/images/real-misal-pav.jpg' },
+          { time: '०३:३० PM', place: 'श्री क्षेत्र भुलेश्वर हेमाडपंथी मंदिर', desc: 'यादवकालीन अत्यंत समृद्ध दगडी कोरीव शिल्पकाम, गुप्त भुयार रचना.', tag: 'प्राचीन वास्तुकला', icon: '🛕', image: '/assets/images/real-ellora-kailash.jpg' },
           { time: '०६:०० PM', place: 'सिंहगड पायथा / पुणे', desc: 'सूर्यास्ताच्या वेळी सुभेदार तानाजी मालुसरे स्मारक व कल्याण दरवाजा.', tag: 'शौर्यपीठ', icon: '🚩', image: '/assets/images/real-sinhagad-fort.jpg' }
         ],
         references: 'महाराष्ट्र शासन पर्यटन संचनालय (MTDC); बॉम्बे गॅझेटिअर (पुणे व सातारा खंड).',
