@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 export const SARDAR_GHARANE_DATA = [
   {
     id: 'bhosale',
-    name: 'भोसले घराणे (Bhosale Royal Clan)',
+    name: 'भोसले घराणे',
     title: 'छत्रपती घराणे · हिंदवी स्वराज्य संस्थापक',
     vansh: 'सूर्यवंशी',
     gotra: 'कौशिक / कौंडिण्य',
@@ -16,7 +16,7 @@ export const SARDAR_GHARANE_DATA = [
     level: 'हिंदवी स्वराज्य छत्रपती',
     desc: 'राजे शहाजीराजे, राष्ट्रमाता जिजाऊ, छत्रपती शिवाजी महाराज, धर्मवीर छत्रपती संभाजी महाराज आणि छत्रपती राजाराम महाराजांचे जगद्वंद्य स्वराज्य संस्थापक घराणे. ज्यांनी गुलामगिरीची ३५० वर्षांची शृंखला तोडून स्वतंत्र सार्वभौम हिंदवी स्वराज्याची स्थापना केली.',
     highlight: '“प्रतिपच्चंद्रलेखेव वर्धिष्णुर्विश्ववंदिता शाहसूनोः शिवस्यैषा मुद्रा भद्राय राजते ॥”',
-    surnames: 'भोसले, सावंत, राजे, घोरपडे (शाखा), शिसोदे संदर्भ',
+    surnames: 'भोसले, राजेभोसले, सावंत, घोरपडे',
     detailedInfo: [
       '१. ऐतिहासिक मूळ: भोसले घराण्याचे मूळ ऐतिहासिकदृष्ट्या सूर्यवंशी क्षत्रिय आणि देवगिरीचे यादव व उदेपूरच्या सिसोदिया परंपरेशी जोडले जाते. महाराष्ट्रात वेरुळ (जि. छत्रपती संभाजीनगर) हे भोसले घराण्याचे मूळ ऐतिहासिक स्थान मानले जाते.',
       '२. बाबाजीराजे व मालोजीराजे भोसले: मालोजीराजे भोसले यांनी निजामशाहीत आपल्या पराक्रमाने इंदापूर व पुणे प्रांताची जहागिरी मिळवली आणि वेरूळ येथील घृष्णेश्वर ज्योतिर्लिंग मंदिराचा जीर्णोद्धार केला.',
@@ -34,7 +34,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'shinde',
-    name: 'शिंदे घराणे (Shinde / Scindia Dynasty)',
+    name: 'शिंदे घराणे',
     title: 'ग्वाल्हेरचे अधिष्ठाते · हिंदुस्थानचे वकील-उल-मुत्लक',
     vansh: 'सूर्यवंशी',
     gotra: 'कौंडिण्य',
@@ -46,7 +46,7 @@ export const SARDAR_GHARANE_DATA = [
     level: 'मराठा साम्राज्य नियंत्रक',
     desc: 'राणेजी शिंदे, जयाप्पा, दत्ताजी, जनकोजी आणि महान मुत्सद्दी श्रीमंत महादजी शिंदे (पाटीलबाबा) यांचे शौर्यसंपन्न घराणे. पानिपतच्या महाभीषण संहारानंतर अवघ्या १० वर्षांत दिल्ली पुन्हा जिंकून संपूर्ण उत्तर भारतावर मराठ्यांचे वर्चस्व प्रस्थापित करणारे अग्रणी घराणे.',
     highlight: '“बचेंगे तो और भी लढेंगे!” — वीर दत्ताजी शिंदे (बुराडी घाट, १७६०)',
-    surnames: 'शिंदे, सिंधिया, पाटील, बागल, आपटे संदर्भ',
+    surnames: 'शिंदे, सिंधिया, पाटील, बागल',
     detailedInfo: [
       '१. मूळ व उदय: सातारा जिल्ह्यातील कण्हेरखेड हे शिंदे घराण्याचे मूळ गाव. राणेजी शिंदे यांनी छत्रपती शाहू महाराज आणि बाजीराव पेशव्यांच्या काळात आपल्या पराक्रमाने माळवा मोहिमेत घराण्याचा दबदबा निर्माण केला.',
       '२. दत्ताजी शिंदे यांचे बलिदान: १७६० च्या बुराडी घाटाच्या लढाईत नजीबखानाच्या सैन्याविरुद्ध अखेरपर्यंत लढताना जखमी अवस्थेतही "बचेंगे तो और भी लढेंगे!" ही अमर गर्जना करून दत्ताजींनी मराठा स्वाभिमान अजरामर केला.',
@@ -60,7 +60,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'holkar',
-    name: 'होळकर घराणे (Holkar Royal Dynasty)',
+    name: 'होळकर घराणे',
     title: 'माळव्याचे सुभेदार · पुण्यश्लोक अहिल्याबाईंची कर्मभूमी',
     vansh: 'सूर्यवंशी / चंद्रवंशी',
     gotra: 'कश्यप',
@@ -85,7 +85,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'gaikwad',
-    name: 'गायकवाड घराणे (Gaikwad Royal Dynasty)',
+    name: 'गायकवाड घराणे',
     title: 'बडोद्याचे श्रीमंत छत्रपती राजे · सामाजिक क्रांतीचे जनक',
     vansh: 'सूर्यवंशी',
     gotra: 'कौंडिण्य / भारद्वाज',
@@ -110,7 +110,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'pawar',
-    name: 'पवार घराणे (Pawar / Parmar Dynasty)',
+    name: 'पवार घराणे',
     title: 'धार व देवासचे अधिष्ठाते · माळव्याचे निष्ठावंत सेनापती',
     vansh: 'अग्निवंशी / सूर्यवंशी',
     gotra: 'वसिष्ठ',
@@ -133,7 +133,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'ghorpade',
-    name: 'घोरपडे घराणे (Ghorpade Royal Clan)',
+    name: 'घोरपडे घराणे',
     title: 'मुधोळ व सन्दूरचे राजे · कर्दनकाळ सरसेनापती',
     vansh: 'सूर्यवंशी',
     gotra: 'कौशिक',
@@ -156,7 +156,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'jadhav',
-    name: 'जाधव घराणे (Jadhav / Yadav Royal Lineage)',
+    name: 'जाधव घराणे',
     title: 'सिंदखेड राजाचे जहागीरदार · जिजाऊ माँसाहेबांचे माहेर',
     vansh: 'चंद्रवंशी / यदुवंशी',
     gotra: 'अत्री / कश्यप',
@@ -179,7 +179,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'more',
-    name: 'मोरे घराणे (More / Chandrarao of Javli)',
+    name: 'मोरे घराणे',
     title: 'जावळीचे चंद्रराव मोरे · सह्याद्रीचे अभेद्य दुर्गपती',
     vansh: 'सोमवंशी / चंद्रवंशी',
     gotra: 'गौतम / भारद्वाज',
@@ -202,7 +202,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'mohite',
-    name: 'मोहिते घराणे (Mohite Sardar Clan)',
+    name: 'मोहिते घराणे',
     title: 'स्वराज्याचे सरसेनापती · तळबीडचे पराक्रमी वीर',
     vansh: 'सूर्यवंशी',
     gotra: 'गार्ग्य / भारद्वाज',
@@ -225,7 +225,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'sawant',
-    name: 'सावंत घराणे (Sawant-Bhonsle of Sawantwadi)',
+    name: 'सावंत घराणे',
     title: 'सावंतवाडीचे राजेबहाद्दर · दक्षिण कोकणचे संरक्षक',
     vansh: 'सूर्यवंशी',
     gotra: 'कौंडिण्य / अंगिरस',
@@ -248,7 +248,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'nimbalkar',
-    name: 'निंबाळकर घराणे (Nimbalkar Clan of Phaltan)',
+    name: 'निंबाळकर घराणे',
     title: 'फलटणचे नाईक-निंबाळकर · छत्रपतींचे निकटवर्तीय घराणे',
     vansh: 'सूर्यवंशी / परमार शाखा',
     gotra: 'वसिष्ठ',
@@ -271,7 +271,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'ghatge',
-    name: 'घाटगे घराणे (Ghatge Sardar Clan of Kagal)',
+    name: 'घाटगे घराणे',
     title: 'कागलचे जहागीरदार व सेनापती · राजर्षी शाहू महाराजांचे जन्मघराणे',
     vansh: 'सूर्यवंशी',
     gotra: 'कश्यप / भारद्वाज',
@@ -294,7 +294,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'kadam',
-    name: 'कदम घराणे (Kadam / Kadamba Royal Lineage)',
+    name: 'कदम घराणे',
     title: 'प्राचीन कदंब सम्राटांचे वारसदार · स्वराज्याचे निष्ठावंत शिलेदार',
     vansh: 'सूर्यवंशी',
     gotra: 'भारद्वाज',
@@ -316,7 +316,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'chavan',
-    name: 'चव्हाण घराणे (Chavan / Chauhan Dynasty)',
+    name: 'चव्हाण घराणे',
     title: 'अग्निवंशी वीर · पृथ्वीराज चौहाणांचे वंशज',
     vansh: 'अग्निवंशी / सूर्यवंशी',
     gotra: 'वसिष्ठ / कश्यप',
@@ -338,7 +338,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'patankar',
-    name: 'पाटणकर घराणे (Patankar Sardar Clan)',
+    name: 'पाटणकर घराणे',
     title: 'पाटण खोऱ्याचे अधिपती · सह्याद्रीचे खडे पहारेकरी',
     vansh: 'सूर्यवंशी',
     gotra: 'कौंडिण्य',
@@ -359,7 +359,7 @@ export const SARDAR_GHARANE_DATA = [
   },
   {
     id: 'angre',
-    name: 'आंग्रे घराणे (Angre Maritime Dynasty)',
+    name: 'आंग्रे घराणे',
     title: 'मराठा आरमाराचे सरखेल · अरबी समुद्राचे अनभिषिक्त सम्राट',
     vansh: 'सूर्यवंशी',
     gotra: 'कश्यप',
@@ -680,6 +680,18 @@ export default function WarriorsPage() {
                 <div style={{ fontSize: '0.86rem', color: '#C9701C', fontWeight: 700 }}>
                   👑 {gharane.title}
                 </div>
+                <div style={{
+                  fontSize: '0.8rem',
+                  color: '#78350F',
+                  fontWeight: 600,
+                  marginTop: '5px',
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  gap: '4px'
+                }}>
+                  <span style={{ color: '#B45309', fontWeight: 800 }}>🏷️ आडनावे:</span>
+                  <span>{gharane.surnames}</span>
+                </div>
               </div>
 
               {/* Card Content Brief Description */}
@@ -932,7 +944,7 @@ export default function WarriorsPage() {
                 <div style={{ background: '#FFF7ED', padding: '12px', borderRadius: '10px', border: '1px solid #FFEDD5' }}>
                   <div style={{ fontSize: '0.75rem', color: '#9A3412', fontWeight: 600 }}>📜 संबंधित आडनावे</div>
                   <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#3D0D0D', marginTop: '2px' }}>
-                    {selectedSardar.surnames.split(',')[0]}
+                    {selectedSardar.surnames}
                   </div>
                 </div>
               </div>
