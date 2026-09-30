@@ -3,6 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import CMDB from '../../services/cmdb';
 import { CONTRIBUTOR_ROLES } from '../../data/maharashtraCoreUniverse';
+import {
+  REFERRAL_BANDS,
+  DEPARTMENT_WINGS,
+  ADMINISTRATIVE_TIERS,
+  MASTER_ROLES,
+  evaluateCandidateEligibility
+} from '../../data/rolesMatrixData';
 
 export default function MemberDashboardPage() {
   const { user, logout } = useAuth();
@@ -813,6 +820,103 @@ export default function MemberDashboardPage() {
                 </Link>
               </div>
             </div>
+          </div>
+
+          {/* MASTER ROLE ELIGIBILITY & NOMINATION PIPELINE WIDGET */}
+          <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '24px', marginBottom: '30px', boxShadow: '0 4px 15px rgba(234,88,12,0.06)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: 10 }}>
+              <div>
+                <span style={{ color: '#C2410C', fontWeight: 800, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  REFERRAL NOMINATION MATRIX • ३-गेट्स पदोन्नती
+                </span>
+                <h3 style={{ fontSize: '1.4rem', color: '#7C1D05', fontWeight 900, margin: '4px 0 2px' }}>
+                  🏛️ माझी संघटनात्मक पदोन्नती व पात्रता (Role Eligibility Matrix)
+                </h3>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: '#64748B' }}>
+                  तुमचे एकंदर रेफरल्स: <strong style={{ color: '#EA580C' }}>{(member.referrals || member.referralCount || 2870).toLocaleString()}</strong> • 
+                  सध्याचा अनलॉक्ड बँड: <strong style={{ color: '#16A34A' }}>Band 4 (प्रभावी योगदानकर्ता)</strong>
+                </p>
+              </div>
+              <Link to="/governance/roles-matrix" style={{ background: '#FFF7ED', color: '#EA580C', border: '1px solid #EA580C', padding: '8px 16px', borderRadius: '10px', fontSize: '0.82rem', fontWeight: 800, textDecoration: 'none' }}>
+                सर्व ३०+ पदे पहा →
+              </Link>
+            </div>
+
+            {/* Top 4 High-Impact Roles */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
+              {MASTER_ROLES.slice(0, 4).map(r => {
+                const userRefs = member.referrals || member.referralCount || 2870;
+                const isEligible = userRefs >= r.referralThreshold;
+                const existingApps = JSON.parse(localStorage.getItem('cm_role_applications') || '[]');
+                const hasApplied = existingApps.some(app => app.roleId === r.id);
+
+                const handleMemberApply = () => {
+                  const newApp = {
+                    id: 'app_' + Date.now(),
+                    userId: memberIdFormatted,
+                    userName: memberName,
+                    userDistrict: member.district || 'पुणे',
+                    roleId: r.id,
+                    roleTitleMr: r.titleMr,
+                    referrals: userRefs,
+                    gate1Status: 'Passed',
+                    gate2Status: 'Qualified',
+                    gate3Status: 'Interview Scheduled',
+                    appliedAt: new Date().toISOString()
+                  };
+                  localStorage.setItem('cm_role_applications', JSON.stringify([newApp, ...existingApps]));
+                  alert(`आपला "${r.titleMr}" पदासाठीचा उमेदवारी अर्ज जिल्हा व राज्य निवड समितीकडे वर्ग करण्यात आला आहे! 🚩`);
+                  window.location.reload();
+                };
+
+                return (
+                  <div key={r.id} style={{
+                    background: isEligible ? '#F0FDF4' : '#FFFDF9',
+                    border: isEligible ? '1.5px solid #86EFAC' : '1.5px solid #FED7AA',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}>
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                        <span style={{ fontSize: '0.72rem', background: isEligible ? '#DCFCE7' : '#FEF3C7', color: isEligible ? '#166534' : '#92400E', padding: '3px 8px', borderRadius: 6, fontWeight: 800 }}>
+                          {isEligible ? '✅ अर्ज करण्यास पात्र' : `🔒 आणखी ${(r.referralThreshold - userRefs).toLocaleString()} रेफरल्स आवश्यक`}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B' }}>{r.tier.toUpperCase()}</span>
+                      </div>
+                      <h4 style={{ margin: '4px 0 2px', fontSize: '1.05rem', fontWeight: 900, color: '#7C1D05' }}>{r.titleMr}</h4>
+                      <div style={{ fontSize: '0.78rem', color: '#64748B', marginBottom: 8 }}>{r.title}</div>
+                      <div style={{ fontSize: '0.76rem', color: '#334155', lineHeight: 1.4 }}>{r.description}</div>
+                    </div>
+
+                    <div style={{ marginTop: 14 }}>
+                      {hasApplied ? (
+                        <div style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #F59E0B', borderRadius: 8, padding: '8px 12px', textAlign: 'center', fontSize: '0.8rem', fontWeight: 800 }}>
+                          ⏳ अर्ज दाखल (Gate 1 & 2 Passed - Pending Review)
+                        </div>
+                      ) : isEligible ? (
+                        <button
+                          onClick={handleMemberApply}
+                          style={{ width: '100%', background: 'linear-gradient(135deg, #EA580C, #D97706)', color: '#fff', border: 'none', borderRadius: 8, padding: '9px 14px', fontSize: '0.82rem', fontWeight: 900, cursor: 'pointer', boxShadow: '0 2px 8px rgba(234,88,12,0.25)' }}
+                        >
+                          🚩 अर्जाची शिफारस करा (Apply for Gate 3)
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          style={{ width: '100%', background: '#F1F5F9', color: '#94A3B8', border: '1px solid #CBD5E1', borderRadius: 8, padding: '9px 14px', fontSize: '0.8rem', fontWeight: 700, cursor: 'not-allowed' }}
+                        >
+                          🔒 अपात्र (Referrals Required)
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
           </div>
         </>
       )}

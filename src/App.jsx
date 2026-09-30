@@ -36,6 +36,7 @@ import PhotoGalleryPage from './pages/culture/PhotoGalleryPage';
 import GovernancePage from './pages/governance/GovernancePage';
 import AdminERPPage from './pages/admin/AdminERPPage';
 import CEODashboardPage from './pages/admin/CEODashboardPage';
+import CEOPage from './pages/admin/CEOPage';
 import DistrictAdminCRM from './pages/admin/DistrictAdminCRM';
 import ChapterPresidentCRM from './pages/admin/ChapterPresidentCRM';
 import SevaHelpdeskCRM from './pages/admin/SevaHelpdeskCRM';
@@ -46,6 +47,8 @@ import CRMProtectedRoute from './components/auth/CRMProtectedRoute';
 import MemberProtectedRoute from './components/auth/MemberProtectedRoute';
 import SiteContentEditorPage from './pages/admin/SiteContentEditorPage';
 import SuperAdminDashboardPage from './pages/admin/SuperAdminDashboardPage';
+import SuperAdminPage from './pages/admin/SuperAdminPage';
+import AdminShell from './pages/admin/AdminShell';
 import ConnectMarathaAIAgentPage from './pages/ai/ConnectMarathaAIAgentPage';
 import GenericArticlePage from './pages/common/GenericArticlePage';
 
@@ -227,16 +230,17 @@ export default function App() {
             <Route key={i} path={r.from} element={<Navigate to={r.to} replace />} />
           ))}
 
+          {/* Admin Shell Console */}
+          <Route path="/admin/*" element={<AdminShell />} />
+
           {/* All Application Pages Wrapped Inside AppLayout */}
           <Route element={<AppLayout />}>
             {/* 100% Modern Clean React Routes */}
             <Route path="/" element={<HomePage />} />
             
             {/* SuperAdmin Supreme Console */}
-            <Route path="/superadmin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
-            <Route path="/admin/superadmin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
-            <Route path="/admin/users" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
-            <Route path="/crm/superadmin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/superadmin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminPage /></CRMProtectedRoute>} />
+            <Route path="/crm/superadmin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminPage /></CRMProtectedRoute>} />
             
             {/* History & Heritage */}
             <Route path="/history" element={<HistoryPage />} />
@@ -424,31 +428,23 @@ export default function App() {
             {/* Role-Specific Live Enterprise CRM Suite — Protected for Authenticated Staff/Admins */}
             <Route path="/crm" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
             <Route path="/crm/roles" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
-            <Route path="/admin" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
             <Route path="/crm/admin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
 
-            <Route path="/crm/ceo" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEODashboardPage /></CRMProtectedRoute>} />
-            <Route path="/ceo" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEODashboardPage /></CRMProtectedRoute>} />
-            <Route path="/ceo-dashboard" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEODashboardPage /></CRMProtectedRoute>} />
+            <Route path="/crm/ceo" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEOPage /></CRMProtectedRoute>} />
+            <Route path="/ceo" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEOPage /></CRMProtectedRoute>} />
+            <Route path="/ceo-dashboard" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEOPage /></CRMProtectedRoute>} />
 
             <Route path="/crm/district" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'district_admin', 'district']}><DistrictAdminCRM /></CRMProtectedRoute>} />
-            <Route path="/admin/district" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'district_admin', 'district']}><DistrictAdminCRM /></CRMProtectedRoute>} />
 
             <Route path="/crm/chapter" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'chapter_president', 'chapter']}><ChapterPresidentCRM /></CRMProtectedRoute>} />
-            <Route path="/admin/chapter" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'chapter_president', 'chapter']}><ChapterPresidentCRM /></CRMProtectedRoute>} />
 
             <Route path="/crm/helpdesk" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'seva_helpdesk', 'helpdesk_admin']}><SevaHelpdeskCRM /></CRMProtectedRoute>} />
             <Route path="/crm/seva" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'seva_helpdesk', 'helpdesk_admin']}><SevaHelpdeskCRM /></CRMProtectedRoute>} />
-            <Route path="/admin/seva" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'seva_helpdesk', 'helpdesk_admin']}><SevaHelpdeskCRM /></CRMProtectedRoute>} />
 
             <Route path="/crm/finance" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'finance_officer', 'finance']}><FinanceLedgerCRM /></CRMProtectedRoute>} />
-            <Route path="/admin/finance" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'finance_officer', 'finance']}><FinanceLedgerCRM /></CRMProtectedRoute>} />
 
             <Route path="/reports" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><AdminERPPage /></CRMProtectedRoute>} />
             <Route path="/crm/reports" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><AdminERPPage /></CRMProtectedRoute>} />
-            <Route path="/admin/reports" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><AdminERPPage /></CRMProtectedRoute>} />
-            <Route path="/admin/cms" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SiteContentEditorPage /></CRMProtectedRoute>} />
-            <Route path="/admin/content" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SiteContentEditorPage /></CRMProtectedRoute>} />
             <Route path="/cms" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SiteContentEditorPage /></CRMProtectedRoute>} />
             <Route path="/crm/cms" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SiteContentEditorPage /></CRMProtectedRoute>} />
 
@@ -543,6 +539,11 @@ export default function App() {
             <Route path="/matrimony-portal" element={<MatrimonyPortalPage />} />
             <Route path="/vivah" element={<MatrimonyPortalPage />} />
             <Route path="/vadhu-var" element={<MatrimonyPortalPage />} />
+
+            {/* Governance & Role Eligibility Matrix Routes */}
+            <Route path="/governance/roles-matrix" element={<RoleEligibilityMatrixPage />} />
+            <Route path="/roles-matrix" element={<RoleEligibilityMatrixPage />} />
+            <Route path="/eligibility-matrix" element={<RoleEligibilityMatrixPage />} />
 
             {/* Generic Article Route & Fallback */}
             <Route path="/article" element={<GenericArticlePage />} />
