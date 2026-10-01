@@ -1,0 +1,6 @@
+# Copy to android/key.properties (git-ignored). Keep the keystore OUTSIDE the repository
+# and back it up securely; enrol in Play App Signing so a lost upload key can be reset.
+storeFile=C:/secure/connect-maratha-upload.jks
+storePassword=CHANGE_ME
+keyAlias=upload
+keyPassword=CHANGE_ME
