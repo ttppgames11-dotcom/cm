@@ -1,9 +1,21 @@
 import { Router } from 'express';
 import express from 'express';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import { get, runQuery } from '../../database/database.js';
 
 const router = Router();
+const JWT_SECRET = process.env.JWT_SECRET || 'connect_maratha_secret_key_2026';
+
+function optionalAuth(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return next();
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (!err && user) req.user = user;
+    next();
+  });
+}
 
 // GET /media/:id or /api/media/:id
 router.get('/:id', async (req, res, next) => {
@@ -26,7 +38,7 @@ router.get('/:id', async (req, res, next) => {
 });
 
 // POST /api/media/:kind (upload raw image bytes)
-router.post('/:kind', express.raw({ type: '*/*', limit: '10mb' }), async (req, res, next) => {
+router.post('/:kind', optionalAuth, express.raw({ type: '*/*', limit: '10mb' }), async (req, res, next) => {
   try {
     const { kind } = req.params;
     const bytes = req.body;
@@ -45,16 +57,22 @@ router.post('/:kind', express.raw({ type: '*/*', limit: '10mb' }), async (req, r
     // 32-character hexadecimal ID matching ApiConfig._mediaPath regex
     const id = crypto.randomBytes(16).toString('hex');
     const ownerId = req.user?.id || 'anonymous';
+    const mediaPath = `/media/${id}`;
 
     await runQuery(`
       INSERT INTO media (id, owner_id, kind, mime, bytes, size, created_at)
       VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
     `, [id, ownerId, kind, mime, bytes, bytes.length]);
 
+    // If uploading profile picture and user is authenticated, link to members table
+    if (kind === 'profile' && req.user?.id) {
+      await runQuery('UPDATE members SET photo = ? WHERE id = ?', [mediaPath, req.user.id]);
+    }
+
     res.status(201).json({
       success: true,
       id,
-      path: `/media/${id}`
+      path: mediaPath
     });
   } catch (err) {
     next(err);
@@ -62,7 +80,7 @@ router.post('/:kind', express.raw({ type: '*/*', limit: '10mb' }), async (req, r
 });
 
 // DELETE /api/media/profile
-router.delete('/profile', async (req, res, next) => {
+router.delete('/profile', optionalAuth, async (req, res, next) => {
   try {
     const ownerId = req.user?.id;
     if (ownerId) {

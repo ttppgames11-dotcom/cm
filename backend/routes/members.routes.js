@@ -7,7 +7,7 @@ const router = Router();
 router.get('/', async (req, res, next) => {
   try {
     const { district, profession, search, tier } = req.query;
-    let sql = 'SELECT id, name, avatar, city, district, state, profession, business, skills, education, about, tier, role, joined FROM members WHERE 1=1';
+    let sql = 'SELECT id, name, avatar, photo, city, district, state, profession, business, skills, education, about, tier, role, joined FROM members WHERE 1=1';
     const params = [];
 
     if (district && district !== 'सर्व') {
@@ -74,7 +74,7 @@ router.get('/stats/summary', getStatsHandler);
 router.get('/:id', async (req, res, next) => {
   try {
     const member = await get(`
-      SELECT id, name, email, phone, avatar, city, district, state, country, profession, business, skills, education, interests, about, tier, role, verified_mobile, verified_email, verified_profile, joined 
+      SELECT id, name, email, phone, avatar, photo, city, district, state, country, profession, business, skills, education, interests, about, tier, role, verified_mobile, verified_email, verified_profile, joined 
       FROM members WHERE id = ?
     `, [req.params.id]);
 
