@@ -107,36 +107,36 @@ const FOCUS_AREAS = [
 
 const SUCCESS_STORIES = [
   {
-    name: 'सौ. सुवर्णा संभाजी जाधव',
-    location: 'सातारा',
-    field: 'जैविक शेती व दुग्धप्रक्रिया',
-    achievement: 'वार्षिक ₹८५ लाखांची उलाढाल, ३५ ग्रामीण महिलांना कायमस्वरूपी रोजगार उपलब्ध करून दिला.',
-    badge: 'यशस्वी कृषी उद्योजिका',
-    image: '/assets/images/story-suvarna-jadhav.jpg'
+    name: 'पद्मश्री राहीबाई सोमा पोपेरे (बीजमाता)',
+    location: 'अकोले, अहमदनगर',
+    field: 'गावरान बियाणे संवर्धन व सेंद्रिय शेती',
+    achievement: 'गावरान बियाण्यांची बँक स्थापन करून हजारो एकर शेती विषमुक्त केली व देशभरातील महिला शेतकऱ्यांना स्वावलंबी बनवले.',
+    badge: 'पद्मश्री कृषी प्रणेत्या',
+    image: '/assets/images/real-rahibai-popere.jpg'
   },
   {
-    name: 'अॅड. प्रज्ञा विक्रम पाटील',
-    location: 'पुणे',
-    field: 'कायदेशीर साहाय्य कक्ष',
-    achievement: '१,२०० पेक्षा जास्त पीडित महिलांना कौटुंबिक व मालमत्ता हक्कांतून मोफत न्याय मिळवून दिला.',
-    badge: 'समाजभूषण विधिज्ञ',
-    image: '/assets/images/women-legal-counseling.jpg'
+    name: 'अॅड. इंदिरा जयसिंग (वरिष्ठ विधिज्ञ)',
+    location: 'मुंबई / नवी दिल्ली',
+    field: 'महिला हक्क व कायदेशीर संरक्षण',
+    achievement: 'सर्वोच्च न्यायालयात कौटुंबिक हिंसाचार प्रतिबंधक कायदा आणि महिलांच्या मालमत्ता हक्कांच्या लढ्यात ऐतिहासिक योगदान.',
+    badge: 'ज्येष्ठ विधीतज्ज्ञ',
+    image: '/assets/images/real-indira-jaising-advocate.jpg'
   },
   {
-    name: 'कु. कल्याणी धनंजय मोहिते',
-    location: 'कोल्हापूर',
-    field: 'एमपीएससी उत्तीर्ण (उपजिल्हाधिकारी)',
-    achievement: 'Connect Maratha अभ्यास केंद्रातून मार्गदर्शन घेऊन राज्यात ५ वी रँक पटकावून उपजिल्हाधिकारी पदी निवड.',
-    badge: 'प्रशासकीय अधिकारी',
-    image: '/assets/images/story-kalyani-mohite.jpg'
+    name: 'श्रीमती अश्विनी भिडे (भा.प्र.से. / IAS)',
+    location: 'मुंबई / सांगली',
+    field: 'प्रशासकीय नेतृत्व व पायाभूत सुविधा',
+    achievement: 'मुंबई मेट्रो रेल कॉर्पोरेशन (MMRC) च्या व्यवस्थापकीय संचालक म्हणून मेट्रो-३ भूमिगत प्रकल्पाचे यशस्वी व धडाडीचे नेतृत्व.',
+    badge: 'वरिष्ठ सनदी अधिकारी (IAS)',
+    image: '/assets/images/real-ashwini-bhide-ias.jpg'
   },
   {
-    name: 'सौ. वैशाली राजेंद्र कदम',
-    location: 'छत्रपती संभाजीनगर',
-    field: 'मसाले व खाद्यपदार्थ निर्यात',
-    achievement: 'जिजाऊ बचत गटाच्या माध्यमातून दुबई, लंडन आणि अमेरिकेत अस्सल मराठमोळे मसाले व डाळी निर्यात सुरू.',
-    badge: 'ग्लोबल एक्स्पोर्टर',
-    image: '/assets/images/women-entrepreneur-hub.jpg'
+    name: 'पद्मश्री कल्पना सरोज (कमानी ट्यूब्स)',
+    location: 'अकोला / मुंबई',
+    field: 'औद्योगिक नेतृत्व व उद्योजकता',
+    achievement: 'अत्यंत प्रतिकूल परिस्थितीतून पुढे येऊन बंद पडलेली कमानी ट्यूब्स कंपनी पुनरुज्जीवित करत शेकडो कोटींचे साम्राज्य उभे केले.',
+    badge: 'पद्मश्री उद्योगपती',
+    image: '/assets/images/real-kalpana-saroj.jpg'
   }
 ];
 
@@ -569,14 +569,15 @@ export default function WomenEmpowermentPage() {
                 flexDirection: 'column'
               }}>
                 {/* Story Image */}
-                <div style={{ height: '180px', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ height: '210px', position: 'relative', overflow: 'hidden', background: '#F1F5F9' }}>
                   <img
                     src={story.image}
                     alt={story.name}
                     style={{
                       width: '100%',
                       height: '100%',
-                      objectFit: 'cover'
+                      objectFit: 'cover',
+                      objectPosition: 'center 20%'
                     }}
                   />
                   <div style={{
