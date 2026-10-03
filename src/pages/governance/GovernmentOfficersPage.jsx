@@ -191,35 +191,59 @@ export default function GovernmentOfficersPage() {
     <div className="government-officers-page" style={{ background: '#FAF7F2', minHeight: '100vh', paddingBottom: '60px' }}>
       {/* Hero Banner */}
       <section style={{
-        background: 'linear-gradient(135deg, rgba(26, 35, 126, 0.90) 0%, rgba(40, 53, 147, 0.88) 100%), url("/assets/images/connect-maratha-council.jpg") center/cover no-repeat',
+        background: 'linear-gradient(180deg, rgba(26, 35, 126, 0.45) 0%, rgba(40, 53, 147, 0.58) 50%, rgba(26, 35, 126, 0.78) 100%), url("/assets/images/connect-maratha-council.jpg") center 30%/cover no-repeat',
         color: '#FFFFFF',
-        padding: '50px 20px',
+        padding: '52px 20px 48px',
         textAlign: 'center',
         position: 'relative'
       }}>
-        <div style={{ maxWidth: '980px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '980px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div style={{
             display: 'inline-block',
-            background: 'rgba(255,255,255,0.18)',
-            padding: '5px 16px',
+            background: 'rgba(26, 35, 126, 0.65)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255, 213, 79, 0.5)',
+            padding: '6px 18px',
             borderRadius: '20px',
-            fontSize: '0.85rem',
+            fontSize: '0.88rem',
             fontWeight: 700,
-            marginBottom: '12px',
-            color: '#FFD54F'
+            marginBottom: '14px',
+            color: '#FFD54F',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
           }}>
             🚩 CONNECT मराठा — एक लढा भगव्यासाठी | सर्वधर्म समभाव
           </div>
-          <p style={{ fontSize: '1.2rem', color: '#FFE082', fontWeight: 600, margin: '0 0 6px' }}>
+          <p style={{
+            fontSize: '1.25rem',
+            color: '#FFE082',
+            fontWeight: 700,
+            margin: '0 0 8px',
+            textShadow: '0 2px 10px rgba(0,0,0,0.9), 0 1px 2px rgba(0,0,0,0.95)'
+          }}>
             समाजाच्या प्रगतीसाठी, शासन सेवेत कार्यरत
           </p>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, margin: '0 0 10px' }}>
+          <h1 style={{
+            fontSize: 'clamp(2rem, 5vw, 2.7rem)',
+            fontWeight: 900,
+            color: '#FFFFFF',
+            margin: '0 0 12px',
+            textShadow: '0 4px 16px rgba(0,0,0,0.95), 0 2px 4px rgba(0,0,0,0.95)'
+          }}>
             आपले अभिमानास्पद शासकीय अधिकारी !
           </h1>
-          <p style={{ fontSize: '1.1rem', opacity: 0.95, margin: '0 auto 20px', maxWidth: '680px' }}>
+          <p style={{
+            fontSize: '1.15rem',
+            color: '#FFFFFF',
+            opacity: 0.98,
+            margin: '0 auto 24px',
+            maxWidth: '720px',
+            lineHeight: 1.6,
+            fontWeight: 500,
+            textShadow: '0 2px 10px rgba(0,0,0,0.95), 0 1px 3px rgba(0,0,0,0.95)'
+          }}>
             प्रामाणिक सेवा, निष्ठावान नेतृत्व, समाज आणि राष्ट्रासाठी समर्पित ! || जय भवानी ! जय शिवाजी !
           </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
             <button
               onClick={() => setShowAddModal(true)}
               style={{
@@ -230,7 +254,8 @@ export default function GovernmentOfficersPage() {
                 borderRadius: '8px',
                 fontWeight: 800,
                 fontSize: '1rem',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.25)'
               }}
             >
               ＋ अधिकारी नोंदणी / माहिती जोडा
@@ -238,9 +263,10 @@ export default function GovernmentOfficersPage() {
             <a
               href="#officers-list"
               style={{
-                background: 'rgba(255,255,255,0.15)',
+                background: 'rgba(255,255,255,0.2)',
                 color: '#fff',
-                border: '1px solid rgba(255,255,255,0.4)',
+                border: '1px solid rgba(255,255,255,0.6)',
+                backdropFilter: 'blur(4px)',
                 padding: '12px 24px',
                 borderRadius: '8px',
                 fontWeight: 700,
@@ -254,11 +280,11 @@ export default function GovernmentOfficersPage() {
       </section>
 
       {/* Search & Categories */}
-      <div id="officers-list" style={{ maxWidth: '1180px', margin: '-22px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
+      <div id="officers-list" style={{ maxWidth: '1180px', margin: '28px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
         <div style={{
           background: '#FFFFFF',
           borderRadius: '14px',
-          padding: '20px',
+          padding: '24px',
           boxShadow: '0 8px 24px rgba(0,0,0,0.07)',
           border: '1px solid #EADBCE'
         }}>
