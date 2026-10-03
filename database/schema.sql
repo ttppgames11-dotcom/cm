@@ -2,6 +2,45 @@
 -- Connect Maratha (कनेक्ट मराठा) SQLite Database Schema
 -- ========================================================
 
+CREATE TABLE IF NOT EXISTS countries (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  code TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS states (
+  id TEXT PRIMARY KEY,
+  country_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  code TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_states_country_id ON states(country_id);
+
+CREATE TABLE IF NOT EXISTS districts (
+  id TEXT PRIMARY KEY,
+  state_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  code TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_districts_state_id ON districts(state_id);
+
+CREATE TABLE IF NOT EXISTS talukas (
+  id TEXT PRIMARY KEY,
+  district_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  code TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_talukas_district_id ON talukas(district_id);
+
+CREATE TABLE IF NOT EXISTS villages (
+  id TEXT PRIMARY KEY,
+  taluka_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  code TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_villages_taluka_id ON villages(taluka_id);
+CREATE INDEX IF NOT EXISTS idx_villages_name ON villages(name);
+
 CREATE TABLE IF NOT EXISTS members (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
@@ -13,6 +52,13 @@ CREATE TABLE IF NOT EXISTS members (
   district TEXT,
   state TEXT DEFAULT 'महाराष्ट्र',
   country TEXT DEFAULT 'भारत',
+  country_id TEXT,
+  state_id TEXT,
+  district_id TEXT,
+  taluka_id TEXT,
+  village_id TEXT,
+  taluka TEXT,
+  village TEXT,
   profession TEXT,
   business TEXT,
   skills TEXT DEFAULT '[]',

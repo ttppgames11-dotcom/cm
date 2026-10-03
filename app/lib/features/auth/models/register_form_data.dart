@@ -9,9 +9,16 @@ class RegisterFormData {
     this.email = '',
     this.password = '',
     this.agreedToGuidelines = false,
-    this.state = 'महाराष्ट्र / Maharashtra',
-    this.district = 'पुणे / Pune',
-    this.taluka = 'हवेली / Haveli',
+    this.countryId,
+    this.country = '',
+    this.stateId,
+    this.state = '',
+    this.districtId,
+    this.district = '',
+    this.talukaId,
+    this.taluka = '',
+    this.villageId,
+    this.village = '',
     this.role = UserRole.member,
     this.city = '',
     this.profession = '',
@@ -28,9 +35,16 @@ class RegisterFormData {
   String email;
   String password;
   bool agreedToGuidelines;
+  String? countryId;
+  String country;
+  String? stateId;
   String state;
+  String? districtId;
   String district;
+  String? talukaId;
   String taluka;
+  String? villageId;
+  String village;
   UserRole role;
   String city;
   String profession;

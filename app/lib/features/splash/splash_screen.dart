@@ -35,12 +35,14 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  static const _navigateAfter = Duration(seconds: 3);
+  static const _animDuration = Duration(milliseconds: 1200);
+  static const _maxTimeout = Duration(milliseconds: 2500);
 
   late final AnimationController _controller;
   late final Animation<double> _textFade;
   late final Animation<double> _progress;
-  Timer? _navigationTimer;
+  Timer? _safetyTimer;
+  bool _navigated = false;
 
   bool get _reduceMotion =>
       WidgetsBinding
@@ -52,13 +54,11 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: _navigateAfter);
+    _controller = AnimationController(vsync: this, duration: _animDuration);
 
-    // Text elements settle in quickly; the progress bar fills for the
-    // whole splash duration so it visually tracks the 3s wait.
     _textFade = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 0.35, curve: Curves.easeOut),
+      curve: const Interval(0.0, 0.4, curve: Curves.easeOut),
     );
     _progress = CurvedAnimation(
       parent: _controller,
@@ -71,21 +71,37 @@ class _SplashScreenState extends State<SplashScreen>
       _controller.forward();
     }
 
-    _navigationTimer = Timer(_navigateAfter, _navigate);
+    // Safety fallback: guarantees the app NEVER remains on splash indefinitely
+    _safetyTimer = Timer(_maxTimeout, () {
+      if (!mounted || _navigated) return;
+      _attemptNavigation(force: true);
+    });
   }
 
-  /// After the splash finishes, check if the user already has a saved session.
-  /// Authenticated  → go straight to /home (no need to log in again).
-  /// Unauthenticated → show the Login screen.
-  Future<void> _navigate() async {
-    if (!mounted) return;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     final status = AuthScope.of(context).state.status;
+    if (status != AuthStatus.unknown && !_navigated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _attemptNavigation();
+      });
+    }
+  }
+
+  Future<void> _attemptNavigation({bool force = false}) async {
+    if (!mounted || _navigated) return;
+    final status = AuthScope.of(context).state.status;
+    if (status == AuthStatus.unknown && !force) return;
+
+    _navigated = true;
+    _safetyTimer?.cancel();
+
     if (status == AuthStatus.authenticated) {
       context.go('/home');
       return;
     }
-    // Android closed the app while the registration photo was being picked:
-    // go back to the registration form, which restores what was filled in.
+
     var draftPending = false;
     try {
       draftPending = await RegistrationDraft.isPending();
@@ -96,7 +112,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
-    _navigationTimer?.cancel();
+    _safetyTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -396,15 +412,15 @@ class _GradientProgressBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(99),
         child: Stack(
           children: [
-            Container(color: Colors.white.withValues(alpha: 0.15)),
+            Container(color: Colors.white.withValues(alpha: 0.2)),
             FractionallySizedBox(
               widthFactor: value.clamp(0.0, 1.0),
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
                       AppColors.saffron600,
-                      AppColors.trueGold.withValues(alpha: 0.3),
+                      AppColors.trueGold,
                     ],
                   ),
                 ),

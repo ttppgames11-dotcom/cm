@@ -98,8 +98,12 @@ class RemoteAuthRepository implements AuthRepository {
   }
 
   Future<void> _endSession() async {
-    await _tokens.clear();
-    await _localDataSource.clearSession();
+    try {
+      await _tokens.clear();
+    } catch (_) {}
+    try {
+      await _localDataSource.clearSession();
+    } catch (_) {}
   }
 
   /// A saved session only counts if the server still accepts it. Old
@@ -108,10 +112,26 @@ class RemoteAuthRepository implements AuthRepository {
   /// cached session is kept (offline tolerance).
   @override
   Future<UserProfile?> restoreSession() async {
-    final profile = await _localDataSource.readSession();
+    UserProfile? profile;
+    try {
+      profile = await _localDataSource.readSession();
+    } catch (_) {
+      await _endSession();
+      return null;
+    }
     if (profile == null) return null;
-    final access = await _tokens.readAccessToken();
-    final refresh = await _tokens.readRefreshToken();
+
+    String? access;
+    String? refresh;
+    try {
+      access = await _tokens.readAccessToken();
+      refresh = await _tokens.readRefreshToken();
+    } catch (_) {
+      // Keystore unavailable / corrupted on device: safely clear session and treat as logged out
+      await _endSession();
+      return null;
+    }
+
     if ((access == null || access.isEmpty) &&
         (refresh == null || refresh.isEmpty)) {
       await _endSession();
@@ -135,6 +155,8 @@ class RemoteAuthRepository implements AuthRepository {
         return null;
       }
       return profile; // offline / server down: keep the cached session
+    } catch (_) {
+      return profile; // other network errors: keep cached session for offline resilience
     }
   }
 
@@ -166,7 +188,16 @@ class RemoteAuthRepository implements AuthRepository {
           'phone': d.mobile.trim(),
           'password': d.password,
           'city': d.city.trim(),
-          'district': d.district.split('/').first.trim(),
+          'district': d.district.isNotEmpty ? d.district.split('/').first.trim() : '',
+          'state': d.state.isNotEmpty ? d.state.split('/').first.trim() : '',
+          'country': d.country.isNotEmpty ? d.country.split('/').first.trim() : '',
+          'taluka': d.taluka.isNotEmpty ? d.taluka.split('/').first.trim() : '',
+          'village': d.village.isNotEmpty ? d.village.split('/').first.trim() : '',
+          if (d.countryId != null) 'countryId': d.countryId,
+          if (d.stateId != null) 'stateId': d.stateId,
+          if (d.districtId != null) 'districtId': d.districtId,
+          if (d.talukaId != null) 'talukaId': d.talukaId,
+          if (d.villageId != null) 'villageId': d.villageId,
           'profession': d.profession.trim(),
           'business': d.businessName.trim(),
           'education': d.education,

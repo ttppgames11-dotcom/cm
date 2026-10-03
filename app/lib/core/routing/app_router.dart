@@ -397,7 +397,7 @@ GoRouter buildAppRouterWithAuth({
       final location = state.matchedLocation;
       final status = getStatus();
 
-      // Splash is always allowed — it handles its own navigation after 3 s.
+      // Splash screen handles its own transition based on AuthStatus:
       if (location == '/splash') return null;
 
       // Terms & guidelines must be readable before registering and after.
@@ -415,9 +415,7 @@ GoRouter buildAppRouterWithAuth({
       }
 
       // Protected pages: /home, /profile, /heritage, /fort/*, /warrior/*
-      // Unknown status means session restore is still in flight — allow
-      // through; the splash timer guards the cold-launch path.
-      if (status == AuthStatus.unauthenticated) {
+      if (status == AuthStatus.unauthenticated || status == AuthStatus.error) {
         // A shared-post link opened while signed out: log in first, then
         // continue to that post.
         if (location.startsWith('/post/')) rememberDeepLink(location);

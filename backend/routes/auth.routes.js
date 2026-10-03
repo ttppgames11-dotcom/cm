@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { runQuery, get, all } from '../../database/database.js';
 import { generateToken, authenticateToken } from '../middleware/auth.js';
 import { sendPasswordResetOtpEmail } from '../utils/mailer.js';
+import { validateLocationHierarchy } from './locations.routes.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'connect_maratha_secret_key_2026';
 
@@ -12,14 +13,47 @@ const router = Router();
 // POST /api/auth/register
 router.post('/register', async (req, res, next) => {
   try {
-    const { name, email, phone, password, city, district, profession, business, education, skills, about } = req.body;
+    const {
+      name,
+      email,
+      phone,
+      password,
+      city,
+      district,
+      state,
+      country,
+      countryId,
+      stateId,
+      districtId,
+      talukaId,
+      villageId,
+      taluka,
+      village,
+      profession,
+      business,
+      education,
+      skills,
+      about
+    } = req.body;
 
     if (!name || (!email && !phone)) {
       return res.status(400).json({ success: false, error: 'नाव आणि ईमेल किंवा फोन नंबर आवश्यक आहे.' });
     }
 
-    // Check if user already exists
-    const existing = await get('SELECT id FROM members WHERE email = ? OR phone = ?', [email || '', phone || '']);
+    // Validate hierarchical location if provided
+    if (countryId || stateId || districtId || talukaId || villageId) {
+      const validation = await validateLocationHierarchy({ countryId, stateId, districtId, talukaId, villageId });
+      if (!validation.valid) {
+        return res.status(400).json({ success: false, error: validation.error });
+      }
+    }
+
+    // Check if user already exists (only check non-empty values)
+    const existing = await get(`
+      SELECT id FROM members 
+      WHERE (? != '' AND email = ?) 
+         OR (? != '' AND phone = ?)
+    `, [email || '', email || '', phone || '', phone || '']);
     if (existing) {
       return res.status(400).json({ success: false, error: 'या ईमेल किंवा फोन क्रमांकासह सदस्य आधीच नोंदणीकृत आहे.' });
     }
@@ -28,12 +62,55 @@ router.post('/register', async (req, res, next) => {
     const passwordHash = password ? bcrypt.hashSync(password, 8) : bcrypt.hashSync('password123', 8);
     const skillsJson = Array.isArray(skills) ? JSON.stringify(skills) : JSON.stringify(skills ? [skills] : []);
 
-    await runQuery(`
-      INSERT INTO members (id, name, email, phone, password_hash, avatar, city, district, profession, business, education, skills, about, tier, role, joined, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Basic', 'member', date('now'), datetime('now'))
-    `, [memberId, name, email || '', phone || '', passwordHash, '👤', city || '', district || 'पुणे', profession || '', business || '', education || '', skillsJson, about || '']);
+    // Resolve display names from IDs if names not provided
+    let finalCountry = country || 'भारत';
+    let finalState = state || 'महाराष्ट्र';
+    let finalDistrict = district || 'पुणे';
+    let finalTaluka = taluka || '';
+    let finalVillage = village || '';
 
-    const newMember = await get('SELECT id, name, email, phone, avatar, city, district, profession, business, education, skills, about, tier, role, joined FROM members WHERE id = ?', [memberId]);
+    if (countryId) {
+      const c = await get('SELECT name FROM countries WHERE id = ?', [countryId]);
+      if (c) finalCountry = c.name;
+    }
+    if (stateId) {
+      const s = await get('SELECT name FROM states WHERE id = ?', [stateId]);
+      if (s) finalState = s.name;
+    }
+    if (districtId) {
+      const d = await get('SELECT name FROM districts WHERE id = ?', [districtId]);
+      if (d) finalDistrict = d.name;
+    }
+    if (talukaId) {
+      const t = await get('SELECT name FROM talukas WHERE id = ?', [talukaId]);
+      if (t) finalTaluka = t.name;
+    }
+    if (villageId) {
+      const v = await get('SELECT name FROM villages WHERE id = ?', [villageId]);
+      if (v) finalVillage = v.name;
+    }
+
+    const computedCity = city || (finalVillage ? `${finalVillage}, ${finalTaluka}` : (finalTaluka ? `${finalTaluka}, ${finalDistrict}` : finalDistrict));
+
+    await runQuery(`
+      INSERT INTO members (
+        id, name, email, phone, password_hash, avatar, city, district, state, country,
+        country_id, state_id, district_id, taluka_id, village_id, taluka, village,
+        profession, business, education, skills, about, tier, role, joined, created_at
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Basic', 'member', date('now'), datetime('now'))
+    `, [
+      memberId, name, email || '', phone || '', passwordHash, '👤', computedCity, finalDistrict, finalState, finalCountry,
+      countryId || null, stateId || null, districtId || null, talukaId || null, villageId || null, finalTaluka, finalVillage,
+      profession || '', business || '', education || '', skillsJson, about || ''
+    ]);
+
+    const newMember = await get(`
+      SELECT id, name, email, phone, avatar, city, district, state, country,
+             country_id, state_id, district_id, taluka_id, village_id, taluka, village,
+             profession, business, education, skills, about, tier, role, joined
+      FROM members WHERE id = ?
+    `, [memberId]);
     
     try {
       newMember.skills = JSON.parse(newMember.skills || '[]');

@@ -23,7 +23,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:app/features/auth/providers/location_provider.dart';
 import 'helpers/local_auth_repository.dart';
+import 'helpers/test_location_repository.dart';
 
 class _UnknownUserRepository extends LocalAuthRepository {
   _UnknownUserRepository(super.local);
@@ -54,6 +56,7 @@ Future<void> _launch(WidgetTester tester, AuthRepository repository) async {
       overrides: [
         authRepositoryProvider.overrideWithValue(repository),
         authControllerProvider.overrideWith((ref) => auth),
+        locationRepositoryProvider.overrideWithValue(TestLocationRepository()),
         communityRepositoryProvider.overrideWithValue(
           DemoCommunityRepository(ApiClient(SecureTokenStore())),
         ),
@@ -125,6 +128,37 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('पुढे → / Next'));
       await tester.pumpAndSettle();
+
+      // 1. Select Country: India
+      await tester.tap(find.text('देश निवडा / Select Country'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('India / भारत').last);
+      await tester.pumpAndSettle();
+
+      // 2. Select State: Maharashtra
+      await tester.tap(find.text('राज्य निवडा / Select State'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Maharashtra / महाराष्ट्र').last);
+      await tester.pumpAndSettle();
+
+      // 3. Select District: Pune
+      await tester.tap(find.text('जिल्हा निवडा / Select District'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Pune / पुणे').last);
+      await tester.pumpAndSettle();
+
+      // 4. Select Taluka: Haveli
+      await tester.tap(find.text('तालुका निवडा / Select Taluka'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Haveli / हवेली').last);
+      await tester.pumpAndSettle();
+
+      // 5. Select Village: Manjari
+      await tester.tap(find.text('गाव निवडा / Select Village'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Manjari / मांजरी').last);
+      await tester.pumpAndSettle();
+
       await tester.ensureVisible(find.text('नोंदणी पूर्ण करा / Finish'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('नोंदणी पूर्ण करा / Finish'));

@@ -14,8 +14,10 @@ import '../../../core/routing/route_state.dart';
 import '../../../core/theme/app_colors.dart';
 import '../data/registration_draft.dart';
 import '../data/registration_options_data.dart';
+import '../models/location_item.dart';
 import '../models/register_form_data.dart';
 import '../models/user_role.dart';
+import '../providers/location_provider.dart';
 
 const _stepLabels = ['नोंदणी', 'प्रोफाईल', 'पूर्ण'];
 
@@ -38,13 +40,32 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _passwordController = TextEditingController();
   bool _agreed = false;
 
-  // Step 2 (Profile Form) - 9 Sequential Fields
-  String _selectedState = RegistrationOptionsData.states.first;
-  String _selectedDistrict = RegistrationOptionsData.maharashtraDistricts.first;
-  late String _selectedTaluka =
-      RegistrationOptionsData.getTalukasForDistrict(
-        RegistrationOptionsData.maharashtraDistricts.first,
-      ).first;
+  // Step 2 (Profile Form) - Dynamic Hierarchical Location Data (5 Levels)
+  List<LocationItem> _countries = [];
+  List<LocationItem> _states = [];
+  List<LocationItem> _districts = [];
+  List<LocationItem> _talukas = [];
+  List<LocationItem> _villages = [];
+
+  LocationItem? _selectedCountry;
+  LocationItem? _selectedState;
+  LocationItem? _selectedDistrict;
+  LocationItem? _selectedTaluka;
+  LocationItem? _selectedVillage;
+
+  bool _isLoadingCountries = false;
+  bool _isLoadingStates = false;
+  bool _isLoadingDistricts = false;
+  bool _isLoadingTalukas = false;
+  bool _isLoadingVillages = false;
+
+  String? _countriesError;
+  String? _statesError;
+  String? _districtsError;
+  String? _talukasError;
+  String? _villagesError;
+
+  // Other Step 2 Profile Fields
   UserRole _selectedRole = UserRole.member;
   final _skillsController = TextEditingController();
   String _selectedEducation = RegistrationOptionsData.educationOptions.first;
@@ -71,9 +92,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     'mobile': _mobileController.text,
     'email': _emailController.text,
     'agreed': _agreed,
-    'state': _selectedState,
-    'district': _selectedDistrict,
-    'taluka': _selectedTaluka,
     'role': _selectedRole.name,
     'skills': _skillsController.text,
     'education': _selectedEducation,
@@ -108,21 +126,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       _emailController.text = fields['email'] as String? ?? '';
       _passwordController.text = password;
       _agreed = fields['agreed'] == true;
-      _selectedState = pick(
-        'state',
-        RegistrationOptionsData.states,
-        _selectedState,
-      );
-      final districts =
-          _selectedState.contains('महाराष्ट्र') ||
-                  _selectedState.contains('Maharashtra')
-              ? RegistrationOptionsData.maharashtraDistricts
-              : ['इतर जिल्हा / Other District'];
-      _selectedDistrict = pick('district', districts, districts.first);
-      final talukas = RegistrationOptionsData.getTalukasForDistrict(
-        _selectedDistrict,
-      );
-      _selectedTaluka = pick('taluka', talukas, talukas.first);
       _selectedRole = UserRole.values.firstWhere(
         (r) => r.name == fields['role'],
         orElse: () => UserRole.member,
@@ -145,6 +148,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           (previous != null && File(previous).existsSync() ? previous : null);
       _step = 1;
     });
+
+    if (_countries.isEmpty && !_isLoadingCountries) {
+      _loadCountries();
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('तुमची भरलेली माहिती परत आणली आहे. नोंदणी पूर्ण करा.'),
@@ -190,6 +198,205 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       return;
     }
     setState(() => _step = 1);
+    if (_countries.isEmpty && !_isLoadingCountries) {
+      _loadCountries();
+    }
+  }
+
+  // Location Loading Methods
+  Future<void> _loadCountries() async {
+    if (_isLoadingCountries) return;
+    setState(() {
+      _isLoadingCountries = true;
+      _countriesError = null;
+    });
+    try {
+      final repo = ref.read(locationRepositoryProvider);
+      final list = await repo.getCountries();
+      if (!mounted) return;
+      setState(() {
+        _countries = list;
+        _isLoadingCountries = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _countriesError =
+            'देश लोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.';
+        _isLoadingCountries = false;
+      });
+    }
+  }
+
+  Future<void> _loadStates(String countryId) async {
+    if (_isLoadingStates) return;
+    setState(() {
+      _isLoadingStates = true;
+      _statesError = null;
+    });
+    try {
+      final repo = ref.read(locationRepositoryProvider);
+      final list = await repo.getStates(countryId);
+      if (!mounted) return;
+      setState(() {
+        _states = list;
+        _isLoadingStates = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _statesError = 'राज्य लोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.';
+        _isLoadingStates = false;
+      });
+    }
+  }
+
+  Future<void> _loadDistricts(String stateId) async {
+    if (_isLoadingDistricts) return;
+    setState(() {
+      _isLoadingDistricts = true;
+      _districtsError = null;
+    });
+    try {
+      final repo = ref.read(locationRepositoryProvider);
+      final list = await repo.getDistricts(stateId);
+      if (!mounted) return;
+      setState(() {
+        _districts = list;
+        _isLoadingDistricts = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _districtsError =
+            'जिल्हा लोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.';
+        _isLoadingDistricts = false;
+      });
+    }
+  }
+
+  Future<void> _loadTalukas(String districtId) async {
+    if (_isLoadingTalukas) return;
+    setState(() {
+      _isLoadingTalukas = true;
+      _talukasError = null;
+    });
+    try {
+      final repo = ref.read(locationRepositoryProvider);
+      final list = await repo.getTalukas(districtId);
+      if (!mounted) return;
+      setState(() {
+        _talukas = list;
+        _isLoadingTalukas = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _talukasError =
+            'तालुका लोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.';
+        _isLoadingTalukas = false;
+      });
+    }
+  }
+
+  Future<void> _loadVillages(String talukaId) async {
+    if (_isLoadingVillages) return;
+    setState(() {
+      _isLoadingVillages = true;
+      _villagesError = null;
+    });
+    try {
+      final repo = ref.read(locationRepositoryProvider);
+      final list = await repo.getVillages(talukaId, limit: 1000);
+      if (!mounted) return;
+      setState(() {
+        _villages = list;
+        _isLoadingVillages = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _villagesError = 'गाव लोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.';
+        _isLoadingVillages = false;
+      });
+    }
+  }
+
+  // Cascading Location Selection Handlers
+  void _onCountryChanged(LocationItem? country) {
+    if (country == _selectedCountry) return;
+    setState(() {
+      _selectedCountry = country;
+      _selectedState = null;
+      _states = [];
+      _statesError = null;
+      _selectedDistrict = null;
+      _districts = [];
+      _districtsError = null;
+      _selectedTaluka = null;
+      _talukas = [];
+      _talukasError = null;
+      _selectedVillage = null;
+      _villages = [];
+      _villagesError = null;
+    });
+    if (country != null) {
+      _loadStates(country.id);
+    }
+  }
+
+  void _onStateChanged(LocationItem? state) {
+    if (state == _selectedState) return;
+    setState(() {
+      _selectedState = state;
+      _selectedDistrict = null;
+      _districts = [];
+      _districtsError = null;
+      _selectedTaluka = null;
+      _talukas = [];
+      _talukasError = null;
+      _selectedVillage = null;
+      _villages = [];
+      _villagesError = null;
+    });
+    if (state != null) {
+      _loadDistricts(state.id);
+    }
+  }
+
+  void _onDistrictChanged(LocationItem? district) {
+    if (district == _selectedDistrict) return;
+    setState(() {
+      _selectedDistrict = district;
+      _selectedTaluka = null;
+      _talukas = [];
+      _talukasError = null;
+      _selectedVillage = null;
+      _villages = [];
+      _villagesError = null;
+    });
+    if (district != null) {
+      _loadTalukas(district.id);
+    }
+  }
+
+  void _onTalukaChanged(LocationItem? taluka) {
+    if (taluka == _selectedTaluka) return;
+    setState(() {
+      _selectedTaluka = taluka;
+      _selectedVillage = null;
+      _villages = [];
+      _villagesError = null;
+    });
+    if (taluka != null) {
+      _loadVillages(taluka.id);
+    }
+  }
+
+  void _onVillageChanged(LocationItem? village) {
+    setState(() {
+      _selectedVillage = village;
+    });
   }
 
   Future<void> _pickPhoto() async {
@@ -210,17 +417,66 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<void> _submit() async {
+    // Validate that all 5 location levels are selected
+    if (_selectedCountry == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('कृपया देश निवडा / Please select Country.'),
+        ),
+      );
+      return;
+    }
+    if (_selectedState == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('कृपया राज्य निवडा / Please select State.'),
+        ),
+      );
+      return;
+    }
+    if (_selectedDistrict == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('कृपया जिल्हा निवडा / Please select District.'),
+        ),
+      );
+      return;
+    }
+    if (_selectedTaluka == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('कृपया तालुका निवडा / Please select Taluka.'),
+        ),
+      );
+      return;
+    }
+    if (_selectedVillage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('कृपया गाव निवडा / Please select Village.'),
+        ),
+      );
+      return;
+    }
+
     _data
       ..fullName = _fullNameController.text
       ..mobile = _mobileController.text
       ..email = _emailController.text
       ..password = _passwordController.text
       ..agreedToGuidelines = _agreed
-      ..state = _selectedState
-      ..district = _selectedDistrict
-      ..taluka = _selectedTaluka
+      ..countryId = _selectedCountry!.id
+      ..stateId = _selectedState!.id
+      ..districtId = _selectedDistrict!.id
+      ..talukaId = _selectedTaluka!.id
+      ..villageId = _selectedVillage!.id
+      ..country = _selectedCountry!.name
+      ..state = _selectedState!.name
+      ..district = _selectedDistrict!.name
+      ..taluka = _selectedTaluka!.name
+      ..village = _selectedVillage!.name
+      ..city = '${_selectedVillage!.name}, ${_selectedTaluka!.name}'
       ..role = _selectedRole
-      ..city = '$_selectedTaluka, $_selectedDistrict'
       ..skills = _skillsController.text
       ..education = _selectedEducation
       ..interest = _selectedInterest
@@ -271,42 +527,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('नोंदणी यशस्वी झाली! अभिनंदन!')),
     );
-  }
-
-  void _onStateChanged(String? newState) {
-    if (newState == null) return;
-    setState(() {
-      _selectedState = newState;
-      if (_selectedState.contains('महाराष्ट्र') ||
-          _selectedState.contains('Maharashtra')) {
-        _selectedDistrict = RegistrationOptionsData.maharashtraDistricts.first;
-        _selectedTaluka =
-            RegistrationOptionsData.getTalukasForDistrict(
-              _selectedDistrict,
-            ).first;
-      } else {
-        _selectedDistrict = 'इतर जिल्हा / Other District';
-        _selectedTaluka = 'इतर तालुका / Other Taluka';
-      }
-    });
-  }
-
-  void _onDistrictChanged(String? newDistrict) {
-    if (newDistrict == null) return;
-    setState(() {
-      _selectedDistrict = newDistrict;
-      final talukas = RegistrationOptionsData.getTalukasForDistrict(
-        newDistrict,
-      );
-      _selectedTaluka = talukas.first;
-    });
-  }
-
-  void _onTalukaChanged(String? newTaluka) {
-    if (newTaluka == null) return;
-    setState(() {
-      _selectedTaluka = newTaluka;
-    });
   }
 
   void _onRoleChanged(UserRole? newRole) {
@@ -376,12 +596,57 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   onNext: _handleStep0Next,
                 ),
                 1 => _Step2Profile(
+                  countries: _countries,
+                  selectedCountry: _selectedCountry,
+                  isLoadingCountries: _isLoadingCountries,
+                  countriesError: _countriesError,
+                  onCountryChanged: _onCountryChanged,
+                  onRetryCountries: _loadCountries,
+
+                  states: _states,
                   selectedState: _selectedState,
+                  isLoadingStates: _isLoadingStates,
+                  statesError: _statesError,
                   onStateChanged: _onStateChanged,
+                  onRetryStates:
+                      () =>
+                          _selectedCountry != null
+                              ? _loadStates(_selectedCountry!.id)
+                              : null,
+
+                  districts: _districts,
                   selectedDistrict: _selectedDistrict,
+                  isLoadingDistricts: _isLoadingDistricts,
+                  districtsError: _districtsError,
                   onDistrictChanged: _onDistrictChanged,
+                  onRetryDistricts:
+                      () =>
+                          _selectedState != null
+                              ? _loadDistricts(_selectedState!.id)
+                              : null,
+
+                  talukas: _talukas,
                   selectedTaluka: _selectedTaluka,
+                  isLoadingTalukas: _isLoadingTalukas,
+                  talukasError: _talukasError,
                   onTalukaChanged: _onTalukaChanged,
+                  onRetryTalukas:
+                      () =>
+                          _selectedDistrict != null
+                              ? _loadTalukas(_selectedDistrict!.id)
+                              : null,
+
+                  villages: _villages,
+                  selectedVillage: _selectedVillage,
+                  isLoadingVillages: _isLoadingVillages,
+                  villagesError: _villagesError,
+                  onVillageChanged: _onVillageChanged,
+                  onRetryVillages:
+                      () =>
+                          _selectedTaluka != null
+                              ? _loadVillages(_selectedTaluka!.id)
+                              : null,
+
                   selectedRole: _selectedRole,
                   onRoleChanged: _onRoleChanged,
                   skillsController: _skillsController,
@@ -581,15 +846,39 @@ class _Step1Basic extends StatelessWidget {
   }
 }
 
-/// 9 Sequential Fields Profile Form implemented in Marathi & English
+/// 10 Sequential Fields Profile Form implemented in Marathi & English
 class _Step2Profile extends StatelessWidget {
   const _Step2Profile({
+    required this.countries,
+    required this.selectedCountry,
+    required this.isLoadingCountries,
+    required this.countriesError,
+    required this.onCountryChanged,
+    required this.onRetryCountries,
+    required this.states,
     required this.selectedState,
+    required this.isLoadingStates,
+    required this.statesError,
     required this.onStateChanged,
+    required this.onRetryStates,
+    required this.districts,
     required this.selectedDistrict,
+    required this.isLoadingDistricts,
+    required this.districtsError,
     required this.onDistrictChanged,
+    required this.onRetryDistricts,
+    required this.talukas,
     required this.selectedTaluka,
+    required this.isLoadingTalukas,
+    required this.talukasError,
     required this.onTalukaChanged,
+    required this.onRetryTalukas,
+    required this.villages,
+    required this.selectedVillage,
+    required this.isLoadingVillages,
+    required this.villagesError,
+    required this.onVillageChanged,
+    required this.onRetryVillages,
     required this.selectedRole,
     required this.onRoleChanged,
     required this.skillsController,
@@ -606,12 +895,41 @@ class _Step2Profile extends StatelessWidget {
     required this.isSubmitting,
   });
 
-  final String selectedState;
-  final ValueChanged<String?> onStateChanged;
-  final String selectedDistrict;
-  final ValueChanged<String?> onDistrictChanged;
-  final String selectedTaluka;
-  final ValueChanged<String?> onTalukaChanged;
+  final List<LocationItem> countries;
+  final LocationItem? selectedCountry;
+  final bool isLoadingCountries;
+  final String? countriesError;
+  final ValueChanged<LocationItem?> onCountryChanged;
+  final VoidCallback onRetryCountries;
+
+  final List<LocationItem> states;
+  final LocationItem? selectedState;
+  final bool isLoadingStates;
+  final String? statesError;
+  final ValueChanged<LocationItem?> onStateChanged;
+  final VoidCallback onRetryStates;
+
+  final List<LocationItem> districts;
+  final LocationItem? selectedDistrict;
+  final bool isLoadingDistricts;
+  final String? districtsError;
+  final ValueChanged<LocationItem?> onDistrictChanged;
+  final VoidCallback onRetryDistricts;
+
+  final List<LocationItem> talukas;
+  final LocationItem? selectedTaluka;
+  final bool isLoadingTalukas;
+  final String? talukasError;
+  final ValueChanged<LocationItem?> onTalukaChanged;
+  final VoidCallback onRetryTalukas;
+
+  final List<LocationItem> villages;
+  final LocationItem? selectedVillage;
+  final bool isLoadingVillages;
+  final String? villagesError;
+  final ValueChanged<LocationItem?> onVillageChanged;
+  final VoidCallback onRetryVillages;
+
   final UserRole selectedRole;
   final ValueChanged<UserRole?> onRoleChanged;
   final TextEditingController skillsController;
@@ -776,27 +1094,6 @@ class _Step2Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final availableTalukas = RegistrationOptionsData.getTalukasForDistrict(
-      selectedDistrict,
-    );
-
-    // Fallback safe district list
-    final districtList =
-        selectedState.contains('महाराष्ट्र') ||
-                selectedState.contains('Maharashtra')
-            ? RegistrationOptionsData.maharashtraDistricts
-            : ['इतर जिल्हा / Other District'];
-
-    final currentDistrict =
-        districtList.contains(selectedDistrict)
-            ? selectedDistrict
-            : districtList.first;
-
-    final currentTaluka =
-        availableTalukas.contains(selectedTaluka)
-            ? selectedTaluka
-            : availableTalukas.first;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -844,108 +1141,93 @@ class _Step2Profile extends StatelessWidget {
         const SizedBox(height: 18),
         _buildPhotoPicker(),
 
-        // 1. STATE - Drop Down (States in India)
-        _buildFieldTitle(
+        // 1. COUNTRY - Drop Down
+        _LocationDropdownField(
           number: '१',
+          marathi: 'देश',
+          english: 'Country',
+          icon: Icons.public_rounded,
+          hint: 'देश निवडा / Select Country',
+          items: countries,
+          selectedItem: selectedCountry,
+          isEnabled: true,
+          isLoading: isLoadingCountries,
+          error: countriesError,
+          onChanged: onCountryChanged,
+          onRetry: onRetryCountries,
+        ),
+
+        // 2. STATE - Drop Down
+        _LocationDropdownField(
+          number: '२',
           marathi: 'राज्य',
           english: 'State',
           icon: Icons.map_outlined,
-        ),
-        DropdownButtonFormField<String>(
-          value: selectedState,
-          decoration: _dropdownDecoration(),
-          isExpanded: true,
-          icon: const Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: Color(0xFFE84C10),
-          ),
-          items:
-              RegistrationOptionsData.states.map((st) {
-                return DropdownMenuItem<String>(
-                  value: st,
-                  child: Text(
-                    st,
-                    style: GoogleFonts.mukta(
-                      fontSize: 13.5,
-                      color: const Color(0xFF1F2937),
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                );
-              }).toList(),
+          hint: 'राज्य निवडा / Select State',
+          disabledHint: 'आधी देश निवडा / Select Country first',
+          items: states,
+          selectedItem: selectedState,
+          isEnabled: selectedCountry != null,
+          isLoading: isLoadingStates,
+          error: statesError,
           onChanged: onStateChanged,
+          onRetry: onRetryStates,
         ),
-        const SizedBox(height: 14),
 
-        // 2. DISTRICT - Drop Down (Districts in Maharashtra)
-        _buildFieldTitle(
-          number: '२',
+        // 3. DISTRICT - Drop Down
+        _LocationDropdownField(
+          number: '३',
           marathi: 'जिल्हा',
           english: 'District',
           icon: Icons.location_city_rounded,
-        ),
-        DropdownButtonFormField<String>(
-          value: currentDistrict,
-          decoration: _dropdownDecoration(),
-          isExpanded: true,
-          icon: const Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: Color(0xFFE84C10),
-          ),
-          items:
-              districtList.map((dist) {
-                return DropdownMenuItem<String>(
-                  value: dist,
-                  child: Text(
-                    dist,
-                    style: GoogleFonts.mukta(
-                      fontSize: 13.5,
-                      color: const Color(0xFF1F2937),
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                );
-              }).toList(),
+          hint: 'जिल्हा निवडा / Select District',
+          disabledHint: 'आधी राज्य निवडा / Select State first',
+          items: districts,
+          selectedItem: selectedDistrict,
+          isEnabled: selectedState != null,
+          isLoading: isLoadingDistricts,
+          error: districtsError,
           onChanged: onDistrictChanged,
+          onRetry: onRetryDistricts,
         ),
-        const SizedBox(height: 14),
 
-        // 3. TALUKA - Drop Down
-        _buildFieldTitle(
-          number: '३',
+        // 4. TALUKA - Drop Down
+        _LocationDropdownField(
+          number: '४',
           marathi: 'तालुका',
           english: 'Taluka',
           icon: Icons.holiday_village_rounded,
-        ),
-        DropdownButtonFormField<String>(
-          value: currentTaluka,
-          decoration: _dropdownDecoration(),
-          isExpanded: true,
-          icon: const Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: Color(0xFFE84C10),
-          ),
-          items:
-              availableTalukas.map((tal) {
-                return DropdownMenuItem<String>(
-                  value: tal,
-                  child: Text(
-                    tal,
-                    style: GoogleFonts.mukta(
-                      fontSize: 13.5,
-                      color: const Color(0xFF1F2937),
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                );
-              }).toList(),
+          hint: 'तालुका निवडा / Select Taluka',
+          disabledHint: 'आधी जिल्हा निवडा / Select District first',
+          items: talukas,
+          selectedItem: selectedTaluka,
+          isEnabled: selectedDistrict != null,
+          isLoading: isLoadingTalukas,
+          error: talukasError,
           onChanged: onTalukaChanged,
+          onRetry: onRetryTalukas,
         ),
-        const SizedBox(height: 14),
 
-        // 4. ROLE - Drop Down (Matching screenshot exactly)
+        // 5. VILLAGE - Drop Down
+        _LocationDropdownField(
+          number: '५',
+          marathi: 'गाव / शहर',
+          english: 'Village / City',
+          icon: Icons.home_work_rounded,
+          hint: 'गाव निवडा / Select Village',
+          disabledHint: 'आधी तालुका निवडा / Select Taluka first',
+          items: villages,
+          selectedItem: selectedVillage,
+          isEnabled: selectedTaluka != null,
+          isLoading: isLoadingVillages,
+          error: villagesError,
+          onChanged: onVillageChanged,
+          onRetry: onRetryVillages,
+        ),
+
+        // 6. ROLE - Drop Down (Matching screenshot exactly)
         _buildFieldTitle(
-          number: '४',
+          number: '६',
           marathi: 'भूमिका',
           english: 'Role',
           icon: Icons.badge_outlined,
@@ -979,9 +1261,9 @@ class _Step2Profile extends StatelessWidget {
         ),
         const SizedBox(height: 14),
 
-        // 5. SKILLS - Text Input
+        // 7. SKILLS - Text Input
         _buildFieldTitle(
-          number: '५',
+          number: '७',
           marathi: 'कौशल्ये',
           english: 'Skills',
           icon: Icons.psychology_outlined,
@@ -1020,9 +1302,9 @@ class _Step2Profile extends StatelessWidget {
         ),
         const SizedBox(height: 14),
 
-        // 6. EDUCATION - Drop Down
+        // 8. EDUCATION - Drop Down
         _buildFieldTitle(
-          number: '६',
+          number: '८',
           marathi: 'शिक्षण',
           english: 'Education',
           icon: Icons.school_outlined,
@@ -1053,9 +1335,9 @@ class _Step2Profile extends StatelessWidget {
         ),
         const SizedBox(height: 14),
 
-        // 7. INTEREST - Drop Down (According to project)
+        // 9. INTEREST - Drop Down (According to project)
         _buildFieldTitle(
-          number: '७',
+          number: '९',
           marathi: 'स्वारस्य व आवड',
           english: 'Interest',
           icon: Icons.auto_awesome_rounded,
@@ -1086,9 +1368,9 @@ class _Step2Profile extends StatelessWidget {
         ),
         const SizedBox(height: 14),
 
-        // 8. ABOUT ME - Multiline Text Input
+        // 10. ABOUT ME - Multiline Text Input
         _buildFieldTitle(
-          number: '८',
+          number: '१०',
           marathi: 'माझ्याबद्दल',
           english: 'About Me',
           icon: Icons.person_pin_outlined,
@@ -1259,6 +1541,219 @@ class _NoticeBox extends StatelessWidget {
       child: Text(
         text,
         style: GoogleFonts.mukta(fontSize: 12, color: const Color(0xFF7A2016)),
+      ),
+    );
+  }
+}
+
+class _LocationDropdownField extends StatelessWidget {
+  const _LocationDropdownField({
+    required this.number,
+    required this.marathi,
+    required this.english,
+    required this.icon,
+    required this.hint,
+    this.disabledHint = 'आधी वरील पर्याय निवडा / Select parent first',
+    required this.items,
+    required this.selectedItem,
+    required this.isEnabled,
+    required this.isLoading,
+    required this.error,
+    required this.onChanged,
+    required this.onRetry,
+  });
+
+  final String number;
+  final String marathi;
+  final String english;
+  final IconData icon;
+  final String hint;
+  final String disabledHint;
+  final List<LocationItem> items;
+  final LocationItem? selectedItem;
+  final bool isEnabled;
+  final bool isLoading;
+  final String? error;
+  final ValueChanged<LocationItem?>? onChanged;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final value =
+        selectedItem != null && items.contains(selectedItem)
+            ? selectedItem
+            : null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildTitle(),
+        if (error != null)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            margin: const EdgeInsets.only(bottom: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFEE2E2),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFFFCA5A5)),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  size: 18,
+                  color: Color(0xFFDC2626),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    error!,
+                    style: GoogleFonts.mukta(
+                      fontSize: 12,
+                      color: const Color(0xFFB91C1C),
+                    ),
+                  ),
+                ),
+                if (onRetry != null)
+                  TextButton(
+                    onPressed: onRetry,
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text(
+                      'पुन्हा प्रयत्न करा / Retry',
+                      style: GoogleFonts.mukta(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFFDC2626),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        DropdownButtonFormField<LocationItem>(
+          value: value,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: isEnabled ? Colors.white : const Color(0xFFF3F4F6),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Color(0xFFE5DCD0)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Color(0xFFE5DCD0)),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(
+                color: Color(0xFFE84C10),
+                width: 1.5,
+              ),
+            ),
+          ),
+          isExpanded: true,
+          hint: Text(
+            isLoading
+                ? 'लोड होत आहे... / Loading...'
+                : !isEnabled
+                ? disabledHint
+                : items.isEmpty
+                ? 'माहिती उपलब्ध नाही / No data'
+                : hint,
+            style: GoogleFonts.mukta(
+              fontSize: 13.5,
+              color: const Color(0xFF9CA3AF),
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+          icon:
+              isLoading
+                  ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Color(0xFFE84C10),
+                    ),
+                  )
+                  : Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color:
+                        isEnabled
+                            ? const Color(0xFFE84C10)
+                            : const Color(0xFF9CA3AF),
+                  ),
+          items:
+              (!isEnabled || isLoading)
+                  ? null
+                  : items.map((item) {
+                    return DropdownMenuItem<LocationItem>(
+                      value: item,
+                      child: Text(
+                        item.displayName,
+                        style: GoogleFonts.mukta(
+                          fontSize: 13.5,
+                          color: const Color(0xFF1F2937),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
+                  }).toList(),
+          onChanged:
+              (isEnabled && !isLoading && items.isNotEmpty) ? onChanged : null,
+        ),
+        const SizedBox(height: 14),
+      ],
+    );
+  }
+
+  Widget _buildTitle() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: const Color(0xFFE84C10)),
+          const SizedBox(width: 6),
+          RichText(
+            text: TextSpan(
+              style: GoogleFonts.mukta(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF1F2937),
+              ),
+              children: [
+                TextSpan(
+                  text: '$number. ',
+                  style: const TextStyle(color: Color(0xFFE84C10)),
+                ),
+                TextSpan(text: marathi),
+                TextSpan(
+                  text: ' / $english',
+                  style: GoogleFonts.mukta(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF6B7280),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

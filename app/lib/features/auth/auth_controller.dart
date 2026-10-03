@@ -68,16 +68,31 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<void> restoreSession() async {
-    final profile = await _repository.restoreSession();
-    _update(
-      _state.copyWith(
-        status:
-            profile != null
-                ? AuthStatus.authenticated
-                : AuthStatus.unauthenticated,
-        profile: profile,
-      ),
-    );
+    try {
+      final profile = await _repository.restoreSession().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          return null;
+        },
+      );
+      _update(
+        _state.copyWith(
+          status:
+              profile != null
+                  ? AuthStatus.authenticated
+                  : AuthStatus.unauthenticated,
+          profile: profile,
+        ),
+      );
+    } catch (e) {
+      _update(
+        _state.copyWith(
+          status: AuthStatus.unauthenticated,
+          profile: null,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
   }
 
   Future<bool> login({

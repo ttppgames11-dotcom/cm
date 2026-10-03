@@ -10,8 +10,10 @@ import 'package:app/core/auth/auth_scope.dart';
 import 'package:app/features/auth/auth_controller.dart';
 import 'package:app/features/auth/data/auth_local_data_source.dart';
 import 'package:app/features/auth/providers/auth_provider.dart';
-import 'helpers/local_auth_repository.dart';
+import 'package:app/features/auth/providers/location_provider.dart';
 import 'package:app/features/auth/screens/register_screen.dart';
+import 'helpers/local_auth_repository.dart';
+import 'helpers/test_location_repository.dart';
 
 Widget createTestRegisterApp() {
   SharedPreferences.setMockInitialValues({});
@@ -19,7 +21,10 @@ Widget createTestRegisterApp() {
     LocalAuthRepository(AuthLocalDataSource()),
   );
   return ProviderScope(
-    overrides: [authControllerProvider.overrideWith((ref) => authController)],
+    overrides: [
+      authControllerProvider.overrideWith((ref) => authController),
+      locationRepositoryProvider.overrideWithValue(TestLocationRepository()),
+    ],
     child: AuthScope(
       controller: authController,
       child: const MaterialApp(home: RegisterScreen()),
@@ -29,7 +34,7 @@ Widget createTestRegisterApp() {
 
 void main() {
   testWidgets(
-    'RegisterScreen: profile form, own photo, and finish without a paid tier',
+    'RegisterScreen: profile form with 5-level location hierarchy and finish',
     (tester) async {
       tester.view.physicalSize = const Size(1080, 2400);
       tester.view.devicePixelRatio = 2.0;
@@ -65,62 +70,101 @@ void main() {
       // Verify Step 1 Header
       expect(find.text('प्रोफाईल माहिती / Profile Form'), findsOneWidget);
 
-      // 1. State Dropdown
+      // 1. Country Dropdown
       expect(find.textContaining('१.', findRichText: true), findsOneWidget);
+      expect(find.textContaining('देश', findRichText: true), findsWidgets);
+      expect(find.textContaining('Country', findRichText: true), findsWidgets);
+
+      // 2. State Dropdown
+      expect(find.textContaining('२.', findRichText: true), findsOneWidget);
       expect(find.textContaining('राज्य', findRichText: true), findsWidgets);
       expect(find.textContaining('State', findRichText: true), findsWidgets);
 
-      // 2. District Dropdown
-      expect(find.textContaining('२.', findRichText: true), findsOneWidget);
+      // 3. District Dropdown
+      expect(find.textContaining('३.', findRichText: true), findsOneWidget);
       expect(find.textContaining('जिल्हा', findRichText: true), findsWidgets);
       expect(find.textContaining('District', findRichText: true), findsWidgets);
 
-      // 3. Taluka Dropdown
-      expect(find.textContaining('३.', findRichText: true), findsOneWidget);
+      // 4. Taluka Dropdown
+      expect(find.textContaining('४.', findRichText: true), findsOneWidget);
       expect(find.textContaining('तालुका', findRichText: true), findsWidgets);
       expect(find.textContaining('Taluka', findRichText: true), findsWidgets);
 
-      // 4. Role Dropdown (with exact screenshot roles)
-      expect(find.textContaining('४.', findRichText: true), findsOneWidget);
+      // 5. Village Dropdown
+      expect(find.textContaining('५.', findRichText: true), findsOneWidget);
+      expect(find.textContaining('गाव', findRichText: true), findsWidgets);
+      expect(find.textContaining('Village', findRichText: true), findsWidgets);
+
+      // 6. Role Dropdown
+      expect(find.textContaining('६.', findRichText: true), findsOneWidget);
       expect(find.textContaining('भूमिका', findRichText: true), findsWidgets);
       expect(find.textContaining('Role', findRichText: true), findsWidgets);
       expect(find.text('सदस्य (General Member)'), findsOneWidget);
 
-      // 5. Skills Input
-      expect(find.textContaining('५.', findRichText: true), findsOneWidget);
+      // 7. Skills Input
+      expect(find.textContaining('७.', findRichText: true), findsOneWidget);
       expect(find.textContaining('कौशल्ये', findRichText: true), findsWidgets);
       expect(find.textContaining('Skills', findRichText: true), findsWidgets);
 
-      // 6. Education Dropdown
-      expect(find.textContaining('६.', findRichText: true), findsOneWidget);
+      // 8. Education Dropdown
+      expect(find.textContaining('८.', findRichText: true), findsOneWidget);
       expect(find.textContaining('शिक्षण', findRichText: true), findsWidgets);
       expect(
         find.textContaining('Education', findRichText: true),
         findsWidgets,
       );
 
-      // 7. Interest Dropdown
-      expect(find.textContaining('७.', findRichText: true), findsOneWidget);
+      // 9. Interest Dropdown
+      expect(find.textContaining('९.', findRichText: true), findsOneWidget);
       expect(find.textContaining('स्वारस्य', findRichText: true), findsWidgets);
       expect(find.textContaining('Interest', findRichText: true), findsWidgets);
 
-      // 8. About Me Input
-      expect(find.textContaining('८.', findRichText: true), findsOneWidget);
+      // 10. About Me Input
+      expect(find.textContaining('१०.', findRichText: true), findsOneWidget);
       expect(
         find.textContaining('माझ्याबद्दल', findRichText: true),
         findsWidgets,
       );
       expect(find.textContaining('About Me', findRichText: true), findsWidgets);
 
-      // Own profile photo (optional): until one is added, the member's
-      // initial is shown — never a stock photo of another person.
+      // Own profile photo
       expect(find.text('तुमचा फोटो जोडा / Add your photo'), findsOneWidget);
       expect(find.text('छ'), findsOneWidget);
-      expect(find.textContaining('९.', findRichText: true), findsNothing);
-      expect(find.text('बदला / Change'), findsNothing);
 
-      // Verify navigation buttons: the profile step finishes registration
-      // (there is no paid membership step).
+      // Initial state: no default selections
+      expect(find.text('देश निवडा / Select Country'), findsOneWidget);
+
+      // 1. Select Country: India
+      await tester.tap(find.text('देश निवडा / Select Country'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('India / भारत').last);
+      await tester.pumpAndSettle();
+
+      // 2. Select State: Maharashtra
+      await tester.tap(find.text('राज्य निवडा / Select State'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Maharashtra / महाराष्ट्र').last);
+      await tester.pumpAndSettle();
+
+      // 3. Select District: Pune
+      await tester.tap(find.text('जिल्हा निवडा / Select District'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Pune / पुणे').last);
+      await tester.pumpAndSettle();
+
+      // 4. Select Taluka: Haveli
+      await tester.tap(find.text('तालुका निवडा / Select Taluka'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Haveli / हवेली').last);
+      await tester.pumpAndSettle();
+
+      // 5. Select Village: Manjari
+      await tester.tap(find.text('गाव निवडा / Select Village'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Manjari / मांजरी').last);
+      await tester.pumpAndSettle();
+
+      // Verify navigation buttons
       expect(find.text('← मागे / Back'), findsOneWidget);
       expect(find.text('नोंदणी पूर्ण करा / Finish'), findsOneWidget);
 

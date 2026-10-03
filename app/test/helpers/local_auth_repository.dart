@@ -44,10 +44,12 @@ class LocalAuthRepository implements AuthRepository {
   @override
   Future<UserProfile> register(RegisterFormData data) async {
     final generatedId = 'CM${10000000 + _random.nextInt(90000000)}';
-    final location =
-        data.district.isNotEmpty
-            ? '${data.taluka.isNotEmpty ? '${data.taluka.split('/').first.trim()}, ' : ''}${data.district.split('/').first.trim()}'
-            : data.city.trim();
+    final village = data.village.isNotEmpty ? '${data.village.split('/').first.trim()}, ' : '';
+    final taluka = data.taluka.isNotEmpty ? '${data.taluka.split('/').first.trim()}, ' : '';
+    final district = data.district.isNotEmpty ? data.district.split('/').first.trim() : '';
+    final location = data.city.isNotEmpty
+        ? data.city.trim()
+        : '$village$taluka$district'.trim().replaceAll(RegExp(r',\s*$'), '');
     final profile = UserProfile(
       id: generatedId,
       name: data.fullName.trim().isEmpty ? 'नवीन सदस्य' : data.fullName.trim(),

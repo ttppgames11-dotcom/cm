@@ -35,6 +35,16 @@ export async function getDatabase() {
     db.run(schemaSql);
   }
 
+  // Ensure members table has hierarchical location columns
+  const locationColumns = ['country_id', 'state_id', 'district_id', 'taluka_id', 'village_id', 'taluka', 'village'];
+  for (const col of locationColumns) {
+    try {
+      db.run(`ALTER TABLE members ADD COLUMN ${col} TEXT;`);
+    } catch (_) {
+      // Column already exists
+    }
+  }
+
   saveDatabase();
   return db;
 }
