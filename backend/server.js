@@ -22,6 +22,7 @@ import communityRoutes from './routes/community.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import cultureRoutes from './routes/culture.routes.js';
 import locationsRoutes from './routes/locations.routes.js';
+import mediaRoutes from './routes/media.routes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -33,6 +34,8 @@ app.use(express.json());
 // ==========================================
 // MOUNT ALL CONNECT MARATHA REST API ROUTERS
 // ==========================================
+app.use('/media', mediaRoutes);
+app.use('/api/media', mediaRoutes);
 app.use('/api/locations', locationsRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/auth', authRoutes);
