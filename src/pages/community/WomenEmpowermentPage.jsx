@@ -626,7 +626,14 @@ export default function WomenEmpowermentPage() {
           position: 'relative',
           overflow: 'hidden'
         }}>
-          <h2 style={{ fontSize: '2.2rem', fontWeight: 900, marginBottom: '1rem', fontFamily: 'Baloo 2' }}>
+          <h2 style={{
+            fontSize: '2.2rem',
+            fontWeight: 900,
+            marginBottom: '1rem',
+            fontFamily: 'Baloo 2',
+            color: '#ffffff',
+            textShadow: '0 2px 10px rgba(0,0,0,0.5)'
+          }}>
             तुम्हीही मराठा स्त्रीशक्तीच्या चळवळीत सहभागी व्हा!
           </h2>
           <p style={{ fontSize: '1.15rem', color: '#cbd5e1', maxWidth: '720px', margin: '0 auto 2.25rem', lineHeight: 1.65 }}>
