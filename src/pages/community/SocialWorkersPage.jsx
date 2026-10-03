@@ -206,21 +206,23 @@ export default function SocialWorkersPage() {
             🤝 सेवा परमो धर्मः | Social Activists & Changemakers
           </div>
           <h1 style={{
-            fontSize: 'clamp(2rem, 5vw, 3.1rem)',
+            fontSize: 'clamp(2.1rem, 5vw, 3.2rem)',
             fontWeight: 900,
+            color: '#FFFFFF',
             margin: '0.5rem 0 1rem',
-            textShadow: '0 3px 14px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9)'
+            textShadow: '0 4px 16px rgba(0,0,0,0.95), 0 2px 4px rgba(0,0,0,0.95), 0 0 20px rgba(0,0,0,0.8)'
           }}>
             मराठा समाजसेवक आणि कार्यकर्ते
           </h1>
           <p style={{
             fontSize: '1.2rem',
-            opacity: 0.98,
+            color: '#FFFFFF',
+            opacity: 1,
             maxWidth: '780px',
             margin: '0 auto 2.2rem',
-            lineHeight: 1.6,
+            lineHeight: 1.65,
             fontWeight: 500,
-            textShadow: '0 2px 10px rgba(0,0,0,0.9), 0 1px 2px rgba(0,0,0,0.95)'
+            textShadow: '0 2px 12px rgba(0,0,0,0.95), 0 1px 3px rgba(0,0,0,0.95)'
           }}>
             स्वार्थापलीकडे जाऊन समाजातील शेवटच्या घटकासाठी अहोरात्र झटणारे निष्ठावंत मराठा समाजसेवक. त्यांच्या कार्यात आपणही हातभार लावा.
           </p>
