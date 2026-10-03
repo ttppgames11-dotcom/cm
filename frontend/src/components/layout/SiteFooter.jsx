@@ -63,7 +63,7 @@ export default function SiteFooter() {
               <li style={{ marginBottom: '8px' }}><Link to="/sangam" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🤝 व्यवसाय संगम (Chapters)</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/jobs" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🛠️ व्यावसायिक सेवा बुकिंग</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/jobs" style={{ color: '#FFFFFF', textDecoration: 'none' }}>💼 रोजगार व करिअर केंद्र</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/jobs" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🎓 उच्च शिक्षण व शिष्यवृत्ती</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/education" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🎓 उच्च शिक्षण व शिष्यवृत्ती</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/about" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🌟 राष्ट्रीय मराठा गौरव</Link></li>
             </ul>
           </div>

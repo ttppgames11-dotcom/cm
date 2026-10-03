@@ -253,13 +253,6 @@ export default function MemberDashboardPage() {
             <div style={{ fontSize: '0.78rem', color: '#666' }}>राज्यभरातील मराठा व्यावसायिक</div>
           </div>
         </Link>
-        <Link to="/roles-matrix" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <div style={{ background: '#FFF7ED', border: '1.5px solid #FED7AA', borderRadius: '10px', padding: '18px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.8rem', marginBottom: '6px' }}>⚖️</div>
-            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#9A3412' }}>पद पात्रता मॅट्रिक्स</div>
-            <div style={{ fontSize: '0.78rem', color: '#C2410C' }}>आपले रेफरल्स व पात्र पदे तपासा</div>
-          </div>
-        </Link>
         <Link to="/donation" style={{ textDecoration: 'none', color: 'inherit' }}>
           <div style={{ background: '#FFFFFF', border: '1px solid #E0E0E0', borderRadius: '10px', padding: '18px', textAlign: 'center' }}>
             <div style={{ fontSize: '1.8rem', marginBottom: '6px' }}>🏰</div>

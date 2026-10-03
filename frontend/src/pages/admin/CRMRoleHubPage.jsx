@@ -412,7 +412,7 @@ export default function CRMRoleHubPage() {
             </p>
           </div>
           <Link
-            to="/roles-matrix"
+            to="/crm"
             style={{
               background: '#C73800',
               color: '#FFFFFF',
@@ -427,7 +427,7 @@ export default function CRMRoleHubPage() {
               boxShadow: '0 4px 12px rgba(199,56,0,0.25)',
               whiteSpace: 'nowrap'
             }}>
-            पात्रता मॅट्रिक्स उघडा ➔
+            CRM प्रणाली उघडा ➔
           </Link>
         </div>
 

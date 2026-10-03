@@ -29,6 +29,7 @@ import EventsCalendarPage from './pages/events/EventsCalendarPage';
 import DonationsPage from './pages/donation/DonationsPage';
 import PeopleDirectoryPage from './pages/directory/PeopleDirectoryPage';
 import JobsPortalPage from './pages/jobs/JobsPortalPage';
+import HigherEducationPortalPage from './pages/education/HigherEducationPortalPage';
 
 // Culture, Governance, Admin
 import PhotoGalleryPage from './pages/culture/PhotoGalleryPage';
@@ -61,13 +62,11 @@ import NewsAnnouncementsPage from './pages/community/NewsAnnouncementsPage';
 import NotificationsPage from './pages/member/NotificationsPage';
 import MessagesPage from './pages/member/MessagesPage';
 import ServiceBookingPage from './pages/jobs/ServiceBookingPage';
-import BlueprintVisionPage from './pages/governance/BlueprintVisionPage';
 import AboutPage from './pages/governance/AboutPage';
 import AchieversPage from './pages/governance/AchieversPage';
 import MorePortalsPage from './pages/common/MorePortalsPage';
 import SymbolsPage from './pages/culture/SymbolsPage';
 import TemplesPage from './pages/culture/TemplesPage';
-import RoleEligibilityMatrixPage from './pages/governance/RoleEligibilityMatrixPage';
 
 // Newly Added Community, Culture, Business & Governance Ecosystem Pages
 import DoctorsDirectoryPage from './pages/directory/DoctorsDirectoryPage';
@@ -109,7 +108,7 @@ const legacyRedirects = [
   { from: '/cm-bajirao-peshwa.html', to: '/history/bajirao-peshwa' },
   { from: '/cm-balidan-maas.html', to: '/history/balidan-maas' },
   { from: '/cm-battles.html', to: '/history/battles' },
-  { from: '/cm-blueprint.html', to: '/blueprint' },
+  { from: '/cm-blueprint.html', to: '/about' },
   { from: '/cm-business-directory.html', to: '/business/directory' },
   { from: '/cm-business-membership-application.html', to: '/business/membership-application' },
   { from: '/cm-business-opportunities.html', to: '/business/directory' },
@@ -304,7 +303,10 @@ export default function App() {
 
             {/* Jobs, Education & Services */}
             <Route path="/jobs" element={<JobsPortalPage />} />
-            <Route path="/education" element={<JobsPortalPage />} />
+            <Route path="/education" element={<HigherEducationPortalPage />} />
+            <Route path="/scholarships" element={<HigherEducationPortalPage />} />
+            <Route path="/colleges" element={<HigherEducationPortalPage />} />
+            <Route path="/higher-education" element={<HigherEducationPortalPage />} />
             <Route path="/services" element={<JobsPortalPage />} />
             <Route path="/services/booking" element={<ServiceBookingPage />} />
             <Route path="/service-booking" element={<ServiceBookingPage />} />
@@ -320,6 +322,11 @@ export default function App() {
             <Route path="/culture/gramdevat" element={<GramdevatJatraPage />} />
             <Route path="/gramdevat" element={<GramdevatJatraPage />} />
             <Route path="/jatra" element={<GramdevatJatraPage />} />
+            <Route path="/culture/jatra" element={<GramdevatJatraPage />} />
+            <Route path="/culture/natya" element={<GramdevatJatraPage />} />
+            <Route path="/natya" element={<GramdevatJatraPage />} />
+            <Route path="/culture/khel" element={<GramdevatJatraPage />} />
+            <Route path="/khel" element={<GramdevatJatraPage />} />
             <Route path="/culture/heritage-map" element={<InteractiveHeritageMapPage />} />
             <Route path="/heritage-map" element={<InteractiveHeritageMapPage />} />
             <Route path="/history/knowledge-graph" element={<KnowledgeGraphExplorerPage />} />
@@ -337,15 +344,10 @@ export default function App() {
 
             {/* Governance, Leadership & Global Search */}
             <Route path="/governance" element={<GovernancePage />} />
-            <Route path="/roles-matrix" element={<RoleEligibilityMatrixPage />} />
-            <Route path="/roles" element={<RoleEligibilityMatrixPage />} />
-            <Route path="/referral-eligibility" element={<RoleEligibilityMatrixPage />} />
-            <Route path="/governance/roles" element={<RoleEligibilityMatrixPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<GovernancePage />} />
             <Route path="/leaders" element={<AboutPage />} />
             <Route path="/achievers" element={<AchieversPage />} />
-            <Route path="/blueprint" element={<BlueprintVisionPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/more" element={<MorePortalsPage />} />
             <Route path="/portals" element={<MorePortalsPage />} />

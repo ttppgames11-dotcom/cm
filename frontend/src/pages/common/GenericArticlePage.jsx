@@ -5,27 +5,42 @@ const articlesDatabase = {
   'shivaji-maharaj': {
     title: 'छत्रपती शिवाजी महाराज — अखंड हिंदवी स्वराज्य संस्थापक',
     eyebrow: 'श्रीमंत छत्रपती · युगपुरुष · भारतीय आरमाराचे जनक (१६३०–१६८०)',
-    heroImage: 'https://wallpapercave.com/wp/wp4518353.jpg',
-    tagline: 'रयतेचे राजे, रणनीतीकार आणि भारतीय नौदलाचे जनक — ३५०+ गड-किल्ले जिंकून हिंदवी स्वराज्याची स्थापना करणारे युगप्रवर्तक महापुरुष.',
+    heroImage: '/assets/images/real-shivaji-contemporary.jpg',
+    cardImage: '/assets/images/real-shivaji-portrait.jpg',
+    tagline: 'रयतेचे राजे, अद्वितीय रणनीतीकार आणि भारतीय नौदलाचे जनक — ३५०+ गड-किल्ले जिंकून परकीय आक्रमक सत्तांना पराभूत करत अखंड लोककल्याणकारी हिंदवी स्वराज्याची स्थापना करणारे युगप्रवर्तक महापुरुष.',
     warCry: '|| प्रतिपच्चंद्रलेखेव वर्धिष्णुर्विश्ववंदिता शाहसूनोः शिवस्यैषा मुद्रा भद्राय राजते ||',
     stats: [
       { num: '१६३०', label: 'जन्म शिवनेरीवर' },
       { num: '३५०+', label: 'जिंकलेले गडकोट' },
       { num: '१६७४', label: 'रायगडावर राज्याभिषेक' },
-      { num: 'अष्टप्रधान', label: 'मंत्रिमंडळ व्यवस्था' }
+      { num: 'अष्टप्रधान', label: 'मंत्रिमंडळ व्यवस्था' },
+      { num: '२८ वर्षे', label: 'अपराजित संघर्ष' },
+      { num: 'पहिले आरमार', label: 'सागरी सार्वभौमत्व' }
     ],
     sections: [
       {
-        heading: 'स्वराज्याची प्रतिज्ञा व पहिले तोरण',
-        content: 'वयाच्या अवघ्या १६ व्या वर्षी छत्रपती शिवरायांनी रायरेश्वराच्या साक्षीने स्वराज्य स्थापनेची पवित्र शपथ घेतली आणि तोरणा किल्ला जिंकून स्वराज्याचे पहिले तोरण बांधले. त्यांनी रयतेच्या कल्याणासाठी जमीन महसूल पद्धती, स्वतंत्र नाणी (होन व शिवराई), आणि अष्टप्रधान मंडळ स्थापन केले.'
+        heading: '१. बालपण, संस्कार आणि रायरेश्वरावर स्वराज्याची पवित्र शपथ (१६४५)',
+        content: '१९ फेब्रुवारी १६३० रोजी सह्याद्रीच्या कुशीतील शिवनेरी किल्ल्यावर छत्रपती शिवाजी महाराजांचा जन्म झाला. राष्ट्रमाता जिजाऊ माँसाहेब आणि शहाजीराजे भोसले यांच्या उच्च संस्कारात शिवबांचे बालपण घडले. वयाच्या अवघ्या १५ व्या वर्षी १६४५ मध्ये त्यांनी रायरेश्वराच्या शिवलिंगावर स्वतःच्या रक्ताचा अभिषेक करून "हे राज्य व्हावे हे तो श्रींचे मनोगत!" अशी हिंदवी स्वराज्याची प्रतिज्ञा घेतली. कान्होजी जेधे, बाजी पासलकर, तानाजी मालुसरे, येसाजी कंक या निष्ठावंत मावळ्यांना सोबत घेऊन तोरणा किल्ला जिंकला आणि स्वराज्याचे पहिले तोरण बांधले.'
       },
       {
-        heading: 'जागतिक युद्धनीती व गनिमी कावा (Ganimi Kawa)',
-        content: 'सह्याद्रीच्या डोंगराळ भागाचा रणनीतिक वापर करून बलाढ्य शत्रूंचा पाडाव करण्याची गनिमी कावा ही युद्धनीती शिवरायांनी विकसित केली. प्रतापगडावर अफझलखानाचा वध आणि पावनखिंडीतील अभेद्य प्रतिकार हे जागतिक लष्करी इतिहासातील अद्वितीय अध्याय आहेत.'
+        heading: '२. जागतिक युद्धनीती — गनिमी कावा (Ganimi Kawa) आणि प्रतापगड विजय',
+        content: 'सह्याद्रीचे दुर्गम डोंगर आणि घनदाट जंगलांचा रणनीतिक उपयोग करून शिवरायांनी "गनिमी कावा" ही अजोड युद्धपद्धती विकसित केली. १० नोव्हेंबर १६५९ रोजी विजापूरच्या बलाढ्य सेनापती अफझलखानाने केलेल्या दगाफटक्याला चोख उत्तर देत शिवरायांनी वाघनखांनी त्याचा कोथळा बाहेर काढला. प्रतापगडाच्या पायथ्याशी झालेल्या या युद्धाने विजापूर सल्तनतीचा पाया हलवला. त्यानंतर पावनखिंडीत वीर बाजीप्रभू देशपांडे आणि बांदल मावळ्यांनी सिद्दी जोहरच्या अजस्त्र सेनेला रोखून धरत अद्वितीय शौर्य गाजवले.'
       },
       {
-        heading: 'भारतीय आरमाराचे जनक (Father of Indian Navy)',
-        content: 'समुद्रावरील परकीय सत्तांचा धोका ओळखून छत्रपती शिवरायांनी सिंधुदुर्ग, विजयदुर्ग, सुवर्णदुर्ग यांसारखे जलदुर्ग उभारले आणि समर्थ आरमारी लढाऊ जहाजांचा ताफा तयार केला. म्हणून त्यांना भारतीय आरमाराचे जनक मानले जाते.'
+        heading: '३. आग्ऱ्याहून अद्वितीय सुटका आणि मोगल सत्तेला आव्हान (१६६६)',
+        content: 'मिर्झाराजे जयसिंगासोबत झालेल्या १६६५ च्या पुरंदर तहानंतर छत्रपती शिवराय १६६६ मध्ये आग्र्याला औरंगजेबाच्या दरबारात गेले. स्वाभिमानाला धक्का लागताच भर दरबारात बादशहाला आव्हान देणारे शिवराय जगातील एकमेव राजे ठरले. औरंगजेबाने नजरकैदेत ठेवल्यानंतर अत्यंत मुत्सद्दीपणे, गोड मिठाईच्या पेटाऱ्यातून बाल संभाजीराजांसह सुरक्षित निसटून शिवराय स्वराज्यात परतले. ही सुटका जागतिक गुप्तहेर आणि रणनीती इतिहासातील महाचमत्कार मानली जाते.'
+      },
+      {
+        heading: '४. भारतीय आरमाराचे जनक (Father of Indian Navy) व सागरी किल्ले',
+        content: '"ज्याचा समुद्र त्याचा देश!" हे तत्त्व ओळखून छत्रपती शिवरायांनी १६५७ मध्ये कल्याण-भिवंडी येथे भारताच्या पहिल्या स्वतंत्र आरमाराची स्थापना केली. मालवणच्या समुद्रात खडकांवर शिशाचा रस ओतून पायाभरणी केलेला सिंधुदुर्ग, विजयदुर्ग, सुवर्णदुर्ग, पद्मदुर्ग, खांदेरी-उंदेरी असे अभेद्य जलदुर्ग उभारले. गुराब, गलबत, पाल, मचवा अशी शेकडो लढाऊ जहाजे तयार करून इंग्रज, पोर्तुगीज, डच आणि जंजिऱ्याच्या सिद्दीच्या समुद्री आक्रमणांना समुद्रावरच कायमचे रोखून धरले.'
+      },
+      {
+        heading: '५. शिवकालीन अष्टप्रधान मंडळ व सुशासन (Administrative Excellence)',
+        content: '६ जून १६७४ रोजी दुर्गराज रायगडावर पंडित गागाभट्टांच्या उपस्थितीत छत्रपती शिवरायांचा वैदिक सुवर्ण राज्याभिषेक झाला आणि स्वतंत्र "शिवराज्याभिषेक शक" सुरू झाला. प्रशासनासाठी त्यांनी अष्टप्रधान मंडळ स्थापन केले: पेशवा (मुख्य प्रधान), अमात्य (अर्थमंत्री), सचिव (गृहमंत्री), मंत्री (वाकनीस), सेनापती (सरनोबत), सुमंत (परराष्ट्रमंत्री), पंडितराव (धर्माध्यक्ष) आणि न्यायाधीश (सरन्यायाधीश). स्वतःची सुवर्ण "होन" आणि तांब्याची "शिवराई" ही नाणी पाडून स्वराज्याचे आर्थिक स्वातंत्र्य सिद्ध केले.'
+      },
+      {
+        heading: '६. शेतकरी हित, पर्यावरण आज्ञापत्र व स्त्री सन्मान',
+        content: 'शिवरायांचे राज्य हे रयतेचे राज्य होते. अण्णाजी दत्तो यांच्या काठी मोजणी पद्धतीनुसार केवळ पिकांच्या उत्पन्नावर शेतसारा ठरवला गेला; दुष्काळात शेतकऱ्यांना तगाई कर्ज आणि बियाणे दिले. आज्ञापत्रात सक्त ताकीद दिली होती: "आरमारासाठी किंवा गडासाठी रयतेने पोटच्या पोरासारखी वाढवलेली फळझाडे तोडू नयेत!" सैन्याला सक्त नियम होता की युद्धाच्या वेळी शेतातील भाजीच्या देठालाही हात लावू नये, आणि शत्रूच्या प्रदेशातीलही स्त्री व बालकांना मातेसमान सन्मान दिला गेला पाहिजे.'
       }
     ]
   },
@@ -457,65 +472,221 @@ export default function GenericArticlePage() {
       </div>
 
       {/* Hero Section */}
-      <div className="hero" style={{ minHeight: '460px', position: 'relative', overflow: 'hidden' }}>
+      <div className="hero" style={{ minHeight: '480px', position: 'relative', overflow: 'hidden', background: '#120502' }}>
         <img
           src={article.heroImage}
           alt={article.title}
           className="hero-bg-img"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', position: 'absolute', inset: 0, opacity: 0.35, filter: 'blur(2px)' }}
           onError={(e) => { e.target.src = '/assets/images/maratha-samrajya.jpg'; }}
         />
-        <div className="hero-overlay" style={{ background: 'radial-gradient(circle at 75% 35%, rgba(230,81,0,0.6), rgba(12,2,4,0.92) 80%)' }}></div>
+        <div className="hero-overlay" style={{ background: 'linear-gradient(90deg, rgba(18,5,2,0.94) 0%, rgba(35,10,5,0.85) 50%, rgba(18,5,2,0.92) 100%)' }}></div>
 
-        <div className="wrap hero-content" style={{ maxWidth: '1320px', width: '100%', padding: '40px 24px', position: 'relative', zIndex: 2 }}>
-          <div>
+        <div className="wrap hero-content" style={{ maxWidth: '1320px', width: '100%', padding: '44px 24px', position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '32px', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 580px', minWidth: '300px' }}>
             <div className="eyebrow" style={{ color: 'var(--gold-300)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.88rem' }}>
               {article.eyebrow}
             </div>
-            <h1 style={{ fontSize: 'clamp(2.2rem, 3.8vw, 3.6rem)', lineHeight: 1.15, color: '#FFFFFF', margin: '12px 0' }}>
+            <h1 style={{ fontSize: 'clamp(2.2rem, 3.8vw, 3.4rem)', lineHeight: 1.18, color: '#FFFFFF', margin: '14px 0 10px', fontFamily: 'Baloo 2' }}>
               {article.title}
             </h1>
-            <div className="rule" style={{ background: 'var(--gold-500)', height: '4px', width: '80px', margin: '12px 0' }}></div>
-            <p className="tagline" style={{ fontSize: '1.1rem', maxWidth: '60ch', color: '#FFF8F2', lineHeight: 1.6 }}>
+            <div className="rule" style={{ background: 'var(--gold-500)', height: '4px', width: '80px', margin: '14px 0' }}></div>
+            <p className="tagline" style={{ fontSize: '1.08rem', maxWidth: '64ch', color: '#FFF8F2', lineHeight: 1.65 }}>
               {article.tagline}
             </p>
 
-            <div className="stats-glass" style={{ marginTop: '24px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            <div className="stats-glass" style={{ marginTop: '24px', display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
               {article.stats.map((s, i) => (
-                <div key={i} className="stat-glass">
-                  <b>{s.num}</b>
-                  <span>{s.label}</span>
+                <div key={i} className="stat-glass" style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)', border: '1px solid rgba(228,162,82,0.3)', padding: '10px 16px', borderRadius: '10px' }}>
+                  <b style={{ color: 'var(--gold-300)', fontSize: '1.15rem', display: 'block' }}>{s.num}</b>
+                  <span style={{ color: '#E2E8F0', fontSize: '0.82rem' }}>{s.label}</span>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Dedicated Portrait Card (Fully Visible, Exact Fit & No Cropping) */}
+          <div style={{
+            flex: '0 0 320px',
+            maxWidth: '360px',
+            width: '100%',
+            background: 'linear-gradient(145deg, rgba(45,15,8,0.95), rgba(20,5,2,0.98))',
+            padding: '14px',
+            borderRadius: '20px',
+            border: '2px solid rgba(245,158,11,0.5)',
+            boxShadow: '0 16px 36px rgba(0,0,0,0.5)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '100%',
+              height: '340px',
+              borderRadius: '14px',
+              overflow: 'hidden',
+              background: '#0D0402',
+              position: 'relative'
+            }}>
+              <img
+                src={article.cardImage || article.heroImage}
+                alt={article.title}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  objectPosition: 'center',
+                  display: 'block'
+                }}
+                onError={(e) => { e.target.src = '/assets/images/real-shivaji-contemporary.jpg'; }}
+              />
+              <span style={{
+                position: 'absolute',
+                bottom: '10px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'rgba(0,0,0,0.75)',
+                color: 'var(--gold-300)',
+                padding: '4px 12px',
+                borderRadius: '20px',
+                fontSize: '0.76rem',
+                fontWeight: 700,
+                border: '1px solid rgba(245,158,11,0.4)',
+                whiteSpace: 'nowrap'
+              }}>
+                अस्सल समकालीन व्यक्तिरेखा
+              </span>
+            </div>
+            <div style={{ marginTop: '10px', color: '#FFF8F2', fontWeight: 700, fontSize: '0.94rem' }}>
+              श्री राजा शिवछत्रपती
+            </div>
+            <div style={{ fontSize: '0.78rem', color: '#D1D5DB' }}>
+              अखंड हिंदवी स्वराज्य संस्थापक
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="wrap" style={{ maxWidth: '1080px', padding: '40px 24px', margin: '0 auto' }}>
-        <div style={{ background: '#FFFFFF', borderRadius: '14px', padding: '36px', border: '1px solid var(--line)', boxShadow: 'var(--shadow-sm)' }}>
+      <div className="wrap" style={{ maxWidth: '1120px', padding: '40px 24px', margin: '0 auto' }}>
+        <div style={{ background: '#FFFFFF', borderRadius: '16px', padding: '36px', border: '1px solid var(--line)', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
           {article.sections.map((sec, idx) => (
-            <div key={idx} style={{ marginBottom: idx === article.sections.length - 1 ? 0 : '32px' }}>
-              <h3 style={{ fontFamily: 'Baloo 2', color: 'var(--maroon-900)', fontSize: '1.5rem', marginBottom: '12px', borderBottom: '2px solid var(--gold-300)', paddingBottom: '6px' }}>
-                {sec.heading}
+            <div key={idx} style={{ marginBottom: idx === article.sections.length - 1 ? 0 : '36px' }}>
+              <h3 style={{ fontFamily: 'Baloo 2', color: 'var(--maroon-900)', fontSize: '1.45rem', marginBottom: '14px', borderBottom: '2px solid var(--gold-300)', paddingBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>📜</span> {sec.heading}
               </h3>
-              <p style={{ fontSize: '1.05rem', lineHeight: 1.8, color: 'var(--ink-soft)' }}>
+              <p style={{ fontSize: '1.04rem', lineHeight: 1.85, color: '#374151', margin: 0, textAlign: 'justify' }}>
                 {sec.content}
               </p>
             </div>
           ))}
 
+          {/* New Interactive Block 1: शिवकालीन अष्टप्रधान मंडळ तक्ता */}
+          <div style={{ marginTop: '44px', padding: '24px', background: '#FFF8F2', borderRadius: '14px', border: '1px solid #FFCC80' }}>
+            <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.4rem', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>🏛️</span> शिवकालीन अष्टप्रधान मंत्रिमंडळ रचना (१६७४)
+            </h3>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.92rem' }}>
+                <thead>
+                  <tr style={{ background: '#C73800', color: '#fff', textAlign: 'left' }}>
+                    <th style={{ padding: '10px 14px', borderRadius: '6px 0 0 0' }}>पद</th>
+                    <th style={{ padding: '10px 14px' }}>शिवकालीन मंत्री</th>
+                    <th style={{ padding: '10px 14px' }}>प्रशासकीय अधिकार व खाते</th>
+                    <th style={{ padding: '10px 14px', borderRadius: '0 6px 0 0' }}>वार्षिक वेतन</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ borderBottom: '1px solid #FED7AA' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>पेशवा (मुख्य प्रधान)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>मोरोपंत त्र्यंबक पिंगळे</td>
+                    <td style={{ padding: '10px 14px' }}>राजांनंतर संपूर्ण राज्यकारभार चालवणे, युद्धप्रसंगी सैन्याचे नेतृत्व.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१५,००० होन</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #FED7AA', background: '#FFFDF9' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>अमात्य (अर्थमंत्री)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>रामचंद्र नीलकंठ मुजुमदार</td>
+                    <td style={{ padding: '10px 14px' }}>स्वराज्याची तिजोरी, जमाखर्च व महसूल व्यवस्था सांभाळणे.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१२,००० होन</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #FED7AA' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>सेनापती (सरनोबत)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>हंबीरराव मोहिते</td>
+                    <td style={{ padding: '10px 14px' }}>स्वराज्याच्या संपूर्ण घोडदळ व पायदळाचे सर्वोच्च लष्करप्रमुख.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१०,००० होन</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #FED7AA', background: '#FFFDF9' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>सचिव (सुरनीस)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>अण्णाजी दत्तो</td>
+                    <td style={{ padding: '10px 14px' }}>राजांच्या सर्व आज्ञापत्रांची शुद्धता तपासणे व जमीन महसूल मोजणी.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१०,००० होन</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #FED7AA' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>मंत्री (वाकनीस)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>दत्ताजी त्रिंबक वाकनीस</td>
+                    <td style={{ padding: '10px 14px' }}>राजांची दैनंदिनी, राजदरबारातील सुरक्षा व गुप्तहेर समन्वय.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१०,००० होन</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #FED7AA', background: '#FFFDF9' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>सुमंत (डबीर)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>रामचंद्र त्रिंबक डबीर</td>
+                    <td style={{ padding: '10px 14px' }}>परराष्ट्र संबंध, वकिलांशी बोलणी आणि राजकीय पत्रव्यवहार.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१०,००० होन</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #FED7AA' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>पंडितराव (धर्माध्यक्ष)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>रघुनाथराव पंडितराव</td>
+                    <td style={{ padding: '10px 14px' }}>धर्मव्यवस्था, न्यायदान मार्गदर्शन, विद्वान सत्कार व दानधर्म.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१०,००० होन</td>
+                  </tr>
+                  <tr>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>न्यायाधीश</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>निराजी रावजी</td>
+                    <td style={{ padding: '10px 14px' }}>स्वराज्यातील दिवाणी व फौजदारी खटल्यांवर निष्पक्ष न्यायनिवाडा.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१०,००० होन</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* New Interactive Block 2: शिवकालीन आज्ञापत्र व प्रसिद्ध उद्गार */}
+          <div style={{ marginTop: '28px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+            <div style={{ background: '#FFFBEB', padding: '20px', borderRadius: '12px', borderLeft: '4px solid #F59E0B' }}>
+              <div style={{ fontWeight: 800, color: '#B45309', marginBottom: '6px' }}>📜 आरमारविषयक आज्ञापत्र:</div>
+              <p style={{ fontSize: '0.9rem', color: '#451A03', fontStyle: 'italic', margin: 0, lineHeight: 1.6 }}>
+                "ज्यांचे आरमार त्यांचा समुद्र! आरमार हे एक स्वतंत्रच राज्य आहे. ज्यास समुद्रतीराचे रक्षण करणे त्यास आरमार अवश्यकच आहे."
+              </p>
+              <div style={{ fontSize: '0.78rem', color: '#78350F', marginTop: '6px', textAlign: 'right' }}>— रामचंद्रपंत अमात्य लिखित आज्ञापत्र</div>
+            </div>
+
+            <div style={{ background: '#FEF2F2', padding: '20px', borderRadius: '12px', borderLeft: '4px solid #EF4444' }}>
+              <div style={{ fontWeight: 800, color: '#991B1B', marginBottom: '6px' }}>🌾 रयतेची काळजी घेणारा राजा:</div>
+              <p style={{ fontSize: '0.9rem', color: '#450A0A', fontStyle: 'italic', margin: 0, lineHeight: 1.6 }}>
+                "रयतेस काडीचाही उपद्रव न देणे. शेतातील भाजीच्या देठासही हात न लावणे. जबरदस्तीने कोणाचेही काही न घेणे."
+              </p>
+              <div style={{ fontSize: '0.78rem', color: '#7F1D1D', marginTop: '6px', textAlign: 'right' }}>— छत्रपती शिवरायांचे सेनापतींना पत्र (१६७४)</div>
+            </div>
+
+            <div style={{ background: '#F0FDF4', padding: '20px', borderRadius: '12px', borderLeft: '4px solid #10B981' }}>
+              <div style={{ fontWeight: 800, color: '#065F46', marginBottom: '6px' }}>⚔️ कवी भूषणांचे ऐतिहासिक गौरवगान:</div>
+              <p style={{ fontSize: '0.9rem', color: '#064E3B', fontStyle: 'italic', margin: 0, lineHeight: 1.6 }}>
+                "काशी की कला जाती, मथुरा की मसजिद होती, सिवाजी न होतो तो सुनति होत सबकी!"
+              </p>
+              <div style={{ fontSize: '0.78rem', color: '#047857', marginTop: '6px', textAlign: 'right' }}>— महाकवी भूषण कृत शिवराजभूषण</div>
+            </div>
+          </div>
+
           {/* Action / Navigation Bar */}
-          <div style={{ marginTop: '40px', paddingTop: '24px', borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-            <Link to="/history" className="btn btn-outline" style={{ padding: '8px 18px', fontSize: '0.88rem' }}>
+          <div style={{ marginTop: '44px', paddingTop: '24px', borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+            <Link to="/history" className="btn btn-outline" style={{ padding: '10px 20px', fontSize: '0.9rem', textDecoration: 'none', borderRadius: '8px', color: '#C73800', borderColor: '#C73800', fontWeight: 700 }}>
               ← इतिहास दालनात परत जा
             </Link>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <Link to="/forts" className="btn btn-outline" style={{ padding: '8px 18px', fontSize: '0.88rem' }}>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <Link to="/forts" className="btn btn-outline" style={{ padding: '10px 20px', fontSize: '0.9rem', textDecoration: 'none', borderRadius: '8px', color: '#374151', borderColor: '#D1D5DB', fontWeight: 700 }}>
                 ३५०+ गड-किल्ले 🏰
               </Link>
-              <Link to="/register" className="btn btn-primary" style={{ padding: '8px 20px', fontSize: '0.88rem' }}>
+              <Link to="/gallery" className="btn btn-outline" style={{ padding: '10px 20px', fontSize: '0.9rem', textDecoration: 'none', borderRadius: '8px', color: '#374151', borderColor: '#D1D5DB', fontWeight: 700 }}>
+                छायाचित्र दालन 🖼️
+              </Link>
+              <Link to="/register" className="btn btn-primary" style={{ padding: '10px 22px', fontSize: '0.9rem', textDecoration: 'none', borderRadius: '8px', background: 'linear-gradient(135deg, #C73800, #E65100)', color: '#fff', fontWeight: 700 }}>
                 🚩 व्यासपीठावर सामील व्हा
               </Link>
             </div>

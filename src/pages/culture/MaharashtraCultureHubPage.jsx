@@ -209,16 +209,17 @@ export default function MaharashtraCultureHubPage() {
                       src={region.heroImage} 
                       alt={region.name}
                       onError={(e) => { e.target.style.display = 'none'; }}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
                     />
                     <span style={{
                       position: 'absolute',
-                      inset: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1.2rem',
-                      background: 'rgba(0,0,0,0.2)'
+                      bottom: '0',
+                      right: '0',
+                      fontSize: '0.8rem',
+                      lineHeight: 1,
+                      background: 'rgba(0,0,0,0.5)',
+                      borderRadius: '50%',
+                      padding: '2px'
                     }}>
                       {region.icon}
                     </span>
@@ -242,9 +243,9 @@ export default function MaharashtraCultureHubPage() {
             <div style={{
               position: 'relative',
               minHeight: '220px',
-              backgroundImage: `linear-gradient(to right, rgba(20, 6, 2, 0.92) 0%, rgba(124, 29, 5, 0.82) 55%, rgba(0, 0, 0, 0.45) 100%), url(${activeRegion.heroImage})`,
+              backgroundImage: `linear-gradient(to right, rgba(20, 6, 2, 0.78) 0%, rgba(124, 29, 5, 0.55) 50%, rgba(0, 0, 0, 0.25) 100%), url(${activeRegion.heroImage})`,
               backgroundSize: 'cover',
-              backgroundPosition: 'center',
+              backgroundPosition: activeRegion.heroPosition || 'center',
               padding: '30px 32px',
               color: '#FFFFFF',
               display: 'flex',
@@ -290,161 +291,345 @@ export default function MaharashtraCultureHubPage() {
               </div>
             </div>
 
-            {/* Cultural Attributes Grid - 4 Image-backed Pillar Cards */}
-            <div style={{ padding: '30px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+            {/* Cultural Attributes Grid - 4 In-Depth Visual Cards */}
+            <div style={{ padding: '32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '26px' }}>
               
-              {/* 1. Lifestyle & Nature (जीवनशैली व निसर्ग) */}
-              <div style={{ background: '#F0FDF4', borderRadius: '16px', border: '1px solid #DCFCE7', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ height: '160px', width: '100%', position: 'relative', overflow: 'hidden', background: '#E2E8F0' }}>
+              {/* 1. Lifestyle & Nature (जीवनशैली, निसर्ग व लोकभाषा) */}
+              <div style={{ background: '#F0FDF4', borderRadius: '18px', border: '1.5px solid #BBF7D0', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 16px rgba(22, 101, 52, 0.06)' }}>
+                <div style={{ height: '220px', width: '100%', position: 'relative', overflow: 'hidden', background: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <img 
                     src={activeRegion.lifestyleImage} 
                     alt={activeRegion.name + ' lifestyle'}
                     onError={(e) => { e.target.style.display = 'none'; }}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                   />
-                  <div style={{ position: 'absolute', bottom: '8px', left: '12px', background: 'rgba(0,0,0,0.65)', color: '#FFFFFF', padding: '3px 10px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>
+                  <div style={{ position: 'absolute', bottom: '10px', left: '12px', background: 'rgba(15, 23, 42, 0.85)', color: '#FFFFFF', padding: '4px 12px', borderRadius: '14px', fontSize: '0.75rem', fontWeight: 700, backdropFilter: 'blur(6px)', border: '1px solid rgba(255,255,255,0.2)' }}>
                     🌿 जीवनशैली व परिसर
                   </div>
                 </div>
-                <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                {/* Image Location Caption */}
+                {activeRegion.lifestyleImageLocation && (
+                  <div style={{ background: '#DCFCE7', padding: '6px 16px', fontSize: '0.74rem', color: '#166534', fontWeight: 600, borderBottom: '1px solid #BBF7D0' }}>
+                    📸 स्थळ: {activeRegion.lifestyleImageLocation}
+                  </div>
+                )}
+                <div style={{ padding: '22px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '16px' }}>
                   <div>
-                    <h4 style={{ margin: '0 0 8px', fontWeight: 800, color: '#15803D', fontSize: '1.1rem' }}>
-                      भौगोलिक परिसर व जीवनधारा
+                    <h4 style={{ margin: '0 0 10px', fontWeight: 800, color: '#15803D', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>🏞️</span> भौगोलिक परिसर व जीवनधारा
                     </h4>
-                    <p style={{ fontSize: '0.9rem', color: '#166534', lineHeight: 1.5, margin: '0 0 12px 0' }}>
-                      {activeRegion.cultureProfile.lifestyle}
+                    <p style={{ fontSize: '0.92rem', color: '#166534', lineHeight: 1.6, margin: '0 0 14px 0', fontWeight: 500 }}>
+                      {activeRegion.lifestyle || activeRegion.cultureProfile?.lifestyle}
                     </p>
+
+                    {/* Culture Highlights */}
                     {activeRegion.cultureHighlights && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        {activeRegion.cultureHighlights.map((hl, i) => (
-                          <div key={i} style={{ fontSize: '0.82rem', color: '#14532D', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ color: '#16A34A', fontWeight: 800 }}>✓</span> {hl}
-                          </div>
-                        ))}
+                      <div style={{ marginBottom: '14px' }}>
+                        <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#14532D', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          मुख्य वैशिष्ट्ये:
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          {activeRegion.cultureHighlights.map((hl, i) => (
+                            <div key={i} style={{ fontSize: '0.84rem', color: '#14532D', display: 'flex', alignItems: 'flex-start', gap: '8px', lineHeight: 1.4 }}>
+                              <span style={{ color: '#16A34A', fontWeight: 800 }}>✓</span>
+                              <span>{hl}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
+
+                    {/* Primary Dialects */}
+                    {activeRegion.primaryDialects && (
+                      <div style={{ background: '#FFFFFF', padding: '10px 14px', borderRadius: '10px', border: '1px solid #DCFCE7', marginTop: '12px' }}>
+                        <span style={{ fontSize: '0.78rem', color: '#166534', fontWeight: 700 }}>🗣️ प्रादेशिक बोलीभाषा: </span>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
+                          {activeRegion.primaryDialects.map((d, i) => (
+                            <span key={i} style={{ background: '#F0FDF4', color: '#15803D', border: '1px solid #86EFAC', padding: '2px 8px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 600 }}>
+                              {d}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Link to={`/culture/dialects?region=${encodeURIComponent(activeRegion.name?.split(' ')[0] || '')}`} style={{ color: '#15803D', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'underline' }}>
+                      या भागातील सर्व बोलींचे ऑडिओ व नमुने पहा →
+                    </Link>
                   </div>
                 </div>
               </div>
 
-              {/* 2. Food Culture (खाद्यसंस्कृतीची वैशिष्ट्ये) */}
-              <div style={{ background: '#FEF2F2', borderRadius: '16px', border: '1px solid #FEE2E2', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ height: '160px', width: '100%', position: 'relative', overflow: 'hidden', background: '#E2E8F0' }}>
+              {/* 2. Food Culture (खाद्यसंस्कृतीची सखोल वैशिष्ट्ये) */}
+              <div style={{ background: '#FEF2F2', borderRadius: '18px', border: '1.5px solid #FECACA', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 16px rgba(185, 28, 28, 0.06)' }}>
+                <div style={{ height: '220px', width: '100%', position: 'relative', overflow: 'hidden', background: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <img 
                     src={activeRegion.foodImage} 
                     alt={activeRegion.name + ' cuisine'}
                     onError={(e) => { e.target.style.display = 'none'; }}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                   />
-                  <div style={{ position: 'absolute', bottom: '8px', left: '12px', background: 'rgba(0,0,0,0.65)', color: '#FFFFFF', padding: '3px 10px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>
+                  <div style={{ position: 'absolute', bottom: '10px', left: '12px', background: 'rgba(15, 23, 42, 0.85)', color: '#FFFFFF', padding: '4px 12px', borderRadius: '14px', fontSize: '0.75rem', fontWeight: 700, backdropFilter: 'blur(6px)', border: '1px solid rgba(255,255,255,0.2)' }}>
                     🍲 प्रादेशिक खाद्यसंस्कृती
                   </div>
                 </div>
-                <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                {/* Image Location Caption */}
+                {activeRegion.foodImageLocation && (
+                  <div style={{ background: '#FEE2E2', padding: '6px 16px', fontSize: '0.74rem', color: '#991B1B', fontWeight: 600, borderBottom: '1px solid #FECACA' }}>
+                    📸 मेजवानी: {activeRegion.foodImageLocation}
+                  </div>
+                )}
+                <div style={{ padding: '22px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '16px' }}>
                   <div>
-                    <h4 style={{ margin: '0 0 8px', fontWeight: 800, color: '#B91C1C', fontSize: '1.1rem' }}>
-                      अस्सल चव व स्वाक्षरी पदार्थ
+                    <h4 style={{ margin: '0 0 10px', fontWeight: 800, color: '#B91C1C', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>🍛</span> अस्सल चव व स्वाक्षरी पदार्थ
                     </h4>
-                    <p style={{ fontSize: '0.9rem', color: '#991B1B', lineHeight: 1.5, margin: '0 0 12px 0' }}>
-                      {activeRegion.cultureProfile.foodCulture}
+                    <p style={{ fontSize: '0.92rem', color: '#991B1B', lineHeight: 1.6, margin: '0 0 14px 0', fontWeight: 500 }}>
+                      {activeRegion.cultureProfile?.foodCulture}
                     </p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
-                      {activeRegion.cultureProfile.signatureDishes.map((dish, i) => (
-                        <span key={i} style={{ background: '#FFFFFF', border: '1px solid #FECACA', padding: '3px 8px', borderRadius: '6px', fontSize: '0.78rem', color: '#B91C1C', fontWeight: 600 }}>
-                          🍽️ {dish}
-                        </span>
-                      ))}
+
+                    {/* Signature Dishes */}
+                    <div style={{ marginBottom: '12px' }}>
+                      <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#7F1D1D', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        प्रमुख स्वाक्षरी पदार्थ:
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                        {(activeRegion.stapleFoods || activeRegion.cultureProfile?.signatureDishes || []).map((dish, i) => (
+                          <span key={i} style={{ background: '#FFFFFF', border: '1px solid #FCA5A5', padding: '4px 10px', borderRadius: '8px', fontSize: '0.8rem', color: '#B91C1C', fontWeight: 700 }}>
+                            🍽️ {dish}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  <Link to="/culture/food" style={{ color: '#B91C1C', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'underline' }}>
-                    या प्रदेशाचे संपूर्ण खाद्यसंस्कृती कोश पहा →
-                  </Link>
+                  <div>
+                    <Link to="/culture/food" style={{ color: '#B91C1C', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'underline' }}>
+                      या प्रदेशाचे संपूर्ण खाद्यसंस्कृती कोश व पाककृती पहा →
+                    </Link>
+                  </div>
                 </div>
               </div>
 
-              {/* 3. Folk Art & Festivals (लोककला, नाट्य व उत्सव) */}
-              <div style={{ background: '#FAF5FF', borderRadius: '16px', border: '1px solid #F3E8FF', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ height: '160px', width: '100%', position: 'relative', overflow: 'hidden', background: '#E2E8F0' }}>
+              {/* 3. Folk Art & Festivals (लोककला, नाट्य व उत्सव परंपरा) */}
+              <div style={{ background: '#FAF5FF', borderRadius: '18px', border: '1.5px solid #E9D5FF', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 16px rgba(126, 34, 206, 0.06)' }}>
+                <div style={{ height: '220px', width: '100%', position: 'relative', overflow: 'hidden', background: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <img 
                     src={activeRegion.artImage} 
                     alt={activeRegion.name + ' folk arts'}
                     onError={(e) => { e.target.style.display = 'none'; }}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                   />
-                  <div style={{ position: 'absolute', bottom: '8px', left: '12px', background: 'rgba(0,0,0,0.65)', color: '#FFFFFF', padding: '3px 10px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>
+                  <div style={{ position: 'absolute', bottom: '10px', left: '12px', background: 'rgba(15, 23, 42, 0.85)', color: '#FFFFFF', padding: '4px 12px', borderRadius: '14px', fontSize: '0.75rem', fontWeight: 700, backdropFilter: 'blur(6px)', border: '1px solid rgba(255,255,255,0.2)' }}>
                     🎭 लोककला, नाट्य व सण
                   </div>
                 </div>
-                <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <h4 style={{ margin: '0 0 8px', fontWeight: 800, color: '#7E22CE', fontSize: '1.1rem' }}>
-                      उत्सव, जत्रा व रंगभूमी परंपरा
-                    </h4>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '10px' }}>
-                      {activeRegion.cultureProfile.festivals.map((fest, i) => (
-                        <span key={i} style={{ background: '#F3E8FF', color: '#6B21A8', padding: '3px 8px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 700 }}>
-                          🚩 {fest}
-                        </span>
-                      ))}
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                      {activeRegion.cultureProfile.folkArts.map((art, i) => (
-                        <span key={i} style={{ background: '#FFFFFF', border: '1px solid #E9D5FF', padding: '3px 8px', borderRadius: '6px', fontSize: '0.78rem', color: '#7E22CE', fontWeight: 600 }}>
-                          🎭 {art}
-                        </span>
-                      ))}
-                    </div>
+                {/* Image Location Caption */}
+                {activeRegion.artImageLocation && (
+                  <div style={{ background: '#F3E8FF', padding: '6px 16px', fontSize: '0.74rem', color: '#6B21A8', fontWeight: 600, borderBottom: '1px solid #E9D5FF' }}>
+                    📸 लोककला: {activeRegion.artImageLocation}
                   </div>
-                  <div style={{ marginTop: '14px' }}>
-                    <Link to="/culture/gramdevat-jatra" style={{ color: '#7E22CE', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'underline' }}>
+                )}
+                <div style={{ padding: '22px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '16px' }}>
+                  <div>
+                    <h4 style={{ margin: '0 0 10px', fontWeight: 800, color: '#7E22CE', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>🚩</span> उत्सव, जत्रा व रंगभूमी परंपरा
+                    </h4>
+                    
+                    {/* Festivals */}
+                    <div style={{ marginBottom: '14px' }}>
+                      <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#581C87', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        प्रादेशिक सण व उत्सव:
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                        {activeRegion.cultureProfile?.festivals.map((fest, i) => (
+                          <span key={i} style={{ background: '#F3E8FF', color: '#6B21A8', border: '1px solid #D8B4FE', padding: '4px 10px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700 }}>
+                            🚩 {fest}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Folk Arts */}
+                    <div style={{ marginBottom: '14px' }}>
+                      <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#581C87', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        पारंपरिक लोककला व नाट्य:
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                        {(activeRegion.folkArts || activeRegion.cultureProfile?.folkArts || []).map((art, i) => (
+                          <span key={i} style={{ background: '#FFFFFF', border: '1px solid #E9D5FF', padding: '4px 10px', borderRadius: '8px', fontSize: '0.8rem', color: '#7E22CE', fontWeight: 600 }}>
+                            🎭 {art}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Regional Jatras */}
+                    {activeRegion.jatras && (
+                      <div style={{ background: '#FFFFFF', padding: '10px 14px', borderRadius: '10px', border: '1px solid #E9D5FF' }}>
+                        <span style={{ fontSize: '0.78rem', color: '#6B21A8', fontWeight: 700 }}>🎡 प्रसिद्ध वार्षिक जत्रा: </span>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
+                          {activeRegion.jatras.map((j, i) => (
+                            <span key={i} style={{ background: '#FAF5FF', color: '#7E22CE', border: '1px solid #DDD6FE', padding: '2px 8px', borderRadius: '6px', fontSize: '0.76rem', fontWeight: 600 }}>
+                              🎪 {j}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Link to="/culture/gramdevat-jatra?tab=jatra" style={{ color: '#7E22CE', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'underline' }}>
                       जत्रा व नाट्य कॅलेंडर उघडा →
                     </Link>
                   </div>
                 </div>
               </div>
 
-              {/* 4. Forts & Temples (प्रमुख दुर्ग व तीर्थक्षेत्रे) */}
-              <div style={{ background: '#F8FAFC', borderRadius: '16px', border: '1px solid #E2E8F0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ height: '160px', width: '100%', position: 'relative', overflow: 'hidden', background: '#E2E8F0' }}>
+              {/* 4. Forts & Temples (प्रमुख दुर्ग, मंदिरे व कुलदेवता) */}
+              <div style={{ background: '#F8FAFC', borderRadius: '18px', border: '1.5px solid #CBD5E1', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 16px rgba(51, 65, 85, 0.06)' }}>
+                <div style={{ height: '220px', width: '100%', position: 'relative', overflow: 'hidden', background: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <img 
                     src={activeRegion.fortImage} 
                     alt={activeRegion.name + ' forts and temples'}
                     onError={(e) => { e.target.style.display = 'none'; }}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                   />
-                  <div style={{ position: 'absolute', bottom: '8px', left: '12px', background: 'rgba(0,0,0,0.65)', color: '#FFFFFF', padding: '3px 10px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>
+                  <div style={{ position: 'absolute', bottom: '10px', left: '12px', background: 'rgba(15, 23, 42, 0.85)', color: '#FFFFFF', padding: '4px 12px', borderRadius: '14px', fontSize: '0.75rem', fontWeight: 700, backdropFilter: 'blur(6px)', border: '1px solid rgba(255,255,255,0.2)' }}>
                     🏰 दुर्ग व तीर्थक्षेत्रे
                   </div>
                 </div>
-                <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <h4 style={{ margin: '0 0 8px', fontWeight: 800, color: '#334155', fontSize: '1.1rem' }}>
-                      ऐतिहासिक गडकोट व पवित्र स्थाने
-                    </h4>
-                    <div style={{ marginBottom: '10px' }}>
-                      <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 700 }}>किल्ले: </span>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px' }}>
-                        {activeRegion.cultureProfile.forts.map((fort, i) => (
-                          <span key={i} style={{ background: '#E2E8F0', color: '#1E293B', padding: '2px 8px', borderRadius: '4px', fontSize: '0.78rem', fontWeight: 600 }}>
-                            🏰 {fort}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 700 }}>मंदिरे: </span>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px' }}>
-                        {activeRegion.cultureProfile.temples.map((temple, i) => (
-                          <span key={i} style={{ background: '#FEF3C7', color: '#92400E', padding: '2px 8px', borderRadius: '4px', fontSize: '0.78rem', fontWeight: 600 }}>
-                            🛕 {temple}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                {/* Image Location Caption */}
+                {activeRegion.fortImageLocation && (
+                  <div style={{ background: '#F1F5F9', padding: '6px 16px', fontSize: '0.74rem', color: '#334155', fontWeight: 600, borderBottom: '1px solid #CBD5E1' }}>
+                    📸 दुर्ग: {activeRegion.fortImageLocation}
                   </div>
-                  <div style={{ marginTop: '14px' }}>
-                    <Link to="/culture/heritage-map" style={{ color: '#0369A1', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'underline' }}>
-                      वारसा नकाशावर स्थाने पहा →
+                )}
+                <div style={{ padding: '22px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '16px' }}>
+                  <div>
+                    <h4 style={{ margin: '0 0 10px', fontWeight: 800, color: '#1E293B', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>🏰</span> ऐतिहासिक गडकोट व पवित्र स्थाने
+                    </h4>
+                    
+                    {/* Forts */}
+                    <div style={{ marginBottom: '12px' }}>
+                      <span style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>किल्ले व गड: </span>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
+                        {(activeRegion.forts || activeRegion.cultureProfile?.forts || []).map((fort, i) => (
+                          <Link 
+                            key={i} 
+                            to={`/culture/heritage-map?category=forts&search=${encodeURIComponent(fort)}`}
+                            style={{ 
+                              background: '#E2E8F0', 
+                              color: '#0F172A', 
+                              border: '1px solid #CBD5E1', 
+                              padding: '3px 8px', 
+                              borderRadius: '6px', 
+                              fontSize: '0.78rem', 
+                              fontWeight: 700,
+                              textDecoration: 'none',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = '#CBD5E1'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = '#E2E8F0'; e.currentTarget.style.transform = 'none'; }}
+                            title={`${fort} नकाशावर व चित्रांसह पहा`}
+                          >
+                            🏰 {fort}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Temples */}
+                    <div style={{ marginBottom: '12px' }}>
+                      <span style={{ fontSize: '0.8rem', color: '#78350F', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>पवित्र तीर्थक्षेत्रे: </span>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
+                        {(activeRegion.temples || activeRegion.cultureProfile?.temples || []).map((temple, i) => (
+                          <Link 
+                            key={i} 
+                            to={`/culture/heritage-map?category=temples&search=${encodeURIComponent(temple.replace(/\(.*?\)/g, '').trim())}`}
+                            style={{ 
+                              background: '#FEF3C7', 
+                              color: '#92400E', 
+                              border: '1px solid #FDE68A', 
+                              padding: '3px 8px', 
+                              borderRadius: '6px', 
+                              fontSize: '0.78rem', 
+                              fontWeight: 700,
+                              textDecoration: 'none',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = '#FDE68A'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = '#FEF3C7'; e.currentTarget.style.transform = 'none'; }}
+                            title={`${temple} नकाशावर व चित्रांसह पहा`}
+                          >
+                            🛕 {temple}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Gramdevats */}
+                    {activeRegion.gramdevats && (
+                      <div style={{ background: '#FFFFFF', padding: '10px 14px', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+                        <span style={{ fontSize: '0.78rem', color: '#334155', fontWeight: 700 }}>🙏 प्रमुख ग्रामदैवत व कुलदेवता: </span>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
+                          {activeRegion.gramdevats.map((g, i) => (
+                            <Link 
+                              key={i} 
+                              to={`/culture/heritage-map?search=${encodeURIComponent(g.replace(/\(.*?\)/g, '').trim())}`}
+                              style={{ 
+                                background: '#F8FAFC', 
+                                color: '#1E293B', 
+                                border: '1px solid #E2E8F0', 
+                                padding: '2px 8px', 
+                                borderRadius: '6px', 
+                                fontSize: '0.76rem', 
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                transition: 'all 0.2s ease'
+                              }}
+                              onMouseEnter={(e) => { e.currentTarget.style.background = '#E2E8F0'; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.background = '#F8FAFC'; }}
+                              title={`${g} नकाशावर व माहितीसह पहा`}
+                            >
+                              🚩 {g}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Link 
+                      to={`/culture/heritage-map?region=${encodeURIComponent(activeRegion.name)}`} 
+                      style={{ 
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        background: '#0284C7',
+                        color: '#FFFFFF',
+                        padding: '8px 14px',
+                        borderRadius: '8px',
+                        fontSize: '0.85rem', 
+                        fontWeight: 700, 
+                        textDecoration: 'none',
+                        boxShadow: '0 2px 8px rgba(2,132,199,0.3)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = '#0369A1'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = '#0284C7'; e.currentTarget.style.transform = 'none'; }}
+                    >
+                      वारसा नकाशावर सर्व स्थाने पहा →
                     </Link>
                   </div>
                 </div>

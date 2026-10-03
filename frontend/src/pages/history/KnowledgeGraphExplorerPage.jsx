@@ -139,34 +139,82 @@ export default function KnowledgeGraphExplorerPage() {
                   style={{
                     background: isSelected ? 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)' : '#FFFFFF',
                     border: isSelected ? '2px solid #F59E0B' : '1px solid #E5E7EB',
-                    borderRadius: '14px',
+                    borderRadius: '16px',
                     padding: '16px',
                     cursor: 'pointer',
                     transition: 'all 0.15s ease',
-                    boxShadow: isSelected ? '0 4px 14px rgba(245,158,11,0.2)' : '0 1px 3px rgba(0,0,0,0.03)'
+                    boxShadow: isSelected ? '0 6px 18px rgba(245,158,11,0.22)' : '0 2px 6px rgba(0,0,0,0.03)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px'
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
-                    <h3 style={{ fontSize: '1.15rem', color: isSelected ? '#78350F' : '#1F2937', fontWeight: 800, margin: 0 }}>
-                      🚩 {ev.title}
-                    </h3>
-                  </div>
+                  {/* Event Thumbnail with proper object-fit without distortion or cutting */}
+                  {ev.heroImage && (
+                    <div style={{
+                      width: '100%',
+                      height: '140px',
+                      borderRadius: '10px',
+                      overflow: 'hidden',
+                      background: '#180E09',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative'
+                    }}>
+                      <img 
+                        src={ev.heroImage} 
+                        alt={ev.title}
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          display: 'block'
+                        }}
+                      />
+                      <span style={{
+                        position: 'absolute',
+                        bottom: '8px',
+                        left: '8px',
+                        background: 'rgba(0,0,0,0.75)',
+                        color: '#FEF3C7',
+                        fontSize: '0.7rem',
+                        fontWeight: 700,
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        backdropFilter: 'blur(4px)'
+                      }}>
+                        📍 {ev.primaryLocation.split(' ')[0]}
+                      </span>
+                    </div>
+                  )}
 
-                  <div style={{ fontSize: '0.82rem', color: '#B91C1C', fontWeight: 700, marginBottom: '6px' }}>
-                    📅 {ev.date}
-                  </div>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
+                      <h3 style={{ fontSize: '1.08rem', color: isSelected ? '#78350F' : '#1F2937', fontWeight: 800, margin: 0, lineHeight: 1.3 }}>
+                        🚩 {ev.title}
+                      </h3>
+                    </div>
 
-                  <div style={{ fontSize: '0.82rem', color: '#4B5563', lineHeight: 1.4, marginBottom: '10px' }}>
-                    {ev.summary}
-                  </div>
+                    <div style={{ fontSize: '0.8rem', color: '#B91C1C', fontWeight: 700, marginBottom: '6px' }}>
+                      📅 {ev.date}
+                    </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem' }}>
-                    <span style={{ color: ev.confidence.color, fontWeight: 700 }}>
-                      {ev.confidence.icon} {ev.confidence.label}
-                    </span>
-                    <span style={{ color: '#78350F', fontWeight: 700 }}>
-                      आलेख पहा →
-                    </span>
+                    <div style={{ fontSize: '0.82rem', color: '#4B5563', lineHeight: 1.4, marginBottom: '10px' }}>
+                      {ev.summary}
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: '8px' }}>
+                      <span style={{ color: ev.confidence.color, fontWeight: 700 }}>
+                        {ev.confidence.icon} {ev.confidence.label}
+                      </span>
+                      <span style={{ color: '#78350F', fontWeight: 800 }}>
+                        आलेख पहा →
+                      </span>
+                    </div>
                   </div>
                 </div>
               );
@@ -221,6 +269,53 @@ export default function KnowledgeGraphExplorerPage() {
                 </span>
               </div>
             </div>
+
+            {/* Uncropped & Perfectly Fitted Event Showcase Image */}
+            {activeEvent.heroImage && (
+              <div style={{
+                background: '#150A05',
+                borderBottom: '3px solid #F59E0B'
+              }}>
+                <div style={{
+                  width: '100%',
+                  maxHeight: '340px',
+                  minHeight: '220px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                  background: '#0E0604'
+                }}>
+                  <img 
+                    src={activeEvent.heroImage} 
+                    alt={activeEvent.title}
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '340px',
+                      width: 'auto',
+                      height: 'auto',
+                      objectFit: 'contain',
+                      display: 'block'
+                    }}
+                  />
+                </div>
+                {activeEvent.heroImageCaption && (
+                  <div style={{
+                    background: '#1F110B',
+                    color: '#FEF3C7',
+                    padding: '8px 24px',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    borderTop: '1px solid rgba(255,255,255,0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <span>📸</span> {activeEvent.heroImageCaption}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Summary */}
             <div style={{ padding: '24px 28px 16px', borderBottom: '1px solid #F3F4F6' }}>

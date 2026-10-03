@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { 
   MAP_LAYERS, 
   MAP_PINS, 
@@ -9,6 +9,7 @@ import {
 } from '../../data/heritageKnowledgeGraph';
 
 export default function InteractiveHeritageMapPage() {
+  const [searchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedRegion, setSelectedRegion] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -16,16 +17,69 @@ export default function InteractiveHeritageMapPage() {
   const [activeTab, setActiveTab] = useState('live'); // 'live' | 'siteplan' | 'trek'
   const [selectedLandmarkIdx, setSelectedLandmarkIdx] = useState(0);
 
+  // Sync state from URL query parameters (e.g. ?region=konkan or ?search=सिंधुदुर्ग or ?pin=pin_sindhudurg)
+  useEffect(() => {
+    const regionParam = searchParams.get('region');
+    const searchParam = searchParams.get('search');
+    const categoryParam = searchParams.get('category');
+    const pinParam = searchParams.get('pin');
+
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    }
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+    if (regionParam) {
+      // Find matching region
+      const matched = REGIONS_DATA.find(r => 
+        r.id === regionParam || 
+        r.name.toLowerCase().includes(regionParam.toLowerCase()) ||
+        r.nameEn.toLowerCase().includes(regionParam.toLowerCase())
+      );
+      if (matched) {
+        setSelectedRegion(matched.name);
+      } else {
+        setSelectedRegion(regionParam);
+      }
+    }
+    if (pinParam) {
+      const foundPin = MAP_PINS.find(p => p.id === pinParam);
+      if (foundPin) {
+        setActivePin(foundPin);
+      }
+    }
+  }, [searchParams]);
+
   // Filtering pins
   const filteredPins = MAP_PINS.filter(pin => {
     const matchesCategory = selectedCategory === 'all' || pin.category === selectedCategory;
-    const matchesRegion = selectedRegion === 'all' || pin.region.includes(selectedRegion);
+    const matchesRegion = selectedRegion === 'all' || 
+      pin.region.toLowerCase().includes(selectedRegion.toLowerCase()) ||
+      (selectedRegion.includes('कोकण') && pin.region.includes('कोकण')) ||
+      (selectedRegion.includes('पश्चिम महाराष्ट्र') && pin.region.includes('पश्चिम महाराष्ट्र')) ||
+      (selectedRegion.includes('मराठवाडा') && pin.region.includes('मराठवाडा')) ||
+      (selectedRegion.includes('विदर्भ') && pin.region.includes('विदर्भ')) ||
+      (selectedRegion.includes('उत्तर महाराष्ट्र') && pin.region.includes('उत्तर महाराष्ट्र'));
     const matchesSearch = searchQuery === '' || 
       pin.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       pin.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pin.significance.toLowerCase().includes(searchQuery.toLowerCase());
+      pin.significance.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (pin.connectedFort && pin.connectedFort.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (pin.connectedTemple && pin.connectedTemple.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesRegion && matchesSearch;
   });
+
+  // Automatically sync activePin to the first item of filteredPins if current activePin is not in the filtered list
+  useEffect(() => {
+    if (filteredPins.length > 0) {
+      const isCurrentPinInFiltered = filteredPins.some(p => p.id === activePin?.id);
+      if (!isCurrentPinInFiltered) {
+        setActivePin(filteredPins[0]);
+        setSelectedLandmarkIdx(0);
+      }
+    }
+  }, [selectedCategory, selectedRegion, searchQuery]);
 
   // Calculate coordinates on the stylized Maharashtra map canvas
   // Bounds: Lat 15.6°N to 22.1°N, Lng 72.6°E to 80.9°E
@@ -414,50 +468,84 @@ export default function InteractiveHeritageMapPage() {
                     style={{
                       background: isSelected ? 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)' : '#FFFFFF',
                       border: isSelected ? '2px solid #F59E0B' : '1px solid #E5E7EB',
-                      borderRadius: '12px',
-                      padding: '14px',
+                      borderRadius: '14px',
+                      padding: '12px',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
-                      boxShadow: isSelected ? '0 4px 14px rgba(245,158,11,0.25)' : '0 1px 3px rgba(0,0,0,0.03)'
+                      boxShadow: isSelected ? '0 4px 14px rgba(245,158,11,0.25)' : '0 1px 3px rgba(0,0,0,0.03)',
+                      display: 'flex',
+                      gap: '12px',
+                      alignItems: 'center'
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
-                      <h4 style={{ fontSize: '1.05rem', color: isSelected ? '#78350F' : '#1F2937', fontWeight: 800, margin: 0 }}>
-                        {getCategoryIcon(pin.category)} {pin.title}
-                      </h4>
-                      <span style={{
-                        fontSize: '0.72rem',
-                        background: isSelected ? '#FDE68A' : '#F3F4F6',
-                        color: isSelected ? '#92400E' : '#4B5563',
-                        padding: '2px 8px',
+                    {/* Fort / Heritage Real Image Thumbnail */}
+                    {pin.image && (
+                      <div style={{
+                        width: '82px',
+                        height: '82px',
                         borderRadius: '10px',
-                        fontWeight: 700
+                        overflow: 'hidden',
+                        flexShrink: 0,
+                        background: '#1F2937',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
+                        position: 'relative'
                       }}>
-                        {pin.district}
-                      </span>
-                    </div>
+                        <img 
+                          src={pin.image} 
+                          alt={pin.title}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            display: 'block'
+                          }}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
 
-                    <div style={{ fontSize: '0.8rem', color: '#4B5563', marginBottom: '6px' }}>
-                      📍 {pin.location} • {pin.region.split(' ')[0]}
-                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '3px' }}>
+                        <h4 style={{ fontSize: '1.02rem', color: isSelected ? '#78350F' : '#1F2937', fontWeight: 800, margin: 0 }}>
+                          {getCategoryIcon(pin.category)} {pin.title}
+                        </h4>
+                        <span style={{
+                          fontSize: '0.7rem',
+                          background: isSelected ? '#FDE68A' : '#F3F4F6',
+                          color: isSelected ? '#92400E' : '#4B5563',
+                          padding: '2px 8px',
+                          borderRadius: '10px',
+                          fontWeight: 700,
+                          flexShrink: 0
+                        }}>
+                          {pin.district}
+                        </span>
+                      </div>
 
-                    <div style={{ fontSize: '0.82rem', color: '#374151', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {pin.significance}
-                    </div>
+                      <div style={{ fontSize: '0.78rem', color: '#4B5563', marginBottom: '4px' }}>
+                        📍 {pin.location} • {pin.region.split(' ')[0]}
+                      </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', fontSize: '0.74rem' }}>
-                      <span style={{
-                        color: pin.confidence ? pin.confidence.color : '#059669',
-                        fontWeight: 700,
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}>
-                        {pin.confidence ? pin.confidence.icon : '🟢'} {pin.confidence ? pin.confidence.label : 'नोंदणीकृत'}
-                      </span>
-                      <span style={{ color: '#6B7280', fontFamily: 'monospace' }}>
-                        GPS: {pin.lat.toFixed(2)}°N, {pin.lng.toFixed(2)}°E
-                      </span>
+                      <div style={{ fontSize: '0.78rem', color: '#374151', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {pin.significance}
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', fontSize: '0.72rem' }}>
+                        <span style={{
+                          color: pin.confidence ? pin.confidence.color : '#059669',
+                          fontWeight: 700,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}>
+                          {pin.confidence ? pin.confidence.icon : '🟢'} {pin.confidence ? pin.confidence.label : 'नोंदणीकृत'}
+                        </span>
+                        <span style={{ color: '#B91C1C', fontWeight: 700 }}>
+                          नकाशा व दर्शन →
+                        </span>
+                      </div>
                     </div>
                   </div>
                 );
@@ -469,41 +557,139 @@ export default function InteractiveHeritageMapPage() {
           {activePin && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               
-              {/* Location Title & Mode Tabs Header */}
+              {/* Location Title & Mode Tabs Header with Real Hero Image Banner */}
               <div style={{
                 background: '#FFFFFF',
                 borderRadius: '16px',
                 border: '1px solid #E5E7EB',
-                padding: '22px',
-                boxShadow: '0 4px 16px rgba(0,0,0,0.04)'
+                overflow: 'hidden',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.06)'
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '10px' }}>
-                  <div>
-                    <span style={{
-                      background: '#FEE2E2',
-                      color: '#B91C1C',
-                      padding: '3px 10px',
-                      borderRadius: '12px',
-                      fontSize: '0.75rem',
-                      fontWeight: 800
-                    }}>
-                      {getCategoryIcon(activePin.category)} {activePin.category.toUpperCase()} • {activePin.region}
-                    </span>
-                    <h2 style={{ fontSize: '1.7rem', fontWeight: 800, color: '#1F2937', margin: '8px 0 4px' }}>
-                      {activePin.title}
-                    </h2>
-                    <div style={{ fontSize: '0.9rem', color: '#4B5563' }}>
-                      📍 {activePin.location} ({activePin.district} जिल्हा)
-                    </div>
-                  </div>
+                {/* Hero Banner for Fort/Heritage */}
+                {activePin.image && (
+                  <div style={{
+                    width: '100%',
+                    minHeight: '300px',
+                    maxHeight: '380px',
+                    position: 'relative',
+                    background: '#0F172A',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    {/* Blurred atmospheric backdrop */}
+                    <img 
+                      src={activePin.image} 
+                      alt=""
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        filter: 'blur(20px) brightness(0.4)',
+                        transform: 'scale(1.1)'
+                      }}
+                    />
 
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '0.78rem', color: '#6B7280' }}>समुद्रसपाटीपासून उंची:</div>
-                    <div style={{ fontSize: '1rem', fontWeight: 800, color: '#B91C1C' }}>
-                      {activePin.altitude || 'उपलब्ध नाही'}
+                    {/* Main uncropped full image */}
+                    <img 
+                      src={activePin.image} 
+                      alt={activePin.title}
+                      style={{
+                        position: 'relative',
+                        maxHeight: '360px',
+                        maxWidth: '100%',
+                        width: 'auto',
+                        height: 'auto',
+                        objectFit: 'contain',
+                        display: 'block',
+                        zIndex: 1,
+                        filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))'
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                    />
+
+                    {/* Overlay info */}
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.4) 50%, rgba(0,0,0,0.2) 100%)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end',
+                      padding: '16px 20px',
+                      color: '#FFFFFF',
+                      zIndex: 2,
+                      pointerEvents: 'none'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '10px' }}>
+                        <div>
+                          <span style={{
+                            background: '#B91C1C',
+                            color: '#FFFFFF',
+                            padding: '3px 10px',
+                            borderRadius: '12px',
+                            fontSize: '0.75rem',
+                            fontWeight: 800,
+                            display: 'inline-block',
+                            marginBottom: '6px'
+                          }}>
+                            {getCategoryIcon(activePin.category)} {activePin.category.toUpperCase()} • {activePin.region}
+                          </span>
+                          <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: '#FFFFFF', margin: '2px 0', textShadow: '0 2px 8px rgba(0,0,0,0.9)' }}>
+                            {activePin.title}
+                          </h2>
+                          <div style={{ fontSize: '0.88rem', color: '#FCD34D', fontWeight: 600, textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
+                            📍 {activePin.location} ({activePin.district} जिल्हा)
+                          </div>
+                        </div>
+
+                        <div style={{ textAlign: 'right', background: 'rgba(0,0,0,0.65)', padding: '6px 14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }}>
+                          <div style={{ fontSize: '0.72rem', color: '#E5E7EB' }}>समुद्रसपाटीपासून उंची:</div>
+                          <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#FCD34D' }}>
+                            {activePin.altitude || 'उपलब्ध नाही'}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+
+                <div style={{ padding: '16px 20px 20px' }}>
+                  {/* If no image was displayed, show title here as fallback */}
+                  {!activePin.image && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '10px' }}>
+                      <div>
+                        <span style={{
+                          background: '#FEE2E2',
+                          color: '#B91C1C',
+                          padding: '3px 10px',
+                          borderRadius: '12px',
+                          fontSize: '0.75rem',
+                          fontWeight: 800
+                        }}>
+                          {getCategoryIcon(activePin.category)} {activePin.category.toUpperCase()} • {activePin.region}
+                        </span>
+                        <h2 style={{ fontSize: '1.7rem', fontWeight: 800, color: '#1F2937', margin: '8px 0 4px' }}>
+                          {activePin.title}
+                        </h2>
+                        <div style={{ fontSize: '0.9rem', color: '#4B5563' }}>
+                          📍 {activePin.location} ({activePin.district} जिल्हा)
+                        </div>
+                      </div>
+
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '0.78rem', color: '#6B7280' }}>समुद्रसपाटीपासून उंची:</div>
+                        <div style={{ fontSize: '1rem', fontWeight: 800, color: '#B91C1C' }}>
+                          {activePin.altitude || 'उपलब्ध नाही'}
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                 {/* 3 Map Modes Switcher Tabs */}
                 <div style={{
@@ -587,6 +773,7 @@ export default function InteractiveHeritageMapPage() {
                   </button>
                 </div>
               </div>
+            </div>
 
               {/* ============================================== */}
               {/* TAB 1: LIVE OPENSTREETMAP & GOOGLE MAPS GPS VIEW */}

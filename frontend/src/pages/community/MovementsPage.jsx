@@ -6,23 +6,66 @@ const DEFAULT_MOVEMENTS = [
     id: 'm1',
     category: 'muk_morcha',
     categoryLabel: 'मूक मोर्चे ५८',
-    title: 'मराठा क्रांती मूक मोर्चे (५८ ऐतिहासिक शांततामय मोर्चे)',
+    title: 'मराठा क्रांती मूक मोर्चे (५८ ऐतिहासिक शांततामय मोर्चे व आझाद मैदान महामोर्चा)',
     period: '९ ऑगस्ट २०१६ – ९ ऑगस्ट २०१७',
-    participants: '५ कोटी+ मराठा बांधव',
-    locations: 'औरंगाबाद (पहिली ठिणगी) ते मुंबई आझाद मैदान (महामोर्चा)',
-    desc: 'जगातील मानवी इतिहासातील सर्वात मोठा, अभूतपूर्व, शांततामय आणि शिस्तबद्ध जनआक्रोश. लाखोंच्या संख्येने भगवे ध्वज हाती घेतलेले मराठा माता-भगिनी, युवक आणि वृद्ध रस्त्यावर उतरले; पण एकाही पालापाचोळ्याला इजा झाली नाही किंवा वाहतूक विस्कळीत झाली नाही. लहान मुलींनी मोर्चाचे नेतृत्व करून जिल्हाधिकाऱ्यांना निवेदने दिली.',
+    participants: '५ कोटी+ अबालवृद्ध, माता-भगिनी व युवक',
+    locations: 'औरंगाबाद (पहिली ऐतिहासिक ठिणगी) ते मुंबई आझाद मैदान (महामोर्चा)',
+    image: '/assets/images/morcha-58-silent-rally.jpg',
+    imageCaption: '५८ मूक मोर्चे: जगातील सर्वात शिस्तबद्ध व शांततामय जनसागर (Mumbai Azad Maidan & District Rallies)',
+    desc: 'जगातील मानवी लोकशाही इतिहासातील सर्वात मोठा, अभूतपूर्व, शांततामय आणि शिस्तबद्ध जनआक्रोश! कोपर्डी घटनेच्या तीव्र संतापातून ९ ऑगस्ट २०१६ रोजी छत्रपती संभाजीनगर (औरंगाबाद) येथून सुरू झालेले हे वादळ संपूर्ण महाराष्ट्रात ५८ मूक मोर्चांच्या रूपाने धडकले. मोर्चात कोणताही राजकीय नेता व्यासपीठावर नव्हता; मोर्चेकऱ्यांनी रस्त्यावर एकही कचरा सोडला नाही, रुग्णवाहिकेला तात्काळ मार्ग दिला आणि मोर्चा संपल्यानंतर रस्ता स्वतः झाडून स्वच्छ केला. मोर्चाच्या अग्रभागी लहान मुलींनी चालून जिल्हाधिकाऱ्यांना अत्यंत अभ्यासपूर्ण निवेदने सादर केली.',
+    keyStats: [
+      { label: 'एकूण जिल्हे व तालुके', value: '३६ जिल्हे व ५८ महामोर्चे' },
+      { label: 'एक मराठा लाख मराठा', value: 'अहिंसक शिस्त व ऐतिहासिक ऐक्य' },
+      { label: 'नेतृत्व', value: 'माता-भगिनी व रणरागिणी मुलींचे नेतृत्व' },
+      { label: 'जागतिक विक्रम', value: 'एकही अनुचित प्रकार न घडता ५ कोटी लोक रस्त्यावर' }
+    ],
     demands: [
-      'कोपर्डी घटनेतील गुन्हेगारांना फाशीची शिक्षा',
-      'मराठा समाजाला शिक्षण व नोकऱ्यांमध्ये हक्काचे आरक्षण',
-      'ॲट्रॉसिटी कायद्याचा गैरवापर रोखण्यासाठी सुधारणा',
-      'शेतकऱ्यांना स्वामिनाथन आयोगानुसार हमीभाव व संपूर्ण कर्जमुक्ती',
-      'छत्रपती शिवाजी महाराज अरबी समुद्र स्मारकाचे जलद काम'
+      'कोपर्डी घटनेतील नराधम गुन्हेगारांना जलद गतीने फाशीची शिक्षा',
+      'मराठा समाजाला शिक्षण व शासकीय नोकऱ्यांमध्ये हक्काचे सामाजिक व शैक्षणिक आरक्षण',
+      'ॲट्रॉसिटी कायद्याचा निष्पापांवर होणारा गैरवापर रोखण्यासाठी आवश्यक कायदेशीर सुधारणा',
+      'शेतकऱ्यांना स्वामिनाथन आयोगानुसार उत्पादन खर्चावर आधारित ५०% नफ्यासह हमीभाव व संपूर्ण कर्जमुक्ती',
+      'अरबी समुद्रातील छत्रपती शिवाजी महाराज आंतरराष्ट्रीय शिवस्मारकाचे काम त्वरित पूर्ण करणे',
+      'मराठा समाजातील गुणवंत विद्यार्थ्यांसाठी वसतिगृहे, शिष्यवृत्ती व स्पर्धा परीक्षा केंद्रे उभारणे'
     ],
     outcomes: [
-      'महाराष्ट्र शासनाकडून १६% SEBC आरक्षण कायदा संमत',
-      'सारथी (SARTHI) संस्थेची स्वायत्त निर्मिती व कोट्यवधींचा निधी',
-      'डॉ. पंजाबराव देशमुख वसतिगृह निर्वाह भत्ता योजना लागू',
-      'अण्णासाहेब पाटील आर्थिक विकास महामंडळाचे पुनरुज्जीवन'
+      'महाराष्ट्र शासनाकडून १६% SEBC मराठा आरक्षण कायदा विधिमंडळात एकमुखाने संमत',
+      'छत्रपती शाहू महाराज संशोधन, प्रशिक्षण व मानव विकास संस्था (SARTHI) ची स्वायत्त स्थापना',
+      'डॉ. पंजाबराव देशमुख वसतिगृह निर्वाह भत्ता योजना लागू (मासिक ३,००० ते ५,००० रु. थेट खात्यात)',
+      'अण्णासाहेब पाटील आर्थिक मागास विकास महामंडळाचे पुनरुज्जीवन व बिनव्याजी कर्जवाटप सुरू',
+      'कोपर्डी खटल्यात आरोपींना फाशीची शिक्षा ठोठावून जलद न्यायनिर्णय'
+    ],
+    verified: true
+  },
+  {
+    id: 'm7',
+    category: 'satyagraha',
+    categoryLabel: 'मराठवाडा आमरण उपोषण',
+    title: 'अंतरवाली सराटी आमरण उपोषण व कुणबी नोंद शोध मोहीम',
+    period: '२०२३ – २०२४ (सद्यस्थिती)',
+    participants: 'लाखो गावकरी, शेतकरी व समस्त समाज',
+    locations: 'अंतरवाली सराटी (जि. जालना), आझाद मैदान व संपूर्ण महाराष्ट्र',
+    image: '/assets/images/real-jarange-antarwali-speech.jpg',
+    imageFit: 'cover',
+    imagePosition: 'center center',
+    imageCaption: 'मनोज जरांगे पाटील — अंतरवाली सराटी (जि. जालना) व्यासपीठावरून समाज, गावकरी व शिष्टमंडळाला संबोधित करताना',
+    desc: 'जालना जिल्ह्यातील अंतरवाली सराटी या छोट्याशा गावातून मनोज जरांगे पाटील यांच्या नेतृत्वाखाली सुरू झालेले आमरण उपोषण पाहता पाहता संपूर्ण महाराष्ट्रात पेटून उठले. लाठीहल्ल्यानंतरही आंदोलकांनी अहिंसा व शांततेचा मार्ग सोडला नाही. सगेसोयरे अध्यादेश, निजामकालीन व हैदराबाद संस्थानातील कुणबी नोंदी शोधून मराठ्यांना हक्काचे ओबीसी/कुणबी प्रमाणपत्र देण्याची मागणी या आंदोलनाने ऐरणीवर आणली.',
+    keyStats: [
+      { label: 'प्रमुख केंद्र', value: 'अंतरवाली सराटी (जि. जालना)' },
+      { label: 'शोधलेल्या कुणबी नोंदी', value: '५७ लाखांहून अधिक ऐतिहासिक नोंदी' },
+      { label: 'समिती', value: 'न्यायमूर्ती संदीप शिंदे (निवृत्त) समिती गठीत' },
+      { label: 'मार्ग', value: 'महात्मा गांधी प्रणित आमरण उपोषण व सत्याग्रह' }
+    ],
+    demands: [
+      'मराठा आणि कुणबी एकच असल्याचे पुरावे ग्राह्य धरून कुणबी जात प्रमाणपत्र देणे',
+      'रक्ताच्या नातेवाईकांना (सगेसोयरे) शपथपत्राच्या आधारे प्रमाणपत्र देण्याचा शासन निर्णय पारित करणे',
+      'आंदोलकांवरील दाखल झालेले सर्व गुन्हे त्वरित व बिनशर्त मागे घेणे',
+      'हैदराबाद गॅझेटिअर, सातारा गॅझेटिअर व बॉम्बे प्रेसिडेन्सी अभिलेखांची अधिकृत अंमलबजावणी'
+    ],
+    outcomes: [
+      'न्यायमूर्ती संदीप शिंदे समितीमार्फत महाराष्ट्रात ५७ लाखांहून अधिक कुणबी नोंदींचा शोध',
+      'लाखो मराठा कुटुंबांना अधिकृत कुणबी दाखल्यांचे वितरण सुरू',
+      'शासनाकडून विशेष अधिवेशन बोलावून १०% स्वतंत्र मराठा आरक्षण कायदा पारित',
+      'आंदोलकांवरील अनेक खटले मागे घेण्याची शासकीय अधिसूचना'
     ],
     verified: true
   },
@@ -30,21 +73,30 @@ const DEFAULT_MOVEMENTS = [
     id: 'm2',
     category: 'reservation',
     categoryLabel: 'आरक्षण लढा',
-    title: 'मराठा आरक्षण घटनात्मक व न्यायालयीन संघर्ष',
+    title: 'मराठा आरक्षण घटनात्मक व न्यायालयीन संघर्ष (Supreme Court & High Court Battle)',
     period: '२०१८ – चालू',
-    participants: 'समस्त समाज, अभ्यासक व विधीज्ञ',
+    participants: 'समस्त समाज, ज्येष्ठ विधीज्ञ, इतिहासकार व अभ्यासक',
     locations: 'मुंबई उच्च न्यायालय, सर्वोच्च न्यायालय, नवी दिल्ली',
-    desc: 'न्यायमूर्ती एम. जी. गायकवाड मागासवर्ग आयोगाच्या अहवालानंतर राज्य शासनाने पारित केलेले आरक्षण आणि त्यानंतर सर्वोच्च न्यायालयात उभा राहिलेला घटनात्मक लढा. ५०% मर्यादेचे आव्हान, १०२ वी घटनादुरुस्ती आणि सध्या सुरू असलेली क्यूरेटिव्ह याचिका.',
+    image: '/assets/images/morcha-court-battle.jpg',
+    imageCaption: 'मुंबई उच्च न्यायालय व सर्वोच्च न्यायालयात ऐतिहासिक गॅझेटिअर, मोडी लिपी व वंशावळी पुराव्यांचा लढा',
+    desc: 'न्यायमूर्ती एम. जी. गायकवाड मागासवर्ग आयोगाच्या ऐतिहासिक अहवालानंतर राज्य शासनाने पारित केलेले आरक्षण आणि त्यानंतर सर्वोच्च न्यायालयात उभा राहिलेला प्रदीर्घ घटनात्मक लढा. ५०% मर्यादेचे आव्हान, १०२ वी घटनादुरुस्ती, इंद्रा साहनी खटल्याचा फेरविचार आणि सध्या सुरू असलेली क्युरेटिव्ह याचिका. मराठा समाजाचा सामाजिक, शैक्षणिक व आर्थिक मागासलेपणा सिद्ध करण्यासाठी हजारो ऐतिहासिक पुरावे न्यायालयात मांडले गेले.',
+    keyStats: [
+      { label: 'मागासवर्ग आयोग', value: 'न्यायमूर्ती गायकवाड व न्यायमूर्ती शुक्रे आयोग' },
+      { label: 'उच्च न्यायालय निकाल', value: 'मुंबई उच्च न्यायालयाकडून आरक्षणाची वैधता सिद्ध' },
+      { label: 'ऐतिहासिक पुरावे', value: 'बॉम्बे प्रेसिडेन्सी व निजामकालीन गॅझेटिअर' },
+      { label: 'सद्यस्थिती', value: '१०% स्वतंत्र कायदा व क्युरेटिव्ह पिटिशन' }
+    ],
     demands: [
-      'मराठा समाजाचा सामाजिक व शैक्षणिक मागासलेपणा सिद्ध करणे',
-      '५० टक्क्यांच्या मर्यादेचे पुनरावलोकन',
-      'कुणबी नोंदींची शोध मोहीम व निजामकालीन वंशावळी तपासणी',
-      'विद्यार्थ्यांना व उमेदवारांना तात्पुरते EWS संरक्षण'
+      'मराठा समाजाचा सामाजिक व शैक्षणिक मागासलेपणा सर्वोच्च न्यायालयात घटनात्मकरित्या सिद्ध करणे',
+      'इंद्रा साहनी खटल्यातील ५० टक्क्यांच्या मर्यादेचे ९ न्यायाधीशांच्या खंडपीठाकडून पुनरावलोकन',
+      'कुणबी नोंदींची शोध मोहीम व मोडी लिपीतील निजामकालीन वंशावळींची पडताळणी',
+      'न्यायालयीन प्रक्रियेदरम्यान मराठा विद्यार्थ्यांना EWS व खुल्या प्रवर्गात संपूर्ण संरक्षण'
     ],
     outcomes: [
-      'मुंबई उच्च न्यायालयाकडून आरक्षणाची वैधता मान्य',
-      'लाखो मराठा-कुणबी दाखल्यांचे शोध व वितरण (हैदराबाद गॅझेटिअर तपासणी)',
-      'EWS आरक्षणाचा लाभ उच्च शिक्षणात सुरू'
+      'मुंबई उच्च न्यायालयाकडून जून २०१९ मध्ये आरक्षणावर शिक्कामोर्तब',
+      'लाखो मराठा-कुणबी दाखल्यांचा शोध व वंशावळींचे डिजिटायझेशन पूर्ण',
+      'उच्च शिक्षण व शासकीय भरतीत मराठा विद्यार्थ्यांना EWS व विशेष सवलती लागू',
+      'सर्वोच्च न्यायालयात क्युरेटिव्ह याचिका दाखल होऊन फेरसुनावणीची दालने खुली'
     ],
     verified: true
   },
@@ -54,18 +106,28 @@ const DEFAULT_MOVEMENTS = [
     categoryLabel: 'शिक्षण व युवा',
     title: 'सारथी (SARTHI) संस्था स्वायत्तता व विद्यार्थी एल्गार',
     period: '२०१८ – चालू',
-    participants: 'विद्यार्थी, संशोधक व स्पर्धा परीक्षा उमेदवार',
-    locations: 'पुणे, नाशिक, छत्रपती संभाजीनगर, कोल्हापूर',
-    desc: 'छत्रपती शाहू महाराज संशोधन, प्रशिक्षण व मानव विकास संस्था (सारथी) च्या माध्यमातून मराठा व कुणबी विद्यार्थ्यांना यूपीएससी, एमपीएससी, सैन्य दल आणि पीएचडी संशोधनासाठी स्वायत्त निधी मिळवून देणारी विद्यार्थी चळवळ.',
+    participants: 'लाखो विद्यार्थी, संशोधक व स्पर्धा परीक्षा उमेदवार',
+    locations: 'पुणे मुख्यालय, नाशिक, छत्रपती संभाजीनगर, कोल्हापूर उपकेंद्रे',
+    image: '/assets/images/morcha-sarthi-academy.jpg',
+    imageCaption: 'सारथी (SARTHI) संस्थेच्या माध्यमातून यूपीएससी, एमपीएससी व पीएचडी संशोधक घडवणारी विद्यार्थी क्रांती',
+    desc: 'राजर्षी छत्रपती शाहू महाराज संशोधन, प्रशिक्षण व मानव विकास संस्था (सारथी) च्या माध्यमातून मराठा व कुणबी विद्यार्थ्यांना यूपीएससी, एमपीएससी, सैन्य दल आणि पीएचडी संशोधनासाठी स्वायत्त निधी मिळवून देणारी अभूतपूर्व विद्यार्थी चळवळ. आंदोलनांच्या दबावामुळे शासनाने सारथीला स्वायत्तता दिली आणि दरवर्षी कोट्यवधींचा अर्थसंकल्पीय निधी उपलब्ध करून दिला.',
+    keyStats: [
+      { label: 'संस्थेचे नाव', value: 'राजर्षी छत्रपती शाहू महाराज संस्था (सारथी)' },
+      { label: 'वार्षिक तरतूद', value: '५०० ते १,००० कोटी रुपयांचा निधी' },
+      { label: 'लाभार्थी विद्यार्थी', value: '५ लाखांहून अधिक युवक-युवती' },
+      { label: 'फेलोशिप्स', value: 'छत्रपती संभाजीराजे राष्ट्रीय पीएचडी फेलोशिप' }
+    ],
     demands: [
-      'सारथी संस्थेला बार्टी (BARTI) च्या धर्तीवर १००% स्वायत्तता व १,००० कोटी वार्षिक निधी',
-      'परदेशी फेलोशिप विद्यार्थ्यांच्या शुल्काची वेळेवर भरपाई',
-      '३६ जिल्ह्यांत अभ्यासिका, वसतिगृहे व मोफत कोचिंग सेंटर्स'
+      'सारथी संस्थेला बार्टी (BARTI) च्या धर्तीवर १००% प्रशासकीय व आर्थिक स्वायत्तता',
+      'परदेशी उच्चशिक्षणासाठी जाणाऱ्या विद्यार्थ्यांना १००% पूर्ण शिष्यवृत्ती वेळेवर देणे',
+      'महाराष्ट्रातील सर्व ३६ जिल्ह्यांत भव्य अभ्यासिका, वसतिगृहे व मोफत निवासी कोचिंग',
+      'पीएचडी व एमफिल संशोधक विद्यार्थ्यांना नियमित मासिक फेलोशिप वाटप'
     ],
     outcomes: [
-      'हजारो मराठा तरुण स्पर्धा परीक्षा उत्तीर्ण होऊन प्रशासकीय सेवेत रुजू',
-      'पीएचडी विद्यार्थ्यांसाठी छत्रपती संभाजीराजे फेलोशिप मंजूर',
-      'विदेशी शिक्षणासाठी दरवर्षी ७५ विद्यार्थ्यांना पूर्ण शिष्यवृत्ती'
+      'हजारो मराठा तरुण स्पर्धा परीक्षा उत्तीर्ण होऊन IAS, IPS, उपजिल्हाधिकारी व DySP पदांवर रुजू',
+      'पीएचडी करणाऱ्या हजारो विद्यार्थ्यांना छत्रपती संभाजीराजे राष्ट्रीय फेलोशिप मंजूर',
+      'विदेशी नामांकित विद्यापीठात शिक्षणासाठी दरवर्षी ७५ विद्यार्थ्यांना पूर्ण शिष्यवृत्ती सुरू',
+      'पुणे, नाशिक, कोल्हापूर येथे सारथीची स्वतःची अद्ययावत उपकेंद्रे व अभ्यासिका कार्यरत'
     ],
     verified: true
   },
@@ -73,19 +135,29 @@ const DEFAULT_MOVEMENTS = [
     id: 'm4',
     category: 'business',
     categoryLabel: 'आर्थिक विकास',
-    title: 'अण्णासाहेब पाटील आर्थिक महामंडळ नवउद्योग क्रांती',
+    title: 'अण्णासाहेब पाटील आर्थिक विकास महामंडळ नवउद्योग क्रांती',
     period: '२०१७ – चालू',
-    participants: '१,५०,०००+ नवउद्योजक व व्यावसायिक',
+    participants: '१,५०,०००+ नवउद्योजक, व्यावसायिक व शेतकरी पुत्र',
     locations: 'महाराष्ट्र राज्यभर (३६ जिल्हे)',
-    desc: 'मराठा तरुणांना व्यवसायासाठी भांडवल मिळावे म्हणून अण्णासाहेब पाटील आर्थिक मागास विकास महामंडळाच्या माध्यमातून १५ लाख रुपयांपर्यंतचे बिनव्याजी बँक कर्ज देण्याची ऐतिहासिक योजना यशस्वी करण्यात आली.',
+    image: '/assets/images/morcha-annasaheb-patil.jpg',
+    imageCaption: 'अण्णासाहेब पाटील महामंडळाच्या बिनव्याजी कर्ज योजनेतून उभारलेले आधुनिक उद्योग व मॅन्युफॅक्चरिंग प्लांट्स',
+    desc: 'मराठा तरुणांना व्यवसायासाठी भांडवल मिळावे, नोकरी मागणारे नव्हे तर नोकरी देणारे उद्योजक घडावेत यासाठी मराठा आंदोलनांच्या रेट्यातून अण्णासाहेब पाटील आर्थिक मागास विकास महामंडळाचे संपूर्ण पुनरुज्जीवन करण्यात आले. १० लाख ते १५ लाखांपर्यंतचे बिनव्याजी कर्ज आणि संपूर्ण १२% व्याजाचा परतावा शासन थेट बँकेत भरते. आज महाराष्ट्रातील कानाकोपऱ्यात लाखो मराठा नवउद्योजक यशस्वीपणे उभे राहिले आहेत.',
+    keyStats: [
+      { label: 'योजना', value: 'वैयक्तिक कर्ज व्याज परतावा योजना (IR-I)' },
+      { label: 'कर्ज मर्यादा', value: '१५ लाखांपर्यंत बिनव्याजी अर्थसाहाय्य' },
+      { label: 'यशस्वी उद्योजक', value: '८५,०००+ हून अधिक उद्योग उभे' },
+      { label: 'वितरित निधी', value: '६,०००+ कोटी रुपयांच्या कर्जाचे वाटप' }
+    ],
     demands: [
-      'बँकांकडून होणारी अडवणूक थांबवणे व त्वरित कर्ज मंजुरी',
-      'कर्ज मर्यादा १० लाखांवरून १५ लाख व पुढे ५० लाखांपर्यंत वाढवणे',
-      'शेतकरी पुत्रांना फूड प्रोसेसिंग व ट्रान्सपोर्टसाठी विशेष अनुदान'
+      'राष्ट्रीयीकृत व सहकारी बँकांकडून होणारी तरुणांची अडवणूक थांबवणे व सुलभ कर्ज मंजुरी',
+      'वैयक्तिक कर्ज मर्यादा १५ लाखांवरून २५ लाख व गटप्रकल्पांसाठी ५० लाखांपर्यंत वाढवणे',
+      'शेतकरी पुत्रांना ॲग्रो-प्रोसेसिंग, कोल्ड स्टोरेज व ट्रान्सपोर्टसाठी विनाअडथळा भांडवल',
+      'महिला बचत गट व महिला उद्योजकांसाठी विशेष सवलती योजना'
     ],
     outcomes: [
-      '८०,००० हून अधिक मराठा तरुणांना स्वतःचा व्यवसाय उभारण्यास यश',
-      '५,०००+ कोटी रुपयांच्या कर्जाचे व्याज शासनामार्फत भरले गेले'
+      '८५,००० हून अधिक मराठा तरुणांना स्वतःचा यशस्वी मॅन्युफॅक्चरिंग, डेअरी व आयटी उद्योग उभारण्यास यश',
+      'शासनाने ६००+ कोटी रुपयांहून अधिक व्याज परतावा थेट बँकांना अदा केला',
+      'गटकर्ज योजनेतून शेकडो सहकारी उद्योग व प्रक्रिया उद्योग उभे राहिले'
     ],
     verified: true
   },
@@ -95,18 +167,27 @@ const DEFAULT_MOVEMENTS = [
     categoryLabel: 'गड संवर्धन',
     title: 'सह्याद्री गडकोट संरक्षण, स्वच्छता व अतिक्रमणमुक्ती महाअभियान',
     period: 'अखंड अविरत लढा',
-    participants: 'लाखो दुर्गप्रेमी मावळे व संघटना',
-    locations: 'रायगड, विशाळगड, प्रतापगड, राजगड, सिंहगड, शिवनेरी',
-    desc: 'छत्रपती शिवरायांच्या पवित्र गडकिल्ल्यांवरील अनधिकृत अतिक्रमणे हटवण्यासाठी, प्लास्टिकमुक्तीसाठी, ऐतिहासिक तोफा व शिलालेख जतन करण्यासाठी उभा राहिलेला सामूहिक लोकसहभाग. विशाळगड व प्रतापगड पायथा अतिक्रमण मुक्ती ही या लढ्याची प्रमुख उपलब्धी ठरली.',
+    participants: 'लाखो दुर्गप्रेमी मावळे, इतिहासप्रेमी व गडकोट संघटना',
+    locations: 'रायगड, विशाळगड, प्रतापगड, राजगड, सिंहगड, शिवनेरी, पन्हाळा',
+    image: '/assets/images/morcha-fort-conservation.jpg',
+    imageCaption: 'सह्याद्रीतील ३५०+ गडकोटांवर भगवा ध्वज फडकवून दुर्गसंवर्धन व अतिक्रमणमुक्ती करणारा मावळ्यांचा एल्गार',
+    desc: 'छत्रपती शिवाजी महाराजांच्या ३५०+ अभेद्य गडकिल्ल्यांवरील अनधिकृत अतिक्रमणे हटवण्यासाठी, प्लास्टिकमुक्तीसाठी, ऐतिहासिक तोफा व शिलालेख जतन करण्यासाठी उभा राहिलेला व्यापक सामूहिक लोकसहभाग. विशाळगड, प्रतापगड पायथा आणि लोहगड येथील अतिक्रमणमुक्ती हा या आंदोलनाचा सर्वात मोठा विजय ठरला. लाखो तरुणांनी श्रमदानातून किल्ल्यांवर पाण्याच्या टाक्या स्वच्छ केल्या व बुरुज पुनरुज्जीवित केले.',
+    keyStats: [
+      { label: 'किल्ले व्याप्ती', value: 'सह्याद्रीतील ३५०+ गडकोट व जलदुर्ग' },
+      { label: 'श्रमदान', value: 'दर रविवारी हजारो दुर्गप्रेमींचे श्रमदान' },
+      { label: 'अतिक्रमणमुक्ती', value: 'विशाळगड व प्रतापगड पायथा कायदेशीर मुक्ती' },
+      { label: 'प्राधिकरण', value: 'रायगड विकास प्राधिकरणाची स्थापना' }
+    ],
     demands: [
-      'किल्ल्यांवरील सर्व अनधिकृत अतिक्रमणे त्वरित हटवणे',
-      'गडकिल्ल्यांच्या ३०० मीटर परिसरात दारू, मांस विक्री व पार्ट्यांवर बंदी',
-      'भारतीय पुरातत्व सर्वेक्षण (ASI) व राज्य पुरातत्व विभागाकडून जलद जिर्णोद्धार'
+      'ऐतिहासिक गडकिल्ल्यांवरील सर्व प्रकारची अनधिकृत बांधकामे व अतिक्रमणे त्वरित हटवणे',
+      'गडकिल्ल्यांच्या ३०० मीटर परिसरात दारू, मांस विक्री, पार्ट्या व गैरवर्तनावर कठोर कायदेशीर बंदी',
+      'भारतीय पुरातत्व सर्वेक्षण (ASI) व राज्य पुरातत्व विभागाकडून किल्ल्यांचे मूळ स्वरूपात जतन',
+      'गडांवर पिण्याचे पाणी, स्वच्छतागृहे आणि अधिकृत इतिहास माहितीफलक लावणे'
     ],
     outcomes: [
-      'प्रतापगड व विशाळगडावरील अतिक्रमणांवर कायदेशीर कारवाई व मुक्ती',
-      'रायगड विकास प्राधिकरणास ६००+ कोटींचा निधी',
-      '५०+ किल्ल्यांवर नियमित स्वच्छता व मार्गदर्शक फलक'
+      'प्रतापगड पायथा व विशाळगडावरील शतकानुशतके झालेली अतिक्रमणे न्यायालयाच्या आदेशाने निष्कासित',
+      'रायगड विकास प्राधिकरणास ६००+ कोटींचा विशेष शासकीय निधी मंजूर व जिर्णोद्धार सुरू',
+      '१००+ किल्ल्यांवर नियमित स्वच्छता, प्लॅस्टिकमुक्ती आणि फलक व्यवस्थापन कार्यरत'
     ],
     verified: true
   },
@@ -116,17 +197,27 @@ const DEFAULT_MOVEMENTS = [
     categoryLabel: 'कृषी व शेतकरी',
     title: 'बळीराजा हक्क एल्गार — शेतकरी कर्जमुक्ती व हमीभाव लढा',
     period: '२०१७ – चालू',
-    participants: 'लाखो शेतकरी, शेतमजूर व कृषी संघटना',
-    locations: 'पुणतांबा (ऐतिहासिक संप) ते मंत्रालय मुंबई',
-    desc: 'महाराष्ट्रातील मराठा-कुणबी शेतकऱ्यांच्या आत्महत्या रोखण्यासाठी, दुधाला रास्त भाव, शेतमालाला हमीभाव आणि संपूर्ण कर्जमाफीसाठी उभा राहिलेला ऐतिहासिक शेतकरी संप. महाराष्ट्रातील शेतकऱ्यांनी पहिल्यांदा अन्नधान्य व दूध शहरात जाणे रोखून सरकारला गुडघे टेकवले.',
+    participants: 'लाखो शेतकरी, शेतमजूर, अन्नदाते व कृषी संघटना',
+    locations: 'पुणतांबा (ऐतिहासिक शेतकरी संप) ते मंत्रालय मुंबई',
+    image: '/assets/images/morcha-farmers-elgar.jpg',
+    imageCaption: 'पुणतांबा ते मुंबई — महाराष्ट्रातील बळीराजाचा ऐतिहासिक शेतकरी संप व ट्रॅक्टर रॅली',
+    desc: 'महाराष्ट्रातील मराठा-कुणबी शेतकऱ्यांच्या वाढत्या आत्महत्या रोखण्यासाठी, दुधाला रास्त दर, शेतमालाला हमीभाव आणि संपूर्ण कर्जमाफीसाठी उभा राहिलेला ऐतिहासिक शेतकरी संप. १ जून २०१७ रोजी अहमदनगरमधील पुणतांबा गावातून सुरू झालेल्या संपाने मुंबई-पुण्यासारख्या महानगरांचे अन्नधान्य व दूध रोखून धरले. शेतकऱ्यांनी प्रथमच आपल्या एकीच्या बळावर सरकारला गुडघे टेकण्यास भाग पाडले.',
+    keyStats: [
+      { label: 'उगम स्थान', value: 'पुणतांबा गाव (जि. अहमदनगर)' },
+      { label: 'कर्जमाफी रक्कम', value: '३४,००० कोटी रुपयांची ऐतिहासिक कर्जमाफी' },
+      { label: 'सहभाग', value: 'महाराष्ट्रातील लाखो शेतकरी कुटुंबे' },
+      { label: 'प्रमुख साधन', value: 'अहिंसक अन्नधान्य-दूध संप व ट्रॅक्टर मोर्चे' }
+    ],
     demands: [
-      'छत्रपती शिवाजी महाराज शेतकरी सन्मान योजना — संपूर्ण कर्जमुक्ती',
-      'स्वामिनाथन आयोगाच्या शिफारशींनुसार दीडपट हमीभाव',
-      'दुधाला प्रति लिटर किमान ३५ रुपये दर व थेट अनुदान'
+      'छत्रपती शिवाजी महाराज शेतकरी सन्मान योजना — शेतकऱ्यांची संपूर्ण सातबारा कोरी कर्जमुक्ती',
+      'डॉ. एम. एस. स्वामिनाथन आयोगाच्या शिफारशींनुसार उत्पादन खर्चावर आधारित दीडपट हमीभाव',
+      'गायीच्या दुधाला प्रति लिटर किमान ३५ रुपये दर व थेट बँक खात्यात अनुदान',
+      'विमा कंपन्यांची नफेखोरी रोखून पीक विम्याची १००% नुकसानभरपाई शेतकऱ्यांना देणे'
     ],
     outcomes: [
-      '३४,००० कोटी रुपयांची ऐतिहासिक शेतकरी कर्जमाफी जाहीर',
-      'दूध उत्पादक शेतकऱ्यांना थेट बँक खात्यात अनुदान'
+      'महाराष्ट्र शासनाकडून ३४,००० कोटी रुपयांची ऐतिहासिक छत्रपती शिवाजी महाराज शेतकरी कर्जमाफी जाहीर',
+      'दूध उत्पादक शेतकऱ्यांना थेट ५ रुपये प्रति लिटर शासकीय अनुदान लागू',
+      'नियमित कर्ज भरणाऱ्या शेतकऱ्यांना ५०,००० रुपयांचे प्रोत्साहनपर अनुदान'
     ],
     verified: true
   }
@@ -135,7 +226,7 @@ const DEFAULT_MOVEMENTS = [
 export default function MovementsPage() {
   const [movements, setMovements] = useState(() => {
     try {
-      const saved = localStorage.getItem('cm_movements_archive_data');
+      const saved = localStorage.getItem('cm_movements_archive_data_v7');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -148,6 +239,7 @@ export default function MovementsPage() {
 
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [lightboxImage, setLightboxImage] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
 
@@ -158,6 +250,8 @@ export default function MovementsPage() {
     period: '',
     participants: '',
     locations: '',
+    image: '',
+    imageCaption: '',
     desc: '',
     demandsStr: '',
     outcomesStr: '',
@@ -166,7 +260,7 @@ export default function MovementsPage() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('cm_movements_archive_data', JSON.stringify(movements));
+      localStorage.setItem('cm_movements_archive_data_v7', JSON.stringify(movements));
     } catch (e) {
       console.error(e);
     }
@@ -189,8 +283,10 @@ export default function MovementsPage() {
       period: '२०२६',
       participants: '१,००,०००+ बांधव',
       locations: 'महाराष्ट्र',
+      image: '/assets/images/morcha-58-silent-rally.jpg',
+      imageCaption: 'शांततामय जनआंदोलन',
       desc: '',
-      demandsStr: 'आरक्षण व संरक्षण, शैक्षणिक सवलती',
+      demandsStr: 'आरक्षण व संरक्षण\nशैक्षणिक सवलती',
       outcomesStr: 'शासन निर्णय व लाभ',
       verified: true
     });
@@ -206,6 +302,8 @@ export default function MovementsPage() {
       period: item.period,
       participants: item.participants,
       locations: item.locations,
+      image: item.image || '/assets/images/morcha-58-silent-rally.jpg',
+      imageCaption: item.imageCaption || item.title,
       desc: item.desc,
       demandsStr: Array.isArray(item.demands) ? item.demands.join('\n') : '',
       outcomesStr: Array.isArray(item.outcomes) ? item.outcomes.join('\n') : '',
@@ -223,7 +321,7 @@ export default function MovementsPage() {
   const handleResetDefaults = () => {
     if (window.confirm('सर्व चळवळ दस्तऐवज मूळ अधिकृत डेटावर रीसेट करायचे आहेत का?')) {
       setMovements(DEFAULT_MOVEMENTS);
-      localStorage.setItem('cm_movements_archive_data', JSON.stringify(DEFAULT_MOVEMENTS));
+      localStorage.setItem('cm_movements_archive_data_v2', JSON.stringify(DEFAULT_MOVEMENTS));
     }
   };
 
@@ -263,39 +361,74 @@ export default function MovementsPage() {
 
   return (
     <div style={{ background: '#F8F5F0', minHeight: 'calc(100vh - 120px)', padding: '36px 16px' }}>
+      
+      {/* Lightbox Zoom Modal */}
+      {lightboxImage && (
+        <div
+          onClick={() => setLightboxImage(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.92)',
+            zIndex: 99999,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px',
+            cursor: 'pointer'
+          }}
+        >
+          <img
+            src={lightboxImage.url}
+            alt={lightboxImage.caption}
+            style={{ maxWidth: '92vw', maxHeight: '82vh', borderRadius: '12px', boxShadow: '0 20px 60px rgba(0,0,0,0.9)', objectFit: 'contain' }}
+          />
+          <div style={{ color: '#fef08a', marginTop: '16px', fontSize: '1.15rem', fontWeight: 800, fontFamily: 'Baloo 2', textAlign: 'center' }}>
+            {lightboxImage.caption}
+          </div>
+          <div style={{ color: '#cbd5e1', fontSize: '0.85rem', marginTop: '4px' }}>
+            (बंद करण्यासाठी कुठेही क्लिक करा ✕)
+          </div>
+        </div>
+      )}
+
       <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
 
-        {/* Hero Section */}
+        {/* Hero Section with Distinct Gateway & Azad Maidan Morcha Banner and Balanced Color Overlay */}
         <div style={{
-          background: 'linear-gradient(135deg, #2D0808 0%, #4D1212 50%, #6E1818 100%)',
-          borderRadius: '24px',
-          padding: '44px 36px',
+          position: 'relative',
+          backgroundImage: 'linear-gradient(135deg, rgba(35, 7, 7, 0.48) 0%, rgba(95, 20, 10, 0.36) 50%, rgba(18, 3, 3, 0.65) 100%), url(/assets/images/morcha-hero-banner.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center 45%',
+          borderRadius: '20px',
+          padding: '38px 30px',
           color: '#FFF',
           border: '2px solid #DD8A2E',
-          marginBottom: '32px',
-          boxShadow: '0 20px 50px rgba(45,8,8,0.4)',
-          position: 'relative'
+          marginBottom: '28px',
+          boxShadow: '0 16px 40px rgba(45,8,8,0.35)'
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
-            <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(221,138,46,0.25)', border: '1px solid #DD8A2E', padding: '5px 16px', borderRadius: '24px', marginBottom: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '18px' }}>
+            <div style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(5px)', padding: '20px 24px', borderRadius: '16px', border: '1px solid rgba(254, 240, 138, 0.25)', maxWidth: '840px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(221,138,46,0.3)', border: '1px solid #DD8A2E', padding: '5px 16px', borderRadius: '24px', marginBottom: '12px' }}>
                 <span style={{ color: '#FFD700' }}>✊</span>
                 <span style={{ color: '#FDF3E6', fontSize: '0.84rem', fontWeight: 800 }}>
-                  ऐतिहासिक लोकआंदोलने • मूक मोर्चे व सत्याग्रह महादालन
+                  ऐतिहासिक लोकआंदोलने • ५८ मूक मोर्चे, आरक्षण लढा व सत्याग्रह महादालन
                 </span>
               </div>
               <h1 style={{
                 fontFamily: "'Baloo 2', 'Noto Sans Devanagari', sans-serif",
-                fontSize: 'clamp(2rem, 4.5vw, 3.2rem)',
-                fontWeight: 800,
+                fontSize: 'clamp(2rem, 4.2vw, 3rem)',
+                fontWeight: 900,
                 margin: '0 0 10px',
                 color: '#FFF',
-                lineHeight: 1.2
+                lineHeight: 1.2,
+                textShadow: '0 3px 12px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.9)'
               }}>
-                मराठा चळवळी, मूक मोर्चे व ऐतिहासिक लढा
+                मराठा क्रांती मूक मोर्चे व ऐतिहासिक लढा
               </h1>
-              <p style={{ color: '#F1E7D8', fontSize: '1.05rem', maxWidth: '780px', margin: 0, lineHeight: 1.65 }}>
-                ५८ मूक मोर्चे, आरक्षण लढा, सारथी निर्मिती, अण्णासाहेब पाटील महामंडळ ते दुर्ग संवर्धन महामोहीम — समाज हितासाठी, अन्यायाविरुद्ध आणि हक्कासाठी उभी राहिलेली लोकआंदोलने.
+              <p style={{ color: '#FDF3E6', fontSize: '1rem', margin: 0, lineHeight: 1.6, textShadow: '0 2px 8px rgba(0,0,0,0.9)' }}>
+                ५८ मूक मोर्चे, अंतरवाली सराटी सत्याग्रह, सर्वोच्च न्यायालयातील घटनात्मक लढा, सारथी निर्मिती, अण्णासाहेब पाटील महामंडळ ते दुर्ग संवर्धन महामोहीम — समाज हितासाठी, अन्यायाविरुद्ध आणि स्वाभिमानासाठी उभी राहिलेली लोकआंदोलने.
               </p>
             </div>
 
@@ -306,12 +439,12 @@ export default function MovementsPage() {
                   background: 'linear-gradient(135deg, #DD8A2E 0%, #C9701C 100%)',
                   color: '#2A0606',
                   border: 'none',
-                  padding: '12px 22px',
-                  borderRadius: '12px',
+                  padding: '10px 20px',
+                  borderRadius: '10px',
                   fontWeight: 800,
-                  fontSize: '0.92rem',
+                  fontSize: '0.9rem',
                   cursor: 'pointer',
-                  boxShadow: '0 8px 20px rgba(221,138,46,0.4)',
+                  boxShadow: '0 6px 16px rgba(221,138,46,0.45)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px'
@@ -321,16 +454,17 @@ export default function MovementsPage() {
               <button
                 onClick={handleResetDefaults}
                 style={{
-                  background: 'rgba(255,255,255,0.12)',
+                  background: 'rgba(0,0,0,0.5)',
                   color: '#FFF',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  padding: '12px 18px',
-                  borderRadius: '12px',
+                  border: '1px solid rgba(255,255,255,0.4)',
+                  backdropFilter: 'blur(6px)',
+                  padding: '10px 16px',
+                  borderRadius: '10px',
                   fontWeight: 700,
-                  fontSize: '0.86rem',
+                  fontSize: '0.84rem',
                   cursor: 'pointer'
                 }}>
-                ↺ मूळ दस्तऐवज रीसेट
+                ↺ मूळ डेटा रीसेट
               </button>
             </div>
           </div>
@@ -338,27 +472,27 @@ export default function MovementsPage() {
           {/* Quick Metrics */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-            gap: '14px',
-            marginTop: '32px',
-            paddingTop: '24px',
-            borderTop: '1px solid rgba(221,138,46,0.3)'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+            gap: '12px',
+            marginTop: '26px',
+            paddingTop: '20px',
+            borderTop: '1px solid rgba(221,138,46,0.4)'
           }}>
-            <div style={{ background: 'rgba(0,0,0,0.3)', padding: '14px 18px', borderRadius: '12px' }}>
-              <div style={{ fontSize: '0.78rem', color: '#DD8A2E', fontWeight: 700 }}>नोंदवलेले ऐतिहासिक लढे</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFF' }}>{movements.length} आंदोलने</div>
+            <div style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)', padding: '10px 16px', borderRadius: '10px', border: '1px solid rgba(221,138,46,0.3)' }}>
+              <div style={{ fontSize: '0.74rem', color: '#DD8A2E', fontWeight: 700 }}>नोंदवलेले ऐतिहासिक लढे</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FFF' }}>{movements.length} आंदोलने</div>
             </div>
-            <div style={{ background: 'rgba(0,0,0,0.3)', padding: '14px 18px', borderRadius: '12px' }}>
-              <div style={{ fontSize: '0.78rem', color: '#DD8A2E', fontWeight: 700 }}>ऐतिहासिक मूक मोर्चे</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFF' }}>५८ मूक मोर्चे</div>
+            <div style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)', padding: '10px 16px', borderRadius: '10px', border: '1px solid rgba(221,138,46,0.3)' }}>
+              <div style={{ fontSize: '0.74rem', color: '#DD8A2E', fontWeight: 700 }}>ऐतिहासिक मूक मोर्चे</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FFF' }}>५८ मूक मोर्चे</div>
             </div>
-            <div style={{ background: 'rgba(0,0,0,0.3)', padding: '14px 18px', borderRadius: '12px' }}>
-              <div style={{ fontSize: '0.78rem', color: '#DD8A2E', fontWeight: 700 }}>एकूण समाज सहभाग</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#4ADE80' }}>५ कोटी+ नागरिक</div>
+            <div style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)', padding: '10px 16px', borderRadius: '10px', border: '1px solid rgba(221,138,46,0.3)' }}>
+              <div style={{ fontSize: '0.74rem', color: '#DD8A2E', fontWeight: 700 }}>एकूण समाज सहभाग</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#4ADE80' }}>५ कोटी+ नागरिक</div>
             </div>
-            <div style={{ background: 'rgba(0,0,0,0.3)', padding: '14px 18px', borderRadius: '12px' }}>
-              <div style={{ fontSize: '0.78rem', color: '#DD8A2E', fontWeight: 700 }}>अभिलेख पडताळणी</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FDBA74' }}>अधिकृत गॅझेट ✓</div>
+            <div style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)', padding: '10px 16px', borderRadius: '10px', border: '1px solid rgba(221,138,46,0.3)' }}>
+              <div style={{ fontSize: '0.74rem', color: '#DD8A2E', fontWeight: 700 }}>कुणबी नोंदींचा शोध</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FDBA74' }}>५७ लाख+ नोंदी ✓</div>
             </div>
           </div>
         </div>
@@ -382,6 +516,7 @@ export default function MovementsPage() {
             {[
               { id: 'all', label: 'सर्व आंदोलने' },
               { id: 'muk_morcha', label: '🚩 मूक मोर्चे ५८' },
+              { id: 'satyagraha', label: '🌾 अंतरवाली सराटी' },
               { id: 'reservation', label: '⚖️ आरक्षण लढा' },
               { id: 'education', label: '🎓 शिक्षण व युवा' },
               { id: 'business', label: '💼 आर्थिक विकास' },
@@ -429,8 +564,8 @@ export default function MovementsPage() {
           </div>
         </div>
 
-        {/* Movements Archive Records */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+        {/* Movements Archive Records with Complete Non-cropped Images and Rich Data */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
           {filteredMovements.map(m => (
             <div
               key={m.id}
@@ -453,7 +588,7 @@ export default function MovementsPage() {
                 gap: '14px'
               }}>
                 <div>
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap' }}>
                     <span style={{
                       background: '#3D0D0D',
                       color: '#FFD700',
@@ -482,7 +617,7 @@ export default function MovementsPage() {
 
                   <h2 style={{
                     fontFamily: "'Baloo 2', sans-serif",
-                    fontSize: '1.5rem',
+                    fontSize: '1.55rem',
                     fontWeight: 800,
                     color: '#2A0606',
                     margin: 0,
@@ -524,34 +659,132 @@ export default function MovementsPage() {
                 </div>
               </div>
 
-              {/* Body */}
-              <div style={{ padding: '28px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '20px' }}>
-                  <div style={{ background: '#FAF6F0', padding: '10px 14px', borderRadius: '10px', border: '1px solid #E6DDCE' }}>
-                    <div style={{ fontSize: '0.78rem', color: '#888' }}>सहभागी संख्या</div>
-                    <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#3D0D0D' }}>👥 {m.participants}</div>
+              {/* COMPACT CINEMATIC BANNER (OPTIMIZED HEIGHT) */}
+              {m.image && (
+                <div style={{
+                  width: '100%',
+                  borderBottom: '1.5px solid #E6DDCE',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  background: '#0c0a09'
+                }}
+                onClick={() => setLightboxImage({
+                  url: m.image,
+                  caption: m.imageCaption || m.title
+                })}
+                title="मोठ्या आकारात पाहण्यासाठी क्लिक करा"
+                >
+                  <div style={{
+                    width: '100%',
+                    height: '260px',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: m.imageFit === 'contain' ? '#1c1917' : '#0c0a09'
+                  }}>
+                    {m.imageFit === 'contain' && (
+                      <div style={{
+                        position: 'absolute',
+                        inset: 0,
+                        backgroundImage: `url(${m.image})`,
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                        filter: 'blur(16px) brightness(0.4)',
+                        transform: 'scale(1.1)'
+                      }} />
+                    )}
+                    <img
+                      src={m.image}
+                      alt={m.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'block',
+                        position: 'relative',
+                        zIndex: 1,
+                        objectFit: m.imageFit || 'cover',
+                        objectPosition: m.imagePosition || 'center 35%',
+                        transition: 'transform 0.35s ease'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    />
                   </div>
-                  <div style={{ background: '#FAF6F0', padding: '10px 14px', borderRadius: '10px', border: '1px solid #E6DDCE' }}>
-                    <div style={{ fontSize: '0.78rem', color: '#888' }}>प्रमुख कार्यक्षेत्र</div>
-                    <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#3D0D0D' }}>📍 {m.locations}</div>
+
+                  <div style={{
+                    background: 'linear-gradient(180deg, rgba(28, 25, 23, 0.82) 0%, rgba(20, 18, 16, 0.95) 100%)',
+                    color: '#fed7aa',
+                    padding: '8px 18px',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '8px',
+                    borderTop: '1px solid rgba(254, 215, 170, 0.15)'
+                  }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>📸</span>
+                      <span>{m.imageCaption || m.title}</span>
+                    </span>
+                    <span style={{ color: '#fef08a', fontSize: '0.78rem', fontWeight: 700 }}>
+                      🔍 संपूर्ण प्रतिमेसाठी क्लिक करा
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Compact Body Content */}
+              <div style={{ padding: '20px 22px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', marginBottom: '14px' }}>
+                  <div style={{ background: '#FAF6F0', padding: '8px 14px', borderRadius: '8px', border: '1px solid #E6DDCE' }}>
+                    <div style={{ fontSize: '0.74rem', color: '#888' }}>सहभागी संख्या</div>
+                    <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#3D0D0D' }}>👥 {m.participants}</div>
+                  </div>
+                  <div style={{ background: '#FAF6F0', padding: '8px 14px', borderRadius: '8px', border: '1px solid #E6DDCE' }}>
+                    <div style={{ fontSize: '0.74rem', color: '#888' }}>प्रमुख कार्यक्षेत्र</div>
+                    <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#3D0D0D' }}>📍 {m.locations}</div>
                   </div>
                 </div>
 
-                <p style={{ fontSize: '0.96rem', color: '#4A3B32', lineHeight: 1.7, margin: '0 0 24px' }}>
+                <p style={{ fontSize: '0.92rem', color: '#4A3B32', lineHeight: 1.65, margin: '0 0 16px' }}>
                   {m.desc}
                 </p>
 
+                {/* Key Highlights / Stats Bar if present */}
+                {m.keyStats && m.keyStats.length > 0 && (
+                  <div style={{
+                    background: '#FFFBEB',
+                    border: '1px solid #FDE68A',
+                    borderRadius: '10px',
+                    padding: '12px 16px',
+                    marginBottom: '16px',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                    gap: '10px'
+                  }}>
+                    {m.keyStats.map((st, sidx) => (
+                      <div key={sidx}>
+                        <div style={{ fontSize: '0.72rem', color: '#92400E', fontWeight: 700 }}>{st.label}</div>
+                        <div style={{ fontSize: '0.86rem', color: '#78350F', fontWeight: 800, marginTop: '2px' }}>{st.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {/* Demands & Outcomes Grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
                   {/* Demands */}
                   {m.demands && m.demands.length > 0 && (
-                    <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '14px', padding: '20px' }}>
-                      <h4 style={{ color: '#9A3412', fontSize: '1rem', fontWeight: 800, margin: '0 0 12px' }}>
-                        📋 प्रमुख मागण्या (Charter of Demands):
+                    <div style={{ background: '#FFFDF9', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
+                      <h4 style={{ color: '#9A3412', fontSize: '0.95rem', fontWeight: 800, margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span>📋</span>
+                        <span>प्रमुख मागण्या:</span>
                       </h4>
-                      <ul style={{ margin: 0, paddingLeft: '20px', color: '#5C534B', fontSize: '0.88rem', lineHeight: 1.6 }}>
+                      <ul style={{ margin: 0, paddingLeft: '18px', color: '#5C534B', fontSize: '0.86rem', lineHeight: 1.55 }}>
                         {m.demands.map((d, i) => (
-                          <li key={i} style={{ marginBottom: '6px' }}>{d}</li>
+                          <li key={i} style={{ marginBottom: '4px' }}>{d}</li>
                         ))}
                       </ul>
                     </div>
@@ -559,13 +792,14 @@ export default function MovementsPage() {
 
                   {/* Outcomes */}
                   {m.outcomes && m.outcomes.length > 0 && (
-                    <div style={{ background: '#F0FDF4', border: '1.5px solid #BBF7D0', borderRadius: '14px', padding: '20px' }}>
-                      <h4 style={{ color: '#166534', fontSize: '1rem', fontWeight: 800, margin: '0 0 12px' }}>
-                        🎯 मिळालेले यश व फलश्रुती (Outcomes & GRs):
+                    <div style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '12px', padding: '16px' }}>
+                      <h4 style={{ color: '#166534', fontSize: '0.95rem', fontWeight: 800, margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span>🎯</span>
+                        <span>मिळालेले यश व फलश्रुती:</span>
                       </h4>
-                      <ul style={{ margin: 0, paddingLeft: '20px', color: '#14532D', fontSize: '0.88rem', lineHeight: 1.6 }}>
+                      <ul style={{ margin: 0, paddingLeft: '18px', color: '#14532D', fontSize: '0.86rem', lineHeight: 1.55 }}>
                         {m.outcomes.map((o, i) => (
-                          <li key={i} style={{ marginBottom: '6px' }}>{o}</li>
+                          <li key={i} style={{ marginBottom: '4px' }}>{o}</li>
                         ))}
                       </ul>
                     </div>
@@ -601,48 +835,42 @@ export default function MovementsPage() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            zIndex: 9999,
-            padding: '16px'
+            padding: '16px',
+            zIndex: 9999
           }}>
             <div style={{
               background: '#FFF',
               borderRadius: '20px',
-              maxWidth: '660px',
               width: '100%',
+              maxWidth: '680px',
               maxHeight: '90vh',
               overflowY: 'auto',
-              boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
-              border: '2px solid #DD8A2E'
+              padding: '32px',
+              border: '2px solid #DD8A2E',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
             }}>
-              <div style={{
-                background: 'linear-gradient(135deg, #2D0808 0%, #4D1212 100%)',
-                color: '#FFF',
-                padding: '20px 24px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <h3 style={{ fontFamily: "'Baloo 2', sans-serif", fontSize: '1.3rem', margin: 0 }}>
-                  {editItem ? '✏️ चळवळ दस्तऐवज संपादित करा' : '➕ नवीन ऐतिहासिक लढा नोंदवा'}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h3 style={{ margin: 0, color: '#3D0D0D', fontSize: '1.4rem', fontFamily: 'Baloo 2' }}>
+                  {editItem ? '✏️ लढा संपादित करा' : '➕ नवीन लढा नोंदवा'}
                 </h3>
                 <button
                   onClick={() => setModalOpen(false)}
-                  style={{ background: 'none', border: 'none', color: '#FFF', fontSize: '1.4rem', cursor: 'pointer' }}>
+                  style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#666' }}>
                   ✕
                 </button>
               </div>
 
-              <form onSubmit={handleSave} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#3D0D0D', marginBottom: '6px' }}>
-                    चळवळ / आंदोलनाचे नाव *
+                    आंदोलनाचे नाव / शीर्षक *
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="उदा. ५८ मराठा क्रांती मूक मोर्चे"
+                    placeholder="उदा. मराठा क्रांती मूक मोर्चे..."
                     style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #E6DDCE', fontSize: '0.92rem' }}
                   />
                 </div>
@@ -650,41 +878,43 @@ export default function MovementsPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#3D0D0D', marginBottom: '6px' }}>
-                      श्रेणी *
+                      वर्ग / श्रेणी
                     </label>
                     <select
                       value={formData.category}
                       onChange={(e) => {
-                        const cat = e.target.value;
-                        const labels = {
+                        const val = e.target.value;
+                        const labelMap = {
                           muk_morcha: 'मूक मोर्चे ५८',
+                          satyagraha: 'अंतरवाली सराटी',
                           reservation: 'आरक्षण लढा',
                           education: 'शिक्षण व युवा',
                           business: 'आर्थिक विकास',
                           forts: 'गड संवर्धन',
                           farmers: 'शेतकरी एल्गार'
                         };
-                        setFormData({ ...formData, category: cat, categoryLabel: labels[cat] || 'सामाजिक लढा' });
+                        setFormData({ ...formData, category: val, categoryLabel: labelMap[val] || val });
                       }}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #E6DDCE', fontSize: '0.92rem' }}>
-                      <option value="muk_morcha">मूक मोर्चे ५८</option>
-                      <option value="reservation">आरक्षण लढा</option>
-                      <option value="education">शिक्षण व युवा</option>
-                      <option value="business">आर्थिक विकास</option>
-                      <option value="forts">गड संवर्धन</option>
-                      <option value="farmers">शेतकरी एल्गार</option>
+                      <option value="muk_morcha">🚩 मूक मोर्चे ५८</option>
+                      <option value="satyagraha">🌾 अंतरवाली सराटी</option>
+                      <option value="reservation">⚖️ आरक्षण लढा</option>
+                      <option value="education">🎓 शिक्षण व युवा</option>
+                      <option value="business">💼 आर्थिक विकास</option>
+                      <option value="forts">🏰 दुर्ग संवर्धन</option>
+                      <option value="farmers">🌾 शेतकरी एल्गार</option>
                     </select>
                   </div>
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#3D0D0D', marginBottom: '6px' }}>
-                      कालावधी / वर्ष
+                      कालावधी
                     </label>
                     <input
                       type="text"
                       value={formData.period}
                       onChange={(e) => setFormData({ ...formData, period: e.target.value })}
-                      placeholder="उदा. २०१६–२०१८"
+                      placeholder="उदा. ९ ऑगस्ट २०१६ – २०१७"
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #E6DDCE', fontSize: '0.92rem' }}
                     />
                   </div>
@@ -716,6 +946,19 @@ export default function MovementsPage() {
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #E6DDCE', fontSize: '0.92rem' }}
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#3D0D0D', marginBottom: '6px' }}>
+                    प्रतिमा लिंक (Image URL)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    placeholder="/assets/images/morcha-58-silent-rally.jpg"
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #E6DDCE', fontSize: '0.92rem' }}
+                  />
                 </div>
 
                 <div>

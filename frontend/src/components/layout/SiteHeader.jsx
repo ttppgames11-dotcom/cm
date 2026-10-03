@@ -86,14 +86,12 @@ export default function SiteHeader({ onOpenSearch }) {
                     <Link to="/about" onClick={handleLinkClick}>🏆 राष्ट्रीय मराठा गौरव</Link>
                     <Link to="/about" onClick={handleLinkClick}>🏛️ कनेक्ट मराठा परिचय व सनद</Link>
                     <Link to="/governance" onClick={handleLinkClick}>🎯 व्हिजन, धोरण व DPDP</Link>
-                    <Link to="/governance" onClick={handleLinkClick}>🧭 मास्टर ब्लूप्रिंट (५० विभाग)</Link>
-                    <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Pillar: संस्कृती व वारसा ज्ञानकोश */}
+            {/* Pillar: संस्कृती व ज्ञानकोश */}
             <div className="nav-item-has-mega">
               <Link to="/culture" onClick={handleLinkClick}>🏛️ संस्कृती व ज्ञानकोश ▾</Link>
               <div className="mega-menu">
@@ -101,30 +99,30 @@ export default function SiteHeader({ onOpenSearch }) {
                   <div className="mega-col">
                     <div className="mega-col-title">🌍 सांस्कृतिक विविधता व बोली</div>
                     <Link to="/culture" onClick={handleLinkClick}>🗺️ ८ प्रादेशिक सांस्कृतिक प्रोफाइल</Link>
-                    <Link to="/culture/dialects" onClick={handleLinkClick}>🗣️ महाराष्ट्राच्या बोली व उच्चार</Link>
+                    <Link to="/culture/dialects" onClick={handleLinkClick}>🗣️ महाराष्ट्राच्या बोली व उच्चार संग्रह</Link>
                     <Link to="/culture/food" onClick={handleLinkClick}>🍲 खाद्यसंस्कृती व उगम इतिहास</Link>
-                    <Link to="/culture/symbols" onClick={handleLinkClick}>🏷️ राजमुद्रा व मराठा चिन्हे</Link>
+                    <Link to="/dnyankosh" onClick={handleLinkClick}>📖 मराठा ज्ञानकोश व शब्दभांडार</Link>
                   </div>
                   <div className="mega-col">
                     <div className="mega-col-title">🛕 ग्रामदैवत, जत्रा व लोककला</div>
-                    <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🛕 ग्रामदैवत व कुलदैवत ज्ञानकार्ड</Link>
-                    <Link to="/jatra" onClick={handleLinkClick}>🎪 जत्रा व वार्षिक यात्रा दिनदर्शिका</Link>
-                    <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🎭 दशावतार, तमाशा व पोवाडा</Link>
-                    <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🏏 विटी-दांडू व पारंपरिक खेळ</Link>
+                    <Link to="/culture/gramdevat-jatra?tab=gramdevat" onClick={handleLinkClick}>🛕 ग्रामदैवत व कुलदैवत ज्ञानकार्ड</Link>
+                    <Link to="/culture/gramdevat-jatra?tab=jatra" onClick={handleLinkClick}>🎪 जत्रा व वार्षिक यात्रा दिनदर्शिका</Link>
+                    <Link to="/culture/gramdevat-jatra?tab=natya" onClick={handleLinkClick}>🎭 दशावतार, तमाशा व पोवाडा</Link>
+                    <Link to="/culture/gramdevat-jatra?tab=khel" onClick={handleLinkClick}>🏏 विटी-दांडू व पारंपरिक खेळ</Link>
                   </div>
                   <div className="mega-col">
                     <div className="mega-col-title">🗺️ वारसा नकाशा व नॉलेज ग्राफ</div>
-                    <Link to="/culture/heritage-map" onClick={handleLinkClick}>🗺️ बहुस्तरीय परस्परसंवादी नकाशा</Link>
+                    <Link to="/culture/heritage-map" onClick={handleLinkClick}>🗺️ बहुस्तरीय परस्परसंवादी वारसा नकाशा</Link>
                     <Link to="/history/knowledge-graph" onClick={handleLinkClick}>⚡ घटना ↔ स्थळे नॉलेज ग्राफ</Link>
-                    <Link to="/temples" onClick={handleLinkClick}>🛕 प्रमुख मंदिरे व शक्तिपीठे</Link>
-                    <Link to="/forts" onClick={handleLinkClick}>🏰 सह्याद्रीचे ३५०+ गडकिल्ले</Link>
+                    <Link to="/temples" onClick={handleLinkClick}>🛕 महाराष्ट्रातील शक्तिपीठे व मंदिरे</Link>
+                    <Link to="/forts/trails" onClick={handleLinkClick}>🥾 सह्याद्री हेरिटेज ट्रेक ट्रेल्स</Link>
                   </div>
                   <div className="mega-col">
-                    <div className="mega-col-title">📚 संदर्भ चौकट व समुदाय</div>
+                    <div className="mega-col-title">📚 मौखिक परंपरा व लोकज्ञान</div>
                     <Link to="/community/oral-history" onClick={handleLinkClick}>✍️ मौखिक इतिहास संकलन (Tier 4)</Link>
-                    <Link to="/history/granthalaya" onClick={handleLinkClick}>📚 पुराभिलेख व ऐतिहासिक ग्रंथालय</Link>
-                    <Link to="/history/dates" onClick={handleLinkClick}>📅 ऐतिहासिक दिनविशेष</Link>
-                    <Link to="/gallery" onClick={handleLinkClick}>🖼️ आपुला महाराष्ट्र छायाचित्र दालन</Link>
+                    <Link to="/swarajya-administration" onClick={handleLinkClick}>📜 स्वराज्य अष्टप्रधान व शासन रचना</Link>
+                    <Link to="/culture/diversity" onClick={handleLinkClick}>🎨 लोककला, हस्तकला व वेशभूषा</Link>
+                    <Link to="/events" onClick={handleLinkClick}>📅 सांस्कृतिक सण व महोत्सव</Link>
                   </div>
                 </div>
               </div>
@@ -150,7 +148,7 @@ export default function SiteHeader({ onOpenSearch }) {
                   <div className="mega-col">
                     <div className="mega-col-title">💼 रोजगार व शिक्षण</div>
                     <Link to="/jobs" onClick={handleLinkClick}>💼 रोजगार व करिअर केंद्र</Link>
-                    <Link to="/jobs" onClick={handleLinkClick}>🎓 उच्च शिक्षण व शिष्यवृत्ती</Link>
+                    <Link to="/education" onClick={handleLinkClick}>🎓 उच्च शिक्षण व शिष्यवृत्ती</Link>
                     <Link to="/directory" onClick={handleLinkClick}>👨‍💼 प्रोफेशनेल्स डिरेक्टरी</Link>
                   </div>
                   <div className="mega-col">
@@ -278,7 +276,6 @@ export default function SiteHeader({ onOpenSearch }) {
                     <Link to="/card" onClick={handleLinkClick}>🪪 डिजिटल सभासद ओळखपत्र</Link>
                     <Link to="/crm" onClick={handleLinkClick}>🚩 भूमिका आधारित CRM पोर्टल</Link>
                     <Link to="/admin/cms" onClick={handleLinkClick} style={{ color: '#E65100', fontWeight: '700' }}>🎨 CMS वेबसाईट संपादक</Link>
-                    <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
                     <Link to="/admin" onClick={handleLinkClick}>🏛️ मुख्य ॲडमिन ईआरपी</Link>
                     <Link to="/crm/ceo" onClick={handleLinkClick}>🦅 CEO एक्झिक्युटिव्ह डॅशबोर्ड</Link>
                     <Link to="/crm/district" onClick={handleLinkClick}>📍 जिल्हा समन्वयक CRM</Link>

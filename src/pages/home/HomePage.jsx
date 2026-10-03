@@ -1415,7 +1415,7 @@ export default function HomePage() {
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
         </Link>
-        <Link to="/jobs" className="eco-card">
+        <Link to="/education" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🎓</span>
             <div>

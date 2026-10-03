@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { 
   DIALECTS_DATA, 
   PHRASE_COMPARISONS, 
@@ -8,10 +8,25 @@ import {
 } from '../../data/heritageKnowledgeGraph';
 
 export default function MarathiDialectsArchivePage() {
+  const [searchParams] = useSearchParams();
+  const dialectParam = searchParams.get('dialect');
+  const regionParam = searchParams.get('region');
+
   const [selectedPhraseId, setSelectedPhraseId] = useState(PHRASE_COMPARISONS[0].id);
   const [activeDialectId, setActiveDialectId] = useState('malwani');
   const [customText, setCustomText] = useState('');
   const [speechNotice, setSpeechNotice] = useState('');
+
+  // Handle URL params for direct dialect selection
+  useEffect(() => {
+    if (dialectParam) {
+      const match = DIALECTS_DATA.find(d => d.id === dialectParam || d.name.toLowerCase().includes(dialectParam.toLowerCase()));
+      if (match) setActiveDialectId(match.id);
+    } else if (regionParam) {
+      const match = DIALECTS_DATA.find(d => d.region?.toLowerCase().includes(regionParam.toLowerCase()));
+      if (match) setActiveDialectId(match.id);
+    }
+  }, [dialectParam, regionParam]);
 
   const activePhrase = PHRASE_COMPARISONS.find(p => p.id === selectedPhraseId) || PHRASE_COMPARISONS[0];
   const activeDialect = DIALECTS_DATA.find(d => d.id === activeDialectId) || DIALECTS_DATA[1];
@@ -298,104 +313,172 @@ export default function MarathiDialectsArchivePage() {
                     cursor: 'pointer'
                   }}
                 >
-                  {d.name} ({d.nameEn})
+                  {d.name}
                 </button>
               );
             })}
           </div>
 
           {/* Detailed Dialect Profile Card */}
-          <div style={{
-            background: '#FFFFFF',
-            borderRadius: '18px',
-            border: '1px solid #F3E8D8',
-            padding: '30px',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.05)'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '14px', marginBottom: '20px' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <h3 style={{ fontSize: '1.8rem', color: '#7C1D05', fontWeight: 800, margin: 0 }}>
-                    {activeDialect.name}
-                  </h3>
-                  <span style={{ background: '#FEF3C7', color: '#92400E', padding: '3px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 700 }}>
-                    प्रदेश: {activeDialect.region}
-                  </span>
-                </div>
-                <div style={{ color: '#6B7280', fontSize: '0.88rem', marginTop: '4px' }}>
-                  प्रमुख जिल्हे: {activeDialect.districts.join(', ')}
-                </div>
-              </div>
-
-              {/* Confidence Badge */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                <span style={{
-                  background: activeDialect.confidence.bg,
-                  color: activeDialect.confidence.color,
-                  border: `1px solid ${activeDialect.confidence.color}`,
-                  padding: '4px 10px',
-                  borderRadius: '20px',
-                  fontSize: '0.78rem',
-                  fontWeight: 700
-                }}>
-                  {activeDialect.confidence.icon} {activeDialect.confidence.label}
-                </span>
-                <span style={{ fontSize: '0.72rem', color: '#9CA3AF' }}>
-                  {activeDialect.sourceTier.badge}
-                </span>
-              </div>
-            </div>
-
-            {/* Description */}
-            <p style={{ fontSize: '0.98rem', color: '#374151', lineHeight: 1.6, marginBottom: '24px' }}>
-              {activeDialect.desc}
-            </p>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-              
-              {/* Phonetics & Characteristics */}
-              <div style={{ background: '#F8FAFC', borderRadius: '12px', padding: '20px', border: '1px solid #E2E8F0' }}>
-                <h4 style={{ fontSize: '1rem', color: '#1E293B', fontWeight: 800, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>🔤</span> उच्चार व ध्वनिविशेष (Phonetic Features)
-                </h4>
-                <ul style={{ paddingLeft: '20px', color: '#475569', fontSize: '0.9rem', lineHeight: 1.6 }}>
-                  {activeDialect.characteristics.map((c, i) => (
-                    <li key={i} style={{ marginBottom: '6px' }}>{c}</li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Vocabulary & Expressions */}
-              <div style={{ background: '#FFFBEB', borderRadius: '12px', padding: '20px', border: '1px solid #FEF3C7' }}>
-                <h4 style={{ fontSize: '1rem', color: '#78350F', fontWeight: 800, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>📖</span> विशेष स्थानिक शब्दसंग्रह (Vocabulary)
-                </h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {activeDialect.sampleWords.map((w, i) => (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '6px 12px', borderRadius: '8px', border: '1px solid #FDE68A' }}>
-                      <span style={{ fontWeight: 800, color: '#B91C1C', fontSize: '0.95rem' }}>
-                        {w.word}
-                      </span>
-                      <span style={{ color: '#4B5563', fontSize: '0.85rem' }}>
-                        अर्थ: <strong>{w.meaning}</strong>
-                      </span>
+          {activeDialect && (
+            <div style={{
+              background: '#FFFFFF',
+              borderRadius: '18px',
+              border: '1px solid #F3E8D8',
+              padding: '30px',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.05)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '14px', marginBottom: '20px' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <h3 style={{ fontSize: '1.8rem', color: '#7C1D05', fontWeight: 800, margin: 0 }}>
+                      {activeDialect.name}
+                    </h3>
+                    <span style={{ background: '#FEF3C7', color: '#92400E', padding: '3px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 700 }}>
+                      प्रदेश: {activeDialect.region}
+                    </span>
+                  </div>
+                  {activeDialect.speakersApprox && (
+                    <div style={{ color: '#6B7280', fontSize: '0.88rem', marginTop: '4px' }}>
+                      अंदाजे भाषक संख्या: <strong>{activeDialect.speakersApprox}</strong>
                     </div>
-                  ))}
+                  )}
                 </div>
+
+                {/* Confidence Badge */}
+                {activeDialect.sourceRef && (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                    {activeDialect.sourceRef.confidence && (
+                      <span style={{
+                        background: activeDialect.sourceRef.confidence.bg,
+                        color: activeDialect.sourceRef.confidence.color,
+                        border: `1px solid ${activeDialect.sourceRef.confidence.color}`,
+                        padding: '4px 10px',
+                        borderRadius: '20px',
+                        fontSize: '0.78rem',
+                        fontWeight: 700
+                      }}>
+                        {activeDialect.sourceRef.confidence.icon} {activeDialect.sourceRef.confidence.label}
+                      </span>
+                    )}
+                    {activeDialect.sourceRef.tier && (
+                      <span style={{ fontSize: '0.72rem', color: '#9CA3AF' }}>
+                        {activeDialect.sourceRef.tier.badge}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
-            </div>
-
-            {/* Official Source Footnote */}
-            <div style={{ marginTop: '24px', background: '#F9FAFB', padding: '12px 18px', borderRadius: '10px', fontSize: '0.8rem', color: '#6B7280', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-              <div>
-                <strong>अभ्यास व शासन संदर्भ:</strong> {activeDialect.reference}
+              {/* Characteristics */}
+              <div style={{
+                background: '#F8FAFC',
+                borderRadius: '12px',
+                padding: '18px 20px',
+                border: '1px solid #E2E8F0',
+                marginBottom: '24px'
+              }}>
+                <h4 style={{ fontSize: '1rem', color: '#1E293B', fontWeight: 800, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>🔤</span> बोलीवैशिष्ट्ये व लहेजा (Phonetic & Dialect Characteristics)
+                </h4>
+                <p style={{ margin: 0, color: '#475569', fontSize: '0.95rem', lineHeight: 1.6 }}>
+                  {typeof activeDialect.characteristics === 'string' 
+                    ? activeDialect.characteristics 
+                    : Array.isArray(activeDialect.characteristics) 
+                      ? activeDialect.characteristics.join(' • ') 
+                      : ''}
+                </p>
               </div>
-              <Link to="/culture/diversity" style={{ color: '#B91C1C', fontWeight: 700 }}>
-                ← संपूर्ण प्रादेशिक प्रोफाइल पहा
-              </Link>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                
+                {/* Proverb & Cultural Meaning */}
+                <div style={{ background: '#FFFBEB', borderRadius: '12px', padding: '20px', border: '1px solid #FEF3C7' }}>
+                  <h4 style={{ fontSize: '1rem', color: '#78350F', fontWeight: 800, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>📜</span> प्रसिद्ध म्हणी व वाक्प्रचार (Traditional Proverb)
+                  </h4>
+                  {activeDialect.proverb && (
+                    <div style={{ background: '#FFFFFF', padding: '12px 16px', borderRadius: '10px', border: '1px solid #FDE68A', marginBottom: '10px' }}>
+                      <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#B91C1C' }}>
+                        "{activeDialect.proverb}"
+                      </div>
+                      {activeDialect.proverbMeaning && (
+                        <div style={{ fontSize: '0.86rem', color: '#4B5563', marginTop: '6px' }}>
+                          💡 भावार्थ: <strong>{activeDialect.proverbMeaning}</strong>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <button
+                    onClick={() => playAudio(activeDialect.proverb)}
+                    style={{
+                      background: '#FEF3C7',
+                      color: '#92400E',
+                      border: '1px solid #FDE68A',
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    🔊 म्हणीचा उच्चार ऐका
+                  </button>
+                </div>
+
+                {/* Sample Sentence & Voice Playback */}
+                <div style={{ background: '#F0FDF4', borderRadius: '12px', padding: '20px', border: '1px solid #DCFCE7' }}>
+                  <h4 style={{ fontSize: '1rem', color: '#166534', fontWeight: 800, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>🗣️</span> प्रातिनिधिक बोली वाक्य (Sample Sentence)
+                  </h4>
+                  {activeDialect.sampleSentence && (
+                    <div style={{ background: '#FFFFFF', padding: '12px 16px', borderRadius: '10px', border: '1px solid #86EFAC', marginBottom: '10px' }}>
+                      <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#15803D' }}>
+                        "{activeDialect.sampleSentence}"
+                      </div>
+                      {activeDialect.englishTranslation && (
+                        <div style={{ fontSize: '0.86rem', color: '#4B5563', marginTop: '6px' }}>
+                          English: <em>"{activeDialect.englishTranslation}"</em>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <button
+                    onClick={() => playAudio(activeDialect.sampleSentence)}
+                    style={{
+                      background: '#15803D',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontSize: '0.85rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    🔊 वाक्याचा लहेजा ऐका (Play Audio)
+                  </button>
+                </div>
+
+              </div>
+
+              {/* Official Source Footnote */}
+              <div style={{ marginTop: '24px', background: '#F9FAFB', padding: '12px 18px', borderRadius: '10px', fontSize: '0.8rem', color: '#6B7280', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                <div>
+                  <strong>अभ्यास व शासन संदर्भ:</strong> {activeDialect.sourceRef?.source || 'महाराष्ट्र शासन भाषा संचालनालय व विद्यापीठ भाषाशास्त्र पुराभिलेख'}
+                </div>
+                <Link to="/culture/diversity" style={{ color: '#B91C1C', fontWeight: 700, textDecoration: 'none' }}>
+                  ← संपूर्ण प्रादेशिक प्रोफाइल पहा
+                </Link>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
       </div>
