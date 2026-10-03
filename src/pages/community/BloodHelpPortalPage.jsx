@@ -182,27 +182,66 @@ export default function BloodHelpPortalPage() {
     <div style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '5rem' }}>
       {/* Hero Header */}
       <div style={{
-        background: 'linear-gradient(135deg, rgba(153, 27, 27, 0.90) 0%, rgba(220, 38, 38, 0.88) 100%), url("/assets/images/generated/maratha_blood_help_hero.jpg") center/cover no-repeat',
+        position: 'relative',
         color: '#fff',
         padding: '3.5rem 1.5rem',
-        textAlign: 'center'
+        textAlign: 'center',
+        overflow: 'hidden'
       }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        {/* Background Image */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'url("/assets/images/generated/maratha_blood_help_hero.jpg")',
+          backgroundPosition: 'center 35%',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          zIndex: 1
+        }} />
+
+        {/* Very Light & Subtle Overlay - preserves full visibility of the hospital & doctors */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.45) 0%, rgba(153, 27, 27, 0.25) 50%, rgba(15, 23, 42, 0.65) 100%)',
+          zIndex: 2
+        }} />
+
+        <div style={{ maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 3 }}>
           <div style={{
             display: 'inline-block',
-            background: 'rgba(255,255,255,0.2)',
-            padding: '0.4rem 1.2rem',
+            background: 'rgba(255, 255, 255, 0.25)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.4)',
+            padding: '0.45rem 1.3rem',
             borderRadius: '999px',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            marginBottom: '1rem'
+            fontSize: '0.88rem',
+            fontWeight: 800,
+            marginBottom: '1rem',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.25)'
           }}>
             🩸 २४×७ मराठा रक्त मदत कक्ष | Emergency Blood Assistance
           </div>
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 900, margin: '0.5rem 0 1rem' }}>
+          <h1 style={{
+            fontSize: 'clamp(2rem, 5vw, 3.2rem)',
+            fontWeight: 900,
+            margin: '0.4rem 0 1rem',
+            fontFamily: 'Baloo 2, sans-serif',
+            color: '#ffffff',
+            textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.7)'
+          }}>
             एक थेंब रक्ताचा — एक जीव आपुलकीचा
           </h1>
-          <p style={{ fontSize: '1.15rem', opacity: 0.95, maxWidth: '750px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
+          <p style={{
+            fontSize: '1.2rem',
+            fontWeight: 500,
+            color: '#ffffff',
+            maxWidth: '780px',
+            margin: '0 auto 2.2rem',
+            lineHeight: 1.6,
+            textShadow: '0 2px 8px rgba(0,0,0,0.85)'
+          }}>
             महाराष्ट्रातील कोणत्याही जिल्ह्यात रक्ताची तातडीची गरज असल्यास मराठा बंधू-भगिनी धावून येतील. थेट रक्तदात्यांशी संपर्क करा किंवा आपली निकड नोंदवा.
           </p>
 
