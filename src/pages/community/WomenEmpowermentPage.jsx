@@ -185,151 +185,114 @@ export default function WomenEmpowermentPage() {
   return (
     <div style={{ background: '#FBF5EC', minHeight: '100vh', paddingBottom: '5rem' }}>
       
-      {/* Premium Hero Banner with High-Res Background Image & Saffron/Rose Gradient Overlay */}
+      {/* Premium Hero Banner Displaying the Beautiful Historical & Empowerment Artwork */}
       <div style={{
         position: 'relative',
-        minHeight: '480px',
-        color: '#fff',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        padding: '4rem 1.5rem 5rem',
-        overflow: 'hidden'
+        width: '100%',
+        maxWidth: '1240px',
+        margin: '1.5rem auto 0',
+        borderRadius: '24px',
+        overflow: 'hidden',
+        boxShadow: '0 20px 40px -10px rgba(0,0,0,0.18)',
+        border: '2px solid rgba(251, 207, 232, 0.6)'
       }}>
-        {/* Background Image with Fallback */}
+        <img
+          src="/assets/images/women-empowerment-hero.jpg"
+          alt="मराठा सक्षमीकरण: कर्तृत्व, शौर्य आणि सन्मान"
+          style={{
+            width: '100%',
+            height: 'auto',
+            display: 'block',
+            objectFit: 'cover'
+          }}
+        />
+      </div>
+
+      {/* 24/7 Helpline & Empowerment Bar - Positioned cleanly below the banner */}
+      <div style={{ maxWidth: '1100px', margin: '2rem auto 2.5rem', padding: '0 1rem', textAlign: 'center' }}>
         <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: 'url(/assets/images/women-empowerment-hero.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center 20%',
-          zIndex: 1
-        }} />
-
-        {/* Light & subtle warm vignette overlay - keeps image vibrant and clear */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'linear-gradient(180deg, rgba(30, 10, 15, 0.40) 0%, rgba(50, 15, 25, 0.30) 40%, rgba(20, 5, 10, 0.65) 100%)',
-          zIndex: 2
-        }} />
-
-        {/* Hero Content */}
-        <div style={{ maxWidth: '1050px', margin: '0 auto', position: 'relative', zIndex: 3 }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'rgba(255, 255, 255, 0.25)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255, 255, 255, 0.45)',
-            padding: '0.45rem 1.4rem',
-            borderRadius: '999px',
-            fontSize: '0.92rem',
-            fontWeight: 800,
-            marginBottom: '1rem',
-            color: '#fff',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)'
-          }}>
-            <span>🌸</span>
-            <span>राजमाता जिजाऊ महिला सक्षमीकरण अभियान | Connect Maratha Women</span>
-          </div>
-
-          <h1 style={{
-            fontSize: 'clamp(2rem, 5vw, 3.2rem)',
-            fontWeight: 900,
-            margin: '0.2rem 0 1rem',
-            lineHeight: 1.25,
-            fontFamily: 'Baloo 2, sans-serif',
-            color: '#ffffff',
-            textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.7)'
-          }}>
-            मराठा स्त्रीशक्ती — स्वाभिमान, कर्तृत्व आणि समृद्धी
-          </h1>
-
-          <p style={{
-            fontSize: '1.15rem',
-            fontWeight: 500,
-            color: '#fff',
-            maxWidth: '820px',
-            margin: '0 auto 2rem',
-            lineHeight: 1.6,
-            textShadow: '0 2px 8px rgba(0,0,0,0.85)'
-          }}>
-            स्वराज्याची पायाभरणी राष्ट्रमाता जिजाऊंच्या प्रेरणेने झाली. मराठा महिलांचे आर्थिक, शैक्षणिक, आरोग्य, कायदेशीर आणि व्यावसायिक सक्षमीकरण घडवण्यासाठी कनेक्ट मराठाचे राज्यव्यापी महाव्यासपीठ.
-          </p>
-
-          {/* 24/7 Helpline Card */}
-          <div style={{
-            background: '#ffffff',
-            color: '#1e293b',
-            padding: '1.4rem 2.2rem',
-            borderRadius: '20px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '1.8rem',
-            boxShadow: '0 25px 35px -5px rgba(0,0,0,0.35)',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            border: '2px solid #FBCFE8'
-          }}>
+          background: '#ffffff',
+          color: '#1e293b',
+          padding: '1.5rem 2.5rem',
+          borderRadius: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '2rem',
+          boxShadow: '0 12px 30px -5px rgba(159, 18, 57, 0.12)',
+          flexWrap: 'wrap',
+          border: '2px solid #FBCFE8'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', textAlign: 'left' }}>
             <div style={{
-              width: '60px',
-              height: '60px',
+              width: '64px',
+              height: '64px',
               borderRadius: '50%',
               background: '#FDF2F8',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: '2.2rem',
-              border: '2px solid #F472B6'
+              border: '2px solid #F472B6',
+              flexShrink: 0
             }}>
               🚨
             </div>
 
-            <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '0.82rem', color: '#be185d', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            <div>
+              <div style={{ fontSize: '0.85rem', color: '#be185d', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                 २४×७ मराठा महिला आणीबाणी हेल्पलाइन
               </div>
-              <div style={{ fontSize: '2rem', fontWeight: 900, color: '#9f1239', letterSpacing: '1px', lineHeight: 1.15 }}>
+              <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#9f1239', letterSpacing: '1px', lineHeight: 1.15 }}>
                 9090 112 112
               </div>
-              <div style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '3px' }}>
-                कायदेशीर संरक्षण • सुरक्षितता साहाय्य • समुपदेशन कक्ष
+              <div style={{ fontSize: '0.88rem', color: '#64748b', marginTop: '3px' }}>
+                कायदेशीर संरक्षण • सुरक्षितता साहाय्य • मोफत समुपदेशन कक्ष
               </div>
             </div>
+          </div>
 
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <button
               onClick={() => setIsHelpModalOpen(true)}
               style={{
                 background: 'linear-gradient(135deg, #be185d 0%, #9f1239 100%)',
                 color: '#fff',
                 border: 'none',
-                padding: '0.85rem 1.8rem',
-                borderRadius: '12px',
+                padding: '0.95rem 2rem',
+                borderRadius: '14px',
                 fontWeight: 800,
                 cursor: 'pointer',
-                fontSize: '1rem',
-                boxShadow: '0 8px 16px rgba(190, 24, 93, 0.35)',
+                fontSize: '1.05rem',
+                boxShadow: '0 8px 18px rgba(190, 24, 93, 0.35)',
                 transition: 'transform 0.2s'
               }}
             >
               तातडीची मदत मागा ➔
+            </button>
+
+            <button
+              onClick={() => setIsJoinModalOpen(true)}
+              style={{
+                background: '#FFF1F2',
+                color: '#be185d',
+                border: '1.5px solid #F43F5E',
+                padding: '0.95rem 1.8rem',
+                borderRadius: '14px',
+                fontWeight: 800,
+                cursor: 'pointer',
+                fontSize: '1rem',
+                transition: 'all 0.2s'
+              }}
+            >
+              चळवळीत सहभागी व्हा 🌸
             </button>
           </div>
         </div>
       </div>
 
       {/* Inspirational Historical Maratha Women Section with Real Portraits */}
-      <div style={{ maxWidth: '1240px', margin: '2.5rem auto 3.5rem', padding: '0 1rem', position: 'relative', zIndex: 10 }}>
+      <div style={{ maxWidth: '1240px', margin: '0 auto 3.5rem', padding: '0 1rem', position: 'relative', zIndex: 10 }}>
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
