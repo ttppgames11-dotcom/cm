@@ -196,46 +196,71 @@ export default function MarathaOrganizationsPage() {
     <div className="organizations-page" style={{ background: '#FAF7F2', minHeight: '100vh', paddingBottom: '60px' }}>
       {/* Hero Banner */}
       <section style={{
-        background: 'linear-gradient(135deg, rgba(183, 28, 28, 0.90) 0%, rgba(216, 67, 21, 0.88) 100%), url("/assets/images/maratha-samrajya.jpg") center/cover no-repeat',
+        background: 'linear-gradient(180deg, rgba(30, 15, 10, 0.45) 0%, rgba(139, 20, 20, 0.62) 60%, rgba(20, 10, 10, 0.78) 100%), url("/assets/images/maratha-kranti-morcha.jpg") center 35%/cover no-repeat',
         color: '#FFFFFF',
-        padding: '50px 20px',
+        padding: '64px 20px 56px',
         textAlign: 'center',
-        position: 'relative'
+        position: 'relative',
+        boxShadow: 'inset 0 0 100px rgba(0,0,0,0.45)'
       }}>
-        <div style={{ maxWidth: '980px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '980px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
           <div style={{
             display: 'inline-block',
-            background: 'rgba(255,255,255,0.18)',
-            padding: '5px 16px',
-            borderRadius: '20px',
-            fontSize: '0.85rem',
+            background: 'rgba(0, 0, 0, 0.45)',
+            backdropFilter: 'blur(6px)',
+            border: '1px solid rgba(255, 213, 79, 0.4)',
+            padding: '6px 18px',
+            borderRadius: '24px',
+            fontSize: '0.88rem',
             fontWeight: 700,
-            marginBottom: '12px',
-            color: '#FFD54F'
+            marginBottom: '14px',
+            color: '#FFD54F',
+            letterSpacing: '0.5px'
           }}>
             🚩 CONNECT मराठा — एक लढा! एक संघर्ष! एक समाज! | सर्वधर्म समभाव
           </div>
-          <p style={{ fontSize: '1.25rem', color: '#FFE082', fontWeight: 600, margin: '0 0 6px' }}>
+          <p style={{
+            fontSize: '1.25rem',
+            color: '#FFE082',
+            fontWeight: 700,
+            margin: '0 0 8px',
+            textShadow: '0 2px 8px rgba(0,0,0,0.8)'
+          }}>
             संघटित मराठा ! सशक्त मराठा !!
           </p>
-          <h1 style={{ fontSize: '2.6rem', fontWeight: 900, margin: '0 0 10px' }}>
+          <h1 style={{
+            fontSize: 'clamp(2rem, 3.8vw, 2.85rem)',
+            fontWeight: 900,
+            margin: '0 0 12px',
+            color: '#FFFFFF',
+            textShadow: '0 3px 12px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9)'
+          }}>
             मराठा संघटना – एकत्र येऊ, प्रगती करू !
           </h1>
-          <p style={{ fontSize: '1.1rem', opacity: 0.95, margin: '0 auto 20px', maxWidth: '680px' }}>
+          <p style={{
+            fontSize: '1.12rem',
+            color: '#F8FAFC',
+            margin: '0 auto 24px',
+            maxWidth: '720px',
+            lineHeight: 1.6,
+            textShadow: '0 2px 8px rgba(0,0,0,0.85)'
+          }}>
             सन्मान, स्वाभिमान आणि हक्कासाठी मराठा समाज एकत्र आहे. महाराष्ट्रातील सर्व अधिकृत संघटनांची सूची.
           </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
             <button
               onClick={() => setShowAddModal(true)}
               style={{
-                background: '#FFD54F',
-                color: '#B71C1C',
+                background: 'linear-gradient(135deg, #FFD54F 0%, #FFB300 100%)',
+                color: '#8B1414',
                 border: 'none',
-                padding: '12px 26px',
-                borderRadius: '8px',
+                padding: '13px 28px',
+                borderRadius: '10px',
                 fontWeight: 800,
                 fontSize: '1rem',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
+                transition: 'all 0.2s ease'
               }}
             >
               ＋ आपली संघटना नोंदवा
@@ -243,13 +268,15 @@ export default function MarathaOrganizationsPage() {
             <a
               href="#orgs-list"
               style={{
-                background: 'rgba(255,255,255,0.15)',
+                background: 'rgba(0, 0, 0, 0.45)',
                 color: '#fff',
-                border: '1px solid rgba(255,255,255,0.4)',
-                padding: '12px 24px',
-                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.6)',
+                backdropFilter: 'blur(4px)',
+                padding: '13px 26px',
+                borderRadius: '10px',
                 fontWeight: 700,
-                textDecoration: 'none'
+                textDecoration: 'none',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.25)'
               }}
             >
               नोंदणीकृत संघटना पहा ({orgsData.length}+)
@@ -259,7 +286,7 @@ export default function MarathaOrganizationsPage() {
       </section>
 
       {/* Search & Categories */}
-      <div id="orgs-list" style={{ maxWidth: '1180px', margin: '-22px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
+      <div id="orgs-list" style={{ maxWidth: '1180px', margin: '24px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
         <div style={{
           background: '#FFFFFF',
           borderRadius: '14px',
