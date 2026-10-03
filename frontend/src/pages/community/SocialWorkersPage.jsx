@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useToast } from '../../context/ToastContext';
+import apiClient from '../../services/apiClient';
 
 const SOCIAL_WORKERS = [
   {
@@ -103,9 +105,6 @@ const SOCIAL_WORKERS = [
     awards: 'आदर्श शिक्षक सन्मान'
   }
 ];
-
-import { useToast } from '../../context/ToastContext';
-import apiClient from '../../services/apiClient';
 
 export default function SocialWorkersPage() {
   const { showToast } = useToast();
