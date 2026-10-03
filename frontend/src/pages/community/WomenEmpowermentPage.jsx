@@ -8,8 +8,8 @@ const INSPIRATIONAL_FIGURES = [
     name: 'राष्ट्रमाता राजमाता जिजाऊ मासाहेब',
     title: 'स्वराज्य प्रेरिका, नीतीशास्त्रज्ञ व मार्गदर्शक',
     desc: 'छत्रपती शिवाजी महाराजांना स्वराज्याची प्रेरणा देणाऱ्या, न्यायप्रिय व कुशल प्रशासक राजमाता. स्वराज्याचा संकल्प जिजाऊंच्या संस्कारांतून साकार झाला.',
-    image: '/assets/images/real-jijau-portrait.jpg',
-    fallbackImg: '/assets/images/real-jijabai-statue.jpg',
+    image: '/assets/images/real-jijabai-statue.jpg',
+    fallbackImg: '/assets/images/real-jijabai-lal-mahal.jpg',
     tag: 'स्वराज्य प्रेरिका',
     period: '१५९८ – १६७४'
   },
@@ -17,8 +17,8 @@ const INSPIRATIONAL_FIGURES = [
     name: 'महारानी ताराबाई भोसले',
     title: 'मुघल सत्ता निष्प्रभ करणारी पराक्रमी रणरागिणी',
     desc: 'छत्रपती राजाराम महाराजांनंतर मराठा साम्राज्याची धुरा समर्थपणे सांभाळत मुघल बादशहा औरंगजेबाला जेरीस आणणाऱ्या पराक्रमी सेनानी व राज्यकर्ती.',
-    image: '/assets/images/real-tarabai-portrait.jpg',
-    fallbackImg: '/assets/images/maharani-tarabai.webp',
+    image: '/assets/images/maharani-tarabai.webp',
+    fallbackImg: '/assets/images/real-tarabai-portrait.jpg',
     tag: 'रणरागिणी',
     period: '१६७५ – १७६१'
   },
@@ -26,8 +26,8 @@ const INSPIRATIONAL_FIGURES = [
     name: 'पुण्यश्लोक अहिल्याबाई होळकर',
     title: 'धर्मरक्षक, मुत्सद्दी व आदर्श लोककल्याणकारी राणी',
     desc: 'संपूर्ण भारतात मंदिरे, घाट, विहिरी व धर्मशाळा बांधून आदर्श लोककल्याणकारी कारभार करणाऱ्या, शेतकऱ्यांना पाठबळ देणाऱ्या तत्वज्ञानी राज्यकर्ती.',
-    image: '/assets/images/real-ahilyabai-color-painting.jpg',
-    fallbackImg: '/assets/images/real-ahilyabai-holkar.jpg',
+    image: '/assets/images/real-ahilyabai-holkar.jpg',
+    fallbackImg: '/assets/images/real-ahilyabai-color-painting.jpg',
     tag: 'लोककल्याणकारी',
     period: '१७२५ – १७९५'
   },
@@ -35,8 +35,8 @@ const INSPIRATIONAL_FIGURES = [
     name: 'डॉ. आनंदीबाई जोशी',
     title: 'भारतातील पहिल्या महिला डॉक्टर (M.D.)',
     desc: 'कठीण परिस्थितीत अमेरिकेत जाऊन वैद्यकीय पदवी संपादन करून भारतीय महिलांसाठी आधुनिक आरोग्य शिक्षणाचा मार्ग खुला करणाऱ्या विदुषी.',
-    image: '/assets/images/historical-anandibai-joshi.jpg',
-    fallbackImg: '/assets/images/women-health-wellness.jpg',
+    image: '/assets/images/real-anandibai-joshi-historical.jpg',
+    fallbackImg: '/assets/images/historical-anandibai-joshi.jpg',
     tag: 'वैद्यकीय प्रणेत्या',
     period: '१८६५ – १८८७'
   }
@@ -204,9 +204,9 @@ export default function WomenEmpowermentPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: 'url(/assets/images/women-empowerment-hero.jpg)',
+          backgroundImage: 'url(/assets/images/real-pratapgad-fort.jpg)',
           backgroundSize: 'cover',
-          backgroundPosition: 'center 25%',
+          backgroundPosition: 'center 40%',
           zIndex: 1
         }} />
 
@@ -217,7 +217,7 @@ export default function WomenEmpowermentPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'linear-gradient(135deg, rgba(131, 24, 67, 0.92) 0%, rgba(190, 24, 93, 0.85) 50%, rgba(199, 56, 0, 0.88) 100%)',
+          background: 'linear-gradient(135deg, rgba(131, 24, 67, 0.90) 0%, rgba(159, 18, 57, 0.85) 50%, rgba(194, 65, 12, 0.88) 100%)',
           zIndex: 2
         }} />
 
@@ -325,11 +325,11 @@ export default function WomenEmpowermentPage() {
       </div>
 
       {/* Inspirational Historical Maratha Women Section with Real Portraits */}
-      <div style={{ maxWidth: '1240px', margin: '-2.5rem auto 3.5rem', padding: '0 1rem', position: 'relative', zIndex: 10 }}>
+      <div style={{ maxWidth: '1240px', margin: '2.5rem auto 3.5rem', padding: '0 1rem', position: 'relative', zIndex: 10 }}>
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '1.25rem'
+          gap: '1.5rem'
         }}>
           {INSPIRATIONAL_FIGURES.map((fig, idx) => (
             <div key={idx} style={{
