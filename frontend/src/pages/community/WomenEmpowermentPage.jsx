@@ -190,22 +190,30 @@ export default function WomenEmpowermentPage() {
         position: 'relative',
         width: '100%',
         maxWidth: '1240px',
-        margin: '1.5rem auto 0',
-        borderRadius: '24px',
-        overflow: 'hidden',
-        boxShadow: '0 20px 40px -10px rgba(0,0,0,0.18)',
-        border: '2px solid rgba(251, 207, 232, 0.6)'
+        margin: '1.25rem auto 0',
+        padding: '0 1rem'
       }}>
-        <img
-          src="/assets/images/women-empowerment-hero.jpg"
-          alt="मराठा सक्षमीकरण: कर्तृत्व, शौर्य आणि सन्मान"
-          style={{
-            width: '100%',
-            height: 'auto',
-            display: 'block',
-            objectFit: 'cover'
-          }}
-        />
+        <div style={{
+          width: '100%',
+          height: 'clamp(260px, 36vw, 420px)',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          boxShadow: '0 16px 36px -10px rgba(0,0,0,0.18)',
+          border: '2px solid rgba(251, 207, 232, 0.6)',
+          position: 'relative'
+        }}>
+          <img
+            src="/assets/images/women-empowerment-hero.jpg"
+            alt="मराठा सक्षमीकरण: कर्तृत्व, शौर्य आणि सन्मान"
+            style={{
+              width: '100%',
+              height: '100%',
+              display: 'block',
+              objectFit: 'cover',
+              objectPosition: 'center 22%'
+            }}
+          />
+        </div>
       </div>
 
       {/* 24/7 Helpline & Empowerment Bar - Positioned cleanly below the banner */}
