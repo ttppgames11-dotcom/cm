@@ -204,20 +204,20 @@ export default function WomenEmpowermentPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: 'url(/assets/images/real-pratapgad-fort.jpg)',
+          backgroundImage: 'url(/assets/images/women-empowerment-hero.jpg)',
           backgroundSize: 'cover',
-          backgroundPosition: 'center 40%',
+          backgroundPosition: 'center 20%',
           zIndex: 1
         }} />
 
-        {/* Sophisticated Dual Gradient Overlay for rich readability */}
+        {/* Light & subtle warm vignette overlay - keeps image vibrant and clear */}
         <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'linear-gradient(135deg, rgba(131, 24, 67, 0.90) 0%, rgba(159, 18, 57, 0.85) 50%, rgba(194, 65, 12, 0.88) 100%)',
+          background: 'linear-gradient(180deg, rgba(30, 10, 15, 0.40) 0%, rgba(50, 15, 25, 0.30) 40%, rgba(20, 5, 10, 0.65) 100%)',
           zIndex: 2
         }} />
 
@@ -227,38 +227,42 @@ export default function WomenEmpowermentPage() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            background: 'rgba(255, 255, 255, 0.22)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.35)',
+            background: 'rgba(255, 255, 255, 0.25)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255, 255, 255, 0.45)',
             padding: '0.45rem 1.4rem',
             borderRadius: '999px',
             fontSize: '0.92rem',
-            fontWeight: 700,
-            marginBottom: '1.25rem',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.15)'
+            fontWeight: 800,
+            marginBottom: '1rem',
+            color: '#fff',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.25)'
           }}>
             <span>🌸</span>
             <span>राजमाता जिजाऊ महिला सक्षमीकरण अभियान | Connect Maratha Women</span>
           </div>
 
           <h1 style={{
-            fontSize: 'clamp(2.1rem, 5.5vw, 3.4rem)',
+            fontSize: 'clamp(2rem, 5vw, 3.2rem)',
             fontWeight: 900,
-            margin: '0.4rem 0 1.2rem',
+            margin: '0.2rem 0 1rem',
             lineHeight: 1.25,
             fontFamily: 'Baloo 2, sans-serif',
-            textShadow: '0 3px 12px rgba(0,0,0,0.45)'
+            color: '#ffffff',
+            textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.7)'
           }}>
             मराठा स्त्रीशक्ती — स्वाभिमान, कर्तृत्व आणि समृद्धी
           </h1>
 
           <p style={{
-            fontSize: '1.2rem',
-            opacity: 0.96,
+            fontSize: '1.15rem',
+            fontWeight: 500,
+            color: '#fff',
             maxWidth: '820px',
-            margin: '0 auto 2.25rem',
-            lineHeight: 1.65,
-            textShadow: '0 1px 4px rgba(0,0,0,0.3)'
+            margin: '0 auto 2rem',
+            lineHeight: 1.6,
+            textShadow: '0 2px 8px rgba(0,0,0,0.85)'
           }}>
             स्वराज्याची पायाभरणी राष्ट्रमाता जिजाऊंच्या प्रेरणेने झाली. मराठा महिलांचे आर्थिक, शैक्षणिक, आरोग्य, कायदेशीर आणि व्यावसायिक सक्षमीकरण घडवण्यासाठी कनेक्ट मराठाचे राज्यव्यापी महाव्यासपीठ.
           </p>
