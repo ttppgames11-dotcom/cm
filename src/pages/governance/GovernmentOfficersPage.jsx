@@ -83,7 +83,8 @@ const officersData = [
     id: 7,
     service: 'नगर विकास',
     name: 'श्री. अमोल जाधव',
-    cadre: 'भारतीय प्रशासकीय सेवा / म्हाडा आयुक्त',
+    image: '/assets/images/officers/officer_tukaram.jpg',
+    cadre: 'भारतीय प्रशासकीय सेवा (IAS - 2012)',
     designation: 'महानगरपालिका अतिरिक्त आयुक्त',
     location: 'मुंबई महानगरपालिका (BMC)',
     department: 'नगर विकास व पायाभूत सुविधा',
@@ -95,13 +96,79 @@ const officersData = [
     id: 8,
     service: 'ग्रामीण विकास',
     name: 'सौ. वैशाली मोरे',
-    cadre: 'महाराष्ट्र नागरी सेवा (Class-I)',
+    image: '/assets/images/officers/officer_ashwini.jpg',
+    cadre: 'महाराष्ट्र नागरी सेवा (MPSC Class-I)',
     designation: 'मुख्य कार्यकारी अधिकारी (CEO)',
     location: 'जिल्हा परिषद, नाशिक',
     department: 'ग्रामविकास व पंचायत राज',
     category: 'राज्यसेवा अधिकारी',
     icon: '🌾',
     contribution: 'महिला स्वयंसहाय्यता गट सक्षमीकरण व आदर्श गाव योजना यशस्वी अंमलबजावणी.'
+  },
+  {
+    id: 9,
+    service: 'IPS',
+    name: 'श्री. मिलिंद भारंबे',
+    image: '/assets/images/officers/officer_vishwas.jpg',
+    cadre: 'भारतीय पोलीस सेवा (IPS - 2006)',
+    designation: 'पोलीस आयुक्त (Commissioner of Police)',
+    location: 'नवी मुंबई, महाराष्ट्र',
+    department: 'गृह व कायदा सुव्यवस्था',
+    category: 'IPS अधिकारी',
+    icon: '🛡️',
+    contribution: 'आधुनिक तंत्रज्ञान व स्मार्ट पोलिसींगद्वारे सुरक्षित शहर संकल्पना.'
+  },
+  {
+    id: 10,
+    service: 'IFS',
+    name: 'श्री. राहुल पाटील',
+    image: '/assets/images/officers/officer_mahesh.jpg',
+    cadre: 'भारतीय वन सेवा (IFS - 2015)',
+    designation: 'उपवनसंरक्षक (DCF), वन्यजीव विभाग',
+    location: 'ताडोबा-अंधारी व्याघ्र प्रकल्प, चंद्रपूर',
+    department: 'पर्यावरण व वन्यजीव संरक्षण',
+    category: 'IFS अधिकारी',
+    icon: '🐅',
+    contribution: 'मानव-वन्यजीव संघर्ष निवारण आणि आदिवासी रोजगार निर्मिती.'
+  },
+  {
+    id: 11,
+    service: 'केंद्र शासन',
+    name: 'श्री. संभाजी जगताप',
+    image: '/assets/images/officers/officer_tukaram.jpg',
+    cadre: 'भारतीय संरक्षण संपदा सेवा (IDÈS)',
+    designation: 'मुख्य कार्यकारी अधिकारी (CEO), छावणी परिषद',
+    location: 'पुणे कॅन्टोन्मेंट बोर्ड / संरक्षण मंत्रालय',
+    department: 'संरक्षण मंत्रालय, भारत सरकार',
+    category: 'केंद्र शासन',
+    icon: '🇮🇳',
+    contribution: 'कॅन्टोन्मेंट परिसरातील डिजिटल सेवा व ऐतिहासिक वारसा जतन प्रकल्प.'
+  },
+  {
+    id: 12,
+    service: 'न्यायिक सेवा',
+    name: 'श्री. धनंजय मोरे',
+    image: '/assets/images/officers/officer_sujata.jpg',
+    cadre: 'महाराष्ट्र उच्च न्यायिक सेवा (DJ & ASJ)',
+    designation: 'प्रधान जिल्हा व सत्र न्यायाधीश',
+    location: 'जिल्हा न्यायालय, छत्रपती संभाजीनगर',
+    department: 'विधी व न्याय विभाग',
+    category: 'इतर',
+    icon: '⚖️',
+    contribution: 'लोकअदालत व जलदगती न्यायालयांद्वारे हजारो प्रलंबित खटल्यांचा गतीने निपटारा.'
+  },
+  {
+    id: 13,
+    service: 'सार्वजनिक आरोग्य',
+    name: 'डॉ. सौ. स्मिता चव्हाण',
+    image: '/assets/images/officers/officer_ashwini.jpg',
+    cadre: 'महाराष्ट्र वैद्यकीय व आरोग्य सेवा (MHS Class-I)',
+    designation: 'जिल्हा शल्यचिकित्सक (Civil Surgeon)',
+    location: 'जिल्हा सामान्य रुग्णालय, सांगली',
+    department: 'सार्वजनिक आरोग्य व कुटुंब कल्याण',
+    category: 'इतर',
+    icon: '🩺',
+    contribution: 'ग्रामीण माता-बाल संगोपन व आपत्कालीन आरोग्य यंत्रणेचे आधुनिकीकरण.'
   }
 ];
 
@@ -141,7 +208,11 @@ export default function GovernmentOfficersPage() {
             icon: o.icon || '🏛️',
             contribution: o.contribution || 'प्रशासकीय सेवा व जनकल्याण'
           }));
-          setOfficersList(formatted);
+          setOfficersList(prev => {
+            const existingIds = new Set(prev.map(p => p.id));
+            const newEntries = formatted.filter(f => !existingIds.has(f.id));
+            return [...newEntries, ...prev];
+          });
         }
       })
       .catch(err => console.warn('Could not load live officers:', err.message));
@@ -307,33 +378,85 @@ export default function GovernmentOfficersPage() {
           </div>
 
           <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCat(cat)}
-                style={{
-                  padding: '7px 18px',
-                  borderRadius: '20px',
-                  border: selectedCat === cat ? '2px solid #1A237E' : '1px solid #E0E0E0',
-                  background: selectedCat === cat ? '#1A237E' : '#FFFFFF',
-                  color: selectedCat === cat ? '#FFFFFF' : '#424242',
-                  fontSize: '0.88rem',
-                  fontWeight: selectedCat === cat ? 700 : 500,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {cat}
-              </button>
-            ))}
+            {categories.map((cat) => {
+              const count = cat === 'सर्व अधिकारी'
+                ? officersList.length
+                : officersList.filter(o => o.category === cat).length;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCat(cat)}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: '20px',
+                    border: selectedCat === cat ? '2px solid #1A237E' : '1px solid #E0E0E0',
+                    background: selectedCat === cat ? '#1A237E' : '#FFFFFF',
+                    color: selectedCat === cat ? '#FFFFFF' : '#424242',
+                    fontSize: '0.9rem',
+                    fontWeight: selectedCat === cat ? 700 : 500,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: selectedCat === cat ? '0 4px 10px rgba(26,35,126,0.25)' : 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <span>{cat}</span>
+                  <span style={{
+                    fontSize: '0.75rem',
+                    padding: '1px 7px',
+                    borderRadius: '10px',
+                    background: selectedCat === cat ? '#FFD54F' : '#F0F0F0',
+                    color: selectedCat === cat ? '#1A237E' : '#616161',
+                    fontWeight: 700
+                  }}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
       {/* Officers Grid */}
       <section style={{ maxWidth: '1180px', margin: '36px auto', padding: '0 16px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '22px' }}>
-          {filtered.map((o) => (
+        {filtered.length === 0 ? (
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            padding: '48px 20px',
+            textAlign: 'center',
+            border: '1px solid #EADBCE',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.04)'
+          }}>
+            <div style={{ fontSize: '3rem', marginBottom: '12px' }}>🏛️</div>
+            <h3 style={{ fontSize: '1.3rem', color: '#1A237E', fontWeight: 700, margin: '0 0 8px' }}>
+              या प्रवर्गात सध्या अधिकारी माहिती उपलब्ध नाही
+            </h3>
+            <p style={{ color: '#666', fontSize: '0.95rem', margin: '0 auto 16px', maxWidth: '500px' }}>
+              आपण स्वतः कर्तव्यदक्ष अधिकाऱ्यांची माहिती जोडून समाजाला मार्गदर्शन करू शकता.
+            </p>
+            <button
+              onClick={() => setSelectedCat('सर्व अधिकारी')}
+              style={{
+                background: '#1A237E',
+                color: '#FFFFFF',
+                border: 'none',
+                padding: '8px 20px',
+                borderRadius: '8px',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+            >
+              सर्व अधिकारी पहा
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '22px' }}>
+            {filtered.map((o) => (
             <div
               key={o.id}
               style={{
@@ -431,6 +554,7 @@ export default function GovernmentOfficersPage() {
             </div>
           ))}
         </div>
+        )}
       </section>
 
       {/* Bottom Highlight */}
