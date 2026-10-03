@@ -8,7 +8,7 @@ const LEADERS = [
     focus: 'किल्ले संवर्धन, मराठा आरक्षण समन्वय, बहुजन ऐक्य',
     party: 'स्वराज्य संघटना / पक्ष',
     icon: '🚩',
-    image: '/assets/images/leaders/leader_sambhaji.jpg',
+    image: '/assets/images/leaders/leader_sambhaji_real.jpg',
     tag: 'राजघराणे व नेतृत्व'
   },
   {
@@ -18,7 +18,7 @@ const LEADERS = [
     focus: 'सातारा विकास, किल्ले जतन, युवक सक्षमीकरण',
     party: 'भाजप / अपक्ष प्रणेता',
     icon: '👑',
-    image: '/assets/images/leaders/leader_udayan.jpg',
+    image: '/assets/images/leaders/leader_udayan_real.jpg',
     tag: 'सातारा गादी'
   },
   {
@@ -28,7 +28,7 @@ const LEADERS = [
     focus: 'पायाभूत सुविधा, मराठा कल्याण योजना, शेतकरी साहाय्य',
     party: 'शिवसेना',
     icon: '🏹',
-    image: '/assets/images/leaders/leader_eknath.jpg',
+    image: '/assets/images/leaders/leader_eknath_real.jpg',
     tag: 'प्रशासक'
   },
   {
@@ -38,7 +38,7 @@ const LEADERS = [
     focus: 'कृषी सहकार चळवळ, जलसंधारण, राष्ट्रीय राजकारण',
     party: 'राष्ट्रवादी काँग्रेस (शरद पवार)',
     icon: '🌾',
-    image: '/assets/images/leaders/leader_sharad.jpg',
+    image: '/assets/images/leaders/leader_sharad_real.jpg',
     tag: 'ज्येष्ठ मुत्सद्दी'
   },
   {
@@ -48,7 +48,7 @@ const LEADERS = [
     focus: 'सकल मराठा आरक्षण, कुणबी दाखले मोहीम व जनसंवाद',
     party: 'मराठा जनआंदोलन',
     icon: '✊',
-    image: '/assets/images/leaders/leader_manoj.jpg',
+    image: '/assets/images/leaders/leader_manoj_real.jpg',
     tag: 'आंदोलन नेतृत्व'
   },
   {
@@ -58,7 +58,7 @@ const LEADERS = [
     focus: 'वित्त नियोजन, सिंचन प्रकल्प, प्रशासकीय गती',
     party: 'राष्ट्रवादी काँग्रेस',
     icon: '⚡',
-    image: '/assets/images/leaders/leader_udayan.jpg',
+    image: '/assets/images/leaders/leader_ajit_real.jpg',
     tag: 'अर्थ व प्रशासन'
   },
   {
@@ -68,7 +68,7 @@ const LEADERS = [
     focus: 'सारथी संस्था निर्मिती, अण्णासाहेब पाटील महामंडळ पुनरुज्जीवन, समृद्धी महामार्ग',
     party: 'भारतीय जनता पक्ष',
     icon: '🏛️',
-    image: '/assets/images/leaders/leader_sambhaji.jpg',
+    image: '/assets/images/leaders/leader_devendra_real.jpg',
     tag: 'धोरणकार'
   },
   {
@@ -78,6 +78,7 @@ const LEADERS = [
     focus: 'सहकारी साखर कारखानदारी, शिक्षण प्रसार, शेतकरी हक्क',
     party: 'भाजप / सहकार नेते',
     icon: '🏭',
+    image: '/assets/images/leaders/leader_radhakrishna_real.jpg',
     tag: 'सहकार महर्षी'
   },
   {
@@ -87,6 +88,7 @@ const LEADERS = [
     focus: 'मराठवाडा विकास, उच्च शिक्षण विस्तार, औद्योगिक विकास',
     party: 'भाजप',
     icon: '🏢',
+    image: '/assets/images/leaders/leader_ashok_real.jpg',
     tag: 'मराठवाडा नेतृत्व'
   }
 ];

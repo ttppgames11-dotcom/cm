@@ -6,14 +6,50 @@ import { validateBusiness, validateBusinessReview, sanitize, isValidPhone, clean
 
 const router = Router();
 
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DB_FILE = path.join(__dirname, '..', 'db.json');
+
 // GET /api/businesses
 // Search businesses by category, district, keywords, ratings
 router.get('/', (req, res) => {
   const { cat, district, search, rating } = req.query;
-  let list = db.getCollection('businesses');
+  let list = [];
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      const data = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+      if (Array.isArray(data.businesses)) {
+        list = data.businesses;
+      }
+    }
+  } catch (e) {
+    list = db.getCollection('businesses');
+  }
+  if (!list || list.length === 0) {
+    list = db.getCollection('businesses');
+  }
 
   if (cat && cat !== 'all') {
-    list = list.filter(b => (b.cat || b.category || '').toLowerCase().includes(cat.toLowerCase()));
+    const catLow = cat.toLowerCase();
+    const catAliases = {
+      'it': ['it', 'सॉफ्टवेअर', 'software', 'technology', 'tech'],
+      'restaurant': ['restaurant', 'भोजनालय', 'रेस्टॉरंट', 'हॉटेल', 'खानावळ', 'food', 'मेजवानी'],
+      'realestate': ['realestate', 'बांधकाम', 'बिल्डर्स', 'इस्टेट', 'इन्फ्रा', 'डेव्हलपर्स'],
+      'manufacturing': ['manufacturing', 'उत्पादन', 'इंजिनिअरिंग', 'फॅब्रिकेशन', 'उद्योग', 'कारखाना'],
+      'travel': ['travel', 'प्रवास', 'पर्यटन', 'ट्रेक', 'टूर्स', 'ट्रेकर्स'],
+      'services': ['services', 'सेवा', 'कायदेशीर', 'कन्सल्टन्सी', 'अकॅडमी', 'सल्ला']
+    };
+    const allowedKeywords = catAliases[catLow] || [catLow];
+    list = list.filter(b => {
+      const bCat = (b.cat || '').toLowerCase();
+      const bCatName = (b.categoryName || '').toLowerCase();
+      const bName = (b.name || '').toLowerCase();
+      return allowedKeywords.some(kw => bCat.includes(kw) || bCatName.includes(kw) || bName.includes(kw));
+    });
   }
 
   if (district && district !== 'सर्व') {
