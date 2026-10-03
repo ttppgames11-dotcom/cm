@@ -184,27 +184,44 @@ export default function SocialWorkersPage() {
     <div style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '5rem' }}>
       {/* Hero Banner */}
       <div style={{
-        background: 'linear-gradient(135deg, rgba(6, 95, 70, 0.90) 0%, rgba(4, 120, 87, 0.88) 100%), url("/assets/images/seva.jpg") center/cover no-repeat',
+        position: 'relative',
+        background: 'linear-gradient(180deg, rgba(6, 78, 59, 0.40) 0%, rgba(4, 120, 87, 0.55) 50%, rgba(6, 78, 59, 0.78) 100%), url("/assets/images/maratha-social-workers-hero.jpg") center 35%/cover no-repeat',
         color: '#fff',
-        padding: '3.5rem 1.5rem',
+        padding: '4rem 1.5rem',
         textAlign: 'center'
       }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div style={{
             display: 'inline-block',
-            background: 'rgba(255,255,255,0.2)',
-            padding: '0.4rem 1.2rem',
+            background: 'rgba(6, 78, 59, 0.65)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            padding: '0.45rem 1.4rem',
             borderRadius: '999px',
-            fontSize: '0.9rem',
-            fontWeight: 600,
-            marginBottom: '1rem'
+            fontSize: '0.92rem',
+            fontWeight: 700,
+            marginBottom: '1rem',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
           }}>
             🤝 सेवा परमो धर्मः | Social Activists & Changemakers
           </div>
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, margin: '0.5rem 0 1rem' }}>
+          <h1 style={{
+            fontSize: 'clamp(2rem, 5vw, 3.1rem)',
+            fontWeight: 900,
+            margin: '0.5rem 0 1rem',
+            textShadow: '0 3px 14px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9)'
+          }}>
             मराठा समाजसेवक आणि कार्यकर्ते
           </h1>
-          <p style={{ fontSize: '1.15rem', opacity: 0.95, maxWidth: '750px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
+          <p style={{
+            fontSize: '1.2rem',
+            opacity: 0.98,
+            maxWidth: '780px',
+            margin: '0 auto 2.2rem',
+            lineHeight: 1.6,
+            fontWeight: 500,
+            textShadow: '0 2px 10px rgba(0,0,0,0.9), 0 1px 2px rgba(0,0,0,0.95)'
+          }}>
             स्वार्थापलीकडे जाऊन समाजातील शेवटच्या घटकासाठी अहोरात्र झटणारे निष्ठावंत मराठा समाजसेवक. त्यांच्या कार्यात आपणही हातभार लावा.
           </p>
 
