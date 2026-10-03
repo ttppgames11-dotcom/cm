@@ -203,30 +203,48 @@ export default function PoliticalLeadersPartiesPage() {
     <div style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '5rem' }}>
       {/* Hero Header */}
       <div style={{
-        background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.92) 0%, rgba(15, 23, 42, 0.90) 100%), url("/assets/images/maratha-kranti-morcha.jpg") center/cover no-repeat',
+        background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.40) 0%, rgba(15, 23, 42, 0.58) 55%, rgba(15, 23, 42, 0.75) 100%), url("/assets/images/maratha-kranti-morcha.jpg") center 30%/cover no-repeat',
         color: '#fff',
-        padding: '3.5rem 1.5rem',
+        padding: '3.8rem 1.5rem 3.2rem',
         textAlign: 'center',
-        borderBottom: '4px solid #f59e0b'
+        borderBottom: '4px solid #f59e0b',
+        boxShadow: 'inset 0 0 100px rgba(0,0,0,0.4)'
       }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{
             display: 'inline-block',
-            background: 'rgba(245, 158, 11, 0.15)',
-            border: '1px solid rgba(245, 158, 11, 0.4)',
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(6px)',
+            border: '1px solid rgba(245, 158, 11, 0.6)',
             color: '#fbbf24',
-            padding: '0.4rem 1.2rem',
+            padding: '0.45rem 1.3rem',
             borderRadius: '999px',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            marginBottom: '1rem'
+            fontSize: '0.88rem',
+            fontWeight: 800,
+            marginBottom: '1rem',
+            letterSpacing: '0.3px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
           }}>
             🏛️ मराठा राजकीय नेतृत्व आणि सामाजिक पक्ष | Political Leadership & Parties
           </div>
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 900, margin: '0.5rem 0 1rem' }}>
+          <h1 style={{
+            fontSize: 'clamp(2rem, 5vw, 3rem)',
+            fontWeight: 900,
+            margin: '0.5rem 0 1rem',
+            color: '#FFFFFF',
+            textShadow: '0 3px 12px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9)'
+          }}>
             मराठा समाजाचे राजकीय सबलीकरण व धोरणात्मक निर्णय
           </h1>
-          <p style={{ fontSize: '1.1rem', color: '#94a3b8', maxWidth: '750px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
+          <p style={{
+            fontSize: '1.15rem',
+            color: '#F8FAFC',
+            maxWidth: '780px',
+            margin: '0 auto 2rem',
+            lineHeight: 1.6,
+            fontWeight: 500,
+            textShadow: '0 2px 8px rgba(0,0,0,0.85)'
+          }}>
             मराठा समाजाच्या विकासासाठी कटिबद्ध असणारे सर्वपक्षीय नेतृत्व, पक्ष, सामाजिक संघटना आणि समाजाच्या प्रमुख धोरणात्मक मागण्यांचे एकात्मिक व्यासपीठ.
           </p>
 
