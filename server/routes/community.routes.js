@@ -6,6 +6,29 @@ import { sanitize } from '../utils/validator.js';
 
 const router = Router();
 
+// Helper to enrich member profiles for likes and comments
+function getMemberProfileSummary(memberId, fallbackName = '', fallbackAvatar = '👤') {
+  if (!memberId) return { id: 'M-ANON', name: fallbackName || 'मराठा बांधव', avatar: fallbackAvatar || '👤', city: 'महाराष्ट्र', kul: 'मराठा' };
+  const member = db.findById('members', memberId);
+  if (member) {
+    return {
+      id: member.id,
+      name: member.name,
+      avatar: member.avatar || '👤',
+      city: member.district || member.city || 'पुणे',
+      kul: member.kul || '९६ कुळी मराठा',
+      role: member.role || 'member'
+    };
+  }
+  return {
+    id: memberId,
+    name: fallbackName || 'मराठा बांधव',
+    avatar: fallbackAvatar || '👤',
+    city: 'महाराष्ट्र',
+    kul: '९६ कुळी मराठा'
+  };
+}
+
 // GET /api/community/posts
 // Community discussion feed (with optional ?groupId= filter)
 router.get('/posts', (req, res) => {
@@ -22,9 +45,34 @@ router.get('/posts', (req, res) => {
       role: 'admin',
       content: 'महाराष्ट्रातील सर्व मराठा उद्योजक, विद्यार्थी व समाजबांधवांचे महासंघाच्या डिजिटल मंचावर हार्दिक स्वागत!',
       likes: 128,
-      likedBy: [],
+      likedBy: [
+        { id: 'CM-96K-001', name: 'अमोल जाधव', avatar: '👨', city: 'पुणे', kul: '९६ कुळी जाधव' },
+        { id: 'CM-96K-002', name: 'प्रिया देशमुख', avatar: '👩', city: 'मुंबई', kul: '९६ कुळी देशमुख' },
+        { id: 'CM-96K-003', name: 'रोहित मोरे', avatar: '🧗', city: 'नाशिक', kul: '९६ कुळी मोरे' },
+        { id: 'CM-96K-004', name: 'महेश कदम', avatar: '👔', city: 'सातारा', kul: '९६ कुळी कदम' },
+        { id: 'CM-96K-005', name: 'विकास गायकवाड', avatar: '🏭', city: 'कोल्हापूर', kul: '९६ कुळी गायकवाड' }
+      ],
       comments: [
-        { id: 'C1', author: 'प्रदीप कदम', text: 'जय जिजाऊ! जय शिवराय!', createdAt: new Date().toISOString() }
+        {
+          id: 'C1',
+          author: 'प्रदीप कदम',
+          authorId: 'CM-96K-004',
+          authorAvatar: '🚩',
+          authorCity: 'सातारा',
+          authorKul: '९६ कुळी कदम',
+          text: 'जय जिजाऊ! जय शिवराय!',
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 'C2',
+          author: 'सुनील मोहिते',
+          authorId: 'CM-96K-006',
+          authorAvatar: '🏗️',
+          authorCity: 'नागपूर',
+          authorKul: '९६ कुळी मोहिते',
+          text: 'सर्व समाजबांधवांसाठी अत्यंत उपयुक्त व कौतुकास्पद उपक्रम!',
+          createdAt: new Date(Date.now() - 3600000).toISOString()
+        }
       ],
       createdAt: new Date().toISOString()
     };
@@ -32,23 +80,57 @@ router.get('/posts', (req, res) => {
     posts = [seedPost];
   }
 
+  // Ensure every post returns structured likedBy and comments with profile metadata
+  const enrichedPosts = posts.map(post => {
+    // Normalise likedBy
+    const rawLikedBy = Array.isArray(post.likedBy) ? post.likedBy : [];
+    const normalizedLikedBy = rawLikedBy.map(item => {
+      if (typeof item === 'object' && item !== null && item.name) {
+        return item;
+      }
+      return getMemberProfileSummary(item);
+    });
+
+    // Normalise comments
+    const rawComments = Array.isArray(post.comments) ? post.comments : [];
+    const normalizedComments = rawComments.map(c => ({
+      id: c.id || `CMT-${Math.random().toString(36).substr(2, 5)}`,
+      author: c.author || c.author_name || 'मराठा सदस्य',
+      authorId: c.authorId || c.author_id || '',
+      authorAvatar: c.authorAvatar || c.avatar || c.author_avatar || '👤',
+      authorCity: c.authorCity || c.city || 'महाराष्ट्र',
+      authorKul: c.authorKul || c.kul || '',
+      text: c.text || '',
+      createdAt: c.createdAt || c.created_at || new Date().toISOString()
+    }));
+
+    return {
+      ...post,
+      text: post.content || post.text,
+      likes_count: post.likes || normalizedLikedBy.length,
+      likedBy: normalizedLikedBy,
+      comments: normalizedComments
+    };
+  });
+
+  let filtered = enrichedPosts;
   if (groupId) {
-    posts = posts.filter(p => p.groupId === groupId);
+    filtered = filtered.filter(p => p.groupId === groupId);
   }
   if (tag) {
-    posts = posts.filter(p => (p.tag || '').toLowerCase() === tag.toLowerCase());
+    filtered = filtered.filter(p => (p.tag || '').toLowerCase() === tag.toLowerCase());
   }
 
-  return sendSuccess(res, 'चर्चा मंच पोस्ट्स प्राप्त झाल्या', { posts, count: posts.length });
+  return sendSuccess(res, 'चर्चा मंच पोस्ट्स प्राप्त झाल्या', { posts: filtered, count: filtered.length });
 });
 
 // POST /api/community/posts
 // Create rich post with media, tag, category
 router.post('/posts', authenticateToken, (req, res) => {
-  const content = sanitize(req.body.content);
-  const mediaUrl = sanitize(req.body.mediaUrl);
+  const content = sanitize(req.body.content || req.body.text);
+  const mediaUrl = sanitize(req.body.mediaUrl || req.body.image);
   const tag = sanitize(req.body.tag);
-  const groupId = req.body.groupId ? sanitize(req.body.groupId) : null;
+  const groupId = req.body.groupId || req.body.group_id ? sanitize(req.body.groupId || req.body.group_id) : null;
 
   if (!content || content.length < 2) {
     return sendError(res, 'कृपया पोस्टचा योग्य मजकूर प्रविष्ट करा (किमान २ अक्षरे).', 'MISSING_CONTENT', 400);
@@ -59,15 +141,23 @@ router.post('/posts', authenticateToken, (req, res) => {
     author: req.user.name,
     authorId: req.user.id,
     avatar: req.user.avatar || '👤',
+    author_name: req.user.name,
+    author_avatar: req.user.avatar || '👤',
+    city: req.user.district || req.user.city || 'पुणे',
+    kul: req.user.kul || '९६ कुळी मराठा',
     role: req.user.role || 'member',
     content,
+    text: content,
     mediaUrl: mediaUrl || '',
+    image: mediaUrl || '',
     tag: tag || 'सामान्य चर्चा',
     groupId,
     likes: 0,
+    likes_count: 0,
     likedBy: [],
     comments: [],
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    created_at: new Date().toISOString()
   };
 
   db.insert('posts', newPost);
@@ -84,12 +174,27 @@ router.post('/posts/:id/like', authenticateToken, (req, res) => {
     return sendError(res, 'पोस्ट सापडली नाही.', 'POST_NOT_FOUND', 404);
   }
 
-  post.likedBy = post.likedBy || [];
-  const index = post.likedBy.indexOf(req.user.id);
+  post.likedBy = Array.isArray(post.likedBy) ? post.likedBy : [];
+  
+  // Find if user already liked (either as ID string or profile object)
+  const index = post.likedBy.findIndex(item => {
+    if (typeof item === 'object' && item !== null) {
+      return String(item.id) === String(req.user.id);
+    }
+    return String(item) === String(req.user.id);
+  });
 
   let liked = false;
   if (index === -1) {
-    post.likedBy.push(req.user.id);
+    // Add current user profile to likedBy
+    const userProfile = {
+      id: req.user.id,
+      name: req.user.name,
+      avatar: req.user.avatar || '👤',
+      city: req.user.district || req.user.city || 'पुणे',
+      kul: req.user.kul || '९६ कुळी मराठा'
+    };
+    post.likedBy.push(userProfile);
     post.likes = (post.likes || 0) + 1;
     liked = true;
   } else {
@@ -98,9 +203,14 @@ router.post('/posts/:id/like', authenticateToken, (req, res) => {
     liked = false;
   }
 
-  db.update('posts', req.params.id, { likes: post.likes, likedBy: post.likedBy });
+  // Ensure post object has uniform likes count
+  post.likes_count = post.likes;
+  db.update('posts', req.params.id, { likes: post.likes, likes_count: post.likes, likedBy: post.likedBy });
+
   return sendSuccess(res, liked ? 'पोस्ट पसंत केली (Liked)' : 'पसंती मागे घेतली (Unliked)', {
     likes: post.likes,
+    likes_count: post.likes,
+    likedBy: post.likedBy,
     liked
   });
 });
@@ -121,12 +231,21 @@ router.post('/posts/:id/comments', authenticateToken, (req, res) => {
   const newComment = {
     id: `CMT-${Date.now().toString().slice(-4)}`,
     author: req.user.name,
+    author_name: req.user.name,
     authorId: req.user.id,
+    author_id: req.user.id,
+    authorAvatar: req.user.avatar || req.body.author_avatar || '👤',
+    author_avatar: req.user.avatar || req.body.author_avatar || '👤',
+    authorCity: req.user.district || req.user.city || 'पुणे',
+    city: req.user.district || req.user.city || 'पुणे',
+    authorKul: req.user.kul || '९६ कुळी मराठा',
+    kul: req.user.kul || '९६ कुळी मराठा',
     text,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    created_at: new Date().toISOString()
   };
 
-  post.comments = post.comments || [];
+  post.comments = Array.isArray(post.comments) ? post.comments : [];
   post.comments.push(newComment);
   db.update('posts', req.params.id, { comments: post.comments });
 
