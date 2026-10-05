@@ -8,7 +8,59 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Yantramanav:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/css/style.css?v=2.2" />
+  <link rel="stylesheet" href="/assets/css/style.css?v=2.3" />
+
+  <style>
+    /* Complete Google Translate Top Banner & Frame Removal */
+    .goog-te-banner-frame,
+    .goog-te-banner-frame.skiptranslate,
+    iframe.goog-te-banner-frame,
+    iframe[id^=":"][id$=".container"],
+    .VIpgJd-ZVi9od-ORHb-OEVmcd,
+    .VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+    .VIpgJd-ZVi9od-aZ2wEe-OiiCO,
+    #goog-gt-tt,
+    .goog-te-balloon-frame,
+    .goog-tooltip,
+    .goog-tooltip:hover {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0px !important;
+      width: 0px !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+    }
+
+    body {
+      top: 0px !important;
+      position: static !important;
+      min-height: 100vh !important;
+    }
+
+    html {
+      top: 0px !important;
+    }
+
+    .goog-text-highlight {
+      background-color: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    #google_translate_element {
+      position: absolute !important;
+      top: -9999px !important;
+      left: -9999px !important;
+      width: 1px !important;
+      height: 1px !important;
+      overflow: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+  </style>
 
   <script type="text/javascript">
     function googleTranslateElementInit() {
@@ -23,6 +75,28 @@
         console.warn('Google translate init error:', e);
       }
     }
+
+    // Keep body.top clean from Google Translate banner offset
+    (function() {
+      function cleanBodyTop() {
+        if (document.body && (document.body.style.top !== '0px' && document.body.style.top !== '')) {
+          document.body.style.top = '0px';
+        }
+        if (document.documentElement && document.documentElement.style.top) {
+          document.documentElement.style.top = '0px';
+        }
+      }
+      if (window.MutationObserver) {
+        window.addEventListener('DOMContentLoaded', function() {
+          cleanBodyTop();
+          var observer = new MutationObserver(function() {
+            cleanBodyTop();
+          });
+          observer.observe(document.body, { attributes: true, attributeFilter: ['style', 'class'] });
+          observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style', 'class'] });
+        });
+      }
+    })();
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </head>
