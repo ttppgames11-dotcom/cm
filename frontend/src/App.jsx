@@ -3,6 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ScopeProvider } from './context/ScopeContext';
 import { SiteContentProvider } from './context/SiteContentContext';
+import { ToastProvider } from './context/ToastContext';
+import { LanguageProvider } from './context/LanguageContext';
 import AppLayout from './components/layout/AppLayout';
 
 // Core React Pages
@@ -220,9 +222,6 @@ const legacyRedirects = [
   { from: '/cm-matrimony.html', to: '/matrimony' },
   { from: '/cm-quiz.html', to: '/quiz' }
 ];
-
-import { ToastProvider } from './context/ToastContext';
-import { LanguageProvider } from './context/LanguageContext';
 
 export default function App() {
   return (
