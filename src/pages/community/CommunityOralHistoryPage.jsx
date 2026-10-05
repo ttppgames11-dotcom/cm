@@ -1,49 +1,189 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { SOURCE_TIERS, CONFIDENCE_LEVELS } from '../../data/heritageKnowledgeGraph';
 
 const INITIAL_COMMUNITY_STORIES = [
   {
-    id: 'comm_1',
-    image: '/assets/images/real-sahyadri-forest.jpg',
-    title: 'किल्ले वासोटा परिसरातील चकवा आख्यायिका व गुराख्यांची लोककथा',
-    author: 'आनंदराव मोरे (जावळी, सातारा)',
-    village: 'बामणोली / वासोटा पायथा',
+    id: 'oral_01',
+    title: 'पाचाड येथील जिजाऊ वाड्याची विहीर व भुयारी पाण्याचा झरा',
+    author: 'बाळकृष्ण मोरे (वय ७८ वर्षे, स्थानिक रहिवासी)',
+    village: 'पाचाड, जि. रायगड',
     category: 'स्थानिक लोककथा / आख्यायिका',
     submissionDate: '१४ ऑगस्ट २०२६',
-    narrative: 'माझ्या पणजोबांच्या सांगण्यानुसार, वासोटा किल्ल्याच्या घनदाट जंगलात रात्रीच्या वेळी चकवा पडायचा. त्या वेळी गावातील वयस्कर लोक झाडांच्या पानांकडे पाहून दिशा ठरवत असत. कोयना खोऱ्यातील शिवकालीन मावळ्यांच्या शौर्याच्या अनेक मौखिक गोष्टी आमच्या भागात आजही शेकोटीभोवती सांगितल्या जातात.',
+    narrative: 'आमच्या आजोबांनी सांगितल्यानुसार, जिजाऊ वाड्यातून गडावरील गुप्त पहारेकऱ्यांना पाणी व संदेश पोहोचवण्यासाठी एका विशिष्ट नैसर्गिक झऱ्याचा वापर केला जाई. आजही त्या विहिरीचे पाणी बाराही महिने अत्यंत स्वच्छ, शीतल आणि गोड राहते.',
+    sourceType: 'पाचाड ग्रामपंचायत दप्तर व स्थानिक मौखिक परंपरा',
+    confidence: CONFIDENCE_LEVELS.COMMUNITY,
+    tier: SOURCE_TIERS.TIER_4,
+    status: 'सत्यापित (Community Verified)'
+  },
+  {
+    id: 'oral_02',
+    title: 'पावनखिंडीच्या युद्धातील घोडखिंडीचे स्थानिक वाटाडे',
+    author: 'तानाजीराव खोत (वय ८२ वर्षे)',
+    village: 'पांढरेपाणी (शाहूवाडी), जि. कोल्हापूर',
+    category: 'स्थानिक लोककथा / आख्यायिका',
+    submissionDate: '२१ जुलै २०२६',
+    narrative: 'बाजीप्रभू देशपांडे आणि शिवा काशिद यांनी सिद्धी जौहरच्या सैन्याला खिंडीत अडवण्यापूर्वी स्थानिक धनगर बांधवांनी जंगलातील चोरवाटा दाखवल्या होत्या. त्या दुर्गम वाटेला आजही स्थानिक गावकरी अभिमानाने "मावळ्यांची वाट" म्हणून संबोधतात.',
+    sourceType: 'विशाळगड परिसर स्थानिक कुटुंब नोंदी व मौखिक गाणी',
+    confidence: CONFIDENCE_LEVELS.COMMUNITY,
+    tier: SOURCE_TIERS.TIER_4,
+    status: 'सत्यापित (Community Verified)'
+  },
+  {
+    id: 'oral_03',
+    title: 'किल्ले वासोटा परिसरातील चकवा आख्यायिका व गुराख्यांची लोककथा',
+    author: 'आनंदराव मोरे (जावळी, सातारा)',
+    village: 'बामणोली / वासोटा पायथा, जि. सातारा',
+    category: 'स्थानिक लोककथा / आख्यायिका',
+    submissionDate: '१४ ऑगस्ट २०२६',
+    narrative: 'माझ्या पणजोबांच्या सांगण्यानुसार, वासोटा किल्ल्याच्या घनदाट जंगलात रात्रीच्या वेळी चकवा पडायचा. त्या वेळी गावातील वयस्कर लोक झाडांच्या पानांकडे व ताऱ्यांकडे पाहून दिशा ठरवत असत. कोयना खोऱ्यातील शिवकालीन मावळ्यांच्या शौर्याच्या अनेक मौखिक गोष्टी आमच्या भागात आजही शेकोटीभोवती रंगतात.',
     sourceType: 'आजोबांकडून ऐकलेली मौखिक परंपरा',
     confidence: CONFIDENCE_LEVELS.COMMUNITY,
     tier: SOURCE_TIERS.TIER_4,
     status: 'समीक्षित (Reviewed by Editorial Team)'
   },
   {
-    id: 'comm_2',
-    image: '/assets/images/real-sindhudurg-fort.jpg',
+    id: 'oral_04',
     title: 'आंगणेवाडी भराडीदेवी मंदिराच्या जत्रेतील कौल लावण्याची १५० वर्षांची परंपरा',
     author: 'सुधाकर आंगणे (मालवण)',
     village: 'आंगणेवाडी, जि. सिंधुदुर्ग',
     category: 'स्थानिक श्रद्धा व परंपरा',
     submissionDate: '२ फेब्रुवारी २०२६',
-    narrative: 'आमच्या गावात भराडीदेवीच्या जत्रेची तारीख पंचांग पाहून ठरत नाही, तर आंगणे कुटुंबीय एकत्र येऊन देवीचा कौल घेतात. कौल मिळाल्यावरच अवघ्या दीड दिवसांची जत्रा जाहीर होते. ही प्रथा आमच्या दप्तरात १८७० सालापासून नोंदवलेली आढळते.',
+    narrative: 'आमच्या गावात भराडीदेवीच्या जत्रेची तारीख पंचांग पाहून ठरत नाही, तर आंगणे कुटुंबीय एकत्र येऊन देवीचा कौल घेतात. कौल मिळाल्यावरच अवघ्या दीड दिवसांची जत्रा जाहीर होते. ही प्रथा आमच्या दप्तरात १८७० सालापासून अखंड नोंदवलेली आढळते.',
     sourceType: 'कौटुंबिक हस्तलिखित नोंदवही व प्रत्यक्ष परंपरा',
     confidence: CONFIDENCE_LEVELS.TRADITIONAL,
     tier: SOURCE_TIERS.TIER_4,
     status: 'समीक्षित (Verified Tradition)'
   },
   {
-    id: 'comm_3',
-    image: '/assets/images/real-farmer-field.jpg',
+    id: 'oral_05',
     title: 'विदर्भातील पोळा सणात बैलांच्या झुलवर काढली जाणारी पारंपरिक चित्रे',
     author: 'गणेशराव देशमुख (अमरावती)',
     village: 'चांदूर बाजार, जि. अमरावती',
     category: 'लोककला व शेती संस्कृती',
     submissionDate: '२० सप्टेंबर २०२५',
-    narrative: 'वऱ्हाडात पोळ्याच्या दिवशी सर्जा-राजाच्या अंगावर हिंगूळ आणि नीळ वापरून मारुती, मोर व सूर्यफुलांची चित्रे हाताने रंगवली जातात. याला ‘तोरण बांधणे’ म्हणतात. ही कला आता हळूहळू लोप पावत आहे, म्हणून त्याचे दस्तऐवजीकरण येथे करत आहे.',
+    narrative: 'वऱ्हाडात पोळ्याच्या दिवशी सर्जा-राजाच्या अंगावर हिंगूळ आणि नीळ वापरून मारुती, मोर व सूर्यफुलांची चित्रे हाताने रंगवली जातात. याला ‘तोरण बांधणे’ म्हणतात. ही कला शेती संस्कृतीतील कृतज्ञतेची अद्वितीय लोकपरंपरा आहे.',
     sourceType: 'स्थानिक शेतकरी कुटुंबातील प्रत्यक्ष अनुभव',
     confidence: CONFIDENCE_LEVELS.COMMUNITY,
     tier: SOURCE_TIERS.TIER_4,
     status: 'समीक्षित'
+  },
+  {
+    id: 'oral_06',
+    title: 'कानबाई उत्सव व तापी खोऱ्यातील मौखिक अहिराणी लोकगीते',
+    author: 'सौ. सुशीलाबाई पाटील (धुळे)',
+    village: 'शिरपूर, जि. धुळे',
+    category: 'लोककला व पारंपरिक खेळ',
+    submissionDate: '१२ ऑगस्ट २०२६',
+    narrative: 'श्रावण महिन्यातील कानबाईच्या उत्सवात खान्देशात रात्रभर जागरण करून तापी मातेचे आणि कानबाईचे अहिराणी बोलीतील मौखिक पद गाईले जातात. हे गीत कोणत्याही पुस्तकात न लिहिता आजीकडून नातीकडे मुखोद्गत पद्धतीने पिढ्यान्पिढ्या चालत आले आहे.',
+    sourceType: 'खान्देशी मौखिक अहिराणी गीते व लोकसंस्कृती',
+    confidence: CONFIDENCE_LEVELS.TRADITIONAL,
+    tier: SOURCE_TIERS.TIER_4,
+    status: 'समीक्षित (Reviewed)'
+  },
+  {
+    id: 'oral_07',
+    title: 'पैठणच्या गोदावरी तीरावरील संतांच्या मौखिक ओव्या व बखर परंपरा',
+    author: 'केशवराव जोशी (पैठण)',
+    village: 'पैठण, जि. छत्रपती संभाजीनगर',
+    category: 'कौटुंबिक बखर / दस्तऐवज',
+    submissionDate: '५ मे २०२६',
+    narrative: 'पैठणमध्ये संत एकनाथ महाराजांच्या वाड्यात पहाटे जात्यावर दळताना गायल्या जाणाऱ्या ओव्या आजही जुन्या घरांमध्ये कानी पडतात. यात पैठणच्या सातवाहन काळापासूनच्या आणि छत्रपती शिवरायांच्या काळातील गोदाकाठच्या लोकजीवनाची अनेक मौखिक वर्णने मिळतात.',
+    sourceType: 'गोदाकाठच्या जात्यावरील ओव्या व मौखिक संग्रह',
+    confidence: CONFIDENCE_LEVELS.COMMUNITY,
+    tier: SOURCE_TIERS.TIER_4,
+    status: 'समीक्षित (Reviewed)'
+  },
+  {
+    id: 'oral_08',
+    title: 'किल्ले पुरंदर व मुरारबाजी देशपांडे यांचे मावळ्यांच्या मुखातील वीरगीत',
+    author: 'रामचंद्र जगताप (वय ७५ वर्षे)',
+    village: 'सासवड / पुरंदर पायथा, जि. पुणे',
+    category: 'स्थानिक लोककथा / आख्यायिका',
+    submissionDate: '१८ जून २०२६',
+    narrative: 'दिलेरखानाविरुद्ध लढताना मुरारबाजींनी दाखवलेल्या अचाट शौर्यावर जुन्या मावळ्यांनी रचलेला एक दुर्मिळ मौखिक पोवाडा आमच्या वाड्यातील जुनी मंडळी खड्या आवाजात गात असत. "नाही झुकणार गड, नाही हटणार पाय" ही त्यातील लोकधून अजूनही पुरंदर खोऱ्यात जिवंत आहे.',
+    sourceType: 'पुरंदर खोऱ्यातील परंपरागत शाहीर परंपरा',
+    confidence: CONFIDENCE_LEVELS.COMMUNITY,
+    tier: SOURCE_TIERS.TIER_4,
+    status: 'सत्यापित (Community Verified)'
+  },
+  {
+    id: 'oral_09',
+    title: 'झाडीपट्टी लोकनाट्य व दंडारची १०० वर्षांची मौखिक परंपरा',
+    author: 'नामदेवराव मेश्राम व बाबाराव बोधले',
+    village: 'आरमोरी, जि. गडचिरोली',
+    category: 'लोककला व पारंपरिक खेळ',
+    submissionDate: '२८ फेब्रुवारी २०२६',
+    narrative: 'विदर्भातील झाडीपट्टी भागात दिवाळीनंतर होणाऱ्या दंडार लोकनाट्यात रामायण-महाभारताच्या प्रसंगांसोबतच गोंडराजे आणि स्थानिक मराठा सरदारांच्या पराक्रमाच्या मौखिक आख्यायिका रात्रभर रंगभूमीवर गायल्या जातात.',
+    sourceType: 'झाडीपट्टी मौखिक संवाद व लोकगीत संग्रह',
+    confidence: CONFIDENCE_LEVELS.COMMUNITY,
+    tier: SOURCE_TIERS.TIER_4,
+    status: 'समीक्षित (Reviewed)'
+  },
+  {
+    id: 'oral_10',
+    title: 'कान्होजी आंग्रे यांच्या आरमारातील दर्यावर्दी आख्यायिका व सागरी पाहरे',
+    author: 'प्रभाकर केळुसकर (वय ८० वर्षे)',
+    village: 'विजयदुर्ग (देवगड), जि. सिंधुदुर्ग',
+    category: 'स्थानिक लोककथा / आख्यायिका',
+    submissionDate: '१० एप्रिल २०२६',
+    narrative: 'विजयदुर्ग आणि कुलाबा किल्ल्याच्या आजूबाजूला समुद्रात खडक कुठे आहेत आणि भरती-ओहोटीत गलबते कशी वळवायची, याच्या खाचखळग्यांची माहिती आंग्र्यांच्या दर्यावर्दींनी मौखिक श्लोक आणि सागरी गाण्यांत साठवली होती, जी खलाशांच्या पिढ्यांनी तोंडपाठ ठेवली होती.',
+    sourceType: 'विजयदुर्ग मच्छीमार व दर्यावर्दी मौखिक स्मृती',
+    confidence: CONFIDENCE_LEVELS.TRADITIONAL,
+    tier: SOURCE_TIERS.TIER_4,
+    status: 'सत्यापित (Community Verified)'
+  },
+  {
+    id: 'oral_11',
+    title: 'शिवकालीन तोफगोळे निर्मितीचा वाई परिसरातील लोहार कारखाना',
+    author: 'संजयराव मोहिते (इतिहास अभ्यासक)',
+    village: 'वाई (कृष्णाकाठ), जि. सातारा',
+    category: 'कौटुंबिक बखर / दस्तऐवज',
+    submissionDate: '२३ सप्टेंबर २०२६',
+    narrative: 'वाई येथील कृष्णा नदीकाठच्या जुन्या पेठेत शिवकाळात तोफांचे लोखंडी गोळे आणि घोड्यांच्या नाला तयार केल्या जात असल्याची नोंद जुन्या बखरीत आढळते. येथील लोहार गल्लीतील जुनी भट्टी आजही इतिहासाची साक्ष देते.',
+    sourceType: 'वाई पेठ मौखिक कुटुंब परंपरा व जुनी दप्तरे',
+    confidence: CONFIDENCE_LEVELS.COMMUNITY,
+    tier: SOURCE_TIERS.TIER_4,
+    status: 'पडताळणी अंतर्गत (Community Review)'
+  },
+  {
+    id: 'oral_12',
+    title: 'तोरणा किल्ल्याच्या झुंजार माचीवरील गुप्त पाण्याचे टाके व पहारेकरी परंपरा',
+    author: 'दत्तात्रय निगडे (वेल्हे, पुणे)',
+    village: 'वेल्हे बुद्रुक, जि. पुणे',
+    category: 'स्थानिक लोककथा / आख्यायिका',
+    submissionDate: '८ मे २०२६',
+    narrative: 'तोष्टा-तोरणावरील झुंजार माचीवर एका अत्यंत अरुंद कातळात बारमाही गोड पाण्याचे गुप्त टाके आहे. शिवाजी महाराजांच्या काळात झुंजार पहारेकरी या टाक्यावर सलग अनेक दिवस पहारा देत असत, अशी मौखिक गाणी वेल्हे खोऱ्यात गुराखी पिढ्यानपिढ्या गातात.',
+    sourceType: 'वेल्हे खोऱ्यातील गुराख्यांची तोंडी परंपरा',
+    confidence: CONFIDENCE_LEVELS.COMMUNITY,
+    tier: SOURCE_TIERS.TIER_4,
+    status: 'सत्यापित (Community Verified)'
+  },
+  {
+    id: 'oral_13',
+    title: 'माहूरच्या रेणुकादेवी गडावरील दीपमाळा प्रज्वलन व गोंधळी परंपरा',
+    author: 'महादेवराव कदम (नांदेड)',
+    village: 'माहूर गड, जि. नांदेड',
+    category: 'ग्रामदैवत पूजा परंपरा',
+    submissionDate: '१५ मार्च २०२६',
+    narrative: 'माहूर गडावर नवरात्रात पारंपरिक गोंधळी घराण्यांकडून संबळ व तुणतुण्याच्या तालावर गायले जाणारे मौखिक जोगवे आणि शक्तिपीठाची आख्यायिका ही केवळ मराठवाड्यातच नव्हे तर संपूर्ण महाराष्ट्रात श्रद्धेचा विषय आहे. यात अनेक जुन्या शिवकालीन वीरांचे चरण समाविष्ट आहेत.',
+    sourceType: 'पारंपरिक माहूर गोंधळी मौखिक पदसंग्रह',
+    confidence: CONFIDENCE_LEVELS.TRADITIONAL,
+    tier: SOURCE_TIERS.TIER_4,
+    status: 'समीक्षित (Reviewed)'
+  },
+  {
+    id: 'oral_14',
+    title: 'सिंधुदुर्ग किल्ल्याच्या तटबंदीतील नारळाच्या खोबऱ्याची व चुन्याची सांधणी',
+    author: 'रत्नाकर सावंत (मालवण)',
+    village: 'किल्ले सिंधुदुर्ग, जि. सिंधुदुर्ग',
+    category: 'स्थानिक लोककथा / आख्यायिका',
+    submissionDate: '२५ जानेवारी २०२६',
+    narrative: 'समुद्राच्या लाटा झेलणाऱ्या सिंधुदुर्गच्या पायाभरणीत चुना, गूळ, शिसे आणि लाख यांसोबतच नारळाच्या खोबऱ्याचे तेल वापरून दगड सांधले गेले, ज्यामुळे ३५० वर्षे लाटांचा मारा सोसूनही ही तटबंदी अभेद्य उभी आहे, अशी दर्यावर्दींची अखंड मौखिक श्रद्धा आहे.',
+    sourceType: 'मालवण बंदर मच्छीमार व स्थानिक रहिवासी मौखिक स्मृती',
+    confidence: CONFIDENCE_LEVELS.COMMUNITY,
+    tier: SOURCE_TIERS.TIER_4,
+    status: 'सत्यापित (Community Verified)'
   }
 ];
 
@@ -52,26 +192,35 @@ export default function CommunityOralHistoryPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // Fetch oral history stories from backend on mount
-  React.useEffect(() => {
+  // Fetch oral history stories from backend on mount & strictly deduplicate
+  useEffect(() => {
     fetch('/api/culture/oral-history')
       .then(res => res.json())
       .then(data => {
         if (data && data.success && Array.isArray(data.data) && data.data.length > 0) {
           const apiStories = data.data.map(item => ({
-            id: item.id,
+            id: item.id || `oral_${Math.random()}`,
             title: item.title,
-            author: item.contributor || item.author,
-            village: `${item.village || ''} (${item.district || ''})`,
-            category: item.tier || 'स्थानिक लोकपरंपरा',
+            author: item.contributor || item.author || 'अनामिक इतिहासप्रेमी',
+            village: item.village ? (item.district ? `${item.village}, जि. ${item.district}` : item.village) : 'महाराष्ट्र',
+            category: item.category || item.tier || 'स्थानिक लोककथा / आख्यायिका',
             submissionDate: item.dateSubmitted || 'सप्टेंबर २०२६',
-            narrative: item.story,
-            sourceType: item.historicalReference || 'मौखिक कुटुंब परंपरा',
+            narrative: item.story || item.narrative,
+            sourceType: item.historicalReference || item.sourceType || 'मौखिक कुटुंब परंपरा',
             confidence: CONFIDENCE_LEVELS.COMMUNITY,
             tier: SOURCE_TIERS.TIER_4,
             status: item.status || 'समीक्षित'
           }));
-          setStories([...apiStories, ...INITIAL_COMMUNITY_STORIES]);
+
+          // Strict deduplication by trimmed title to eliminate repeated entries
+          const map = new Map();
+          [...apiStories, ...INITIAL_COMMUNITY_STORIES].forEach(s => {
+            const key = (s.title || '').trim().toLowerCase();
+            if (key && !map.has(key)) {
+              map.set(key, s);
+            }
+          });
+          setStories(Array.from(map.values()));
         }
       })
       .catch(err => {
@@ -110,8 +259,8 @@ export default function CommunityOralHistoryPage() {
       status: 'संपादकीय पुनरावलोकनाधीन (Under Review)'
     };
 
-    // Optimistic UI update
-    setStories([newStory, ...stories]);
+    // Optimistic UI update without duplicates
+    setStories(prev => [newStory, ...prev.filter(s => s.title !== newStory.title)]);
     setShowSuccessModal(true);
 
     // Persist to backend database
@@ -148,7 +297,7 @@ export default function CommunityOralHistoryPage() {
       
       {/* Hero Header */}
       <section style={{
-        background: "linear-gradient(rgba(124, 29, 5, 0.88), rgba(230, 81, 0, 0.92)), url('/assets/images/apla-maharashtra-gallery.jpg') center/cover no-repeat",
+        background: 'linear-gradient(135deg, #7C1D05 0%, #B91C1C 60%, #E65100 100%)',
         color: '#FFFFFF',
         padding: '48px 20px 36px',
         borderBottom: '4px solid #F59E0B'
@@ -360,7 +509,7 @@ export default function CommunityOralHistoryPage() {
           </div>
         )}
 
-        {/* Community Stories Feed */}
+        {/* Community Stories Feed (Original Single Column Vertical Feed Layout) */}
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <h2 style={{ fontSize: '1.6rem', color: '#7C1D05', fontWeight: 800 }}>
@@ -398,18 +547,18 @@ export default function CommunityOralHistoryPage() {
 
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
                     <span style={{
-                      background: st.confidence.bg,
-                      color: st.confidence.color,
-                      border: `1px solid ${st.confidence.color}`,
+                      background: st.confidence?.bg || '#faf5ff',
+                      color: st.confidence?.color || '#9333ea',
+                      border: `1px solid ${st.confidence?.color || '#d8b4fe'}`,
                       padding: '3px 10px',
                       borderRadius: '20px',
                       fontSize: '0.75rem',
                       fontWeight: 700
                     }}>
-                      {st.confidence.icon} {st.confidence.label}
+                      {st.confidence?.icon || '🟣'} {st.confidence?.label || 'समुदाय योगदान'}
                     </span>
                     <span style={{ fontSize: '0.72rem', color: '#7E22CE', fontWeight: 600 }}>
-                      {st.tier.badge}
+                      {st.tier?.badge || 'Tier 4: लोकपरंपरा'}
                     </span>
                   </div>
                 </div>

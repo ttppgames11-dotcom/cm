@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { SHIVCHARITRA_SERIES } from '../common/GenericArticlePage';
 
 // Complete Detailed Shivcharitra Kathan Episodes Data (15 Parts)
 const SHIVCHARITRA_EPISODES_METADATA = [

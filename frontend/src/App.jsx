@@ -100,6 +100,9 @@ import SocialWorkersPage from './pages/community/SocialWorkersPage';
 import BloodHelpPortalPage from './pages/community/BloodHelpPortalPage';
 import MatrimonyPortalPage from './pages/community/MatrimonyPortalPage';
 
+import ContactPage from './pages/common/ContactPage';
+import HigherEducationPortalPage from './pages/education/HigherEducationPortalPage';
+
 // Maharashtra Culture & Heritage Knowledge Graph (8 Major Pillars)
 import MaharashtraCultureHubPage from './pages/culture/MaharashtraCultureHubPage';
 import MarathiDialectsArchivePage from './pages/culture/MarathiDialectsArchivePage';
@@ -341,7 +344,10 @@ export default function App() {
 
             {/* Jobs, Education & Services */}
             <Route path="/jobs" element={<JobsPortalPage />} />
-            <Route path="/education" element={<JobsPortalPage />} />
+            <Route path="/education" element={<HigherEducationPortalPage />} />
+            <Route path="/higher-education" element={<HigherEducationPortalPage />} />
+            <Route path="/colleges" element={<HigherEducationPortalPage />} />
+            <Route path="/scholarships" element={<HigherEducationPortalPage />} />
             <Route path="/services" element={<JobsPortalPage />} />
             <Route path="/services/booking" element={<MemberProtectedRoute><ServiceBookingPage /></MemberProtectedRoute>} />
             <Route path="/service-booking" element={<MemberProtectedRoute><ServiceBookingPage /></MemberProtectedRoute>} />
@@ -424,7 +430,9 @@ export default function App() {
             <Route path="/why-join" element={<WhyJoinPage />} />
             <Route path="/whytojoin" element={<WhyJoinPage />} />
             <Route path="/benefits" element={<WhyJoinPage />} />
-            <Route path="/contact" element={<GovernancePage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/contact-us" element={<ContactPage />} />
+            <Route path="/helpdesk-contact" element={<ContactPage />} />
             <Route path="/leaders" element={<AboutPage />} />
             <Route path="/achievers" element={<AchieversPage />} />
             <Route path="/blueprint" element={<BlueprintVisionPage />} />

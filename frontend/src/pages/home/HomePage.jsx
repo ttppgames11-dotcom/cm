@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSiteContent } from '../../context/SiteContentContext';
-import { CORE_ENGINES, INTERCONNECTED_ENTITIES, TRUST_STATUS_MAP } from '../../data/maharashtraCoreUniverse';
 
 const heroViews = {
   hero: {
@@ -9,7 +8,7 @@ const heroViews = {
     title: 'छत्रपती शिवाजी महाराज — हिंदवी स्वराज्य संस्थापक',
     desc: 'रयतेचे कल्याण, ३५०+ अभेद्य गडकोट, गनिमी काव्याचे जनक आणि सार्वभौम मराठा साम्राज्याची पायाभरणी करणारे युगपुरुष.',
     link: '/history/shivaji-maharaj',
-    img: '/assets/images/real-shivaji-portrait.jpg'
+    img: '/assets/images/maratha-hero.jpg'
   },
   samrajya: {
     badge: '⚔️ मराठा साम्राज्य',
@@ -30,7 +29,7 @@ const heroViews = {
     title: 'मराठा साम्राज्य विस्तार नकाशा (१७५८)',
     desc: 'पेशवे, शिंदे, होळकर, गायकवाड, भोसले यांच्या मांडलिक राज्यांसह संपूर्ण भारतभर पसरलेले साम्राज्य.',
     link: '/forts',
-    img: '/assets/images/real-maratha-peak-map.jpg'
+    img: '/assets/images/maratha-empire-accurate-map.jpg'
   }
 };
 
@@ -55,16 +54,9 @@ export default function HomePage() {
   const [ecoQuery, setEcoQuery] = useState('');
   const [bgIndex, setBgIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [selectedEntityId, setSelectedEntityId] = useState('raigad');
-  const [activeEngineId, setActiveEngineId] = useState('calendar');
-  const [correctionModalOpen, setCorrectionModalOpen] = useState(false);
-  const [correctionText, setCorrectionText] = useState('');
-  const [correctionSent, setCorrectionSent] = useState(false);
 
   const activeHero = heroViews[heroView];
-  const displayHeroImg = (heroView === 'hero' && getContent('images.heroBanner')) 
-    ? getContent('images.heroBanner') 
-    : activeHero.img;
+  const displayHeroImg = activeHero.img || getContent('images.heroBanner');
 
   // Continuously cycle hero background every 5 seconds
   useEffect(() => {
@@ -107,34 +99,6 @@ export default function HomePage() {
 
   return (
     <div className="home-page-root">
-{/* ========== WAR CRY (living bhagwa flag video banner) ========== */}
-<div className="war-cry-strip" style={{"position":"relative","overflow":"hidden","minHeight":"76px","display":"flex","justifyContent":"center","alignItems":"center","background":"linear-gradient(90deg,#F4511E,#E65100)","color":"#FFFFFF"}}>
-  <video className="war-cry-video" style={{"position":"absolute","top":0,"left":0,"width":"100%","height":"100%","objectFit":"cover","zIndex":0,"pointerEvents":"none","filter":"saturate(1.25) brightness(.92)"}} autoPlay muted loop playsInline aria-hidden="true" poster="/assets/images/real-raigad-panoramic.jpg">
-    <source src="/assets/videos/bhagwa-flag-waving.mp4" type="video/mp4" />
-  </video>
-  <div className="war-cry-overlay" style={{"position":"absolute","inset":0,"zIndex":1,"background":"linear-gradient(90deg,rgba(199,56,0,.88) 0%,rgba(230,81,0,.58) 50%,rgba(199,56,0,.88) 100%)"}}></div>
-  <div className="war-cry-text">
-    <span>🔥</span>
-    <span>{getContent('hero.announcementMarquee', '|| जय भवानी, जय शिवाजी || प्रौढ प्रताप पुरंधर क्षत्रियकुलावतंस सिंहासनाधीश्वर छत्रपती शिवाजी महाराज की जय!')}</span>
-    <span>🔥</span>
-  </div>
-</div>
-
-{/* ========== TODAY ON CONNECT MARATHA (Master Plan Section 8) ========== */}
-<div className="today-ribbon">
-  <div className="today-ribbon-inner">
-    <div style={{"display":"flex","alignItems":"center","gap":"12px","flexWrap":"wrap"}}>
-      <span className="today-pill">📅 आजचा दिवस</span>
-      <span><strong>ऐतिहासिक स्मरण:</strong> १७२८ — पालखेडच्या रणांगणात थोरले बाजीराव पेशवे यांनी निजामाला शरण येण्यास भाग पाडले.</span>
-    </div>
-    <div style={{"display":"flex","alignItems":"center","gap":"14px","fontSize":"0.84rem"}}>
-      <Link to="/calendar" style={{ color: '#FFE082', textDecoration: 'none', borderBottom: '1.5px solid rgba(255, 224, 130, 0.7)', paddingBottom: '1px', fontWeight: '700' }}>⚔️ आजचा इतिहास व पंचांग वाचा →</Link>
-      <span style={{"color":"rgba(255,255,255,0.6)"}}>•</span>
-      <Link to="/calendar" style={{"color":"#FFFFFF","opacity":"0.95","textDecoration":"none"}}>📅 सर्व ३६५ दिवस दिनदर्शिका</Link>
-    </div>
-  </div>
-</div>
-
 {/* ========== HERO SECTION (DYNAMIC CONTINUOUSLY CHANGING BACKGROUND) ========== */}
 <section 
   className="hero"
@@ -189,12 +153,6 @@ export default function HomePage() {
         {getContent('hero.description', 'छत्रपती शिवरायांच्या स्वराज्याची जाज्वल्य निष्ठा, ३५० वर्षांची अखंड शौर्यपरंपरा आणि २१ व्या शतकातील तंत्रज्ञानावर आधारित मराठा समाजाचे राष्ट्रीय डिजिटल व्यासपीठ.')}
       </p>
       <div className="hero-ctas">
-        <Link to="/platform" className="btn btn-primary" style={{ background: 'linear-gradient(135deg, #B45309 0%, #D97706 100%)', border: '1.5px solid #FDE68A', boxShadow: '0 4px 20px rgba(217, 119, 6, 0.5)' }}>
-          🗺️ महाराष्ट्र मास्टर डेटा प्लॅटफॉर्म (50+ Datasets)
-        </Link>
-        <Link to="/universe" className="btn btn-primary" style={{ background: 'linear-gradient(135deg, #7C1D05 0%, #C2410C 100%)', border: '1.5px solid #FED7AA', boxShadow: '0 4px 16px rgba(254, 215, 170, 0.4)' }}>
-          🌌 संपूर्ण महाराष्ट्र महाविश्व (४९ वैशिष्ट्ये)
-        </Link>
         {getContent('buttons.joinMember.visible', true) && (
           <Link to={getContent('buttons.joinMember.link', '/register')} className="btn btn-primary">
             {getContent('buttons.joinMember.label', '🚩 व्यासपीठावर सहभागी व्हा')}
@@ -215,9 +173,6 @@ export default function HomePage() {
             {getContent('buttons.emergencyHelp.label', '🧭 Product Blueprint')}
           </Link>
         )}
-        <Link to="/roles-matrix" className="btn-glass" style={{ border: '1.5px solid #FED7AA', color: '#FFFFFF', fontWeight: 800 }}>
-          ⚖️ ५६ पदे व पात्रता मॅट्रिक्स
-        </Link>
       </div>
       <div className="hero-stats-grid">
         <div className="stat-glass"><b data-countup="350" data-suffix="+">0</b><span>अभ्यासित गड-किल्ले</span></div>
@@ -228,7 +183,17 @@ export default function HomePage() {
     </div>
     <div className="hero-feature-card" data-reveal="right">
       <div className="card-img-wrap">
-        <img src={displayHeroImg} alt={activeHero.title} id="heroCardImg" />
+        <img 
+          src={displayHeroImg} 
+          alt={activeHero.title} 
+          id="heroCardImg" 
+          style={{
+            objectFit: heroView === 'map' ? 'contain' : 'cover',
+            objectPosition: heroView === 'hero' ? 'center 8%' : (heroView === 'map' ? 'center center' : 'center top'),
+            backgroundColor: '#1a0803',
+            padding: heroView === 'map' ? '4px' : '0'
+          }}
+        />
       </div>
       <div className="card-body">
         <span className="card-tag" id="heroBadge">{activeHero.badge}</span>
@@ -249,16 +214,17 @@ export default function HomePage() {
 
   {/* Active Slide Badge & Controller Navigation */}
   <div 
+    className="hero-slider-bar"
     style={{
       position: 'absolute',
       bottom: '16px',
       left: '50%',
       transform: 'translateX(-50%)',
-      zIndex: 3,
+      zIndex: 12,
       display: 'flex',
       alignItems: 'center',
       gap: '12px',
-      background: 'rgba(20,5,5,0.78)',
+      background: 'rgba(20,5,5,0.85)',
       backdropFilter: 'blur(8px)',
       padding: '7px 18px',
       borderRadius: '30px',
@@ -307,558 +273,33 @@ export default function HomePage() {
   </div>
 </section>
 
-{/* ========== 🔥 EXPLORE MAHARASHTRA — ६ मुख्य इंजिन व संपूर्ण ज्ञान ब्रह्मांड (28 MODULES INTERCONNECTED) ========== */}
-<section className="section" style={{ background: '#FFFDF9', padding: '60px 0 68px', borderBottom: '3px solid #FED7AA' }}>
-  <div className="container">
-    {/* Section Header */}
-    <div style={{ textAlign: 'center', maxWidth: '920px', margin: '0 auto 40px' }} data-reveal>
-      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #FFEDD5, #FEF3C7)', color: '#9A3412', border: '1.5px solid #FDBA74', padding: '6px 18px', borderRadius: '30px', fontWeight: 800, fontSize: '0.85rem', marginBottom: '14px', boxShadow: '0 2px 8px rgba(154,52,18,0.08)' }}>
-        <span>🔥</span>
-        <span>EXPLORE MAHARASHTRA • ६ मुख्य प्रणाली (6 CORE ENGINES)</span>
-        <span>🔥</span>
-      </div>
-      <h2 style={{ fontSize: '2.4rem', color: '#7C1D05', fontWeight: 900, lineHeight: 1.25, margin: '0 0 14px' }}>
-        महाराष्ट्र सांस्कृतिक + ऐतिहासिक + समुदाय + व्यवसाय महाव्यासपीठ
-      </h2>
-      <p style={{ fontSize: '1.05rem', color: '#431407', lineHeight: 1.6, margin: 0, opacity: 0.92 }}>
-        केवळ स्वतंत्र वेबपेजेस नव्हे, तर एकमेकांशी जोडलेले सजीव ज्ञानविश्व — 
-        <strong> व्यक्ती ↔ प्रसंग ↔ ठिकाण ↔ गडकोट ↔ मंदिरे ↔ सण ↔ खाद्य ↔ परंपरा ↔ समुदाय ↔ उद्योग</strong>.
-      </p>
+{/* ========== WAR CRY (living bhagwa flag video banner) ========== */}
+<div className="war-cry-strip" style={{"position":"relative","overflow":"hidden","minHeight":"76px","display":"flex","justifyContent":"center","alignItems":"center","background":"linear-gradient(90deg,#F4511E,#E65100)","color":"#FFFFFF"}}>
+  <video className="war-cry-video" style={{"position":"absolute","top":0,"left":0,"width":"100%","height":"100%","objectFit":"cover","zIndex":0,"pointerEvents":"none","filter":"saturate(1.25) brightness(.92)"}} autoPlay muted loop playsInline aria-hidden="true" poster="/assets/images/real-raigad-panoramic.jpg">
+    <source src="/assets/videos/bhagwa-flag-waving.mp4" type="video/mp4" />
+  </video>
+  <div className="war-cry-overlay" style={{"position":"absolute","inset":0,"zIndex":1,"background":"linear-gradient(90deg,rgba(199,56,0,.88) 0%,rgba(230,81,0,.58) 50%,rgba(199,56,0,.88) 100%)"}}></div>
+  <div className="war-cry-text">
+    <span>🔥</span>
+    <span>{getContent('hero.announcementMarquee', '|| जय भवानी, जय शिवाजी || प्रौढ प्रताप पुरंधर क्षत्रियकुलावतंस सिंहासनाधीश्वर छत्रपती शिवाजी महाराज की जय!')}</span>
+    <span>🔥</span>
+  </div>
+</div>
+
+{/* ========== TODAY ON CONNECT MARATHA (Master Plan Section 8) ========== */}
+<div className="today-ribbon">
+  <div className="today-ribbon-inner">
+    <div style={{"display":"flex","alignItems":"center","gap":"12px","flexWrap":"wrap"}}>
+      <span className="today-pill">📅 आजचा दिवस</span>
+      <span><strong>ऐतिहासिक स्मरण:</strong> १७२८ — पालखेडच्या रणांगणात थोरले बाजीराव पेशवे यांनी निजामाला शरण येण्यास भाग पाडले.</span>
     </div>
-
-    {/* 6 CORE ENGINES SELECTOR TABS */}
-    <div style={{ marginBottom: '36px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
-        <h3 style={{ fontSize: '1.25rem', color: '#7C1D05', fontWeight: 800, margin: 0 }}>
-          ⚙️ प्लॅटफॉर्मच्या ६ मुख्य प्रणाली (The 6 Engines):
-        </h3>
-        <Link to="/universe" style={{ color: '#C2410C', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none' }}>
-          सर्व २८ ज्ञान दालने एक्सप्लोर करा →
-        </Link>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
-        {CORE_ENGINES.map((engine) => {
-          const isSelected = activeEngineId === engine.id;
-          return (
-            <div
-              key={engine.id}
-              onClick={() => setActiveEngineId(engine.id)}
-              style={{
-                background: isSelected ? '#FFFFFF' : engine.bg,
-                border: isSelected ? `2.5px solid ${engine.color}` : '1.5px solid rgba(0,0,0,0.08)',
-                borderRadius: '16px',
-                padding: '20px',
-                cursor: 'pointer',
-                transition: 'all 0.25s ease',
-                boxShadow: isSelected ? '0 8px 24px rgba(124, 29, 5, 0.12)' : '0 2px 8px rgba(0,0,0,0.02)',
-                position: 'relative',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between'
-              }}
-            >
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '1.8rem' }}>{engine.icon}</span>
-                  {isSelected && (
-                    <span style={{ background: engine.color, color: '#FFFFFF', padding: '3px 10px', borderRadius: '12px', fontSize: '0.72rem', fontWeight: 800 }}>
-                      सक्रिय इंजिन
-                    </span>
-                  )}
-                </div>
-                <h4 style={{ fontSize: '1.15rem', color: engine.color, fontWeight: 800, margin: '0 0 6px' }}>
-                  {engine.title}
-                </h4>
-                <p style={{ fontSize: '0.84rem', color: '#4B5563', lineHeight: 1.5, margin: '0 0 12px' }}>
-                  {engine.subtitle}
-                </p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '14px' }}>
-                  {engine.modules.map((m, idx) => (
-                    <span key={idx} style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(0,0,0,0.1)', padding: '2px 8px', borderRadius: '6px', fontSize: '0.74rem', color: '#374151', fontWeight: 600 }}>
-                      {m}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <Link
-                to={engine.route}
-                style={{
-                  background: isSelected ? engine.color : 'rgba(0,0,0,0.06)',
-                  color: isSelected ? '#FFFFFF' : '#374151',
-                  textAlign: 'center',
-                  padding: '9px 14px',
-                  borderRadius: '10px',
-                  fontWeight: 700,
-                  fontSize: '0.85rem',
-                  textDecoration: 'none',
-                  display: 'block',
-                  transition: 'background 0.2s ease'
-                }}
-              >
-                इंजिन पोर्टल उघडा →
-              </Link>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-
-    {/* ========================================================================= */}
-    {/* 🌐 MAHARASHTRA KNOWLEDGE GRAPH: LIVE ENTITY RELATIONSHIP TRAVERSAL (FEATURE 24 & 25) */}
-    {/* ========================================================================= */}
-    <div style={{
-      background: '#FFFFFF',
-      border: '2px solid #FED7AA',
-      borderRadius: '24px',
-      padding: '32px 28px',
-      boxShadow: '0 12px 36px rgba(124, 29, 5, 0.08)'
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '24px', borderBottom: '1.5px solid #FFEDD5', paddingBottom: '18px' }}>
-        <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#FEF3C7', color: '#B45309', padding: '4px 12px', borderRadius: '14px', fontSize: '0.78rem', fontWeight: 800, marginBottom: '6px' }}>
-            <span>🌐 FEATURE 24 & 25</span>
-            <span>•</span>
-            <span>MAHARASHTRA KNOWLEDGE GRAPH</span>
-          </div>
-          <h3 style={{ fontSize: '1.7rem', color: '#7C1D05', fontWeight: 900, margin: 0 }}>
-            "एक घटक निवडा ↔ सर्व काही आपोआप जोडले जाईल"
-          </h3>
-          <p style={{ fontSize: '0.92rem', color: '#78350F', margin: '4px 0 0' }}>
-            उदा. रायगडावर क्लिक केल्यास ऐतिहासिक घटना, शिवराय, प्रशासन, मंदिरे, खाद्य, मार्ग आणि स्थानिक व्यवसाय एकत्र दिसतील:
-          </p>
-        </div>
-
-        {/* Action Buttons */}
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => { setCorrectionModalOpen(true); setCorrectionSent(false); }}
-            style={{
-              background: '#FFF7ED',
-              border: '1.5px solid #F97316',
-              color: '#C2410C',
-              padding: '9px 16px',
-              borderRadius: '10px',
-              fontWeight: 700,
-              fontSize: '0.84rem',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            <span>✍️</span>
-            <span>बदल किंवा सुधारणा सुचवा (Suggest Correction)</span>
-          </button>
-
-          <Link
-            to="/history/knowledge-graph"
-            style={{
-              background: '#7C1D05',
-              color: '#FFFFFF',
-              padding: '9px 18px',
-              borderRadius: '10px',
-              fontWeight: 800,
-              fontSize: '0.85rem',
-              textDecoration: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              boxShadow: '0 4px 12px rgba(124, 29, 5, 0.2)'
-            }}
-          >
-            <span>⚡</span>
-            <span>संपूर्ण नॉलेज ग्राफ नकाशा ⛶</span>
-          </Link>
-        </div>
-      </div>
-
-      {/* Entity Chips Selector */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px' }}>
-        {INTERCONNECTED_ENTITIES.map((ent) => {
-          const isSelected = selectedEntityId === ent.id;
-          return (
-            <button
-              key={ent.id}
-              onClick={() => setSelectedEntityId(ent.id)}
-              style={{
-                background: isSelected ? 'linear-gradient(135deg, #7C1D05, #C2410C)' : '#FFFDF9',
-                color: isSelected ? '#FFFFFF' : '#431407',
-                border: isSelected ? '1.5px solid #7C1D05' : '1.5px solid #FED7AA',
-                padding: '8px 16px',
-                borderRadius: '24px',
-                fontWeight: 800,
-                fontSize: '0.86rem',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                boxShadow: isSelected ? '0 4px 12px rgba(124, 29, 5, 0.2)' : 'none',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              <span>{ent.id === 'raigad' ? '🏰' : ent.id === 'shivaji_maharaj' ? '👑' : ent.id === 'sinhagad' ? '⚔️' : ent.id === 'sindhudurg' ? '⚓' : ent.id === 'tukaram_maharaj' ? '🧘' : ent.id === 'puran_poli' ? '🍲' : '👗'}</span>
-              <span>{ent.name}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Selected Entity Showcase */}
-      {(() => {
-        const ent = INTERCONNECTED_ENTITIES.find(e => e.id === selectedEntityId) || INTERCONNECTED_ENTITIES[0];
-        const trust = TRUST_STATUS_MAP[ent.trustStatus] || TRUST_STATUS_MAP.verified;
-        return (
-          <div>
-            {/* Entity Header Banner */}
-            <div style={{
-              background: 'linear-gradient(135deg, #FFF7ED 0%, #FEF3C7 100%)',
-              border: '1.5px solid #FED7AA',
-              borderRadius: '16px',
-              padding: '20px 24px',
-              marginBottom: '24px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '16px'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <img
-                  src={ent.image}
-                  alt={ent.name}
-                  style={{ width: '84px', height: '84px', objectFit: 'cover', borderRadius: '14px', border: '2px solid #F59E0B' }}
-                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/assets/images/real-raigad-panoramic.jpg'; }}
-                />
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                    <span style={{ background: '#7C1D05', color: '#FFFFFF', padding: '2px 8px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800 }}>
-                      {ent.typeBadge}
-                    </span>
-                    <span style={{ background: trust.badgeBg, color: trust.badgeColor, border: `1px solid ${trust.badgeColor}40`, padding: '2px 8px', borderRadius: '6px', fontSize: '0.74rem', fontWeight: 800 }}>
-                      {trust.icon} {trust.label}
-                    </span>
-                  </div>
-                  <h4 style={{ fontSize: '1.5rem', color: '#7C1D05', fontWeight: 900, margin: 0 }}>
-                    {ent.name}
-                  </h4>
-                  <p style={{ fontSize: '0.9rem', color: '#78350F', margin: '4px 0 0', fontWeight: 600 }}>
-                    {ent.tagline}
-                  </p>
-                </div>
-              </div>
-
-              {/* Source Transparency Badge (Feature 26) */}
-              <div style={{ background: '#FFFFFF', padding: '10px 14px', borderRadius: '10px', border: '1px solid #FED7AA', maxWidth: '380px' }}>
-                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#C2410C', textTransform: 'uppercase', marginBottom: '2px' }}>
-                  📜 अधिकृत संदर्भ व पडताळणी:
-                </div>
-                <div style={{ fontSize: '0.82rem', color: '#4B5563', lineHeight: 1.4 }}>
-                  {ent.sourceCitation}
-                </div>
-              </div>
-            </div>
-
-            {/* 10-Point Connected Chain Grid */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-              gap: '14px',
-              marginBottom: '20px'
-            }}>
-              {/* 1. Person */}
-              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
-                  <span>👑</span> <span>१. जोडलेली व्यक्ती (Person):</span>
-                </div>
-                <Link to={ent.connections.person.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
-                  {ent.connections.person.name}
-                </Link>
-                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>{ent.connections.person.role}</span>
-              </div>
-
-              {/* 2. Historical Event */}
-              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
-                  <span>⚔️</span> <span>२. ऐतिहासिक प्रसंग (Event):</span>
-                </div>
-                <Link to={ent.connections.event.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
-                  {ent.connections.event.name}
-                </Link>
-                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>काळ: {ent.connections.event.date}</span>
-              </div>
-
-              {/* 3. Place & Village */}
-              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
-                  <span>📍</span> <span>३. गाव व स्थान (Place):</span>
-                </div>
-                <Link to={ent.connections.place.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
-                  {ent.connections.place.name}
-                </Link>
-                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>जिल्हा: {ent.connections.place.district}</span>
-              </div>
-
-              {/* 4. Temple & Sacred */}
-              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
-                  <span>🛕</span> <span>४. मंदिर व श्रद्धास्थान (Temple):</span>
-                </div>
-                <Link to={ent.connections.temple.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
-                  {ent.connections.temple.name}
-                </Link>
-                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>दैवत: {ent.connections.temple.deity}</span>
-              </div>
-
-              {/* 5. Festival & Jatra */}
-              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
-                  <span>🌺</span> <span>५. सण व उत्सव (Festival):</span>
-                </div>
-                <Link to={ent.connections.festival.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
-                  {ent.connections.festival.name}
-                </Link>
-                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>ऋतू: {ent.connections.festival.season}</span>
-              </div>
-
-              {/* 6. Food Culture */}
-              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
-                  <span>🍲</span> <span>६. खाद्यसंस्कृती (Food):</span>
-                </div>
-                <Link to={ent.connections.food.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
-                  {ent.connections.food.name}
-                </Link>
-                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>प्रदेश: {ent.connections.food.region}</span>
-              </div>
-
-              {/* 7. Tradition & Performing Arts */}
-              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
-                  <span>🎭</span> <span>७. कला व परंपरा (Tradition):</span>
-                </div>
-                <Link to={ent.connections.tradition.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
-                  {ent.connections.tradition.name}
-                </Link>
-                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>लोककला व विधी वारसा</span>
-              </div>
-
-              {/* 8. Heritage Route & Tourism */}
-              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
-                  <span>🧭</span> <span>८. वारसा पर्यटन मार्ग (Route):</span>
-                </div>
-                <Link to={ent.connections.route.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
-                  {ent.connections.route.name}
-                </Link>
-                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>कालावधी: {ent.connections.route.days}</span>
-              </div>
-
-              {/* 9. Books & Documents */}
-              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
-                  <span>📚</span> <span>९. संदर्भ ग्रंथ व पत्रे (Books):</span>
-                </div>
-                <Link to={ent.connections.books.route} style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.95rem', textDecoration: 'none', display: 'block' }}>
-                  {ent.connections.books.title}
-                </Link>
-                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>प्राथमिक व समकालीन दस्तऐवज</span>
-              </div>
-
-              {/* 10. Community & Business */}
-              <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#9A3412', fontWeight: 800, marginBottom: '4px' }}>
-                  <span>🤝</span> <span>१०. समुदाय व उद्योग (Business):</span>
-                </div>
-                <div style={{ color: '#7C1D05', fontWeight: 800, fontSize: '0.92rem' }}>
-                  {ent.connections.business.name}
-                </div>
-                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>{ent.connections.community.name}</span>
-              </div>
-            </div>
-
-            {/* Calendar Connection Bar */}
-            <div style={{
-              background: '#FEF3C7',
-              border: '1.5px solid #FDE68A',
-              borderRadius: '12px',
-              padding: '12px 18px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '10px'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '1.3rem' }}>📅</span>
-                <span style={{ color: '#92400E', fontWeight: 800, fontSize: '0.92rem' }}>
-                  मराठा दिनदर्शिका २.० संदर्भ: {ent.connections.calendarDate.tithi}
-                </span>
-              </div>
-              <Link
-                to={ent.connections.calendarDate.route}
-                style={{
-                  background: '#92400E',
-                  color: '#FFFFFF',
-                  padding: '6px 14px',
-                  borderRadius: '8px',
-                  fontSize: '0.82rem',
-                  fontWeight: 700,
-                  textDecoration: 'none'
-                }}
-              >
-                दिनदर्शिकेत पहा व कॅलेंडरमध्ये जोडा 📅 →
-              </Link>
-            </div>
-          </div>
-        );
-      })()}
+    <div style={{"display":"flex","alignItems":"center","gap":"14px","fontSize":"0.84rem"}}>
+      <Link to="/history/battles" style={{"color":"#FFE082","textDecoration":"underline","fontWeight":"700"}}>⚔️ पालखेड युद्ध इतिहास वाचा →</Link>
+      <span style={{"color":"rgba(255,255,255,0.6)"}}>•</span>
+      <Link to="/history" style={{"color":"#FFFFFF","opacity":"0.95","textDecoration":"none"}}>सर्व ३६५ तिथी सूची</Link>
     </div>
   </div>
-</section>
-
-{/* Suggest Correction Modal */}
-{correctionModalOpen && (
-  <div style={{
-    position: 'fixed',
-    inset: 0,
-    background: 'rgba(0,0,0,0.65)',
-    backdropFilter: 'blur(4px)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 99999,
-    padding: '20px'
-  }}>
-    <div style={{
-      background: '#FFFFFF',
-      borderRadius: '20px',
-      maxWidth: '560px',
-      width: '100%',
-      padding: '28px',
-      boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-      border: '2px solid #FED7AA',
-      position: 'relative'
-    }}>
-      <button
-        onClick={() => setCorrectionModalOpen(false)}
-        style={{
-          position: 'absolute',
-          top: '16px',
-          right: '16px',
-          background: '#F3F4F6',
-          border: 'none',
-          borderRadius: '50%',
-          width: '36px',
-          height: '36px',
-          cursor: 'pointer',
-          fontWeight: 800,
-          fontSize: '1rem'
-        }}
-      >
-        ✕
-      </button>
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-        <span style={{ fontSize: '2rem' }}>✍️</span>
-        <div>
-          <h3 style={{ margin: 0, color: '#7C1D05', fontSize: '1.35rem', fontWeight: 900 }}>
-            बदल किंवा संदर्भ सुधारणा सुचवा
-          </h3>
-          <span style={{ fontSize: '0.8rem', color: '#6B7280' }}>
-            Trust & Verification Engine (Feature 26)
-          </span>
-        </div>
-      </div>
-
-      {correctionSent ? (
-        <div style={{ background: '#DCFCE7', border: '1px solid #86EFAC', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
-          <span style={{ fontSize: '2.5rem' }}>✅</span>
-          <h4 style={{ color: '#166534', margin: '8px 0 4px', fontSize: '1.2rem' }}>सुधारणा नोंदवली गेली!</h4>
-          <p style={{ color: '#15803D', fontSize: '0.88rem', margin: 0 }}>
-            आपल्या संदर्भाची तपासणी इतिहास संशोधक व तज्ज्ञ मंडळ करेल आणि त्यानुसार नोंद अद्ययावत केली जाईल. धन्यवाद!
-          </p>
-          <button
-            onClick={() => setCorrectionModalOpen(false)}
-            style={{
-              marginTop: '16px',
-              background: '#15803D',
-              color: '#FFFFFF',
-              border: 'none',
-              padding: '8px 20px',
-              borderRadius: '8px',
-              fontWeight: 700,
-              cursor: 'pointer'
-            }}
-          >
-            बंद करा
-          </button>
-        </div>
-      ) : (
-        <>
-          <p style={{ fontSize: '0.88rem', color: '#4B5563', lineHeight: 1.5, margin: '0 0 14px' }}>
-            आपल्याकडे या नोंदीबद्दल अधिकृत समकालीन दस्तऐवज, शिलालेख, बखर संदर्भ किंवा छायाचित्र असल्यास कृपया खाली नोंदवा:
-          </p>
-
-          <textarea
-            value={correctionText}
-            onChange={(e) => setCorrectionText(e.target.value)}
-            placeholder="उदा. सभासद बखर पृष्ठ क्र. ४५ नुसार..., किंवा स्थानिक शिलालेख वाचनानुसार..."
-            rows={4}
-            style={{
-              width: '100%',
-              padding: '12px',
-              borderRadius: '10px',
-              border: '1.5px solid #FED7AA',
-              fontSize: '0.92rem',
-              outline: 'none',
-              marginBottom: '16px',
-              resize: 'none'
-            }}
-          />
-
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-            <button
-              onClick={() => setCorrectionModalOpen(false)}
-              style={{
-                background: '#F3F4F6',
-                color: '#374151',
-                border: 'none',
-                padding: '9px 18px',
-                borderRadius: '8px',
-                fontWeight: 700,
-                cursor: 'pointer'
-              }}
-            >
-              रद्द करा
-            </button>
-            <button
-              onClick={() => {
-                if (!correctionText.trim()) {
-                  alert('कृपया सुधारणा किंवा संदर्भ लिहा.');
-                  return;
-                }
-                setCorrectionSent(true);
-              }}
-              style={{
-                background: '#7C1D05',
-                color: '#FFFFFF',
-                border: 'none',
-                padding: '9px 20px',
-                borderRadius: '8px',
-                fontWeight: 800,
-                cursor: 'pointer'
-              }}
-            >
-              सुधारणा पाठवा 📤
-            </button>
-          </div>
-        </>
-      )}
-    </div>
-  </div>
-)}
+</div>
 
 {/* ========== FOUR PRIMARY PILLARS (Section 2 of Master Blueprint) ========== */}
 <section className="section" style={{"background":"#FFFFFF","padding":"54px 0"}}>
@@ -931,8 +372,7 @@ export default function HomePage() {
           <p style={{"fontSize":"0.88rem","color":"rgba(255,248,231,0.95)","marginBottom":"12px"}}>
             बखरी, बुधभूषणम्, आज्ञापत्र, मोडी पत्रे व नकाशे — ५-स्तरीय संपादकीय प्रमाण दर्जा (Level 1 Primary ते Level 5 Oral).
           </p>
-          <Link to="/granthalaya" className="btn btn-primary" style={{"fontSize":"0.8rem","padding":"6px 14px"}}>महाग्रंथालय उघडा →</Link>
-          <Link to="/article/babasaheb-purandare-shivcharitra-kathan-bhag-1" className="btn btn-gold" style={{"fontSize":"0.8rem","padding":"6px 14px","marginLeft":"8px","background":"#DD8A2E","color":"#000","fontWeight":"800","textDecoration":"none","borderRadius":"6px","display":"inline-block"}}>🚩 शिवचरित्र कथन (१० भाग) →</Link>
+          <Link to="/history" className="btn btn-primary" style={{"fontSize":"0.8rem","padding":"6px 14px"}}>महाग्रंथालय उघडा →</Link>
         </div>
       </div>
 
@@ -961,19 +401,19 @@ export default function HomePage() {
       </div>
     </div>
     <div className="portrait-strip" data-reveal-group>
-      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-shivaji-raigad-statue.jpg')"}}>
+      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/maratha-hero.jpg')","backgroundPosition":"center 8%"}}>
         <div className="portrait-body"><h4>छत्रपती शिवाजी महाराज</h4><span>हिंदवी स्वराज्य संस्थापक</span></div>
       </div>
-      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-sambhaji-portrait.png')"}}>
+      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/Sambhaji_Maharaj.avif')","backgroundPosition":"center 8%","backgroundSize":"cover"}}>
         <div className="portrait-body"><h4>छत्रपती संभाजी महाराज</h4><span>अपराजित धर्मवीर</span></div>
       </div>
-      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-bajirao-statue.jpg')"}}>
+      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-bajirao-statue.jpg')","backgroundPosition":"center 4%","backgroundSize":"155%"}}>
         <div className="portrait-body"><h4>श्रीमंत बाजीराव पेशवे</h4><span>अपराजित सेनापती</span></div>
       </div>
-      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-maratha-confederacy-map.png')"}}>
+      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-maratha-confederacy-map.png')","backgroundPosition":"center"}}>
         <div className="portrait-body"><h4>मराठा साम्राज्य विस्तार</h4><span>अटकेपार पसरलेले साम्राज्य</span></div>
       </div>
-      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-raigad-mahadarwaja.jpg')"}}>
+      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-raigad-mahadarwaja.jpg')","backgroundPosition":"center"}}>
         <div className="portrait-body"><h4>दुर्गराज रायगड</h4><span>स्वराज्याची राजधानी</span></div>
       </div>
     </div>
@@ -1000,32 +440,32 @@ export default function HomePage() {
       <Link to="/gallery" className="more-link">सर्व विभाग पहा →</Link>
     </div>
     <div className="quick-grid" data-reveal-group>
-      <Link to="/history" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-army-panoramic.jpg')"}}>
+      <Link to="/history" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-army-panoramic.jpg')","backgroundPosition":"center"}}>
         <span className="icon">⚔️</span>
         <h3>इतिहास</h3>
         <p>साम्राज्य, लढाया, कालपट आणि अस्सल संदर्भ.</p>
       </Link>
-      <Link to="/forts" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-raigad-panoramic.jpg')"}}>
+      <Link to="/forts" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-raigad-panoramic.jpg')","backgroundPosition":"center"}}>
         <span className="icon">🏰</span>
         <h3>गड-किल्ले</h3>
         <p>३५०+ किल्ल्यांचे दालन, माहिती आणि नकाशा.</p>
       </Link>
-      <Link to="/jobs" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-arms.jpg')"}}>
+      <Link to="/jobs" className="quick-card" style={{"backgroundImage":"url('/assets/images/maratha-services-care.jpg')","backgroundPosition":"center"}}>
         <span className="icon">🛠️</span>
         <h3>सेवा</h3>
         <p>समाजातील विश्वासू सेवा व तज्ज्ञ नेटवर्क.</p>
       </Link>
-      <Link to="/directory" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-sambhaji-photo.jpg')"}}>
+      <Link to="/directory" className="quick-card" style={{"backgroundImage":"url('/assets/images/connect-maratha-council.jpg')","backgroundPosition":"center 25%"}}>
         <span className="icon">👥</span>
         <h3>समुदाय</h3>
         <p>बांधव, नेटवर्किंग आणि सामाजिक जोडणी.</p>
       </Link>
-      <Link to="/sangam" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-shaniwar-wada.jpg')"}}>
+      <Link to="/sangam" className="quick-card" style={{"backgroundImage":"url('/assets/images/maratha-business-sangam.jpg')","backgroundPosition":"center 20%","backgroundSize":"cover"}}>
         <span className="icon">🤝</span>
         <h3>व्यवसाय संगम</h3>
         <p>व्यवसाय मंडळे, संधी, भेटी आणि विश्वासाधारित नेटवर्क.</p>
       </Link>
-      <Link to="/business/directory" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-expansion-map.jpg')"}}>
+      <Link to="/business/directory" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-expansion-map.jpg')","backgroundPosition":"center 20%"}}>
         <span className="icon">🔎</span>
         <h3>सर्वत्र शोध</h3>
         <p>सदस्य, व्यवसाय, मंडळे, कार्यक्रम आणि मोहिमा शोधा.</p>
@@ -1067,7 +507,7 @@ export default function HomePage() {
         <span className="card-tag">🚩 स्वराज्याचे प्रतीक</span>
         <h2>आजही अभिमानाने फडकणारा जिवंत भगवा ध्वज</h2>
         <p>"ज्यांचे आरमार त्यांचा समुद्र!" म्हणणाऱ्या छत्रपती शिवरायांचा भगवा ध्वज — शौर्य, स्वाभिमान आणि अखंड स्वराज्याचे प्रतीक. साडेतीनशे वर्षांपूर्वी सह्याद्रीच्या कड्यांवर व गडकोटांवर फडकलेला हा ध्वज आजही प्रत्येक मराठ्याच्या मनात तितक्याच जाज्वल्य निष्ठेने फडकत आहे.</p>
-        <Link to="/culture" className="btn btn-primary" style={{"marginTop":"6px"}}>राजमुद्रा व मराठा चिन्हे पहा →</Link>
+        <Link to="/culture/symbols" className="btn btn-primary" style={{"marginTop":"6px"}}>राजमुद्रा व मराठा चिन्हे पहा →</Link>
       </div>
     </div>
   </div>
@@ -1087,8 +527,8 @@ export default function HomePage() {
       छत्रपती शिवाजी महाराजांनी १६७४ मध्ये स्थापन केलेले सार्वभौम स्वराज्य, छत्रपती संभाजी महाराजांचा अभेद्य लढा, आणि पेशवे, शिंदे, होळकर, भोसले, गायकवाड, पवार घराण्यांनी भारतभर फडकवलेला भगवा ध्वज. १८ व्या शतकात संपूर्ण हिंदुस्थानवर मराठा सत्तेचा एकछत्री दरारा होता.
     </p>
 
-    <div style={{"position":"relative","borderRadius":"var(--radius)","overflow":"hidden","marginBottom":"32px"}} data-reveal="zoom">
-      <img src="/assets/images/real-maratha-sowar.jpg" alt="मराठा सैन्य" style={{"width":"100%","height":"440px","objectFit":"cover","objectPosition":"50% 12%"}} />
+    <div style={{"position":"relative","borderRadius":"var(--radius)","overflow":"hidden","marginBottom":"32px","backgroundColor":"#1a0a04"}} data-reveal="zoom">
+      <img src="/assets/images/bhavya-maratha-army.jpg" alt="मराठा सैन्य" style={{"width":"100%","height":"420px","objectFit":"cover","objectPosition":"center 45%"}} />
       <div style={{"position":"absolute","bottom":"0","left":"0","right":"0","background":"linear-gradient(180deg, transparent 20%, rgba(18,9,3,0.5) 60%, rgba(15,7,3,0.92) 100%)","padding":"32px 24px"}}>
         <span className="card-tag">भव्य दृश्य</span>
         <h3 style={{"color":"#FFFFFF","margin":"8px 0 4px","fontSize":"1.5rem"}}>मराठा सैन्याची अजस्त्र घोडदौड</h3>
@@ -1133,7 +573,7 @@ export default function HomePage() {
           <p>चिलखत, शिरस्त्राण, भाला (बर्ची), ढाल व तलवार सज्ज मराठा घोडेस्वार — ज्यांच्या वेगवान घोडदौडीने मुघल व युरोपीय सत्तांना पराभूत केले.</p>
         </div>
       </div>
-      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-maratha-arms.jpg')","backgroundPosition":"center 25%"}}>
+      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-maratha-arms.jpg')","backgroundPosition":"center 18%","backgroundSize":"cover"}}>
         <div className="card-bg-body">
           <span className="card-tag">शस्त्रागार</span>
           <h4>मराठा शस्त्रास्त्रे व चिलखत संग्रह</h4>
@@ -1214,10 +654,12 @@ export default function HomePage() {
   <div className="container">
     <div className="section-head" data-reveal>
       <div>
-        <span className="eyebrow-sm">वास्तुरचना व लष्करी अभियांत्रिकी</span>
-        <h2>मराठा गडकोट स्थापत्यशास्त्र — त्रिविध वर्गीकरण</h2>
+        <span className="eyebrow-sm">सह्याद्रीचे गडकिल्ले · लष्करी अभियांत्रिकी</span>
+        <h2>सह्याद्रीचे गडकिल्ले — ३५०+ किल्ले व स्थापत्यशास्त्र</h2>
       </div>
-      <Link to="/forts" className="more-link">सर्व ३५०+ किल्ले पाहा →</Link>
+      <Link to="/forts" className="more-link" style={{ background: 'var(--maroon-900)', color: '#FFFFFF', padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 700 }}>
+        सर्व ३५०+ किल्ले पाहा →
+      </Link>
     </div>
     <div className="grid-3" data-reveal-group>
       <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-raigad-panoramic.jpg')","minHeight":"360px"}}>
@@ -1236,7 +678,7 @@ export default function HomePage() {
           <div className="tag-list"><span className="tag">शिशाची जोडणी</span><span className="tag">५२ बुरुज</span><span className="tag">सुरक्षित गोदी</span><span className="tag">गुप्त भुयारी मार्ग</span></div>
         </div>
       </div>
-      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-shaniwar-wada.jpg')","minHeight":"360px"}}>
+      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-ahmednagar-main-gate.jpg')","minHeight":"360px"}}>
         <div className="card-bg-body">
           <span className="card-tag">🏰 भुईकोट</span>
           <h4>भुईकोट (Land / Plain Forts)</h4>
@@ -1298,7 +740,7 @@ export default function HomePage() {
     </div>
     <p className="muted" style={{"marginBottom":"24px"}}>छत्रपती शिवाजी महाराजांनी १६५७ मध्ये कल्याण-भिवंडीत भारताच्या पहिल्या स्वतंत्र आरमाराची पायाभरणी केली. पोर्तुगीज, ब्रिटिश, डच व जंजिऱ्याच्या सिद्दीच्या समुद्री वर्चस्वाला सुरुंग लावून मराठ्यांनी पश्चिम किनारपट्टीवर स्वतःचे निर्विवाद प्रभुत्व प्रस्थापित केले.</p>
     <div className="grid-2" data-reveal-group>
-      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-kanhoji-angre.jpg')","minHeight":"400px"}}>
+      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-kanhoji-angre.jpg')","minHeight":"420px","backgroundPosition":"center 12%","backgroundSize":"cover"}}>
         <div className="card-bg-body">
           <span className="card-tag">दर्यासारंग (Grand Admiral)</span>
           <h4>सरखेल कान्होजी आंग्रे (१६६९ – १७२९)</h4>
@@ -1336,11 +778,16 @@ export default function HomePage() {
       <Link to="/history" className="more-link">सविस्तर इतिहास →</Link>
     </div>
     <p className="muted" style={{"marginBottom":"24px"}}>१४ जानेवारी १७६१ रोजी पानिपतच्या तिसऱ्या युद्धात मोठा आघात सहन केल्यानंतर जगाला वाटले होते की मराठा सत्ता संपली. परंतु अवघ्या १० वर्षांत पेशवे माधवराव, महादजी शिंदे, तुकोजी होळकर आणि नाना फडणवीस यांनी पुन्हा दिल्लीवर भगवा फडकवून मुघल बादशहाला मराठ्यांचे मांडलिक बनवले.</p>
-    <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-maratha-court-1792.jpg')","minHeight":"400px","marginBottom":"32px"}} data-reveal="zoom">
-      <div className="card-bg-body">
+    <div style={{"position":"relative","borderRadius":"var(--radius)","overflow":"hidden","marginBottom":"32px","backgroundColor":"#1a0a04","minHeight":"460px"}} data-reveal="zoom">
+      <img 
+        src="/assets/images/real-maratha-court-1792.jpg" 
+        alt="मराठा राजदरबार १७९२" 
+        style={{"width":"100%","height":"480px","objectFit":"cover","objectPosition":"center 8%","display":"block"}} 
+      />
+      <div style={{"position":"absolute","bottom":"0","left":"0","right":"0","background":"linear-gradient(180deg, transparent 20%, rgba(18,9,3,0.65) 60%, rgba(15,7,3,0.95) 100%)","padding":"28px 24px"}}>
         <span className="card-tag">अस्सल ऐतिहासिक तैलचित्र · १७९२</span>
-        <h4>मराठा राजदरबार (The Maratha Durbar at Pune, 1792)</h4>
-        <p>ब्रिटिश चित्रकार जेम्स वेल्स याने शनिवार वाड्यामध्ये प्रत्यक्ष उपस्थित राहून रेखाटलेले ऐतिहासिक चित्र. यामध्ये पेशवे सवाई माधवराव, कारभारी नाना फडणवीस, महादजी शिंदे आणि मराठा मुत्सद्दी उपस्थित आहेत.</p>
+        <h4 style={{"color":"#FFFFFF","margin":"8px 0 6px","fontSize":"1.35rem"}}>मराठा राजदरबार (The Maratha Durbar at Pune, 1792)</h4>
+        <p style={{"color":"rgba(255,248,231,0.92)","fontSize":".9rem","lineHeight":"1.5","margin":"0"}}>ब्रिटिश चित्रकार जेम्स वेल्स याने शनिवार वाड्यामध्ये प्रत्यक्ष उपस्थित राहून रेखाटलेले ऐतिहासिक चित्र. यामध्ये पेशवे सवाई माधवराव, कारभारी नाना फडणवीस, महादजी शिंदे आणि मराठा मुत्सद्दी उपस्थित आहेत.</p>
       </div>
     </div>
     <div className="grid-3" data-reveal-group>
@@ -1358,7 +805,7 @@ export default function HomePage() {
           <p>युरोपीय इतिहासकारांनी 'मराठ्यांचे मॅकियाव्हेली' संबोधलेले बुद्धिवंत राजकारणी. नारायणराव पेशव्यांच्या हत्येनंतर 'बारभाई कारस्थान' रचून स्वराज्याची धुरा सांभाळली. पहिल्या इंग्रज-मराठा युद्धात इंग्रजांना नमवून 'सालबाईचा तह' घडवून आणला.</p>
         </div>
       </div>
-      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-ahilyabai-holkar.jpg')","minHeight":"360px","backgroundPosition":"center 8%"}}>
+      <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-ahilyabai-holkar.jpg')","minHeight":"380px","backgroundPosition":"center 6%","backgroundSize":"cover"}}>
         <div className="card-bg-body">
           <span className="card-tag">लोकमाता व तत्त्वज्ञ राणी</span>
           <h4>पुण्यश्लोक अहिल्याबाई होळकर</h4>
@@ -1468,7 +915,7 @@ export default function HomePage() {
       <Link to="/history" className="more-link">सर्व इतिहास पाहा →</Link>
     </div>
     <div className="grid-3" data-reveal-group>
-      <Link to="/history/shivaji-maharaj" className="card-bg" style={{"backgroundImage":"url('/assets/images/real-shivaji-portrait.jpg')","minHeight":"320px","backgroundPosition":"center 15%"}}>
+      <Link to="/history/shivaji-maharaj" className="card-bg" style={{"backgroundImage":"url('/assets/images/maratha-hero.jpg')","minHeight":"350px","backgroundPosition":"center 8%","backgroundSize":"cover"}}>
         <div className="card-bg-body">
           <span className="card-tag">हिंदवी स्वराज्य संस्थापक</span>
           <h4>छत्रपती शिवाजी महाराज</h4>
@@ -1476,7 +923,7 @@ export default function HomePage() {
           <span className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>सविस्तर चरित्र वाचा →</span>
         </div>
       </Link>
-      <Link to="/history/sambhaji-maharaj" className="card-bg" style={{"backgroundImage":"url('/assets/images/real-sambhaji-portrait.png')","minHeight":"320px","backgroundPosition":"center 15%"}}>
+      <Link to="/history/sambhaji-maharaj" className="card-bg" style={{"backgroundImage":"url('/assets/images/Sambhaji_Maharaj.avif')","minHeight":"350px","backgroundPosition":"center 8%","backgroundSize":"cover"}}>
         <div className="card-bg-body">
           <span className="card-tag">अपराजित धर्मवीर</span>
           <h4>छत्रपती संभाजी महाराज</h4>
@@ -1484,7 +931,7 @@ export default function HomePage() {
           <span className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>सविस्तर चरित्र वाचा →</span>
         </div>
       </Link>
-      <Link to="/history/bajirao-peshwa" className="card-bg" style={{"backgroundImage":"url('/assets/images/real-bajirao-statue.jpg')","minHeight":"320px","backgroundPosition":"50% 8%"}}>
+      <Link to="/history/bajirao-peshwa" className="card-bg" style={{"backgroundImage":"url('/assets/images/real-bajirao-statue.jpg')","minHeight":"350px","backgroundPosition":"center 3%","backgroundSize":"160%"}}>
         <div className="card-bg-body">
           <span className="card-tag">अपराजित सेनापती</span>
           <h4>श्रीमंत बाजीराव पेशवे</h4>
@@ -1968,7 +1415,7 @@ export default function HomePage() {
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
         </Link>
-        <Link to="/jobs" className="eco-card">
+        <Link to="/education" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🎓</span>
             <div>

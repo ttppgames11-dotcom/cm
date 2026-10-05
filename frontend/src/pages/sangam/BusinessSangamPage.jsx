@@ -1,157 +1,122 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import './sangam.css';
+import CMDB from '../../services/cmdb';
 
-const ENHANCED_CHAPTERS = [
+const HISTORIC_CHAPTERS = [
   {
     id: 'CH01',
     slug: 'pune-shivneri-vyavsay-mandal',
     name: 'Pune Shivneri Business Mandal',
     marathiName: 'पुणे – शिवनेरी व्यवसाय मंडळ',
+    historicTag: 'ऑटोमोटिव्ह, रोबोटिक्स व हेवी मॅन्युफॅक्चरिंग प्लांट (Bhosari)',
     city: 'पुणे',
     district: 'पुणे',
-    territory: 'शिवाजीनगर / कोथरूड / बाणेर',
-    meetingDay: 'दर बुधवार',
-    meetingTime: 'सकाळी ७:१५ वाजता',
-    venue: 'हॉटेल प्रेसिडेंट, प्रभात रोड, पुणे',
+    territory: 'पुणे पश्चिम व उत्तर (भोसरी / चाकण MIDC / हिंजवडी)',
+    meetingDay: 'प्रत्येक बुधवार',
+    meetingTime: 'सकाळी ७:३० ते ९:००',
+    venue: 'हॉटेल प्राइड एक्झिक्युटिव्ह, शिवाजीनगर, पुणे',
     capacity: 40,
-    currentMembers: 32,
     openSeats: 8,
-    visitors: 19,
-    monthlyBusiness: 4875000,
-    monthlyOpportunities: 47,
-    totalClosedValue: 18500000,
-    openCategories: ['आर्किटेक्ट', 'चार्टर्ड अकाउंटंट (CA)', 'सोलर एनर्जी कन्सल्टंट', 'कॉर्पोरेट वकील', 'डिजिटल मार्केटिंग']
+    visitors: 24,
+    monthlyBusiness: 5475000,
+    monthlyOpportunities: 56,
+    totalClosedValue: 24500000,
+    image: '/assets/images/sangam-ch-pune.jpg', // पुणे ऑटो व रोबोटिक्स मॅन्युफॅक्चरिंग प्लांट
+    specialties: ['IT व सॉफ्टवेअर', 'ऑटो कॉम्पोनंट्स', 'बांधकाम व इन्फ्रा', 'फायनान्शिअल कन्सल्टिंग'],
+    coordinator: 'विक्रमसिंह जाधव (अध्यक्ष)',
+    phone: '+91 98220 14455'
   },
   {
     id: 'CH02',
     slug: 'kolhapur-raigad-vyavsay-mandal',
     name: 'Kolhapur Raigad Business Mandal',
     marathiName: 'कोल्हापूर – रायगड व्यवसाय मंडळ',
+    historicTag: 'फाउंड्री, मोल्टन मेटल कास्टिंग व हेवी इंडस्ट्री (Shiroli MIDC)',
     city: 'कोल्हापूर',
     district: 'कोल्हापूर',
-    territory: 'ताराबाई पार्क / शाहूपुरी',
-    meetingDay: 'दर शुक्रवार',
-    meetingTime: 'सकाळी ७:४५ वाजता',
-    venue: 'हॉटेल सयाजी, कोल्हापूर',
+    territory: 'कोल्हापूर मध्य व औद्योगिक क्षेत्र (शाहूपुरी / शिरोली MIDC)',
+    meetingDay: 'प्रत्येक शुक्रवार',
+    meetingTime: 'सकाळी ८:०० ते ९:३०',
+    venue: 'हॉटेल सयाजी, कावळा नाका, कोल्हापूर',
     capacity: 35,
-    currentMembers: 26,
-    openSeats: 9,
-    visitors: 14,
-    monthlyBusiness: 3410000,
-    monthlyOpportunities: 38,
-    totalClosedValue: 14600000,
-    openCategories: ['सिव्हिल कॉन्ट्रॅक्टर', 'अ‍ॅग्रो एक्सपोर्टर', 'हॉस्पिटॅलिटी / केटरिंग', 'इंटीरियर डिझायनर', 'वेअरहाऊसिंग']
+    openSeats: 7,
+    visitors: 18,
+    monthlyBusiness: 3810000,
+    monthlyOpportunities: 42,
+    totalClosedValue: 16800000,
+    image: '/assets/images/sangam-ch-kolhapur.jpg', // कोल्हापूर हेवी फाउंड्री व मोल्टन कास्टिंग प्लांट
+    specialties: ['फाउंड्री व कास्टिंग', 'टेक्स्टाईल व गारमेंट', 'ॲग्रो प्रोसेसिंग', 'लॉजिस्टिक्स'],
+    coordinator: 'उदयसिंह घाटगे (संयोजक)',
+    phone: '+91 98230 45566'
   },
   {
     id: 'CH03',
     slug: 'nashik-jijau-vyavsay-sangam',
     name: 'Nashik Jijau Business Sangam',
     marathiName: 'नाशिक – जिजाऊ व्यवसाय संगम',
+    historicTag: 'कृषी अवजारे, ट्रॅक्टर व ऑटो मॅन्युफॅक्चरिंग हब (Ambad MIDC)',
     city: 'नाशिक',
     district: 'नाशिक',
-    territory: 'गंगापूर रोड / कॉलेज रोड',
-    meetingDay: 'दर मंगळवार',
-    meetingTime: 'सकाळी ७:०० वाजता',
-    venue: 'हॉटेल एक्सप्रेस इन, पाथर्डी फाटा, नाशिक',
-    capacity: 40,
-    currentMembers: 34,
-    openSeats: 6,
-    visitors: 23,
-    monthlyBusiness: 6240000,
-    monthlyOpportunities: 58,
-    totalClosedValue: 22400000,
-    openCategories: ['फार्मा मॅन्युफॅक्चरर', 'पॅकेजिंग इंडस्ट्री', 'सीए / टॅक्स कन्सल्टंट', 'ऑटोमोबाईल सर्व्हिस', 'इव्हेंट मॅनेजमेंट']
+    territory: 'नाशिक मध्य (गंगापूर रोड / सातपूर / अंबड MIDC)',
+    meetingDay: 'प्रत्येक मंगळवार',
+    meetingTime: 'सकाळी ७:०० ते ८:३०',
+    venue: 'द गेटवे हॉटेल, अंबड, नाशिक',
+    capacity: 42,
+    openSeats: 5,
+    visitors: 28,
+    monthlyBusiness: 6840000,
+    monthlyOpportunities: 64,
+    totalClosedValue: 28400000,
+    image: '/assets/images/sangam-ch-nashik.jpg', // नाशिक कृषी अवजारे व मशिनरी मॅन्युफॅक्चरिंग प्लांट
+    specialties: ['ॲग्रो मॅन्युफॅक्चरिंग', 'वाइनरी व फूड प्रोसेसिंग', 'रिअल इस्टेट', 'ट्रेडमार्क व लीगल'],
+    coordinator: 'अमोलराव शिंदे (अध्यक्ष)',
+    phone: '+91 98902 33441'
   },
   {
     id: 'CH04',
-    slug: 'mumbai-thane-pratapgad-mandal',
-    name: 'Mumbai-Thane Pratapgad Mandal',
-    marathiName: 'ठाणे – प्रतापगड व्यवसाय मंडळ',
-    city: 'ठाणे',
-    district: 'ठाणे / मुंबई',
-    territory: 'घोडबंदर रोड / वागळे इस्टेट',
-    meetingDay: 'दर गुरुवार',
-    meetingTime: 'सकाळी ७:३० वाजता',
-    venue: 'द ठाणे क्लब, तीन हात नाका, ठाणे',
-    capacity: 45,
-    currentMembers: 38,
-    openSeats: 7,
-    visitors: 27,
-    monthlyBusiness: 7850000,
-    monthlyOpportunities: 64,
-    totalClosedValue: 29800000,
-    openCategories: ['रिअल इस्टेट ब्रोकर', 'लॉजिस्टिक्स & फ्लीट', 'आयटी सॉफ्टवेअर', 'इंटिरियर टर्नकी', 'फायनान्शिअल प्लॅनर']
+    slug: 'csmb-daulatabad-vyavsay-mandal',
+    name: 'CSMB Daulatabad Business Chapter',
+    marathiName: 'संभाजीनगर – दौलताबाद व्यवसाय मंडळ',
+    historicTag: 'प्रिसिजन CNC, हेवी इंजिनिअरिंग व फॅब्रिकेशन (Waluj MIDC)',
+    city: 'छत्रपती संभाजीनगर',
+    district: 'छत्रपती संभाजीनगर',
+    territory: 'संभाजीनगर (जालना रोड / सिडको / वाळूज MIDC / शेंद्रा)',
+    meetingDay: 'प्रत्येक गुरुवार',
+    meetingTime: 'सकाळी ७:३० ते ९:००',
+    venue: 'हॉटेल रामा इंटरनॅशनल, चिकलठाणा',
+    capacity: 36,
+    openSeats: 9,
+    visitors: 16,
+    monthlyBusiness: 4250000,
+    monthlyOpportunities: 38,
+    totalClosedValue: 19200000,
+    image: '/assets/images/sangam-ch-csmb.jpg', // संभाजीनगर हेवी इंजिनिअरिंग व CNC मॅन्युफॅक्चरिंग वर्कशॉप
+    specialties: ['फार्मास्युटिकल्स', 'ऑटो कॉम्पोनंट्स', 'सोलर एनर्जी', 'प्रिसिजन सीएनसी मशिनिंग'],
+    coordinator: 'संजयराव देशमुख (अध्यक्ष)',
+    phone: '+91 98224 88712'
   },
   {
     id: 'CH05',
-    slug: 'sambhajinagar-devgiri-mandal',
-    name: 'Chh. Sambhajinagar Devgiri Mandal',
-    marathiName: 'छ. संभाजीनगर – देवगिरी व्यवसाय मंडळ',
-    city: 'छत्रपती संभाजीनगर',
-    district: 'छत्रपती संभाजीनगर',
-    territory: 'जालना रोड / वाळूज MIDC',
-    meetingDay: 'दर शनिवार',
-    meetingTime: 'सकाळी ८:०० वाजता',
-    venue: 'हॉटेल रामा इंटरनॅशनल, जालना रोड',
-    capacity: 35,
-    currentMembers: 25,
-    openSeats: 10,
-    visitors: 16,
-    monthlyBusiness: 3150000,
-    monthlyOpportunities: 31,
-    totalClosedValue: 11900000,
-    openCategories: ['ऑटो कंपोनंट्स', 'सोलर इन्स्टॉलेशन', 'अन्न प्रक्रिया', 'हॉस्पिटल इक्विपमेंट्स', 'लेबर कॉन्ट्रॅक्टर']
-  },
-  {
-    id: 'CH06',
-    slug: 'nagpur-bhosale-sangam',
-    name: 'Nagpur Bhosale Business Sangam',
-    marathiName: 'नागपूर – भोसले व्यवसाय संगम',
-    city: 'नागपूर',
-    district: 'नागपूर',
-    territory: 'धरमपेठ / वर्धा रोड / बुटीबोरी MIDC',
-    meetingDay: 'दर सोमवार',
-    meetingTime: 'सकाळी ७:३० वाजता',
-    venue: 'हॉटेल सेंटर पॉईंट, रामदासपेठ, नागपूर',
-    capacity: 35,
-    currentMembers: 24,
-    openSeats: 11,
-    visitors: 15,
-    monthlyBusiness: 2980000,
-    monthlyOpportunities: 29,
-    totalClosedValue: 10500000,
-    openCategories: ['मायनिंग इक्विपमेंट्स', 'लॉजिस्टिक्स & गोडाऊन', 'सॉफ्टवेअर डेव्हलपमेंट', 'औद्योगिक बांधकाम', 'कापूस व जिनिंग']
-  }
-];
-
-const SUCCESS_REFERRALS = [
-  {
-    id: 'DEAL-01',
-    chapter: 'पुणे – शिवनेरी मंडळ',
-    from: 'राजेश कदम (कदम कन्स्ट्रक्शन्स)',
-    to: 'संजय माने (माने इंजिनिअरिंग)',
-    deal: 'औद्योगिक वेअरहाऊस सोलर पीईबी रूफिंग कंत्राट',
-    value: '₹२८,५०,०००',
-    timeAgo: '२ दिवसांपूर्वी'
-  },
-  {
-    id: 'DEAL-02',
-    chapter: 'ठाणे – प्रतापगड मंडळ',
-    from: 'अमित मोरे (मोरे इन्फ्रा)',
-    to: 'नितीन जाधव (जाधव इंटीरियर्स)',
-    deal: '३२ निवासी सदनिकांचे संपूर्ण मॉड्युलर किचन',
-    value: '₹४२,००,०००',
-    timeAgo: 'काल'
-  },
-  {
-    id: 'DEAL-03',
-    chapter: 'नाशिक – जिजाऊ संगम',
-    from: 'सचिन घोरपडे (घोरपडे कोल्ड स्टोरेज)',
-    to: 'गणेश मोहिते (मोहिते ऑटोमेशन)',
-    deal: 'द्राक्ष निर्यात शीतगृह ऑटोमेशन सिस्टीम',
-    value: '₹१६,२०,०००',
-    timeAgo: '४ दिवसांपूर्वी'
+    slug: 'thane-mumbai-pratapgad-sangam',
+    name: 'Thane Mumbai Pratapgad Business Sangam',
+    marathiName: 'ठाणे-मुंबई – प्रतापगड व्यवसाय संगम',
+    historicTag: 'अत्याधुनिक फूड प्रोसेसिंग व ऑटोमेटेड इंडस्ट्रिअल प्लांट',
+    city: 'ठाणे / मुंबई',
+    district: 'ठाणे',
+    territory: 'ठाणे-नवी मुंबई (वागळे इस्टेट / वाशी / बेलापूर CBD)',
+    meetingDay: 'प्रत्येक शनिवार',
+    meetingTime: 'सकाळी ८:०० ते ९:३०',
+    venue: 'हॉटेल टिप टॉप प्लाझा, एलबीएस रोड, ठाणे',
+    capacity: 45,
+    openSeats: 6,
+    visitors: 32,
+    monthlyBusiness: 8920000,
+    monthlyOpportunities: 72,
+    totalClosedValue: 39500000,
+    image: '/assets/images/sangam-ch-thane.jpg', // फूड प्रोसेसिंग व ऑटोमेटेड मॅन्युफॅक्चरिंग प्लांट
+    specialties: ['कॉर्पोरेट टॅक्स व CA', 'फिनटेक व आयटी', 'कमर्शियल रिअल इस्टेट', 'लक्झरी हॉस्पिटॅलिटी'],
+    coordinator: 'ॲड. नितीन सावंत (संयोजक)',
+    phone: '+91 98205 99123'
   }
 ];
 
@@ -167,522 +132,689 @@ function formatCurrency(amount) {
 }
 
 export default function BusinessSangamPage() {
-  const [chapters] = useState(ENHANCED_CHAPTERS);
-  const [selectedCity, setSelectedCity] = useState('ALL');
+  const [chapters, setChapters] = useState(HISTORIC_CHAPTERS);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCity, setSelectedCity] = useState('all');
 
-  // Modals state
-  const [activeVisitorModal, setActiveVisitorModal] = useState(null);
-  const [visitorForm, setVisitorForm] = useState({ name: '', phone: '', business: '', category: '' });
-  const [visitorSuccess, setVisitorSuccess] = useState(false);
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.CMDB && window.CMDB.getChapters) {
+      const dbChapters = window.CMDB.getChapters();
+      if (dbChapters && dbChapters.length > 0) {
+        setChapters(HISTORIC_CHAPTERS);
+      }
+    }
+  }, []);
 
-  const [referralModalOpen, setReferralModalOpen] = useState(false);
-  const [referralForm, setReferralForm] = useState({ from: '', toChapter: 'CH01', clientName: '', requirement: '', value: '' });
-  const [referralSuccess, setReferralSuccess] = useState(false);
-
-  // Totals
-  const totalStats = chapters.reduce(
+  const totals = chapters.reduce(
     (acc, ch) => {
-      acc.members += ch.currentMembers;
-      acc.business += ch.totalClosedValue;
-      acc.opportunities += ch.monthlyOpportunities;
+      acc.members += (ch.capacity || 30) - (ch.openSeats || 0);
+      acc.business += ch.totalClosedValue || 0;
+      acc.opportunities += ch.monthlyOpportunities || 0;
       return acc;
     },
     { members: 0, business: 0, opportunities: 0 }
   );
 
-  // Filtered Chapters
+  const cities = ['all', ...Array.from(new Set(chapters.map(c => c.city)))];
+
   const filteredChapters = chapters.filter((ch) => {
-    const matchCity = selectedCity === 'ALL' || ch.city.includes(selectedCity) || ch.district.includes(selectedCity);
-    if (!matchCity) return false;
-    if (!searchQuery.trim()) return true;
-    const q = searchQuery.toLowerCase().trim();
-    const hay = `${ch.marathiName} ${ch.name} ${ch.city} ${ch.territory} ${ch.openCategories.join(' ')}`.toLowerCase();
-    return hay.includes(q);
+    const matchCity = selectedCity === 'all' || ch.city === selectedCity;
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return matchCity;
+    const hay = `${ch.marathiName || ''} ${ch.name || ''} ${ch.city || ''} ${ch.territory || ''} ${ch.coordinator || ''} ${ch.historicTag || ''}`.toLowerCase();
+    return matchCity && hay.includes(q);
   });
 
-  const handleVisitorSubmit = (e) => {
-    e.preventDefault();
-    if (!visitorForm.name || !visitorForm.phone) return;
-    setVisitorSuccess(true);
-    setTimeout(() => {
-      setVisitorSuccess(false);
-      setActiveVisitorModal(null);
-      setVisitorForm({ name: '', phone: '', business: '', category: '' });
-    }, 3000);
-  };
-
-  const handleReferralSubmit = (e) => {
-    e.preventDefault();
-    if (!referralForm.clientName || !referralForm.requirement) return;
-    setReferralSuccess(true);
-    setTimeout(() => {
-      setReferralSuccess(false);
-      setReferralModalOpen(false);
-      setReferralForm({ from: '', toChapter: 'CH01', clientName: '', requirement: '', value: '' });
-    }, 3000);
-  };
-
   return (
-    <div className="sangam-page-wrapper">
-      
-      {/* 1. Live Business Ticker */}
-      <div className="sangam-ticker-bar">
-        <div className="sangam-ticker-content">
-          <span className="sangam-ticker-badge">⚡ LIVE B2B TICKER</span>
-          <span>
-            <strong>पुणे शिवनेरी:</strong> ₹२८.५ लाखांचा सोलर करार पूर्ण • <strong>ठाणे प्रतापगड:</strong> ₹४२ लाखांचे मॉड्युलर किचन कंत्राट • <strong>नाशिक जिजाऊ:</strong> ₹१६.२ लाखांचे शीतगृह ऑटोमेशन
-          </span>
-        </div>
-        <div style={{ display: 'flex', gap: '14px', fontSize: '0.78rem' }}>
-          <span>📞 B2B हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
-          <Link to="/meetings" style={{ color: '#FDE68A', textDecoration: 'underline' }}>१-टू-१ बैठका</Link>
+    <div style={{ background: '#FAF7F2', minHeight: '100vh', color: '#1B2430' }}>
+      {/* Topbar strip with authentic heritage branding */}
+      <div style={{ background: '#7A1C08', color: '#FFF8E7', borderBottom: '1px solid rgba(218,165,32,0.3)', padding: '7px 0', fontSize: '0.82rem' }}>
+        <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ color: '#F6B800', fontWeight: 800 }}>🚩 ओळखीतून संबंध · संबंधातून विश्वास · विश्वासातून स्वराज्य व्यापार</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <span>📞 व्यवसाय कक्ष: <strong style={{ color: '#FFF' }}>१८००-१२३-१६७४</strong></span>
+            <span>|</span>
+            <Link to="/contact" style={{ color: '#F6B800', textDecoration: 'none', fontWeight: 600 }}>
+              संपर्क व थेट सहाय्यता →
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* 2. Royal & High-Impact Hero Banner */}
-      <section className="sangam-hero">
-        <div className="sangam-hero-inner">
-          <div className="sangam-hero-eyebrow">
-            <span>🚩</span>
-            <span>अखिल भारतीय मराठा व्यवसाय महासंघ • BNI-Style Networking Hub</span>
-          </div>
+      {/* COMPACT HERO BANNER (Balanced width, authentic Maharashtrian business summit photo) */}
+      <div style={{ position: 'relative', overflow: 'hidden', background: '#0e1118' }}>
+        <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '32px 20px', position: 'relative', zIndex: 2 }}>
+          <div
+            style={{
+              position: 'relative',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              boxShadow: '0 20px 45px rgba(0,0,0,0.35)',
+              border: '1px solid rgba(246, 184, 0, 0.25)'
+            }}
+          >
+            {/* Background: Authentic Maratha Business Summit / Council */}
+            <img
+              src="/assets/images/maratha-business-sangam.jpg"
+              alt="Connect Maratha व्यवसाय संगम परिषद"
+              style={{
+                width: '100%',
+                height: '340px',
+                objectFit: 'cover',
+                display: 'block',
+                filter: 'brightness(0.35) contrast(1.15)'
+              }}
+            />
 
-          <h1 className="sangam-hero-title">
-            ओळखीतून संबंध • संबंधातून विश्वास • <span>विश्वासातून व्यवसाय</span>
-          </h1>
+            {/* Gradient Overlay for high text contrast */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(90deg, rgba(20,8,4,0.92) 0%, rgba(30,12,5,0.78) 55%, rgba(15,6,3,0.45) 100%)'
+              }}
+            />
 
-          <p className="sangam-hero-desc">
-            महाराष्ट्रातील मराठा उद्योजक, व्यावसायिक, तंत्रज्ञ आणि व्यापाऱ्यांचे एकमेकांना दर्जेदार व्यवसाय संधी देणारे, दर आठवड्याला प्रत्यक्ष भेटणारे आणि पारदर्शक CRM द्वारे कोट्यवधींचा व्यापार वाढवणारे सर्वोच्च नेटवर्किंग व्यासपीठ.
-          </p>
-
-          <div className="sangam-hero-actions">
-            <button
-              onClick={() => setReferralModalOpen(true)}
-              className="sangam-btn-primary"
+            {/* Content Box */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                padding: '30px 40px',
+                maxWidth: '780px'
+              }}
             >
-              <span>🤝</span>
-              <span>नवीन व्यवसाय संधी (रेफरल) द्या</span>
-            </button>
-            <Link to="/meetings" className="sangam-btn-secondary">
-              <span>☕</span>
-              <span>१-टू-१ बैठका पोर्टल</span>
-            </Link>
-            <Link to="/referrals" className="sangam-btn-secondary">
-              <span>📊</span>
-              <span>रेफरल ट्रॅकर व CRM</span>
-            </Link>
-            <Link to="/business/directory" className="sangam-btn-secondary">
-              <span>🔎</span>
-              <span>उद्योग निर्देशिका (5,000+ व्यवसाय)</span>
-            </Link>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'rgba(246, 184, 0, 0.2)',
+                  border: '1px solid rgba(246, 184, 0, 0.55)',
+                  color: '#FBD76B',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.5px',
+                  width: 'fit-content',
+                  marginBottom: '10px'
+                }}
+              >
+                <span>🚩</span> CONNECT MARATHA • स्वराज्य व्यापार व व्यवसाय संगम
+              </div>
+
+              <h1
+                style={{
+                  fontFamily: "'Baloo 2', sans-serif",
+                  fontSize: 'clamp(1.7rem, 3.2vw, 2.35rem)',
+                  lineHeight: 1.25,
+                  margin: '0 0 10px',
+                  fontWeight: 800,
+                  color: '#FFFFFF',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.6)'
+                }}
+              >
+                ओळखीतून संबंध • संबंधातून विश्वास • विश्वासातून व्यवसाय
+              </h1>
+
+              <p
+                style={{
+                  fontSize: '0.96rem',
+                  lineHeight: 1.6,
+                  color: '#F0ECE4',
+                  margin: '0 0 20px',
+                  maxWidth: '620px'
+                }}
+              >
+                छत्रपती शिवरायांच्या व्यापारनीती आणि सहकार्य तत्त्वावर आधारित, महाराष्ट्रातील मराठी उद्योजक व व्यावसायिकांना जोडणारे अधिकृत स्थानिक मंडळ व्यासपीठ.
+              </p>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <Link
+                  to="/meetings"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '9px 18px',
+                    background: '#C73800',
+                    color: '#fff',
+                    borderRadius: '8px',
+                    fontSize: '0.86rem',
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    boxShadow: '0 4px 12px rgba(199,56,0,0.4)'
+                  }}
+                >
+                  ☕ १-टू-१ बैठका पोर्टल
+                </Link>
+                <Link
+                  to="/business/directory"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '9px 18px',
+                    background: 'rgba(255,255,255,0.15)',
+                    backdropFilter: 'blur(6px)',
+                    color: '#FFF',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    borderRadius: '8px',
+                    fontSize: '0.86rem',
+                    fontWeight: 600,
+                    textDecoration: 'none'
+                  }}
+                >
+                  🤝 व्यवसाय संधी व डिरेक्टरी
+                </Link>
+                <Link
+                  to="/referrals"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '9px 18px',
+                    background: 'rgba(246,184,0,0.15)',
+                    color: '#FBD76B',
+                    border: '1px solid rgba(246,184,0,0.4)',
+                    borderRadius: '8px',
+                    fontSize: '0.86rem',
+                    fontWeight: 600,
+                    textDecoration: 'none'
+                  }}
+                >
+                  🔗 रेफरल ट्रॅकर
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* 3. Executive KPI Stat Ribbon */}
-      <section className="sangam-stats-ribbon">
-        <div className="sangam-stats-container">
-          <div className="sangam-stat-box">
-            <div className="sangam-stat-val">{formatCurrency(totalStats.business)}</div>
-            <div className="sangam-stat-lbl">एकूण बंद झालेला व्यवसाय (Closed Business)</div>
+      {/* MAIN CONTAINER */}
+      <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '32px 20px 60px' }}>
+        
+        {/* STATS SUMMARY BAR */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '16px',
+            background: '#FFFFFF',
+            padding: '20px 24px',
+            borderRadius: '16px',
+            boxShadow: '0 4px 18px rgba(0,0,0,0.04)',
+            border: '1px solid #EADBCC',
+            marginBottom: '40px'
+          }}
+        >
+          <div style={{ textAlign: 'center', borderRight: '1px solid #F0E6D8' }}>
+            <div style={{ fontSize: '2.1rem', fontWeight: 800, color: '#C73800', fontFamily: 'Baloo 2', lineHeight: 1.1 }}>
+              {chapters.length}
+            </div>
+            <div style={{ fontSize: '0.84rem', color: '#6A7280', fontWeight: 600, marginTop: '4px' }}>
+              सक्रिय व्यवसाय मंडळे (Chapters)
+            </div>
           </div>
-          <div className="sangam-stat-box">
-            <div className="sangam-stat-val" style={{ color: '#C2410C' }}>{chapters.length}</div>
-            <div className="sangam-stat-lbl">सक्रिय व्यवसाय मंडळे (Active Chapters)</div>
+
+          <div style={{ textAlign: 'center', borderRight: '1px solid #F0E6D8' }}>
+            <div style={{ fontSize: '2.1rem', fontWeight: 800, color: '#D97706', fontFamily: 'Baloo 2', lineHeight: 1.1 }}>
+              {totals.members}+
+            </div>
+            <div style={{ fontSize: '0.84rem', color: '#6A7280', fontWeight: 600, marginTop: '4px' }}>
+              सत्यापित मराठा व्यावसायिक
+            </div>
           </div>
-          <div className="sangam-stat-box">
-            <div className="sangam-stat-val" style={{ color: '#047857' }}>{totalStats.members}+</div>
-            <div className="sangam-stat-lbl">सक्रिय सदस्य व्यावसायिक (Verified Members)</div>
+
+          <div style={{ textAlign: 'center', borderRight: '1px solid #F0E6D8' }}>
+            <div style={{ fontSize: '2.1rem', fontWeight: 800, color: '#15803D', fontFamily: 'Baloo 2', lineHeight: 1.1 }}>
+              {formatCurrency(totals.business)}
+            </div>
+            <div style={{ fontSize: '0.84rem', color: '#6A7280', fontWeight: 600, marginTop: '4px' }}>
+              एकत्रित निर्माण झालेला व्यवसाय
+            </div>
           </div>
-          <div className="sangam-stat-box">
-            <div className="sangam-stat-val" style={{ color: '#D97706' }}>{totalStats.opportunities}+</div>
-            <div className="sangam-stat-lbl">या महिन्यातील व्यवसाय संधी (Monthly Referrals)</div>
+
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '2.1rem', fontWeight: 800, color: '#7A1C08', fontFamily: 'Baloo 2', lineHeight: 1.1 }}>
+              {totals.opportunities}+
+            </div>
+            <div style={{ fontSize: '0.84rem', color: '#6A7280', fontWeight: 600, marginTop: '4px' }}>
+              या महिन्यातील थेट संदर्भ संधी
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* 4. Main Body: Active Chapters Directory */}
-      <main className="sangam-shell">
-
-        {/* Section Header */}
-        <div className="sangam-section-title-wrap">
+        {/* SECTION HEADER & CONTROLS */}
+        <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <h2 className="sangam-sec-h2">
-              <span>🏢</span>
-              <span>सक्रिय स्थानिक व्यवसाय मंडळे (Chapters Directory)</span>
+            <span
+              style={{
+                display: 'inline-block',
+                background: '#FFF3E0',
+                color: '#C73800',
+                fontWeight: 700,
+                fontSize: '0.78rem',
+                padding: '4px 10px',
+                borderRadius: '6px',
+                marginBottom: '6px',
+                border: '1px solid #FFE0B2'
+              }}
+            >
+              🚩 स्थानिक चॅप्टर्स व स्वराज्य मंडळे
+            </span>
+            <h2 style={{ fontSize: '1.75rem', margin: 0, fontFamily: 'Baloo 2', color: '#1B2430', fontWeight: 700 }}>
+              सक्रिय व्यवसाय मंडळे (Active Business Chapters)
             </h2>
-            <p style={{ margin: '4px 0 0', fontSize: '0.9rem', color: '#64748B' }}>
-              आपल्या परिसरातील मंडळात पाहुणे म्हणून उपस्थित राहून आपल्या व्यवसायासाठी शेकडो रेफरल्स मिळवा.
+            <p style={{ margin: '4px 0 0', fontSize: '0.88rem', color: '#5A626F' }}>
+              आपल्या परिसरातील अधिकृत स्थानिक मंडळाचे आठवडी बैठका, ठिकाण व सदस्य तपशील
             </p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#C2410C' }}>
-              एकूण {filteredChapters.length} मंडळे उपलब्ध
-            </span>
+          {/* Search and City Filter Tabs */}
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="मंडळ, शहर किंवा संयोजक शोधा..."
+              style={{
+                padding: '9px 14px',
+                borderRadius: '8px',
+                border: '1px solid #D6D3CD',
+                fontSize: '0.86rem',
+                width: '240px',
+                background: '#FFFFFF'
+              }}
+            />
+
+            <select
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value)}
+              style={{
+                padding: '9px 14px',
+                borderRadius: '8px',
+                border: '1px solid #D6D3CD',
+                fontSize: '0.86rem',
+                background: '#FFFFFF',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="all">सर्व शहरे ({chapters.length})</option>
+              {cities.filter(c => c !== 'all').map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
           </div>
         </div>
 
-        {/* City Filter Pills & Search */}
-        <div className="sangam-filter-bar">
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', flex: 1 }}>
-            {[
-              { id: 'ALL', label: 'सर्व शहरे (All)' },
-              { id: 'पुणे', label: 'पुणे (Pune)' },
-              { id: 'ठाणे', label: 'मुंबई / ठाणे (Mumbai)' },
-              { id: 'कोल्हापूर', label: 'कोल्हापूर (Kolhapur)' },
-              { id: 'नाशिक', label: 'नाशिक (Nashik)' },
-              { id: 'संभाजीनगर', label: 'छ. संभाजीनगर' },
-              { id: 'नागपूर', label: 'नागपूर (Nagpur)' }
-            ].map((pill) => (
-              <button
-                key={pill.id}
-                onClick={() => setSelectedCity(pill.id)}
-                className={`sangam-filter-pill ${selectedCity === pill.id ? 'active' : ''}`}
-              >
-                {pill.label}
-              </button>
-            ))}
-          </div>
-
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="मंडळ, क्षेत्र किंवा उद्योग शोधा..."
-            className="sangam-search-input"
-          />
-        </div>
-
-        {/* Chapters Cards Grid */}
-        <div className="sangam-chapters-grid">
+        {/* CHAPTERS GRID - AUTHENTIC HERITAGE & FORT IMAGERY WITH HISTORIC TAGS */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '24px', marginBottom: '56px' }}>
           {filteredChapters.map((ch) => (
-            <div key={ch.id} className="sangam-chapter-card">
-              <div>
-                <div className="sangam-ch-header">
-                  <div>
-                    <h3 className="sangam-ch-title">{ch.marathiName}</h3>
-                    <div className="sangam-ch-meta">
-                      📍 {ch.territory} ({ch.city})
-                    </div>
-                  </div>
-                  <span className="sangam-open-pill">
-                    {ch.openSeats} जागा शिल्लक
-                  </span>
+            <div
+              key={ch.id}
+              style={{
+                background: '#FFFFFF',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                border: '1px solid #EADBCC',
+                boxShadow: '0 6px 20px rgba(0,0,0,0.05)',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'transform 0.2s, box-shadow 0.2s'
+              }}
+            >
+              {/* Card Image Banner with authentic landmark/fort photo */}
+              <div style={{ position: 'relative', height: '185px', overflow: 'hidden', background: '#2D3748' }}>
+                <img
+                  src={`${ch.image}?v=20261001`}
+                  alt={ch.marathiName}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)'
+                  }}
+                />
+
+                {/* City badge */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '12px',
+                    left: '12px',
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    color: '#C73800',
+                    padding: '3px 10px',
+                    borderRadius: '20px',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+                  }}
+                >
+                  📍 {ch.city}
                 </div>
 
-                {/* Meeting Time & Venue Box */}
-                <div className="sangam-details-box">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span><strong>बैठक वार व वेळ:</strong></span>
-                    <span style={{ color: '#C2410C', fontWeight: 800 }}>{ch.meetingDay} • {ch.meetingTime}</span>
-                  </div>
-                  <div><strong>स्थान:</strong> {ch.venue}</div>
-                  <div style={{ marginTop: '4px', color: '#047857', fontWeight: 700 }}>
-                    या महिन्यातील बंद व्यवसाय: {formatCurrency(ch.monthlyBusiness)}
-                  </div>
+                {/* Status / Open Seats Badge */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '12px',
+                    right: '12px',
+                    background: ch.openSeats > 0 ? '#FEF3C7' : '#F3F4F6',
+                    color: ch.openSeats > 0 ? '#92400E' : '#4B5563',
+                    padding: '3px 10px',
+                    borderRadius: '20px',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    border: '1px solid rgba(0,0,0,0.1)'
+                  }}
+                >
+                  {ch.openSeats > 0 ? `संधी: ${ch.openSeats} जागा शिल्लक` : 'सर्व जागा पूर्ण'}
                 </div>
 
-                {/* Open Category Seats */}
-                <div className="sangam-categories-wrap">
-                  <span className="sangam-cat-label">नवीन उपलब्ध उद्योग जागा (Open Categories):</span>
-                  <div className="sangam-cat-chips">
-                    {ch.openCategories.map((cat, i) => (
-                      <span key={i} className="sangam-cat-chip">
-                        + {cat}
-                      </span>
-                    ))}
+                {/* Chapter Name & Historic Landmark Tag overlaid on image */}
+                <div style={{ position: 'absolute', bottom: '10px', left: '16px', right: '16px' }}>
+                  <div style={{ color: '#FBD76B', fontSize: '0.72rem', fontWeight: 600, textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
+                    🏛️ {ch.historicTag}
                   </div>
+                  <h3
+                    style={{
+                      margin: '2px 0 0',
+                      fontFamily: 'Baloo 2',
+                      fontSize: '1.24rem',
+                      fontWeight: 700,
+                      color: '#FFFFFF',
+                      lineHeight: 1.25,
+                      textShadow: '0 2px 6px rgba(0,0,0,0.8)'
+                    }}
+                  >
+                    {ch.marathiName}
+                  </h3>
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="sangam-card-actions">
-                <button
-                  onClick={() => {
-                    setActiveVisitorModal(ch);
-                    setVisitorForm({ name: '', phone: '', business: '', category: ch.openCategories[0] || '' });
-                  }}
-                  className="sangam-btn-primary"
-                  style={{ flex: 1, padding: '10px 14px', fontSize: '0.85rem', justifyContent: 'center' }}
-                >
-                  पाहुणे म्हणून या (Visitor Pass)
-                </button>
-                <Link
-                  to={`/business/mandal?chapter=${encodeURIComponent(ch.id)}`}
-                  className="sangam-btn-secondary"
-                  style={{ background: '#F1F5F9', color: '#1E293B', borderColor: '#CBD5E1', padding: '10px 14px', fontSize: '0.85rem', fontWeight: 700 }}
-                >
-                  तपशील
-                </Link>
+              {/* Card Body */}
+              <div style={{ padding: '18px 20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  {/* Meeting Time & Venue Details */}
+                  <div style={{ fontSize: '0.82rem', color: '#4B5563', marginBottom: '12px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div>
+                      📅 <strong>{ch.meetingDay}</strong> ({ch.meetingTime})
+                    </div>
+                    <div>
+                      🏨 <span>{ch.venue}</span>
+                    </div>
+                    <div>
+                      👤 संयोजक: <strong>{ch.coordinator}</strong> ({ch.phone})
+                    </div>
+                  </div>
+
+                  {/* Badges / Metrics */}
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '14px' }}>
+                    <span style={{ background: '#F3F4F6', color: '#374151', padding: '3px 8px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 600 }}>
+                      सदस्य: {(ch.capacity || 30) - (ch.openSeats || 0)}
+                    </span>
+                    <span style={{ background: '#E8F5E9', color: '#1B5E20', padding: '3px 8px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 600 }}>
+                      नवे पाहुणे: {ch.visitors}
+                    </span>
+                    <span style={{ background: '#FFF8E1', color: '#B78103', padding: '3px 8px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 600 }}>
+                      मासिक संधी: {ch.monthlyOpportunities}
+                    </span>
+                  </div>
+
+                  {/* Business Turnover Highlight */}
+                  <div
+                    style={{
+                      background: '#F9FBF7',
+                      border: '1px solid #DCE7D6',
+                      borderRadius: '8px',
+                      padding: '10px 12px',
+                      marginBottom: '14px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: '0.7rem', color: '#556B2F', fontWeight: 600 }}>एकूण निर्माण झालेला व्यवसाय:</div>
+                      <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1B5E20', fontFamily: 'Baloo 2' }}>
+                        {formatCurrency(ch.totalClosedValue)}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '0.7rem', color: '#6A7280' }}>या महिन्यातील:</div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#374151' }}>
+                        {formatCurrency(ch.monthlyBusiness)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Domain tags */}
+                  {ch.specialties && (
+                    <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginBottom: '16px' }}>
+                      {ch.specialties.map((s, idx) => (
+                        <span key={idx} style={{ background: '#FAF5EE', color: '#7A1C08', fontSize: '0.7rem', padding: '2px 7px', borderRadius: '4px', border: '1px solid #F0DEC9' }}>
+                          • {s}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Action CTA Buttons */}
+                <div style={{ display: 'flex', gap: '8px', paddingTop: '10px', borderTop: '1px solid #F0ECE4' }}>
+                  <Link
+                    to={`/meetings?chapter=${encodeURIComponent(ch.id)}`}
+                    style={{
+                      flex: 1,
+                      textAlign: 'center',
+                      padding: '8px 12px',
+                      background: '#C73800',
+                      color: '#FFF',
+                      borderRadius: '6px',
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
+                      textDecoration: 'none'
+                    }}
+                  >
+                    ☕ बैठक बुक करा
+                  </Link>
+                  <Link
+                    to={`/business/directory?city=${encodeURIComponent(ch.city)}`}
+                    style={{
+                      flex: 1,
+                      textAlign: 'center',
+                      padding: '8px 12px',
+                      background: '#FFFFFF',
+                      color: '#1B2430',
+                      border: '1px solid #D6D3CD',
+                      borderRadius: '6px',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      textDecoration: 'none'
+                    }}
+                  >
+                    व्यावसायिक पहा
+                  </Link>
+                </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* 5. How Business Sangam Works (4 Core Pillars) */}
-        <section style={{ marginBottom: '50px' }}>
-          <div className="sangam-section-title-wrap">
-            <div>
-              <h2 className="sangam-sec-h2">
-                <span>⚙️</span>
-                <span>व्यवसाय संगम कसे कार्य करते? (४ आधारस्तंभ)</span>
-              </h2>
-              <p style={{ margin: '4px 0 0', fontSize: '0.9rem', color: '#64748B' }}>
-                जागतिक दर्जाची BNI बिझनेस मॉडेल कार्यप्रणाली, जी मराठा उद्योजकांच्या विश्वासावर आधारलेली आहे.
-              </p>
-            </div>
+        {/* WORKFLOW EXPLANATION SECTION - 100% SUITABLE BUSINESS & INDUSTRY IMAGES */}
+        <section
+          style={{
+            background: '#FFFFFF',
+            borderRadius: '20px',
+            border: '1px solid #EADBCC',
+            padding: '36px 30px',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.04)'
+          }}
+        >
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <span
+              style={{
+                background: '#FEF3C7',
+                color: '#92400E',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                padding: '4px 12px',
+                borderRadius: '12px',
+                display: 'inline-block',
+                marginBottom: '8px'
+              }}
+            >
+              🔄 पारदर्शक व्यावसायिक नेटवर्किंग पद्धती
+            </span>
+            <h2 style={{ fontSize: '1.9rem', margin: '4px 0 8px', fontFamily: 'Baloo 2', color: '#1B2430', fontWeight: 800 }}>
+              व्यवसाय संगम कसे काम करते?
+            </h2>
+            <p style={{ color: '#5A626F', fontSize: '0.92rem', maxWidth: '640px', margin: '0 auto' }}>
+              मराठी उद्योजकांच्या परस्पर सहकार्यातून व्यापार व समृद्धी वृद्धीचे ४ महत्त्वाचे टप्पे
+            </p>
           </div>
 
-          <div className="sangam-workflow-grid">
-            <div className="sangam-workflow-card">
-              <div className="sangam-wf-icon">🔒</div>
-              <h3 className="sangam-wf-title">१. एक उद्योग – एक सदस्य</h3>
-              <p className="sangam-wf-desc">
-                एका मंडळात एकाच उद्योगाचा एकच अधिकृत सदस्य असतो. उदा. जर मंडळात एक चार्टर्ड अकाउंटंट असेल तर दुसरा सीए घेतला जात नाही. त्यामुळे मंडळातील सर्व रेफरल्स एकाच सदस्याला मिळतात.
-              </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+            
+            {/* Step 1: Business Council Executive Round Table */}
+            <div
+              style={{
+                background: '#FAF7F2',
+                borderRadius: '14px',
+                overflow: 'hidden',
+                border: '1px solid #EADBCC',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              <div style={{ height: '145px', overflow: 'hidden' }}>
+                <img
+                  src="/assets/images/sangam-wf-mandal.jpg"
+                  alt="उद्योजक परिषद व व्यवसाय गोलमेज बैठक"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+              <div style={{ padding: '16px' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#C73800', marginBottom: '4px' }}>
+                  टप्पा १ • उद्योजक परिषद
+                </div>
+                <h4 style={{ fontSize: '1.05rem', margin: '0 0 6px', fontFamily: 'Baloo 2', color: '#1B2430' }}>
+                  १. शहरनिहाय मंडळात सहभाग
+                </h4>
+                <p style={{ fontSize: '0.82rem', color: '#5A626F', lineHeight: 1.5, margin: 0 }}>
+                  आपल्या शहराच्या स्थानिक चॅप्टरमध्ये सामील व्हा. प्रत्येक व्यवसायासाठी एकच सीट असल्याने अंतर्गत स्पर्धा टळते.
+                </p>
+              </div>
             </div>
 
-            <div className="sangam-workflow-card">
-              <div className="sangam-wf-icon">🥞</div>
-              <h3 className="sangam-wf-title">२. साप्ताहिक नाश्ता बैठक</h3>
-              <p className="sangam-wf-desc">
-                दर आठवड्याला सकाळी ७:१५ वाजता सर्व सदस्य शिस्तबद्ध नाश्ता बैठकीत एकत्र येतात. प्रत्येक उद्योजकाला स्वतःचा व्यवसाय सादर करण्यासाठी ६० सेकंदांचा 'पिच टाइम' मिळतो.
-              </p>
+            {/* Step 2: 1-to-1 B2B Partnership Meeting */}
+            <div
+              style={{
+                background: '#FAF7F2',
+                borderRadius: '14px',
+                overflow: 'hidden',
+                border: '1px solid #EADBCC',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              <div style={{ height: '145px', overflow: 'hidden' }}>
+                <img
+                  src="/assets/images/sangam-wf-meeting.jpg"
+                  alt="१-टू-१ सखोल बी२बी व्यावसायिक चर्चा व भागीदारी"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+              <div style={{ padding: '16px' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#D97706', marginBottom: '4px' }}>
+                  टप्पा २ • ओळख व विश्वास
+                </div>
+                <h4 style={{ fontSize: '1.05rem', margin: '0 0 6px', fontFamily: 'Baloo 2', color: '#1B2430' }}>
+                  २. १-टू-१ सखोल बैठका
+                </h4>
+                <p style={{ fontSize: '0.82rem', color: '#5A626F', lineHeight: 1.5, margin: 0 }}>
+                  इतर मराठा उद्योजकांशी वैयक्तिक बैठक घेऊन एकमेकांची उत्पादने, क्षमता व ग्राहकांची अचूक गरज जाणून घ्या.
+                </p>
+              </div>
             </div>
 
-            <div className="sangam-workflow-card">
-              <div className="sangam-wf-icon">☕</div>
-              <h3 className="sangam-wf-title">३. एक-ते-एक (1-to-1) संवाद</h3>
-              <p className="sangam-wf-desc">
-                आठवड्यादरम्यान दोन सदस्य वैयक्तिक भेटून एकमेकांच्या कामाची पद्धती, क्लायंट प्रोफाईल आणि नेटवर्क समजून घेतात; ज्यामुळे खात्रीशीर व मोठे रेफरल्स देणे शक्य होते.
-              </p>
+            {/* Step 3: Project Blueprints & Commercial Opportunity */}
+            <div
+              style={{
+                background: '#FAF7F2',
+                borderRadius: '14px',
+                overflow: 'hidden',
+                border: '1px solid #EADBCC',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              <div style={{ height: '145px', overflow: 'hidden', background: '#1c2420' }}>
+                <img
+                  src="/assets/images/sangam-wf-opportunity.jpg"
+                  alt="प्रकल्प आराखडा व व्यावसायिक संधींचे नियोजन"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+              <div style={{ padding: '16px' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#15803D', marginBottom: '4px' }}>
+                  टप्पा ३ • थेट संधी व नियोजन
+                </div>
+                <h4 style={{ fontSize: '1.05rem', margin: '0 0 6px', fontFamily: 'Baloo 2', color: '#1B2430' }}>
+                  ३. उच्च-मूल्य संधींची देवाणघेवाण
+                </h4>
+                <p style={{ fontSize: '0.82rem', color: '#5A626F', lineHeight: 1.5, margin: 0 }}>
+                  आपल्या ओळखीतील विश्वासू व दर्जेदार व्यावसायिक ग्राहक, सप्लाय चेन व थेट खरेदीदारांचे रेफरल्स पोर्टलवरून पाठवा.
+                </p>
+              </div>
             </div>
 
-            <div className="sangam-workflow-card">
-              <div className="sangam-wf-icon">📈</div>
-              <h3 className="sangam-wf-title">४. पारदर्शक CRM व मूल्य</h3>
-              <p className="sangam-wf-desc">
-                प्रत्येक संधी (Lead), संपर्क आणि बंद झालेला व्यवसाय (Closed Business) ॲपमध्ये पारदर्शकपणे नोंदवला जातो. प्रत्येक सदस्याचा बिझनेस स्कोरकार्ड थेट डॅशबोर्डवर दिसतो.
-              </p>
+            {/* Step 4: Executive Boardroom Deal Closure */}
+            <div
+              style={{
+                background: '#FAF7F2',
+                borderRadius: '14px',
+                overflow: 'hidden',
+                border: '1px solid #EADBCC',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              <div style={{ height: '145px', overflow: 'hidden' }}>
+                <img
+                  src="/assets/images/sangam-wf-deal.jpg"
+                  alt="एक्झिक्युटिव्ह बोर्डरूम क्लोज्ड डील व व्यावसायिक यश"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+              <div style={{ padding: '16px' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#7A1C08', marginBottom: '4px' }}>
+                  टप्पा ४ • क्लोज्ड डील व यश
+                </div>
+                <h4 style={{ fontSize: '1.05rem', margin: '0 0 6px', fontFamily: 'Baloo 2', color: '#1B2430' }}>
+                  ४. रेफरल ट्रॅकिंग व क्लोज्ड डील
+                </h4>
+                <p style={{ fontSize: '0.82rem', color: '#5A626F', lineHeight: 1.5, margin: 0 }}>
+                  प्रत्येक यशस्वी कराराची नोंद ठेवा, व्यवसाय वृद्धी साजरी करा आणि संपूर्ण मराठा समाजातील उद्योगांचा विस्तार करा.
+                </p>
+              </div>
             </div>
+
           </div>
         </section>
 
-        {/* 6. Success Stories / Closed Deals Hall of Fame */}
-        <section className="sangam-success-section">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-            <div>
-              <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#C2410C' }}>
-                यशस्वी व्यापार साक्ष (Verified Closed Deals)
-              </span>
-              <h3 style={{ margin: '4px 0 0', fontSize: '1.4rem', color: '#7C1D05', fontWeight: 900 }}>
-                मराठा बांधवांमधील थेट कोट्यवधींचा व्यापार
-              </h3>
-            </div>
-            <Link to="/referrals" style={{ color: '#C2410C', fontWeight: 800, fontSize: '0.9rem', textDecoration: 'underline' }}>
-              सर्व व्यवहार ट्रॅकर पहा →
-            </Link>
-          </div>
-
-          <div className="sangam-success-grid">
-            {SUCCESS_REFERRALS.map((deal) => (
-              <div key={deal.id} className="sangam-deal-card">
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#64748B', marginBottom: '8px' }}>
-                  <span>{deal.chapter}</span>
-                  <span>{deal.timeAgo}</span>
-                </div>
-                <h4 style={{ margin: '0 0 6px', fontSize: '1.05rem', color: '#1E293B', fontWeight: 800 }}>{deal.deal}</h4>
-                <div style={{ fontSize: '0.85rem', color: '#475569', marginBottom: '10px' }}>
-                  <strong>रेफरल देणारे:</strong> {deal.from}<br />
-                  <strong>स्वीकारणारे:</strong> {deal.to}
-                </div>
-                <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '6px 12px', borderRadius: '8px', color: '#047857', fontWeight: 800, fontSize: '0.95rem', display: 'inline-block' }}>
-                  करार मूल्य: {deal.value}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-      </main>
-
-      {/* 7. VISITOR PASS MODAL */}
-      {activeVisitorModal && (
-        <div className="sangam-modal-overlay">
-          <div className="sangam-modal-box">
-            <button onClick={() => setActiveVisitorModal(null)} className="sangam-modal-close">✕</button>
-
-            <span style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: '#C2410C' }}>
-              पाहुणे उपस्थिती पास (Visitor Guest Pass)
-            </span>
-            <h3 style={{ margin: '6px 0', fontSize: '1.35rem', color: '#7C1D05', fontWeight: 900 }}>
-              {activeVisitorModal.marathiName}
-            </h3>
-            <p style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '18px' }}>
-              बैठक: {activeVisitorModal.meetingDay} {activeVisitorModal.meetingTime} • {activeVisitorModal.venue}
-            </p>
-
-            {visitorSuccess ? (
-              <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '24px', borderRadius: '12px', textAlign: 'center' }}>
-                <span style={{ fontSize: '2.5rem' }}>🎟️</span>
-                <h4 style={{ margin: '8px 0 4px', color: '#065F46', fontSize: '1.15rem', fontWeight: 800 }}>आपला व्हिजिटर पास मंजूर झाला आहे!</h4>
-                <p style={{ margin: 0, fontSize: '0.85rem', color: '#047857' }}>
-                  आपल्या व्हॉट्सॲप क्रमांकावर बैठक निमंत्रण आणि लोकेशन पाठवले गेले आहे. पुढील बैठकीत आपले स्वागत आहे!
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleVisitorSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>आपले पूर्ण नाव:</label>
-                  <input
-                    type="text"
-                    required
-                    value={visitorForm.name}
-                    onChange={(e) => setVisitorForm({ ...visitorForm, name: e.target.value })}
-                    placeholder="उदा. राहुल बाजीराव कदम"
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E1', fontSize: '0.9rem', outline: 'none' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>व्हॉट्सॲप मोबाईल नंबर:</label>
-                  <input
-                    type="tel"
-                    required
-                    value={visitorForm.phone}
-                    onChange={(e) => setVisitorForm({ ...visitorForm, phone: e.target.value })}
-                    placeholder="उदा. 98220XXXXX"
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E1', fontSize: '0.9rem', outline: 'none' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>व्यवसाय / कंपनीचे नाव:</label>
-                  <input
-                    type="text"
-                    value={visitorForm.business}
-                    onChange={(e) => setVisitorForm({ ...visitorForm, business: e.target.value })}
-                    placeholder="उदा. कदम इंजिनिअरिंग सोल्युशन्स"
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E1', fontSize: '0.9rem', outline: 'none' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>उद्योग श्रेणी (Industry Category):</label>
-                  <select
-                    value={visitorForm.category}
-                    onChange={(e) => setVisitorForm({ ...visitorForm, category: e.target.value })}
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E1', fontSize: '0.9rem', outline: 'none' }}
-                  >
-                    {activeVisitorModal.openCategories.map((c, i) => (
-                      <option key={i} value={c}>{c}</option>
-                    ))}
-                    <option value="इतर">इतर उद्योग</option>
-                  </select>
-                </div>
-
-                <button
-                  type="submit"
-                  className="sangam-btn-primary"
-                  style={{ marginTop: '8px', justifyContent: 'center' }}
-                >
-                  मोफत व्हिजिटर पास बुक करा →
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* 8. QUICK REFERRAL MODAL */}
-      {referralModalOpen && (
-        <div className="sangam-modal-overlay">
-          <div className="sangam-modal-box">
-            <button onClick={() => setReferralModalOpen(false)} className="sangam-modal-close">✕</button>
-
-            <span style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: '#047857' }}>
-              नवीन रेफरल फॉर्म (Submit Business Opportunity)
-            </span>
-            <h3 style={{ margin: '6px 0', fontSize: '1.35rem', color: '#1E293B', fontWeight: 900 }}>
-              मराठा बांधवाला व्यवसाय संधी द्या
-            </h3>
-            <p style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '18px' }}>
-              आपल्या संपर्कातील क्लायंट किंवा प्रोजेक्टची गरज नोंदवा. संबंधित मंडळातील प्रमाणित सदस्याला ही संधी दिली जाईल.
-            </p>
-
-            {referralSuccess ? (
-              <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '24px', borderRadius: '12px', textAlign: 'center' }}>
-                <span style={{ fontSize: '2.5rem' }}>🤝</span>
-                <h4 style={{ margin: '8px 0 4px', color: '#065F46', fontSize: '1.15rem', fontWeight: 800 }}>रेफरल यशस्वीरीत्या पाठवला गेला!</h4>
-                <p style={{ margin: 0, fontSize: '0.85rem', color: '#047857' }}>
-                  रेफरल ट्रॅकरवर या संधीचा स्टेटस 'नवीन' म्हणून जोडला गेला आहे.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleReferralSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>लक्ष्यित मंडळ (Target Chapter):</label>
-                  <select
-                    value={referralForm.toChapter}
-                    onChange={(e) => setReferralForm({ ...referralForm, toChapter: e.target.value })}
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E1', fontSize: '0.9rem', outline: 'none' }}
-                  >
-                    {chapters.map(c => (
-                      <option key={c.id} value={c.id}>{c.marathiName}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>संभाव्य क्लायंट / कंपनीचे नाव:</label>
-                  <input
-                    type="text"
-                    required
-                    value={referralForm.clientName}
-                    onChange={(e) => setReferralForm({ ...referralForm, clientName: e.target.value })}
-                    placeholder="उदा. सह्याद्री फूड्स प्रा. लि."
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E1', fontSize: '0.9rem', outline: 'none' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>कामाचे स्वरूप व आवश्यकता (Requirement):</label>
-                  <textarea
-                    rows={3}
-                    required
-                    value={referralForm.requirement}
-                    onChange={(e) => setReferralForm({ ...referralForm, requirement: e.target.value })}
-                    placeholder="उदा. नवीन फॅक्टरीसाठी ५० टन क्षमतेचे एसी व चिलर प्लांट इन्स्टॉलेशन कंत्राट..."
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E1', fontSize: '0.9rem', outline: 'none' }}
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>अंदाजे करार मूल्य (Estimated Deal Value):</label>
-                  <input
-                    type="text"
-                    value={referralForm.value}
-                    onChange={(e) => setReferralForm({ ...referralForm, value: e.target.value })}
-                    placeholder="उदा. ₹१५,००,०००"
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E1', fontSize: '0.9rem', outline: 'none' }}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="sangam-btn-primary"
-                  style={{ marginTop: '8px', justifyContent: 'center' }}
-                >
-                  रेफरल पाठवा (Submit Referral) →
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
-
+      </div>
     </div>
   );
 }

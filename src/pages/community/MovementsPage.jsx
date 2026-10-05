@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 const DEFAULT_MOVEMENTS = [
   {
     id: 'm1',
-    image: '/assets/images/maratha-kranti-morcha.jpg',
     category: 'muk_morcha',
     categoryLabel: 'मूक मोर्चे ५८',
     title: 'मराठा क्रांती मूक मोर्चे (५८ ऐतिहासिक शांततामय मोर्चे)',
@@ -29,7 +28,6 @@ const DEFAULT_MOVEMENTS = [
   },
   {
     id: 'm2',
-    image: '/assets/images/leaders/leader_manoj.jpg',
     category: 'reservation',
     categoryLabel: 'आरक्षण लढा',
     title: 'मराठा आरक्षण घटनात्मक व न्यायालयीन संघर्ष',
@@ -52,7 +50,6 @@ const DEFAULT_MOVEMENTS = [
   },
   {
     id: 'm3',
-    image: '/assets/images/leaders/leader_sambhaji.jpg',
     category: 'education',
     categoryLabel: 'शिक्षण व युवा',
     title: 'सारथी (SARTHI) संस्था स्वायत्तता व विद्यार्थी एल्गार',
@@ -444,14 +441,6 @@ export default function MovementsPage() {
                 boxShadow: '0 8px 30px rgba(45,8,8,0.06)',
                 overflow: 'hidden'
               }}>
-              {m.image && (
-                <div style={{ height: '210px', width: '100%', overflow: 'hidden', position: 'relative', background: '#1c1917' }}>
-                  <img src={m.image} alt={m.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)', padding: '8px 16px' }}>
-                    <span style={{ color: '#FDE047', fontSize: '0.8rem', fontWeight: 800 }}>🚩 ऐतिहासिक जनआंदोलन दस्तऐवजी छायाचित्र</span>
-                  </div>
-                </div>
-              )}
               {/* Header */}
               <div style={{
                 background: 'linear-gradient(135deg, #FFFDF9 0%, #FAF2E6 100%)',

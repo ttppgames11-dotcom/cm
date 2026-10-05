@@ -2,44 +2,59 @@ import React, { useState, useEffect } from 'react';
 import apiClient from '../../services/apiClient';
 
 const orgsData = [
+  // 1. सामाजिक (Social)
   {
     id: 1,
     name: 'अखिल भारतीय मराठा महासंघ',
     category: 'सामाजिक',
     established: '१९८१',
     hq: 'मुंबई / पुणे, महाराष्ट्र',
-    presence: 'अखिल भारत व विदेश',
+    presence: 'अखिल भारत व ३६ जिल्हे',
     members: '३५ लाख+ सदस्य',
-    focus: 'मराठा आरक्षण, आर्थिक व शैक्षणिक हक्क, समाज प्रबोधन',
+    focus: 'मराठा आरक्षण, आर्थिक व शैक्षणिक हक्क, समाज प्रबोधन व न्याय हक्क लढा',
     icon: '🚩',
     contact: '+91 22 2430 1674'
   },
   {
     id: 2,
+    name: 'मराठा क्रांती मोर्चा समन्वय समिती',
+    category: 'सामाजिक',
+    established: '२०१६',
+    hq: 'पुणे, महाराष्ट्र',
+    presence: 'संपूर्ण महाराष्ट्र व परराज्य',
+    members: '५८ मूक मोर्चे समन्वयक',
+    focus: 'मराठा आरक्षण न्यायालयीन पाठपुरावा, सारथी संस्था स्वायत्तता, वसतिगृहे व विद्यार्थी हक्क',
+    icon: '✊',
+    contact: '+91 98220 55443'
+  },
+  {
+    id: 3,
     name: 'मराठा सेवा संघ',
     category: 'सामाजिक',
     established: '१९९०',
     hq: 'छत्रपती संभाजीनगर, महाराष्ट्र',
-    presence: 'संपूर्ण महाराष्ट्र',
+    presence: 'संपूर्ण भारत व ३६ जिल्हे',
     members: '१५ लाख+ सदस्य',
-    focus: 'शिव-शाहू-फुले-आंबेडकर विचारप्रसार, जिजाऊ ब्रिगेड, संभाजी ब्रिगेड',
+    focus: 'शिव-शाहू-फुले-आंबेडकर विचारप्रसार, जिजाऊ ब्रिगेड, संभाजी ब्रिगेड कक्ष',
     icon: '⚔️',
     contact: '+91 240 233 4455'
   },
   {
-    id: 3,
-    name: 'मराठा युवा मंच',
-    category: 'युवक',
-    established: '२०१२',
-    hq: 'पुणे, महाराष्ट्र',
-    presence: '३६ जिल्हे',
-    members: '८ लाख+ युवक',
-    focus: 'युवा रोजगार, करिअर मेन्टॉरशिप, रक्तदान शिबिरे व गड-किल्ले स्वच्छता',
-    icon: '⚡',
-    contact: '+91 98220 99887'
-  },
-  {
     id: 4,
+    name: 'छत्रपती संभाजी महाराज प्रतिष्ठान',
+    category: 'सामाजिक',
+    established: '२००४',
+    hq: 'पुणे, महाराष्ट्र',
+    presence: 'पुणे, सातारा, कोल्हापूर',
+    members: '२ लाख+ कार्यकर्ते',
+    focus: 'गडकिल्ले संवर्धन, बलिदान मास प्रबोधन, ग्रंथालय व स्पर्धा परीक्षा अभ्यासिका',
+    icon: '🏰',
+    contact: '+91 94220 66778'
+  },
+
+  // 2. शैक्षणिक (Educational)
+  {
+    id: 5,
     name: 'मराठा शिक्षण संस्था महासंघ',
     category: 'शैक्षणिक',
     established: '१९९५',
@@ -51,31 +66,195 @@ const orgsData = [
     contact: '+91 231 265 1234'
   },
   {
-    id: 5,
+    id: 6,
+    name: 'सारथी विद्यार्थी कृती समिती',
+    category: 'शैक्षणिक',
+    established: '२०१९',
+    hq: 'पुणे, महाराष्ट्र',
+    presence: '३६ जिल्हे',
+    members: '८५,०००+ विद्यार्थी',
+    focus: 'सारथी फेलोशिप, यूपीएससी/एमपीएससी मोफत प्रशिक्षण व परदेशी शिष्यवृत्ती पाठपुरावा',
+    icon: '📚',
+    contact: '+91 20 2567 8901'
+  },
+  {
+    id: 7,
+    name: 'श्री शिवाजी शिक्षण प्रसारक मंडळ',
+    category: 'शैक्षणिक',
+    established: '१९६२',
+    hq: 'अमरावती / विदर्भ',
+    presence: 'विदर्भ व मराठवाडा',
+    members: '१२०+ शाळा व महाविद्यालये',
+    focus: 'ग्रामीण भागातील शेतकरी कुटुंबातील पाल्यांना दर्जेदार तांत्रिक व उच्च शिक्षण',
+    icon: '🏫',
+    contact: '+91 721 256 3344'
+  },
+  {
+    id: 8,
+    name: 'मराठा विद्यार्थी वसतिगृह फेडरेशन',
+    category: 'शैक्षणिक',
+    established: '२००१',
+    hq: 'छत्रपती संभाजीनगर',
+    presence: 'राज्यव्यापी',
+    members: '४०+ मराठा वसतिगृहे',
+    focus: 'शहरात शिक्षणासाठी येणाऱ्या मराठा विद्यार्थ्यांसाठी माफक दरात भोजन व निवासाची सोय',
+    icon: '🏢',
+    contact: '+91 240 248 9911'
+  },
+
+  // 3. युवक (Youth)
+  {
+    id: 9,
+    name: 'मराठा युवा मंच',
+    category: 'युवक',
+    established: '२०१२',
+    hq: 'पुणे, महाराष्ट्र',
+    presence: '३६ जिल्हे',
+    members: '८ लाख+ युवक',
+    focus: 'युवा रोजगार, करिअर मेन्टॉरशिप, रक्तदान शिबिरे व गड-किल्ले स्वच्छता',
+    icon: '⚡',
+    contact: '+91 98220 99887'
+  },
+  {
+    id: 10,
+    name: 'संभाजी ब्रिगेड युवा आघाडी',
+    category: 'युवक',
+    established: '१९९९',
+    hq: 'पुणे / मुंबई, महाराष्ट्र',
+    presence: 'राज्यव्यापी ३५०+ तालुके',
+    members: '१२ लाख+ युवा कार्यकर्ते',
+    focus: 'इतिहास रक्षण, शेतकऱ्यांच्या प्रश्नांवर आंदोलन, युवा नेतृत्व विकास व प्रबोधन',
+    icon: '🔥',
+    contact: '+91 20 2445 6789'
+  },
+  {
+    id: 11,
+    name: 'अखिल भारतीय मराठा विद्यार्थी व युवक महासंघ',
+    category: 'युवक',
+    established: '२०१५',
+    hq: 'नाशिक, महाराष्ट्र',
+    presence: 'उत्तर महाराष्ट्र व मराठवाडा',
+    members: '३.५ लाख+ युवक',
+    focus: 'स्टार्टअप मार्गदर्शन, कौशल्य विकास कार्यशाळा व पोलिस/सैन्य भरती पूर्वतयारी वर्ग',
+    icon: '🎯',
+    contact: '+91 253 234 5678'
+  },
+  {
+    id: 12,
+    name: 'शिवराय युथ फोर्स महाराष्ट्र',
+    category: 'युवक',
+    established: '२०१८',
+    hq: 'सातारा, महाराष्ट्र',
+    presence: 'पश्चिम महाराष्ट्र',
+    members: '१.५ लाख+ युवा सैनिक',
+    focus: 'शिवचरित्र प्रसार, आपत्ती व्यवस्थापन पथके, रक्तदान व गडकोट संवर्धन मोहीम',
+    icon: '🛡️',
+    contact: '+91 91580 44556'
+  },
+
+  // 4. महिला (Women)
+  {
+    id: 13,
+    name: 'जिजाऊ ब्रिगेड (महिला आघाडी)',
+    category: 'महिला',
+    established: '२००२',
+    hq: 'सिंदखेड राजा / बुलढाणा',
+    presence: 'महाराष्ट्र व राष्ट्रीय शाखा',
+    members: '६ लाख+ महिला भगिनी',
+    focus: 'जिजाऊंचे संस्कार, स्त्री प्रबोधन, हुंडाबंदी, स्त्रीभ्रूणहत्या विरोध व कायदेशीर साहाय्य',
+    icon: '👑',
+    contact: '+91 7262 245 111'
+  },
+  {
+    id: 14,
     name: 'मराठा महिला विकास संघटना',
     category: 'महिला',
     established: '२००८',
     hq: 'नाशिक, महाराष्ट्र',
     presence: '२८ जिल्हे',
     members: '४ लाख+ भगिनी',
-    focus: 'महिला बचत गट सक्षमीकरण, कायदेशीर मदत, उद्योग उभारणी',
-    icon: '👑',
+    focus: 'महिला बचत गट सक्षमीकरण, कायदेशीर मदत, महिला उद्योग उभारणी व कौशल्य विकास',
+    icon: '🌸',
     contact: '+91 98500 11223'
   },
   {
-    id: 6,
-    name: 'मराठा उद्योग व्यवसाय संघ',
+    id: 15,
+    name: 'ताराबाई मराठा महिला उद्योजिका मंच',
+    category: 'महिला',
+    established: '२०१७',
+    hq: 'कोल्हापूर, महाराष्ट्र',
+    presence: 'दक्षिण महाराष्ट्र व मुंबई',
+    members: '५०,०००+ महिला उद्योजक',
+    focus: 'मराठा महिलांचे गृहउद्योग, फूड प्रोसेसिंग, वस्त्रोद्योग व ऑनलाइन बाजारपेठ जोडणी',
+    icon: '✨',
+    contact: '+91 231 254 7890'
+  },
+  {
+    id: 16,
+    name: 'अहिल्या-जिजाऊ सखी मंच',
+    category: 'महिला',
+    established: '२०२०',
+    hq: 'पुणे, महाराष्ट्र',
+    presence: 'पुणे, सोलापूर, सातारा',
+    members: '८०,०००+ सदस्या',
+    focus: 'एकल व विधवा महिला पुनर्वसन, आरोग्य तपासणी शिबिरे व मोफत समुपदेशन',
+    icon: '🕊️',
+    contact: '+91 98224 88776'
+  },
+
+  // 5. व्यावसायिक (Business & Entrepreneurs)
+  {
+    id: 17,
+    name: 'मराठा उद्योग व्यवसाय संघ (MUVS)',
     category: 'व्यावसायिक',
     established: '२०१५',
     hq: 'मुंबई / ठाणे, महाराष्ट्र',
     presence: 'राज्यव्यापी व जागतिक',
     members: '५०,०००+ उद्योजक',
-    focus: 'B2B बिझनेस नेटवर्किंग, स्टार्टअप सीड फंडिंग, शासकीय योजना साहाय्य',
+    focus: 'B2B बिझनेस नेटवर्किंग, स्टार्टअप सीड फंडिंग, शासकीय योजना व ग्लोबल एक्स्पोर्ट',
     icon: '💼',
     contact: '+91 22 2580 4455'
   },
   {
-    id: 7,
+    id: 18,
+    name: 'मराठा चेंबर ऑफ कॉमर्स अँड इंडस्ट्रीज (MCCI)',
+    category: 'व्यावसायिक',
+    established: '२००५',
+    hq: 'पुणे, महाराष्ट्र',
+    presence: 'महाराष्ट्र, दुबई, अमेरिका',
+    members: '३५,०००+ व्यावसायिक',
+    focus: 'औद्योगिक प्रकल्प मार्गदर्शन, व्हेन्चर कॅपिटल, एमएसएमई लोन व आंतरराष्ट्रीय परिषद',
+    icon: '🌐',
+    contact: '+91 20 2605 9876'
+  },
+  {
+    id: 19,
+    name: 'अण्णासाहेब पाटील उद्योजक मंच',
+    category: 'व्यावसायिक',
+    established: '२०१८',
+    hq: 'नवी मुंबई, महाराष्ट्र',
+    presence: '३६ जिल्हे',
+    members: '१.२ लाख+ लाभार्थी',
+    focus: 'अण्णासाहेब पाटील महामंडळ बिनव्याजी कर्ज योजना साहाय्य, बँक लोन मंजुरी पाठपुरावा',
+    icon: '📈',
+    contact: '+91 22 2788 1234'
+  },
+  {
+    id: 20,
+    name: 'मराठा कृषी-औद्योगिक विकास महामंडळ',
+    category: 'व्यावसायिक',
+    established: '२०१३',
+    hq: 'सांगली / जालना',
+    presence: 'पश्चिम महाराष्ट्र व मराठवाडा',
+    members: '२२,०००+ शेतकरी उद्योजक',
+    focus: 'फळ प्रक्रिया उद्योग, कोल्ड स्टोरेज नेटवर्किंग, थेट निर्यात व कृषी मूल्यवर्धन',
+    icon: '🌾',
+    contact: '+91 233 232 4455'
+  },
+
+  // 6. सांस्कृतिक (Cultural & Heritage)
+  {
+    id: 21,
     name: 'मराठा सांस्कृतिक परिषद',
     category: 'सांस्कृतिक',
     established: '२००२',
@@ -87,16 +266,140 @@ const orgsData = [
     contact: '+91 94220 33221'
   },
   {
-    id: 8,
+    id: 22,
+    name: 'श्री शिवराज्याभिषेक दिनोत्सव सेवा समिती',
+    category: 'सांस्कृतिक',
+    established: '१९९६',
+    hq: 'दुर्गराज रायगड / महाड',
+    presence: 'अखिल भारत व विश्व',
+    members: '५ लाख+ शिवभक्त',
+    focus: '६ जून भव्य शिवराज्याभिषेक सोहळा आयोजन, पालखी सोहळा व शिवकालीन इतिहास जतन',
+    icon: '🚩',
+    contact: '+91 2145 222 345'
+  },
+  {
+    id: 23,
+    name: 'अखिल भारतीय मराठी शाहिरी परिषद',
+    category: 'सांस्कृतिक',
+    established: '१९८८',
+    hq: 'कोल्हापूर, महाराष्ट्र',
+    presence: 'संपूर्ण महाराष्ट्र',
+    members: '१,५००+ शाहीर व कलावंत',
+    focus: 'शिवकालीन पोवाडा, डफ-तुणतुणे वादन, शाहिरी प्रशिक्षण वर्ग व ऐतिहासिक नाटक मंचन',
+    icon: '🎭',
+    contact: '+91 231 262 1199'
+  },
+  {
+    id: 24,
+    name: 'मराठा इतिहास संशोधन मंडळ',
+    category: 'सांस्कृतिक',
+    established: '१९७५',
+    hq: 'पुणे, महाराष्ट्र',
+    presence: 'महाराष्ट्र व लंडन अभिलेखागार',
+    members: '५००+ इतिहास संशोधक',
+    focus: 'मोडी लिपी दस्तऐवज संशोधन, शिवकालीन अस्सल कागदपत्रांचे प्रकाशन व व्याख्यानमाला',
+    icon: '📜',
+    contact: '+91 20 2447 5511'
+  },
+
+  // 7. क्रीडा (Sports)
+  {
+    id: 25,
     name: 'मराठा क्रीडा प्रोत्साहन मंडळ',
     category: 'क्रीडा',
     established: '२०१६',
     hq: 'सांगली, महाराष्ट्र',
     presence: 'महाराष्ट्र व राष्ट्रीय',
     members: '१ लाख+ खेळाडू',
-    focus: 'कुस्ती, कबड्डी, मल्लखांब खेळाडूंना आर्थिक मदत व ऑलिम्पिक तयारी',
+    focus: 'कुस्ती, कबड्डी, मल्लखांब खेळाडूंना आर्थिक मदत, डाएट किट व ऑलिम्पिक तयारी',
     icon: '🤼',
     contact: '+91 97650 88776'
+  },
+  {
+    id: 26,
+    name: 'महाराष्ट्र कुस्तीगीर मराठा परिषद',
+    category: 'क्रीडा',
+    established: '२००३',
+    hq: 'कोल्हापूर (कुस्तीची पंढरी)',
+    presence: 'कोल्हापूर, सांगली, सातारा, पुणे',
+    members: '१५,०००+ मल्ल व वस्ताद',
+    focus: 'पारंपरिक तालीम संवर्धन, हिंदकेसरी व महाराष्ट्र केसरी मल्लांना स्पॉन्सरशिप व वैद्यकीय विमा',
+    icon: '🏆',
+    contact: '+91 231 264 8833'
+  },
+  {
+    id: 27,
+    name: 'शिवकालीन युद्धकला व मर्दानी खेळ महासंघ',
+    category: 'क्रीडा',
+    established: '२०१०',
+    hq: 'पुणे, महाराष्ट्र',
+    presence: '२६ जिल्हे',
+    members: '४०,०००+ खेळाडू',
+    focus: 'दांडपट्टा, तलवारबाजी, लाठीकाठी, भालाफेक यांचे प्रशिक्षण व शालेय क्रीडा स्पर्धा मान्यता',
+    icon: '🗡️',
+    contact: '+91 98223 11445'
+  },
+  {
+    id: 28,
+    name: 'सह्याद्री ट्रेकर्स व माउंटेनिअरिंग असोसिएशन',
+    category: 'क्रीडा',
+    established: '२०१४',
+    hq: 'ठाणे / नाशिक, महाराष्ट्र',
+    presence: 'सह्याद्री पर्वत रांगा',
+    members: '२५,०००+ गिर्यारोहक',
+    focus: 'किल्ले प्रदक्षिणा, रॉक क्लाइंबिंग, पर्यावरणपूरक ट्रेकिंग व दुर्ग संवर्धन मोहीम',
+    icon: '🧗',
+    contact: '+91 22 2533 8899'
+  },
+
+  // 8. इतर (Other / Specialized)
+  {
+    id: 29,
+    name: 'मराठा लीगल फोरम (कायदेविषयक साहाय्य कक्ष)',
+    category: 'इतर',
+    established: '२०१७',
+    hq: 'मुंबई उच्च न्यायालय / पुणे',
+    presence: 'सर्व जिल्हा न्यायालये',
+    members: '३,०००+ विधीज्ञ व वकील',
+    focus: 'गरजू मराठा बांधवांना मोफत कायदेशीर सल्ला, आरक्षण कायदेशीर लढाई व जनहित याचिका',
+    icon: '⚖️',
+    contact: '+91 22 2267 4433'
+  },
+  {
+    id: 30,
+    name: 'मराठा डॉक्टर्स असोसिएशन (आरोग्य सेवा)',
+    category: 'इतर',
+    established: '२०११',
+    hq: 'पुणे / छत्रपती संभाजीनगर',
+    presence: 'महाराष्ट्रभर १०,०००+ डॉक्टर',
+    members: '१०,०००+ मराठा डॉक्टर्स',
+    focus: 'मोफत ग्रामीण आरोग्य शिबिरे, कॅन्सर तपासणी, रक्तदान महाअभियान व आपत्कालीन मदत',
+    icon: '🩺',
+    contact: '+91 20 2553 7700'
+  },
+  {
+    id: 31,
+    name: 'मराठा शेतकरी समन्वय मंच',
+    category: 'इतर',
+    established: '२०१५',
+    hq: 'बीड / लातूर / परभणी',
+    presence: 'मराठवाडा व विदर्भ',
+    members: '३ लाख+ शेतकरी कुटुंबे',
+    focus: 'दुष्काळ मदत, शेतकरी आत्महत्याग्रस्त कुटुंबांचे पुनर्वसन व हमीभाव मिळवण्यासाठी लढा',
+    icon: '🚜',
+    contact: '+91 2442 223 990'
+  },
+  {
+    id: 32,
+    name: 'ग्लोबल मराठा डायस्पोरा कौन्सिल (आंतरराष्ट्रीय)',
+    category: 'इतर',
+    established: '२०१९',
+    hq: 'लंडन / न्यू जर्सी / दुबई',
+    presence: '२५+ देश (परदेशस्थ मराठा मंडळे)',
+    members: '१.५ लाख+ अनिवासी मराठा',
+    focus: 'परदेशात शिवजयंती उत्सव, मराठी भाषा संवर्धन, परदेशी उच्च शिक्षण व नोकरी मार्गदर्शन',
+    icon: '✈️',
+    contact: '+44 20 7946 0991'
   }
 ];
 
@@ -136,7 +439,12 @@ export default function MarathaOrganizationsPage() {
           icon: o.logo || o.icon || '🚩',
           contact: o.contact || '+91 98220 99887'
         }));
-        setOrgs(mapped);
+        // Merge registered live organizations at top without removing categorized defaults
+        setOrgs((prev) => {
+          const liveIds = new Set(mapped.map((m) => m.id));
+          const unmanaged = prev.filter((p) => !liveIds.has(p.id));
+          return [...mapped, ...unmanaged];
+        });
       }
     }).catch(() => {});
   }, []);
@@ -196,46 +504,71 @@ export default function MarathaOrganizationsPage() {
     <div className="organizations-page" style={{ background: '#FAF7F2', minHeight: '100vh', paddingBottom: '60px' }}>
       {/* Hero Banner */}
       <section style={{
-        background: 'linear-gradient(135deg, rgba(183, 28, 28, 0.90) 0%, rgba(216, 67, 21, 0.88) 100%), url("/assets/images/maratha-samrajya.jpg") center/cover no-repeat',
+        background: 'linear-gradient(180deg, rgba(30, 15, 10, 0.45) 0%, rgba(139, 20, 20, 0.62) 60%, rgba(20, 10, 10, 0.78) 100%), url("/assets/images/maratha-kranti-morcha.jpg") center 35%/cover no-repeat',
         color: '#FFFFFF',
-        padding: '50px 20px',
+        padding: '64px 20px 56px',
         textAlign: 'center',
-        position: 'relative'
+        position: 'relative',
+        boxShadow: 'inset 0 0 100px rgba(0,0,0,0.45)'
       }}>
-        <div style={{ maxWidth: '980px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '980px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
           <div style={{
             display: 'inline-block',
-            background: 'rgba(255,255,255,0.18)',
-            padding: '5px 16px',
-            borderRadius: '20px',
-            fontSize: '0.85rem',
+            background: 'rgba(0, 0, 0, 0.45)',
+            backdropFilter: 'blur(6px)',
+            border: '1px solid rgba(255, 213, 79, 0.4)',
+            padding: '6px 18px',
+            borderRadius: '24px',
+            fontSize: '0.88rem',
             fontWeight: 700,
-            marginBottom: '12px',
-            color: '#FFD54F'
+            marginBottom: '14px',
+            color: '#FFD54F',
+            letterSpacing: '0.5px'
           }}>
             🚩 CONNECT मराठा — एक लढा! एक संघर्ष! एक समाज! | सर्वधर्म समभाव
           </div>
-          <p style={{ fontSize: '1.25rem', color: '#FFE082', fontWeight: 600, margin: '0 0 6px' }}>
+          <p style={{
+            fontSize: '1.25rem',
+            color: '#FFE082',
+            fontWeight: 700,
+            margin: '0 0 8px',
+            textShadow: '0 2px 8px rgba(0,0,0,0.8)'
+          }}>
             संघटित मराठा ! सशक्त मराठा !!
           </p>
-          <h1 style={{ fontSize: '2.6rem', fontWeight: 900, margin: '0 0 10px' }}>
+          <h1 style={{
+            fontSize: 'clamp(2rem, 3.8vw, 2.85rem)',
+            fontWeight: 900,
+            margin: '0 0 12px',
+            color: '#FFFFFF',
+            textShadow: '0 3px 12px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9)'
+          }}>
             मराठा संघटना – एकत्र येऊ, प्रगती करू !
           </h1>
-          <p style={{ fontSize: '1.1rem', opacity: 0.95, margin: '0 auto 20px', maxWidth: '680px' }}>
+          <p style={{
+            fontSize: '1.12rem',
+            color: '#F8FAFC',
+            margin: '0 auto 24px',
+            maxWidth: '720px',
+            lineHeight: 1.6,
+            textShadow: '0 2px 8px rgba(0,0,0,0.85)'
+          }}>
             सन्मान, स्वाभिमान आणि हक्कासाठी मराठा समाज एकत्र आहे. महाराष्ट्रातील सर्व अधिकृत संघटनांची सूची.
           </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
             <button
               onClick={() => setShowAddModal(true)}
               style={{
-                background: '#FFD54F',
-                color: '#B71C1C',
+                background: 'linear-gradient(135deg, #FFD54F 0%, #FFB300 100%)',
+                color: '#8B1414',
                 border: 'none',
-                padding: '12px 26px',
-                borderRadius: '8px',
+                padding: '13px 28px',
+                borderRadius: '10px',
                 fontWeight: 800,
                 fontSize: '1rem',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
+                transition: 'all 0.2s ease'
               }}
             >
               ＋ आपली संघटना नोंदवा
@@ -243,13 +576,15 @@ export default function MarathaOrganizationsPage() {
             <a
               href="#orgs-list"
               style={{
-                background: 'rgba(255,255,255,0.15)',
+                background: 'rgba(0, 0, 0, 0.45)',
                 color: '#fff',
-                border: '1px solid rgba(255,255,255,0.4)',
-                padding: '12px 24px',
-                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.6)',
+                backdropFilter: 'blur(4px)',
+                padding: '13px 26px',
+                borderRadius: '10px',
                 fontWeight: 700,
-                textDecoration: 'none'
+                textDecoration: 'none',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.25)'
               }}
             >
               नोंदणीकृत संघटना पहा ({orgsData.length}+)
@@ -259,7 +594,7 @@ export default function MarathaOrganizationsPage() {
       </section>
 
       {/* Search & Categories */}
-      <div id="orgs-list" style={{ maxWidth: '1180px', margin: '-22px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
+      <div id="orgs-list" style={{ maxWidth: '1180px', margin: '24px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
         <div style={{
           background: '#FFFFFF',
           borderRadius: '14px',
@@ -284,31 +619,84 @@ export default function MarathaOrganizationsPage() {
             }}
           />
           <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCat(cat)}
-                style={{
-                  padding: '7px 18px',
-                  borderRadius: '20px',
-                  border: selectedCat === cat ? '2px solid #B71C1C' : '1px solid #E0E0E0',
-                  background: selectedCat === cat ? '#B71C1C' : '#FFFFFF',
-                  color: selectedCat === cat ? '#FFFFFF' : '#424242',
-                  fontSize: '0.88rem',
-                  fontWeight: selectedCat === cat ? 700 : 500,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {cat}
-              </button>
-            ))}
+            {categories.map((cat) => {
+              const count = cat === 'सर्व संघटना' 
+                ? orgs.length 
+                : orgs.filter((o) => o.category === cat).length;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCat(cat)}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: '24px',
+                    border: selectedCat === cat ? '2px solid #B71C1C' : '1.5px solid #E2D9D2',
+                    background: selectedCat === cat ? 'linear-gradient(135deg, #B71C1C 0%, #880E4F 100%)' : '#FFFFFF',
+                    color: selectedCat === cat ? '#FFFFFF' : '#333333',
+                    fontSize: '0.9rem',
+                    fontWeight: selectedCat === cat ? 800 : 600,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: selectedCat === cat ? '0 4px 12px rgba(183,28,28,0.25)' : 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <span>{cat}</span>
+                  <span style={{
+                    fontSize: '0.75rem',
+                    background: selectedCat === cat ? 'rgba(255,255,255,0.25)' : '#F0EAE1',
+                    color: selectedCat === cat ? '#FFFFFF' : '#8B1414',
+                    padding: '2px 8px',
+                    borderRadius: '12px',
+                    fontWeight: 700
+                  }}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
       {/* Organizations Grid */}
       <section style={{ maxWidth: '1180px', margin: '36px auto', padding: '0 16px' }}>
+        {filtered.length === 0 ? (
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            padding: '48px 24px',
+            textAlign: 'center',
+            border: '1px dashed #D7CCC8',
+            maxWidth: '600px',
+            margin: '0 auto'
+          }}>
+            <div style={{ fontSize: '3rem', marginBottom: '12px' }}>🚩</div>
+            <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#B71C1C', margin: '0 0 8px' }}>
+              या वर्गवारीत सध्या संघटना आढळली नाही
+            </h4>
+            <p style={{ color: '#666', fontSize: '0.95rem', marginBottom: '20px' }}>
+              आपण आपल्या अधिकृत मराठा संघटनेची येथे विनामूल्य नोंदणी करू शकता.
+            </p>
+            <button
+              onClick={() => setShowAddModal(true)}
+              style={{
+                background: '#B71C1C',
+                color: '#fff',
+                border: 'none',
+                padding: '10px 22px',
+                borderRadius: '8px',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+            >
+              ＋ संघटना नोंदणी करा
+            </button>
+          </div>
+        ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '22px' }}>
           {filtered.map((org) => (
             <div
@@ -405,6 +793,7 @@ export default function MarathaOrganizationsPage() {
             </div>
           ))}
         </div>
+        )}
       </section>
 
       {/* Statistics Banner */}

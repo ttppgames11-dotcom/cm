@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 const DEFAULT_TRAILS = [
   {
     id: 'trail_1',
-    image: '/assets/images/real-raigad-panoramic.jpg',
     title: 'तोरणा → राजगड → रायगड (स्वराज्य विजय व राजधानी महामार्ग)',
     route: 'किल्ले तोरणा ते किल्ले राजगड ते दुर्गराज रायगड',
     region: 'पुणे - वेल्हे - महाड (सह्याद्री मुख्य रांग)',
@@ -19,7 +18,6 @@ const DEFAULT_TRAILS = [
   },
   {
     id: 'trail_2',
-    image: '/assets/images/real-pavankhind.jpg',
     title: 'पन्हाळा → पावनखिंड → विशाळगड (अमर शौर्य व बलिदान स्मृती ट्रेल)',
     route: 'किल्ले पन्हाळा ते घोडखिंड (पावनखिंड) ते किल्ले विशाळगड',
     region: 'कोल्हापूर (पन्हाळा-शाहुवाडी)',
@@ -34,7 +32,6 @@ const DEFAULT_TRAILS = [
   },
   {
     id: 'trail_3',
-    image: '/assets/images/projects/proj_shivneri.jpg',
     title: 'शिवनेरी → जुन्नर लेणी → चाकण संग्रामदुर्ग (शिवजन्मोत्सव ट्रेल)',
     route: 'किल्ले शिवनेरी ते जुन्नर प्राचीन बाजारपेठ ते चाकण किल्ला',
     region: 'पुणे उत्तर (जुन्नर-चाकण)',
@@ -49,7 +46,6 @@ const DEFAULT_TRAILS = [
   },
   {
     id: 'trail_4',
-    image: '/assets/images/real-pratapgad-fort.jpg',
     title: 'प्रतापगड → जावळी अरण्य → महाबळेश्वर (अफझलखान रणभूमी ट्रेल)',
     route: 'किल्ले प्रतापगड ते जावळीचे घनदाट खोरे ते महाबळेश्वर',
     region: 'सातारा (महाबळेश्वर-वाई)',
@@ -238,7 +234,7 @@ export default function HeritageTrailsPage() {
 
         {/* Hero Section */}
         <div style={{
-          background: "linear-gradient(rgba(28, 10, 0, 0.88), rgba(92, 30, 0, 0.9)), url('/assets/images/real-raigad-panoramic.jpg') center/cover no-repeat",
+          background: 'linear-gradient(135deg, #1C0A00 0%, #3D1200 50%, #5C1E00 100%)',
           borderRadius: '24px',
           padding: '44px 36px',
           color: '#FFF',
@@ -465,19 +461,6 @@ export default function HeritageTrailsPage() {
               }}>
               <div>
                 {/* Diff Badge & Region */}
-                {t.image && (
-                  <div style={{ height: '170px', margin: '-26px -26px 14px -26px', overflow: 'hidden', borderRadius: '16px 16px 0 0', position: 'relative' }}>
-                    <img
-                      src={t.image}
-                      alt={t.title}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/real-raigad-panoramic.jpg'; }}
-                    />
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)', padding: '6px 12px' }}>
-                      <span style={{ color: '#FDE047', fontSize: '0.76rem', fontWeight: 800 }}>🏔️ सह्याद्री पदभ्रमण वारसा मार्ग</span>
-                    </div>
-                  </div>
-                )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <span style={{
                     background: '#FFF7ED',

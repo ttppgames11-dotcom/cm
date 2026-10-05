@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams, useLocation } from 'react-router-dom';
 import { 
   GRAMDEVAT_TEMPLES_DATA, 
   FOLK_TRADITIONS_DATA, 
@@ -8,8 +8,35 @@ import {
 } from '../../data/heritageKnowledgeGraph';
 
 export default function GramdevatJatraPage() {
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+
   const [activeTab, setActiveTab] = useState('gramdevat'); // 'gramdevat' | 'jatra' | 'natya' | 'khel'
   const [selectedDeityId, setSelectedDeityId] = useState(GRAMDEVAT_TEMPLES_DATA[0].id);
+
+  // Sync activeTab from URL searchParams or pathname
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    const path = location.pathname.toLowerCase();
+
+    if (tabParam && ['gramdevat', 'jatra', 'natya', 'khel'].includes(tabParam.toLowerCase())) {
+      setActiveTab(tabParam.toLowerCase());
+    } else if (path.includes('jatra')) {
+      setActiveTab('jatra');
+    } else if (path.includes('natya')) {
+      setActiveTab('natya');
+    } else if (path.includes('khel')) {
+      setActiveTab('khel');
+    } else if (path.includes('gramdevat')) {
+      setActiveTab('gramdevat');
+    }
+
+    const deityParam = searchParams.get('deity');
+    if (deityParam) {
+      const found = GRAMDEVAT_TEMPLES_DATA.find(d => d.id === deityParam || d.name.toLowerCase().includes(deityParam.toLowerCase()));
+      if (found) setSelectedDeityId(found.id);
+    }
+  }, [searchParams, location.pathname]);
 
   const activeDeity = GRAMDEVAT_TEMPLES_DATA.find(d => d.id === selectedDeityId) || GRAMDEVAT_TEMPLES_DATA[0];
 
@@ -21,7 +48,7 @@ export default function GramdevatJatraPage() {
       
       {/* Hero Header */}
       <section style={{
-        background: "linear-gradient(rgba(124, 29, 5, 0.88), rgba(230, 81, 0, 0.92)), url('/assets/images/apla-maharashtra-gallery.jpg') center/cover no-repeat",
+        background: 'linear-gradient(135deg, #7C1D05 0%, #B91C1C 60%, #E65100 100%)',
         color: '#FFFFFF',
         padding: '48px 20px 36px',
         borderBottom: '4px solid #F59E0B'
@@ -139,24 +166,56 @@ export default function GramdevatJatraPage() {
                         background: isSelected ? 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)' : '#FFFFFF',
                         border: isSelected ? '2px solid #F59E0B' : '1px solid #E5E7EB',
                         borderRadius: '14px',
-                        padding: '16px',
+                        padding: '14px',
                         cursor: 'pointer',
-                        transition: 'all 0.15s ease'
+                        transition: 'all 0.15s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '14px'
                       }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
-                        <h4 style={{ fontSize: '1.05rem', color: isSelected ? '#78350F' : '#1F2937', fontWeight: 800, margin: 0 }}>
-                          🛕 {d.name}
-                        </h4>
-                        <span style={{ fontSize: '0.72rem', background: '#FEE2E2', color: '#B91C1C', padding: '2px 8px', borderRadius: '10px', fontWeight: 700 }}>
-                          {d.type}
-                        </span>
+                      {/* Deity Thumbnail without cropping */}
+                      <div style={{
+                        width: '74px',
+                        height: '74px',
+                        borderRadius: '10px',
+                        overflow: 'hidden',
+                        background: '#180E09',
+                        flexShrink: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+                      }}>
+                        <img 
+                          src={d.heroImage} 
+                          alt={d.name}
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                            display: 'block',
+                            padding: '2px'
+                          }}
+                        />
                       </div>
-                      <div style={{ fontSize: '0.82rem', color: '#4B5563', marginBottom: '4px' }}>
-                        📍 {d.location}
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: d.sourceRef.confidence.color, fontWeight: 700 }}>
-                        {d.sourceRef.confidence.icon} {d.sourceRef.confidence.label}
+
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
+                          <h4 style={{ fontSize: '1rem', color: isSelected ? '#78350F' : '#1F2937', fontWeight: 800, margin: 0 }}>
+                            🛕 {d.name}
+                          </h4>
+                          <span style={{ fontSize: '0.7rem', background: '#FEE2E2', color: '#B91C1C', padding: '2px 8px', borderRadius: '10px', fontWeight: 700, flexShrink: 0 }}>
+                            {d.type.split(' ')[0]}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '0.8rem', color: '#4B5563', marginBottom: '4px' }}>
+                          📍 {d.location}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: d.sourceRef.confidence.color, fontWeight: 700 }}>
+                          {d.sourceRef.confidence.icon} {d.sourceRef.confidence.label}
+                        </div>
                       </div>
                     </div>
                   );
@@ -171,44 +230,76 @@ export default function GramdevatJatraPage() {
                 boxShadow: '0 10px 30px rgba(0,0,0,0.06)',
                 overflow: 'hidden'
               }}>
-                {/* Header */}
+                {/* Hero Image Presentation Container (Uncropped Full View) */}
                 <div style={{
-                  background: 'linear-gradient(90deg, #7C1D05 0%, #B91C1C 100%)',
-                  color: '#FFFFFF',
-                  padding: '24px 28px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
-                  flexWrap: 'wrap',
-                  gap: '12px'
+                  position: 'relative',
+                  background: 'linear-gradient(135deg, #180905 0%, #2A1009 50%, #150604 100%)',
+                  borderBottom: '4px solid #F59E0B'
                 }}>
-                  <div>
-                    <span style={{ background: 'rgba(255,255,255,0.2)', padding: '3px 10px', borderRadius: '12px', fontSize: '0.78rem', fontWeight: 700 }}>
-                      {activeDeity.type}
-                    </span>
-                    <h2 style={{ fontSize: '1.7rem', fontWeight: 800, margin: '8px 0 4px' }}>
-                      {activeDeity.name}
-                    </h2>
-                    <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>
-                      📍 {activeDeity.location} • {activeDeity.region}
-                    </div>
+                  {/* Full image display with objectFit: contain without cropping */}
+                  <div style={{
+                    width: '100%',
+                    maxHeight: '340px',
+                    minHeight: '220px',
+                    background: '#0E0604',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img 
+                      src={activeDeity.heroImage} 
+                      alt={activeDeity.name}
+                      style={{
+                        maxWidth: '100%',
+                        maxHeight: '340px',
+                        width: 'auto',
+                        height: 'auto',
+                        objectFit: 'contain',
+                        display: 'block'
+                      }}
+                    />
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                    <span style={{
-                      background: activeDeity.sourceRef.confidence.bg,
-                      color: activeDeity.sourceRef.confidence.color,
-                      border: `1px solid ${activeDeity.sourceRef.confidence.color}`,
-                      padding: '4px 10px',
-                      borderRadius: '20px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700
-                    }}>
-                      {activeDeity.sourceRef.confidence.icon} {activeDeity.sourceRef.confidence.label}
-                    </span>
-                    <span style={{ fontSize: '0.72rem', color: '#FCD34D' }}>
-                      {activeDeity.sourceRef.tier.badge}
-                    </span>
+                  {/* Header Title Bar */}
+                  <div style={{
+                    background: 'linear-gradient(to top, rgba(20, 6, 2, 0.98) 0%, rgba(35, 10, 4, 0.92) 100%)',
+                    color: '#FFFFFF',
+                    padding: '20px 24px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    flexWrap: 'wrap',
+                    gap: '12px'
+                  }}>
+                    <div>
+                      <span style={{ background: 'rgba(255,255,255,0.2)', padding: '3px 10px', borderRadius: '12px', fontSize: '0.78rem', fontWeight: 700 }}>
+                        {activeDeity.type}
+                      </span>
+                      <h2 style={{ fontSize: '1.7rem', fontWeight: 800, margin: '8px 0 4px', textShadow: '0 2px 6px rgba(0,0,0,0.6)' }}>
+                        {activeDeity.name}
+                      </h2>
+                      <div style={{ fontSize: '0.9rem', color: '#FDE68A' }}>
+                        📍 {activeDeity.location} • {activeDeity.region}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                      <span style={{
+                        background: activeDeity.sourceRef.confidence.bg,
+                        color: activeDeity.sourceRef.confidence.color,
+                        border: `1px solid ${activeDeity.sourceRef.confidence.color}`,
+                        padding: '4px 10px',
+                        borderRadius: '20px',
+                        fontSize: '0.78rem',
+                        fontWeight: 700
+                      }}>
+                        {activeDeity.sourceRef.confidence.icon} {activeDeity.sourceRef.confidence.label}
+                      </span>
+                      <span style={{ fontSize: '0.72rem', color: '#FCD34D' }}>
+                        {activeDeity.sourceRef.tier.badge}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -319,42 +410,80 @@ export default function GramdevatJatraPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px' }}>
               {GRAMDEVAT_TEMPLES_DATA.map(j => (
-                <div key={j.id} style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #F3E8D8', padding: '24px', boxShadow: '0 4px 14px rgba(0,0,0,0.04)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-                    <h3 style={{ fontSize: '1.25rem', color: '#7C1D05', fontWeight: 800, margin: 0 }}>
-                      🎪 {j.name} यात्रा
-                    </h3>
-                    <span style={{ fontSize: '0.75rem', background: '#FEF3C7', color: '#92400E', padding: '3px 8px', borderRadius: '10px', fontWeight: 700 }}>
-                      {j.region}
-                    </span>
-                  </div>
-
-                  <div style={{ fontSize: '0.88rem', color: '#B91C1C', fontWeight: 800, marginBottom: '8px' }}>
-                    🗓️ कालावधी: {j.annualJatraDate}
-                  </div>
-
-                  <div style={{ fontSize: '0.85rem', color: '#4B5563', lineHeight: 1.5, marginBottom: '12px' }}>
-                    <strong>प्रमुख विधी:</strong> {j.jatraRituals.join(' • ')}
-                  </div>
-
-                  <div style={{ background: '#F9FAFB', padding: '10px 14px', borderRadius: '10px', fontSize: '0.82rem', color: '#374151', marginBottom: '14px' }}>
-                    <div>🍲 <strong>विशेष यात्रा खाद्य:</strong> {j.connectedFood}</div>
-                    <div style={{ marginTop: '4px' }}>🏰 <strong>जवळील दुर्ग:</strong> {j.connectedFort}</div>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #F3F4F6', paddingTop: '10px', fontSize: '0.78rem' }}>
-                    <span style={{ color: j.sourceRef.confidence.color, fontWeight: 700 }}>
-                      {j.sourceRef.confidence.icon} {j.sourceRef.confidence.label}
-                    </span>
-                    <button
-                      onClick={() => {
-                        setSelectedDeityId(j.id);
-                        setActiveTab('gramdevat');
+                <div key={j.id} style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #F3E8D8', overflow: 'hidden', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column' }}>
+                  {/* Uncropped Temple / Jatra Image Banner */}
+                  <div style={{
+                    width: '100%',
+                    height: '180px',
+                    background: '#1A0E08',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'relative'
+                  }}>
+                    <img 
+                      src={j.heroImage} 
+                      alt={j.name} 
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                      style={{
+                        maxWidth: '100%',
+                        maxHeight: '100%',
+                        objectFit: 'contain',
+                        display: 'block'
                       }}
-                      style={{ background: 'none', border: 'none', color: '#B91C1C', fontWeight: 700, cursor: 'pointer' }}
-                    >
-                      सविस्तर देवस्थान प्रोफाइल →
-                    </button>
+                    />
+                    <span style={{
+                      position: 'absolute',
+                      top: '12px',
+                      right: '12px',
+                      background: 'rgba(0,0,0,0.7)',
+                      color: '#FEF3C7',
+                      fontSize: '0.75rem',
+                      padding: '3px 10px',
+                      borderRadius: '12px',
+                      fontWeight: 700
+                    }}>
+                      📍 {j.region.split(' (')[0]}
+                    </span>
+                  </div>
+
+                  <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                      <h3 style={{ fontSize: '1.2rem', color: '#7C1D05', fontWeight: 800, margin: 0 }}>
+                        🎪 {j.name} यात्रा
+                      </h3>
+                      <span style={{ fontSize: '0.72rem', background: '#FEF3C7', color: '#92400E', padding: '2px 8px', borderRadius: '8px', fontWeight: 700 }}>
+                        {j.type.split(' ')[0]}
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: '0.85rem', color: '#B91C1C', fontWeight: 800, marginBottom: '8px' }}>
+                      🗓️ कालावधी: {j.annualJatraDate}
+                    </div>
+
+                    <div style={{ fontSize: '0.82rem', color: '#4B5563', lineHeight: 1.45, marginBottom: '12px' }}>
+                      <strong>प्रमुख विधी:</strong> {j.jatraRituals.join(' • ')}
+                    </div>
+
+                    <div style={{ background: '#F9FAFB', padding: '10px 14px', borderRadius: '10px', fontSize: '0.8rem', color: '#374151', marginBottom: '14px', marginTop: 'auto' }}>
+                      <div>🍲 <strong>विशेष यात्रा खाद्य:</strong> {j.connectedFood}</div>
+                      <div style={{ marginTop: '4px' }}>🏰 <strong>जवळील दुर्ग:</strong> {j.connectedFort}</div>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #F3F4F6', paddingTop: '10px', fontSize: '0.78rem' }}>
+                      <span style={{ color: j.sourceRef.confidence.color, fontWeight: 700 }}>
+                        {j.sourceRef.confidence.icon} {j.sourceRef.confidence.label}
+                      </span>
+                      <button
+                        onClick={() => {
+                          setSelectedDeityId(j.id);
+                          setActiveTab('gramdevat');
+                        }}
+                        style={{ background: 'none', border: 'none', color: '#B91C1C', fontWeight: 700, cursor: 'pointer' }}
+                      >
+                        सविस्तर देवस्थान प्रोफाइल →
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -377,10 +506,39 @@ export default function GramdevatJatraPage() {
               </p>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {natyaList.map(n => (
-                <div key={n.id} style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #F3E8D8', padding: '26px', boxShadow: '0 4px 14px rgba(0,0,0,0.04)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
+                <div key={n.id} style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #F3E8D8', overflow: 'hidden', boxShadow: '0 4px 14px rgba(0,0,0,0.04)' }}>
+                  {/* Uncropped Natya/Art Performance Banner */}
+                  {n.heroImage && (
+                    <div style={{
+                      width: '100%',
+                      maxHeight: '300px',
+                      minHeight: '180px',
+                      background: '#150A05',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      overflow: 'hidden'
+                    }}>
+                      <img 
+                        src={n.heroImage} 
+                        alt={n.name}
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '300px',
+                          width: 'auto',
+                          height: 'auto',
+                          objectFit: 'contain',
+                          display: 'block'
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  <div style={{ padding: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
                     <div>
                       <span style={{ background: '#FEE2E2', color: '#991B1B', padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
                         {n.category}
@@ -442,10 +600,11 @@ export default function GramdevatJatraPage() {
                     स्रोत: {n.sourceRef.source}
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
+      )}
 
         {/* TAB 4: KHEL (TRADITIONAL FOLK GAMES) */}
         {activeTab === 'khel' && (
@@ -464,37 +623,64 @@ export default function GramdevatJatraPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
               {khelList.map(k => (
-                <div key={k.id} style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #F3E8D8', padding: '24px', boxShadow: '0 4px 14px rgba(0,0,0,0.04)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-                    <h3 style={{ fontSize: '1.3rem', color: '#7C1D05', fontWeight: 800, margin: 0 }}>
-                      🏏 {k.name}
-                    </h3>
-                    <span style={{ fontSize: '0.75rem', background: '#DCFCE7', color: '#15803D', padding: '3px 8px', borderRadius: '10px', fontWeight: 700 }}>
-                      {k.category}
-                    </span>
-                  </div>
-
-                  <div style={{ fontSize: '0.88rem', color: '#4B5563', lineHeight: 1.5, marginBottom: '10px' }}>
-                    {k.historicalRoots}
-                  </div>
-
-                  <div style={{ background: '#FFFBEB', padding: '10px 14px', borderRadius: '10px', border: '1px solid #FEF3C7', marginBottom: '12px' }}>
-                    <div style={{ fontSize: '0.78rem', color: '#92400E', fontWeight: 700 }}>खेळण्याची पद्धत व साधने:</div>
-                    <div style={{ fontSize: '0.85rem', color: '#78350F', marginTop: '2px' }}>
-                      {k.elements.join(' • ')}
+                <div key={k.id} style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #F3E8D8', overflow: 'hidden', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column' }}>
+                  {/* Uncropped Folk Game Image */}
+                  {k.heroImage && (
+                    <div style={{
+                      width: '100%',
+                      height: '200px',
+                      background: '#1A0E08',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      overflow: 'hidden'
+                    }}>
+                      <img 
+                        src={k.heroImage} 
+                        alt={k.name}
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          objectFit: 'contain',
+                          display: 'block'
+                        }}
+                      />
                     </div>
-                  </div>
+                  )}
 
-                  <div style={{ fontSize: '0.82rem', color: '#6B7280', marginBottom: '12px' }}>
-                    📍 <strong>प्रसंग:</strong> {k.performanceOccasion}
-                  </div>
+                  <div style={{ padding: '22px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+                      <h3 style={{ fontSize: '1.3rem', color: '#7C1D05', fontWeight: 800, margin: 0 }}>
+                        🏏 {k.name}
+                      </h3>
+                      <span style={{ fontSize: '0.75rem', background: '#DCFCE7', color: '#15803D', padding: '3px 8px', borderRadius: '10px', fontWeight: 700 }}>
+                        {k.category}
+                      </span>
+                    </div>
 
-                  <div style={{ fontSize: '0.82rem', color: '#166534', background: '#F0FDF4', padding: '8px 12px', borderRadius: '8px', fontWeight: 600 }}>
-                    🏆 {k.modernStatus}
-                  </div>
+                    <div style={{ fontSize: '0.88rem', color: '#4B5563', lineHeight: 1.5, marginBottom: '10px' }}>
+                      {k.historicalRoots}
+                    </div>
 
-                  <div style={{ borderTop: '1px solid #F3F4F6', paddingTop: '10px', marginTop: '12px', fontSize: '0.75rem', color: '#9CA3AF' }}>
-                    संदर्भ: {k.sourceRef.source}
+                    <div style={{ background: '#FFFBEB', padding: '10px 14px', borderRadius: '10px', border: '1px solid #FEF3C7', marginBottom: '12px' }}>
+                      <div style={{ fontSize: '0.78rem', color: '#92400E', fontWeight: 700 }}>खेळण्याची पद्धत व साधने:</div>
+                      <div style={{ fontSize: '0.85rem', color: '#78350F', marginTop: '2px' }}>
+                        {k.elements.join(' • ')}
+                      </div>
+                    </div>
+
+                    <div style={{ fontSize: '0.82rem', color: '#6B7280', marginBottom: '12px' }}>
+                      📍 <strong>प्रसंग:</strong> {k.performanceOccasion}
+                    </div>
+
+                    <div style={{ fontSize: '0.82rem', color: '#166534', background: '#F0FDF4', padding: '8px 12px', borderRadius: '8px', fontWeight: 600, marginTop: 'auto', marginBottom: '10px' }}>
+                      🏆 {k.modernStatus}
+                    </div>
+
+                    <div style={{ borderTop: '1px solid #F3F4F6', paddingTop: '10px', fontSize: '0.75rem', color: '#9CA3AF' }}>
+                      संदर्भ: {k.sourceRef.source}
+                    </div>
                   </div>
                 </div>
               ))}

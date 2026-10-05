@@ -11,7 +11,7 @@ export default function SymbolsPage() {
       name: 'दांडपट्टा (The Gauntlet Sword)',
       subtitle: 'मराठा सैन्याचे सर्वात संहारक व अद्वितीय अस्त्र',
       icon: '🗡️',
-      image: '/assets/images/weapons/dandpatta.jpg',
+      image: '/assets/images/real-dandpatta.jpg',
       description: 'दांडपट्टा हे मराठा पायदळाचे अत्यंत वेगवान व घातक शस्त्र होते. हाताच्या मनगटापासून कोपरापर्यंत पोलादी आवरण (Gauntlet) घालून फिरवले जाणारे हे शस्त्र एकाच वेळी शेकडो शत्रू फौजेत तुटून पडण्यासाठी वापरले जाई. बाजीप्रभू देशपांडे आणि तानाजी मालुसरे यांसारख्या वीरांनी दांडपट्ट्याच्या जोरावर अद्वितीय शौर्य गाजवले.',
       specs: [
         { label: 'लांबी', value: '३.५ ते ४.५ फूट लवचिक पोलाद' },
@@ -24,8 +24,8 @@ export default function SymbolsPage() {
       name: 'वाघनखे (Tiger Claws)',
       subtitle: 'प्रतापगडाच्या पायथ्याशी इतिहास घडवणारे गुप्त शस्त्र',
       icon: '🐾',
-      image: '/assets/images/weapons/waghnakh.jpg',
-      description: 'हाताच्या तळव्यात सहज लपवून ठेवता येणारे चार पोलादी नख्यांचे हे शस्त्र. १० नोव्हेंबर १६५९ रोजी छत्रपती शिवाजी महाराजांनी बलाढ्य अफझलखानाचा कोथळा बाहेर काढण्यासाठी या अस्त्राचा वापर केला. अलीकडेच लंडनमधील व्हिक्टोरिया अँड अल्बर्ट संग्रहालयातून ही ऐतिहासिक वाघनखे महाराष्ट्रात प्रदर्शनासाठी आणली गेली आहेत.',
+      image: '/assets/images/real-waghnakh.jpg',
+      description: 'हाताच्या तळव्यात सहज लपवून ठेवता येणारे चार पोलादी नख्यांचे हे शस्त्र. १० नोव्हेंबर १६५९ रोजी छत्रपती शिवाजी महाराजांनी बलाढ्य अफझलखानाचा कोथळा बाहेर काढण्यासाठी या अस्त्राचा वापर केला. लंडनमधील व्हिक्टोरिया अँड अल्बर्ट संग्रहालयातील ही ऐतिहासिक वाघनखे मराठ्यांच्या गनिमी काव्याचे सर्वोच्च प्रतीक आहेत.',
       specs: [
         { label: 'रचना', value: 'चार तीक्ष्ण वक्राकार पोलादी नखे व दोन अंगठ्या' },
         { label: 'वैशिष्ट्य', value: 'अंगरख्याच्या बाहीत पूर्णपणे गुप्त राहणारे' },
@@ -34,11 +34,11 @@ export default function SymbolsPage() {
     },
     bhavani: {
       id: 'bhavani',
-      name: 'भवानी तलवार (Bhavani Sword)',
+      name: 'भवानी तलवार व खांडा (Bhavani Sword)',
       subtitle: 'छत्रपती शिवरायांची पवित्र व अजिंक्य तलवार',
       icon: '⚔️',
-      image: '/assets/images/weapons/bhavani_talwar.jpg',
-      description: 'तुळजाभवानी मातेच्या आशीर्वादाने पूजलेली भवानी तलवार ही स्वराज्याची प्राणज्योत मानली जाते. उत्तम दर्जाच्या स्पॅनिश टोलेडो पोलादाची ही तलवार अत्यंत संतुलित व तीक्ष्ण होती. शिवरायांच्या हस्ते या तलवारीने अनेक लढाया जिंकल्या आणि अन्यायाचा निःपात केला.',
+      image: '/assets/images/real-khanda-sword.jpg',
+      description: 'तुळजाभवानी मातेच्या आशीर्वादाने पूजलेली भवानी तलवार ही स्वराज्याची प्राणज्योत मानली जाते. उत्तम दर्जाच्या पोलादाची मराठा खांडा पद्धतीची तलवार अत्यंत संतुलित, दुधारी व तीक्ष्ण होती. शिवरायांच्या हस्ते या अस्त्राने अनेक लढाया जिंकल्या आणि रयतेला अभय दिले.',
       specs: [
         { label: 'पोलाद', value: 'उच्च दर्जाचे दमास्कस / टोलेडो कार्बन स्टील' },
         { label: 'मुठ', value: 'पारंपरिक मराठा खांडा मुठ (धूप मुठ)' },
@@ -206,30 +206,55 @@ export default function SymbolsPage() {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px', alignItems: 'center', marginBottom: '28px' }}>
-            {/* The SVG Royal Seal */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{
-                width: '240px',
-                height: '240px',
-                filter: 'drop-shadow(0 12px 24px rgba(199, 56, 0, 0.35))',
-                transition: 'transform 0.3s ease',
-                cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.04)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-              >
-                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-                  <polygon points="60,10 140,10 190,60 190,140 140,190 60,190 10,140 10,60" fill="#991b1b" stroke="#f59e0b" strokeWidth="5"/>
-                  <polygon points="63,18 137,18 182,63 182,137 137,182 63,182 18,137 18,63" fill="none" stroke="#fef08a" strokeWidth="2" strokeDasharray="4,2"/>
-                  <text x="100" y="55" fontFamily="'Baloo 2', sans-serif" fontSize="13.5" fontWeight="800" fill="#fef08a" textAnchor="middle">प्रतिपच्चंद्रलेखेव</text>
-                  <text x="100" y="80" fontFamily="'Baloo 2', sans-serif" fontSize="13.5" fontWeight="800" fill="#fef08a" textAnchor="middle">वर्धिष्णुर्विश्ववंदिता</text>
-                  <text x="100" y="105" fontFamily="'Baloo 2', sans-serif" fontSize="13.5" fontWeight="800" fill="#fef08a" textAnchor="middle">शाहसूनोः शिवस्यैषा</text>
-                  <text x="100" y="130" fontFamily="'Baloo 2', sans-serif" fontSize="13.5" fontWeight="800" fill="#fef08a" textAnchor="middle">मुद्रा भद्राय</text>
-                  <text x="100" y="155" fontFamily="'Baloo 2', sans-serif" fontSize="13.5" fontWeight="800" fill="#fef08a" textAnchor="middle">राजते ॥</text>
-                </svg>
+            {/* The Authentic Royal Seal & SVG */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <div
+                  onClick={() => setLightboxImage({
+                    url: '/assets/images/real-rajmudra-seal.jpg',
+                    caption: 'अस्सल ऐतिहासिक सुवर्ण/कांस्य राजमुद्रा (Shivaji Seal Reproduction)',
+                    source: 'पुरातत्त्व विभाग व ऐतिहासिक दस्तऐवजांवर आढळणारी मूळ अष्टकोनी मुद्रा'
+                  })}
+                  title="मोठ्या आकारात पाहण्यासाठी क्लिक करा"
+                  style={{
+                    width: '140px',
+                    height: '140px',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    border: '3px solid #b45309',
+                    boxShadow: '0 8px 20px rgba(180,83,9,0.3)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <img
+                    src="/assets/images/real-rajmudra-seal.jpg"
+                    alt="अस्सल ऐतिहासिक राजमुद्रा"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </div>
+                <div style={{
+                  width: '140px',
+                  height: '140px',
+                  filter: 'drop-shadow(0 8px 16px rgba(199, 56, 0, 0.35))',
+                  transition: 'transform 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                >
+                  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+                    <polygon points="60,10 140,10 190,60 190,140 140,190 60,190 10,140 10,60" fill="#991b1b" stroke="#f59e0b" strokeWidth="5"/>
+                    <polygon points="63,18 137,18 182,63 182,137 137,182 63,182 18,137 18,63" fill="none" stroke="#fef08a" strokeWidth="2" strokeDasharray="4,2"/>
+                    <text x="100" y="55" fontFamily="'Baloo 2', sans-serif" fontSize="13.5" fontWeight="800" fill="#fef08a" textAnchor="middle">प्रतिपच्चंद्रलेखेव</text>
+                    <text x="100" y="80" fontFamily="'Baloo 2', sans-serif" fontSize="13.5" fontWeight="800" fill="#fef08a" textAnchor="middle">वर्धिष्णुर्विश्ववंदिता</text>
+                    <text x="100" y="105" fontFamily="'Baloo 2', sans-serif" fontSize="13.5" fontWeight="800" fill="#fef08a" textAnchor="middle">शाहसूनोः शिवस्यैषा</text>
+                    <text x="100" y="130" fontFamily="'Baloo 2', sans-serif" fontSize="13.5" fontWeight="800" fill="#fef08a" textAnchor="middle">मुद्रा भद्राय</text>
+                    <text x="100" y="155" fontFamily="'Baloo 2', sans-serif" fontSize="13.5" fontWeight="800" fill="#fef08a" textAnchor="middle">राजते ॥</text>
+                  </svg>
+                </div>
               </div>
-              <div style={{ fontSize: '0.78rem', color: '#78716c', marginTop: '12px', fontWeight: 600 }}>
-                अष्टकोनी शुद्ध संस्कृत सुवर्ण राजमुद्रा (इ.स. १६४० चे दशक)
+              <div style={{ fontSize: '0.8rem', color: '#78716c', fontWeight: 600, textAlign: 'center' }}>
+                डावीकडे: अस्सल धातूची ऐतिहासिक मुद्रा | उजवीकडे: देवनागरी संस्कृत आलेखन
               </div>
             </div>
 
@@ -282,6 +307,54 @@ export default function SymbolsPage() {
             <h2 style={{ fontSize: '2rem', fontFamily: 'Baloo 2', margin: '4px 0 0', color: '#450a0a' }}>
               🚩 अखंड भगवा ध्वज (जरीपटका)
             </h2>
+          </div>
+
+          <div style={{
+            background: 'linear-gradient(135deg, #fff7ed 0%, #fff 100%)',
+            borderRadius: '16px',
+            border: '1px solid #fed7aa',
+            padding: '24px',
+            boxShadow: '0 4px 20px rgba(194, 65, 12, 0.08)',
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '24px',
+            flexWrap: 'wrap'
+          }}>
+            <div
+              onClick={() => setLightboxImage({
+                url: '/assets/images/real-bhagwa-dhwaj.svg',
+                caption: 'मराठा साम्राज्य — अखंड दुहेरी टोक असलेला अस्सल भगवा ध्वज',
+                source: 'मराठा सैन्याचा अधिकृत राष्ट्रध्वज व जरीपटका रचना'
+              })}
+              title="मोठ्या आकारात पाहण्यासाठी क्लिक करा"
+              style={{
+                background: '#fff',
+                padding: '12px 18px',
+                borderRadius: '12px',
+                border: '2px solid #fdba74',
+                boxShadow: '0 6px 16px rgba(234, 88, 12, 0.15)',
+                cursor: 'pointer'
+              }}
+            >
+              <img
+                src="/assets/images/real-bhagwa-dhwaj.svg"
+                alt="मराठा भगवा ध्वज"
+                style={{ width: '220px', height: '110px', objectFit: 'contain', filter: 'drop-shadow(0 4px 8px rgba(234, 88, 12, 0.3))' }}
+              />
+              <div style={{ textAlign: 'center', fontSize: '0.78rem', color: '#c2410c', fontWeight: 700, marginTop: '6px' }}>
+                ऐतिहासिक दुहेरी टोक (Swallowtail) मराठा भगवा ध्वज
+              </div>
+            </div>
+            <div style={{ maxWidth: '520px' }}>
+              <h3 style={{ margin: '0 0 8px', fontSize: '1.25rem', fontFamily: 'Baloo 2', color: '#991b1b' }}>
+                स्वराज्याचे सर्वोच्च राष्ट्रनिशान
+              </h3>
+              <p style={{ margin: 0, fontSize: '0.92rem', color: '#44403c', lineHeight: 1.65 }}>
+                मराठा फौजांचा जरीपटका हा दोन टोकांचा (Swallowtail) शुद्ध भगवा ध्वज होता. हा ध्वज म्हणजे धर्मरक्षण, त्याग, सूर्यतेज आणि जुलमी सत्तेविरुद्ध पुकारलेल्या अखंड स्वातंत्र्यलढ्याचे प्रतीक होता.
+              </p>
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
@@ -397,11 +470,24 @@ export default function SymbolsPage() {
             </div>
 
             <div style={{ textAlign: 'center' }}>
-              <img
-                src={currentWeapon.image}
-                alt={currentWeapon.name}
-                style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '14px', border: '2px solid #ea580c' }}
-              />
+              <div
+                onClick={() => setLightboxImage({
+                  url: currentWeapon.image,
+                  caption: currentWeapon.name,
+                  source: currentWeapon.subtitle
+                })}
+                style={{ cursor: 'pointer', display: 'inline-block', position: 'relative' }}
+                title="मोठ्या आकारात पाहण्यासाठी क्लिक करा"
+              >
+                <img
+                  src={currentWeapon.image}
+                  alt={currentWeapon.name}
+                  style={{ width: '100%', maxHeight: '320px', objectFit: 'contain', background: '#0c0a09', borderRadius: '14px', border: '2px solid #ea580c', padding: '8px' }}
+                />
+                <span style={{ position: 'absolute', bottom: '14px', right: '14px', background: 'rgba(0,0,0,0.7)', color: '#fed7aa', fontSize: '0.75rem', padding: '4px 8px', borderRadius: '6px' }}>
+                  🔍 झूम करा
+                </span>
+              </div>
             </div>
           </div>
         </section>
@@ -418,23 +504,23 @@ export default function SymbolsPage() {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
-            <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e7e5e4', padding: '20px', textAlign: 'center' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🔱</div>
+            <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e7e5e4', padding: '16px', textAlign: 'center', overflow: 'hidden' }}>
+              <img src="/assets/images/real-rajmudra-seal.jpg" alt="राजमुद्रा" style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover', margin: '0 auto 10px', border: '2px solid #b45309' }} />
               <h4 style={{ margin: '0 0 4px', fontSize: '1.1rem', color: '#450a0a', fontFamily: 'Baloo 2' }}>राजमुद्रा</h4>
               <p style={{ margin: 0, fontSize: '0.84rem', color: '#78716c' }}>सार्वभौम सत्तेचे व रयत कल्याणाचे अधिकृत सुवर्ण चिन्ह</p>
             </div>
-            <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e7e5e4', padding: '20px', textAlign: 'center' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🚩</div>
+            <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e7e5e4', padding: '16px', textAlign: 'center', overflow: 'hidden' }}>
+              <img src="/assets/images/real-bhagwa-dhwaj.svg" alt="भगवा ध्वज" style={{ width: '70px', height: '40px', objectFit: 'contain', margin: '15px auto 15px' }} />
               <h4 style={{ margin: '0 0 4px', fontSize: '1.1rem', color: '#450a0a', fontFamily: 'Baloo 2' }}>भगवा ध्वज</h4>
               <p style={{ margin: 0, fontSize: '0.84rem', color: '#78716c' }}>त्याग, तेज आणि अखंड स्वाभिमानाचे राष्ट्रप्रतीक</p>
             </div>
-            <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e7e5e4', padding: '20px', textAlign: 'center' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🏰</div>
+            <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e7e5e4', padding: '16px', textAlign: 'center', overflow: 'hidden' }}>
+              <img src="/assets/images/real-raigad-panoramic.jpg" alt="गड-किल्ले" style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover', margin: '0 auto 10px', border: '2px solid #b45309' }} />
               <h4 style={{ margin: '0 0 4px', fontSize: '1.1rem', color: '#450a0a', fontFamily: 'Baloo 2' }}>गड-किल्ले</h4>
               <p style={{ margin: 0, fontSize: '0.84rem', color: '#78716c' }}>सह्याद्रीतील ३५०+ अभेद्य लष्करी व सांस्कृतिक दुर्ग</p>
             </div>
-            <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e7e5e4', padding: '20px', textAlign: 'center' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>⚔️</div>
+            <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e7e5e4', padding: '16px', textAlign: 'center', overflow: 'hidden' }}>
+              <img src="/assets/images/real-dandpatta.jpg" alt="तलवार व दांडपट्टा" style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover', margin: '0 auto 10px', border: '2px solid #b45309' }} />
               <h4 style={{ margin: '0 0 4px', fontSize: '1.1rem', color: '#450a0a', fontFamily: 'Baloo 2' }}>तलवार व दांडपट्टा</h4>
               <p style={{ margin: 0, fontSize: '0.84rem', color: '#78716c' }}>मराठा योद्ध्यांचे अद्वितीय शौर्य व संरक्षण साधने</p>
             </div>
@@ -456,13 +542,13 @@ export default function SymbolsPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
             <div
               onClick={() => setLightboxImage({
-                url: '/assets/images/history/coronation.jpg',
+                url: '/assets/images/real-shivaji-coronation.jpg',
                 caption: 'शिवराज्याभिषेक सोहळा (६ जून १६७४)',
                 source: 'रायगडावरील सुवर्ण सिंहासनाधिष्ठित सोहळा — राजमुद्रेची अधिकृत घोषणा'
               })}
               style={{ background: '#fff', borderRadius: '14px', overflow: 'hidden', border: '1px solid #e7e5e4', cursor: 'pointer', transition: 'transform 0.2s' }}
             >
-              <img src="/assets/images/history/coronation.jpg" alt="शिवराज्याभिषेक" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
+              <img src="/assets/images/real-shivaji-coronation.jpg" alt="शिवराज्याभिषेक" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
               <div style={{ padding: '14px 18px' }}>
                 <div style={{ fontWeight: 700, color: '#450a0a', fontSize: '1rem', fontFamily: 'Baloo 2' }}>
                   राज्याभिषेक सोहळा
@@ -475,38 +561,38 @@ export default function SymbolsPage() {
 
             <div
               onClick={() => setLightboxImage({
-                url: '/assets/images/battles/pratapgad.jpg',
-                caption: 'अस्सल १८ व्या शतकातील भित्तीचित्र',
-                source: 'भगवा ध्वज घेऊन रणांगणात उतरलेले मराठा सैन्य'
+                url: '/assets/images/bhavya-maratha-army.jpg',
+                caption: 'मराठा सेना व भगवा ध्वज',
+                source: 'भगवा ध्वज घेऊन रणांगणात उतरलेले मराठा घोडेस्वार व पायदळ'
               })}
               style={{ background: '#fff', borderRadius: '14px', overflow: 'hidden', border: '1px solid #e7e5e4', cursor: 'pointer', transition: 'transform 0.2s' }}
             >
-              <img src="/assets/images/battles/pratapgad.jpg" alt="भगवा ध्वज मोहीम" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
+              <img src="/assets/images/bhavya-maratha-army.jpg" alt="भगवा ध्वज मोहीम" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
               <div style={{ padding: '14px 18px' }}>
                 <div style={{ fontWeight: 700, color: '#450a0a', fontSize: '1rem', fontFamily: 'Baloo 2' }}>
                   भगवा ध्वज मोहीम
                 </div>
                 <div style={{ fontSize: '0.8rem', color: '#78716c' }}>
-                  ऐतिहासिक भित्तीचित्रांतील जरीपटका दर्शन
+                  ऐतिहासिक मोहिमांतील भगवा ध्वज व मराठा सेना दर्शन
                 </div>
               </div>
             </div>
 
             <div
               onClick={() => setLightboxImage({
-                url: '/assets/images/weapons/dandpatta.jpg',
-                caption: 'राजा दिनकर केळकर संग्रहालय, पुणे',
-                source: 'अस्सल मराठा शस्त्रास्त्रे, दांडपट्टे, चिलखत व वाघनखे संग्रह'
+                url: '/assets/images/real-maratha-arms.jpg',
+                caption: 'अस्सल ऐतिहासिक मराठा शस्त्रास्त्रे संग्रह',
+                source: 'अस्सल मराठा तलवारी, खांडा, ढाल, चिलखत व दांडपट्टा'
               })}
               style={{ background: '#fff', borderRadius: '14px', overflow: 'hidden', border: '1px solid #e7e5e4', cursor: 'pointer', transition: 'transform 0.2s' }}
             >
-              <img src="/assets/images/weapons/dandpatta.jpg" alt="केळकर संग्रहालय" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
+              <img src="/assets/images/real-maratha-arms.jpg" alt="मराठा शस्त्रागार" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
               <div style={{ padding: '14px 18px' }}>
                 <div style={{ fontWeight: 700, color: '#450a0a', fontSize: '1rem', fontFamily: 'Baloo 2' }}>
                   तलवार-ढाल शस्त्रागार
                 </div>
                 <div style={{ fontSize: '0.8rem', color: '#78716c' }}>
-                  ऐतिहासिक युद्धकौशल्याचे जतन केलेले नमुने
+                  अस्सल मराठा युद्धकौशल्याचे जतन केलेले शस्त्र नमुने
                 </div>
               </div>
             </div>

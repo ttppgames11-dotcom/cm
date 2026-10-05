@@ -12,6 +12,7 @@ const DEFAULT_TEMPLES = [
     desc: 'छत्रपती शिवाजी महाराज व भोसले घराण्याची कुलस्वामिनी. छत्रपती शिवरायांना भवानी तलवार प्रदान करून हिंदवी स्वराज्य स्थापनेचा आशीर्वाद देणारी आई जगदंबा. साडेतीन शक्तिपीठांपैकी संपूर्ण पीठ.',
     history: 'राष्ट्रकूट आणि कदंब काळापासूनचे प्राचीन देवस्थान. छत्रपती शिवरायांनी १६६२ मध्ये येथे येऊन सुवर्ण पादुका व छत्र अर्पण केले होते.',
     icon: '🚩',
+    image: '/assets/images/real-tuljabhavani-temple.jpg',
     darshanStatus: 'सुलभ दर्शन सुरू (२४ तास मंदिर परिसर खुला)'
   },
   {
@@ -24,6 +25,7 @@ const DEFAULT_TEMPLES = [
     desc: 'छत्रपती शिवरायांनी राजधानी रायगडावर स्वतःच्या देखरेखीखाली बांधलेले भव्य महादेवाचे मंदिर. मंदिराच्या प्रवेश पायरीवर "सेवेचे ठायी तत्पर हिरोजी इंदुलकर" ही ऐतिहासिक अक्षरे कोरलेली आहेत.',
     history: '१६७४ च्या राज्याभिषेकापूर्वी या मंदिराची प्रतिष्ठापना झाली. मंदिरासमोरच छत्रपती शिवाजी महाराजांचे पवित्र समाधी स्मारक आहे.',
     icon: '🛕',
+    image: '/assets/images/real-jagdishwar-temple.jpg',
     darshanStatus: 'रोपवे व पायरी मार्गे दर्शन सुरू'
   },
   {
@@ -36,6 +38,7 @@ const DEFAULT_TEMPLES = [
     desc: 'समस्त मराठा घराण्यांचे आणि भोसले वंशाचे आद्य कुलदैवत. शहाजीराजे भोसले, मालोजीराजे आणि छत्रपती शिवरायांचे निस्सीम श्रद्धास्थान.',
     history: 'मालोजीराजे भोसले यांनी येथे भव्य तलाव व पायऱ्या बांधून देवस्थानाचा जिर्णोद्धार केला होता. चैत्र शुद्ध अष्टमीला भव्य कावड यात्रा भरते.',
     icon: '🔱',
+    image: '/assets/images/real-shikhar-shingnapur.jpg',
     darshanStatus: 'थेट दर्शन व अभिषेक व्यवस्था उपलब्ध'
   },
   {
@@ -48,6 +51,7 @@ const DEFAULT_TEMPLES = [
     desc: 'महाराष्ट्राचे लाडके कुलदैवत, मावळ्यांचे आराध्य आणि सोन्याची जेजुरी. भंडारा उधळून मराठा योद्धे रणांगणात "येळकोट येळकोट जय मल्हार"चा गजर करत असत.',
     history: '१६६२ मध्ये छत्रपती शिवाजी महाराज आणि शहाजीराजे भोसले यांची ऐतिहासिक भेट जेजुरीच्या भूमीवर झाली होती. पेशवे काळात मंदिराचे भव्य तटबंदीयुक्त रूप साकारले.',
     icon: '☀️',
+    image: '/assets/images/real-jejuri-khandoba.jpg',
     darshanStatus: 'भंडारा दर्शन व पालखी सोहळा नियमित सुरू'
   },
   {
@@ -60,6 +64,7 @@ const DEFAULT_TEMPLES = [
     desc: 'महाराष्ट्रातील प्रमुख शक्तिपीठ. छत्रपती ताराबाई यांनी कोल्हापूर मराठा गादी स्थापन केल्यानंतर हे संस्थानचे प्रमुख श्रद्धास्थान राहिले.',
     history: 'चालुक्य व शिलाहार कालीन हेमाडपंथी स्थापत्य. वर्षातून दोनदा थेट सूर्यकिरणे देवीच्या मुखावर पडणारा किरणोत्सव जगप्रसिद्ध आहे.',
     icon: '🌸',
+    image: '/assets/images/real-kolhapur-mahalaxmi.jpg',
     darshanStatus: 'ई-पास व थेट दर्शन रांग उपलब्ध'
   },
   {
@@ -72,6 +77,7 @@ const DEFAULT_TEMPLES = [
     desc: 'गुलालाची उधळण आणि "चांगभलं"चा जयघोष! कोल्हापूरच्या छत्रपती घराण्याचे व लाखो मराठा सरदारांचे कुलदैवत.',
     history: '१७३० मध्ये राणोजी शिंदे यांनी सध्याच्या मंदिराचा जिर्णोद्धार केला. चैत्र पौर्णिमेला लाखो भाविकांच्या उपस्थितीत भव्य सासनकाठी सोहळा होतो.',
     icon: '✨',
+    image: '/assets/images/real-jotiba-wadi-ratnagiri.jpg',
     darshanStatus: 'सासनकाठी दर्शन व गुलाल अर्पण सुरू'
   },
   {
@@ -84,6 +90,7 @@ const DEFAULT_TEMPLES = [
     desc: '२६ एप्रिल १६४५ रोजी १६ वर्षांच्या शिवरायांनी मावळ्यांसह रक्ताचा अभिषेक करून हिंदवी स्वराज्य स्थापनेची पवित्र शपथ घेतलेली ऐतिहासिक भूमी.',
     history: 'सह्याद्रीच्या पठारावर वसलेले अतिप्राचीन स्वयंभू शिवमंदिर. येथे स्वराज्याचा पहिला संकल्प सिद्धीस गेला.',
     icon: '⚔️',
+    image: '/assets/images/real-raireshwar-temple.jpg',
     darshanStatus: 'पठार ट्रेक व दर्शन नियमित सुरू'
   },
   {
@@ -96,6 +103,7 @@ const DEFAULT_TEMPLES = [
     desc: 'भीमा नदीचे उगमस्थान आणि सह्याद्रीच्या घनदाट अरण्यातील स्वयंभू ज्योतिर्लिंग. मराठा पेशव्यांच्या काळातील भव्य हेमाडपंथी शिखर.',
     history: 'नाना फडणवीस यांनी या मंदिराचे भव्य शिखर व सभामंडप उभारला. चिमाजी आप्पा यांनी वसईच्या युद्धात पोर्तुगिजांकडून जिंकलेली महाकाय घंटा येथे अर्पण केली.',
     icon: '🔔',
+    image: '/assets/images/real-bhimashankar-temple.jpg',
     darshanStatus: 'व्हीआयपी व सर्वसामान्य दर्शन पास उपलब्ध'
   },
   {
@@ -108,6 +116,7 @@ const DEFAULT_TEMPLES = [
     desc: 'छत्रपती शिवाजी महाराजांचे पूर्वज मालोजीराजे भोसले व बाबाजीराजे भोसले यांच्या मूळ गाव वेरूळ येथील १२ वे ज्योतिर्लिंग.',
     history: 'मालोजीराजे भोसले यांनी येथे कमळ तळे बांधले व मंदिराचा जिर्णोद्धार केला. पुढे पुण्यश्लोक अहिल्याबाई होळकरांनी मंदिराचे संपूर्ण पुनर्निर्माण लाल दगडात केले.',
     icon: '🪔',
+    image: '/assets/images/real-grishneshwar-temple.jpg',
     darshanStatus: 'सुलभ दर्शन व अभिषेक सुरू'
   },
   {
@@ -120,7 +129,47 @@ const DEFAULT_TEMPLES = [
     desc: 'गोदावरी नदीचे उगमस्थान. येथे शिवलिंगात ब्रह्मा, विष्णू आणि महेश या तीनही देवांचे त्रिमुखी स्वरूप विराजमान आहे.',
     history: 'श्रीमंत नानासाहेब पेशवे यांनी १७५५ ते १७८६ दरम्यान काळ्या पाषाणात हे अत्यंत कलाकुसरयुक्त भव्य मंदिर नव्याने बांधून पूर्ण केले.',
     icon: '🌊',
+    image: '/assets/images/real-trimbakeshwar.jpg',
     darshanStatus: 'कालसर्प व महापूजा नोंदणी सुरू'
+  },
+  {
+    id: 't11',
+    name: 'श्री रेणुका माता महापीठ (माहूर)',
+    category: 'shaktipeeth',
+    categoryLabel: 'साडेतीन शक्तिपीठ',
+    place: 'माहूर गड, नांदेड',
+    aartiTimes: 'काकड आरती: ५:०० AM · नैवेद्य व महापूजा: १२:०० PM · शेजारती: ९:०० PM',
+    desc: 'साडेतीन शक्तिपीठांपैकी प्रमुख पूर्ण पीठ. भगवान परशुरामांची जन्मभूमी व माता रेणुकेचे जागृत देवस्थान. मराठा सरदारांचे श्रद्धास्थान.',
+    history: 'राष्ट्रकूट आणि यादव काळापासून प्रसिद्ध. छत्रपती शिवाजी महाराजांचे सरदार व होळकर-शिंदे घराण्यांनी या मंदिरास देणग्या दिल्या होत्या.',
+    icon: '🌸',
+    image: '/assets/images/real-renukadevi-mahur.jpg',
+    darshanStatus: 'थेट दर्शन व पायरी/वाहनाने सुलभ प्रवेश'
+  },
+  {
+    id: 't12',
+    name: 'श्री सप्तशृंगी माता (अर्धे शक्तिपीठ)',
+    category: 'shaktipeeth',
+    categoryLabel: 'साडेतीन शक्तिपीठ',
+    place: 'सप्तशृंग गड, वणी, नाशिक',
+    aartiTimes: 'काकड आरती: ५:३० AM · पंचामृत अभिषेक: ८:०० AM · शेजारती: ९:३० PM',
+    desc: 'महाराष्ट्रातील साडेतीन शक्तिपीठांपैकी अर्धे पीठ. सह्याद्रीच्या सात शिखरांच्या कुशीत विराजमान असलेली १८ हातांची भव्य महिषासुरमर्दिनी.',
+    history: 'छत्रपती शिवाजी महाराज सुरत मोहिमेवरून परतताना येथे देवीच्या दर्शनास आले होते व नवस फेडून सोन्याचे अलंकार अर्पण केले होते.',
+    icon: '🌺',
+    image: '/assets/images/real-saptashrungi-temple.jpg',
+    darshanStatus: 'फ्युनिक्युलर ट्रॉली व दर्शन रांग सुरू'
+  },
+  {
+    id: 't13',
+    name: 'किल्ले प्रतापगड श्री भवानी माता मंदिर',
+    category: 'shivkalin',
+    categoryLabel: 'शिवकालीन राजधानी देवस्थान',
+    place: 'किल्ले प्रतापगड, महाबळेश्वर, सातारा',
+    aartiTimes: 'प्रातः पूजा: ७:०० AM · संध्या आरती: ६:३० PM',
+    desc: 'अफझलखानाच्या वधानंतर छत्रपती शिवाजी महाराजांनी नेपाळमधील गंडकी नदीतून खास शाळिग्राम पाषाण आणवून प्रतापगडावर स्वतः स्थापन केलेले भवानी मातेचे मंदिर.',
+    history: '१६६१ मध्ये छत्रपती शिवरायांनी स्वतः मंदिराची उभारणी केली. मंदिराच्या गाभाऱ्यात अखंड ज्योत तेवत असून शिवरायांची भवानी तलवार येथे ठेवली जात असे.',
+    icon: '🚩',
+    image: '/assets/images/real-pratapgad-bhavani.jpg',
+    darshanStatus: 'गडावर सुलभ पायी दर्शन सुरू'
   }
 ];
 
@@ -130,7 +179,25 @@ export default function TemplesPage() {
       const saved = localStorage.getItem('cm_temples_list');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Merge images and also include any new default temples (like Mahur, Saptashrungi, Pratapgad)
+          const merged = parsed.map(item => {
+            const def = DEFAULT_TEMPLES.find(d => d.id === item.id);
+            return {
+              ...item,
+              image: item.image || (def ? def.image : '')
+            };
+          });
+
+          // Append any newly added default temples not in user's saved list
+          DEFAULT_TEMPLES.forEach(def => {
+            if (!merged.some(m => m.id === def.id)) {
+              merged.push(def);
+            }
+          });
+
+          return merged;
+        }
       }
     } catch (e) {
       console.error(e);
@@ -153,6 +220,7 @@ export default function TemplesPage() {
     desc: '',
     history: '',
     icon: '🛕',
+    image: '',
     darshanStatus: 'दर्शन नियमित सुरू'
   });
 
@@ -183,6 +251,7 @@ export default function TemplesPage() {
       desc: '',
       history: '',
       icon: '🛕',
+      image: '',
       darshanStatus: 'दर्शन नियमित सुरू'
     });
     setModalOpen(true);
@@ -199,6 +268,7 @@ export default function TemplesPage() {
       desc: t.desc,
       history: t.history || '',
       icon: t.icon || '🛕',
+      image: t.image || '',
       darshanStatus: t.darshanStatus || 'दर्शन सुरू'
     });
     setModalOpen(true);
@@ -242,21 +312,47 @@ export default function TemplesPage() {
 
         {/* Hero Section */}
         <div style={{
-          background: 'linear-gradient(135deg, #3D0D0D 0%, #681515 60%, #8A1C1C 100%)',
           borderRadius: '24px',
-          padding: '44px 36px',
+          padding: '40px 36px',
           color: '#FFF',
           border: '2px solid #DD8A2E',
           marginBottom: '32px',
-          boxShadow: '0 20px 50px rgba(61,13,13,0.35)',
+          boxShadow: '0 20px 50px rgba(61,13,13,0.2)',
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          backgroundColor: '#1E0606'
         }}>
+          {/* Prominent Authentic Temple Background Image */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: 'url(/assets/images/real-ellora-kailash.jpg)',
+              backgroundPosition: 'center 35%',
+              backgroundSize: 'cover',
+              opacity: 0.65,
+              filter: 'saturate(1.15) contrast(1.05)',
+              pointerEvents: 'none',
+              zIndex: 0
+            }}
+          />
+
+          {/* Light Ambient Overlay - clearly shows temple while keeping text readable */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(90deg, rgba(28, 6, 6, 0.72) 0%, rgba(45, 10, 10, 0.55) 55%, rgba(20, 4, 4, 0.45) 100%)',
+              pointerEvents: 'none',
+              zIndex: 1
+            }}
+          />
+
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px', position: 'relative', zIndex: 2 }}>
             <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(221,138,46,0.2)', border: '1px solid #DD8A2E', padding: '5px 16px', borderRadius: '24px', marginBottom: '14px' }}>
-                <span style={{ color: '#FFD700', fontSize: '1rem' }}>🚩</span>
-                <span style={{ color: '#FDF3E6', fontSize: '0.84rem', fontWeight: 800, letterSpacing: '0.5px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', border: '1.5px solid #FFD700', padding: '6px 18px', borderRadius: '24px', marginBottom: '14px' }}>
+                <span style={{ color: '#FFD700', fontSize: '1.1rem' }}>🚩</span>
+                <span style={{ color: '#FFF', fontSize: '0.86rem', fontWeight: 800, letterSpacing: '0.5px' }}>
                   आध्यात्मिक अधिष्ठान • कुलदैवत व तीर्थक्षेत्र महादालन
                 </span>
               </div>
@@ -266,11 +362,12 @@ export default function TemplesPage() {
                 fontWeight: 800,
                 margin: '0 0 10px',
                 color: '#FFF',
-                lineHeight: 1.2
+                lineHeight: 1.2,
+                textShadow: '0 3px 12px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9)'
               }}>
                 शिवकालीन मंदिरे, कुलदैवते व तीर्थक्षेत्रे
               </h1>
-              <p style={{ color: '#F1E7D8', fontSize: '1.05rem', maxWidth: '760px', margin: 0, lineHeight: 1.65 }}>
+              <p style={{ color: '#FFF8F0', fontSize: '1.05rem', maxWidth: '780px', margin: 0, lineHeight: 1.65, fontWeight: 500, textShadow: '0 2px 8px rgba(0,0,0,0.85)' }}>
                 तुळजापूर भवानी, रायगड जगदीश्वर, शिखर शिंगणापूर ते जेजुरी — स्वराज्याला आध्यात्मिक बळ देणारी पवित्र श्रद्धास्थाने.
                 येथे सर्व माहिती <strong>रिअल-टाइम</strong> संपादनक्षम (Fully Editable) आहे.
               </p>
@@ -288,7 +385,7 @@ export default function TemplesPage() {
                   fontWeight: 800,
                   fontSize: '0.92rem',
                   cursor: 'pointer',
-                  boxShadow: '0 8px 20px rgba(221,138,46,0.4)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px'
@@ -298,14 +395,16 @@ export default function TemplesPage() {
               <button
                 onClick={handleResetDefaults}
                 style={{
-                  background: 'rgba(255,255,255,0.12)',
+                  background: 'rgba(0,0,0,0.4)',
+                  backdropFilter: 'blur(4px)',
                   color: '#FFF',
-                  border: '1px solid rgba(255,255,255,0.3)',
+                  border: '1.5px solid rgba(255,255,255,0.4)',
                   padding: '12px 18px',
                   borderRadius: '12px',
                   fontWeight: 700,
                   fontSize: '0.86rem',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
                 }}>
                 ↺ मूळ डेटा रीसेट
               </button>
@@ -319,27 +418,29 @@ export default function TemplesPage() {
             gap: '14px',
             marginTop: '32px',
             paddingTop: '24px',
-            borderTop: '1px solid rgba(221,138,46,0.3)'
+            borderTop: '1.5px solid rgba(221,138,46,0.5)',
+            position: 'relative',
+            zIndex: 2
           }}>
-            <div style={{ background: 'rgba(0,0,0,0.25)', padding: '14px 18px', borderRadius: '12px' }}>
-              <div style={{ fontSize: '0.78rem', color: '#DD8A2E', fontWeight: 700 }}>नोंदवलेली देवस्थाने</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFF' }}>{temples.length} मंदिरे</div>
+            <div style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', padding: '14px 18px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ fontSize: '0.8rem', color: '#FFD700', fontWeight: 700 }}>नोंदवलेली देवस्थाने</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFF', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{temples.length} मंदिरे</div>
             </div>
-            <div style={{ background: 'rgba(0,0,0,0.25)', padding: '14px 18px', borderRadius: '12px' }}>
-              <div style={{ fontSize: '0.78rem', color: '#DD8A2E', fontWeight: 700 }}>कुलदैवत स्थाने</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFF' }}>
+            <div style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', padding: '14px 18px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ fontSize: '0.8rem', color: '#FFD700', fontWeight: 700 }}>कुलदैवत स्थाने</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFF', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                 {temples.filter(t => t.category === 'kuldaivat').length}
               </div>
             </div>
-            <div style={{ background: 'rgba(0,0,0,0.25)', padding: '14px 18px', borderRadius: '12px' }}>
-              <div style={{ fontSize: '0.78rem', color: '#DD8A2E', fontWeight: 700 }}>ज्योतिर्लिंग व शक्तीपीठे</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFF' }}>
+            <div style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', padding: '14px 18px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ fontSize: '0.8rem', color: '#FFD700', fontWeight: 700 }}>ज्योतिर्लिंग व शक्तीपीठे</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFF', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                 {temples.filter(t => t.category === 'jyotirlinga' || t.category === 'shaktipeeth').length}
               </div>
             </div>
-            <div style={{ background: 'rgba(0,0,0,0.25)', padding: '14px 18px', borderRadius: '12px' }}>
-              <div style={{ fontSize: '0.78rem', color: '#DD8A2E', fontWeight: 700 }}>थेट आरती व दर्शन वेळा</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#4ADE80' }}>सक्रिय ✓</div>
+            <div style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', padding: '14px 18px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ fontSize: '0.8rem', color: '#FFD700', fontWeight: 700 }}>थेट आरती व दर्शन वेळा</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#4ADE80', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>सक्रिय ✓</div>
             </div>
           </div>
         </div>
@@ -347,69 +448,81 @@ export default function TemplesPage() {
         {/* Ahilyabai Holkar Temple Restoration Heritage Showcase */}
         <div style={{
           background: '#FFFFFF',
-          borderRadius: '20px',
+          borderRadius: '16px',
           border: '1.5px solid #E6DDCE',
-          boxShadow: '0 8px 30px rgba(61,13,13,0.06)',
+          boxShadow: '0 6px 20px rgba(61,13,13,0.06)',
           overflow: 'hidden',
-          marginBottom: '36px',
+          marginBottom: '32px',
           display: 'grid',
-          gridTemplateColumns: 'minmax(260px, 340px) 1fr'
+          gridTemplateColumns: 'minmax(180px, 220px) 1fr'
         }}>
-          <div style={{ position: 'relative', background: '#3D0D0D' }}>
+          <div style={{
+            position: 'relative',
+            background: '#1A0808',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '170px',
+            maxHeight: '210px',
+            overflow: 'hidden'
+          }}>
             <img
               src="/assets/images/real-ahilyabai-holkar.jpg"
               alt="पुण्यश्लोक अहिल्याबाई होळकर"
               onError={(e) => { e.target.style.display = 'none'; }}
-              style={{ width: '100%', height: '100%', minHeight: '260px', objectFit: 'cover' }}
+              style={{ width: '100%', height: '100%', objectFit: 'contain', maxHeight: '200px' }}
             />
             <div style={{
               position: 'absolute',
               bottom: 0,
               left: 0,
               right: 0,
-              padding: '12px',
-              background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent)',
+              padding: '6px 8px',
+              background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)',
               color: '#FFD700',
-              fontSize: '0.82rem',
+              fontSize: '0.75rem',
               fontWeight: 700,
               textAlign: 'center'
             }}>
-              पुण्यश्लोक अहिल्याबाई होळकर (१७२५–१७९५)
+              पुण्यश्लोक अहिल्याबाई होळकर
             </div>
           </div>
 
-          <div style={{ padding: '28px 32px' }}>
-            <span style={{
-              background: '#FDF3E6',
-              color: '#C9701C',
-              padding: '4px 12px',
-              borderRadius: '20px',
-              fontSize: '0.8rem',
-              fontWeight: 800,
-              textTransform: 'uppercase'
-            }}>
-              🏛️ ऐतिहासिक मंदिर जीर्णोद्धाराचा सुवर्ण वारसा
-            </span>
+          <div style={{ padding: '16px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div>
+              <span style={{
+                background: '#FDF3E6',
+                color: '#C9701C',
+                padding: '3px 10px',
+                borderRadius: '16px',
+                fontSize: '0.75rem',
+                fontWeight: 800,
+                textTransform: 'uppercase'
+              }}>
+                🏛️ ऐतिहासिक मंदिर जीर्णोद्धाराचा सुवर्ण वारसा
+              </span>
+            </div>
             <h2 style={{
               fontFamily: "'Baloo 2', sans-serif",
-              fontSize: '1.6rem',
+              fontSize: '1.35rem',
               color: '#3D0D0D',
-              margin: '10px 0 8px'
+              margin: '8px 0 6px',
+              lineHeight: 1.3
             }}>
               काशी विश्वनाथ ते सोमनाथ — मराठा साम्राज्याचे धर्मरक्षण कार्य
             </h2>
-            <p style={{ color: '#5C534B', fontSize: '0.95rem', lineHeight: 1.7, margin: '0 0 14px' }}>
+            <p style={{ color: '#5C534B', fontSize: '0.88rem', lineHeight: 1.55, margin: '0 0 10px' }}>
               मुघल व आक्रमकांच्या आघाताने उद्ध्वस्त झालेली हिंदू तीर्थक्षेत्रे पुन्हा वैभवाने उभी करण्याचे ऐतिहासिक कार्य पुण्यश्लोक राजमाता अहिल्याबाई होळकर यांनी केले.
               त्यांनी <strong>काशी विश्वनाथ</strong>, <strong>सोमनाथ</strong>, <strong>गया</strong>, <strong>बद्रीनाथ</strong>, <strong>केदारनाथ</strong>, <strong>अयोध्या</strong>, <strong>हरिद्वार</strong> ते दक्षिणेतील <strong>रामेश्वरम</strong>पर्यंत शेकडो मंदिरे, घाट, धर्मशाळा आणि अन्नछत्रे स्वखर्चाने उभारली.
             </p>
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              <span style={{ background: '#FAF6F0', border: '1px solid #E6DDCE', padding: '6px 12px', borderRadius: '8px', fontSize: '0.82rem', color: '#3D0D0D', fontWeight: 700 }}>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <span style={{ background: '#FAF6F0', border: '1px solid #E6DDCE', padding: '4px 10px', borderRadius: '6px', fontSize: '0.78rem', color: '#3D0D0D', fontWeight: 700 }}>
                 📍 काशी विश्वनाथ मंदिर पुनर्निर्माण (१७८०)
               </span>
-              <span style={{ background: '#FAF6F0', border: '1px solid #E6DDCE', padding: '6px 12px', borderRadius: '8px', fontSize: '0.82rem', color: '#3D0D0D', fontWeight: 700 }}>
+              <span style={{ background: '#FAF6F0', border: '1px solid #E6DDCE', padding: '4px 10px', borderRadius: '6px', fontSize: '0.78rem', color: '#3D0D0D', fontWeight: 700 }}>
                 📍 सोमनाथ मंदिर जिर्णोद्धार (१७८३)
               </span>
-              <span style={{ background: '#FAF6F0', border: '1px solid #E6DDCE', padding: '6px 12px', borderRadius: '8px', fontSize: '0.82rem', color: '#3D0D0D', fontWeight: 700 }}>
+              <span style={{ background: '#FAF6F0', border: '1px solid #E6DDCE', padding: '4px 10px', borderRadius: '6px', fontSize: '0.78rem', color: '#3D0D0D', fontWeight: 700 }}>
                 📍 नर्मदा महेश्वर घाट व धर्मशाळा
               </span>
             </div>
@@ -481,7 +594,12 @@ export default function TemplesPage() {
         </div>
 
         {/* Temples Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+          gap: '24px',
+          alignItems: 'stretch'
+        }}>
           {filteredTemples.map((t) => (
             <div
               key={t.id}
@@ -493,43 +611,120 @@ export default function TemplesPage() {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                padding: '24px',
+                padding: '18px',
                 position: 'relative',
-                transition: 'transform 0.2s, box-shadow 0.2s'
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                maxWidth: '420px',
+                width: '100%'
               }}>
               <div>
-                {/* Header with Icon & Category */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                {/* Authentic Temple Image Header */}
+                {t.image && (
                   <div style={{
-                    width: '52px',
-                    height: '52px',
-                    borderRadius: '14px',
+                    width: '100%',
+                    height: '210px',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    marginBottom: '14px',
+                    background: '#1A0E08',
+                    position: 'relative',
+                    boxShadow: 'inset 0 0 12px rgba(0,0,0,0.4)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    {/* Blurred Ambient Background so no awkward black empty borders */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: '-10px',
+                        backgroundImage: `url(${t.image})`,
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                        filter: 'blur(16px) brightness(0.4)',
+                        transform: 'scale(1.1)',
+                        zIndex: 0
+                      }}
+                    />
+
+                    {/* Main Image Fitted Completely Without Cropping */}
+                    <img
+                      src={t.image}
+                      alt={t.name}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        maxHeight: '210px',
+                        objectFit: 'contain',
+                        position: 'relative',
+                        zIndex: 1
+                      }}
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      padding: '8px 12px',
+                      background: 'linear-gradient(to top, rgba(0,0,0,0.88), transparent)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      zIndex: 2
+                    }}>
+                      <span style={{ color: '#FFF', fontSize: '0.78rem', fontWeight: 600, textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>📍 {t.place}</span>
+                      <span style={{
+                        background: '#DD8A2E',
+                        color: '#2A0606',
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        padding: '2px 8px',
+                        borderRadius: '10px',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.4)'
+                      }}>
+                        {t.categoryLabel || t.category}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Header with Icon & Category (shown if no image or complement) */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+                  <div style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
                     background: '#FDF3E6',
                     border: '1px solid #DD8A2E',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '26px'
+                    fontSize: '22px'
                   }}>
                     {t.icon}
                   </div>
-                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                    <span style={{
-                      background: '#FAF0E6',
-                      color: '#C9701C',
-                      fontSize: '0.76rem',
-                      fontWeight: 800,
-                      padding: '4px 10px',
-                      borderRadius: '14px'
-                    }}>
-                      {t.categoryLabel || t.category}
-                    </span>
-                  </div>
+                  {!t.image && (
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                      <span style={{
+                        background: '#FAF0E6',
+                        color: '#C9701C',
+                        fontSize: '0.76rem',
+                        fontWeight: 800,
+                        padding: '4px 10px',
+                        borderRadius: '14px'
+                      }}>
+                        {t.categoryLabel || t.category}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <h3 style={{
                   fontFamily: "'Baloo 2', sans-serif",
-                  fontSize: '1.35rem',
+                  fontSize: '1.3rem',
                   fontWeight: 800,
                   color: '#3D0D0D',
                   margin: '0 0 6px',
@@ -545,7 +740,7 @@ export default function TemplesPage() {
                   fontSize: '0.85rem',
                   color: '#DD8A2E',
                   fontWeight: 700,
-                  marginBottom: '12px'
+                  marginBottom: '10px'
                 }}>
                   <span>📍 {t.place}</span>
                 </div>
@@ -763,6 +958,19 @@ export default function TemplesPage() {
                     onChange={(e) => setFormData({ ...formData, place: e.target.value })}
                     placeholder="उदा. तुळजापूर, धाराशिव"
                     required
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #E6DDCE', fontSize: '0.92rem' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#3D0D0D', marginBottom: '6px' }}>
+                    प्रतिमा / छायाचित्र मार्ग (Image URL / Path)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    placeholder="उदा. /assets/images/real-tuljabhavani-temple.jpg"
                     style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #E6DDCE', fontSize: '0.92rem' }}
                   />
                 </div>
