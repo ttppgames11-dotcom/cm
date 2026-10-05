@@ -438,7 +438,6 @@ export default function App() {
             <Route path="/helpdesk-contact" element={<ContactPage />} />
             <Route path="/leaders" element={<AboutPage />} />
             <Route path="/achievers" element={<AchieversPage />} />
-            <Route path="/blueprint" element={<BlueprintVisionPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/more" element={<MorePortalsPage />} />
             <Route path="/portals" element={<MorePortalsPage />} />
