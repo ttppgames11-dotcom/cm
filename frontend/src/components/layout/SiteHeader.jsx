@@ -107,8 +107,11 @@ export default function SiteHeader({ onOpenSearch }) {
                 <NavLink to="/vision" onClick={handleLinkClick}>
                   🎯 व्हिजन
                 </NavLink>
+                <NavLink to="/goals" onClick={handleLinkClick}>
+                  🏆 उद्दिष्टे
+                </NavLink>
                 <NavLink to="/blueprint" onClick={handleLinkClick}>
-                  🏆 उद्दिष्टे व संकल्प
+                  🧭 ब्लूप्रिंट
                 </NavLink>
                 <NavLink to="/why-join" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800 }}>
                   ⭐ सहभागी का व्हावे?
@@ -412,8 +415,11 @@ export default function SiteHeader({ onOpenSearch }) {
                 <NavLink to="/vision" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">🎯</span> व्हिजन
                 </NavLink>
-                <NavLink to="/blueprint" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                <NavLink to="/goals" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">🏆</span> उद्दिष्टे
+                </NavLink>
+                <NavLink to="/blueprint" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🧭</span> ब्लूप्रिंट
                 </NavLink>
                 <NavLink to="/why-join" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-gold ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">⭐</span> सहभागी व्हा
@@ -677,15 +683,23 @@ export default function SiteHeader({ onOpenSearch }) {
               <Link to="/vision" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
                 <span style={{ fontSize: '1.2rem' }}>🎯</span>
                 <div>
-                  <div style={{ color: '#0F172A', fontWeight: 800 }}>व्हिजन व ध्येय (Vision 2030)</div>
-                  <small style={{ color: '#64748B' }}>दीर्घकालीन संकल्पना व उद्दिष्टे</small>
+                  <div style={{ color: '#0F172A', fontWeight: 800 }}>व्हिजन (Vision 2030)</div>
+                  <small style={{ color: '#64748B' }}>दीर्घकालीन संकल्पना</small>
+                </div>
+              </Link>
+
+              <Link to="/goals" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '1.2rem' }}>🏆</span>
+                <div>
+                  <div style={{ color: '#0F172A', fontWeight: 800 }}>उद्दिष्टे व संकल्प (Goals)</div>
+                  <small style={{ color: '#64748B' }}>१० रणनीतिक धोरणे व उद्दिष्टे</small>
                 </div>
               </Link>
 
               <Link to="/blueprint" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
-                <span style={{ fontSize: '1.2rem' }}>🏆</span>
+                <span style={{ fontSize: '1.2rem' }}>🧭</span>
                 <div>
-                  <div style={{ color: '#0F172A', fontWeight: 800 }}>उद्दिष्टे व ५० विभाग ब्लूप्रिंट</div>
+                  <div style={{ color: '#0F172A', fontWeight: 800 }}>५० विभाग मास्टर ब्लूप्रिंट</div>
                   <small style={{ color: '#64748B' }}>कार्यक्षेत्र व आगामी महाप्रकल्प</small>
                 </div>
               </Link>

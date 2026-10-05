@@ -426,7 +426,9 @@ export default function App() {
             <Route path="/vision" element={<VisionMissionPage />} />
             <Route path="/vision-mission" element={<VisionMissionPage />} />
             <Route path="/mission" element={<VisionMissionPage />} />
-            <Route path="/goals" element={<BlueprintVisionPage />} />
+            <Route path="/goals" element={<VisionMissionPage />} />
+            <Route path="/uddishta" element={<VisionMissionPage />} />
+            <Route path="/blueprint" element={<BlueprintVisionPage />} />
             <Route path="/why-join" element={<WhyJoinPage />} />
             <Route path="/whytojoin" element={<WhyJoinPage />} />
             <Route path="/benefits" element={<WhyJoinPage />} />
