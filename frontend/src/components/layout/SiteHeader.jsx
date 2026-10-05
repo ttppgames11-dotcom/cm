@@ -93,13 +93,13 @@ export default function SiteHeader({ onOpenSearch }) {
                 <NavLink to="/about" onClick={handleLinkClick}>
                   🏛️ आमच्याबद्दल
                 </NavLink>
-                <NavLink to="/governance" onClick={handleLinkClick}>
-                  🎯 व्हिजन व ध्येय
+                <NavLink to="/about#vision" onClick={handleLinkClick}>
+                  🎯 व्हिजन
                 </NavLink>
                 <NavLink to="/blueprint" onClick={handleLinkClick}>
-                  🏆 उद्दिष्टे व संकल्प
+                  🏆 उद्दिष्टे व ब्लूप्रिंट
                 </NavLink>
-                <NavLink to="/register" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800 }}>
+                <NavLink to="/why-join" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800 }}>
                   ⭐ सहभागी का व्हावे?
                 </NavLink>
                 <NavLink to="/roles-matrix" onClick={handleLinkClick} style={{ color: '#B45309', fontWeight: 800 }}>
@@ -482,13 +482,13 @@ export default function SiteHeader({ onOpenSearch }) {
                 <NavLink to="/about" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">🏛️</span> आमच्याबद्दल
                 </NavLink>
-                <NavLink to="/governance" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                <NavLink to="/about#vision" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">🎯</span> व्हिजन
                 </NavLink>
                 <NavLink to="/blueprint" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">🏆</span> उद्दिष्टे
                 </NavLink>
-                <NavLink to="/register" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-gold ${isActive ? 'active' : ''}`}>
+                <NavLink to="/why-join" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-gold ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">⭐</span> सहभागी व्हा
                 </NavLink>
                 <NavLink to="/roles-matrix" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
@@ -693,11 +693,11 @@ export default function SiteHeader({ onOpenSearch }) {
                 </div>
               </Link>
 
-              <Link to="/governance" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+              <Link to="/about#vision" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
                 <span style={{ fontSize: '1.2rem' }}>🎯</span>
                 <div>
-                  <div style={{ color: '#0F172A', fontWeight: 800 }}>व्हिजन, मिशन व DPDP धोरण</div>
-                  <small style={{ color: '#64748B' }}>दीर्घकालीन संकल्पना व सुरक्षा</small>
+                  <div style={{ color: '#0F172A', fontWeight: 800 }}>व्हिजन व ध्येय (Vision 2030)</div>
+                  <small style={{ color: '#64748B' }}>दीर्घकालीन संकल्पना व उद्दिष्टे</small>
                 </div>
               </Link>
 
@@ -705,15 +705,15 @@ export default function SiteHeader({ onOpenSearch }) {
                 <span style={{ fontSize: '1.2rem' }}>🏆</span>
                 <div>
                   <div style={{ color: '#0F172A', fontWeight: 800 }}>उद्दिष्टे व ५० विभाग ब्लूप्रिंट</div>
-                  <small style={{ color: '#64748B' }}>कार्यक्षेत्र व आगामी प्रकल्प</small>
+                  <small style={{ color: '#64748B' }}>कार्यक्षेत्र व आगामी महाप्रकल्प</small>
                 </div>
               </Link>
 
-              <Link to="/register" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#FFF7ED', color: '#C2410C', textDecoration: 'none', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px', border: '1.5px solid #FFCC80' }}>
+              <Link to="/why-join" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#FFF7ED', color: '#C2410C', textDecoration: 'none', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px', border: '1.5px solid #FFCC80' }}>
                 <span style={{ fontSize: '1.2rem' }}>⭐</span>
                 <div>
-                  <div style={{ color: '#9A3412', fontWeight: 900 }}>सहभागी का व्हावे? (नवीन नोंदणी)</div>
-                  <small style={{ color: '#C2410C' }}>डिजिटल महासंघाचे अधिकृत सभासद व्हा</small>
+                  <div style={{ color: '#9A3412', fontWeight: 900 }}>सहभागी का व्हावे? (सदस्यत्वाचे लाभ)</div>
+                  <small style={{ color: '#C2410C' }}>८ मुख्य फायदे व डिजिटल स्मार्ट कार्ड</small>
                 </div>
               </Link>
 

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function AboutPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showCharterModal, setShowCharterModal] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+  const location = useLocation();
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -12,11 +13,12 @@ export default function AboutPage() {
   };
 
   useEffect(() => {
-    const hash = window.location.hash.replace('#', '');
+    const hash = location.hash.replace('#', '') || window.location.hash.replace('#', '');
     if (hash && ['overview', 'vision', 'mission', 'values', 'story', 'org', 'leadership'].includes(hash)) {
       setActiveTab(hash);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, []);
+  }, [location.hash]);
 
   const handleTabSwitch = (tabKey) => {
     setActiveTab(tabKey);

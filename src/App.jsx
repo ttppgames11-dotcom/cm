@@ -74,6 +74,7 @@ import ServiceBookingPage from './pages/jobs/ServiceBookingPage';
 import BlueprintVisionPage from './pages/governance/BlueprintVisionPage';
 import AboutPage from './pages/governance/AboutPage';
 import AchieversPage from './pages/governance/AchieversPage';
+import WhyJoinPage from './pages/governance/WhyJoinPage';
 import MorePortalsPage from './pages/common/MorePortalsPage';
 import SymbolsPage from './pages/culture/SymbolsPage';
 import TemplesPage from './pages/culture/TemplesPage';
@@ -413,6 +414,11 @@ export default function App() {
             <Route path="/referral-eligibility" element={<RoleEligibilityMatrixPage />} />
             <Route path="/governance/roles" element={<RoleEligibilityMatrixPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/vision" element={<AboutPage />} />
+            <Route path="/goals" element={<BlueprintVisionPage />} />
+            <Route path="/why-join" element={<WhyJoinPage />} />
+            <Route path="/whytojoin" element={<WhyJoinPage />} />
+            <Route path="/benefits" element={<WhyJoinPage />} />
             <Route path="/contact" element={<GovernancePage />} />
             <Route path="/leaders" element={<AboutPage />} />
             <Route path="/achievers" element={<AchieversPage />} />
