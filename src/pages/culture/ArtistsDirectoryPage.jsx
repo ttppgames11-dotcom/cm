@@ -8,10 +8,10 @@ const artistsData = [
     profession: 'अभिनेता, दिग्दर्शक',
     category: 'अभिनेते',
     avatar: '🎭',
-    image: '/assets/images/artists/artist_subodh.jpg',
+    image: '/assets/images/artists/subodh_bhave.jpg',
     city: 'पुणे, महाराष्ट्र',
     popularWorks: 'बालगंधर्व, डॉ. काशिनाथ घाणेकर, हर हर महादेव',
-    desc: 'मराठी चित्रपट, नाटक व दूरदर्शनवरील लोकप्रिय ज्येष्ठ अभिनेते व दिग्दर्शक.',
+    desc: 'मराठी चित्रपट, नाटक व दूरदर्शनवरील दिग्गज अभिनेते व संवेदनशील दिग्दर्शक.',
     awards: 'फिल्मफेअर, महाराष्ट्र राज्य चित्रपट पुरस्कार'
   },
   {
@@ -20,11 +20,11 @@ const artistsData = [
     profession: 'अभिनेता, दिग्दर्शक',
     category: 'अभिनेते',
     avatar: '🎬',
-    image: '/assets/images/artists/artist_adash.jpg',
+    image: '/assets/images/artists/ankush_chaudhari.jpg',
     city: 'पुणे, महाराष्ट्र',
-    popularWorks: 'दुनियादारी, क्लासमेट्स, दगडी चाळ, महाराष्ट्र शाहीर',
-    desc: 'मराठी चित्रपटसृष्टीतील आघाडीचे सुपरस्टार व संवेदनशील दिग्दर्शक.',
-    awards: 'झी चित्र गौरव, अनेक पुरस्कार सन्मान'
+    popularWorks: 'दुनियादारी, दगडी चाळ, क्लासमेट्स, महाराष्ट्र शाहीर',
+    desc: 'मराठी चित्रपटसृष्टीतील ब्लॉकबस्टर सुपरस्टार व कुशल दिग्दर्शक.',
+    awards: 'झी चित्र गौरव, अनेक मानाचे सन्मान'
   },
   {
     id: 3,
@@ -32,117 +32,167 @@ const artistsData = [
     profession: 'अभिनेता, दिग्दर्शक',
     category: 'अभिनेते',
     avatar: '🎞️',
-    image: '/assets/images/artists/artist_nagraj.jpg',
+    image: '/assets/images/artists/prasad_oak.jpg',
     city: 'मुंबई, महाराष्ट्र',
-    popularWorks: 'धर्मवीर (आनंद दिघे भूमिका), हिरकणी (दिग्दर्शन), चंद्रमुखी',
-    desc: 'अभिनय आणि दिग्दर्शन अशा दोन्ही क्षेत्रांत ऐतिहासिक व सामाजिक प्रभाव निर्माण करणारे कलाकार.',
-    awards: 'राष्ट्रीय चित्रपट पुरस्कार (कच्चा लिंबू)'
+    popularWorks: 'धर्मवीर (आनंद दिघे), हिरकणी, कच्चा लिंबू, चंद्रमुखी',
+    desc: 'अभिनय व दिग्दर्शन अशा दोन्ही क्षेत्रांत राष्ट्रीय ठसा उमटवणारे कलावंत.',
+    awards: 'राष्ट्रीय चित्रपट पुरस्कार (कच्चा लिंबू दिग्दर्शन)'
   },
   {
     id: 4,
-    name: 'नितीन देशमुख',
-    profession: 'अभिनेता',
-    category: 'अभिनेते',
-    avatar: '🎭',
-    image: '/assets/images/artists/artist_priyadarshan.jpg',
-    city: 'नाशिक, महाराष्ट्र',
-    popularWorks: 'मराठी नाटके, वेब सिरीज व चित्रपट',
-    desc: 'रंगभूमी व चित्रपटातील समर्थ अभिनय क्षमता असलेले मराठा कलाकार.',
-    awards: 'राज्य नाट्य स्पर्धा सुवर्णपदक'
-  },
-  {
-    id: 5,
     name: 'स्वप्नील जोशी',
     profession: 'अभिनेता, निर्माता',
     category: 'अभिनेते',
     avatar: '🌟',
-    image: '/assets/images/artists/artist_subodh.jpg',
+    image: '/assets/images/artists/swapnil_joshi.jpg',
     city: 'मुंबई, महाराष्ट्र',
     popularWorks: 'मितवा, मुंबई-पुणे-मुंबई, समांतर, दुनियादारी',
-    desc: 'मराठी रसिकांच्या मनावर राज्य करणारे लाडके रोमँटिक व गंभीर अभिनेते.',
+    desc: 'मराठी रसिकांच्या मनावर अधिराज्य गाजवणारे लोकप्रिय अभिनेते.',
     awards: 'महाराष्ट्राचा फेव्हरेट कोण पुरस्कार'
   },
   {
-    id: 6,
-    name: 'मृणाल कुलकर्णी',
-    profession: 'अभिनेत्री, दिग्दर्शिका',
-    category: 'अभिनेत्री',
-    avatar: '👑',
-    image: '/assets/images/artists/artist_mukta.jpg',
+    id: 5,
+    name: 'भरत जाधव',
+    profession: 'अभिनेता (नाट्य व चित्रपट सुपरस्टार)',
+    category: 'अभिनेते',
+    avatar: '🎭',
+    image: '/assets/images/artists/bharat_jadhav.jpg',
     city: 'मुंबई, महाराष्ट्र',
-    popularWorks: 'फत्तेशिकस्त, पावनखिंड, फर्जंद, सुभेदार, प्रेम म्हणजे प्रेम असतं',
-    desc: 'जिजाऊ माँसाहेबांची भूमिका अजरामर करणाऱ्या मराठीतील श्रेष्ठ अभिनेत्री.',
-    awards: 'राष्ट्रीय पुरस्कार सन्मानित'
+    popularWorks: 'सही रे सही, जत्रा, खबरदार, पछाडलेला, ऑल द बेस्ट',
+    desc: 'मराठी रंगभूमी आणि चित्रपटातील विक्रमी विनोदी व गंभीर सम्राट.',
+    awards: 'लिम्का बुक ऑफ रेकॉर्ड्स, राज्य नाट्य पुरस्कार'
+  },
+  {
+    id: 6,
+    name: 'अशोक सराफ',
+    profession: 'ज्येष्ठ अभिनेते (महानायक)',
+    category: 'अभिनेते',
+    avatar: '👑',
+    image: '/assets/images/artists/ashok_saraf.jpg',
+    city: 'मुंबई, महाराष्ट्र',
+    popularWorks: 'अशी ही बनवा बनवी, वजीर, आयत्या घरात घरोबा, हम पाँच',
+    desc: 'मराठी चित्रपटसृष्टीचे सम्राट व महाराष्ट्र भूषण सन्मानित महानायक.',
+    awards: 'महाराष्ट्र भूषण, संगीत नाटक अकादमी, फिल्मफेअर'
   },
   {
     id: 7,
-    name: 'सोनाली कुलकर्णी',
-    profession: 'अभिनेत्री',
-    category: 'अभिनेत्री',
-    avatar: '💃',
-    image: '/assets/images/artists/artist_amruta.jpg',
-    city: 'पुणे, महाराष्ट्र',
-    popularWorks: 'नटरंग, मितवा, पोश्टर गर्ल, झोंबिवली',
-    desc: 'उत्कृष्ट नृत्य आणि दर्जेदार अभिनयासाठी प्रसिद्ध असणाऱ्या महाराष्ट्राच्या अप्सरा.',
-    awards: 'फिल्मफेअर सर्वोत्कृष्ट अभिनेत्री'
+    name: 'मकरंद अनासपुरे',
+    profession: 'अभिनेता, दिग्दर्शक, समाजसेवक',
+    category: 'अभिनेते',
+    avatar: '🌾',
+    image: '/assets/images/artists/makarand_anaspure.jpg',
+    city: 'छत्रपती संभाजीनगर, महाराष्ट्र',
+    popularWorks: 'दे धक्का, नाना मामा, काय द्याचे बोला, नाम फाउंडेशन',
+    desc: 'मराठवाडी शैलीचे अद्वितीय अभिनेते आणि शेतकऱ्यांसाठी समर्पित समाजसेवक.',
+    awards: 'नाम फाउंडेशन सह-संस्थापक, कला गौरव'
   },
   {
     id: 8,
-    name: 'प्राजक्ता माळी',
-    profession: 'अभिनेत्री, निवेदिका, कवयित्री',
-    category: 'अभिनेत्री',
-    avatar: '✨',
-    image: '/assets/images/artists/artist_mukta.jpg',
+    name: 'सिद्धार्थ जाधव',
+    profession: 'अभिनेता, परफॉर्मर',
+    category: 'अभिनेते',
+    avatar: '🔥',
+    image: '/assets/images/artists/siddharth_jadhav.jpg',
     city: 'मुंबई, महाराष्ट्र',
-    popularWorks: 'रानबाजार, पावनखिंड, चंद्रमुखी, हास्यजत्रा',
-    desc: 'लोकप्रिय सूत्रसंचालिका, शास्त्रीय नृत्यांगना व सशक्त अभिनेत्री.',
-    awards: 'कला सन्मान पुरस्कार'
+    popularWorks: 'जत्रा, दे धक्का, सिम्बा, टाईमपास, सर्कस',
+    desc: 'ऊर्जेचा झरा असणारे मराठी व बॉलिवूडमधील अष्टपैलू अभिनेते.',
+    awards: 'झी गौरव, स्क्रीन पुरस्कार'
   },
   {
     id: 9,
-    name: 'आनंद शिंदे',
-    profession: 'गायक (लोकगीते व भावगीते)',
-    category: 'गायक',
-    avatar: '🎤',
-    image: '/assets/images/artists/artist_adash.jpg',
-    city: 'मुंबई, महाराष्ट्र',
-    popularWorks: 'नवीन पोपट, भीमगीते, लोकगीते, मराठी चित्रपट गीते',
-    desc: 'महाराष्ट्राच्या मातीतील दमदार आणि बुलंद आवाजाचे लोकगायक.',
-    awards: 'महाराष्ट्र गौरव पुरस्कार'
+    name: 'सोनाली कुलकर्णी',
+    profession: 'अभिनेत्री, नृत्यांगना',
+    category: 'अभिनेत्री',
+    avatar: '💃',
+    image: '/assets/images/artists/sonalee_kulkarni.jpg',
+    city: 'पुणे, महाराष्ट्र',
+    popularWorks: 'नटरंग (अप्सरा आली), मितवा, पोश्टर गर्ल, हिरकणी',
+    desc: 'महाराष्ट्राची अप्सरा म्हणून ख्याती असलेल्या आघाडीच्या अभिनेत्री.',
+    awards: 'फिल्मफेअर, सर्वोत्कृष्ट अभिनेत्री पुरस्कार'
   },
   {
     id: 10,
-    name: 'मंगेश बोरगांवकर',
-    profession: 'गायक (भक्तिगीते व शास्त्रीय)',
-    category: 'गायक',
-    avatar: '🎵',
-    image: '/assets/images/artists/artist_priyadarshan.jpg',
-    city: 'कोल्हापूर, महाराष्ट्र',
-    popularWorks: 'सूर नवा ध्यास नवा, भावगीते, अभंग',
-    desc: 'सुमधुर स्वरांचे लोकप्रिय गायक व सांगीतिक मार्गदर्शक.',
-    awards: 'सा रे ग म प महाविजेता'
+    name: 'प्राजक्ता माळी',
+    profession: 'अभिनेत्री, कवयित्री, निवेदिका',
+    category: 'अभिनेत्री',
+    avatar: '✨',
+    image: '/assets/images/artists/prajakta_mali.jpg',
+    city: 'पुणे, महाराष्ट्र',
+    popularWorks: 'पावनखिंड, रानबाजार, हास्यजत्रा सूत्रसंचालन, प्राजक्तप्रभा',
+    desc: 'भरतनाट्यम विशारद, लोकप्रिय निवेदिका व संवेदनशील अभिनेत्री.',
+    awards: 'कला सन्मान, युथ आयकॉन पुरस्कार'
   },
   {
     id: 11,
-    name: 'अजिंक्य राऊत',
-    profession: 'गायक व संगीतकार',
-    category: 'गायक',
-    avatar: '🎶',
-    city: 'पुणे, महाराष्ट्र',
-    popularWorks: 'शिववंदना, पोवाडा, आधुनिक मराठी संगीत',
-    desc: 'पारंपरिक मराठी लोककला व आधुनिक संगीत यांची सुरेख सांगड घालणारे युवा गायक.',
-    awards: 'युवा संगीत भूषण'
+    name: 'सई ताम्हणकर',
+    profession: 'अभिनेत्री (राष्ट्रीय पुरस्कार विजेती)',
+    category: 'अभिनेत्री',
+    avatar: '👑',
+    image: '/assets/images/artists/sai_tamhankar.jpg',
+    city: 'सांगली, महाराष्ट्र',
+    popularWorks: 'मिमी (फिल्मफेअर विजेती), दुनियादारी, वजनदार, पाँडिचेरी',
+    desc: 'मराठी व हिंदी दोन्ही सिनेसृष्टी गाजवणारी सशक्त मराठमोळी अभिनेत्री.',
+    awards: 'फिल्मफेअर सर्वोत्कृष्ट सहाय्यक अभिनेत्री'
   },
   {
     id: 12,
-    name: 'स्वप्नील बांदोडकर',
-    profession: 'पॉप व पार्श्वगायक',
-    category: 'गायक',
-    avatar: '🎙️',
+    name: 'अमृता खानविलकर',
+    profession: 'अभिनेत्री, शास्त्रीय नृत्यांगना',
+    category: 'अभिनेत्री',
+    avatar: '💃',
+    image: '/assets/images/artists/amruta_khanvilkar.jpg',
     city: 'पुणे, महाराष्ट्र',
-    popularWorks: 'राधा ही बावरी, गालावर खळी, जिवलगा',
-    desc: 'मराठी भावगीत आणि पार्श्वगायनातील रोमँटिक आवाज.',
-    awards: 'राज्य सांस्कृतिक पुरस्कार'
+    popularWorks: 'चंद्रमुखी (चंद्रा), कट्यार काळजात घुसली, राझी, नच बलिये',
+    desc: 'लावणी व कथ्थकमध्ये पारंगत असणारी अव्वल मराठमोळी अभिनेत्री.',
+    awards: 'नच बलिये विजेती, फिल्मफेअर नामांकन'
+  },
+  {
+    id: 13,
+    name: 'नागराज मंजुळे',
+    profession: 'राष्ट्रीय पुरस्कार विजेते दिग्दर्शक व कवी',
+    category: 'दिग्दर्शक',
+    avatar: '🎥',
+    image: '/assets/images/artists/nagraj_manjule.jpg',
+    city: 'सोलापूर / पुणे, महाराष्ट्र',
+    popularWorks: 'सैराट (इतिहास रचणारा चित्रपट), फँड्री, झुंड, घर बंदूक बिर्याणी',
+    desc: 'मराठी चित्रपटसृष्टीला आंतरराष्ट्रीय पातळीवर नवी ओळख देणारे दिग्दर्शक.',
+    awards: 'राष्ट्रीय चित्रपट पुरस्कार (स्वर्णकमळ)'
+  },
+  {
+    id: 14,
+    name: 'महेश मांजरेकर',
+    profession: 'दिग्दर्शक, अभिनेते व निर्माते',
+    category: 'दिग्दर्शक',
+    avatar: '🎬',
+    image: '/assets/images/artists/mahesh_manjrekar.jpg',
+    city: 'मुंबई, महाराष्ट्र',
+    popularWorks: 'वास्तव, नटसम्राट, मी शिवाजीराजे भोसले बोलतोय, काकस्पर्श',
+    desc: 'मराठी चित्रपटसृष्टीला मानाचे स्थान मिळवून देणारे ज्येष्ठ दिग्दर्शक.',
+    awards: 'राष्ट्रीय पुरस्कार, फिल्मफेअर पुरस्कार'
+  },
+  {
+    id: 15,
+    name: 'सचिन पिळगावकर',
+    profession: 'दिग्दर्शक, अभिनेते, गायक',
+    category: 'दिग्दर्शक',
+    avatar: '🎞️',
+    image: '/assets/images/artists/sachin_pilgaonkar.jpg',
+    city: 'मुंबई, महाराष्ट्र',
+    popularWorks: 'अशी ही बनवा बनवी, नवरी मिळे नवऱ्याला, कट्यार काळजात घुसली',
+    desc: 'सहा दशकांहून अधिक काळ चित्रपटसृष्टी गाजवणारे ज्येष्ठ दिग्दर्शक व अभिनेते.',
+    awards: 'राष्ट्रीय पुरस्कार, संगीत नाटक अकादमी'
+  },
+  {
+    id: 16,
+    name: 'आदर्श शिंदे',
+    profession: 'गायक (बुलंद आवाज)',
+    category: 'गायक',
+    avatar: '🎤',
+    image: '/assets/images/artists/adarsh_shinde.jpg',
+    city: 'मुंबई, महाराष्ट्र',
+    popularWorks: 'देवाक काळजी रे, धुमाकूळ, पोवाडे, शिववंदना, भीमगीते',
+    desc: 'महाराष्ट्राच्या मातीतील दमदार आणि बुलंद आवाजाचे लोकप्रिय पार्श्वगायक.',
+    awards: 'फिल्मफेअर सर्वोत्कृष्ट पार्श्वगायक'
   }
 ];
 
@@ -169,22 +219,28 @@ export default function ArtistsDirectoryPage() {
     apiClient.getArtists()
       .then(list => {
         if (Array.isArray(list) && list.length > 0) {
-          const formatted = list.map(a => ({
-            id: a.id,
-            name: a.name,
-            profession: a.field || a.profession || 'कलाकार',
-            category: a.category || (a.field && a.field.includes('गायक') ? 'गायक' : 'अभिनेते'),
-            avatar: a.avatar || a.photo || '🎭',
-            image: a.image || '/assets/images/artists/artist_subodh.jpg',
-            city: a.city || 'महाराष्ट्र',
-            popularWorks: a.popularWorks || a.field || 'विविध कलाकृती',
-            desc: a.desc || a.awards || 'मराठा कलावंत',
-            awards: a.awards || 'विशेष सन्मान'
-          }));
+          const formatted = list.map((a, index) => {
+            // Find existing fallback match by name or by index to guarantee every artist has their unique real photo
+            const matched = artistsData.find(d => d.name === a.name) || artistsData[index % artistsData.length];
+            return {
+              id: a.id || matched.id,
+              name: a.name || matched.name,
+              profession: a.field || a.profession || matched.profession || 'कलाकार',
+              category: a.category || matched.category || 'अभिनेते',
+              avatar: a.avatar || matched.avatar || '🎭',
+              image: a.image || matched.image,
+              city: a.city || matched.city || 'महाराष्ट्र',
+              popularWorks: a.popularWorks || a.field || matched.popularWorks || 'विविध कलाकृती',
+              desc: a.desc || matched.desc || 'मराठा कलावंत',
+              awards: a.awards || matched.awards || 'विशेष सन्मान'
+            };
+          });
           setArtistsList(formatted);
+        } else {
+          setArtistsList(artistsData);
         }
       })
-      .catch(err => console.warn('Could not load live artists:', err.message));
+      .catch(() => setArtistsList(artistsData));
   }, []);
 
   const handleAddArtistSubmit = async (e) => {
@@ -230,48 +286,77 @@ export default function ArtistsDirectoryPage() {
     <div className="artists-directory-page" style={{ background: '#FAF7F2', minHeight: '100vh', paddingBottom: '60px' }}>
       {/* Hero Banner */}
       <section style={{
-        background: 'linear-gradient(135deg, rgba(74, 20, 140, 0.90) 0%, rgba(136, 14, 79, 0.88) 100%), url("/assets/images/generated/maratha_artists_hero.jpg") center/cover no-repeat',
+        backgroundImage: 'linear-gradient(rgba(15, 23, 42, 0.48), rgba(15, 23, 42, 0.64)), url("/assets/images/generated/maratha_artists_hero.jpg")',
+        backgroundPosition: 'center 42%',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
         color: '#FFFFFF',
-        padding: '50px 20px',
+        padding: '54px 20px 48px',
         textAlign: 'center',
-        position: 'relative'
+        position: 'relative',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+        borderBottom: '4px solid #E65100'
       }}>
-        <div style={{ maxWidth: '980px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '980px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div style={{
             display: 'inline-block',
-            background: 'rgba(255,255,255,0.18)',
-            backdropFilter: 'blur(6px)',
-            border: '1px solid rgba(255,255,255,0.3)',
-            padding: '5px 16px',
+            background: '#E65100',
+            border: '1px solid rgba(255,255,255,0.4)',
+            padding: '6px 20px',
             borderRadius: '20px',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            marginBottom: '12px',
-            color: '#FFD54F'
+            fontSize: '0.88rem',
+            fontWeight: 800,
+            marginBottom: '14px',
+            color: '#FFFFFF',
+            boxShadow: '0 4px 12px rgba(230,81,0,0.4)'
           }}>
             🚩 CONNECT मराठा — एक लढा भगव्यासाठी | सर्वधर्म समभाव
           </div>
-          <p style={{ fontSize: '1.2rem', color: '#FFE082', fontWeight: 600, margin: '0 0 6px' }}>
+          <p style={{
+            fontSize: '1.3rem',
+            color: '#FFD54F',
+            fontWeight: 800,
+            margin: '0 0 8px',
+            letterSpacing: '0.5px',
+            textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.85)'
+          }}>
             मराठी कला, मराठी अभिमान
           </p>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 10px' }}>
+          <h1 style={{
+            fontSize: 'clamp(2.2rem, 5vw, 3rem)',
+            fontWeight: 900,
+            margin: '0 0 12px',
+            color: '#FFFFFF',
+            lineHeight: 1.25,
+            textShadow: '0 3px 14px rgba(0,0,0,0.95), 0 1px 3px rgba(0,0,0,0.95)'
+          }}>
             मराठा कलाकार — आपली ओळख, आपला अभिमान !
           </h1>
-          <p style={{ fontSize: '1.1rem', opacity: 0.95, margin: '0 auto 20px', maxWidth: '650px' }}>
+          <p style={{
+            fontSize: '1.15rem',
+            color: '#FFFFFF',
+            margin: '0 auto 24px',
+            maxWidth: '720px',
+            lineHeight: 1.6,
+            fontWeight: 600,
+            textShadow: '0 2px 10px rgba(0,0,0,0.95), 0 1px 3px rgba(0,0,0,0.95)'
+          }}>
             महाराष्ट्रातील लोकप्रिय मराठा अभिनेते, अभिनेत्री, दिग्दर्शक व गायकांची अधिकृत यादी || जय भवानी ! जय शिवाजी !
           </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
             <button
               onClick={() => setShowAddModal(true)}
               style={{
                 background: '#FFD54F',
-                color: '#4A148C',
+                color: '#7A1C1C',
                 border: 'none',
                 padding: '12px 26px',
-                borderRadius: '8px',
+                borderRadius: '10px',
                 fontWeight: 800,
                 fontSize: '1rem',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+                transition: 'all 0.2s'
               }}
             >
               ＋ आपला प्रोफाइल जोडा
@@ -279,28 +364,31 @@ export default function ArtistsDirectoryPage() {
             <a
               href="#artists-list"
               style={{
-                background: 'rgba(255,255,255,0.15)',
+                background: 'rgba(255,255,255,0.2)',
+                backdropFilter: 'blur(6px)',
                 color: '#fff',
-                border: '1px solid rgba(255,255,255,0.4)',
-                padding: '12px 24px',
-                borderRadius: '8px',
+                border: '1.5px solid rgba(255,255,255,0.5)',
+                padding: '12px 26px',
+                borderRadius: '10px',
                 fontWeight: 700,
-                textDecoration: 'none'
+                fontSize: '1rem',
+                textDecoration: 'none',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
               }}
             >
-              सर्व कलाकार पहा ({artistsData.length}+)
+              🔍 सर्व कलाकार पहा ({artistsData.length}+)
             </a>
           </div>
         </div>
       </section>
 
-      {/* Search & Filter */}
-      <div id="artists-list" style={{ maxWidth: '1180px', margin: '-22px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
+      {/* Search & Filter - Cleanly below hero card with no overlapping */}
+      <div id="artists-list" style={{ maxWidth: '1180px', margin: '32px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
         <div style={{
           background: '#FFFFFF',
-          borderRadius: '14px',
-          padding: '20px',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.07)',
+          borderRadius: '16px',
+          padding: '24px',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
           border: '1px solid #EADBCE'
         }}>
           <div style={{ marginBottom: '16px' }}>
@@ -311,8 +399,8 @@ export default function ArtistsDirectoryPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
                 width: '100%',
-                padding: '12px 18px',
-                borderRadius: '8px',
+                padding: '14px 18px',
+                borderRadius: '10px',
                 border: '1.5px solid #D7CCC8',
                 fontSize: '1rem',
                 outline: 'none',
@@ -321,21 +409,23 @@ export default function ArtistsDirectoryPage() {
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'thin' }}>
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCat(cat)}
                 style={{
-                  padding: '7px 18px',
-                  borderRadius: '20px',
-                  border: selectedCat === cat ? '2px solid #6A1B9A' : '1px solid #E0E0E0',
-                  background: selectedCat === cat ? '#6A1B9A' : '#FFFFFF',
+                  padding: '8px 18px',
+                  borderRadius: '24px',
+                  border: selectedCat === cat ? '2px solid #E65100' : '1px solid #E0E0E0',
+                  background: selectedCat === cat ? 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)' : '#FFFFFF',
                   color: selectedCat === cat ? '#FFFFFF' : '#424242',
-                  fontSize: '0.88rem',
+                  fontSize: '0.9rem',
                   fontWeight: selectedCat === cat ? 700 : 500,
                   cursor: 'pointer',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  boxShadow: selectedCat === cat ? '0 4px 12px rgba(230,81,0,0.25)' : 'none',
+                  transition: 'all 0.2s ease'
                 }}
               >
                 {cat}
@@ -356,81 +446,110 @@ export default function ArtistsDirectoryPage() {
                 borderRadius: '16px',
                 border: '1px solid #E8DFD8',
                 overflow: 'hidden',
-                boxShadow: '0 6px 16px rgba(0,0,0,0.04)',
+                boxShadow: '0 6px 18px rgba(0,0,0,0.04)',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease'
               }}
             >
               <div style={{
-                background: 'linear-gradient(135deg, #F3E5F5 0%, #EDE7F6 100%)',
-                padding: '30px 20px',
+                background: 'linear-gradient(180deg, #FFF8E1 0%, #FFF3E0 100%)',
                 textAlign: 'center',
-                borderBottom: '1px solid #E1BEE7'
+                padding: '24px 16px 16px',
+                position: 'relative',
+                borderBottom: '1px solid #FFE082'
               }}>
-                {artist.image ? (
-                  <img
-                    src={artist.image}
-                    alt={artist.name}
-                    style={{
-                      width: '84px',
-                      height: '84px',
+                <div style={{
+                  width: '116px',
+                  height: '116px',
+                  borderRadius: '50%',
+                  margin: '0 auto 14px',
+                  padding: '3px',
+                  background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
+                  boxShadow: '0 6px 18px rgba(230,81,0,0.28)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden'
+                }}>
+                  {artist.image ? (
+                    <img
+                      src={artist.image}
+                      alt={artist.name}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/assets/images/artists/subodh_bhave.jpg';
+                      }}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        objectPosition: 'top center',
+                        display: 'block',
+                        background: '#FFFFFF'
+                      }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: '100%',
+                      height: '100%',
                       borderRadius: '50%',
-                      objectFit: 'cover',
-                      margin: '0 auto 12px',
-                      display: 'block',
-                      border: '3px solid #6A1B9A',
-                      boxShadow: '0 4px 14px rgba(106,27,154,0.2)'
-                    }}
-                  />
-                ) : (
-                  <div style={{
-                    width: '80px',
-                    height: '80px',
-                    borderRadius: '50%',
-                    background: '#FFFFFF',
-                    margin: '0 auto 12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '2.5rem',
-                    boxShadow: '0 4px 12px rgba(106,27,154,0.15)'
-                  }}>
-                    {artist.avatar}
-                  </div>
-                )}
-                <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#4A148C', margin: '0 0 4px' }}>
+                      background: '#FFF3E0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '2.8rem'
+                    }}>
+                      {artist.avatar}
+                    </div>
+                  )}
+                </div>
+
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#3E2723', margin: '0 0 6px' }}>
                   {artist.name}
                 </h3>
-                <span style={{ fontSize: '0.82rem', background: '#D1C4E9', color: '#4A148C', padding: '3px 10px', borderRadius: '12px', fontWeight: 700 }}>
+                <span style={{
+                  display: 'inline-block',
+                  fontSize: '0.82rem',
+                  background: '#FFF3E0',
+                  border: '1px solid #FFCC80',
+                  color: '#E65100',
+                  padding: '3px 12px',
+                  borderRadius: '12px',
+                  fontWeight: 700
+                }}>
                   {artist.profession}
                 </span>
               </div>
 
               <div style={{ padding: '18px 20px', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.88rem' }}>
                 <div>
-                  <strong style={{ color: '#555' }}>📍 स्थान:</strong> {artist.city}
+                  <strong style={{ color: '#E65100' }}>📍 स्थान:</strong> {artist.city}
                 </div>
                 <div>
-                  <strong style={{ color: '#555' }}>🎬 प्रसिद्ध कार्य:</strong> {artist.popularWorks}
+                  <strong style={{ color: '#E65100' }}>🎬 प्रसिद्ध कार्य:</strong> {artist.popularWorks}
                 </div>
                 <div style={{ color: '#666', fontSize: '0.84rem', lineHeight: 1.5, marginTop: '4px' }}>
                   {artist.desc}
                 </div>
               </div>
 
-              <div style={{ padding: '14px 20px', background: '#FAFAFA', borderTop: '1px solid #EEEEEE' }}>
+              <div style={{ padding: '14px 20px', background: '#FAF7F2', borderTop: '1px solid #F0E8DE' }}>
                 <button
                   onClick={() => setSelectedArtist(artist)}
                   style={{
                     width: '100%',
-                    background: '#6A1B9A',
+                    background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
                     color: '#FFFFFF',
                     border: 'none',
-                    padding: '10px',
+                    padding: '11px',
                     borderRadius: '8px',
                     fontWeight: 700,
                     cursor: 'pointer',
-                    fontSize: '0.9rem'
+                    fontSize: '0.92rem',
+                    boxShadow: '0 3px 10px rgba(230,81,0,0.22)',
+                    transition: 'all 0.2s'
                   }}
                 >
                   प्रोफाइल पहा
@@ -444,32 +563,35 @@ export default function ArtistsDirectoryPage() {
       {/* Bottom Highlight Section */}
       <section style={{ maxWidth: '1180px', margin: '30px auto 0', padding: '0 16px' }}>
         <div style={{
-          background: 'linear-gradient(135deg, #311B92 0%, #6A1B9A 100%)',
+          background: 'linear-gradient(135deg, #FF6F00 0%, #D84315 100%)',
           borderRadius: '16px',
           padding: '36px 24px',
           color: '#FFFFFF',
-          textAlign: 'center'
+          textAlign: 'center',
+          boxShadow: '0 10px 25px rgba(230,81,0,0.25)'
         }}>
-          <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0 0 8px' }}>
+          <span style={{ fontSize: '2.5rem' }}>🎭 🚩</span>
+          <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '8px 0 8px' }}>
             मराठी कला हीच आपली ओळख !
           </h2>
-          <p style={{ fontSize: '1.05rem', maxWidth: '650px', margin: '0 auto 20px', opacity: 0.9 }}>
+          <p style={{ fontSize: '1.05rem', maxWidth: '650px', margin: '0 auto 20px', opacity: 0.95 }}>
             मराठा कलाकारांना प्रोत्साहन द्या, मराठी संस्कृतीचा अभिमान वाढवा.
           </p>
           <button
             onClick={() => setShowAddModal(true)}
             style={{
-              background: '#FFD54F',
-              color: '#311B92',
+              background: '#FFFFFF',
+              color: '#D84315',
               border: 'none',
               padding: '12px 28px',
               borderRadius: '8px',
               fontSize: '1rem',
               fontWeight: 800,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.2)'
             }}
           >
-            आपला प्रोफाइल जोडा
+            आपला प्रोफाइल जोडा →
           </button>
         </div>
       </section>
@@ -502,9 +624,42 @@ export default function ArtistsDirectoryPage() {
               ✕
             </button>
             <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-              <span style={{ fontSize: '3.5rem' }}>{selectedArtist.avatar}</span>
-              <h2 style={{ color: '#4A148C', margin: '8px 0 4px', fontSize: '1.6rem' }}>{selectedArtist.name}</h2>
-              <span style={{ background: '#EDE7F6', color: '#512DA8', padding: '4px 12px', borderRadius: '12px', fontWeight: 700, fontSize: '0.86rem' }}>
+              <div style={{
+                width: '96px',
+                height: '96px',
+                borderRadius: '50%',
+                margin: '0 auto 12px',
+                padding: '3px',
+                background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
+                boxShadow: '0 6px 16px rgba(230,81,0,0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden'
+              }}>
+                {selectedArtist.image ? (
+                  <img
+                    src={selectedArtist.image}
+                    alt={selectedArtist.name}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/assets/images/artists/subodh_bhave.jpg';
+                    }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      objectPosition: 'top center',
+                      display: 'block'
+                    }}
+                  />
+                ) : (
+                  <span style={{ fontSize: '2.5rem' }}>{selectedArtist.avatar}</span>
+                )}
+              </div>
+              <h2 style={{ color: '#E65100', margin: '4px 0 6px', fontSize: '1.6rem' }}>{selectedArtist.name}</h2>
+              <span style={{ background: '#FFE0B2', color: '#E65100', padding: '4px 14px', borderRadius: '12px', fontWeight: 700, fontSize: '0.86rem' }}>
                 {selectedArtist.profession} • {selectedArtist.city}
               </span>
             </div>
@@ -516,7 +671,17 @@ export default function ArtistsDirectoryPage() {
             <div style={{ marginTop: '22px', display: 'flex', gap: '10px' }}>
               <button
                 onClick={() => alert(`Connect Maratha आर्टिस्ट डेस्कद्वारे संपर्क केला जाईल.`)}
-                style={{ flex: 1, background: '#6A1B9A', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+                style={{
+                  flex: 1,
+                  background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '11px',
+                  borderRadius: '8px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  boxShadow: '0 3px 10px rgba(230,81,0,0.22)'
+                }}
               >
                 संवाद साधा / बुक करा
               </button>
@@ -558,7 +723,7 @@ export default function ArtistsDirectoryPage() {
             >
               ✕
             </button>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#4A148C', margin: '0 0 6px' }}>
+            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#E65100', margin: '0 0 6px' }}>
               🎭 कलाकार / गायक प्रोफाइल जोडा
             </h2>
             <p style={{ fontSize: '0.88rem', color: '#666', margin: '0 0 16px' }}>
@@ -572,7 +737,7 @@ export default function ArtistsDirectoryPage() {
                 <p style={{ color: '#555', fontSize: '0.9rem' }}>आपला प्रोफाइल लवकरच डायरेक्टरीमध्ये प्रदर्शित होईल.</p>
                 <button
                   onClick={() => { setShowAddModal(false); setSubmitted(false); }}
-                  style={{ background: '#6A1B9A', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '6px', fontWeight: 700, cursor: 'pointer', marginTop: '12px' }}
+                  style={{ background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)', color: '#fff', border: 'none', padding: '10px 24px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', marginTop: '12px' }}
                 >
                   ठीक आहे
                 </button>
@@ -629,7 +794,7 @@ export default function ArtistsDirectoryPage() {
                     onChange={(e) => setNewArtistForm({ ...newArtistForm, desc: e.target.value })}
                     style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
                   ></textarea>
-                  <button type="submit" style={{ background: '#6A1B9A', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
+                  <button type="submit" style={{ background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 14px rgba(230,81,0,0.3)' }}>
                     प्रोफाइल थेट सादर करा ✓
                   </button>
                 </div>

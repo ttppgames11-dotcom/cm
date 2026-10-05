@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams, useLocation } from 'react-router-dom';
 
 const DEFAULT_NETWORK_DIVISIONS = [
   {
@@ -12,17 +12,18 @@ const DEFAULT_NETWORK_DIVISIONS = [
     leadSecretary: 'श्री. संग्राम पाटील (विभागीय अध्यक्ष)',
     phone: '०२०-२४४५-१६७४',
     desc: 'शिवछत्रपतींच्या राजधानीचा, हिंदवी स्वराज्य उगम क्षेत्राचा आणि पश्चिम महाराष्ट्रातील औद्योगिक-सहकारी चळवळीचा बालेकिल्ला.',
+    image: '/assets/images/real-shaniwar-wada.jpg',
     districts: [
       { name: 'पुणे', code: 'PN', members: '८२,०००+', talukas: ['हवेली', 'पुणे शहर', 'शिरूर', 'बारामती', 'जुन्नर', 'आंबेगाव', 'खेड', 'मावळ', 'मुळशी', 'वेल्हे', 'भोर', 'पुरंदर', 'दौंड', 'इंदापूर'] },
       { name: 'सातारा', code: 'ST', members: '३२,०००+', talukas: ['सातारा', 'कराड', 'वाई', 'महाबळेश्वर', 'जावळी', 'पाटण', 'कोरेगाव', 'खटाव', 'माण', 'फलटण', 'खंडाळा'] },
-      { name: 'कोल्हापूर', code: 'KL', members: '३८,०००+', talukas: ['करवीर', 'पन्हाळा', 'शाहुवाडी', 'कागल', 'हातकणंगले', 'शिरोळ', 'राधानगरी', 'गगनबावडा', 'भुदरगड', 'आजरा', 'गडहिंग्लज', 'चंदगड'] },
+      { name: 'कोल्हापूर', code: 'KL', members: '३८,०००+', talukas: ['करवीर', 'पन्हाळा', 'शाहूवाडी', 'कागल', 'हातकणंगले', 'शिरोळ', 'राधानगरी', 'गगनबावडा', 'भुदरगड', 'आजरा', 'गडहिंग्लज', 'चंदगड'] },
       { name: 'सांगली', code: 'SG', members: '१८,०००+', talukas: ['मिरज', 'तासगाव', 'खानापूर (विटा)', 'आटपाडी', 'कवठे महांकाळ', 'जत', 'वाळवा (इस्लामपूर)', 'शिराळा', 'पलूस', 'कडेगाव'] },
       { name: 'सोलापूर', code: 'SO', members: '१५,०००+', talukas: ['उत्तर सोलापूर', 'दक्षिण सोलापूर', 'बार्शी', 'माढा', 'करमाळा', 'पंढरपूर', 'मोहोळ', 'माळशिरस', 'सांगोला', 'मंगळवेढा', 'अक्कलकोट'] }
     ]
   },
   {
     id: 'kokan',
-    name: 'कोकण विभाग (सागरी आरमार व मुंबई महाक्षेत्र)',
+    name: 'कोकण विभाग (मुंबई व कोकण किनारपट्टी)',
     hq: 'दादर / नरिमन पॉईंट, मुंबई',
     totalMembers: '१,४०,०००+',
     chapters: '४८ मंडळे',
@@ -30,10 +31,13 @@ const DEFAULT_NETWORK_DIVISIONS = [
     leadSecretary: 'श्री. उदय सावंत (विभागीय अध्यक्ष)',
     phone: '०२२-२८३३-१६७४',
     desc: 'सागरी किल्ले, छत्रपती शिवरायांचे आरमार, आंतरराष्ट्रीय व्यापार आणि मराठा समाजाच्या आर्थिक सामर्थ्याचे महाद्वार.',
+    image: '/assets/images/real-mumbai-gateway.jpg',
     districts: [
-      { name: 'मुंबई शहर व उपनगर', code: 'MB', members: '६०,०००+', talukas: ['कुर्ला', 'अंधेरी', 'बोरिवली', 'दादर', 'वरळी', 'गिरगाव', 'भांडुप'] },
-      { name: 'ठाणे व पालघर', code: 'TH', members: '३२,०००+', talukas: ['ठाणे', 'कल्याण', 'मुरबाड', 'भिवंडी', 'शहापूर', 'उल्हासनगर', 'अंबरनाथ', 'पालघर', 'वसई', 'डहाणू'] },
-      { name: 'रायगड', code: 'RG', members: '२४,०००+', talukas: ['अलिबाग', 'पेण', 'महाड', 'माणगाव', 'रोहा', 'पनवेल', 'कर्जत', 'खालापूर', 'पोलादपूर', 'तळा', 'म्हसळा', 'श्रीवर्धन'] },
+      { name: 'मुंबई शहर', code: 'MC', members: '२८,०००+', talukas: ['दादर', 'कुलाबा', 'मलबार हिल', 'वरळी', 'भायखळा', 'शिवडी'] },
+      { name: 'मुंबई उपनगर', code: 'MS', members: '३५,०००+', talukas: ['कुर्ला', 'अंधेरी', 'बोरिवली', 'वांद्रे', 'घाटकोपर'] },
+      { name: 'ठाणे', code: 'TH', members: '२२,०००+', talukas: ['ठाणे', 'कल्याण', 'मुरबाड', 'भिवंडी', 'शहापूर', 'उल्हासनगर', 'अंबरनाथ'] },
+      { name: 'पालघर', code: 'PL', members: '१२,०००+', talukas: ['पालघर', 'वसई', 'डहाणू', 'तलासरी', 'जव्हार', 'मोखाडा', 'वाडा', 'विक्रमगड'] },
+      { name: 'रायगड', code: 'RG', members: '२४,०००+', talukas: ['अलिबाग', 'पेण', 'महाड', 'माणगाव', 'रोहा', 'पनवेल', 'कर्जत', 'खालापूर', 'पोलादपूर', 'तळा', 'म्हसळा', 'श्रीवर्धन', 'उरण', 'मुरुड', 'सुधागड (पाली)'] },
       { name: 'रत्नागिरी', code: 'RT', members: '१४,०००+', talukas: ['रत्नागिरी', 'चिपळूण', 'दापोली', 'खेड', 'गुहागर', 'संगमेश्वर', 'लांजा', 'राजापूर', 'मंडणगड'] },
       { name: 'सिंधुदुर्ग', code: 'SD', members: '१०,०००+', talukas: ['कुडाळ', 'मालवण', 'सावंतवाडी', 'कणकवली', 'देवगड', 'वेंगुर्ला', 'वैभववाडी', 'दोडामार्ग'] }
     ]
@@ -48,14 +52,16 @@ const DEFAULT_NETWORK_DIVISIONS = [
     leadSecretary: 'श्री. विलास चव्हाण (विभागीय अध्यक्ष)',
     phone: '०२४०-२३३४-१६७४',
     desc: 'संतांची भूमी, मराठवाडा मुक्तीसंग्रामाचा दैदीप्यमान इतिहास आणि ५८ मराठा मूक मोर्चांची उगमभूमी.',
+    image: '/assets/images/real-ellora-kailash.jpg',
     districts: [
       { name: 'छत्रपती संभाजीनगर', code: 'CS', members: '२८,०००+', talukas: ['संभाजीनगर', 'पैठण', 'गंगापूर', 'वैजापूर', 'कन्नड', 'खुलताबाद', 'सिल्लोड', 'सोयगाव', 'फुलंब्री'] },
       { name: 'जालना', code: 'JL', members: '१२,०००+', talukas: ['जालना', 'भोकरदन', 'जाफ्राबाद', 'बदनापूर', 'अंबड', 'परतूर', 'मंठा', 'घनसावंगी'] },
       { name: 'बीड', code: 'BD', members: '१६,०००+', talukas: ['बीड', 'गेवराई', 'माजलगाव', 'आष्टी', 'पाटोदा', 'शिरूर कासार', 'अंबाजोगाई', 'परळी', 'केज', 'वडवणी', 'धारूर'] },
-      { name: 'नांदेड', code: 'ND', members: '१४,०००+', talukas: ['नांदेड', 'लोहा', 'कंधार', 'मुखेड', 'देगलूर', 'बिलोली', 'धर्माबाद', 'उमरी', 'मुदखेड', 'भोकर', 'हदगाव', 'किनवट'] },
+      { name: 'नांदेड', code: 'ND', members: '१४,०००+', talukas: ['नांदेड', 'लोहा', 'कंधार', 'मुखेड', 'देगलूर', 'बिलोली', 'धर्माबाद', 'उमरी', 'मुदखेड', 'भोकर', 'हदगाव', 'किनवट', 'हिमायतनगर', 'माहूर', 'अर्धापूर', 'नायगाव'] },
       { name: 'लातूर', code: 'LT', members: '१०,०००+', talukas: ['लातूर', 'औसा', 'रेणापूर', 'चाकूर', 'शिरूर अनंतपाळ', 'अहमदपूर', 'उदगीर', 'जळकोट', 'निलंगा', 'देवणी'] },
       { name: 'धाराशिव', code: 'DH', members: '८,०००+', talukas: ['धाराशिव', 'तुळजापूर', 'उमरगा', 'लोहारा', 'कळंब', 'भूम', 'परांडा', 'वाशी'] },
-      { name: 'परभणी व हिंगोली', code: 'PB', members: '७,०००+', talukas: ['परभणी', 'गंगाखेड', 'जिंतूर', 'पूर्णा', 'हिंगोली', 'कळमनुरी', 'वसमत'] }
+      { name: 'परभणी', code: 'PB', members: '८,०००+', talukas: ['परभणी', 'गंगाखेड', 'जिंतूर', 'पूर्णा', 'पालम', 'सेलू', 'मानवत', 'पाथरी', 'सोनपेठ'] },
+      { name: 'हिंगोली', code: 'HN', members: '६,०००+', talukas: ['हिंगोली', 'कळमनुरी', 'वसमत', 'औंढा नागनाथ', 'सेनगाव'] }
     ]
   },
   {
@@ -68,11 +74,13 @@ const DEFAULT_NETWORK_DIVISIONS = [
     leadSecretary: 'श्री. नीलेश मोहिते (विभागीय अध्यक्ष)',
     phone: '०२५३-२५७१-१६७४',
     desc: 'गोदावरीचे उगमस्थान, कृषी क्रांती, द्राक्ष-कांदा पट्टा आणि सह्याद्रीच्या उत्तर रांगांमधील ऐतिहासिक गडकोट.',
+    image: '/assets/images/real-trimbakeshwar.jpg',
     districts: [
-      { name: 'नाशिक', code: 'NK', members: '३०,०००+', talukas: ['नाशिक', 'इगतपुरी', 'दिंडोरी', 'पेठ', 'त्र्यंबकेश्वर', 'कळवण', 'देवळा', 'सुरगाणा', 'सिन्नर', 'निफाड', 'चांदवड', 'नांदगाव', 'मालेगाव', 'सटाणा'] },
+      { name: 'नाशिक', code: 'NK', members: '३०,०००+', talukas: ['नाशिक', 'इगतपुरी', 'दिंडोरी', 'पेठ', 'त्र्यंबकेश्वर', 'कळवण', 'देवळा', 'सुरगाणा', 'सिन्नर', 'निफाड', 'चांदवड', 'नांदगाव', 'मालेगाव', 'सटाणा (बागलाण)', 'येवला'] },
       { name: 'अहिल्यानगर (अहमदनगर)', code: 'AH', members: '२२,०००+', talukas: ['नगर', 'पारनेर', 'श्रीगोंदा', 'कर्जत', 'जामखेड', 'शेवगाव', 'पाथर्डी', 'नेवासा', 'राहाता', 'संगमनेर', 'कोपरगाव', 'श्रीरामपूर', 'राहुरी', 'अकोले'] },
-      { name: 'जळगाव', code: 'JG', members: '१०,०००+', talukas: ['जळगाव', 'भुसावळ', 'एरंडोल', 'धरणगाव', 'यावल', 'रावेर', 'मुक्ताईनगर', 'बोदवड', 'चोपडा', 'पाचोरा', 'भडगाव', 'चाळीसगाव', 'पारोळा', 'अमळनेर'] },
-      { name: 'धुळे व नंदुरबार', code: 'DH', members: '८,०००+', talukas: ['धुळे', 'साक्री', 'शिंदखेडा', 'शिरपूर', 'नंदुरबार', 'नवापूर', 'शहादा', 'तळोदा', 'अक्कलकुवा', 'धडगाव'] }
+      { name: 'जळगाव', code: 'JG', members: '१०,०००+', talukas: ['जळगाव', 'भुसावळ', 'एरंडोल', 'धरणगाव', 'यावल', 'रावेर', 'मुक्ताईनगर', 'बोदवड', 'चोपडा', 'पाचोरा', 'भडगाव', 'चाळीसगाव', 'पारोळा', 'अमळनेर', 'जामनेर'] },
+      { name: 'धुळे', code: 'DL', members: '८,०००+', talukas: ['धुळे', 'साक्री', 'शिंदखेडा', 'शिरपूर'] },
+      { name: 'नंदुरबार', code: 'NB', members: '६,०००+', talukas: ['नंदुरबार', 'नवापूर', 'शहादा', 'तळोदा', 'अक्कलकुवा', 'धडगाव (अक्राणी)'] }
     ]
   },
   {
@@ -85,10 +93,14 @@ const DEFAULT_NETWORK_DIVISIONS = [
     leadSecretary: 'श्री. प्रफुल्ल भोसले (विभागीय अध्यक्ष)',
     phone: '०७१२-२५५२-१६७४',
     desc: 'रघूजीराजे भोसले यांच्या पराक्रमाचा, नागपूर मराठा गादीचा आणि मध्य भारत महाविस्ताराचा केंद्रबिंदू.',
+    image: '/assets/images/real-vidarbha-deekshabhoomi.jpg',
     districts: [
       { name: 'नागपूर', code: 'NG', members: '१४,०००+', talukas: ['नागपूर शहर', 'नागपूर ग्रामीण', 'कामठी', 'हिंगणा', 'काटोल', 'नरखेड', 'सावनेर', 'कळमेश्वर', 'रामटेक', 'पारशिवनी', 'मौदा', 'उमरेड', 'कुही', 'भिवापूर'] },
-      { name: 'वर्धा व चंद्रपूर', code: 'WR', members: '८,०००+', talukas: ['वर्धा', 'हिंगणघाट', 'आर्वी', 'चंद्रपूर', 'वरोरा', 'भद्रावती', 'चिमूर'] },
-      { name: 'भंडारा, गोंदिया व गडचिरोली', code: 'BH', members: '६,०००+', talukas: ['भंडारा', 'तुमसर', 'गोंदिया', 'तिरोडा', 'गडचिरोली', 'चामोर्शी'] }
+      { name: 'वर्धा', code: 'WR', members: '६,०००+', talukas: ['वर्धा', 'हिंगणघाट', 'आर्वी', 'देवळी', 'सेलू', 'समुद्रपूर', 'कारंजा (घाडगे)', 'आष्टी'] },
+      { name: 'चंद्रपूर', code: 'CH', members: '६,५००+', talukas: ['चंद्रपूर', 'वरोरा', 'भद्रावती', 'चिमूर', 'बल्लारपूर', 'मूल', 'सिंदेवाही', 'ब्रह्मपुरी', 'नागभीड', 'राजुरा', 'कोरपना', 'पोंभुर्णा', 'गोंडपिपरी', 'सावली', 'जिवती'] },
+      { name: 'भंडारा', code: 'BH', members: '४,०००+', talukas: ['भंडारा', 'तुमसर', 'मोहाडी', 'साकोली', 'लाखनी', 'पौनी', 'लाखांदूर'] },
+      { name: 'गोंदिया', code: 'GD', members: '३,५००+', talukas: ['गोंदिया', 'तिरोडा', 'गोरेगाव', 'आमगाव', 'सालेकसा', 'देवरी', 'सडक अर्जुनी', 'अर्जुनी मोरगाव'] },
+      { name: 'गडचिरोली', code: 'GC', members: '३,०००+', talukas: ['गडचिरोली', 'चामोर्शी', 'आरमोरी', 'कुरखेडा', 'धानोरा', 'कोरची', 'अहेरी', 'सिरोंचा', 'एटापल्ली', 'भामरागड', 'मुलचेरा', 'वडसा (देसाईगंज)'] }
     ]
   },
   {
@@ -101,18 +113,30 @@ const DEFAULT_NETWORK_DIVISIONS = [
     leadSecretary: 'श्री. गजानन देशमुख (विभागीय अध्यक्ष)',
     phone: '०७२१-२६६१-१६७४',
     desc: 'राजमाता राष्ट्रमाता जिजाऊंचे जन्मस्थान सिंदखेड राजा, कापूस-सोयाबीन पट्टा आणि मराठा-कुणबी एकजुटीची भूमी.',
+    image: '/assets/images/wiki-shegaon.jpg',
     districts: [
-      { name: 'बुलढाणा (सिंदखेड राजा)', code: 'BL', members: '८,५००+', talukas: ['सिंदखेड राजा', 'देऊळगाव राजा', 'चिखली', 'बुलढाणा', 'मेहकर', 'लोणार', 'खामगाव', 'शेगाव', 'मलकापूर', 'मोताळा', 'नांदुरा', 'जळगाव जामोद', 'संग्रामपूर'] },
-      { name: 'अमरावती व अकोला', code: 'AM', members: '८,०००+', talukas: ['अमरावती', 'भातकुली', 'चांदूर रेल्वे', 'मोर्शी', 'वरुड', 'अचलपूर', 'अकोला', 'बाळापूर', 'बार्शीटाकळी'] },
-      { name: 'यवतमाळ व वाशीम', code: 'YW', members: '५,५००+', talukas: ['यवतमाळ', 'पुसद', 'दिग्रस', 'उमरखेड', 'दारव्हा', 'वाशीम', 'रिसोड', 'कारंजा'] }
+      { name: 'अमरावती', code: 'AM', members: '८,०००+', talukas: ['अमरावती', 'भातकुली', 'चांदूर रेल्वे', 'मोर्शी', 'वरुड', 'अचलपूर', 'चांदूर बाजार', 'दर्यापूर', 'अंजनगाव सुर्जी', 'तिवसा', 'धामणगाव रेल्वे', 'नांदगाव खंडेश्वर', 'धारणी', 'चिखलदरा'] },
+      { name: 'अकोला', code: 'AK', members: '६,०००+', talukas: ['अकोला', 'बाळापूर', 'बार्शीटाकळी', 'अकोट', 'तेल्हारा', 'पातूर', 'मूर्तिजापूर'] },
+      { name: 'बुलढाणा', code: 'BL', members: '८,५००+', talukas: ['सिंदखेड राजा', 'देऊळगाव राजा', 'चिखली', 'बुलढाणा', 'मेहकर', 'लोणार', 'खामगाव', 'शेगाव', 'मलकापूर', 'मोताळा', 'नांदुरा', 'जळगाव जामोद', 'संग्रामपूर'] },
+      { name: 'यवतमाळ', code: 'YW', members: '५,५००+', talukas: ['यवतमाळ', 'पुसद', 'दिग्रस', 'उमरखेड', 'दारव्हा', 'नेर', 'वणी', 'पांढरकवडा (केळापूर)', 'राळेगाव', 'घाटंजी', 'मारेगाव', 'झरी जामणी', 'कळंब', 'आर्णी', 'बाभूळगाव', 'महागाव'] },
+      { name: 'वाशीम', code: 'WS', members: '४,०००+', talukas: ['वाशीम', 'रिसोड', 'कारंजा', 'मालेगाव', 'मंगरुळपीर', 'मानोरा'] }
     ]
   }
 ];
 
+const DIVISION_FALLBACK_IMAGES = {
+  pune: '/assets/images/real-shaniwar-wada.jpg',
+  kokan: '/assets/images/real-mumbai-gateway.jpg',
+  sambhajinagar: '/assets/images/real-ellora-kailash.jpg',
+  nashik: '/assets/images/real-trimbakeshwar.jpg',
+  nagpur: '/assets/images/real-vidarbha-deekshabhoomi.jpg',
+  amravati: '/assets/images/wiki-shegaon.jpg'
+};
+
 export default function MaharashtraNetworkPage() {
   const [divisions, setDivisions] = useState(() => {
     try {
-      const saved = localStorage.getItem('cm_maharashtra_network_data');
+      const saved = localStorage.getItem('cm_maharashtra_network_data_v4');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -123,11 +147,25 @@ export default function MaharashtraNetworkPage() {
     return DEFAULT_NETWORK_DIVISIONS;
   });
 
-  const [selectedDivId, setSelectedDivId] = useState('pune');
-  const [activeTab, setActiveTab] = useState('divisions'); // divisions, talukas, leadership
-  const [talukaSearch, setTalukaSearch] = useState('');
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+
+  const [selectedDivId, setSelectedDivId] = useState(() => searchParams.get('division') || 'pune');
+  const [activeTab, setActiveTab] = useState(() => searchParams.get('tab') || 'divisions'); // divisions, talukas, leadership
+  const [talukaSearch, setTalukaSearch] = useState(() => searchParams.get('search') || '');
   const [modalOpen, setModalOpen] = useState(false);
   const [editDiv, setEditDiv] = useState(null);
+
+  // Sync state whenever URL query params change (e.g. clicking navbar mega menu items while on /network)
+  useEffect(() => {
+    const divParam = searchParams.get('division');
+    const tabParam = searchParams.get('tab');
+    const searchParam = searchParams.get('search');
+
+    if (divParam) setSelectedDivId(divParam);
+    if (tabParam) setActiveTab(tabParam);
+    if (searchParam !== null) setTalukaSearch(searchParam);
+  }, [searchParams, location.key]);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -142,7 +180,7 @@ export default function MaharashtraNetworkPage() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('cm_maharashtra_network_data', JSON.stringify(divisions));
+      localStorage.setItem('cm_maharashtra_network_data_v3', JSON.stringify(divisions));
     } catch (e) {
       console.error(e);
     }
@@ -175,7 +213,7 @@ export default function MaharashtraNetworkPage() {
   const handleResetDefaults = () => {
     if (window.confirm('महाराष्ट्र नेटवर्क मूळ अधिकृत रचनेवर रीसेट करायचे आहे का?')) {
       setDivisions(DEFAULT_NETWORK_DIVISIONS);
-      localStorage.setItem('cm_maharashtra_network_data', JSON.stringify(DEFAULT_NETWORK_DIVISIONS));
+      localStorage.setItem('cm_maharashtra_network_data_v3', JSON.stringify(DEFAULT_NETWORK_DIVISIONS));
     }
   };
 
@@ -203,52 +241,89 @@ export default function MaharashtraNetworkPage() {
 
         {/* Hero Section */}
         <div style={{
-          background: 'linear-gradient(135deg, #1A0700 0%, #3D1400 50%, #5E2000 100%)',
+          backgroundImage: 'linear-gradient(135deg, rgba(35, 14, 4, 0.82) 0%, rgba(70, 20, 5, 0.78) 50%, rgba(20, 8, 3, 0.88) 100%), url("/assets/images/maharashtra-network-map-pins.jpg")',
+          backgroundPosition: 'center 45%',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
           borderRadius: '24px',
-          padding: '44px 36px',
-          color: '#FFF',
-          border: '2px solid #DD8A2E',
+          padding: '50px 40px 42px',
+          color: '#FFFFFF',
+          border: '2px solid #FF8F00',
           marginBottom: '32px',
-          boxShadow: '0 20px 50px rgba(45,15,0,0.4)',
-          position: 'relative'
+          boxShadow: '0 20px 50px rgba(0,0,0,0.30)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
-            <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(221,138,46,0.25)', border: '1px solid #DD8A2E', padding: '5px 16px', borderRadius: '24px', marginBottom: '14px' }}>
-                <span style={{ color: '#FFD700' }}>🗺️</span>
-                <span style={{ color: '#FDF3E6', fontSize: '0.84rem', fontWeight: 800 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px', position: 'relative', zIndex: 2 }}>
+            <div style={{ flex: 1, minWidth: '300px' }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
+                border: '1px solid rgba(255,255,255,0.4)',
+                padding: '6px 18px',
+                borderRadius: '24px',
+                marginBottom: '16px',
+                boxShadow: '0 4px 12px rgba(230,81,0,0.35)'
+              }}>
+                <span style={{ fontSize: '1rem' }}>🗺️</span>
+                <span style={{ color: '#FFFFFF', fontSize: '0.86rem', fontWeight: 800 }}>
                   ३६ जिल्हे • ३५८ तालुके • ३,२००+ ग्रामशाखा
                 </span>
               </div>
+              <p style={{
+                fontSize: '1.2rem',
+                color: '#FFD54F',
+                fontWeight: 800,
+                margin: '0 0 6px',
+                letterSpacing: '0.5px',
+                textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.85)'
+              }}>
+                अखंड महाराष्ट्र, एकसंध मराठा समाज !
+              </p>
               <h1 style={{
                 fontFamily: "'Baloo 2', 'Noto Sans Devanagari', sans-serif",
-                fontSize: 'clamp(2rem, 4.5vw, 3.2rem)',
-                fontWeight: 800,
-                margin: '0 0 10px',
-                color: '#FFF',
-                lineHeight: 1.2
+                fontSize: 'clamp(2.2rem, 4.5vw, 3.2rem)',
+                fontWeight: 900,
+                margin: '0 0 12px',
+                color: '#FFFFFF',
+                lineHeight: 1.25,
+                textShadow: '0 4px 18px rgba(0,0,0,0.95), 0 2px 6px rgba(0,0,0,0.9), 0 0 24px rgba(0,0,0,0.85)'
               }}>
-                महाराष्ट्र राज्य नेटवर्क विस्तार (State Network)
+                महाराष्ट्र राज्य नेटवर्क विस्तार <span style={{ color: '#FFB74D' }}>(State Network)</span>
               </h1>
-              <p style={{ color: '#F1E7D8', fontSize: '1.05rem', maxWidth: '780px', margin: 0, lineHeight: 1.65 }}>
-                महाराष्ट्राच्या प्रत्येक कानाकोपऱ्यात मराठा समाजाची सांस्कृतिक, व्यावसायिक आणि सामाजिक एकजूट निर्माण करणारी ५-स्तरीय संघटनात्मक चौकट.
+              <p style={{
+                color: '#FFF8E1',
+                fontSize: '1.08rem',
+                maxWidth: '780px',
+                margin: 0,
+                lineHeight: 1.65,
+                fontWeight: 700,
+                textShadow: '0 2px 10px rgba(0,0,0,0.95), 0 1px 4px rgba(0,0,0,0.9)'
+              }}>
+                महाराष्ट्राच्या प्रत्येक कानाकोपऱ्यात मराठा समाजाची सांस्कृतिक, शैक्षणिक, व्यावसायिक आणि सामाजिक एकजूट निर्माण करणारी ५-स्तरीय संघटनात्मक चौकट.
               </p>
             </div>
 
-            <button
-              onClick={handleResetDefaults}
-              style={{
-                background: 'rgba(255,255,255,0.12)',
-                color: '#FFF',
-                border: '1px solid rgba(255,255,255,0.3)',
-                padding: '10px 18px',
-                borderRadius: '10px',
-                fontWeight: 700,
-                fontSize: '0.86rem',
-                cursor: 'pointer'
-              }}>
-              ↺ मूळ नेटवर्क रीसेट
-            </button>
+            <div>
+              <button
+                onClick={handleResetDefaults}
+                style={{
+                  background: 'rgba(255,255,255,0.92)',
+                  color: '#B71C1C',
+                  border: '1.5px solid #FFB74D',
+                  padding: '11px 22px',
+                  borderRadius: '12px',
+                  fontWeight: 800,
+                  fontSize: '0.88rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+                  transition: 'all 0.2s'
+                }}>
+                ↺ मूळ नेटवर्क रीसेट
+              </button>
+            </div>
           </div>
 
           {/* 5-Level Dynamic Hierarchy Flow */}
@@ -258,33 +333,35 @@ export default function MaharashtraNetworkPage() {
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: '12px',
-            marginTop: '32px',
+            marginTop: '36px',
             paddingTop: '24px',
-            borderTop: '1px solid rgba(221,138,46,0.3)'
+            borderTop: '1px solid rgba(255,255,255,0.22)',
+            position: 'relative',
+            zIndex: 2
           }}>
-            <div style={{ background: 'rgba(0,0,0,0.3)', padding: '12px 20px', borderRadius: '12px', textAlign: 'center', flex: 1, minWidth: '130px' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFD700' }}>१</div>
-              <div style={{ fontSize: '0.8rem', color: '#E6DDCE' }}>महाराष्ट्र राज्य (State)</div>
+            <div style={{ background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(8px)', padding: '14px 18px', borderRadius: '14px', textAlign: 'center', flex: 1, minWidth: '125px', boxShadow: '0 4px 14px rgba(0,0,0,0.18)', border: '1px solid rgba(255,255,255,0.8)' }}>
+              <div style={{ fontSize: '1.7rem', fontWeight: 800, color: '#B71C1C' }}>१</div>
+              <div style={{ fontSize: '0.82rem', color: '#3E2723', fontWeight: 800 }}>महाराष्ट्र राज्य (State)</div>
             </div>
-            <div style={{ color: '#DD8A2E', fontSize: '1.4rem' }}>➔</div>
-            <div style={{ background: 'rgba(0,0,0,0.3)', padding: '12px 20px', borderRadius: '12px', textAlign: 'center', flex: 1, minWidth: '130px' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFD700' }}>६</div>
-              <div style={{ fontSize: '0.8rem', color: '#E6DDCE' }}>महसूल विभाग (Divisions)</div>
+            <div style={{ color: '#FFD54F', fontSize: '1.4rem', fontWeight: 900, textShadow: '0 2px 6px rgba(0,0,0,0.6)' }}>➔</div>
+            <div style={{ background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(8px)', padding: '14px 18px', borderRadius: '14px', textAlign: 'center', flex: 1, minWidth: '125px', boxShadow: '0 4px 14px rgba(0,0,0,0.18)', border: '1px solid rgba(255,255,255,0.8)' }}>
+              <div style={{ fontSize: '1.7rem', fontWeight: 800, color: '#E65100' }}>६</div>
+              <div style={{ fontSize: '0.82rem', color: '#3E2723', fontWeight: 800 }}>महसूल विभाग (Divisions)</div>
             </div>
-            <div style={{ color: '#DD8A2E', fontSize: '1.4rem' }}>➔</div>
-            <div style={{ background: 'rgba(0,0,0,0.3)', padding: '12px 20px', borderRadius: '12px', textAlign: 'center', flex: 1, minWidth: '130px' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFD700' }}>३६</div>
-              <div style={{ fontSize: '0.8rem', color: '#E6DDCE' }}>जिल्हे (Districts)</div>
+            <div style={{ color: '#FFD54F', fontSize: '1.4rem', fontWeight: 900, textShadow: '0 2px 6px rgba(0,0,0,0.6)' }}>➔</div>
+            <div style={{ background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(8px)', padding: '14px 18px', borderRadius: '14px', textAlign: 'center', flex: 1, minWidth: '125px', boxShadow: '0 4px 14px rgba(0,0,0,0.18)', border: '1px solid rgba(255,255,255,0.8)' }}>
+              <div style={{ fontSize: '1.7rem', fontWeight: 800, color: '#B71C1C' }}>३६</div>
+              <div style={{ fontSize: '0.82rem', color: '#3E2723', fontWeight: 800 }}>जिल्हे (Districts)</div>
             </div>
-            <div style={{ color: '#DD8A2E', fontSize: '1.4rem' }}>➔</div>
-            <div style={{ background: 'rgba(0,0,0,0.3)', padding: '12px 20px', borderRadius: '12px', textAlign: 'center', flex: 1, minWidth: '130px' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFD700' }}>३५८+</div>
-              <div style={{ fontSize: '0.8rem', color: '#E6DDCE' }}>तालुके (Talukas)</div>
+            <div style={{ color: '#FFD54F', fontSize: '1.4rem', fontWeight: 900, textShadow: '0 2px 6px rgba(0,0,0,0.6)' }}>➔</div>
+            <div style={{ background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(8px)', padding: '14px 18px', borderRadius: '14px', textAlign: 'center', flex: 1, minWidth: '125px', boxShadow: '0 4px 14px rgba(0,0,0,0.18)', border: '1px solid rgba(255,255,255,0.8)' }}>
+              <div style={{ fontSize: '1.7rem', fontWeight: 800, color: '#E65100' }}>३५८+</div>
+              <div style={{ fontSize: '0.82rem', color: '#3E2723', fontWeight: 800 }}>तालुके (Talukas)</div>
             </div>
-            <div style={{ color: '#DD8A2E', fontSize: '1.4rem' }}>➔</div>
-            <div style={{ background: 'rgba(0,0,0,0.3)', padding: '12px 20px', borderRadius: '12px', textAlign: 'center', flex: 1, minWidth: '130px' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#4ADE80' }}>३,२००+</div>
-              <div style={{ fontSize: '0.8rem', color: '#E6DDCE' }}>शाखा (Branches)</div>
+            <div style={{ color: '#FFD54F', fontSize: '1.4rem', fontWeight: 900, textShadow: '0 2px 6px rgba(0,0,0,0.6)' }}>➔</div>
+            <div style={{ background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(8px)', padding: '14px 18px', borderRadius: '14px', textAlign: 'center', flex: 1, minWidth: '125px', boxShadow: '0 4px 14px rgba(0,0,0,0.18)', border: '2px solid #4CAF50' }}>
+              <div style={{ fontSize: '1.7rem', fontWeight: 800, color: '#2E7D32' }}>३,२००+</div>
+              <div style={{ fontSize: '0.82rem', color: '#1B5E20', fontWeight: 800 }}>शाखा (Branches)</div>
             </div>
           </div>
         </div>
@@ -331,25 +408,42 @@ export default function MaharashtraNetworkPage() {
           <div>
             {/* Division Selector Pills */}
             <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '10px', marginBottom: '24px' }}>
-              {divisions.map(d => (
-                <button
-                  key={d.id}
-                  onClick={() => setSelectedDivId(d.id)}
-                  style={{
-                    padding: '10px 18px',
-                    borderRadius: '20px',
-                    border: selectedDivId === d.id ? '2px solid #EA580C' : '1px solid #DDD',
-                    background: selectedDivId === d.id ? '#FFF7ED' : '#FFF',
-                    color: selectedDivId === d.id ? '#9A3412' : '#555',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    fontSize: '0.9rem',
-                    whiteSpace: 'nowrap',
-                    boxShadow: selectedDivId === d.id ? '0 2px 8px rgba(234,88,12,0.15)' : 'none'
-                  }}>
-                  {d.name.split(' (')[0]}
-                </button>
-              ))}
+              {divisions.map(d => {
+                const totalTalukasInDiv = d.districts.reduce((sum, dist) => sum + dist.talukas.length, 0);
+                const isSelected = selectedDivId === d.id;
+                return (
+                  <button
+                    key={d.id}
+                    onClick={() => setSelectedDivId(d.id)}
+                    style={{
+                      padding: '10px 18px',
+                      borderRadius: '20px',
+                      border: isSelected ? '2px solid #EA580C' : '1px solid #DDD',
+                      background: isSelected ? '#FFF7ED' : '#FFF',
+                      color: isSelected ? '#9A3412' : '#555',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      fontSize: '0.9rem',
+                      whiteSpace: 'nowrap',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      boxShadow: isSelected ? '0 2px 8px rgba(234,88,12,0.15)' : 'none'
+                    }}>
+                    <span>{d.name.split(' (')[0]}</span>
+                    <span style={{
+                      background: isSelected ? '#EA580C' : '#F1E9DA',
+                      color: isSelected ? '#FFF' : '#705030',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      padding: '2px 7px',
+                      borderRadius: '10px'
+                    }}>
+                      {d.districts.length} जिल्हे • {totalTalukasInDiv} तालुके
+                    </span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Selected Division Detailed Box */}
@@ -361,20 +455,49 @@ export default function MaharashtraNetworkPage() {
               boxShadow: '0 8px 30px rgba(0,0,0,0.05)',
               marginBottom: '32px'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '24px', borderBottom: '1px solid #EEE', paddingBottom: '20px' }}>
-                <div>
-                  <h2 style={{ fontFamily: "'Baloo 2', sans-serif", fontSize: '1.8rem', color: '#2A0606', margin: '0 0 6px' }}>
-                    {currentDiv.name}
-                  </h2>
-                  <p style={{ color: '#5C534B', fontSize: '0.96rem', margin: 0, maxWidth: '700px' }}>
-                    {currentDiv.desc}
-                  </p>
-                  <div style={{ marginTop: '10px', fontSize: '0.86rem', color: '#888' }}>
-                    📍 विभागीय मुख्यालय: <strong>{currentDiv.hq}</strong> · 📞 हेल्पलाईन: <strong>{currentDiv.phone}</strong>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px', marginBottom: '24px', borderBottom: '1px solid #EEE', paddingBottom: '20px' }}>
+                <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                  {currentDiv.image && (
+                    <div style={{
+                      width: '180px',
+                      height: '120px',
+                      borderRadius: '14px',
+                      overflow: 'hidden',
+                      boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
+                      border: '2px solid #FFCC80',
+                      flexShrink: 0
+                    }}>
+                      <img
+                        src={currentDiv.image}
+                        alt={currentDiv.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <h2 style={{ fontFamily: "'Baloo 2', sans-serif", fontSize: '1.8rem', color: '#B71C1C', margin: '0 0 6px' }}>
+                      {currentDiv.name}
+                    </h2>
+                    <p style={{ color: '#5C534B', fontSize: '0.96rem', margin: 0, maxWidth: '650px', lineHeight: 1.6 }}>
+                      {currentDiv.desc}
+                    </p>
+                    <div style={{ marginTop: '10px', fontSize: '0.86rem', color: '#777' }}>
+                      📍 विभागीय मुख्यालय: <strong style={{ color: '#2E1A17' }}>{currentDiv.hq}</strong> · 📞 हेल्पलाईन: <strong style={{ color: '#E65100' }}>{currentDiv.phone}</strong>
+                    </div>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <div style={{ textAlign: 'center', background: '#FEF2F2', padding: '10px 18px', borderRadius: '10px', border: '1.5px solid #FECACA', boxShadow: '0 2px 6px rgba(185,28,28,0.08)' }}>
+                    <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#B91C1C' }}>{currentDiv.districts.length}</div>
+                    <div style={{ fontSize: '0.74rem', color: '#7F1D1D', fontWeight: 800 }}>एकूण जिल्हे</div>
+                  </div>
+                  <div style={{ textAlign: 'center', background: '#FFFBEB', padding: '10px 18px', borderRadius: '10px', border: '1.5px solid #FDE68A', boxShadow: '0 2px 6px rgba(217,119,6,0.08)' }}>
+                    <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#D97706' }}>
+                      {currentDiv.districts.reduce((sum, d) => sum + d.talukas.length, 0)}
+                    </div>
+                    <div style={{ fontSize: '0.74rem', color: '#92400E', fontWeight: 800 }}>एकूण तालुके</div>
+                  </div>
                   <div style={{ textAlign: 'center', background: '#FFF7ED', padding: '10px 18px', borderRadius: '10px', border: '1px solid #FED7AA' }}>
                     <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#EA580C' }}>{currentDiv.totalMembers}</div>
                     <div style={{ fontSize: '0.75rem', color: '#666' }}>सक्रिय सदस्य</div>
@@ -401,9 +524,22 @@ export default function MaharashtraNetworkPage() {
               </div>
 
               {/* Districts & Talukas Cards */}
-              <h3 style={{ fontSize: '1.15rem', color: '#3D0D0D', marginBottom: '16px' }}>
-                या विभागातील समाविष्ट जिल्हे व तालुके:
-              </h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '18px' }}>
+                <h3 style={{ fontSize: '1.2rem', color: '#3D0D0D', margin: 0, fontWeight: 800 }}>
+                  या विभागातील समाविष्ट जिल्हे व तालुके:
+                </h3>
+                <span style={{
+                  background: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)',
+                  border: '1.5px solid #FDBA74',
+                  color: '#9A3412',
+                  padding: '6px 14px',
+                  borderRadius: '20px',
+                  fontSize: '0.86rem',
+                  fontWeight: 800
+                }}>
+                  📊 या विभागात एकूण: <strong style={{ color: '#B91C1C' }}>{currentDiv.districts.length} जिल्हे</strong> आणि <strong style={{ color: '#C2410C' }}>{currentDiv.districts.reduce((sum, d) => sum + d.talukas.length, 0)} तालुके</strong>
+                </span>
+              </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
                 {currentDiv.districts.map(dist => (
@@ -420,20 +556,33 @@ export default function MaharashtraNetworkPage() {
                         <span style={{ fontSize: '20px' }}>📍</span>
                         <strong style={{ fontSize: '1.1rem', color: '#2A0606' }}>{dist.name} जिल्हा</strong>
                       </div>
-                      <span style={{
-                        background: '#FFF',
-                        color: '#EA580C',
-                        border: '1px solid #FED7AA',
-                        fontSize: '0.76rem',
-                        fontWeight: 800,
-                        padding: '2px 8px',
-                        borderRadius: '6px'
-                      }}>
-                        {dist.members}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{
+                          background: '#FEF3C7',
+                          color: '#92400E',
+                          border: '1px solid #FCD34D',
+                          fontSize: '0.76rem',
+                          fontWeight: 800,
+                          padding: '2px 8px',
+                          borderRadius: '6px'
+                        }}>
+                          {dist.talukas.length} तालुके
+                        </span>
+                        <span style={{
+                          background: '#FFF',
+                          color: '#EA580C',
+                          border: '1px solid #FED7AA',
+                          fontSize: '0.76rem',
+                          fontWeight: 800,
+                          padding: '2px 8px',
+                          borderRadius: '6px'
+                        }}>
+                          {dist.members}
+                        </span>
+                      </div>
                     </div>
 
-                    <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '8px' }}>
+                    <div style={{ fontSize: '0.82rem', color: '#5C534B', fontWeight: 700, marginBottom: '8px' }}>
                       समाविष्ट {dist.talukas.length} तालुके:
                     </div>
 

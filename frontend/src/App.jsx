@@ -86,6 +86,7 @@ import PoliticalLeadersPartiesPage from './pages/governance/PoliticalLeadersPart
 import SocialWorkersPage from './pages/community/SocialWorkersPage';
 import BloodHelpPortalPage from './pages/community/BloodHelpPortalPage';
 import MatrimonyPortalPage from './pages/community/MatrimonyPortalPage';
+import ContactPage from './pages/common/ContactPage';
 
 // Maharashtra Culture & Heritage Knowledge Graph (8 Major Pillars)
 import MaharashtraCultureHubPage from './pages/culture/MaharashtraCultureHubPage';
@@ -345,7 +346,7 @@ export default function App() {
             {/* Governance, Leadership & Global Search */}
             <Route path="/governance" element={<GovernancePage />} />
             <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<GovernancePage />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route path="/leaders" element={<AboutPage />} />
             <Route path="/achievers" element={<AchieversPage />} />
             <Route path="/search" element={<SearchPage />} />
@@ -461,6 +462,11 @@ export default function App() {
             <Route path="/matrimony-portal" element={<MatrimonyPortalPage />} />
             <Route path="/vivah" element={<MatrimonyPortalPage />} />
             <Route path="/vadhu-var" element={<MatrimonyPortalPage />} />
+
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/contact-us" element={<ContactPage />} />
+            <Route path="/helpdesk" element={<ContactPage />} />
+            <Route path="/grievance" element={<ContactPage />} />
 
             {/* Generic Article Route & Fallback */}
             <Route path="/article/:slug" element={<GenericArticlePage />} />

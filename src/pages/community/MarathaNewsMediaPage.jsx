@@ -1,11 +1,60 @@
 import React, { useState } from 'react';
 
 const newsChannels = [
-  { id: 1, name: 'साम टीव्ही (Saam TV)', lang: 'मराठी', type: 'LIVE TV', views: '१.२ लाख सक्रिय', color: '#D32F2F' },
-  { id: 2, name: 'लोकशाही न्यूज (Lokshahi)', lang: 'मराठी', type: 'LIVE TV', views: '८५ हजार सक्रिय', color: '#E65100' },
-  { id: 3, name: 'News18 लोकमत', lang: 'मराठी', type: 'LIVE TV', views: '२.५ लाख सक्रिय', color: '#0D47A1' },
-  { id: 4, name: 'Zee 24 तास', lang: 'मराठी', type: 'LIVE TV', views: '१.९ लाख सक्रिय', color: '#1B5E20' },
-  { id: 5, name: 'तरुण भारत न्यूज', lang: 'मराठी', type: 'LIVE TV', views: '९० हजार सक्रिय', color: '#C2185B' }
+  {
+    id: 1,
+    name: 'साम टीव्ही (Saam TV)',
+    lang: 'मराठी',
+    type: 'LIVE TV',
+    views: '१.२ लाख सक्रिय',
+    color: '#900C3F',
+    logo: '/assets/images/news/saam_tv.jpg'
+  },
+  {
+    id: 2,
+    name: 'Zee 24 तास',
+    lang: 'मराठी',
+    type: 'LIVE TV',
+    views: '१.९ लाख सक्रिय',
+    color: '#000000',
+    logo: '/assets/images/news/zee_24_taas.svg'
+  },
+  {
+    id: 3,
+    name: 'News18 लोकमत',
+    lang: 'मराठी',
+    type: 'LIVE TV',
+    views: '२.५ लाख सक्रिय',
+    color: '#B71C1C',
+    logo: '/assets/images/news/news18_lokmat.svg'
+  },
+  {
+    id: 4,
+    name: 'एबीपी माझा (ABP Majha)',
+    lang: 'मराठी',
+    type: 'LIVE TV',
+    views: '३.२ लाख सक्रिय',
+    color: '#D32F2F',
+    logo: '/assets/images/news/abp_majha.svg'
+  },
+  {
+    id: 5,
+    name: 'लोकशाही न्यूज (Lokshahi)',
+    lang: 'मराठी',
+    type: 'LIVE TV',
+    views: '८५ हजार सक्रिय',
+    color: '#E65100',
+    logo: '/assets/images/news/lokshahi.svg'
+  },
+  {
+    id: 6,
+    name: 'तरुण भारत न्यूज',
+    lang: 'मराठी',
+    type: 'LIVE TV',
+    views: '९० हजार सक्रिय',
+    color: '#880E4F',
+    logo: '/assets/images/news/tarun_bharat.svg'
+  }
 ];
 
 const epapersData = [
@@ -17,13 +66,6 @@ const epapersData = [
   { id: 6, name: 'नवशक्ति', year: '१९३२', city: 'मुंबई', editor: 'महाराष्ट्राचा औद्योगिक विकास' }
 ];
 
-const headlinesData = [
-  { title: 'मराठा आरक्षणावर सर्वोच्च न्यायालयात ऐतिहासिक सुनावणी व शासनाची भूमिका', tag: 'ताज्या घडामोडी', time: '१० मिनिटांपूर्वी' },
-  { title: 'दुर्गराज रायगडावर शिवराज्याभिषेक दिन उत्साहात संपन्न, लाखोंच्या संख्येत शिवभक्त दाखल', tag: 'संस्कृती', time: '१ तासापूर्वी' },
-  { title: 'शेतकऱ्यांसाठी नवीन कर्जमाफी व वीज दर सवलत योजना जाहीर', tag: 'कृषी व शेतकरी', time: '२ तासांपूर्वी' },
-  { title: 'मराठा नवउद्योजकांसाठी ५०० कोटींच्या विशेष सीड फंडाची घोषणा', tag: 'उद्योग', time: '४ तासांपूर्वी' }
-];
-
 export default function MarathaNewsMediaPage() {
   const [activeChannel, setActiveChannel] = useState(null);
   const [activeEpaper, setActiveEpaper] = useState(null);
@@ -32,74 +74,129 @@ export default function MarathaNewsMediaPage() {
     <div className="maratha-news-page" style={{ background: '#FAF7F2', minHeight: '100vh', paddingBottom: '60px' }}>
       {/* Hero Banner */}
       <section style={{
-        background: 'linear-gradient(135deg, rgba(183, 28, 28, 0.90) 0%, rgba(216, 67, 21, 0.88) 100%), url("/assets/images/generated/maratha_news_hero.jpg") center/cover no-repeat',
+        backgroundImage: 'linear-gradient(90deg, rgba(15, 10, 8, 0.72) 0%, rgba(15, 10, 8, 0.45) 45%, rgba(15, 10, 8, 0.10) 75%, rgba(15, 10, 8, 0.25) 100%), url("/assets/images/generated/maratha_news_hero.jpg")',
+        backgroundPosition: 'right 30% center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
         color: '#FFFFFF',
-        padding: '48px 20px',
-        textAlign: 'center'
+        padding: '50px 24px',
+        position: 'relative',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+        borderBottom: '4px solid #E65100'
       }}>
-        <div style={{ maxWidth: '980px', margin: '0 auto' }}>
-          <div style={{
-            display: 'inline-block',
-            background: 'rgba(255,255,255,0.2)',
-            padding: '5px 16px',
-            borderRadius: '20px',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            marginBottom: '12px',
-            color: '#FFD54F'
-          }}>
-            🚩 CONNECT मराठा — एक लढा! एक समाज! एक भविष्य!
-          </div>
-          <p style={{ fontSize: '1.2rem', color: '#FFE082', fontWeight: 600, margin: '0 0 6px' }}>
-            मराठा अस्मिता, मराठा समाचार !
-          </p>
-          <h1 style={{ fontSize: '2.6rem', fontWeight: 900, margin: '0 0 10px' }}>
-            मराठा न्यूज & वृत्तपत्र महादालन
-          </h1>
-          <p style={{ fontSize: '1.05rem', opacity: 0.95, margin: '0 auto 20px', maxWidth: '650px' }}>
-            बातमी खरी, भूमिका स्पष्ट, समाजासाठी सदैव तत्पर ! || जय भवानी ! जय शिवाजी !
-          </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            <a
-              href="#live-tv"
-              style={{
-                background: '#FFD54F',
-                color: '#B71C1C',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                fontWeight: 800,
-                fontSize: '0.95rem',
-                textDecoration: 'none'
-              }}
-            >
-              🔴 ५ लाईव्ह न्यूज चॅनल्स
-            </a>
-            <a
-              href="#epapers"
-              style={{
-                background: 'rgba(255,255,255,0.2)',
-                color: '#fff',
-                border: '1px solid rgba(255,255,255,0.4)',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                fontWeight: 700,
-                textDecoration: 'none'
-              }}
-            >
-              📰 E-Paper वाचा (६ वृत्तपत्रे)
-            </a>
+        <div style={{ maxWidth: '1180px', margin: '0 auto', display: 'flex', alignItems: 'center' }}>
+          <div style={{ maxWidth: '580px', textAlign: 'left' }}>
+            <div style={{
+              display: 'inline-block',
+              background: 'linear-gradient(135deg, #FF6F00 0%, #D84315 100%)',
+              border: '1px solid rgba(255,255,255,0.4)',
+              padding: '6px 18px',
+              borderRadius: '20px',
+              fontSize: '0.85rem',
+              fontWeight: 800,
+              marginBottom: '14px',
+              color: '#FFFFFF',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+            }}>
+              🚩 CONNECT मराठा — एक लढा! एक समाज! एक भविष्य!
+            </div>
+            <p style={{
+              fontSize: '1.2rem',
+              color: '#FFD54F',
+              fontWeight: 800,
+              margin: '0 0 8px',
+              letterSpacing: '0.5px',
+              textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.85)'
+            }}>
+              मराठा अस्मिता, मराठा समाचार !
+            </p>
+            <h1 style={{
+              fontSize: 'clamp(2.1rem, 4.2vw, 3rem)',
+              fontWeight: 900,
+              margin: '0 0 12px',
+              lineHeight: 1.25,
+              color: '#FFE082',
+              textShadow: '0 3px 10px rgba(0,0,0,0.95), 0 0 20px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,1)'
+            }}>
+              मराठा न्यूज & वृत्तपत्र महादालन
+            </h1>
+            <p style={{
+              fontSize: '1.05rem',
+              color: '#FFFFFF',
+              margin: '0 0 24px',
+              maxWidth: '520px',
+              lineHeight: 1.6,
+              fontWeight: 600,
+              textShadow: '0 2px 8px rgba(0,0,0,0.95)'
+            }}>
+              बातमी खरी, भूमिका स्पष्ट, समाजासाठी सदैव तत्पर ! || जय भवानी ! जय शिवाजी !
+            </p>
+            <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+              <a
+                href="#live-tv"
+                style={{
+                  background: 'linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%)',
+                  color: '#FFFFFF',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  fontWeight: 800,
+                  fontSize: '0.95rem',
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                🔴 ५ लाईव्ह न्यूज चॅनल्स
+              </a>
+              <a
+                href="#epapers"
+                style={{
+                  background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
+                  color: '#FFFFFF',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  fontWeight: 800,
+                  fontSize: '0.95rem',
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                📰 E-Paper वाचा (६ वृत्तपत्रे)
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Breaking News Ticker */}
-      <div style={{ background: '#212121', color: '#FFFFFF', padding: '12px 20px', borderBottom: '2px solid #E65100' }}>
+      {/* News & Community Motto Strip */}
+      <div style={{
+        background: 'linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 50%, #FFCC80 100%)',
+        color: '#3E2723',
+        padding: '12px 20px',
+        borderTop: '1px solid #FFE0B2',
+        borderBottom: '2px solid #E65100',
+        boxShadow: '0 2px 8px rgba(230,81,0,0.08)'
+      }}>
         <div style={{ maxWidth: '1180px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
-          <span style={{ background: '#D32F2F', color: '#fff', padding: '3px 10px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 800 }}>
-            ब्रेकिंग न्यूज
+          <span style={{
+            background: 'linear-gradient(135deg, #FF6F00 0%, #D84315 100%)',
+            color: '#FFFFFF',
+            padding: '4px 14px',
+            borderRadius: '6px',
+            fontSize: '0.82rem',
+            fontWeight: 800,
+            boxShadow: '0 2px 6px rgba(216,67,21,0.25)',
+            letterSpacing: '0.5px'
+          }}>
+            ध्येय वाक्य
           </span>
-          <span style={{ fontSize: '0.92rem', color: '#FFD54F', fontWeight: 600 }}>
-            {headlinesData[0].title}
+          <span style={{ fontSize: '0.94rem', color: '#B71C1C', fontWeight: 800, letterSpacing: '0.3px' }}>
+            सत्य, निर्भीड व समाजहितैषी पत्रकारिता — दर्पण ते डिजिटल युगापर्यंत अखंड मराठा जागर !
           </span>
         </div>
       </div>
@@ -124,48 +221,59 @@ export default function MarathaNewsMediaPage() {
                 background: '#FFFFFF',
                 borderRadius: '14px',
                 border: '1px solid #EADBCE',
-                padding: '22px 18px',
+                padding: '24px 18px 20px',
                 textAlign: 'center',
                 boxShadow: '0 6px 16px rgba(0,0,0,0.04)',
                 cursor: 'pointer',
-                transition: 'transform 0.2s ease'
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 10px 22px rgba(0,0,0,0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.04)';
               }}
             >
               <div style={{
-                width: '60px',
-                height: '60px',
-                borderRadius: '50%',
-                background: ch.color,
-                color: '#fff',
+                width: '74px',
+                height: '74px',
+                borderRadius: '14px',
+                background: '#FFFFFF',
+                border: '1.5px solid #F0E6DE',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                margin: '0 auto 12px',
-                fontSize: '1.6rem',
-                fontWeight: 900
+                margin: '0 auto 14px',
+                overflow: 'hidden',
+                padding: '6px'
               }}>
-                📺
+                <img
+                  src={ch.logo}
+                  alt={ch.name}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain'
+                  }}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/assets/images/news/saam_tv.jpg';
+                  }}
+                />
               </div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#2E1A17', margin: '0 0 4px' }}>
+              <h3 style={{ fontSize: '1.12rem', fontWeight: 800, color: '#2E1A17', margin: '0 0 6px' }}>
                 {ch.name}
               </h3>
-              <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '12px' }}>
+              <div style={{ fontSize: '0.82rem', color: '#666' }}>
                 भाषा: {ch.lang} • {ch.views}
               </div>
-              <button
-                style={{
-                  background: ch.color,
-                  color: '#FFFFFF',
-                  border: 'none',
-                  padding: '6px 16px',
-                  borderRadius: '6px',
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  cursor: 'pointer'
-                }}
-              >
-                ▶ लाईव्ह पहा
-              </button>
             </div>
           ))}
         </div>
@@ -184,15 +292,28 @@ export default function MarathaNewsMediaPage() {
           {epapersData.map((ep) => (
             <div
               key={ep.id}
+              onClick={() => setActiveEpaper(ep)}
               style={{
                 background: '#FFFFFF',
                 borderRadius: '14px',
                 border: '1px solid #EADBCE',
-                padding: '22px',
+                padding: '24px',
                 boxShadow: '0 6px 16px rgba(0,0,0,0.03)',
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 10px 24px rgba(0,0,0,0.09)';
+                e.currentTarget.style.borderColor = '#B71C1C';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.03)';
+                e.currentTarget.style.borderColor = '#EADBCE';
               }}
             >
               <div>
@@ -200,76 +321,86 @@ export default function MarathaNewsMediaPage() {
                   <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#B71C1C', margin: 0 }}>
                     {ep.name}
                   </h3>
-                  <span style={{ fontSize: '0.78rem', background: '#FFEBEE', color: '#B71C1C', padding: '2px 8px', borderRadius: '8px', fontWeight: 700 }}>
+                  <span style={{ fontSize: '0.78rem', background: '#FFEBEE', color: '#B71C1C', padding: '3px 10px', borderRadius: '10px', fontWeight: 700 }}>
                     स्था: {ep.year}
                   </span>
                 </div>
-                <div style={{ fontSize: '0.86rem', color: '#555', marginBottom: '6px' }}>
+                <div style={{ fontSize: '0.86rem', color: '#555', marginBottom: '8px' }}>
                   📍 {ep.city}
                 </div>
-                <div style={{ fontSize: '0.84rem', color: '#666', fontStyle: 'italic', background: '#FAF7F2', padding: '8px', borderRadius: '6px' }}>
+                <div style={{ fontSize: '0.86rem', color: '#555', fontStyle: 'italic', background: '#FAF7F2', padding: '10px 12px', borderRadius: '8px', borderLeft: '3px solid #B71C1C' }}>
                   संपादकीय: "{ep.editor}"
                 </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
-                <button
-                  onClick={() => setActiveEpaper(ep)}
-                  style={{
-                    flex: 1,
-                    background: '#B71C1C',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '8px',
-                    borderRadius: '6px',
-                    fontWeight: 700,
-                    fontSize: '0.86rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  📖 आजचा अंक वाचा
-                </button>
-                <button
-                  onClick={() => alert(`${ep.name} बद्दल अधिक माहिती: स्थापना ${ep.year}, मुख्यालय ${ep.city}`)}
-                  style={{
-                    border: '1px solid #B71C1C',
-                    background: '#fff',
-                    color: '#B71C1C',
-                    padding: '8px 14px',
-                    borderRadius: '6px',
-                    fontWeight: 700,
-                    fontSize: '0.86rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  माहिती
-                </button>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Headlines List */}
+      {/* Maratha Journalism Heritage & Charter Section */}
       <section style={{ maxWidth: '1180px', margin: '50px auto 0', padding: '0 16px' }}>
-        <div style={{ background: '#FFFFFF', borderRadius: '16px', padding: '28px', border: '1px solid #EADBCE' }}>
-          <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#3E2723', margin: '0 0 16px' }}>
-            📌 आजच्या महत्त्वाच्या बातम्या
+        <div style={{
+          background: 'linear-gradient(135deg, #FFFDF9 0%, #FFF3E0 100%)',
+          borderRadius: '16px',
+          padding: '36px 32px',
+          border: '2px solid #FFCC80',
+          boxShadow: '0 8px 24px rgba(230,81,0,0.08)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
+            <span style={{
+              background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
+              color: '#FFFFFF',
+              padding: '5px 16px',
+              borderRadius: '20px',
+              fontSize: '0.82rem',
+              fontWeight: 800,
+              letterSpacing: '0.5px',
+              boxShadow: '0 3px 8px rgba(230,81,0,0.25)'
+            }}>
+              🚩 मराठी वृत्तपत्र परंपरा व तत्त्वप्रणाली
+            </span>
+          </div>
+          
+          <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#B71C1C', margin: '0 0 12px' }}>
+            📰 निर्भीड पत्रकारितेचा ऐतिहासिक वारसा
           </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            {headlinesData.map((h, idx) => (
-              <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '12px', borderBottom: idx < headlinesData.length - 1 ? '1px solid #EEEEEE' : 'none', flexWrap: 'wrap', gap: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{ fontSize: '0.78rem', background: '#FFF3E0', color: '#E65100', padding: '2px 8px', borderRadius: '6px', fontWeight: 700 }}>
-                    {h.tag}
-                  </span>
-                  <span style={{ fontWeight: 700, color: '#2E1A17', fontSize: '0.95rem' }}>
-                    {h.title}
-                  </span>
-                </div>
-                <span style={{ fontSize: '0.8rem', color: '#888' }}>{h.time}</span>
+          <p style={{ fontSize: '0.96rem', lineHeight: 1.7, color: '#4E342E', margin: '0 0 24px', maxWidth: '920px', fontWeight: 500 }}>
+            दर्पणकार बाळशास्त्री जांभेकर, लोकमान्य टिळक (केसरी) आणि अच्युतराव पटवर्धन यांच्यापासून सुरू झालेली मराठी पत्रकारिता ही केवळ बातम्या देण्याचे साधन नसून समाजप्रबोधन, सत्यनिष्ठा आणि लोकशाहीच्या संरक्षणाचा आधारस्तंभ राहिली आहे. CONNECT मराठा याच सत्यशोधक विचारधारेवर चालत समस्त मराठी बांधवांना विश्वासार्ह व एकात्म माहिती मंच उपलब्ध करून देण्यास कटिबद्ध आहे.
+          </p>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: '16px',
+            borderTop: '1px solid #FFE0B2',
+            paddingTop: '20px'
+          }}>
+            <div style={{ background: '#FFFFFF', padding: '18px 20px', borderRadius: '12px', borderLeft: '4px solid #FF6F00', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', border: '1px solid #FFE0B2', borderLeftWidth: '4px' }}>
+              <div style={{ fontWeight: 800, color: '#E65100', fontSize: '1.02rem', marginBottom: '6px' }}>
+                १. सत्य व निष्पक्षता
               </div>
-            ))}
+              <p style={{ fontSize: '0.86rem', color: '#5D4037', margin: 0, lineHeight: 1.5 }}>
+                समाजाच्या प्रत्येक घटकाचा आवाज, अधिकृत व पडताळणी केलेले निष्पक्ष वृत्त विश्लेषण.
+              </p>
+            </div>
+
+            <div style={{ background: '#FFFFFF', padding: '18px 20px', borderRadius: '12px', borderLeft: '4px solid #E65100', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', border: '1px solid #FFE0B2', borderLeftWidth: '4px' }}>
+              <div style={{ fontWeight: 800, color: '#E65100', fontSize: '1.02rem', marginBottom: '6px' }}>
+                २. अखंड डिजिटल उपलब्धता
+              </div>
+              <p style={{ fontSize: '0.86rem', color: '#5D4037', margin: 0, lineHeight: 1.5 }}>
+                महाराष्ट्रातील अग्रगण्य टीव्ही चॅनल्स व वृत्तपत्रांचे डिजिटल अंक एकाच क्लिकवर.
+              </p>
+            </div>
+
+            <div style={{ background: '#FFFFFF', padding: '18px 20px', borderRadius: '12px', borderLeft: '4px solid #B71C1C', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', border: '1px solid #FFE0B2', borderLeftWidth: '4px' }}>
+              <div style={{ fontWeight: 800, color: '#B71C1C', fontSize: '1.02rem', marginBottom: '6px' }}>
+                ३. सामाजिक व कृषी विकास
+              </div>
+              <p style={{ fontSize: '0.86rem', color: '#5D4037', margin: 0, lineHeight: 1.5 }}>
+                शेतकरी, युवक, उद्योग व संस्कृती या महत्त्वाच्या विषयांना अग्रक्रम व न्याय.
+              </p>
+            </div>
           </div>
         </div>
       </section>

@@ -208,31 +208,31 @@ export default function SiteHeader({ onOpenSearch }) {
                 <div className="mega-menu-grid">
                   <div className="mega-col">
                     <div className="mega-col-title">🏛️ पश्चिम व कोकण विभाग</div>
-                    <Link to="/network" onClick={handleLinkClick}>🏛️ पुणे विभाग (पुणे, सातारा, कोल्हापूर)</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🌊 कोकण विभाग (मुंबई, ठाणे, पालघर)</Link>
-                    <Link to="/network" onClick={handleLinkClick}>⛵ रायगड, रत्नागिरी, सिंधुदुर्ग</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🗺️ संपूर्ण राज्य शाखा नकाशा</Link>
+                    <Link to="/network?division=pune&tab=divisions" onClick={handleLinkClick}>🏛️ पुणे विभाग (पुणे, सातारा, कोल्हापूर)</Link>
+                    <Link to="/network?division=kokan&tab=divisions" onClick={handleLinkClick}>🌊 कोकण विभाग (मुंबई, ठाणे, पालघर)</Link>
+                    <Link to="/network?division=kokan&tab=divisions" onClick={handleLinkClick}>⛵ रायगड, रत्नागिरी, सिंधुदुर्ग</Link>
+                    <Link to="/network?tab=divisions" onClick={handleLinkClick}>🗺️ संपूर्ण राज्य शाखा नकाशा</Link>
                   </div>
                   <div className="mega-col">
                     <div className="mega-col-title">🌄 मराठवाडा व उत्तर महाराष्ट्र</div>
-                    <Link to="/network" onClick={handleLinkClick}>🌄 छ. संभाजीनगर, जालना, बीड</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🌾 नाशिक, अहमदनगर, जळगाव, धुळे</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🚩 धाराशिव, लातूर, नांदेड, परभणी</Link>
-                    <Link to="/directory" onClick={handleLinkClick}>👥 विभागीय संपर्क व प्रतिनिधी</Link>
+                    <Link to="/network?division=sambhajinagar&tab=divisions" onClick={handleLinkClick}>🌄 छ. संभाजीनगर, जालना, बीड</Link>
+                    <Link to="/network?division=nashik&tab=divisions" onClick={handleLinkClick}>🌾 नाशिक, अहमदनगर, जळगाव, धुळे</Link>
+                    <Link to="/network?division=sambhajinagar&tab=divisions" onClick={handleLinkClick}>🚩 धाराशिव, लातूर, नांदेड, परभणी</Link>
+                    <Link to="/network?tab=leadership" onClick={handleLinkClick}>👥 विभागीय संपर्क व प्रतिनिधी</Link>
                   </div>
                   <div className="mega-col">
                     <div className="mega-col-title">🌿 विदर्भ व सीमावर्ती भाग</div>
-                    <Link to="/network" onClick={handleLinkClick}>🌿 अमरावती, अकोला, बुलढाणा, यवतमाळ</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🐅 नागपूर, वर्धा, चंद्रपूर, गडचिरोली</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🚩 बेळगाव, कारवार सीमावर्ती शाखा</Link>
+                    <Link to="/network?division=amravati&tab=divisions" onClick={handleLinkClick}>🌿 अमरावती, अकोला, बुलढाणा, यवतमाळ</Link>
+                    <Link to="/network?division=nagpur&tab=divisions" onClick={handleLinkClick}>🐅 नागपूर, वर्धा, चंद्रपूर, गडचिरोली</Link>
+                    <Link to="/network?tab=talukas&search=सीमावर्ती" onClick={handleLinkClick}>🚩 बेळगाव, कारवार सीमावर्ती शाखा</Link>
                     <Link to="/business/directory" onClick={handleLinkClick}>🏢 स्थानिक व्यापारी व उद्योजक</Link>
                   </div>
                   <div className="mega-col">
                     <div className="mega-col-title">🏢 संघटनात्मक चौकट</div>
                     <Link to="/about" onClick={handleLinkClick}>🏛️ राज्य मध्यवर्ती कार्यकारिणी</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🏢 ३६ जिल्हा समन्वय केंद्रे</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🏘️ ३५८+ तालुका समित्या</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🚩 ३,२००+ ग्रामशाखा नेटवर्क</Link>
+                    <Link to="/network?tab=divisions" onClick={handleLinkClick}>🏢 ३६ जिल्हा समन्वय केंद्रे</Link>
+                    <Link to="/network?tab=talukas" onClick={handleLinkClick}>🏘️ ३५८+ तालुका समित्या</Link>
+                    <Link to="/network?tab=talukas" onClick={handleLinkClick}>🚩 ३,२००+ ग्रामशाखा नेटवर्क</Link>
                   </div>
                 </div>
               </div>

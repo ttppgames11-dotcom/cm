@@ -93,40 +93,45 @@ Connect Maratha हे कंपनी कायदा २०१३ च्या
       )}
 
       {/* TOP SUB-BAR */}
-      <div style={{ background: '#1c0507', color: '#fff', padding: '6px 24px', fontSize: '0.82rem' }}>
+      <div style={{ background: 'linear-gradient(90deg, #3E1B15 0%, #2A0E0A 100%)', color: '#fff', padding: '7px 24px', fontSize: '0.82rem', borderBottom: '1px solid #FFCC80' }}>
         <div className="wrap" style={{ maxWidth: '1300px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <span style={{ color: 'var(--gold-400)', fontWeight: 700 }}>🚩 CONNECT MARATHA</span>
-            <span style={{ color: 'var(--text-sec)', opacity: 0.8 }}>इतिहास जपूया • समाज जोडूया • भविष्य घडवूया</span>
+            <span style={{ color: '#FFD54F', fontWeight: 800 }}>🚩 CONNECT MARATHA</span>
+            <span style={{ color: '#FFE0B2', opacity: 0.95 }}>इतिहास जपूया • समाज जोडूया • भविष्य घडवूया</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <span>📞 समाज हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
-            <Link to="/achievers" style={{ color: 'var(--gold-400)', textDecoration: 'none', fontWeight: 600 }}>🏆 हॉल ऑफ फेम</Link>
+            <Link to="/achievers" style={{ color: '#FFD54F', textDecoration: 'none', fontWeight: 700 }}>🏆 हॉल ऑफ फेम</Link>
           </div>
         </div>
       </div>
 
       {/* HERO SECTION */}
-      <div className="hero" style={{ position: 'relative', minHeight: '280px', overflow: 'hidden', display: 'flex', alignItems: 'center', background: '#120204' }}>
+      <div className="hero" style={{ position: 'relative', minHeight: '320px', overflow: 'hidden', display: 'flex', alignItems: 'center', borderBottom: '4px solid #E65100' }}>
         <img 
           src="/assets/images/connect-maratha-council.jpg" 
           alt="Connect Maratha Advisory Council" 
           className="hero-bg-img" 
-          style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.68) contrast(1.05)' }}
+          style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%' }}
           onError={(e) => {
             e.target.src = 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1600&q=80';
           }}
         />
-        <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(18,2,4,0.85) 0%, rgba(35,8,12,0.68) 55%, rgba(18,2,4,0.8) 100%)' }}></div>
-        <div className="wrap hero-content" style={{ position: 'relative', zIndex: 2, maxWidth: '1300px', margin: '0 auto', padding: '32px 24px', color: '#fff', width: '100%' }}>
-          <div className="eyebrow" style={{ color: 'var(--gold-400)', textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '1.2px', fontWeight: 700, marginBottom: '4px' }}>
-            Spec Page 2 • Institutional Framework
+        {/* Warm, luminous saffron-tinted subtle overlay instead of heavy black */}
+        <div className="hero-overlay" style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(90deg, rgba(28, 8, 4, 0.72) 0%, rgba(35, 12, 6, 0.42) 50%, rgba(20, 6, 4, 0.20) 75%, rgba(28, 8, 4, 0.40) 100%)'
+        }}></div>
+        <div className="wrap hero-content" style={{ position: 'relative', zIndex: 2, maxWidth: '1300px', margin: '0 auto', padding: '38px 24px', color: '#fff', width: '100%' }}>
+          <div className="eyebrow" style={{ color: '#FFD54F', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '1.2px', fontWeight: 800, marginBottom: '6px', textShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>
+            संस्थात्मक घटना व नियम • INSTITUTIONAL FRAMEWORK
           </div>
-          <h1 style={{ fontSize: 'clamp(1.8rem, 3.2vw, 2.6rem)', lineHeight: 1.2, color: '#fff', margin: '4px 0 10px', fontFamily: 'Baloo 2' }}>
-            आमच्याबद्दल — <span style={{ background: 'linear-gradient(90deg, #F3C06B, #FF8C42)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Connect Maratha</span>
+          <h1 style={{ fontSize: 'clamp(1.9rem, 3.4vw, 2.7rem)', lineHeight: 1.25, color: '#FFFFFF', margin: '4px 0 10px', fontFamily: 'Baloo 2', fontWeight: 800, textShadow: '0 2px 10px rgba(0,0,0,0.95)' }}>
+            आमच्याबद्दल — <span style={{ color: '#FFD54F', textShadow: '0 2px 10px rgba(0,0,0,0.95)' }}>Connect Maratha</span>
           </h1>
-          <div style={{ background: 'var(--gold-500, #E0A96D)', width: '60px', height: '3px', marginBottom: '12px' }}></div>
-          <p style={{ color: 'rgba(255,255,255,0.88)', fontSize: '0.98rem', maxWidth: '72ch', lineHeight: 1.55, margin: '0 0 18px' }}>
+          <div style={{ background: '#FFB300', width: '70px', height: '4px', borderRadius: '2px', marginBottom: '14px', boxShadow: '0 2px 6px rgba(0,0,0,0.5)' }}></div>
+          <p style={{ color: '#FFFFFF', fontSize: '1.02rem', maxWidth: '68ch', lineHeight: 1.6, margin: '0 0 20px', fontWeight: 600, textShadow: '0 2px 8px rgba(0,0,0,0.95)' }}>
             इतिहासाचे अस्सल संवर्धन, आधुनिक पिढीची विधायक जोडणी आणि सक्षम भविष्यनिर्मिती • अभ्यासक, विचारवंत, तंत्रज्ञान तज्ज्ञ व समाजसेवकांचे स्वतंत्र लोकसहभागी डिजिटल महाव्यासपीठ.
           </p>
 
@@ -326,39 +331,56 @@ Connect Maratha हे कंपनी कायदा २०१३ च्या
               </div>
 
               {/* IMPACT & NUMBERS STRIP */}
-              <div style={{ marginTop: '40px', background: 'linear-gradient(135deg, #1C0507 0%, #3D0D0D 100%)', borderRadius: '16px', padding: '28px 24px', color: '#fff', border: '1px solid rgba(243,192,107,0.3)', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}>
+              <div style={{
+                marginTop: '40px',
+                background: 'linear-gradient(135deg, #FFF8E7 0%, #FFF3E0 50%, #FFE0B2 100%)',
+                borderRadius: '16px',
+                padding: '30px 24px',
+                color: '#2E1A17',
+                border: '2px solid #FFCC80',
+                boxShadow: '0 8px 24px rgba(230,81,0,0.08)'
+              }}>
                 <div style={{ textAlign: 'center', marginBottom: '22px' }}>
-                  <span style={{ color: 'var(--gold-400, #F3C06B)', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '1.2px', textTransform: 'uppercase' }}>
+                  <span style={{
+                    background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
+                    color: '#FFFFFF',
+                    padding: '4px 16px',
+                    borderRadius: '20px',
+                    fontSize: '0.8rem',
+                    fontWeight: 800,
+                    letterSpacing: '1px',
+                    boxShadow: '0 2px 6px rgba(230,81,0,0.25)'
+                  }}>
                     🚩 राज्यव्यापी थेट परिणाम • REAL-TIME IMPACT SNAPSHOT
                   </span>
-                  <h3 style={{ fontSize: '1.5rem', margin: '6px 0 0', fontFamily: 'Baloo 2', color: '#fff' }}>
+                  <h3 style={{ fontSize: '1.5rem', margin: '10px 0 0', fontFamily: 'Baloo 2', color: '#B71C1C', fontWeight: 800 }}>
                     महाराष्ट्रातील ३६ जिल्हे, ३,०००+ शाखा व ५०+ लाख बंधू-भगिनींचे संघटन
                   </h3>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '18px', textAlign: 'center' }}>
-                  <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                    <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--gold-400, #F3C06B)', fontFamily: 'Baloo 2', lineHeight: 1.1 }}>३५०+</div>
-                    <div style={{ fontSize: '0.86rem', color: '#E5E7EB', fontWeight: 600, marginTop: '4px' }}>संरक्षित व डिजिटल दुर्ग</div>
-                    <div style={{ fontSize: '0.74rem', color: '#9CA3AF', marginTop: '2px' }}>३६०° VR व ऐतिहासिक दस्तऐवज</div>
+                  <div style={{ background: '#FFFFFF', borderRadius: '12px', padding: '18px 16px', border: '1px solid #FFD54F', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                    <div style={{ fontSize: '2.1rem', fontWeight: 800, color: '#C73800', fontFamily: 'Baloo 2', lineHeight: 1.1 }}>३५०+</div>
+                    <div style={{ fontSize: '0.88rem', color: '#1F2937', fontWeight: 700, marginTop: '4px' }}>संरक्षित व डिजिटल दुर्ग</div>
+                    <div style={{ fontSize: '0.76rem', color: '#6B7280', marginTop: '2px' }}>३६०° VR व ऐतिहासिक दस्तऐवज</div>
                   </div>
 
-                  <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                    <div style={{ fontSize: '2rem', fontWeight: 800, color: '#34D399', fontFamily: 'Baloo 2', lineHeight: 1.1 }}>₹ ५०+ कोटी</div>
-                    <div style={{ fontSize: '0.86rem', color: '#E5E7EB', fontWeight: 600, marginTop: '4px' }}>वार्षिक B2B व्यवसाय विनिमय</div>
-                    <div style={{ fontSize: '0.74rem', color: '#9CA3AF', marginTop: '2px' }}>५००+ उद्योग चॅप्टर्स व निर्यातीस साहाय्य</div>
+                  <div style={{ background: '#FFFFFF', borderRadius: '12px', padding: '18px 16px', border: '1px solid #A7F3D0', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                    <div style={{ fontSize: '2.1rem', fontWeight: 800, color: '#059669', fontFamily: 'Baloo 2', lineHeight: 1.1 }}>₹ ५०+ कोटी</div>
+                    <div style={{ fontSize: '0.88rem', color: '#1F2937', fontWeight: 700, marginTop: '4px' }}>वार्षिक B2B व्यवसाय विनिमय</div>
+                    <div style={{ fontSize: '0.76rem', color: '#6B7280', marginTop: '2px' }}>५००+ उद्योग चॅप्टर्स व निर्यातीस साहाय्य</div>
                   </div>
 
-                  <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                    <div style={{ fontSize: '2rem', fontWeight: 800, color: '#60A5FA', fontFamily: 'Baloo 2', lineHeight: 1.1 }}>२५,०००+</div>
-                    <div style={{ fontSize: '0.86rem', color: '#E5E7EB', fontWeight: 600, marginTop: '4px' }}>नोंदणीकृत रक्तदाते</div>
-                    <div style={{ fontSize: '0.74rem', color: '#9CA3AF', marginTop: '2px' }}>२४x७ आपत्कालीन आरोग्य मदत कक्ष</div>
+                  <div style={{ background: '#FFFFFF', borderRadius: '12px', padding: '18px 16px', border: '1px solid #BFDBFE', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                    <div style={{ fontSize: '2.1rem', fontWeight: 800, color: '#2563EB', fontFamily: 'Baloo 2', lineHeight: 1.1 }}>२५,०००+</div>
+                    <div style={{ fontSize: '0.88rem', color: '#1F2937', fontWeight: 700, marginTop: '4px' }}>नोंदणीकृत रक्तदाते</div>
+                    <div style={{ fontSize: '0.76rem', color: '#6B7280', marginTop: '2px' }}>२४x७ आपत्कालीन आरोग्य मदत कक्ष</div>
                   </div>
 
-                  <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                    <div style={{ fontSize: '2rem', fontWeight: 800, color: '#F472B6', fontFamily: 'Baloo 2', lineHeight: 1.1 }}>१०,०००+</div>
-                    <div style={{ fontSize: '0.86rem', color: '#E5E7EB', fontWeight: 600, marginTop: '4px' }}>स्पर्धा परीक्षा विद्यार्थी</div>
-                    <div style={{ fontSize: '0.74rem', color: '#9CA3AF', marginTop: '2px' }}>मोफत ग्रंथालय, हॉस्टेल व करिअर मार्गदर्शन</div>
+                  <div style={{ background: '#FFFFFF', borderRadius: '12px', padding: '18px 16px', border: '1px solid #FBCFE8', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                    <div style={{ fontSize: '2.1rem', fontWeight: 800, color: '#DB2777', fontFamily: 'Baloo 2', lineHeight: 1.1 }}>१०,०००+</div>
+                    <div style={{ fontSize: '0.88rem', color: '#1F2937', fontWeight: 700, marginTop: '4px' }}>स्पर्धा परीक्षा विद्यार्थी</div>
+                    <div style={{ fontSize: '0.76rem', color: '#6B7280', marginTop: '2px' }}>मोफत ग्रंथालय, हॉस्टेल व करिअर मार्गदर्शन</div>
                   </div>
                 </div>
               </div>
