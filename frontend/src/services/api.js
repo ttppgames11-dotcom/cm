@@ -76,15 +76,15 @@ export const api = {
     },
     forgotPassword: (email) => request('/auth/forgot-password', {
       method: 'POST',
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ identifier: email, email })
     }),
     verifyOtp: (email, otp) => request('/auth/verify-reset-otp', {
       method: 'POST',
-      body: JSON.stringify({ email, otp })
+      body: JSON.stringify({ identifier: email, email, otp })
     }),
     resetPassword: (email, resetToken, newPassword) => request('/auth/reset-password', {
       method: 'POST',
-      body: JSON.stringify({ email, resetToken, newPassword })
+      body: JSON.stringify({ identifier: email, email, resetToken, newPassword })
     })
   },
 
