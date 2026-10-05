@@ -1,14 +1,5 @@
-// Central API Client connecting React Frontend to Express Backend Server (Port 5000)
-
-const BACKEND_PORT = 5000;
+// Central API Client connecting React Frontend to Express Backend Server via /api
 function getBaseUrl() {
-  if (typeof window !== 'undefined') {
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      if (window.location.port !== String(BACKEND_PORT)) {
-        return `http://${window.location.hostname}:${BACKEND_PORT}/api`;
-      }
-    }
-  }
   return '/api';
 }
 

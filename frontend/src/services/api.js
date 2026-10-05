@@ -57,24 +57,20 @@ export const api = {
       return res;
     },
     getMe: () => request('/auth/me'),
-    logout: async () => {
-      try {
-        await request('/auth/logout', { method: 'POST' });
-      } finally {
-        localStorage.removeItem('cm_jwt_token');
-      }
+    logout: () => {
+      localStorage.removeItem('cm_jwt_token');
     },
-    forgotPassword: (identifier) => request('/auth/forgot-password', {
+    forgotPassword: (email) => request('/auth/forgot-password', {
       method: 'POST',
-      body: JSON.stringify({ identifier })
+      body: JSON.stringify({ email })
     }),
-    verifyOtp: (identifier, otp) => request('/auth/verify-otp', {
+    verifyOtp: (email, otp) => request('/auth/verify-reset-otp', {
       method: 'POST',
-      body: JSON.stringify({ identifier, otp })
+      body: JSON.stringify({ email, otp })
     }),
-    resetPassword: (identifier, newPassword, otp) => request('/auth/reset-password', {
-      method: 'PUT',
-      body: JSON.stringify({ identifier, newPassword, otp })
+    resetPassword: (email, resetToken, newPassword) => request('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ email, resetToken, newPassword })
     })
   },
 

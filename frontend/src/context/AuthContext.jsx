@@ -49,21 +49,9 @@ export function AuthProvider({ children }) {
         localStorage.setItem('cm_user_data', JSON.stringify(finalUser));
         return { success: true, member: finalUser };
       }
+      return { success: false, error: res?.error || 'लॉगिन अयशस्वी' };
     } catch (err) {
-      // Local fallback
-      localStorage.setItem('cm_user_mobile', identifier);
-      localStorage.setItem('cm_logged_in', 'true');
-      const base = CMDB.currentMember ? CMDB.currentMember() : {
-        id: 'M1001',
-        name: 'अमोल जाधव',
-        district: 'पुणे',
-        tier: 'Gold',
-        role: 'admin'
-      };
-      const finalUser = customProfile ? { ...base, ...customProfile } : base;
-      setUser(finalUser);
-      localStorage.setItem('cm_user_data', JSON.stringify(finalUser));
-      return { success: true, member: finalUser, fallback: true };
+      return { success: false, error: err.message || 'लॉगिन अयशस्वी' };
     }
   };
 
@@ -73,16 +61,12 @@ export function AuthProvider({ children }) {
       if (res && res.member) {
         setUser(res.member);
         localStorage.setItem('cm_logged_in', 'true');
+        localStorage.setItem('cm_user_data', JSON.stringify(res.member));
         return { success: true, member: res.member };
       }
+      return { success: false, error: res?.error || 'नोंदणी अयशस्वी झाली.' };
     } catch (err) {
-      console.warn('Backend register error, using local registration:', err.message);
-      if (CMDB.registerMember) {
-        const local = CMDB.registerMember(formData);
-        setUser(local);
-        return { success: true, member: local };
-      }
-      throw err;
+      return { success: false, error: err.message || 'नोंदणी अयशस्वी झाली.' };
     }
   };
 

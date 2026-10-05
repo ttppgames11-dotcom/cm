@@ -4,62 +4,46 @@ import { useAuth } from '../../context/AuthContext';
 
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState('password'); // 'password' or 'otp'
-  const [loginId, setLoginId] = useState('9876543210');
-  const [password, setPassword] = useState('maratha1674');
+  const [loginId, setLoginId] = useState('');
+  const [password, setPassword] = useState('');
   const [roleMode, setRoleMode] = useState('member'); // 'member', 'business', 'crm', 'ceo'
   const [rememberMe, setRememberMe] = useState(true);
   
   // OTP state
   const [otpSent, setOtpSent] = useState(false);
-  const [otpCode, setOtpCode] = useState('167430');
+  const [otpCode, setOtpCode] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     if (e) e.preventDefault();
-    setLoading(true);
-
-    setTimeout(() => {
-      // Clean member profile mapping
-      let roleUser = {
-        name: 'अमोल तुकाराम जाधव',
-        id: loginId || 'CM-MH-2026-8842',
-        role: roleMode === 'business' ? 'business' : 'member',
-        tier: 'Gold',
-        district: 'पुणे',
-        city: 'पुणे',
-        profession: roleMode === 'business' ? 'उद्योजक' : 'सॉफ्टवेअर आर्किटेक्ट'
-      };
-
-      login(roleUser.id, password || 'demo', roleUser);
-      setLoading(false);
-      navigate('/dashboard');
-    }, 400);
-  };
-
-  const handleSendOtp = () => {
-    if (!loginId || loginId.length < 10) {
-      setMessage('कृपया वैध १० अंकी मोबाईल नंबर प्रविष्ट करा.');
+    if (!loginId || !loginId.trim()) {
+      setMessage('कृपया आपला मोबाईल नंबर किंवा सदस्य ID प्रविष्ट करा.');
       return;
     }
-    setOtpSent(true);
-    setMessage('तुमच्या मोबाईलवर ६ अंकी ओटीपी पाठवला आहे: 167430');
-  };
-
-  const handleDemoLogin = (presetRole = 'member') => {
-    setRoleMode(presetRole);
-    if (presetRole === 'business') {
-      setLoginId('9876500055');
-    } else {
-      setLoginId('9876543210');
+    if (!password) {
+      setMessage('कृपया आपला पासवर्ड प्रविष्ट करा.');
+      return;
     }
-    setPassword('maratha1674');
-    setTimeout(() => {
-      handleLoginSubmit();
-    }, 100);
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const res = await login(loginId.trim(), password);
+      if (res && res.success) {
+        navigate('/dashboard');
+      } else {
+        setMessage(res?.error || 'लॉगिन अयशस्वी. कृपया आपले क्रेडेंशियल तपासा.');
+      }
+    } catch (err) {
+      setMessage(err.message || 'सर्व्हरशी संपर्क साधता आला नाही.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -440,18 +424,19 @@ export default function LoginPage() {
               <div style={{ flex: 1, height: '1px', background: '#E5E7EB' }} />
             </div>
 
-            {/* 2 Side-by-Side Quick/Social Logins */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
+            {/* Quick Login Options */}
+            <div style={{ marginBottom: '16px' }}>
               <button
                 type="button"
-                onClick={() => handleDemoLogin('member')}
+                onClick={() => setMessage('Google लॉगिन लवकरच उपलब्ध होत आहे.')}
                 style={{
-                  padding: '9px 12px',
+                  width: '100%',
+                  padding: '10px 14px',
                   borderRadius: '8px',
                   border: '1.5px solid #E5E7EB',
                   background: '#FFFFFF',
                   color: '#374151',
-                  fontSize: '0.82rem',
+                  fontSize: '0.85rem',
                   fontWeight: 600,
                   display: 'flex',
                   alignItems: 'center',
@@ -465,27 +450,7 @@ export default function LoginPage() {
                   <path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/>
                   <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/>
                 </svg>
-                Google लॉगिन
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleDemoLogin(roleMode)}
-                style={{
-                  padding: '9px 12px',
-                  borderRadius: '8px',
-                  border: '1.5px dashed #FFB74D',
-                  background: '#FFF8E1',
-                  color: '#E65100',
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  cursor: 'pointer'
-                }}>
-                ⚡ Demo लॉगिन
+                Google ने लॉगिन करा
               </button>
             </div>
 

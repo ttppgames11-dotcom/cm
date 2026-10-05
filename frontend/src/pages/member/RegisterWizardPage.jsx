@@ -43,21 +43,21 @@ export default function RegisterWizardPage() {
   const [activeScreen, setActiveScreen] = useState('signup');
   const [validationError, setValidationError] = useState('');
   const [formData, setFormData] = useState({
-    name: 'संभाजी विलासराव पाटील',
-    displayName: 'संभाजी पाटील',
-    mobile: '9822123456',
-    email: 'sambhajip@connectmaratha.org',
+    name: '',
+    displayName: '',
+    mobile: '',
+    email: '',
     password: '',
     confirmPassword: '',
-    dob: '1992-06-06',
+    dob: '',
     gender: 'पुरुष',
-    state: 'महाराष्ट्र (Maharashtra)',
-    city: 'पुणे (Pune)',
-    avatar: '🧑',
+    state: 'महाराष्ट्र',
+    city: 'पुणे',
+    avatar: '👤',
     persona: 'Professional',
-    profession: 'Agri-Tech उद्योजक',
-    organization: 'सह्याद्री ॲग्रो फूड्स',
-    experience: '३–५ वर्षे',
+    profession: '',
+    organization: '',
+    experience: '',
     interests: ['इतिहास', 'गड-किल्ले', 'उद्योग', 'शिक्षण', 'करिअर'],
     goals: [
       'माझ्या क्षेत्रातील बांधव व तज्ज्ञांशी जोडले जाणे',
@@ -69,7 +69,6 @@ export default function RegisterWizardPage() {
     language: 'mr'
   });
 
-  const [otp, setOtp] = useState(['1', '6', '7', '4', '3', '5']);
   const [showPassword, setShowPassword] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -120,51 +119,34 @@ export default function RegisterWizardPage() {
       return;
     }
 
-    setActiveScreen('otp');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleOtpVerify = () => {
     setActiveScreen('profile');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleCompleteRegistration = () => {
-    // Generate a guaranteed unique, non-repetitive sequential Member ID
-    const cityCode = (formData.city || 'PUN').split(' ')[0].replace(/[^A-Za-z]/g, '').slice(0, 3).toUpperCase() || 'MH';
-    const uniqueMemberId = `CM-MH-${cityCode}-${Date.now().toString().slice(-6)}`;
-    const uniqueToken = `CM-VAL-SEC-${Date.now().toString(16).toUpperCase()}`;
-
+  const handleCompleteRegistration = async () => {
+    setValidationError('');
     const memberPayload = {
-      id: uniqueMemberId,
-      name: formData.name,
-      displayName: formData.displayName || formData.name,
-      mobile: formData.mobile,
-      phone: `+९१ ${formData.mobile}`,
-      email: formData.email,
-      city: formData.city,
-      district: formData.city?.split(' ')[0] || 'पुणे',
-      chapter: `${formData.city?.split(' ')[0] || 'पुणे'} – स्वराज्य चॅप्टर`,
-      profession: formData.profession,
-      organization: formData.organization,
-      avatar: formData.avatar,
-      persona: formData.persona,
-      interests: formData.interests,
-      tier: 'GOLD FOUNDER MEMBER',
-      bloodGroup: 'O +ve (नोंदणीकृत रक्तदाता)',
-      issueDate: new Date().toLocaleDateString('mr-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
-      validThru: 'आजीवन वैध (DPDP २०२३ व ISO २७००१ प्रमाणित)',
-      token: uniqueToken
+      name: formData.name.trim(),
+      email: formData.email ? formData.email.trim() : '',
+      phone: formData.mobile ? formData.mobile.trim() : '',
+      password: formData.password,
+      city: formData.city || 'पुणे',
+      district: (formData.city || 'पुणे').split(' ')[0],
+      state: formData.state || 'महाराष्ट्र',
+      country: 'भारत',
+      profession: formData.profession ? formData.profession.trim() : '',
+      business: formData.organization ? formData.organization.trim() : '',
+      education: formData.education || '',
+      skills: formData.skills ? (Array.isArray(formData.skills) ? formData.skills : [formData.skills]) : [],
+      about: formData.about || ''
     };
 
     if (register) {
-      register(memberPayload);
-    }
-    try {
-      localStorage.setItem('cm_user_data', JSON.stringify(memberPayload));
-      localStorage.setItem('cm_logged_in', 'true');
-    } catch (e) {
-      console.warn(e);
+      const res = await register(memberPayload);
+      if (!res || !res.success) {
+        setValidationError(res?.error || 'नोंदणी अयशस्वी झाली. कृपया माहिती तपासा.');
+        return;
+      }
     }
 
     setActiveScreen('welcome');
@@ -276,12 +258,11 @@ export default function RegisterWizardPage() {
       <nav className="devnav">
         {[
           { id: 'signup', label: '१. नवीन नोंदणी' },
-          { id: 'otp', label: '२. OTP पडताळणी' },
-          { id: 'profile', label: '३. प्रोफाईल' },
-          { id: 'persona', label: '४. भूमिका' },
-          { id: 'interests', label: '५. आवडी' },
-          { id: 'connect', label: '६. जोडणी प्राधान्य' },
-          { id: 'welcome', label: '७. पूर्ण' }
+          { id: 'profile', label: '२. प्रोफाईल' },
+          { id: 'persona', label: '३. भूमिका' },
+          { id: 'interests', label: '४. आवडी' },
+          { id: 'connect', label: '५. जोडणी प्राधान्य' },
+          { id: 'welcome', label: '६. पूर्ण' }
         ].map((s) => (
           <button
             key={s.id}
@@ -435,53 +416,7 @@ export default function RegisterWizardPage() {
         )}
 
         {/* ============ 2. OTP ============ */}
-        {activeScreen === 'otp' && (
-          <div className="split-card" style={{ maxWidth: '480px', gridTemplateColumns: '1fr' }}>
-            <div className="form-pane" style={{ padding: '48px 42px' }}>
-              <button
-                type="button"
-                onClick={() => setActiveScreen('signup')}
-                style={{ background: 'none', border: 'none', fontSize: '13px', color: '#5c534b', textAlign: 'left', cursor: 'pointer', fontWeight: 700, marginBottom: '20px' }}
-              >
-                ← मागे जा (Back)
-              </button>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ width: '68px', height: '68px', borderRadius: '50%', background: '#fdf3e6', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px', fontSize: '28px' }}>
-                  🔒
-                </div>
-                <h1 style={{ fontFamily: 'Baloo 2', fontSize: '24px', fontWeight: 700, margin: '0 0 6px' }}>खाते पडताळणी (OTP)</h1>
-                <p style={{ color: '#5c534b', fontSize: '14px', margin: '0 0 20px' }}>
-                  आम्ही ६ अंकी पडताळणी कोड पाठवला आहे:<br />
-                  <strong style={{ color: '#2b2420', fontSize: '1.05rem' }}>+91 {formData.mobile}</strong>
-                </p>
-              </div>
 
-              <div className="otp-inputs">
-                {otp.map((digit, idx) => (
-                  <input
-                    key={idx}
-                    type="text"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => {
-                      const next = [...otp];
-                      next[idx] = e.target.value.slice(-1);
-                      setOtp(next);
-                    }}
-                  />
-                ))}
-              </div>
-
-              <p style={{ textAlign: 'center', fontSize: '13px', color: '#a89d90', marginBottom: '26px' }}>
-                पुन्हा कोड पाठवा: <strong style={{ color: '#5c534b' }}>00:42</strong>
-              </p>
-
-              <button type="button" className="btn-brand-primary" onClick={handleOtpVerify}>
-                सत्यापित करा व पुढे जा (Verify & continue) →
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* ============ 3. PROFILE ============ */}
         {activeScreen === 'profile' && (
@@ -558,9 +493,14 @@ export default function RegisterWizardPage() {
                 </div>
               </div>
 
-              <button type="button" className="btn-brand-primary" onClick={() => setActiveScreen('persona')}>
-                पुढे चला (Continue) →
-              </button>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button type="button" className="btn-brand-outline" onClick={() => setActiveScreen('signup')}>
+                  ← मागे
+                </button>
+                <button type="button" className="btn-brand-primary" onClick={() => setActiveScreen('persona')}>
+                  पुढे चला (Continue) →
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -726,6 +666,21 @@ export default function RegisterWizardPage() {
                   );
                 })}
               </div>
+
+              {validationError && (
+                <div style={{
+                  color: '#991B1B',
+                  background: '#FEE2E2',
+                  border: '1.5px solid #F87171',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  marginBottom: '16px',
+                  fontWeight: 700,
+                  fontSize: '0.85rem'
+                }}>
+                  ⚠️ {validationError}
+                </div>
+              )}
 
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button type="button" className="btn-brand-outline" onClick={() => setActiveScreen('interests')}>
