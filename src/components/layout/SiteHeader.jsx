@@ -570,13 +570,16 @@ export default function SiteHeader({ onOpenSearch }) {
               <div className="cm-drawer-brand-sub">अखिल भारतीय डिजिटल व्यासपीठ</div>
             </div>
           </Link>
-          <button
-            type="button"
-            className="cm-drawer-close-btn"
-            onClick={() => setMobileOpen(false)}
-            aria-label="मेनू बंद करा">
-            ✕
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <LanguageSwitcher variant="header" />
+            <button
+              type="button"
+              className="cm-drawer-close-btn"
+              onClick={() => setMobileOpen(false)}
+              aria-label="मेनू बंद करा">
+              ✕
+            </button>
+          </div>
         </div>
 
         {/* Drawer Scrollable Body */}
