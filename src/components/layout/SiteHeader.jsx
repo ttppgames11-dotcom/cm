@@ -93,7 +93,7 @@ export default function SiteHeader({ onOpenSearch }) {
                 <NavLink to="/about" onClick={handleLinkClick}>
                   🏛️ आमच्याबद्दल
                 </NavLink>
-                <NavLink to="/about#vision" onClick={handleLinkClick}>
+                <NavLink to="/vision" onClick={handleLinkClick}>
                   🎯 व्हिजन
                 </NavLink>
                 <NavLink to="/blueprint" onClick={handleLinkClick}>
@@ -473,7 +473,7 @@ export default function SiteHeader({ onOpenSearch }) {
                 <NavLink to="/about" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">🏛️</span> आमच्याबद्दल
                 </NavLink>
-                <NavLink to="/about#vision" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                <NavLink to="/vision" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">🎯</span> व्हिजन
                 </NavLink>
                 <NavLink to="/blueprint" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
@@ -720,7 +720,7 @@ export default function SiteHeader({ onOpenSearch }) {
                 </div>
               </Link>
 
-              <Link to="/about#vision" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+              <Link to="/vision" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
                 <span style={{ fontSize: '1.2rem' }}>🎯</span>
                 <div>
                   <div style={{ color: '#0F172A', fontWeight: 800 }}>व्हिजन व ध्येय (Vision 2030)</div>
