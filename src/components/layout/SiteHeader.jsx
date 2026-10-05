@@ -270,6 +270,7 @@ export default function SiteHeader({ onOpenSearch }) {
                   </div>
                   <div className="mega-col">
                     <div className="mega-col-title">🏢 संघटनात्मक चौकट</div>
+                    <Link to="/roles-matrix" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800 }}>⚖️ ५६ पदे व पात्रता मॅट्रिक्स</Link>
                     <Link to="/about" onClick={handleLinkClick}>🏛️ राज्य मध्यवर्ती कार्यकारिणी</Link>
                     <Link to="/network" onClick={handleLinkClick}>🏢 ३६ जिल्हा समन्वय केंद्रे</Link>
                     <Link to="/network" onClick={handleLinkClick}>🏘️ ३५८+ तालुका समित्या</Link>

@@ -215,6 +215,9 @@ export default function HomePage() {
             {getContent('buttons.emergencyHelp.label', '🧭 Product Blueprint')}
           </Link>
         )}
+        <Link to="/roles-matrix" className="btn-glass" style={{ border: '1.5px solid #FED7AA', color: '#FFFFFF', fontWeight: 800 }}>
+          ⚖️ ५६ पदे व पात्रता मॅट्रिक्स
+        </Link>
       </div>
       <div className="hero-stats-grid">
         <div className="stat-glass"><b data-countup="350" data-suffix="+">0</b><span>अभ्यासित गड-किल्ले</span></div>

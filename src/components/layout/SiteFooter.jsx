@@ -76,6 +76,7 @@ export default function SiteFooter() {
               संस्था व प्रशासन
             </h3>
             <ul style={{ listStyle: 'none', padding: 0 }}>
+              <li style={{ marginBottom: '8px' }}><Link to="/roles-matrix" style={{ color: '#FFE082', fontWeight: 800, textDecoration: 'none' }}>⚖️ ५६ पदे व पात्रता मॅट्रिक्स (Roles Matrix)</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/about" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🏛️ संस्था परिचय व सल्लागार मंडळ</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/governance" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🎯 व्हिजन, मिशन व धोरण</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/governance" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🔒 DPDP २०२३ गोपनीयता धोरण</Link></li>
