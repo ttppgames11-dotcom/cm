@@ -2651,11 +2651,12 @@ section {
 }
 
 .brand-desktop .brand-sub {
-  font-size: 0.72rem;
-  color: var(--muted);
-  font-weight: 600;
-  letter-spacing: 0.4px;
+  font-size: 0.74rem;
+  color: #7C2D12 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px;
   white-space: nowrap;
+  opacity: 1 !important;
 }
 
 .desktop-nav {
@@ -3066,13 +3067,14 @@ section {
 }
 
 .brand-desktop .brand-sub {
-  font-size: 0.70rem;
-  color: var(--muted, #6B7280);
-  font-weight: 600;
+  font-size: 0.74rem;
+  color: #7C2D12 !important;
+  font-weight: 700 !important;
   letter-spacing: 0.3px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  opacity: 1 !important;
 }
 
 .desktop-nav {
@@ -3845,10 +3847,11 @@ section {
 }
 
 .brand-desktop .brand-sub {
-  font-size: 0.72rem;
-  color: rgba(255, 247, 237, 0.80);
-  letter-spacing: 0.5px;
-  font-weight: 600;
+  font-size: 0.74rem;
+  color: #7C2D12 !important;
+  letter-spacing: 0.3px;
+  font-weight: 700 !important;
+  opacity: 1 !important;
 }
 
 /* Desktop Horizontal Mega Navigation */
