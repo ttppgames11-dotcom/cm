@@ -31,13 +31,12 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3000,
     open: false,
-    // Local development proxy: forwards /api requests to production API without CORS issues.
-    // In production, Vercel edge rewrites in vercel.json handle proxying /api/* to the production API.
+    // Local development proxy: forwards /api requests to backend API server
     proxy: {
       '/api': {
-        target: 'https://api.connectmaratha.com',
+        target: process.env.VITE_API_TARGET || 'http://localhost:5000',
         changeOrigin: true,
-        secure: true
+        secure: false
       }
     },
     watch: {
