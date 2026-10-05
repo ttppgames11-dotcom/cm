@@ -9,12 +9,12 @@ export default function SuperAdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
 
-  const handleQuickSuperAdminLogin = async () => {
+  const handleQuickAdminLogin = async () => {
     try {
-      showToast('SuperAdmin खात्यात लॉगिन करत आहे...', 'success');
-      const res = await login('superadmin@connectmaratha.org', 'password123');
+      showToast('Admin खात्यात लॉगिन करत आहे...', 'success');
+      const res = await login('admin@connectmaratha.org', 'password123');
       if (res && (res.success || res.member)) {
-        showToast('यशस्वी! SuperAdmin अधिकार प्राप्त झाले.', 'success');
+        showToast('यशस्वी! Admin अधिकार प्राप्त झाले.', 'success');
         setTimeout(() => loadAllData(), 500);
       } else {
         showToast('लॉगिन अयशस्वी झाले.', 'error');
@@ -76,7 +76,7 @@ export default function SuperAdminDashboardPage() {
       setInformation(infoRes || []);
       setRolesMatrix(rolesRes || []);
     } catch (err) {
-      console.error('Superadmin load error:', err);
+      console.error('Admin load error:', err);
       showToast('माहिती लोड करताना अडचण आली.', 'error');
     } finally {
       setLoading(false);
@@ -87,7 +87,7 @@ export default function SuperAdminDashboardPage() {
     loadAllData();
   }, [userRoleFilter, userVerifiedFilter, userActiveFilter]);
 
-  // Periodic polling to keep live active users fresh
+  // Fast Real-Time periodic polling (every 4s) to keep live users and data fresh
   useEffect(() => {
     const pollInterval = setInterval(() => {
       apiClient.getAdminUsers({
@@ -101,7 +101,7 @@ export default function SuperAdminDashboardPage() {
           if (res.stats) setUserStats(res.stats);
         }
       }).catch(() => {});
-    }, 20000);
+    }, 4000);
     return () => clearInterval(pollInterval);
   }, [userSearch, userRoleFilter, userVerifiedFilter, userActiveFilter]);
 
@@ -558,15 +558,15 @@ export default function SuperAdminDashboardPage() {
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
           <div>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255, 215, 0, 0.15)', border: '1px solid #F59E0B', borderRadius: '30px', padding: '4px 14px', fontSize: '0.8rem', color: '#FDE68A', marginBottom: '10px' }}>
-              <span>👑 सर्वोच्च नियामक कन्सोल (SuperAdmin Supreme Console)</span>
+              <span>👑 केंद्रीय ॲडमिन कन्सोल (Admin Supreme Console)</span>
               <span>•</span>
               <span>अमर्याद अधिकार (Full Access)</span>
             </div>
             <h1 style={{ margin: '4px 0 8px 0', fontSize: '2.1rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.5px' }}>
-              सर्वोच्च प्रशासकीय व्यवस्थापन केंद्र
+              केंद्रीय प्रशासकीय व्यवस्थापन केंद्र (Admin Management Hub)
             </h1>
             <p style={{ margin: 0, color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem' }}>
-              वापरकर्ते, भूमिका, डॉक्टर्स, सेवा, हॉटेल्स आणि महासंघ माहितीवरील संपूर्ण CRUD नियंत्रण.
+              सर्व ३६ जिल्हे, वापरकर्ते, भूमिका, डॉक्टर्स, सेवा, हॉटेल्स आणि महासंघ माहितीवरील संपूर्ण रीअल-टाइम CRUD नियंत्रण.
             </p>
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -587,8 +587,8 @@ export default function SuperAdminDashboardPage() {
       </div>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '24px 20px' }}>
-        {/* SuperAdmin Quick Access & Verification Bar */}
-        {(!user || user.role !== 'superadmin') && (
+        {/* Admin Quick Access & Verification Bar */}
+        {(!user || (user.role !== 'admin' && user.role !== 'superadmin' && user.role !== 'ceo')) && (
           <div style={{
             background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(217, 119, 6, 0.22) 100%)',
             border: '2px solid #F59E0B',
@@ -604,14 +604,14 @@ export default function SuperAdminDashboardPage() {
           }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#FDE68A', fontWeight: 800, fontSize: '1.05rem' }}>
-                <span>👑 सर्वोच्च प्रशासकीय अधिकार (SuperAdmin Authorization)</span>
+                <span>👑 प्रशासकीय अधिकार (Admin Authorization)</span>
               </div>
               <div style={{ color: '#E2E8F0', fontSize: '0.92rem', marginTop: '6px', maxWidth: '850px', lineHeight: 1.5 }}>
-                सध्या तुम्ही {user ? `"${user.name}" (${user.role || 'member'})` : 'अतिथी (Guest)'} म्हणून कन्सोल पाहत आहात. वापरकर्ते बदलणे/हटवणे, नवीन डॉक्टर्स/सेवा/हॉटेल्स जोडणे आणि डेटाबेस थेट अपडेट करण्यासाठी SuperAdmin खाते आवश्यक आहे.
+                सध्या तुम्ही {user ? `"${user.name}" (${user.role || 'member'})` : 'अतिथी (Guest)'} म्हणून कन्सोल पाहत आहात. वापरकर्ते बदलणे/हटवणे, नवीन डॉक्टर्स/सेवा/हॉटेल्स जोडणे आणि डेटाबेस थेट अपडेट करण्यासाठी Admin खाते आवश्यक आहे.
               </div>
             </div>
             <button
-              onClick={handleQuickSuperAdminLogin}
+              onClick={handleQuickAdminLogin}
               className="btn"
               style={{
                 background: 'linear-gradient(135deg, #F59E0B, #D97706)',
@@ -628,7 +628,7 @@ export default function SuperAdminDashboardPage() {
                 gap: '8px'
               }}>
               <span>⚡</span>
-              <span>SuperAdmin म्हणून थेट १-क्लिक लॉगिन करा</span>
+              <span>Admin म्हणून थेट १-क्लिक लॉगिन करा</span>
             </button>
           </div>
         )}
@@ -636,7 +636,7 @@ export default function SuperAdminDashboardPage() {
         {/* Top Metric Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '28px' }}>
           <div style={{ background: '#1E293B', padding: '18px', borderRadius: '12px', border: '1px solid #334155' }}>
-            <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>👥 एकूण वापरकर्ते (Users)</div>
+            <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>👥 एकूण वापरकर्ते (Total Users)</div>
             <div style={{ fontSize: '1.9rem', fontWeight: 900, color: '#38BDF8', marginTop: '4px' }}>{userStats.total || users.length}</div>
             <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '4px' }}>प्रमाणित: {userStats.verifiedMembers || 0}</div>
           </div>
@@ -677,12 +677,13 @@ export default function SuperAdminDashboardPage() {
             </div>
           </div>
           <div style={{ background: '#1E293B', padding: '18px', borderRadius: '12px', border: '1px solid #334155' }}>
-            <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>👑 SuperAdmins & Heads</div>
+            <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>👑 मुख्य ॲडमिन व प्रमुख</div>
             <div style={{ fontSize: '1.9rem', fontWeight: 900, color: '#FBBF24', marginTop: '4px' }}>
               {(userStats.superadmins || 0) + (userStats.admins || 0)}
             </div>
             <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '4px' }}>जिल्हाप्रमुख: {userStats.districtHeads || 0}</div>
           </div>
+
           <div style={{ background: '#1E293B', padding: '18px', borderRadius: '12px', border: '1px solid #334155' }}>
             <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>🩺 नोंदणीकृत डॉक्टर्स</div>
             <div style={{ fontSize: '1.9rem', fontWeight: 900, color: '#34D399', marginTop: '4px' }}>{doctors.length}</div>

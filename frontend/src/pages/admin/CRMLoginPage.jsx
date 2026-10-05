@@ -5,16 +5,16 @@ import { CRM_AUTHORIZED_ROLES } from '../../components/auth/CRMProtectedRoute';
 
 const CRM_OFFICIAL_PROFILES = [
   {
-    role: 'superadmin',
-    name: 'छत्रपती शासन सर्वोच्च प्रशासक',
-    id: 'CM-SUPER-001',
+    role: 'admin',
+    name: 'केंद्रीय मुख्य प्रशासक (Admin)',
+    id: 'CM-ADMIN-001',
     phone: '9876500001',
-    password: 'superadmin1674',
-    title: '👑 केंद्रीय सुपर ॲडमिन (SuperAdmin)',
+    password: 'admin1674',
+    title: '👑 केंद्रीय ॲडमिन (Admin Console)',
     desc: 'सर्व ३६ जिल्हे, वापरकर्ते CRUD, रोल मॅट्रिक्स व मास्टर सिस्टीम नियंत्रण',
-    targetRoute: '/superadmin',
+    targetRoute: '/admin',
     color: '#EA580C',
-    badge: 'ALL ACCESS'
+    badge: 'ADMIN ACCESS'
   },
   {
     role: 'ceo',
@@ -22,9 +22,9 @@ const CRM_OFFICIAL_PROFILES = [
     id: 'CM-CEO-0088',
     phone: '9876500088',
     password: 'ceo1674',
-    title: '🦅 कार्याध्यक्ष / राज्य अध्यक्ष (CEO Macro)',
+    title: '🦅 मुख्य कार्यकारी अधिकारी / राज्य अध्यक्ष (CEO Macro)',
     desc: 'राज्यस्तरीय व्यवसाय वृद्धी, ६ विभाग, ₹ १८४+ कोटी मॅक्रो आकडेवारी',
-    targetRoute: '/crm/ceo',
+    targetRoute: '/ceo',
     color: '#EA580C',
     badge: 'STATE EXECUTIVE'
   },
@@ -83,9 +83,9 @@ export default function CRMLoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [selectedRole, setSelectedRole] = useState('superadmin');
-  const [officerId, setOfficerId] = useState('CM-SUPER-001');
-  const [password, setPassword] = useState('superadmin1674');
+  const [selectedRole, setSelectedRole] = useState('admin');
+  const [officerId, setOfficerId] = useState('CM-ADMIN-001');
+  const [password, setPassword] = useState('admin1674');
   const [securityPin, setSecurityPin] = useState('1674');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
