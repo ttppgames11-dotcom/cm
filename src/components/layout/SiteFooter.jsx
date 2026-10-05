@@ -83,7 +83,7 @@ export default function SiteFooter() {
               <li style={{ marginBottom: '8px' }}><Link to="/governance" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🔒 DPDP २०२३ गोपनीयता धोरण</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/profile" style={{ color: '#FFFFFF', textDecoration: 'none' }}>⚙️ खाते व वैयक्तिक सेटिंग्ज</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/community" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🔔 एकात्मिक सूचना केंद्र</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/governance" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🧭 मास्टर ब्लूप्रिंट (५० विभाग)</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/goals" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🏆 प्रमुख उद्दिष्टे व संकल्प</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/contact" style={{ color: '#FFFFFF', textDecoration: 'none' }}>☎️ संपर्क व तक्रार निवारण</Link></li>
             </ul>
           </div>
@@ -97,7 +97,7 @@ export default function SiteFooter() {
             ॥ जय भवानी, जय शिवाजी ॥ प्रौढ प्रताप पुरंधर क्षत्रियकुलावतंस सिंहासनाधीश्वर छत्रपती शिवाजी महाराज की जय!
           </p>
           <p className="footer-admin" style={{ fontSize: '0.75rem', marginTop: '8px' }}>
-            <Link to="/governance" style={{ color: '#FFF3E0', opacity: 0.9 }}>DPDP धोरण व सनद</Link> | <Link to="/blueprint" style={{ color: '#FFF3E0', opacity: 0.9 }}>Master Blueprint</Link> | <Link to="/contact" style={{ color: '#FFF3E0', opacity: 0.9 }}>मदत व संपर्क</Link> | <Link to="/login" style={{ color: '#FFF3E0', opacity: 0.9 }}>सभासद लॉगिन</Link>
+            <Link to="/governance" style={{ color: '#FFF3E0', opacity: 0.9 }}>DPDP धोरण व सनद</Link> | <Link to="/goals" style={{ color: '#FFF3E0', opacity: 0.9 }}>उद्दिष्टे व संकल्प</Link> | <Link to="/contact" style={{ color: '#FFF3E0', opacity: 0.9 }}>मदत व संपर्क</Link> | <Link to="/login" style={{ color: '#FFF3E0', opacity: 0.9 }}>सभासद लॉगिन</Link>
           </p>
         </div>
       </footer>

@@ -5,7 +5,7 @@ const SEARCHABLE_ITEMS = [
   // Governance & Core
   { title: 'आमच्याबद्दल (About Connect Maratha)', path: '/about', category: 'संस्था', keywords: 'about us mahasangh sanstha info परिचय सनद' },
   { title: 'व्हिजन व ध्येय (Vision & Mission)', path: '/vision', category: 'संस्था', keywords: 'vision mission dhyey uddishte व्हिजन ध्येय' },
-  { title: '५० विभाग मास्टर ब्लूप्रिंट व संकल्प (Blueprint)', path: '/blueprint', category: 'संस्था', keywords: 'blueprint sankalp uddishta master plan धोरण' },
+  { title: '१० प्रमुख उद्दिष्टे व संकल्प (Objectives & Goals)', path: '/goals', category: 'संस्था', keywords: 'goals uddishta sankalp objectives master plan ध्येय उद्दिष्टे' },
   { title: 'सहभागी का व्हावे? (Why to Join Connect Maratha)', path: '/why-join', category: 'संस्था', keywords: 'why join benefits fayde सहभाग सामील' },
   { title: 'संपर्क व तक्रार निवारण (Contact & Support)', path: '/contact', category: 'संस्था', keywords: 'contact support phone email helpline संपर्क' },
   { title: '५६ पदे व पात्रता मॅट्रिक्स (56 Roles Matrix)', path: '/roles-matrix', category: 'प्रशासन', keywords: '56 roles pade eligibility matrix पात्रता पद पदे' },

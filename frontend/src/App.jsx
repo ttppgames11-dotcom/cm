@@ -71,7 +71,7 @@ import NewsAnnouncementsPage from './pages/community/NewsAnnouncementsPage';
 import NotificationsPage from './pages/member/NotificationsPage';
 import MessagesPage from './pages/member/MessagesPage';
 import ServiceBookingPage from './pages/jobs/ServiceBookingPage';
-import BlueprintVisionPage from './pages/governance/BlueprintVisionPage';
+import ObjectivesPage from './pages/governance/ObjectivesPage';
 import AboutPage from './pages/governance/AboutPage';
 import AchieversPage from './pages/governance/AchieversPage';
 import WhyJoinPage from './pages/governance/WhyJoinPage';
@@ -426,9 +426,11 @@ export default function App() {
             <Route path="/vision" element={<VisionMissionPage />} />
             <Route path="/vision-mission" element={<VisionMissionPage />} />
             <Route path="/mission" element={<VisionMissionPage />} />
-            <Route path="/goals" element={<VisionMissionPage />} />
-            <Route path="/uddishta" element={<VisionMissionPage />} />
-            <Route path="/blueprint" element={<BlueprintVisionPage />} />
+            <Route path="/goals" element={<ObjectivesPage />} />
+            <Route path="/objectives" element={<ObjectivesPage />} />
+            <Route path="/uddishta" element={<ObjectivesPage />} />
+            <Route path="/sankalp" element={<ObjectivesPage />} />
+            <Route path="/blueprint" element={<ObjectivesPage />} />
             <Route path="/why-join" element={<WhyJoinPage />} />
             <Route path="/whytojoin" element={<WhyJoinPage />} />
             <Route path="/benefits" element={<WhyJoinPage />} />

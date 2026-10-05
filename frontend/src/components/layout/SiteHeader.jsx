@@ -110,9 +110,6 @@ export default function SiteHeader({ onOpenSearch }) {
                 <NavLink to="/goals" onClick={handleLinkClick}>
                   🏆 उद्दिष्टे
                 </NavLink>
-                <NavLink to="/blueprint" onClick={handleLinkClick}>
-                  🧭 ब्लूप्रिंट
-                </NavLink>
                 <NavLink to="/why-join" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800 }}>
                   ⭐ सहभागी का व्हावे?
                 </NavLink>
@@ -241,7 +238,7 @@ export default function SiteHeader({ onOpenSearch }) {
                         <Link to="/roles-matrix" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800 }}>⚖️ ५६ पदे व पात्रता मॅट्रिक्स</Link>
                         <Link to="/about" onClick={handleLinkClick}>🏛️ संस्था परिचय व सनद</Link>
                         <Link to="/governance" onClick={handleLinkClick}>🎯 व्हिजन व DPDP धोरण</Link>
-                        <Link to="/blueprint" onClick={handleLinkClick}>🧭 ५० विभाग मास्टर ब्लूप्रिंट</Link>
+                        <Link to="/goals" onClick={handleLinkClick}>🏆 १० प्रमुख उद्दिष्टे</Link>
                         <Link to="/contact" onClick={handleLinkClick}>☎️ संपर्क व तक्रार निवारण</Link>
                       </div>
                     </div>
@@ -417,9 +414,6 @@ export default function SiteHeader({ onOpenSearch }) {
                 </NavLink>
                 <NavLink to="/goals" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">🏆</span> उद्दिष्टे
-                </NavLink>
-                <NavLink to="/blueprint" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-                  <span className="subnav-pill-icon">🧭</span> ब्लूप्रिंट
                 </NavLink>
                 <NavLink to="/why-join" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-gold ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">⭐</span> सहभागी व्हा
@@ -680,34 +674,26 @@ export default function SiteHeader({ onOpenSearch }) {
                 </div>
               </Link>
 
-              <Link to="/vision" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+              <Link to="/vision" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#FFF8F0', color: '#EA580C', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #FED7AA' }}>
                 <span style={{ fontSize: '1.2rem' }}>🎯</span>
                 <div>
-                  <div style={{ color: '#0F172A', fontWeight: 800 }}>व्हिजन (Vision 2030)</div>
-                  <small style={{ color: '#64748B' }}>दीर्घकालीन संकल्पना</small>
+                  <div style={{ color: '#EA580C', fontWeight: 800 }}>व्हिजन (Vision 2030)</div>
+                  <small style={{ color: '#C2410C' }}>दीर्घकालीन संकल्पना</small>
                 </div>
               </Link>
 
-              <Link to="/goals" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+              <Link to="/goals" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#FFF8F0', color: '#EA580C', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #FED7AA' }}>
                 <span style={{ fontSize: '1.2rem' }}>🏆</span>
                 <div>
-                  <div style={{ color: '#0F172A', fontWeight: 800 }}>उद्दिष्टे व संकल्प (Goals)</div>
-                  <small style={{ color: '#64748B' }}>१० रणनीतिक धोरणे व उद्दिष्टे</small>
-                </div>
-              </Link>
-
-              <Link to="/blueprint" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
-                <span style={{ fontSize: '1.2rem' }}>🧭</span>
-                <div>
-                  <div style={{ color: '#0F172A', fontWeight: 800 }}>५० विभाग मास्टर ब्लूप्रिंट</div>
-                  <small style={{ color: '#64748B' }}>कार्यक्षेत्र व आगामी महाप्रकल्प</small>
+                  <div style={{ color: '#EA580C', fontWeight: 800 }}>उद्दिष्टे व संकल्प (Goals)</div>
+                  <small style={{ color: '#C2410C' }}>१० प्रमुख रणनीतिक उद्दिष्टे</small>
                 </div>
               </Link>
 
               <Link to="/why-join" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#FFF7ED', color: '#C2410C', textDecoration: 'none', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px', border: '1.5px solid #FFCC80' }}>
                 <span style={{ fontSize: '1.2rem' }}>⭐</span>
                 <div>
-                  <div style={{ color: '#9A3412', fontWeight: 900 }}>सहभागी का व्हावे? (सदस्यत्वाचे लाभ)</div>
+                  <div style={{ color: '#EA580C', fontWeight: 900 }}>सहभागी का व्हावे? (सदस्यत्वाचे लाभ)</div>
                   <small style={{ color: '#C2410C' }}>८ मुख्य फायदे व डिजिटल स्मार्ट कार्ड</small>
                 </div>
               </Link>

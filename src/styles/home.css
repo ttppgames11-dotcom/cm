@@ -2,24 +2,24 @@
    NEW LAYOUT – MODERN, CARD-BASED, ONLINE BG IMAGES
    ============================================================ */
 :root {
-  --maroon-950: #C73800;
-  --maroon-900: #D84315;
-  --maroon-800: #E65100;
+  --maroon-950: #EA580C;
+  --maroon-900: #EA580C;
+  --maroon-800: #F97316;
   --gold-400: #FFFFFF;
-  --gold-500: #F4511E;
+  --gold-500: #EA580C;
   --gold-300: #FFFFFF;
-  --gold-600: #E65100;
-  --gold-700: #BF360C;
-  --saffron-500: #F4511E;
-  --saffron-600: #E65100;
+  --gold-600: #F97316;
+  --gold-700: #C2410C;
+  --saffron-500: #EA580C;
+  --saffron-600: #C2410C;
   --paper: #FFFFFF;
-  --card-bg: #F4511E;
-  --text-sec: rgba(255, 255, 255, .92);
-  --ink-soft: #D84315;
-  --muted: #D84315;
-  --success: #E65100;
+  --card-bg: #FFFFFF;
+  --text-sec: #EA580C;
+  --ink-soft: #EA580C;
+  --muted: #EA580C;
+  --success: #EA580C;
   --radius: 16px;
-  --shadow: 0 12px 32px rgba(244, 81, 30, .2);
+  --shadow: 0 12px 32px rgba(234, 88, 12, .12);
 }
 
 * {
@@ -30,8 +30,8 @@
 
 body {
   font-family: 'Baloo 2', 'Segoe UI', system-ui, sans-serif;
-  background: #FBF5EC;
-  color: #C73800;
+  background: #FFFFFF;
+  color: #C2410C;
   line-height: 1.6;
 }
 
