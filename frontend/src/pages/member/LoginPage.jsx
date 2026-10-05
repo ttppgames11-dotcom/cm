@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { api } from '../../services/api';
 
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState('password'); // 'password' or 'otp'
@@ -14,6 +15,18 @@ export default function LoginPage() {
   const [otpCode, setOtpCode] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Forgot Password Modal state (matches mobile app: email -> OTP -> reset password)
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotStep, setForgotStep] = useState(1); // 1: enter email, 2: enter OTP, 3: set new password, 4: success
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotOtp, setForgotOtp] = useState('');
+  const [forgotResetToken, setForgotResetToken] = useState('');
+  const [forgotNewPassword, setForgotNewPassword] = useState('');
+  const [forgotConfirmPassword, setForgotConfirmPassword] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotError, setForgotError] = useState('');
+  const [forgotSuccessMsg, setForgotSuccessMsg] = useState('');
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -44,6 +57,85 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // 1. Send OTP to user's registered email
+  const handleRequestForgotOtp = async (e) => {
+    if (e) e.preventDefault();
+    setForgotError('');
+    if (!forgotEmail || !forgotEmail.trim()) {
+      setForgotError('कृपया आपला नोंदणीकृत ईमेल पत्ता प्रविष्ट करा.');
+      return;
+    }
+    setForgotLoading(true);
+    try {
+      const res = await api.auth.forgotPassword(forgotEmail.trim());
+      setForgotSuccessMsg(res?.message || 'आपल्या ईमेलवर ६-अंकी OTP पाठवण्यात आला आहे.');
+      setForgotStep(2);
+    } catch (err) {
+      setForgotError(err.message || 'OTP पाठवता आला नाही. ईमेल तपासा.');
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  // 2. Verify OTP received in email
+  const handleVerifyForgotOtp = async (e) => {
+    if (e) e.preventDefault();
+    setForgotError('');
+    if (!forgotOtp || forgotOtp.trim().length < 4) {
+      setForgotError('कृपया वैध OTP कोड प्रविष्ट करा.');
+      return;
+    }
+    setForgotLoading(true);
+    try {
+      const res = await api.auth.verifyOtp(forgotEmail.trim(), forgotOtp.trim());
+      const token = res?.resetToken || res?.data?.resetToken;
+      if (!token) {
+        throw new Error('अवैध रीसेट टोकन प्राप्त झाले.');
+      }
+      setForgotResetToken(token);
+      setForgotStep(3);
+    } catch (err) {
+      setForgotError(err.message || 'चुकीचा किंवा कालबाह्य झालेला OTP.');
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  // 3. Reset password with new password
+  const handleResetPassword = async (e) => {
+    if (e) e.preventDefault();
+    setForgotError('');
+    if (!forgotNewPassword || forgotNewPassword.length < 6) {
+      setForgotError('पासवर्ड किमान ६ वर्णांचा असावा.');
+      return;
+    }
+    if (forgotNewPassword !== forgotConfirmPassword) {
+      setForgotError('दोन्ही पासवर्ड जुळत नाहीत (Passwords do not match).');
+      return;
+    }
+    setForgotLoading(true);
+    try {
+      await api.auth.resetPassword(forgotEmail.trim(), forgotResetToken, forgotNewPassword);
+      setForgotStep(4);
+    } catch (err) {
+      setForgotError(err.message || 'पासवर्ड रीसेट करताना त्रुटी आली.');
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  const closeForgotModal = () => {
+    setShowForgotModal(false);
+    setForgotStep(1);
+    setForgotEmail('');
+    setForgotOtp('');
+    setForgotResetToken('');
+    setForgotNewPassword('');
+    setForgotConfirmPassword('');
+    setForgotError('');
+    setForgotSuccessMsg('');
   };
 
   return (
@@ -318,9 +410,19 @@ export default function LoginPage() {
                     />
                     मला आठवणीत ठेवा
                   </label>
-                  <a href="#forgot" onClick={(e) => { e.preventDefault(); setMessage('पासवर्ड रीसेट लिंक आपल्या नोंदणीकृत मोबाईलवर पाठवण्यात आली आहे.'); }} style={{ color: '#E65100', fontWeight: 700, textDecoration: 'none' }}>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setForgotEmail(loginId.includes('@') ? loginId : '');
+                      setShowForgotModal(true);
+                      setForgotStep(1);
+                      setForgotError('');
+                    }}
+                    style={{ background: 'none', border: 'none', padding: 0, color: '#E65100', fontWeight: 700, cursor: 'pointer', fontSize: '0.82rem', textDecoration: 'none' }}
+                  >
                     पासवर्ड विसरलात?
-                  </a>
+                  </button>
                 </div>
 
                 {/* Big Gradient Submit Button */}
@@ -505,6 +607,339 @@ export default function LoginPage() {
         </div>
 
       </div>
+
+      {/* ================= FORGOT PASSWORD MODAL (EMAIL OTP) ================= */}
+      {showForgotModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.65)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '16px',
+          backdropFilter: 'blur(3px)'
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '20px',
+            width: '100%',
+            maxWidth: '460px',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
+            overflow: 'hidden',
+            border: '1.5px solid #F0B866'
+          }}>
+            {/* Modal Header */}
+            <div style={{
+              background: 'linear-gradient(135deg, #7A1C1C, #4A0E0E)',
+              padding: '18px 22px',
+              color: '#FFFFFF',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <div>
+                <h3 style={{ fontFamily: 'Baloo 2, sans-serif', margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>
+                  पासवर्ड रीसेट करा (Reset Password)
+                </h3>
+                <div style={{ fontSize: '0.78rem', color: '#F3E5D8', marginTop: '2px' }}>
+                  {forgotStep === 1 && 'पायरी १: ईमेल प्रविष्ट करा'}
+                  {forgotStep === 2 && 'पायरी २: ईमेलवर पाठवलेला OTP प्रविष्ट करा'}
+                  {forgotStep === 3 && 'पायरी ३: नवीन पासवर्ड सेट करा'}
+                  {forgotStep === 4 && 'यशस्वी!'}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={closeForgotModal}
+                style={{
+                  background: 'rgba(255,255,255,0.15)',
+                  border: 'none',
+                  color: '#FFFFFF',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: '24px 26px' }}>
+              {/* Error banner */}
+              {forgotError && (
+                <div style={{
+                  padding: '10px 14px',
+                  background: '#FEE2E2',
+                  border: '1.5px solid #F87171',
+                  color: '#991B1B',
+                  borderRadius: '8px',
+                  fontSize: '0.84rem',
+                  fontWeight: 600,
+                  marginBottom: '16px'
+                }}>
+                  ⚠️ {forgotError}
+                </div>
+              )}
+
+              {/* STEP 1: Enter Email to Receive OTP */}
+              {forgotStep === 1 && (
+                <form onSubmit={handleRequestForgotOtp}>
+                  <p style={{ color: '#4B5563', fontSize: '0.88rem', margin: '0 0 16px', lineHeight: 1.45 }}>
+                    आपल्या खात्याचा नोंदणीकृत ईमेल पत्ता टाका. आम्ही त्यावर <strong>पासवर्ड रीसेट OTP</strong> पाठवू.
+                  </p>
+                  <div style={{ marginBottom: '18px' }}>
+                    <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>
+                      नोंदणीकृत ईमेल (Registered Email)
+                    </label>
+                    <input
+                      type="email"
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                      placeholder="उदा. name@example.com"
+                      required
+                      autoFocus
+                      style={{
+                        width: '100%',
+                        padding: '11px 14px',
+                        borderRadius: '8px',
+                        border: '1.5px solid #D1D5DB',
+                        fontSize: '0.95rem',
+                        outline: 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={forgotLoading}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #F4511E, #E65100)',
+                      color: '#FFFFFF',
+                      fontFamily: 'Baloo 2, sans-serif',
+                      fontSize: '1rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 12px rgba(244,81,30,0.35)'
+                    }}
+                  >
+                    {forgotLoading ? 'OTP पाठवत आहे...' : 'ईमेलवर OTP पाठवा (Send OTP) ➔'}
+                  </button>
+                </form>
+              )}
+
+              {/* STEP 2: Enter Email OTP */}
+              {forgotStep === 2 && (
+                <form onSubmit={handleVerifyForgotOtp}>
+                  <div style={{
+                    padding: '10px 14px',
+                    background: '#ECFDF5',
+                    border: '1px solid #A7F3D0',
+                    color: '#065F46',
+                    borderRadius: '8px',
+                    fontSize: '0.82rem',
+                    marginBottom: '16px'
+                  }}>
+                    ✓ {forgotSuccessMsg || 'आपल्या ईमेलवर OTP पाठवण्यात आला आहे.'}
+                  </div>
+                  <p style={{ color: '#4B5563', fontSize: '0.88rem', margin: '0 0 16px' }}>
+                    <strong>{forgotEmail}</strong> या पत्त्यावर आलेला ६-अंकी OTP प्रविष्ट करा:
+                  </p>
+                  <div style={{ marginBottom: '18px' }}>
+                    <input
+                      type="text"
+                      maxLength="6"
+                      value={forgotOtp}
+                      onChange={(e) => setForgotOtp(e.target.value)}
+                      placeholder="उदा. 482910"
+                      required
+                      autoFocus
+                      style={{
+                        width: '100%',
+                        padding: '12px 14px',
+                        borderRadius: '8px',
+                        border: '2px solid #E65100',
+                        fontSize: '1.25rem',
+                        letterSpacing: '5px',
+                        textAlign: 'center',
+                        fontWeight: 800,
+                        outline: 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setForgotStep(1)}
+                      style={{
+                        padding: '10px 16px',
+                        borderRadius: '8px',
+                        border: '1.5px solid #D1D5DB',
+                        background: '#FFFFFF',
+                        color: '#374151',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      ← मागे
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={forgotLoading}
+                      style={{
+                        flex: 1,
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: 'linear-gradient(135deg, #F4511E, #E65100)',
+                        color: '#FFFFFF',
+                        fontFamily: 'Baloo 2, sans-serif',
+                        fontSize: '1rem',
+                        fontWeight: 800,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {forgotLoading ? 'पडताळत आहे...' : 'OTP पडताळा (Verify OTP) ➔'}
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* STEP 3: Set New Password */}
+              {forgotStep === 3 && (
+                <form onSubmit={handleResetPassword}>
+                  <p style={{ color: '#4B5563', fontSize: '0.88rem', margin: '0 0 16px' }}>
+                    OTP सत्यापित झाला आहे! आता नवीन पासवर्ड सेट करा:
+                  </p>
+                  <div style={{ marginBottom: '14px' }}>
+                    <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, color: '#374151', marginBottom: '5px' }}>
+                      नवीन पासवर्ड (New Password)
+                    </label>
+                    <input
+                      type="password"
+                      value={forgotNewPassword}
+                      onChange={(e) => setForgotNewPassword(e.target.value)}
+                      placeholder="किमान ६ वर्ण"
+                      required
+                      autoFocus
+                      style={{
+                        width: '100%',
+                        padding: '10px 14px',
+                        borderRadius: '8px',
+                        border: '1.5px solid #D1D5DB',
+                        fontSize: '0.92rem',
+                        outline: 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                  <div style={{ marginBottom: '18px' }}>
+                    <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, color: '#374151', marginBottom: '5px' }}>
+                      पासवर्ड पुन्हा प्रविष्ट करा (Confirm Password)
+                    </label>
+                    <input
+                      type="password"
+                      value={forgotConfirmPassword}
+                      onChange={(e) => setForgotConfirmPassword(e.target.value)}
+                      placeholder="नवीन पासवर्ड पुन्हा टाका"
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '10px 14px',
+                        borderRadius: '8px',
+                        border: '1.5px solid #D1D5DB',
+                        fontSize: '0.92rem',
+                        outline: 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={forgotLoading}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #16A34A, #15803D)',
+                      color: '#FFFFFF',
+                      fontFamily: 'Baloo 2, sans-serif',
+                      fontSize: '1rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 12px rgba(22,163,74,0.35)'
+                    }}
+                  >
+                    {forgotLoading ? 'अपडेट करत आहे...' : 'पासवर्ड बदला (Reset Password) ➔'}
+                  </button>
+                </form>
+              )}
+
+              {/* STEP 4: Success Message */}
+              {forgotStep === 4 && (
+                <div style={{ textAlign: 'center', padding: '10px 0' }}>
+                  <div style={{
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    background: '#DCFCE7',
+                    color: '#16A34A',
+                    fontSize: '28px',
+                    fontWeight: 800,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 16px'
+                  }}>
+                    ✓
+                  </div>
+                  <h4 style={{ fontFamily: 'Baloo 2, sans-serif', fontSize: '1.25rem', fontWeight: 800, margin: '0 0 8px', color: '#166534' }}>
+                    पासवर्ड यशस्वीरित्या बदलला आहे!
+                  </h4>
+                  <p style={{ color: '#4B5563', fontSize: '0.88rem', margin: '0 0 20px' }}>
+                    आता आपण आपल्या नवीन पासवर्डचा वापर करून लॉग इन करू शकता.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeForgotModal();
+                      setLoginId(forgotEmail);
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #F4511E, #E65100)',
+                      color: '#FFFFFF',
+                      fontFamily: 'Baloo 2, sans-serif',
+                      fontSize: '1rem',
+                      fontWeight: 800,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    आता लॉगिन करा (Log In Now) ➔
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
