@@ -319,29 +319,34 @@ export const apiClient = {
         })
       );
 
-      let filtered = detailedList.map(m => ({
-        id: m.id || m._id || 'CM-96K',
-        name: m.name || 'सदस्य',
-        email: m.email || `member_${(m.id || '').toLowerCase()}@connectmaratha.org`,
-        phone: m.phone || m.mobile || '',
-        avatar: m.avatar || '👤',
-        photo: m.photo || null,
-        city: m.city || 'पुणे',
-        district: m.district || 'पुणे',
-        state: m.state || 'महाराष्ट्र',
-        taluka: m.taluka || '',
-        kul: m.kul || '९६ कुळी मराठा',
-        gotra: m.gotra || '',
-        profession: m.profession || m.education || 'व्यवसायिक / नोकरी',
-        business: m.business || '',
-        tier: m.tier || 'Gold',
-        role: m.role || 'member',
-        verified: m.verified !== false && m.verified_profile !== 0,
-        verificationStatus: (m.verified !== false && m.verified_profile !== 0) ? 'प्रमाणित (Verified)' : 'प्रलंबित (Pending)',
-        joined: m.joined || m.createdAt?.split('T')[0] || '२०२६-०१-०१',
-        lastActiveFormatted: 'काही वेळापूर्वी',
-        isOnline: true
-      }));
+      let filtered = detailedList.map(m => {
+        const cleanPhone = (m.phone || m.mobile || '').trim();
+        const cleanEmail = (m.email || '').trim();
+        return {
+          id: m.id || m._id || 'CM-96K',
+          name: m.name || 'सदस्य',
+          email: cleanEmail || (cleanPhone ? `${cleanPhone}@connectmaratha.com` : 'ईमेल नोंदणीकृत नाही'),
+          rawEmail: cleanEmail,
+          phone: cleanPhone || 'फोन नोंदणीकृत नाही',
+          avatar: m.avatar || '👤',
+          photo: m.photo || null,
+          city: m.city || 'पुणे',
+          district: m.district || 'पुणे',
+          state: m.state || 'महाराष्ट्र',
+          taluka: m.taluka || '',
+          kul: m.kul || '९६ कुळी मराठा',
+          gotra: m.gotra || '',
+          profession: m.profession || m.education || 'व्यवसायिक / नोकरी',
+          business: m.business || '',
+          tier: m.tier || 'Gold',
+          role: m.role || 'member',
+          verified: m.verified !== false && m.verified_profile !== 0,
+          verificationStatus: (m.verified !== false && m.verified_profile !== 0) ? 'प्रमाणित (Verified)' : 'प्रलंबित (Pending)',
+          joined: m.joined || m.createdAt?.split('T')[0] || '२०२६-०१-०१',
+          lastActiveFormatted: 'काही वेळापूर्वी',
+          isOnline: true
+        };
+      });
 
       if (params.search) {
         const q = String(params.search).toLowerCase().trim();

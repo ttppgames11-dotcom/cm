@@ -13,7 +13,7 @@ const CRM_OFFICIAL_PROFILES = [
     title: '👑 केंद्रीय ॲडमिन (Admin Console)',
     desc: 'सर्व ३६ जिल्हे, वापरकर्ते CRUD, रोल मॅट्रिक्स व मास्टर सिस्टीम नियंत्रण',
     targetRoute: '/admin',
-    color: '#EA580C',
+    color: '#FF6B00',
     badge: 'ADMIN ACCESS'
   },
   {
@@ -25,7 +25,7 @@ const CRM_OFFICIAL_PROFILES = [
     title: '🦅 मुख्य कार्यकारी अधिकारी / राज्य अध्यक्ष (CEO Macro)',
     desc: 'राज्यस्तरीय व्यवसाय वृद्धी, ६ विभाग, ₹ १८४+ कोटी मॅक्रो आकडेवारी',
     targetRoute: '/ceo',
-    color: '#EA580C',
+    color: '#FF6B00',
     badge: 'STATE EXECUTIVE'
   },
   {
@@ -37,7 +37,7 @@ const CRM_OFFICIAL_PROFILES = [
     title: '📍 जिल्हा समन्वयक (District Admin)',
     desc: 'जिल्हा प्रशासन, तालुका समन्वय, ओळखपत्र छाननी व स्थानिक आकडेवारी',
     targetRoute: '/crm/district',
-    color: '#C2410C',
+    color: '#FF6B00',
     badge: 'DISTRICT HEAD'
   },
   {
@@ -49,7 +49,7 @@ const CRM_OFFICIAL_PROFILES = [
     title: '💼 चॅप्टर अध्यक्ष (Chapter President)',
     desc: 'साप्ताहिक व्यवसाय संगम, रेफरल व्यवहार व सदस्य उपस्थिती',
     targetRoute: '/crm/chapter',
-    color: '#D97706',
+    color: '#FF6B00',
     badge: 'CHAPTER HEAD'
   },
   {
@@ -61,7 +61,7 @@ const CRM_OFFICIAL_PROFILES = [
     title: '🩺 समाज साहाय्यता कक्ष (Seva Helpdesk)',
     desc: '२४x७ आपत्कालीन रक्त विनंत्या, रुग्णालय साहाय्य व आपत्ती निवारण',
     targetRoute: '/crm/helpdesk',
-    color: '#DC2626',
+    color: '#FF6B00',
     badge: 'EMERGENCY SEVA'
   },
   {
@@ -73,7 +73,7 @@ const CRM_OFFICIAL_PROFILES = [
     title: '💰 वित्त व 80G कोषाध्यक्ष (Finance & Ledger)',
     desc: 'Section 8 वित्तीय ऑडिट, 80G आयकर पावत्या व वर्गणी लेजर',
     targetRoute: '/crm/finance',
-    color: '#B45309',
+    color: '#FF6B00',
     badge: 'TREASURY AUDIT'
   }
 ];
@@ -132,7 +132,6 @@ export default function CRMLoginPage() {
       login(officerId, password, officialUser);
       setLoading(false);
 
-      // Redirect to attempted route or destination dashboard
       const destination = (location.state && location.state.from && location.state.from.pathname) || matchedProfile.targetRoute;
       navigate(destination, { replace: true });
     }, 400);
@@ -162,29 +161,29 @@ export default function CRMLoginPage() {
 
   return (
     <div style={{
-      background: '#FFFDF9',
+      background: '#0A0A0C',
       minHeight: '100vh',
       padding: '48px 16px 80px',
-      color: '#1E293B',
-      fontFamily: 'Inter, system-ui, sans-serif'
+      color: '#FFFFFF',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
-      <div style={{ maxWidth: '1080px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
         
         {/* Top Header Badge */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '36px' }}>
           <div style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            background: '#FFF7ED',
-            border: '1.5px solid #FED7AA',
-            color: '#EA580C',
-            padding: '6px 18px',
+            background: '#FF6B00',
+            border: '2px solid #FFFFFF',
+            color: '#FFFFFF',
+            padding: '6px 20px',
             borderRadius: '999px',
-            fontSize: '0.85rem',
-            fontWeight: 800,
-            marginBottom: '14px',
-            letterSpacing: '0.5px'
+            fontSize: '0.88rem',
+            fontWeight: 900,
+            marginBottom: '16px',
+            boxShadow: '0 4px 15px rgba(255, 107, 0, 0.4)'
           }}>
             <span>🔒 RESTRICTED ADMINISTRATIVE GATEWAY</span>
             <span>•</span>
@@ -192,68 +191,30 @@ export default function CRMLoginPage() {
           </div>
 
           <h1 style={{
-            fontSize: '2.4rem',
+            fontSize: '2.5rem',
             fontWeight: 900,
-            margin: '0 0 10px',
-            color: '#431407'
+            margin: '0 0 12px',
+            color: '#FFFFFF'
           }}>
             🏛️ प्रशासकीय व कार्यकारी CRM लॉगिन
           </h1>
           <p style={{
-            color: '#64748B',
+            color: '#FF8C00',
             fontSize: '1.05rem',
             maxWidth: '680px',
             margin: '0 auto',
-            lineHeight: 1.6
+            lineHeight: 1.6,
+            fontWeight: 700
           }}>
             Connect Maratha केंद्रीय नियंत्रण कक्ष, जिल्हा प्रशासन, चॅप्टर व्यवस्थापन व २४x७ सेवा कक्ष यांसाठी स्वतंत्र व सुरक्षित प्रवेशद्वार.
           </p>
         </div>
 
-        {/* Security Warning / Redirect Notice */}
-        {location.state?.reason === 'login_required' && (
-          <div style={{
-            background: '#FEF2F2',
-            border: '1.5px solid #FECACA',
-            borderRadius: '12px',
-            padding: '14px 20px',
-            marginBottom: '24px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            color: '#991B1B'
-          }}>
-            <span style={{ fontSize: '1.5rem' }}>⚠️</span>
-            <div>
-              <strong>प्रवेश प्रतिबंधित (Restricted Access):</strong> आपण विनंती केलेले CRM पृष्ठ सुरक्षित आहे. पुढे जाण्यासाठी कृपया आपल्या अधिकृत प्रशासकीय खात्याने लॉगिन करा.
-            </div>
-          </div>
-        )}
-
-        {location.state?.reason === 'unauthorized_member' && (
-          <div style={{
-            background: '#FFFBEB',
-            border: '1.5px solid #FDE68A',
-            borderRadius: '12px',
-            padding: '14px 20px',
-            marginBottom: '24px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            color: '#92400E'
-          }}>
-            <span style={{ fontSize: '1.5rem' }}>🛡️</span>
-            <div>
-              <strong>अधिकार पातळी अपूर्ण:</strong> आपले चालू खाते सामान्य सभासद (Public Member) स्तराचे आहे. अंतर्गत CRM व्यवस्थापन पाहण्यासाठी अधिकृत प्रशासकीय (Official/Staff) क्रेडेंशियल्स आवश्यक आहेत.
-            </div>
-          </div>
-        )}
-
-        {/* If Already Logged In as CRM Staff */}
+        {/* If Already Logged In */}
         {isCurrentStaff && (
           <div style={{
-            background: '#F0FDF4',
-            border: '1.5px solid #BBF7D0',
+            background: '#18181B',
+            border: '2px solid #FF6B00',
             borderRadius: '16px',
             padding: '20px 24px',
             marginBottom: '28px',
@@ -261,40 +222,43 @@ export default function CRMLoginPage() {
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
-            gap: '16px'
+            gap: '16px',
+            boxShadow: '0 4px 20px rgba(255, 107, 0, 0.25)'
           }}>
             <div>
-              <div style={{ color: '#166534', fontWeight: 800, fontSize: '0.9rem', marginBottom: '4px' }}>
+              <div style={{ color: '#FF8C00', fontWeight: 900, fontSize: '0.92rem', marginBottom: '4px' }}>
                 ✓ अधिकृत प्रशासकीय सत्र चालू आहे
               </div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#14532D' }}>
+              <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#FFFFFF' }}>
                 👤 {user.name} ({user.role})
               </div>
-              <div style={{ color: '#475569', fontSize: '0.88rem' }}>
+              <div style={{ color: '#FFFFFF', fontSize: '0.88rem', fontWeight: 700 }}>
                 अधिकृत आयडी: {user.id}
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '12px' }}>
               <Link
-                to={user.role === 'superadmin' ? '/superadmin' : (user.role === 'ceo' ? '/crm/ceo' : '/crm')}
+                to={user.role === 'superadmin' || user.role === 'admin' ? '/admin' : (user.role === 'ceo' ? '/ceo' : '/crm')}
                 style={{
-                  background: 'linear-gradient(135deg, #EA580C, #D97706)',
+                  background: 'linear-gradient(135deg, #FF6B00, #EA580C)',
                   color: '#FFFFFF',
-                  fontWeight: 800,
-                  padding: '10px 20px',
+                  fontWeight: 900,
+                  padding: '12px 22px',
                   borderRadius: '10px',
-                  textDecoration: 'none'
+                  border: '2px solid #FFFFFF',
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 15px rgba(255, 107, 0, 0.4)'
                 }}>
                 डॅशबोर्ड उघडा ➔
               </Link>
               <button
                 onClick={logout}
                 style={{
-                  background: '#FFFFFF',
-                  border: '1.5px solid #CBD5E1',
-                  color: '#475569',
-                  fontWeight: 700,
-                  padding: '10px 18px',
+                  background: '#18181B',
+                  border: '1.5px solid #FF6B00',
+                  color: '#FFFFFF',
+                  fontWeight: 800,
+                  padding: '12px 20px',
                   borderRadius: '10px',
                   cursor: 'pointer'
                 }}>
@@ -313,28 +277,29 @@ export default function CRMLoginPage() {
           
           {/* Main Credentials Box */}
           <div style={{
-            background: '#FFFFFF',
-            border: '1.5px solid #FED7AA',
+            background: '#18181B',
+            border: '2px solid #FF6B00',
             borderRadius: '20px',
             padding: '32px 28px',
-            boxShadow: '0 10px 30px rgba(234, 88, 12, 0.08)'
+            boxShadow: '0 10px 35px rgba(0, 0, 0, 0.6)'
           }}>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0 0 6px', color: '#EA580C' }}>
+            <h2 style={{ fontSize: '1.45rem', fontWeight: 900, margin: '0 0 8px', color: '#FFFFFF' }}>
               अधिकृत अधिकारी लॉगिन
             </h2>
-            <p style={{ color: '#64748B', fontSize: '0.9rem', margin: '0 0 24px' }}>
+            <p style={{ color: '#FF8C00', fontSize: '0.92rem', margin: '0 0 24px', fontWeight: 700 }}>
               आपला प्रशासकीय पदभार निवडा व अधिकृत क्रेडेंशियल्स प्रविष्ट करा.
             </p>
 
             {errorMsg && (
               <div style={{
-                background: '#FEF2F2',
-                border: '1px solid #FECACA',
-                color: '#991B1B',
-                padding: '10px 14px',
+                background: '#7F1D1D',
+                border: '1.5px solid #FFFFFF',
+                color: '#FFFFFF',
+                padding: '12px 16px',
                 borderRadius: '8px',
-                fontSize: '0.88rem',
-                marginBottom: '16px'
+                fontSize: '0.9rem',
+                fontWeight: 800,
+                marginBottom: '18px'
               }}>
                 {errorMsg}
               </div>
@@ -343,7 +308,7 @@ export default function CRMLoginPage() {
             <form onSubmit={handleOfficialLogin}>
               {/* Role Select */}
               <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#431407', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 800, color: '#FF8C00', marginBottom: '6px' }}>
                   प्रशासकीय पदभार निवडा (Official Designation)
                 </label>
                 <select
@@ -353,11 +318,11 @@ export default function CRMLoginPage() {
                     width: '100%',
                     padding: '12px 14px',
                     borderRadius: '10px',
-                    background: '#FFF7ED',
-                    border: '1.5px solid #FED7AA',
-                    color: '#431407',
+                    background: '#111113',
+                    border: '1.5px solid #FF6B00',
+                    color: '#FFFFFF',
                     fontSize: '0.95rem',
-                    fontWeight: 600,
+                    fontWeight: 800,
                     outline: 'none'
                   }}>
                   {CRM_OFFICIAL_PROFILES.map(p => (
@@ -370,22 +335,23 @@ export default function CRMLoginPage() {
 
               {/* ID Input */}
               <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#431407', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 800, color: '#FF8C00', marginBottom: '6px' }}>
                   अधिकारी आयडी / अधिकृत मोबाईल
                 </label>
                 <input
                   type="text"
                   value={officerId}
                   onChange={(e) => setOfficerId(e.target.value)}
-                  placeholder="उदा. CM-SUPER-001 किंवा 9876500001"
+                  placeholder="उदा. CM-ADMIN-001 किंवा 9876500001"
                   style={{
                     width: '100%',
                     padding: '12px 14px',
                     borderRadius: '10px',
-                    background: '#FFFFFF',
-                    border: '1.5px solid #FED7AA',
-                    color: '#1E293B',
+                    background: '#111113',
+                    border: '1.5px solid #FF6B00',
+                    color: '#FFFFFF',
                     fontSize: '0.95rem',
+                    fontWeight: 700,
                     outline: 'none',
                     boxSizing: 'border-box'
                   }}
@@ -394,7 +360,7 @@ export default function CRMLoginPage() {
 
               {/* Password Input */}
               <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#431407', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 800, color: '#FF8C00', marginBottom: '6px' }}>
                   सुरक्षा पासवर्ड (Security Password)
                 </label>
                 <input
@@ -406,23 +372,24 @@ export default function CRMLoginPage() {
                     width: '100%',
                     padding: '12px 14px',
                     borderRadius: '10px',
-                    background: '#FFFFFF',
-                    border: '1.5px solid #FED7AA',
-                    color: '#1E293B',
+                    background: '#111113',
+                    border: '1.5px solid #FF6B00',
+                    color: '#FFFFFF',
                     fontSize: '0.95rem',
+                    fontWeight: 700,
                     outline: 'none',
                     boxSizing: 'border-box'
                   }}
                 />
               </div>
 
-              {/* 2FA Security Token */}
+              {/* 2FA Token */}
               <div style={{ marginBottom: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#431407' }}>
+                  <label style={{ fontSize: '0.88rem', fontWeight: 800, color: '#FF8C00' }}>
                     २-स्टेप सुरक्षा पिन (2FA Authenticator Token)
                   </label>
-                  <span style={{ fontSize: '0.75rem', color: '#16A34A', fontWeight: 700 }}>✓ Verified Token</span>
+                  <span style={{ fontSize: '0.78rem', color: '#FFFFFF', fontWeight: 800, background: '#FF6B00', padding: '2px 8px', borderRadius: '4px' }}>✓ Verified Token</span>
                 </div>
                 <input
                   type="text"
@@ -431,16 +398,17 @@ export default function CRMLoginPage() {
                   maxLength={6}
                   style={{
                     width: '100%',
-                    padding: '10px 14px',
+                    padding: '12px 14px',
                     borderRadius: '10px',
-                    background: '#FFF7ED',
-                    border: '1.5px solid #FED7AA',
-                    color: '#EA580C',
-                    fontSize: '1rem',
-                    fontWeight: 800,
+                    background: '#111113',
+                    border: '2px solid #FF6B00',
+                    color: '#FFFFFF',
+                    fontSize: '1.1rem',
+                    fontWeight: 900,
                     letterSpacing: '4px',
                     boxSizing: 'border-box',
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    outline: 'none'
                   }}
                 />
               </div>
@@ -451,105 +419,94 @@ export default function CRMLoginPage() {
                 disabled={loading}
                 style={{
                   width: '100%',
-                  background: 'linear-gradient(135deg, #EA580C 0%, #D97706 100%)',
+                  background: 'linear-gradient(135deg, #FF6B00 0%, #EA580C 100%)',
                   color: '#FFFFFF',
                   fontWeight: 900,
                   fontSize: '1.05rem',
-                  padding: '14px',
+                  padding: '15px',
                   borderRadius: '12px',
-                  border: 'none',
+                  border: '2px solid #FFFFFF',
                   cursor: loading ? 'wait' : 'pointer',
-                  boxShadow: '0 4px 18px rgba(234, 88, 12, 0.3)',
+                  boxShadow: '0 4px 20px rgba(255, 107, 0, 0.45)',
                   transition: 'transform 0.15s ease'
                 }}>
-                {loading ? '🔐 क्रेडेंशियल्स पडताळत आहे...' : 'प्रशासकीय CRM मध्ये प्रवेश करा (Access CRM) ➔'}
+                {loading ? '🔐 पडताळत आहे...' : 'प्रशासकीय CRM मध्ये प्रवेश करा (Access CRM) ➔'}
               </button>
             </form>
 
             <div style={{
               marginTop: '24px',
               paddingTop: '20px',
-              borderTop: '1px solid #FED7AA',
+              borderTop: '1px solid rgba(255, 107, 0, 0.3)',
               textAlign: 'center',
-              fontSize: '0.88rem',
-              color: '#64748B'
+              fontSize: '0.9rem',
+              color: '#FFFFFF'
             }}>
               सामान्य सभासद आहात का?{' '}
-              <Link to="/login" style={{ color: '#EA580C', fontWeight: 700, textDecoration: 'none' }}>
+              <Link to="/login" style={{ color: '#FF8C00', fontWeight: 800, textDecoration: 'underline' }}>
                 सार्वजनिक सभासद लॉगिन येथे करा →
               </Link>
             </div>
           </div>
 
-          {/* Quick Officer Switch Cards (Pre-configured Official Profiles) */}
+          {/* Quick Officer Switch Cards */}
           <div>
             <div style={{ marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 4px', color: '#EA580C' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: '0 0 6px', color: '#FFFFFF' }}>
                 ⚡ अधिकृत पदभार प्रोफाइल सूची (Quick Role Portals)
               </h3>
-              <p style={{ color: '#64748B', fontSize: '0.85rem', margin: 0 }}>
-                चाचणी व अधिकृत पडताळणीसाठी खालीलपैकी कोणत्याही अधिकृत पदावर क्लिक करून थेट संबंधित नियंत्रण कक्ष उघडा:
+              <p style={{ color: '#FF8C00', fontSize: '0.88rem', margin: 0, fontWeight: 700 }}>
+                खालीलपैकी कोणत्याही अधिकृत पदावर क्लिक करून थेट संबंधित नियंत्रण कक्ष उघडा:
               </p>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {CRM_OFFICIAL_PROFILES.map((p) => (
                 <div
                   key={p.role}
                   onClick={() => handleQuickOfficialAuth(p)}
                   style={{
-                    background: '#FFFFFF',
-                    border: '1.5px solid #FED7AA',
+                    background: '#18181B',
+                    border: '2px solid #FF6B00',
                     borderRadius: '14px',
-                    padding: '14px 18px',
+                    padding: '16px 20px',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    boxShadow: '0 2px 8px rgba(234, 88, 12, 0.05)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#FFF7ED';
-                    e.currentTarget.style.borderColor = '#EA580C';
-                    e.currentTarget.style.transform = 'translateX(4px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#FFFFFF';
-                    e.currentTarget.style.borderColor = '#FED7AA';
-                    e.currentTarget.style.transform = 'translateX(0)';
+                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.4)'
                   }}>
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <span style={{ fontWeight: 800, fontSize: '0.98rem', color: '#431407' }}>{p.title}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                      <span style={{ fontWeight: 900, fontSize: '1.05rem', color: '#FFFFFF' }}>{p.title}</span>
                       <span style={{
-                        background: '#FFF7ED',
-                        color: '#EA580C',
-                        fontSize: '0.72rem',
-                        fontWeight: 800,
-                        padding: '2px 8px',
-                        borderRadius: '999px',
-                        border: '1px solid #FED7AA'
+                        background: '#FF6B00',
+                        color: '#FFFFFF',
+                        fontSize: '0.75rem',
+                        fontWeight: 900,
+                        padding: '3px 8px',
+                        borderRadius: '6px'
                       }}>
                         {p.badge}
                       </span>
                     </div>
-                    <div style={{ color: '#64748B', fontSize: '0.82rem', marginBottom: '2px' }}>
-                      अधिकारी: <strong style={{ color: '#1E293B' }}>{p.name}</strong> • आयडी: {p.id}
+                    <div style={{ color: '#FF8C00', fontSize: '0.85rem', marginBottom: '2px', fontWeight: 700 }}>
+                      अधिकारी: <strong style={{ color: '#FFFFFF' }}>{p.name}</strong> • आयडी: {p.id}
                     </div>
-                    <div style={{ color: '#94A3B8', fontSize: '0.78rem' }}>
+                    <div style={{ color: '#FFFFFF', fontSize: '0.8rem', fontWeight: 600 }}>
                       {p.desc}
                     </div>
                   </div>
 
                   <div style={{
-                    background: '#FFF7ED',
-                    border: '1px solid #FED7AA',
+                    background: 'linear-gradient(135deg, #FF6B00, #EA580C)',
+                    border: '1.5px solid #FFFFFF',
                     borderRadius: '8px',
-                    padding: '8px 12px',
+                    padding: '8px 14px',
                     fontSize: '0.85rem',
-                    fontWeight: 700,
-                    color: '#EA580C',
+                    fontWeight: 900,
+                    color: '#FFFFFF',
                     whiteSpace: 'nowrap'
                   }}>
                     प्रवेश करा →
@@ -558,18 +515,19 @@ export default function CRMLoginPage() {
               ))}
             </div>
 
-            {/* Official Security Disclaimer */}
+            {/* Security Disclaimer */}
             <div style={{
-              marginTop: '20px',
-              padding: '12px 16px',
-              background: '#FFF7ED',
-              borderRadius: '10px',
-              border: '1px solid #FED7AA',
-              fontSize: '0.78rem',
-              color: '#9A3412',
-              lineHeight: 1.5
+              marginTop: '22px',
+              padding: '14px 18px',
+              background: '#18181B',
+              borderRadius: '12px',
+              border: '2px solid #FF6B00',
+              fontSize: '0.85rem',
+              color: '#FFFFFF',
+              lineHeight: 1.5,
+              fontWeight: 600
             }}>
-              ⚖️ <strong>सुरक्षा सूचना:</strong> हे पोर्टल फक्त अधिकृत प्रशासकीय कामकाजासाठी आहे. प्रत्येक लॉगिनचा आयपी ॲड्रेस, वेळ व बदल सिस्टीम ऑडिट लॉग (Audit Trail) मध्ये DPDP कायदा २०२३ अंतर्गत स्वयंचलित नोंदवला जातो.
+              ⚖️ <strong style={{ color: '#FF8C00' }}>सुरक्षा सूचना:</strong> हे पोर्टल फक्त अधिकृत प्रशासकीय कामकाजासाठी आहे. प्रत्येक लॉगिनचा आयपी ॲड्रेस, वेळ व बदल सिस्टीम ऑडिट लॉग (Audit Trail) मध्ये DPDP कायदा २०२३ अंतर्गत स्वयंचलित नोंदवला जातो.
             </div>
           </div>
 
