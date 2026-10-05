@@ -219,14 +219,16 @@ const legacyRedirects = [
 ];
 
 import { ToastProvider } from './context/ToastContext';
+import { LanguageProvider } from './context/LanguageContext';
 
 export default function App() {
   return (
     <ToastProvider>
-      <AuthProvider>
-        <ScopeProvider>
-          <SiteContentProvider>
-            <Routes>
+      <LanguageProvider>
+        <AuthProvider>
+          <ScopeProvider>
+            <SiteContentProvider>
+              <Routes>
           {/* Automatic Clean Redirects from legacy .html to clean React routes */}
           {legacyRedirects.map((r, i) => (
             <Route key={i} path={r.from} element={<Navigate to={r.to} replace />} />
@@ -565,6 +567,7 @@ export default function App() {
           </SiteContentProvider>
         </ScopeProvider>
       </AuthProvider>
+      </LanguageProvider>
     </ToastProvider>
   );
 }

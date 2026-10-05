@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSiteContent } from '../../context/SiteContentContext';
+import LanguageSwitcher from '../common/LanguageSwitcher';
 
 export default function SiteHeader({ onOpenSearch }) {
   const { user, logout } = useAuth();
@@ -9,6 +10,14 @@ export default function SiteHeader({ onOpenSearch }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expandedPillar, setExpandedPillar] = useState(null);
   const navigate = useNavigate();
+
+  const handleSearchClick = () => {
+    if (onOpenSearch) {
+      onOpenSearch();
+    } else {
+      navigate('/search');
+    }
+  };
 
   const handleLinkClick = () => {
     setMobileOpen(false);
@@ -60,7 +69,7 @@ export default function SiteHeader({ onOpenSearch }) {
             <span className="topbar-hide-tablet">|</span>
             <Link to="/about" className="topbar-hide-tablet">संस्था परिचय</Link>
             <span className="topbar-hide-tablet">|</span>
-            <Link to="/governance" className="topbar-hide-tablet">DPDP धोरण</Link>
+            <LanguageSwitcher variant="topbar" />
           </div>
         </div>
       </div>
@@ -357,31 +366,31 @@ export default function SiteHeader({ onOpenSearch }) {
 
           {/* Header Action Buttons */}
           <div className="header-actions">
-            {onOpenSearch && (
-              <button
-                type="button"
-                className="header-search-btn"
-                onClick={onOpenSearch}
-                title="शोध (Ctrl+K)"
-                aria-label="शोध"
-                style={{
-                  background: '#FFF8F0',
-                  border: '1.5px solid #FFCC80',
-                  borderRadius: '10px',
-                  width: '38px',
-                  height: '38px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  color: '#C2410C',
-                  flexShrink: 0
-                }}
-              >
-                🔍
-              </button>
-            )}
+            <button
+              type="button"
+              className="header-search-btn"
+              onClick={handleSearchClick}
+              title="शोध / Search (Ctrl+K)"
+              aria-label="शोध / Search"
+              style={{
+                background: '#FFF8F0',
+                border: '1.5px solid #FFCC80',
+                borderRadius: '10px',
+                width: '38px',
+                height: '38px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1rem',
+                cursor: 'pointer',
+                color: '#C2410C',
+                flexShrink: 0
+              }}
+            >
+              🔍
+            </button>
+
+            <LanguageSwitcher variant="header" />
 
             <Link
               to="/universe"
