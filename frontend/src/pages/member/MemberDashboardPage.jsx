@@ -253,7 +253,7 @@ export default function MemberDashboardPage() {
                 transform-style: preserve-3d;
                 transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                 cursor: pointer;
-                box-shadow: 0 24px 60px rgba(0,0,0,0.38);
+                box-shadow: 0 16px 40px rgba(124, 29, 5, 0.12), 0 2px 10px rgba(0,0,0,0.06);
               }
               .dash-smart-card.flipped {
                 transform: rotateY(180deg);
@@ -270,24 +270,25 @@ export default function MemberDashboardPage() {
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                color: #fff;
+                color: #1E293B;
                 box-sizing: border-box;
-                border: 1.5px solid rgba(212, 175, 55, 0.5);
+                border: 2px solid #FED7AA;
+                background: #FFFFFF;
               }
               .dash-card-front {
-                background: linear-gradient(135deg, #1C0F0F 0%, #2D1414 45%, #180909 100%);
+                background: #FFFFFF;
                 position: relative;
               }
               .dash-card-front::before {
                 content: '';
                 position: absolute;
                 inset: 0;
-                background-image: radial-gradient(rgba(212, 175, 55, 0.14) 1.2px, transparent 1.2px);
+                background-image: radial-gradient(rgba(234, 88, 12, 0.10) 1.2px, transparent 1.2px);
                 background-size: 16px 16px;
                 pointer-events: none;
               }
               .dash-card-back {
-                background: linear-gradient(135deg, #150A0A 0%, #220E0E 70%, #150A0A 100%);
+                background: #FFFFFF;
                 transform: rotateY(180deg);
               }
               .dash-emv-chip {
@@ -295,8 +296,8 @@ export default function MemberDashboardPage() {
                 height: 32px;
                 background: linear-gradient(135deg, #ECC86A 0%, #FFF3B3 50%, #C69830 100%);
                 border-radius: 6px;
-                border: 1px solid #7C5C00;
-                box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+                border: 1px solid #B45309;
+                box-shadow: inset 0 1px 3px rgba(0,0,0,0.25);
                 position: relative;
                 flex-shrink: 0;
               }
@@ -307,7 +308,7 @@ export default function MemberDashboardPage() {
                 left: 0;
                 right: 0;
                 height: 1px;
-                background: rgba(124, 92, 0, 0.6);
+                background: rgba(180, 83, 9, 0.6);
               }
             `}</style>
 
@@ -402,10 +403,10 @@ export default function MemberDashboardPage() {
                             style={{ width: '38px', height: '38px', borderRadius: '50%', border: '1.5px solid #F59E0B', background: '#FFFFFF', padding: '1px', objectFit: 'contain' }}
                           />
                           <div>
-                            <div style={{ fontSize: '1.05rem', fontWeight: 900, letterSpacing: '0.6px', color: '#F8FAFC' }}>
+                            <div style={{ fontSize: '1.05rem', fontWeight: 900, letterSpacing: '0.6px', color: '#7C1D05' }}>
                               CONNECT MARATHA
                             </div>
-                            <div style={{ fontSize: '0.64rem', color: '#CBD5E1', letterSpacing: '0.5px' }}>
+                            <div style={{ fontSize: '0.64rem', color: '#64748B', letterSpacing: '0.5px', fontWeight: 600 }}>
                               अखिल भारतीय अधिकृत सभासद ओळखपत्र
                             </div>
                           </div>
@@ -413,9 +414,9 @@ export default function MemberDashboardPage() {
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <span style={{
-                            background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.35), rgba(245, 158, 11, 0.2))',
-                            border: '1px solid #F59E0B',
-                            color: '#FDE68A',
+                            background: '#FFF7ED',
+                            border: '1px solid #FED7AA',
+                            color: '#C2410C',
                             fontSize: '0.72rem',
                             padding: '4px 10px',
                             borderRadius: '12px',
@@ -424,7 +425,7 @@ export default function MemberDashboardPage() {
                           }}>
                             ⭐ {memberTier} सदस्य
                           </span>
-                          <span style={{ fontSize: '1rem', color: '#F59E0B', opacity: 0.9, transform: 'rotate(90deg)', display: 'inline-block' }} title="Contactless NFC">
+                          <span style={{ fontSize: '1rem', color: '#EA580C', opacity: 0.9, transform: 'rotate(90deg)', display: 'inline-block' }} title="Contactless NFC">
                             📶
                           </span>
                         </div>
@@ -440,8 +441,8 @@ export default function MemberDashboardPage() {
                           border: '2px solid #F59E0B',
                           overflow: 'hidden',
                           flexShrink: 0,
-                          boxShadow: '0 6px 16px rgba(0,0,0,0.55)',
-                          background: '#2D1414',
+                          boxShadow: '0 4px 12px rgba(124,29,5,0.15)',
+                          background: '#FFF7ED',
                           position: 'relative'
                         }}>
                           <img
@@ -455,17 +456,17 @@ export default function MemberDashboardPage() {
                         <div style={{ flex: 1 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                             <div className="dash-emv-chip" title="EMV Smart Security Chip" />
-                            <span style={{ fontSize: '0.62rem', color: '#94A3B8', letterSpacing: '1px', fontWeight: 700 }}>SECURE ID CHIP</span>
-                            <span style={{ fontSize: '0.72rem', color: '#F59E0B', fontWeight: 700 }}>• NFC 2.0</span>
+                            <span style={{ fontSize: '0.62rem', color: '#64748B', letterSpacing: '1px', fontWeight: 700 }}>SECURE ID CHIP</span>
+                            <span style={{ fontSize: '0.72rem', color: '#EA580C', fontWeight: 700 }}>• NFC 2.0</span>
                           </div>
 
-                          <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#FFFFFF', lineHeight: 1.2, fontFamily: 'Baloo 2' }}>
+                          <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0F172A', lineHeight: 1.2, fontFamily: 'Baloo 2' }}>
                             {memberName}
                           </div>
-                          <div style={{ fontSize: '0.84rem', color: '#FCD34D', fontWeight: 700, marginTop: '2px' }}>
+                          <div style={{ fontSize: '0.84rem', color: '#C2410C', fontWeight: 800, marginTop: '2px' }}>
                             {memberRole}
                           </div>
-                          <div style={{ fontSize: '0.76rem', color: '#CBD5E1', marginTop: '2px' }}>
+                          <div style={{ fontSize: '0.76rem', color: '#475569', marginTop: '2px', fontWeight: 600 }}>
                             📍 {memberCity}
                           </div>
                         </div>
@@ -474,13 +475,13 @@ export default function MemberDashboardPage() {
                       {/* Bottom Bar: Member ID & Crisp Laser QR */}
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', position: 'relative', zIndex: 1 }}>
                         <div>
-                          <div style={{ fontSize: '0.62rem', color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 700 }}>
+                          <div style={{ fontSize: '0.62rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 700 }}>
                             MEMBER ID
                           </div>
-                          <div style={{ fontSize: '1.1rem', fontWeight: 900, letterSpacing: '1.5px', color: '#FDE68A', fontFamily: 'monospace' }}>
+                          <div style={{ fontSize: '1.1rem', fontWeight: 900, letterSpacing: '1.5px', color: '#7C1D05', fontFamily: 'monospace' }}>
                             {memberIdFormatted}
                           </div>
-                          <div style={{ fontSize: '0.68rem', color: '#34D399', marginTop: '2px', fontWeight: 700 }}>
+                          <div style={{ fontSize: '0.68rem', color: '#15803D', marginTop: '2px', fontWeight: 800 }}>
                             ✓ DPDP २०२३ व ISO २७००१ प्रमाणित • ✔ अधिकृत सक्रिय
                           </div>
                         </div>
@@ -488,12 +489,13 @@ export default function MemberDashboardPage() {
                         <div style={{ textAlign: 'right' }}>
                           <div style={{
                             background: '#FFFFFF',
+                            border: '1.5px solid #FED7AA',
                             padding: '4px',
                             borderRadius: '6px',
                             display: 'inline-block',
-                            boxShadow: '0 3px 10px rgba(0,0,0,0.35)'
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
                           }}>
-                            <svg width="54" height="54" viewBox="0 0 25 25" fill="#111">
+                            <svg width="54" height="54" viewBox="0 0 25 25" fill="#7C1D05">
                               <rect x="0" y="0" width="7" height="7"/>
                               <rect x="1" y="1" width="5" height="5" fill="#fff"/>
                               <rect x="2" y="2" width="3" height="3"/>
@@ -515,7 +517,7 @@ export default function MemberDashboardPage() {
                               <rect x="20" y="20" width="4" height="4"/>
                             </svg>
                           </div>
-                          <div style={{ fontSize: '0.6rem', color: '#94A3B8', marginTop: '2px' }}>Scan to Verify</div>
+                          <div style={{ fontSize: '0.6rem', color: '#64748B', marginTop: '2px', fontWeight: 700 }}>Scan to Verify</div>
                         </div>
                       </div>
                     </div>
@@ -525,47 +527,47 @@ export default function MemberDashboardPage() {
                       {/* Magnetic Stripe */}
                       <div style={{
                         width: 'calc(100% + 48px)',
-                        height: '40px',
-                        background: '#0B0B0E',
+                        height: '38px',
+                        background: 'linear-gradient(90deg, #7C1D05 0%, #991B1B 50%, #7C1D05 100%)',
                         margin: '-24px -24px 14px -24px',
-                        borderBottom: '1px solid rgba(255,255,255,0.12)',
-                        boxShadow: 'inset 0 -2px 6px rgba(0,0,0,0.5)'
+                        borderBottom: '1.5px solid #F59E0B',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                       }} />
 
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.15)', paddingBottom: '8px' }}>
-                        <span style={{ fontSize: '0.84rem', fontWeight: 800, color: '#FCD34D' }}>CONNECT MARATHA COUNCIL</span>
-                        <span style={{ fontSize: '0.72rem', color: '#CBD5E1' }}>हेल्पलाईन: १८००-२३३-१९२४</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #FED7AA', paddingBottom: '8px' }}>
+                        <span style={{ fontSize: '0.84rem', fontWeight: 900, color: '#7C1D05' }}>CONNECT MARATHA COUNCIL</span>
+                        <span style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700 }}>हेल्पलाईन: १८००-२३३-१९२४</span>
                       </div>
 
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.82rem', margin: '10px 0' }}>
                         <div>
-                          <span style={{ color: '#94A3B8', fontSize: '0.68rem' }}>रक्तगट (Blood Group):</span>
-                          <div style={{ fontWeight: 800, color: '#F87171' }}>{bloodGroup}</div>
+                          <span style={{ color: '#64748B', fontSize: '0.68rem', fontWeight: 600 }}>रक्तगट (Blood Group):</span>
+                          <div style={{ fontWeight: 800, color: '#DC2626' }}>{bloodGroup}</div>
                         </div>
                         <div>
-                          <span style={{ color: '#94A3B8', fontSize: '0.68rem' }}>संबद्ध चॅप्टर (Chapter):</span>
-                          <div style={{ fontWeight: 700, color: '#FFFFFF' }}>{memberChapter}</div>
+                          <span style={{ color: '#64748B', fontSize: '0.68rem', fontWeight: 600 }}>संबद्ध चॅप्टर (Chapter):</span>
+                          <div style={{ fontWeight: 800, color: '#0F172A' }}>{memberChapter}</div>
                         </div>
                         <div>
-                          <span style={{ color: '#94A3B8', fontSize: '0.68rem' }}>वैधता (Valid Thru):</span>
-                          <div style={{ fontWeight: 700, color: '#34D399' }}>आजीवन (Lifetime)</div>
+                          <span style={{ color: '#64748B', fontSize: '0.68rem', fontWeight: 600 }}>वैधता (Valid Thru):</span>
+                          <div style={{ fontWeight: 800, color: '#15803D' }}>आजीवन (Lifetime)</div>
                         </div>
                         <div>
-                          <span style={{ color: '#94A3B8', fontSize: '0.68rem' }}>आपत्कालीन संपर्क:</span>
-                          <div style={{ fontWeight: 700, color: '#FFFFFF' }}>{emergencyPhone}</div>
+                          <span style={{ color: '#64748B', fontSize: '0.68rem', fontWeight: 600 }}>आपत्कालीन संपर्क:</span>
+                          <div style={{ fontWeight: 800, color: '#0F172A' }}>{emergencyPhone}</div>
                         </div>
                       </div>
 
                       {/* Signature strip & Disclaimer */}
-                      <div style={{ borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ fontSize: '0.64rem', color: '#94A3B8', maxWidth: '300px', lineHeight: 1.4 }}>
+                      <div style={{ borderTop: '1px solid #FED7AA', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ fontSize: '0.64rem', color: '#64748B', maxWidth: '300px', lineHeight: 1.4 }}>
                           हे ओळखपत्र केवळ अधिकृत CONNECT MARATHA सदस्यासाठी वैध आहे. गैरवापर कायद्याने दंडनीय आहे.
                         </div>
                         <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.2rem', color: '#FCD34D', fontWeight: 700 }}>
+                          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.2rem', color: '#7C1D05', fontWeight: 800 }}>
                             Dr. J. Pawar
                           </div>
-                          <div style={{ fontSize: '0.6rem', color: '#94A3B8' }}>मुख्य सचिव अधिकृत स्वाक्षरी</div>
+                          <div style={{ fontSize: '0.6rem', color: '#64748B', fontWeight: 700 }}>मुख्य सचिव अधिकृत स्वाक्षरी</div>
                         </div>
                       </div>
                     </div>

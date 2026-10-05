@@ -88,249 +88,280 @@ export default function SiteHeader({ onOpenSearch }) {
 
           {/* Desktop Navigation (Hidden <= 1024px) */}
           <nav className="desktop-nav">
-            {/* Pillar 1: इतिहास व वारसा */}
-            <div className="nav-item-has-mega">
-              <Link to="/history" onClick={handleLinkClick}>⚔️ इतिहास व वारसा ▾</Link>
-              <div className="mega-menu">
-                <div className="mega-menu-grid">
-                  <div className="mega-col">
-                    <div className="mega-col-title">🚩 मराठा शौर्यगाथा</div>
-                    <Link to="/history" onClick={handleLinkClick}>📜 मराठा कालपट (१६३०-१८१८)</Link>
-                    <Link to="/history/battles" onClick={handleLinkClick}>⚔️ प्रमुख ७ रणांगणे व व्यूहरचना</Link>
-                    <Link to="/forts" onClick={handleLinkClick}>🏰 सह्याद्रीचे गड-किल्ले (३५०+)</Link>
-                    <Link to="/history/navy" onClick={handleLinkClick}>⚓ मराठा आरमार व जलदुर्ग</Link>
-                    <Link to="/quiz" onClick={handleLinkClick} style={{ color: 'var(--maroon-800)', fontWeight: 700 }}>🎯 स्वराज्य इतिहास महाक्विझ</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">🕯️ स्मृती व ग्रंथ संपदा</div>
-                    <Link to="/shivcharitra" onClick={handleLinkClick} style={{ color: '#C73800', fontWeight: 800 }}>🚩 शिवचरित्र कथन (१५ भाग)</Link>
-                    <Link to="/history/balidan-maas" onClick={handleLinkClick}>🕯️ धर्मवीर बलिदान मास स्मरण</Link>
-                    <Link to="/history/granthalaya" onClick={handleLinkClick}>📚 मराठा ग्रंथालय व बखरी</Link>
-                    <Link to="/history/warriors" onClick={handleLinkClick}>👑 ९६ कुळे व सरदार घराणी</Link>
-                    <Link to="/article" onClick={handleLinkClick}>📖 सर्व इतिहास संशोधन आलेख</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">✊ समाज लढा व वारसा</div>
-                    <Link to="/history/movements" onClick={handleLinkClick}>🚩 मराठा क्रांती मूक मोर्चे (५८+)</Link>
-                    <Link to="/history/dates" onClick={handleLinkClick}>📅 ऐतिहासिक दिनविशेष</Link>
-                    <Link to="/gallery" onClick={handleLinkClick}>🖼️ आपुला महाराष्ट्र छायाचित्र दालन</Link>
-                    <Link to="/history/shivaji-maharaj" onClick={handleLinkClick}>📖 विशेष संशोधन लेख</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">🌟 गौरव व अचीव्हर्स</div>
-                    <Link to="/about" onClick={handleLinkClick}>🏆 राष्ट्रीय मराठा गौरव</Link>
-                    <Link to="/about" onClick={handleLinkClick}>🏛️ कनेक्ट मराठा परिचय व सनद</Link>
-                    <Link to="/governance" onClick={handleLinkClick}>🎯 व्हिजन, धोरण व DPDP</Link>
-                    <Link to="/governance" onClick={handleLinkClick}>🧭 मास्टर ब्लूप्रिंट (५० विभाग)</Link>
-                    <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
+            {!user ? (
+              <>
+                <NavLink to="/about" onClick={handleLinkClick}>
+                  🏛️ आमच्याबद्दल
+                </NavLink>
+                <NavLink to="/governance" onClick={handleLinkClick}>
+                  🎯 व्हिजन व ध्येय
+                </NavLink>
+                <NavLink to="/blueprint" onClick={handleLinkClick}>
+                  🏆 उद्दिष्टे व संकल्प
+                </NavLink>
+                <NavLink to="/register" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800 }}>
+                  ⭐ सहभागी का व्हावे?
+                </NavLink>
+                <NavLink to="/roles-matrix" onClick={handleLinkClick} style={{ color: '#B45309', fontWeight: 800 }}>
+                  ⚖️ ५६ पदे व पात्रता
+                </NavLink>
+                <NavLink to="/card" onClick={handleLinkClick}>
+                  🪪 डिजिटल ओळखपत्र
+                </NavLink>
+                <NavLink to="/universe" onClick={handleLinkClick}>
+                  🌌 महाविश्व
+                </NavLink>
+                <NavLink to="/contact" onClick={handleLinkClick}>
+                  ☎️ संपर्क
+                </NavLink>
+              </>
+            ) : (
+              <>
+                {/* Pillar 1: इतिहास व वारसा */}
+                <div className="nav-item-has-mega">
+                  <Link to="/history" onClick={handleLinkClick}>⚔️ इतिहास व वारसा ▾</Link>
+                  <div className="mega-menu">
+                    <div className="mega-menu-grid">
+                      <div className="mega-col">
+                        <div className="mega-col-title">🚩 मराठा शौर्यगाथा</div>
+                        <Link to="/history" onClick={handleLinkClick}>📜 मराठा कालपट (१६३०-१८१८)</Link>
+                        <Link to="/history/battles" onClick={handleLinkClick}>⚔️ प्रमुख ७ रणांगणे व व्यूहरचना</Link>
+                        <Link to="/forts" onClick={handleLinkClick}>🏰 सह्याद्रीचे गड-किल्ले (३५०+)</Link>
+                        <Link to="/history/navy" onClick={handleLinkClick}>⚓ मराठा आरमार व जलदुर्ग</Link>
+                        <Link to="/quiz" onClick={handleLinkClick} style={{ color: 'var(--maroon-800)', fontWeight: 700 }}>🎯 स्वराज्य इतिहास महाक्विझ</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">🕯️ स्मृती व ग्रंथ संपदा</div>
+                        <Link to="/shivcharitra" onClick={handleLinkClick} style={{ color: '#C73800', fontWeight: 800 }}>🚩 शिवचरित्र कथन (१५ भाग)</Link>
+                        <Link to="/history/balidan-maas" onClick={handleLinkClick}>🕯️ धर्मवीर बलिदान मास स्मरण</Link>
+                        <Link to="/history/granthalaya" onClick={handleLinkClick}>📚 मराठा ग्रंथालय व बखरी</Link>
+                        <Link to="/history/warriors" onClick={handleLinkClick}>👑 ९६ कुळे व सरदार घराणी</Link>
+                        <Link to="/article" onClick={handleLinkClick}>📖 सर्व इतिहास संशोधन आलेख</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">✊ समाज लढा व वारसा</div>
+                        <Link to="/history/movements" onClick={handleLinkClick}>🚩 मराठा क्रांती मूक मोर्चे (५८+)</Link>
+                        <Link to="/history/dates" onClick={handleLinkClick}>📅 ऐतिहासिक दिनविशेष</Link>
+                        <Link to="/gallery" onClick={handleLinkClick}>🖼️ आपुला महाराष्ट्र छायाचित्र दालन</Link>
+                        <Link to="/history/shivaji-maharaj" onClick={handleLinkClick}>📖 विशेष संशोधन लेख</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">🌟 गौरव व अचीव्हर्स</div>
+                        <Link to="/about" onClick={handleLinkClick}>🏆 राष्ट्रीय मराठा गौरव</Link>
+                        <Link to="/about" onClick={handleLinkClick}>🏛️ कनेक्ट मराठा परिचय व सनद</Link>
+                        <Link to="/governance" onClick={handleLinkClick}>🎯 व्हिजन, धोरण व DPDP</Link>
+                        <Link to="/governance" onClick={handleLinkClick}>🧭 मास्टर ब्लूप्रिंट (५० विभाग)</Link>
+                        <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Pillar: संस्कृती व वारसा ज्ञानकोश */}
-            <div className="nav-item-has-mega">
-              <Link to="/culture" onClick={handleLinkClick}>🏛️ संस्कृती व ज्ञानकोश ▾</Link>
-              <div className="mega-menu">
-                <div className="mega-menu-grid">
-                  <div className="mega-col">
-                    <div className="mega-col-title">🌍 सांस्कृतिक विविधता व महाविश्व</div>
-                    <Link to="/platform" onClick={handleLinkClick} style={{ color: '#9A3412', fontWeight: 800, background: '#FEF3C7', padding: '5px 8px', borderRadius: '6px', display: 'block', marginBottom: '5px', border: '1px solid #FCD34D' }}>🗺️ महाराष्ट्र डेटा प्लॅटफॉर्म (50+ Datasets)</Link>
-                    <Link to="/universe" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 800, background: '#FFEDD5', padding: '5px 8px', borderRadius: '6px', display: 'block', marginBottom: '5px' }}>🌌 संपूर्ण महाराष्ट्र महाविश्व (४९ वैशिष्ट्ये)</Link>
-                    <Link to="/time-machine" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 700 }}>⏳ महाराष्ट्र टाइम मशीन (१२ कालखंड)</Link>
-                    <Link to="/culture/shivkal-festivals" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 700 }}>🚩 शिवकालीन उत्सव (१६३०-१६८०)</Link>
-                    <Link to="/culture" onClick={handleLinkClick}>🗺️ ८ प्रादेशिक सांस्कृतिक प्रोफाइल</Link>
-                    <Link to="/culture/dialects" onClick={handleLinkClick}>🗣️ महाराष्ट्राच्या बोली व उच्चार</Link>
-                    <Link to="/culture/food" onClick={handleLinkClick}>🍲 खाद्यसंस्कृती व उगम इतिहास</Link>
-                    <Link to="/culture/symbols" onClick={handleLinkClick}>🏷️ राजमुद्रा व मराठा चिन्हे</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">🛕 ग्रामदैवत, जत्रा व लोककला</div>
-                    <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🛕 ग्रामदैवत व कुलदैवत ज्ञानकार्ड</Link>
-                    <Link to="/jatra" onClick={handleLinkClick}>🎪 जत्रा व वार्षिक यात्रा दिनदर्शिका</Link>
-                    <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🎭 दशावतार, तमाशा व पोवाडा</Link>
-                    <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🏏 विटी-दांडू व पारंपरिक खेळ</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">🗺️ वारसा नकाशा व नॉलेज ग्राफ</div>
-                    <Link to="/culture/heritage-map" onClick={handleLinkClick}>🗺️ बहुस्तरीय परस्परसंवादी नकाशा</Link>
-                    <Link to="/history/knowledge-graph" onClick={handleLinkClick}>⚡ घटना ↔ स्थळे नॉलेज ग्राफ</Link>
-                    <Link to="/temples" onClick={handleLinkClick}>🛕 प्रमुख मंदिरे व शक्तिपीठे</Link>
-                    <Link to="/forts" onClick={handleLinkClick}>🏰 सह्याद्रीचे ३५०+ गडकिल्ले</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">📚 संदर्भ चौकट व समुदाय</div>
-                    <Link to="/community/oral-history" onClick={handleLinkClick}>✍️ मौखिक इतिहास संकलन (Tier 4)</Link>
-                    <Link to="/history/granthalaya" onClick={handleLinkClick}>📚 पुराभिलेख व ऐतिहासिक ग्रंथालय</Link>
-                    <Link to="/history/dates" onClick={handleLinkClick}>📅 ऐतिहासिक दिनविशेष</Link>
-                    <Link to="/gallery" onClick={handleLinkClick}>🖼️ आपुला महाराष्ट्र छायाचित्र दालन</Link>
+                {/* Pillar: संस्कृती व वारसा ज्ञानकोश */}
+                <div className="nav-item-has-mega">
+                  <Link to="/culture" onClick={handleLinkClick}>🏛️ संस्कृती व ज्ञानकोश ▾</Link>
+                  <div className="mega-menu">
+                    <div className="mega-menu-grid">
+                      <div className="mega-col">
+                        <div className="mega-col-title">🌍 सांस्कृतिक विविधता व महाविश्व</div>
+                        <Link to="/platform" onClick={handleLinkClick} style={{ color: '#9A3412', fontWeight: 800, background: '#FEF3C7', padding: '5px 8px', borderRadius: '6px', display: 'block', marginBottom: '5px', border: '1px solid #FCD34D' }}>🗺️ महाराष्ट्र डेटा प्लॅटफॉर्म (50+ Datasets)</Link>
+                        <Link to="/universe" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 800, background: '#FFEDD5', padding: '5px 8px', borderRadius: '6px', display: 'block', marginBottom: '5px' }}>🌌 संपूर्ण महाराष्ट्र महाविश्व (४९ वैशिष्ट्ये)</Link>
+                        <Link to="/time-machine" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 700 }}>⏳ महाराष्ट्र टाइम मशीन (१२ कालखंड)</Link>
+                        <Link to="/culture/shivkal-festivals" onClick={handleLinkClick} style={{ color: 'var(--maroon-800, #7C1D05)', fontWeight: 700 }}>🚩 शिवकालीन उत्सव (१६३०-१६८०)</Link>
+                        <Link to="/culture" onClick={handleLinkClick}>🗺️ ८ प्रादेशिक सांस्कृतिक प्रोफाइल</Link>
+                        <Link to="/culture/dialects" onClick={handleLinkClick}>🗣️ महाराष्ट्राच्या बोली व उच्चार</Link>
+                        <Link to="/culture/food" onClick={handleLinkClick}>🍲 खाद्यसंस्कृती व उगम इतिहास</Link>
+                        <Link to="/culture/symbols" onClick={handleLinkClick}>🏷️ राजमुद्रा व मराठा चिन्हे</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">🛕 ग्रामदैवत, जत्रा व लोककला</div>
+                        <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🛕 ग्रामदैवत व कुलदैवत ज्ञानकार्ड</Link>
+                        <Link to="/jatra" onClick={handleLinkClick}>🎪 जत्रा व वार्षिक यात्रा दिनदर्शिका</Link>
+                        <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🎭 दशावतार, तमाशा व पोवाडा</Link>
+                        <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🏏 विटी-दांडू व पारंपरिक खेळ</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">🗺️ वारसा नकाशा व नॉलेज ग्राफ</div>
+                        <Link to="/culture/heritage-map" onClick={handleLinkClick}>🗺️ बहुस्तरीय परस्परसंवादी नकाशा</Link>
+                        <Link to="/history/knowledge-graph" onClick={handleLinkClick}>⚡ घटना ↔ स्थळे नॉलेज ग्राफ</Link>
+                        <Link to="/temples" onClick={handleLinkClick}>🛕 प्रमुख मंदिरे व शक्तिपीठे</Link>
+                        <Link to="/forts" onClick={handleLinkClick}>🏰 सह्याद्रीचे ३५०+ गडकिल्ले</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">📚 संदर्भ चौकट व समुदाय</div>
+                        <Link to="/community/oral-history" onClick={handleLinkClick}>✍️ मौखिक इतिहास संकलन (Tier 4)</Link>
+                        <Link to="/history/granthalaya" onClick={handleLinkClick}>📚 पुराभिलेख व ऐतिहासिक ग्रंथालय</Link>
+                        <Link to="/history/dates" onClick={handleLinkClick}>📅 ऐतिहासिक दिनविशेष</Link>
+                        <Link to="/gallery" onClick={handleLinkClick}>🖼️ आपुला महाराष्ट्र छायाचित्र दालन</Link>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Pillar 2: व्यवसाय व संधी */}
-            <div className="nav-item-has-mega">
-              <Link to="/sangam" onClick={handleLinkClick}>💼 व्यवसाय व संधी ▾</Link>
-              <div className="mega-menu">
-                <div className="mega-menu-grid">
-                  <div className="mega-col">
-                    <div className="mega-col-title">🤝 बिझनेस संगम</div>
-                    <Link to="/business/directory" onClick={handleLinkClick}>🏢 व्यवसाय निर्देशिका</Link>
-                    <Link to="/sangam" onClick={handleLinkClick}>🤝 चॅप्टर्स व लीडरशिप</Link>
-                    <Link to="/jobs" onClick={handleLinkClick}>🛠️ सेवा बुकिंग विझार्ड</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">📈 उद्योग व नेटवर्किंग</div>
-                    <Link to="/business/directory" onClick={handleLinkClick}>📈 व्यवसाय संधी व सौदे</Link>
-                    <Link to="/referrals" onClick={handleLinkClick}>🔗 रेफरल व व्यवसाय देवाणघेवाण</Link>
-                    <Link to="/meetings" onClick={handleLinkClick}>☕ 1-to-1 व्यावसायिक बैठका</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">💼 रोजगार व शिक्षण</div>
-                    <Link to="/jobs" onClick={handleLinkClick}>💼 रोजगार व करिअर केंद्र</Link>
-                    <Link to="/jobs" onClick={handleLinkClick}>🎓 उच्च शिक्षण व शिष्यवृत्ती</Link>
-                    <Link to="/directory" onClick={handleLinkClick}>👨‍💼 प्रोफेशनेल्स डिरेक्टरी</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">🛠️ उद्योग, बँक व डेव्हलपर्स</div>
-                    <Link to="/bank" onClick={handleLinkClick}>🏦 मराठा बँक व वित्त संस्था</Link>
-                    <Link to="/builders" onClick={handleLinkClick}>🏗️ मराठा बिल्डर्स व डेव्हलपर्स</Link>
-                    <Link to="/dairy" onClick={handleLinkClick}>🥛 मराठा दूध व संकलन केंद्र</Link>
-                    <Link to="/manufacturers" onClick={handleLinkClick}>🏭 मराठा मॅन्युफॅक्चरर्स</Link>
-                    <Link to="/business/directory" onClick={handleLinkClick}>🚀 B2B संधी व सौदे</Link>
+                {/* Pillar 2: व्यवसाय व संधी */}
+                <div className="nav-item-has-mega">
+                  <Link to="/sangam" onClick={handleLinkClick}>💼 व्यवसाय व संधी ▾</Link>
+                  <div className="mega-menu">
+                    <div className="mega-menu-grid">
+                      <div className="mega-col">
+                        <div className="mega-col-title">🤝 बिझनेस संगम</div>
+                        <Link to="/business/directory" onClick={handleLinkClick}>🏢 व्यवसाय निर्देशिका</Link>
+                        <Link to="/sangam" onClick={handleLinkClick}>🤝 चॅप्टर्स व लीडरशिप</Link>
+                        <Link to="/jobs" onClick={handleLinkClick}>🛠️ सेवा बुकिंग विझार्ड</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">📈 उद्योग व नेटवर्किंग</div>
+                        <Link to="/business/directory" onClick={handleLinkClick}>📈 व्यवसाय संधी व सौदे</Link>
+                        <Link to="/referrals" onClick={handleLinkClick}>🔗 रेफरल व व्यवसाय देवाणघेवाण</Link>
+                        <Link to="/meetings" onClick={handleLinkClick}>☕ 1-to-1 व्यावसायिक बैठका</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">💼 रोजगार व शिक्षण</div>
+                        <Link to="/jobs" onClick={handleLinkClick}>💼 रोजगार व करिअर केंद्र</Link>
+                        <Link to="/jobs" onClick={handleLinkClick}>🎓 उच्च शिक्षण व शिष्यवृत्ती</Link>
+                        <Link to="/directory" onClick={handleLinkClick}>👨‍💼 प्रोफेशनेल्स डिरेक्टरी</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">🛠️ उद्योग, बँक व डेव्हलपर्स</div>
+                        <Link to="/bank" onClick={handleLinkClick}>🏦 मराठा बँक व वित्त संस्था</Link>
+                        <Link to="/builders" onClick={handleLinkClick}>🏗️ मराठा बिल्डर्स व डेव्हलपर्स</Link>
+                        <Link to="/dairy" onClick={handleLinkClick}>🥛 मराठा दूध व संकलन केंद्र</Link>
+                        <Link to="/manufacturers" onClick={handleLinkClick}>🏭 मराठा मॅन्युफॅक्चरर्स</Link>
+                        <Link to="/business/directory" onClick={handleLinkClick}>🚀 B2B संधी व सौदे</Link>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Pillar 3: समाज व उपक्रम */}
-            <div className="nav-item-has-mega">
-              <Link to="/community" onClick={handleLinkClick}>🚩 समाज व उपक्रम ▾</Link>
-              <div className="mega-menu">
-                <div className="mega-menu-grid">
-                  <div className="mega-col">
-                    <div className="mega-col-title">👥 समुदाय व कल्याण मंच</div>
-                    <Link to="/community" onClick={handleLinkClick}>💬 मराठा डिजिटल कम्युनिटी</Link>
-                    <Link to="/women" onClick={handleLinkClick}>🌸 महिला सक्षमीकरण कक्ष</Link>
-                    <Link to="/blood" onClick={handleLinkClick}>🩸 २४×७ रक्त मदत केंद्र</Link>
-                    <Link to="/matrimony" onClick={handleLinkClick}>💍 मराठा वधू-वर सूचक केंद्र</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">🤝 संघटना व नेते</div>
-                    <Link to="/organizations" onClick={handleLinkClick}>🤝 मराठा सामाजिक संघटना</Link>
-                    <Link to="/political" onClick={handleLinkClick}>🏛️ राजकीय नेतृत्व व पक्ष</Link>
-                    <Link to="/social-workers" onClick={handleLinkClick}>🤝 मराठा निष्ठावंत समाजसेवक</Link>
-                    <Link to="/officers" onClick={handleLinkClick}>⭐ मराठा सनदी अधिकारी (IAS/IPS)</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">🎭 कला, साहित्य व मीडिया</div>
-                    <Link to="/doctors" onClick={handleLinkClick}>👨‍⚕️ मराठा तज्ज्ञ डॉक्टर्स</Link>
-                    <Link to="/artists" onClick={handleLinkClick}>🎭 कलाकार, गायक व दिग्दर्शक</Link>
-                    <Link to="/books" onClick={handleLinkClick}>📚 मराठा ग्रंथ व साहित्य</Link>
-                    <Link to="/movies" onClick={handleLinkClick}>🎬 मराठी दर्जेदार चित्रपट</Link>
-                    <Link to="/speakers" onClick={handleLinkClick}>🎙️ प्रेरक वक्ते व मार्गदर्शक</Link>
-                    <Link to="/maratha-news" onClick={handleLinkClick}>📺 मराठा न्यूज व ई-पेपर्स</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">🏛️ संस्था व प्रशासन</div>
-                    <Link to="/about" onClick={handleLinkClick}>🏛️ संस्था सनद व मार्गदर्शक मंडळ</Link>
-                    <Link to="/governance" onClick={handleLinkClick}>⚖️ संविधान व DPDP २०२३</Link>
-                    <Link to="/contact" onClick={handleLinkClick}>☎️ संपर्क व तक्रार निवारण</Link>
+                {/* Pillar 3: समाज व उपक्रम */}
+                <div className="nav-item-has-mega">
+                  <Link to="/community" onClick={handleLinkClick}>🚩 समाज व उपक्रम ▾</Link>
+                  <div className="mega-menu">
+                    <div className="mega-menu-grid">
+                      <div className="mega-col">
+                        <div className="mega-col-title">👥 समुदाय व कल्याण मंच</div>
+                        <Link to="/community" onClick={handleLinkClick}>💬 मराठा डिजिटल कम्युनिटी</Link>
+                        <Link to="/women" onClick={handleLinkClick}>🌸 महिला सक्षमीकरण कक्ष</Link>
+                        <Link to="/blood" onClick={handleLinkClick}>🩸 २४×७ रक्त मदत केंद्र</Link>
+                        <Link to="/matrimony" onClick={handleLinkClick}>💍 मराठा वधू-वर सूचक केंद्र</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">🤝 संघटना व नेते</div>
+                        <Link to="/organizations" onClick={handleLinkClick}>🤝 मराठा सामाजिक संघटना</Link>
+                        <Link to="/political" onClick={handleLinkClick}>🏛️ राजकीय नेतृत्व व पक्ष</Link>
+                        <Link to="/social-workers" onClick={handleLinkClick}>🤝 मराठा निष्ठावंत समाजसेवक</Link>
+                        <Link to="/officers" onClick={handleLinkClick}>⭐ मराठा सनदी अधिकारी (IAS/IPS)</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">🎭 कला, साहित्य व मीडिया</div>
+                        <Link to="/doctors" onClick={handleLinkClick}>👨‍⚕️ मराठा तज्ज्ञ डॉक्टर्स</Link>
+                        <Link to="/artists" onClick={handleLinkClick}>🎭 कलाकार, गायक व दिग्दर्शक</Link>
+                        <Link to="/books" onClick={handleLinkClick}>📚 मराठा ग्रंथ व साहित्य</Link>
+                        <Link to="/movies" onClick={handleLinkClick}>🎬 मराठी दर्जेदार चित्रपट</Link>
+                        <Link to="/speakers" onClick={handleLinkClick}>🎙️ प्रेरक वक्ते व मार्गदर्शक</Link>
+                        <Link to="/maratha-news" onClick={handleLinkClick}>📺 मराठा न्यूज व ई-पेपर्स</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">🏛️ संस्था व प्रशासन</div>
+                        <Link to="/about" onClick={handleLinkClick}>🏛️ संस्था सनद व मार्गदर्शक मंडळ</Link>
+                        <Link to="/governance" onClick={handleLinkClick}>⚖️ संविधान व DPDP २०२३</Link>
+                        <Link to="/contact" onClick={handleLinkClick}>☎️ संपर्क व तक्रार निवारण</Link>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Pillar 4: महाराष्ट्र नेटवर्क */}
-            <div className="nav-item-has-mega">
-              <Link to="/network" onClick={handleLinkClick}>🗺️ महाराष्ट्र नेटवर्क ▾</Link>
-              <div className="mega-menu">
-                <div className="mega-menu-grid">
-                  <div className="mega-col">
-                    <div className="mega-col-title">🏛️ पश्चिम व कोकण विभाग</div>
-                    <Link to="/network" onClick={handleLinkClick}>🏛️ पुणे विभाग (पुणे, सातारा, कोल्हापूर)</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🌊 कोकण विभाग (मुंबई, ठाणे, पालघर)</Link>
-                    <Link to="/network" onClick={handleLinkClick}>⛵ रायगड, रत्नागिरी, सिंधुदुर्ग</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🗺️ संपूर्ण राज्य शाखा नकाशा</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">🌄 मराठवाडा व उत्तर महाराष्ट्र</div>
-                    <Link to="/network" onClick={handleLinkClick}>🌄 छ. संभाजीनगर, जालना, बीड</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🌾 नाशिक, अहमदनगर, जळगाव, धुळे</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🚩 धाराशिव, लातूर, नांदेड, परभणी</Link>
-                    <Link to="/directory" onClick={handleLinkClick}>👥 विभागीय संपर्क व प्रतिनिधी</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">🌿 विदर्भ व सीमावर्ती भाग</div>
-                    <Link to="/network" onClick={handleLinkClick}>🌿 अमरावती, अकोला, बुलढाणा, यवतमाळ</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🐅 नागपूर, वर्धा, चंद्रपूर, गडचिरोली</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🚩 बेळगाव, कारवार सीमावर्ती शाखा</Link>
-                    <Link to="/business/directory" onClick={handleLinkClick}>🏢 स्थानिक व्यापारी व उद्योजक</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">🏢 संघटनात्मक चौकट</div>
-                    <Link to="/roles-matrix" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800 }}>⚖️ ५६ पदे व पात्रता मॅट्रिक्स</Link>
-                    <Link to="/about" onClick={handleLinkClick}>🏛️ राज्य मध्यवर्ती कार्यकारिणी</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🏢 ३६ जिल्हा समन्वय केंद्रे</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🏘️ ३५८+ तालुका समित्या</Link>
-                    <Link to="/network" onClick={handleLinkClick}>🚩 ३,२००+ ग्रामशाखा नेटवर्क</Link>
+                {/* Pillar 4: महाराष्ट्र नेटवर्क */}
+                <div className="nav-item-has-mega">
+                  <Link to="/network" onClick={handleLinkClick}>🗺️ महाराष्ट्र नेटवर्क ▾</Link>
+                  <div className="mega-menu">
+                    <div className="mega-menu-grid">
+                      <div className="mega-col">
+                        <div className="mega-col-title">🏛️ पश्चिम व कोकण विभाग</div>
+                        <Link to="/network" onClick={handleLinkClick}>🏛️ पुणे विभाग (पुणे, सातारा, कोल्हापूर)</Link>
+                        <Link to="/network" onClick={handleLinkClick}>🌊 कोकण विभाग (मुंबई, ठाणे, पालघर)</Link>
+                        <Link to="/network" onClick={handleLinkClick}>⛵ रायगड, रत्नागिरी, सिंधुदुर्ग</Link>
+                        <Link to="/network" onClick={handleLinkClick}>🗺️ संपूर्ण राज्य शाखा नकाशा</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">🌄 मराठवाडा व उत्तर महाराष्ट्र</div>
+                        <Link to="/network" onClick={handleLinkClick}>🌄 छ. संभाजीनगर, जालना, बीड</Link>
+                        <Link to="/network" onClick={handleLinkClick}>🌾 नाशिक, अहमदनगर, जळगाव, धुळे</Link>
+                        <Link to="/network" onClick={handleLinkClick}>🚩 धाराशिव, लातूर, नांदेड, परभणी</Link>
+                        <Link to="/directory" onClick={handleLinkClick}>👥 विभागीय संपर्क व प्रतिनिधी</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">🌿 विदर्भ व सीमावर्ती भाग</div>
+                        <Link to="/network" onClick={handleLinkClick}>🌿 अमरावती, अकोला, बुलढाणा, यवतमाळ</Link>
+                        <Link to="/network" onClick={handleLinkClick}>🐅 नागपूर, वर्धा, चंद्रपूर, गडचिरोली</Link>
+                        <Link to="/network" onClick={handleLinkClick}>🚩 बेळगाव, कारवार सीमावर्ती शाखा</Link>
+                        <Link to="/business/directory" onClick={handleLinkClick}>🏢 स्थानिक व्यापारी व उद्योजक</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">🏢 संघटनात्मक चौकट</div>
+                        <Link to="/roles-matrix" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800 }}>⚖️ ५६ पदे व पात्रता मॅट्रिक्स</Link>
+                        <Link to="/about" onClick={handleLinkClick}>🏛️ राज्य मध्यवर्ती कार्यकारिणी</Link>
+                        <Link to="/network" onClick={handleLinkClick}>🏢 ३६ जिल्हा समन्वय केंद्रे</Link>
+                        <Link to="/network" onClick={handleLinkClick}>🏘️ ३५८+ तालुका समित्या</Link>
+                        <Link to="/network" onClick={handleLinkClick}>🚩 ३,२००+ ग्रामशाखा नेटवर्क</Link>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Pillar 5: सर्व दालने (७०+) */}
-            <div className="nav-item-has-mega">
-              <Link to="/gallery" onClick={handleLinkClick}>📂 सर्व दालने (७०+) ▾</Link>
-              <div className="mega-menu">
-                <div className="mega-menu-grid">
-                  <div className="mega-col">
-                    <div className="mega-col-title">🏛️ इतिहास, दुर्ग व महापुरुष</div>
-                    <Link to="/history/shivaji-maharaj" onClick={handleLinkClick}>👑 छत्रपती शिवाजी महाराज चरित्र</Link>
-                    <Link to="/history/sambhaji-maharaj" onClick={handleLinkClick}>⚔️ छत्रपती संभाजी महाराज शौर्यगाथा</Link>
-                    <Link to="/history/rajmata-jijau" onClick={handleLinkClick}>🌸 राष्ट्रमाता जिजाऊ माँसाहेब</Link>
-                    <Link to="/history/bajirao-peshwa" onClick={handleLinkClick}>🐎 श्रीमंत थोरले बाजीराव पेशवे</Link>
-                    <Link to="/forts" onClick={handleLinkClick}>🏰 सह्याद्रीचे ३५०+ गडकिल्ले</Link>
-                    <Link to="/history/battles" onClick={handleLinkClick}>⚔️ प्रमुख ७ रणांगणे व व्यूहरचना</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">💼 उद्योग, करिअर व संगम</div>
-                    <Link to="/business/directory" onClick={handleLinkClick}>🏢 अखिल मराठा व्यवसाय निर्देशिका</Link>
-                    <Link to="/sangam" onClick={handleLinkClick}>🤝 बिझनेस संगम व चॅप्टर्स</Link>
-                    <Link to="/referrals" onClick={handleLinkClick}>🔗 व्यावसायिक रेफरल देवाणघेवाण</Link>
-                    <Link to="/jobs" onClick={handleLinkClick}>💼 रोजगार केंद्र व भरती पोर्टल</Link>
-                    <Link to="/meetings" onClick={handleLinkClick}>☕ 1-to-1 व्यावसायिक बैठका</Link>
-                    <Link to="/business/directory" onClick={handleLinkClick}>🚀 B2B संधी व सौदे</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">👥 समाज, संस्कृती व कल्याण</div>
-                    <Link to="/community" onClick={handleLinkClick}>💬 मराठा डिजिटल कम्युनिटी</Link>
-                    <Link to="/community" onClick={handleLinkClick}>🧑‍🤝‍🧑 उपक्रम गट व चर्चा मंच</Link>
-                    <Link to="/calendar" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800, background: '#FFF7ED', borderRadius: '6px', padding: '6px 8px' }}>📅 मराठा दिनदर्शिका (पंचांग • इतिहास)</Link>
-                    <Link to="/events" onClick={handleLinkClick}>📅 आगामी मेळावे व दिनविशेष</Link>
-                    <Link to="/donation" onClick={handleLinkClick}>❤️ दुर्ग संवर्धन व देणगी कोष</Link>
-                    <Link to="/culture" onClick={handleLinkClick}>🎭 मराठी संस्कृती व सण परंपरा</Link>
-                    <Link to="/gallery" onClick={handleLinkClick}>🖼️ आपुला महाराष्ट्र छायाचित्र दालन</Link>
-                  </div>
-                  <div className="mega-col">
-                    <div className="mega-col-title">🏛️ ओळख, नागरिक व सनद</div>
-                    <Link to="/card" onClick={handleLinkClick}>🪪 डिजिटल सभासद ओळखपत्र</Link>
-                    <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
-                    <Link to="/about" onClick={handleLinkClick}>🏛️ संस्था परिचय व सल्लागार मंडळ</Link>
-                    <Link to="/governance" onClick={handleLinkClick}>🎯 व्हिजन व DPDP २०२३ धोरण</Link>
-                    <Link to="/blueprint" onClick={handleLinkClick}>🧭 ५० विभाग मास्टर ब्लूप्रिंट</Link>
-                    <Link to="/achievers" onClick={handleLinkClick}>🏆 राष्ट्रीय मराठा गौरव व अचीव्हर्स</Link>
-                    <Link to="/contact" onClick={handleLinkClick}>☎️ संपर्क व तक्रार निवारण</Link>
-                    {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo' || user.role === 'district_admin') && (
-                      <Link to="/crm" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800, marginTop: '8px', borderTop: '1px dashed #CBD5E1', paddingTop: '8px' }}>
-                        🛡️ अधिकारी CRM पोर्टल →
-                      </Link>
-                    )}
+                {/* Pillar 5: सर्व दालने (७०+) */}
+                <div className="nav-item-has-mega">
+                  <Link to="/gallery" onClick={handleLinkClick}>📂 सर्व दालने (७०+) ▾</Link>
+                  <div className="mega-menu">
+                    <div className="mega-menu-grid">
+                      <div className="mega-col">
+                        <div className="mega-col-title">🏛️ इतिहास, दुर्ग व महापुरुष</div>
+                        <Link to="/history/shivaji-maharaj" onClick={handleLinkClick}>👑 छत्रपती शिवाजी महाराज चरित्र</Link>
+                        <Link to="/history/sambhaji-maharaj" onClick={handleLinkClick}>⚔️ छत्रपती संभाजी महाराज शौर्यगाथा</Link>
+                        <Link to="/history/rajmata-jijau" onClick={handleLinkClick}>🌸 राष्ट्रमाता जिजाऊ माँसाहेब</Link>
+                        <Link to="/history/bajirao-peshwa" onClick={handleLinkClick}>🐎 श्रीमंत थोरले बाजीराव पेशवे</Link>
+                        <Link to="/forts" onClick={handleLinkClick}>🏰 सह्याद्रीचे ३५०+ गडकिल्ले</Link>
+                        <Link to="/history/battles" onClick={handleLinkClick}>⚔️ प्रमुख ७ रणांगणे व व्यूहरचना</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">💼 उद्योग, करिअर व संगम</div>
+                        <Link to="/business/directory" onClick={handleLinkClick}>🏢 अखिल मराठा व्यवसाय निर्देशिका</Link>
+                        <Link to="/sangam" onClick={handleLinkClick}>🤝 बिझनेस संगम व चॅप्टर्स</Link>
+                        <Link to="/referrals" onClick={handleLinkClick}>🔗 व्यावसायिक रेफरल देवाणघेवाण</Link>
+                        <Link to="/jobs" onClick={handleLinkClick}>💼 रोजगार केंद्र व भरती पोर्टल</Link>
+                        <Link to="/meetings" onClick={handleLinkClick}>☕ 1-to-1 व्यावसायिक बैठका</Link>
+                        <Link to="/business/directory" onClick={handleLinkClick}>🚀 B2B संधी व सौदे</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">👥 समाज, संस्कृती व कल्याण</div>
+                        <Link to="/community" onClick={handleLinkClick}>💬 मराठा डिजिटल कम्युनिटी</Link>
+                        <Link to="/community" onClick={handleLinkClick}>🧑‍🤝‍🧑 उपक्रम गट व चर्चा मंच</Link>
+                        <Link to="/calendar" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800, background: '#FFF7ED', borderRadius: '6px', padding: '6px 8px' }}>📅 मराठा दिनदर्शिका (पंचांग • इतिहास)</Link>
+                        <Link to="/events" onClick={handleLinkClick}>📅 आगामी मेळावे व दिनविशेष</Link>
+                        <Link to="/donation" onClick={handleLinkClick}>❤️ दुर्ग संवर्धन व देणगी कोष</Link>
+                        <Link to="/culture" onClick={handleLinkClick}>🎭 मराठी संस्कृती व सण परंपरा</Link>
+                        <Link to="/gallery" onClick={handleLinkClick}>🖼️ आपुला महाराष्ट्र छायाचित्र दालन</Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">🏛️ ओळख, नागरिक व सनद</div>
+                        <Link to="/card" onClick={handleLinkClick}>🪪 डिजिटल सभासद ओळखपत्र</Link>
+                        <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
+                        <Link to="/about" onClick={handleLinkClick}>🏛️ संस्था परिचय व सल्लागार मंडळ</Link>
+                        <Link to="/governance" onClick={handleLinkClick}>🎯 व्हिजन व DPDP २०२३ धोरण</Link>
+                        <Link to="/blueprint" onClick={handleLinkClick}>🧭 ५० विभाग मास्टर ब्लूप्रिंट</Link>
+                        <Link to="/achievers" onClick={handleLinkClick}>🏆 राष्ट्रीय मराठा गौरव व अचीव्हर्स</Link>
+                        <Link to="/contact" onClick={handleLinkClick}>☎️ संपर्क व तक्रार निवारण</Link>
+                        {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo' || user.role === 'district_admin') && (
+                          <Link to="/crm" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800, marginTop: '8px', borderTop: '1px dashed #CBD5E1', paddingTop: '8px' }}>
+                            🛡️ अधिकारी CRM पोर्टल →
+                          </Link>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
           </nav>
 
           {/* Header Action Buttons */}
@@ -439,50 +470,81 @@ export default function SiteHeader({ onOpenSearch }) {
               type="button"
               className="subnav-pill subnav-pill-dropdown-trigger"
               onClick={() => setMobileOpen(true)}
-              aria-label="सर्व ५०+ विभाग व दालने मेनू उघडा"
+              aria-label="सर्व मेनू उघडा"
             >
-              <span className="subnav-pill-icon">📑</span> सर्व विभाग ▾
+              <span className="subnav-pill-icon">📑</span> सर्व मेनू ▾
             </button>
             <NavLink to="/" end onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
               <span className="subnav-pill-icon">🏠</span> मुख्यपृष्ठ
             </NavLink>
-            <NavLink to="/history" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-              <span className="subnav-pill-icon">⚔️</span> इतिहास
-            </NavLink>
-            <NavLink to="/culture" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-              <span className="subnav-pill-icon">🏛️</span> संस्कृती
-            </NavLink>
-            <NavLink to="/calendar" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-gold ${isActive ? 'active' : ''}`}>
-              <span className="subnav-pill-icon">📅</span> दिनदर्शिका
-            </NavLink>
-            <NavLink to="/business/directory" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-              <span className="subnav-pill-icon">💼</span> व्यवसाय
-            </NavLink>
-            <NavLink to="/community" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-              <span className="subnav-pill-icon">👥</span> समाज
-            </NavLink>
-            <NavLink to="/universe" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-universe ${isActive ? 'active' : ''}`}>
-              <span className="subnav-pill-icon">🌌</span> महाविश्व
-            </NavLink>
-            <NavLink to="/forts" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-              <span className="subnav-pill-icon">🏰</span> गड-किल्ले
-            </NavLink>
-            <NavLink to="/temples" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-              <span className="subnav-pill-icon">🛕</span> मंदिरे
-            </NavLink>
-            <NavLink to="/sangam" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-              <span className="subnav-pill-icon">🤝</span> संगम
-            </NavLink>
-            <NavLink to="/gallery" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-              <span className="subnav-pill-icon">🖼️</span> दालने
-            </NavLink>
+            {!user ? (
+              <>
+                <NavLink to="/about" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🏛️</span> आमच्याबद्दल
+                </NavLink>
+                <NavLink to="/governance" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🎯</span> व्हिजन
+                </NavLink>
+                <NavLink to="/blueprint" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🏆</span> उद्दिष्टे
+                </NavLink>
+                <NavLink to="/register" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-gold ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">⭐</span> सहभागी व्हा
+                </NavLink>
+                <NavLink to="/roles-matrix" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">⚖️</span> ५६ पदे
+                </NavLink>
+                <NavLink to="/card" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🪪</span> ओळखपत्र
+                </NavLink>
+                <NavLink to="/universe" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-universe ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🌌</span> महाविश्व
+                </NavLink>
+                <NavLink to="/contact" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">☎️</span> संपर्क
+                </NavLink>
+              </>
+            ) : (
+              <>
+                <NavLink to="/history" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">⚔️</span> इतिहास
+                </NavLink>
+                <NavLink to="/culture" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🏛️</span> संस्कृती
+                </NavLink>
+                <NavLink to="/calendar" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-gold ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">📅</span> दिनदर्शिका
+                </NavLink>
+                <NavLink to="/business/directory" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">💼</span> व्यवसाय
+                </NavLink>
+                <NavLink to="/community" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">👥</span> समाज
+                </NavLink>
+                <NavLink to="/universe" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-universe ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🌌</span> महाविश्व
+                </NavLink>
+                <NavLink to="/forts" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🏰</span> गड-किल्ले
+                </NavLink>
+                <NavLink to="/temples" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🛕</span> मंदिरे
+                </NavLink>
+                <NavLink to="/sangam" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🤝</span> संगम
+                </NavLink>
+                <NavLink to="/gallery" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🖼️</span> दालने
+                </NavLink>
+              </>
+            )}
             <button
               type="button"
               className="subnav-pill subnav-pill-more"
               onClick={() => setMobileOpen(true)}
               aria-label="सर्व ५०+ विभाग व मेनू"
             >
-              <span className="subnav-pill-icon">☰</span> सर्व मेनू
+              <span className="subnav-pill-icon">☰</span> अधिक
             </button>
           </div>
         </nav>
@@ -581,6 +643,25 @@ export default function SiteHeader({ onOpenSearch }) {
           {/* Quick Jump Badges */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
             <Link
+              to="/roles-matrix"
+              onClick={handleLinkClick}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '9px 12px',
+                background: '#FFF7ED',
+                border: '1px solid #FED7AA',
+                borderRadius: '8px',
+                color: '#C2410C',
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                textDecoration: 'none'
+              }}>
+              <span>⚖️</span>
+              <span>५६ पदे मॅट्रिक्स</span>
+            </Link>
+            <Link
               to="/calendar"
               onClick={handleLinkClick}
               style={{
@@ -599,190 +680,235 @@ export default function SiteHeader({ onOpenSearch }) {
               <span>📅</span>
               <span>दिनदर्शिका</span>
             </Link>
-            <Link
-              to="/platform"
-              onClick={handleLinkClick}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '9px 12px',
-                background: '#FEF3C7',
-                border: '1px solid #FCD34D',
-                borderRadius: '8px',
-                color: '#78350F',
-                fontWeight: 700,
-                fontSize: '0.82rem',
-                textDecoration: 'none'
-              }}>
-              <span>🗺️</span>
-              <span>डेटा प्लॅटफॉर्म</span>
-            </Link>
           </div>
 
-          {/* Pillar 1: इतिहास व वारसा */}
-          <div className="cm-drawer-accordion-item">
-            <button
-              type="button"
-              className={`cm-drawer-accordion-btn ${expandedPillar === 'history' ? 'expanded' : ''}`}
-              onClick={() => togglePillar('history')}>
-              <span>⚔️ इतिहास व वारसा</span>
-              <span className="cm-drawer-accordion-chevron">{expandedPillar === 'history' ? '▲' : '▼'}</span>
-            </button>
-            {expandedPillar === 'history' && (
-              <div className="cm-drawer-accordion-panel">
-                <Link to="/history" onClick={handleLinkClick}>📜 मराठा कालपट (१६३०-१८१८)</Link>
-                <Link to="/history/battles" onClick={handleLinkClick}>⚔️ प्रमुख ७ रणांगणे व व्यूहरचना</Link>
-                <Link to="/forts" onClick={handleLinkClick}>🏰 सह्याद्रीचे गड-किल्ले (३५०+)</Link>
-                <Link to="/history/navy" onClick={handleLinkClick}>⚓ मराठा आरमार व जलदुर्ग</Link>
-                <Link to="/quiz" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 700 }}>🎯 स्वराज्य इतिहास महाक्विझ</Link>
-                <Link to="/history/balidan-maas" onClick={handleLinkClick}>🕯️ धर्मवीर बलिदान मास स्मरण</Link>
-                <Link to="/history/granthalaya" onClick={handleLinkClick}>📚 मराठा ग्रंथालय व बखरी</Link>
-                <Link to="/history/warriors" onClick={handleLinkClick}>👑 ९६ कुळे व सरदार घराणी</Link>
-                <Link to="/history/movements" onClick={handleLinkClick}>🚩 मराठा क्रांती मूक मोर्चे</Link>
-                <Link to="/history/dates" onClick={handleLinkClick}>📅 ऐतिहासिक दिनविशेष</Link>
-                <Link to="/history/shivaji-maharaj" onClick={handleLinkClick}>📖 विशेष संशोधन लेख</Link>
-              </div>
-            )}
-          </div>
+          {!user ? (
+            /* Guest Navigation Items */
+            <div className="cm-drawer-guest-menu" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '10px' }}>
+              <Link to="/about" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '1.2rem' }}>🏛️</span>
+                <div>
+                  <div style={{ color: '#0F172A', fontWeight: 800 }}>आमच्याबद्दल व संस्था परिचय</div>
+                  <small style={{ color: '#64748B' }}>संस्थेची पार्श्वभूमी व उद्दिष्टे</small>
+                </div>
+              </Link>
 
-          {/* Pillar 2: संस्कृती व ज्ञानकोश */}
-          <div className="cm-drawer-accordion-item">
-            <button
-              type="button"
-              className={`cm-drawer-accordion-btn ${expandedPillar === 'culture' ? 'expanded' : ''}`}
-              onClick={() => togglePillar('culture')}>
-              <span>🏛️ संस्कृती व ज्ञानकोश</span>
-              <span className="cm-drawer-accordion-chevron">{expandedPillar === 'culture' ? '▲' : '▼'}</span>
-            </button>
-            {expandedPillar === 'culture' && (
-              <div className="cm-drawer-accordion-panel">
-                <Link to="/platform" onClick={handleLinkClick} style={{ color: '#9A3412', fontWeight: 700 }}>🗺️ महाराष्ट्र डेटा प्लॅटफॉर्म</Link>
-                <Link to="/universe" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 700 }}>🌌 संपूर्ण महाराष्ट्र महाविश्व</Link>
-                <Link to="/time-machine" onClick={handleLinkClick}>⏳ महाराष्ट्र टाइम मशीन (१२ कालखंड)</Link>
-                <Link to="/culture/shivkal-festivals" onClick={handleLinkClick}>🚩 शिवकालीन उत्सव (१६३०-१६८०)</Link>
-                <Link to="/culture" onClick={handleLinkClick}>🗺️ ८ प्रादेशिक सांस्कृतिक प्रोफाइल</Link>
-                <Link to="/culture/dialects" onClick={handleLinkClick}>🗣️ महाराष्ट्राच्या बोली व उच्चार</Link>
-                <Link to="/culture/food" onClick={handleLinkClick}>🍲 खाद्यसंस्कृती व उगम इतिहास</Link>
-                <Link to="/culture/symbols" onClick={handleLinkClick}>🏷️ राजमुद्रा व मराठा चिन्हे</Link>
-                <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🛕 ग्रामदैवत व कुलदैवत ज्ञानकार्ड</Link>
-                <Link to="/jatra" onClick={handleLinkClick}>🎪 जत्रा व वार्षिक यात्रा दिनदर्शिका</Link>
-                <Link to="/culture/heritage-map" onClick={handleLinkClick}>🗺️ बहुस्तरीय परस्परसंवादी नकाशा</Link>
-                <Link to="/history/knowledge-graph" onClick={handleLinkClick}>⚡ घटना ↔ स्थळे नॉलेज ग्राफ</Link>
-              </div>
-            )}
-          </div>
+              <Link to="/governance" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '1.2rem' }}>🎯</span>
+                <div>
+                  <div style={{ color: '#0F172A', fontWeight: 800 }}>व्हिजन, मिशन व DPDP धोरण</div>
+                  <small style={{ color: '#64748B' }}>दीर्घकालीन संकल्पना व सुरक्षा</small>
+                </div>
+              </Link>
 
-          {/* Pillar 3: व्यवसाय व संधी */}
-          <div className="cm-drawer-accordion-item">
-            <button
-              type="button"
-              className={`cm-drawer-accordion-btn ${expandedPillar === 'business' ? 'expanded' : ''}`}
-              onClick={() => togglePillar('business')}>
-              <span>💼 व्यवसाय व संधी</span>
-              <span className="cm-drawer-accordion-chevron">{expandedPillar === 'business' ? '▲' : '▼'}</span>
-            </button>
-            {expandedPillar === 'business' && (
-              <div className="cm-drawer-accordion-panel">
-                <Link to="/business/directory" onClick={handleLinkClick}>🏢 व्यवसाय निर्देशिका</Link>
-                <Link to="/sangam" onClick={handleLinkClick}>🤝 बिझनेस संगम व चॅप्टर्स</Link>
-                <Link to="/referrals" onClick={handleLinkClick}>🔗 रेफरल व व्यवसाय देवाणघेवाण</Link>
-                <Link to="/meetings" onClick={handleLinkClick}>☕ 1-to-1 व्यावसायिक बैठका</Link>
-                <Link to="/jobs" onClick={handleLinkClick}>💼 रोजगार व करिअर केंद्र</Link>
-                <Link to="/bank" onClick={handleLinkClick}>🏦 मराठा बँक व वित्त संस्था</Link>
-                <Link to="/builders" onClick={handleLinkClick}>🏗️ मराठा बिल्डर्स व डेव्हलपर्स</Link>
-                <Link to="/dairy" onClick={handleLinkClick}>🥛 मराठा दूध व संकलन केंद्र</Link>
-                <Link to="/manufacturers" onClick={handleLinkClick}>🏭 मराठा मॅन्युफॅक्चरर्स</Link>
-              </div>
-            )}
-          </div>
+              <Link to="/blueprint" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '1.2rem' }}>🏆</span>
+                <div>
+                  <div style={{ color: '#0F172A', fontWeight: 800 }}>उद्दिष्टे व ५० विभाग ब्लूप्रिंट</div>
+                  <small style={{ color: '#64748B' }}>कार्यक्षेत्र व आगामी प्रकल्प</small>
+                </div>
+              </Link>
 
-          {/* Pillar 4: समाज व उपक्रम */}
-          <div className="cm-drawer-accordion-item">
-            <button
-              type="button"
-              className={`cm-drawer-accordion-btn ${expandedPillar === 'community' ? 'expanded' : ''}`}
-              onClick={() => togglePillar('community')}>
-              <span>🚩 समाज व उपक्रम</span>
-              <span className="cm-drawer-accordion-chevron">{expandedPillar === 'community' ? '▲' : '▼'}</span>
-            </button>
-            {expandedPillar === 'community' && (
-              <div className="cm-drawer-accordion-panel">
-                <Link to="/community" onClick={handleLinkClick}>💬 मराठा डिजिटल कम्युनिटी</Link>
-                <Link to="/women" onClick={handleLinkClick}>🌸 महिला सक्षमीकरण कक्ष</Link>
-                <Link to="/blood" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 700 }}>🩸 २४×७ रक्त मदत केंद्र</Link>
-                <Link to="/matrimony" onClick={handleLinkClick}>💍 मराठा वधू-वर सूचक केंद्र</Link>
-                <Link to="/organizations" onClick={handleLinkClick}>🤝 मराठा सामाजिक संघटना</Link>
-                <Link to="/political" onClick={handleLinkClick}>🏛️ राजकीय नेतृत्व व पक्ष</Link>
-                <Link to="/social-workers" onClick={handleLinkClick}>🤝 मराठा निष्ठावंत समाजसेवक</Link>
-                <Link to="/officers" onClick={handleLinkClick}>⭐ मराठा सनदी अधिकारी (IAS/IPS)</Link>
-                <Link to="/doctors" onClick={handleLinkClick}>👨‍⚕️ मराठा तज्ज्ञ डॉक्टर्स</Link>
-                <Link to="/artists" onClick={handleLinkClick}>🎭 कलाकार, गायक व दिग्दर्शक</Link>
-              </div>
-            )}
-          </div>
+              <Link to="/register" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#FFF7ED', color: '#C2410C', textDecoration: 'none', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px', border: '1.5px solid #FFCC80' }}>
+                <span style={{ fontSize: '1.2rem' }}>⭐</span>
+                <div>
+                  <div style={{ color: '#9A3412', fontWeight: 900 }}>सहभागी का व्हावे? (नवीन नोंदणी)</div>
+                  <small style={{ color: '#C2410C' }}>डिजिटल महासंघाचे अधिकृत सभासद व्हा</small>
+                </div>
+              </Link>
 
-          {/* Pillar 5: महाराष्ट्र नेटवर्क */}
-          <div className="cm-drawer-accordion-item">
-            <button
-              type="button"
-              className={`cm-drawer-accordion-btn ${expandedPillar === 'network' ? 'expanded' : ''}`}
-              onClick={() => togglePillar('network')}>
-              <span>🗺️ महाराष्ट्र नेटवर्क</span>
-              <span className="cm-drawer-accordion-chevron">{expandedPillar === 'network' ? '▲' : '▼'}</span>
-            </button>
-            {expandedPillar === 'network' && (
-              <div className="cm-drawer-accordion-panel">
-                <Link to="/network" onClick={handleLinkClick}>🏛️ पुणे विभाग (पुणे, सातारा, कोल्हापूर)</Link>
-                <Link to="/network" onClick={handleLinkClick}>🌊 कोकण विभाग (मुंबई, ठाणे, पालघर)</Link>
-                <Link to="/network" onClick={handleLinkClick}>⛵ रायगड, रत्नागिरी, सिंधुदुर्ग</Link>
-                <Link to="/network" onClick={handleLinkClick}>🌄 छ. संभाजीनगर, जालना, बीड</Link>
-                <Link to="/network" onClick={handleLinkClick}>🌾 नाशिक, अहमदनगर, जळगाव, धुळे</Link>
-                <Link to="/network" onClick={handleLinkClick}>🌿 विदर्भ (अमरावती, नागपूर, चंद्रपूर)</Link>
-                <Link to="/network" onClick={handleLinkClick}>🚩 बेळगाव, कारवार सीमावर्ती शाखा</Link>
-                <Link to="/network" onClick={handleLinkClick}>🏢 ३६ जिल्हा समन्वय केंद्रे</Link>
-              </div>
-            )}
-          </div>
+              <Link to="/roles-matrix" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '1.2rem' }}>⚖️</span>
+                <div>
+                  <div style={{ color: '#0F172A', fontWeight: 800 }}>५६ पदे व पात्रता मॅट्रिक्स</div>
+                  <small style={{ color: '#64748B' }}>पदांची रचना व रेफरल पात्रता</small>
+                </div>
+              </Link>
 
-          {/* Pillar 6: सर्व दालने, सनद व ओळख */}
-          <div className="cm-drawer-accordion-item">
-            <button
-              type="button"
-              className={`cm-drawer-accordion-btn ${expandedPillar === 'all' ? 'expanded' : ''}`}
-              onClick={() => togglePillar('all')}>
-              <span>📂 सर्व दालने व सनद</span>
-              <span className="cm-drawer-accordion-chevron">{expandedPillar === 'all' ? '▲' : '▼'}</span>
-            </button>
-            {expandedPillar === 'all' && (
-              <div className="cm-drawer-accordion-panel">
-                <Link to="/card" onClick={handleLinkClick}>🪪 डिजिटल सभासद ओळखपत्र</Link>
-                <Link to="/calendar" onClick={handleLinkClick}>📅 मराठा दिनदर्शिका</Link>
-                <Link to="/about" onClick={handleLinkClick}>🏛️ संस्था परिचय व सल्लागार मंडळ</Link>
-                <Link to="/governance" onClick={handleLinkClick}>🎯 व्हिजन व DPDP २०२३ धोरण</Link>
-                <Link to="/blueprint" onClick={handleLinkClick}>🧭 ५० विभाग मास्टर ब्लूप्रिंट</Link>
-                <Link to="/achievers" onClick={handleLinkClick}>🏆 राष्ट्रीय मराठा गौरव व अचीव्हर्स</Link>
-                <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
-                <Link to="/donation" onClick={handleLinkClick}>❤️ दुर्ग संवर्धन व देणगी कोष</Link>
-                <Link to="/contact" onClick={handleLinkClick}>☎️ संपर्क व तक्रार निवारण</Link>
-                {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo' || user.role === 'district_admin') && (
-                  <Link to="/crm" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800, borderTop: '1px dashed #CBD5E1', paddingTop: '8px' }}>
-                    🛡️ अधिकारी CRM पोर्टल →
-                  </Link>
-                )}
-                {user && user.role === 'superadmin' && (
-                  <Link to="/superadmin" onClick={handleLinkClick} style={{ color: '#D97706', fontWeight: 800 }}>
-                    👑 SuperAdmin कन्सोल →
-                  </Link>
-                )}
-                {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo') && (
-                  <Link to="/admin/cms" onClick={handleLinkClick} style={{ color: '#7C3AED', fontWeight: 800 }}>
-                    🎨 CMS संपादक →
-                  </Link>
+              <Link to="/card" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '1.2rem' }}>🪪</span>
+                <div>
+                  <div style={{ color: '#0F172A', fontWeight: 800 }}>डिजिटल सभासद ओळखपत्र</div>
+                  <small style={{ color: '#64748B' }}>स्मार्ट कार्ड पूर्वावलोकन व पडताळणी</small>
+                </div>
+              </Link>
+
+              <Link to="/contact" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '1.2rem' }}>☎️</span>
+                <div>
+                  <div style={{ color: '#0F172A', fontWeight: 800 }}>संपर्क व मदत केंद्र</div>
+                  <small style={{ color: '#64748B' }}>हेल्पलाईन व समन्वय अधिकारी</small>
+                </div>
+              </Link>
+            </div>
+          ) : (
+            /* Logged-In User Accordion Menu */
+            <>
+              {/* Pillar 1: इतिहास व वारसा */}
+              <div className="cm-drawer-accordion-item">
+                <button
+                  type="button"
+                  className={`cm-drawer-accordion-btn ${expandedPillar === 'history' ? 'expanded' : ''}`}
+                  onClick={() => togglePillar('history')}>
+                  <span>⚔️ इतिहास व वारसा</span>
+                  <span className="cm-drawer-accordion-chevron">{expandedPillar === 'history' ? '▲' : '▼'}</span>
+                </button>
+                {expandedPillar === 'history' && (
+                  <div className="cm-drawer-accordion-panel">
+                    <Link to="/history" onClick={handleLinkClick}>📜 मराठा कालपट (१६३०-१८१८)</Link>
+                    <Link to="/history/battles" onClick={handleLinkClick}>⚔️ प्रमुख ७ रणांगणे व व्यूहरचना</Link>
+                    <Link to="/forts" onClick={handleLinkClick}>🏰 सह्याद्रीचे गड-किल्ले (३५०+)</Link>
+                    <Link to="/history/navy" onClick={handleLinkClick}>⚓ मराठा आरमार व जलदुर्ग</Link>
+                    <Link to="/quiz" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 700 }}>🎯 स्वराज्य इतिहास महाक्विझ</Link>
+                    <Link to="/history/balidan-maas" onClick={handleLinkClick}>🕯️ धर्मवीर बलिदान मास स्मरण</Link>
+                    <Link to="/history/granthalaya" onClick={handleLinkClick}>📚 मराठा ग्रंथालय व बखरी</Link>
+                    <Link to="/history/warriors" onClick={handleLinkClick}>👑 ९६ कुळे व सरदार घराणी</Link>
+                    <Link to="/history/movements" onClick={handleLinkClick}>🚩 मराठा क्रांती मूक मोर्चे</Link>
+                    <Link to="/history/dates" onClick={handleLinkClick}>📅 ऐतिहासिक दिनविशेष</Link>
+                    <Link to="/history/shivaji-maharaj" onClick={handleLinkClick}>📖 विशेष संशोधन लेख</Link>
+                  </div>
                 )}
               </div>
-            )}
-          </div>
+
+              {/* Pillar 2: संस्कृती व ज्ञानकोश */}
+              <div className="cm-drawer-accordion-item">
+                <button
+                  type="button"
+                  className={`cm-drawer-accordion-btn ${expandedPillar === 'culture' ? 'expanded' : ''}`}
+                  onClick={() => togglePillar('culture')}>
+                  <span>🏛️ संस्कृती व ज्ञानकोश</span>
+                  <span className="cm-drawer-accordion-chevron">{expandedPillar === 'culture' ? '▲' : '▼'}</span>
+                </button>
+                {expandedPillar === 'culture' && (
+                  <div className="cm-drawer-accordion-panel">
+                    <Link to="/platform" onClick={handleLinkClick} style={{ color: '#9A3412', fontWeight: 700 }}>🗺️ महाराष्ट्र डेटा प्लॅटफॉर्म</Link>
+                    <Link to="/universe" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 700 }}>🌌 संपूर्ण महाराष्ट्र महाविश्व</Link>
+                    <Link to="/time-machine" onClick={handleLinkClick}>⏳ महाराष्ट्र टाइम मशीन (१२ कालखंड)</Link>
+                    <Link to="/culture/shivkal-festivals" onClick={handleLinkClick}>🚩 शिवकालीन उत्सव (१६३०-१६८०)</Link>
+                    <Link to="/culture" onClick={handleLinkClick}>🗺️ ८ प्रादेशिक सांस्कृतिक प्रोफाइल</Link>
+                    <Link to="/culture/dialects" onClick={handleLinkClick}>🗣️ महाराष्ट्राच्या बोली व उच्चार</Link>
+                    <Link to="/culture/food" onClick={handleLinkClick}>🍲 खाद्यसंस्कृती व उगम इतिहास</Link>
+                    <Link to="/culture/symbols" onClick={handleLinkClick}>🏷️ राजमुद्रा व मराठा चिन्हे</Link>
+                    <Link to="/culture/gramdevat-jatra" onClick={handleLinkClick}>🛕 ग्रामदैवत व कुलदैवत ज्ञानकार्ड</Link>
+                    <Link to="/jatra" onClick={handleLinkClick}>🎪 जत्रा व वार्षिक यात्रा दिनदर्शिका</Link>
+                    <Link to="/culture/heritage-map" onClick={handleLinkClick}>🗺️ बहुस्तरीय परस्परसंवादी नकाशा</Link>
+                    <Link to="/history/knowledge-graph" onClick={handleLinkClick}>⚡ घटना ↔ स्थळे नॉलेज ग्राफ</Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Pillar 3: व्यवसाय व संधी */}
+              <div className="cm-drawer-accordion-item">
+                <button
+                  type="button"
+                  className={`cm-drawer-accordion-btn ${expandedPillar === 'business' ? 'expanded' : ''}`}
+                  onClick={() => togglePillar('business')}>
+                  <span>💼 व्यवसाय व संधी</span>
+                  <span className="cm-drawer-accordion-chevron">{expandedPillar === 'business' ? '▲' : '▼'}</span>
+                </button>
+                {expandedPillar === 'business' && (
+                  <div className="cm-drawer-accordion-panel">
+                    <Link to="/business/directory" onClick={handleLinkClick}>🏢 व्यवसाय निर्देशिका</Link>
+                    <Link to="/sangam" onClick={handleLinkClick}>🤝 बिझनेस संगम व चॅप्टर्स</Link>
+                    <Link to="/referrals" onClick={handleLinkClick}>🔗 रेफरल व व्यवसाय देवाणघेवाण</Link>
+                    <Link to="/meetings" onClick={handleLinkClick}>☕ 1-to-1 व्यावसायिक बैठका</Link>
+                    <Link to="/jobs" onClick={handleLinkClick}>💼 रोजगार व करिअर केंद्र</Link>
+                    <Link to="/bank" onClick={handleLinkClick}>🏦 मराठा बँक व वित्त संस्था</Link>
+                    <Link to="/builders" onClick={handleLinkClick}>🏗️ मराठा बिल्डर्स व डेव्हलपर्स</Link>
+                    <Link to="/dairy" onClick={handleLinkClick}>🥛 मराठा दूध व संकलन केंद्र</Link>
+                    <Link to="/manufacturers" onClick={handleLinkClick}>🏭 मराठा मॅन्युफॅक्चरर्स</Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Pillar 4: समाज व उपक्रम */}
+              <div className="cm-drawer-accordion-item">
+                <button
+                  type="button"
+                  className={`cm-drawer-accordion-btn ${expandedPillar === 'community' ? 'expanded' : ''}`}
+                  onClick={() => togglePillar('community')}>
+                  <span>🚩 समाज व उपक्रम</span>
+                  <span className="cm-drawer-accordion-chevron">{expandedPillar === 'community' ? '▲' : '▼'}</span>
+                </button>
+                {expandedPillar === 'community' && (
+                  <div className="cm-drawer-accordion-panel">
+                    <Link to="/community" onClick={handleLinkClick}>💬 मराठा डिजिटल कम्युनिटी</Link>
+                    <Link to="/women" onClick={handleLinkClick}>🌸 महिला सक्षमीकरण कक्ष</Link>
+                    <Link to="/blood" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 700 }}>🩸 २४×७ रक्त मदत केंद्र</Link>
+                    <Link to="/matrimony" onClick={handleLinkClick}>💍 मराठा वधू-वर सूचक केंद्र</Link>
+                    <Link to="/organizations" onClick={handleLinkClick}>🤝 मराठा सामाजिक संघटना</Link>
+                    <Link to="/political" onClick={handleLinkClick}>🏛️ राजकीय नेतृत्व व पक्ष</Link>
+                    <Link to="/social-workers" onClick={handleLinkClick}>🤝 मराठा निष्ठावंत समाजसेवक</Link>
+                    <Link to="/officers" onClick={handleLinkClick}>⭐ मराठा सनदी अधिकारी (IAS/IPS)</Link>
+                    <Link to="/doctors" onClick={handleLinkClick}>👨‍⚕️ मराठा तज्ज्ञ डॉक्टर्स</Link>
+                    <Link to="/artists" onClick={handleLinkClick}>🎭 कलाकार, गायक व दिग्दर्शक</Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Pillar 5: महाराष्ट्र नेटवर्क */}
+              <div className="cm-drawer-accordion-item">
+                <button
+                  type="button"
+                  className={`cm-drawer-accordion-btn ${expandedPillar === 'network' ? 'expanded' : ''}`}
+                  onClick={() => togglePillar('network')}>
+                  <span>🗺️ महाराष्ट्र नेटवर्क</span>
+                  <span className="cm-drawer-accordion-chevron">{expandedPillar === 'network' ? '▲' : '▼'}</span>
+                </button>
+                {expandedPillar === 'network' && (
+                  <div className="cm-drawer-accordion-panel">
+                    <Link to="/network" onClick={handleLinkClick}>🏛️ पुणे विभाग (पुणे, सातारा, कोल्हापूर)</Link>
+                    <Link to="/network" onClick={handleLinkClick}>🌊 कोकण विभाग (मुंबई, ठाणे, पालघर)</Link>
+                    <Link to="/network" onClick={handleLinkClick}>⛵ रायगड, रत्नागिरी, सिंधुदुर्ग</Link>
+                    <Link to="/network" onClick={handleLinkClick}>🌄 छ. संभाजीनगर, जालना, बीड</Link>
+                    <Link to="/network" onClick={handleLinkClick}>🌾 नाशिक, अहमदनगर, जळगाव, धुळे</Link>
+                    <Link to="/network" onClick={handleLinkClick}>🌿 विदर्भ (अमरावती, नागपूर, चंद्रपूर)</Link>
+                    <Link to="/network" onClick={handleLinkClick}>🚩 बेळगाव, कारवार सीमावर्ती शाखा</Link>
+                    <Link to="/network" onClick={handleLinkClick}>🏢 ३६ जिल्हा समन्वय केंद्रे</Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Pillar 6: सर्व दालने, सनद व ओळख */}
+              <div className="cm-drawer-accordion-item">
+                <button
+                  type="button"
+                  className={`cm-drawer-accordion-btn ${expandedPillar === 'all' ? 'expanded' : ''}`}
+                  onClick={() => togglePillar('all')}>
+                  <span>📂 सर्व दालने व सनद</span>
+                  <span className="cm-drawer-accordion-chevron">{expandedPillar === 'all' ? '▲' : '▼'}</span>
+                </button>
+                {expandedPillar === 'all' && (
+                  <div className="cm-drawer-accordion-panel">
+                    <Link to="/card" onClick={handleLinkClick}>🪪 डिजिटल सभासद ओळखपत्र</Link>
+                    <Link to="/calendar" onClick={handleLinkClick}>📅 मराठा दिनदर्शिका</Link>
+                    <Link to="/about" onClick={handleLinkClick}>🏛️ संस्था परिचय व सल्लागार मंडळ</Link>
+                    <Link to="/governance" onClick={handleLinkClick}>🎯 व्हिजन व DPDP २०२३ धोरण</Link>
+                    <Link to="/blueprint" onClick={handleLinkClick}>🧭 ५० विभाग मास्टर ब्लूप्रिंट</Link>
+                    <Link to="/achievers" onClick={handleLinkClick}>🏆 राष्ट्रीय मराठा गौरव व अचीव्हर्स</Link>
+                    <Link to="/roles-matrix" onClick={handleLinkClick}>⚖️ भूमिका व पात्रता मॅट्रिक्स</Link>
+                    <Link to="/donation" onClick={handleLinkClick}>❤️ दुर्ग संवर्धन व देणगी कोष</Link>
+                    <Link to="/contact" onClick={handleLinkClick}>☎️ संपर्क व तक्रार निवारण</Link>
+                    {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo' || user.role === 'district_admin') && (
+                      <Link to="/crm" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800, borderTop: '1px dashed #CBD5E1', paddingTop: '8px' }}>
+                        🛡️ अधिकारी CRM पोर्टल →
+                      </Link>
+                    )}
+                    {user && user.role === 'superadmin' && (
+                      <Link to="/superadmin" onClick={handleLinkClick} style={{ color: '#D97706', fontWeight: 800 }}>
+                        👑 SuperAdmin कन्सोल →
+                      </Link>
+                    )}
+                    {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo') && (
+                      <Link to="/admin/cms" onClick={handleLinkClick} style={{ color: '#7C3AED', fontWeight: 800 }}>
+                        🎨 CMS संपादक →
+                      </Link>
+                    )}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
 
           {/* Drawer Footer */}
           <div className="cm-drawer-footer">
