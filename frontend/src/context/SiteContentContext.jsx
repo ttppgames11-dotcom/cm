@@ -105,10 +105,9 @@ export const defaultSiteContent = {
       discountNotice: "मराठा महासंघ सदस्यांसाठी विशेष व्यावसायिक सवलत."
     },
     contactSupport: {
-      email: "support@connectmaratha.org",
+      email: "support@connectmaratha.com",
       phone: "+91 98220 11223",
-      emergencyHelpline: "1800-209-1674",
-      address: "छत्रपती संभाजी महाराज भवन, एफसी रोड, शिवाजीनगर, पुणे, महाराष्ट्र - ४११००४"
+      emergencyHelpline: "1800-123-1674"
     }
   },
   footer: {

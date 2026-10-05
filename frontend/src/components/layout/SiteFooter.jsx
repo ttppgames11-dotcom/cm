@@ -31,6 +31,7 @@ export default function SiteFooter() {
             </p>
             <div style={{ background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,204,128,0.3)', borderRadius: '8px', padding: '10px 12px', fontSize: '0.8rem', color: '#FFF3E0' }}>
               📞 समाज हेल्पलाईन: <strong>{getContent('forms.contactSupport.emergencyHelpline', '१८००-१२३-१६७४')}</strong><br />
+              ✉️ अधिकृत ईमेल: <a href="mailto:support@connectmaratha.com" style={{ color: '#FDE047', fontWeight: 700, textDecoration: 'none' }}>support@connectmaratha.com</a><br />
               🔒 <strong>DPDP Act, 2023 सुसंगत:</strong> डेटा गोपनीयता व एन्क्रिप्शन.
             </div>
           </div>

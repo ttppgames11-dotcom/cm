@@ -105,10 +105,9 @@ export const defaultSiteContent = {
       discountNotice: "मराठा महासंघ सदस्यांसाठी विशेष व्यावसायिक सवलत."
     },
     contactSupport: {
-      email: "support@connectmaratha.org",
+      email: "support@connectmaratha.com",
       phone: "+91 98220 11223",
-      emergencyHelpline: "1800-209-1674",
-      address: "छत्रपती संभाजी महाराज भवन, एफसी रोड, शिवाजीनगर, पुणे, महाराष्ट्र - ४११००४"
+      emergencyHelpline: "1800-123-1674"
     }
   },
   footer: {
@@ -129,28 +128,9 @@ export function SiteContentProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Load latest content from API on mount
+  // Site content is driven directly by defaultSiteContent (no unmapped CMS backend calls)
   useEffect(() => {
-    let isMounted = true;
-    setIsLoading(true);
-    apiClient.getSiteContent()
-      .then((data) => {
-        if (isMounted && data && typeof data === 'object') {
-          setContent((prev) => {
-            const merged = { ...defaultSiteContent, ...prev, ...data };
-            localStorage.setItem('cm_site_content', JSON.stringify(merged));
-            return merged;
-          });
-        }
-      })
-      .catch((err) => {
-        console.warn('[SiteContent] Could not fetch live content, using cached/defaults:', err.message);
-      })
-      .finally(() => {
-        if (isMounted) setIsLoading(false);
-      });
-
-    return () => { isMounted = false; };
+    setIsLoading(false);
   }, []);
 
   // Helper to extract nested values with fallback: getContent('hero.title', 'fallback')

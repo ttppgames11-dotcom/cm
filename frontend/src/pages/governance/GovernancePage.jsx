@@ -181,19 +181,17 @@ export default function GovernancePage() {
               )}
             </div>
 
-            {/* Central Office Card */}
+            {/* Contact & Support Card */}
             <div style={{ background: '#FFF8F2', borderRadius: '16px', padding: '24px', border: '1px solid #FFCC80' }}>
               <div style={{ fontWeight: 800, color: '#C73800', fontSize: '1.1rem', marginBottom: '8px' }}>
-                📍 मध्यवर्ती कार्यालय
+                ✉️ अधिकृत संपर्क व साहाय्यता
               </div>
               <p style={{ fontSize: '0.9rem', color: '#4B5563', lineHeight: 1.6, margin: '0 0 12px' }}>
-                Connect Maratha भवन,<br />
-                नारायण पेठ, छत्रपती शिवाजी महाराज चौक,<br />
-                पुणे – ४११०३०, महाराष्ट्र, भारत.
+                Connect Maratha डिजिटल व्यासपीठ — अखंड महाराष्ट्र व देश-विदेशातील सर्व बांधवांसाठी २४x७ ऑनलाइन साहाय्य.
               </p>
               <div style={{ fontSize: '0.9rem', color: '#C73800', fontWeight: 700 }}>
-                📞 २४/७ हेल्पलाईन: १८००-२३३-१९८१<br />
-                ✉️ ईमेल: contact@connectmaratha.org
+                📞 २४/७ समाज हेल्पलाईन: १८००-१२३-१६७४<br />
+                ✉️ अधिकृत ईमेल: support@connectmaratha.com
               </div>
             </div>
           </div>
