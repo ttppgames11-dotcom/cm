@@ -97,19 +97,10 @@ export default function SiteHeader({ onOpenSearch }) {
                   🎯 व्हिजन
                 </NavLink>
                 <NavLink to="/blueprint" onClick={handleLinkClick}>
-                  🏆 उद्दिष्टे व ब्लूप्रिंट
+                  🏆 उद्दिष्टे व संकल्प
                 </NavLink>
                 <NavLink to="/why-join" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800 }}>
                   ⭐ सहभागी का व्हावे?
-                </NavLink>
-                <NavLink to="/roles-matrix" onClick={handleLinkClick} style={{ color: '#B45309', fontWeight: 800 }}>
-                  ⚖️ ५६ पदे व पात्रता
-                </NavLink>
-                <NavLink to="/card" onClick={handleLinkClick}>
-                  🪪 डिजिटल ओळखपत्र
-                </NavLink>
-                <NavLink to="/universe" onClick={handleLinkClick}>
-                  🌌 महाविश्व
                 </NavLink>
                 <NavLink to="/contact" onClick={handleLinkClick}>
                   ☎️ संपर्क
@@ -491,15 +482,6 @@ export default function SiteHeader({ onOpenSearch }) {
                 <NavLink to="/why-join" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-gold ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">⭐</span> सहभागी व्हा
                 </NavLink>
-                <NavLink to="/roles-matrix" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-                  <span className="subnav-pill-icon">⚖️</span> ५६ पदे
-                </NavLink>
-                <NavLink to="/card" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-                  <span className="subnav-pill-icon">🪪</span> ओळखपत्र
-                </NavLink>
-                <NavLink to="/universe" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-universe ${isActive ? 'active' : ''}`}>
-                  <span className="subnav-pill-icon">🌌</span> महाविश्व
-                </NavLink>
                 <NavLink to="/contact" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">☎️</span> संपर्क
                 </NavLink>
@@ -642,44 +624,89 @@ export default function SiteHeader({ onOpenSearch }) {
 
           {/* Quick Jump Badges */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-            <Link
-              to="/roles-matrix"
-              onClick={handleLinkClick}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '9px 12px',
-                background: '#FFF7ED',
-                border: '1px solid #FED7AA',
-                borderRadius: '8px',
-                color: '#C2410C',
-                fontWeight: 700,
-                fontSize: '0.82rem',
-                textDecoration: 'none'
-              }}>
-              <span>⚖️</span>
-              <span>५६ पदे मॅट्रिक्स</span>
-            </Link>
-            <Link
-              to="/calendar"
-              onClick={handleLinkClick}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '9px 12px',
-                background: '#FFFBEB',
-                border: '1px solid #FDE68A',
-                borderRadius: '8px',
-                color: '#92400E',
-                fontWeight: 700,
-                fontSize: '0.82rem',
-                textDecoration: 'none'
-              }}>
-              <span>📅</span>
-              <span>दिनदर्शिका</span>
-            </Link>
+            {!user ? (
+              <>
+                <Link
+                  to="/why-join"
+                  onClick={handleLinkClick}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '9px 12px',
+                    background: '#FFF7ED',
+                    border: '1px solid #FED7AA',
+                    borderRadius: '8px',
+                    color: '#C2410C',
+                    fontWeight: 800,
+                    fontSize: '0.82rem',
+                    textDecoration: 'none'
+                  }}>
+                  <span>⭐</span>
+                  <span>सहभागी व्हा</span>
+                </Link>
+                <Link
+                  to="/contact"
+                  onClick={handleLinkClick}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '9px 12px',
+                    background: '#FFFBEB',
+                    border: '1px solid #FDE68A',
+                    borderRadius: '8px',
+                    color: '#92400E',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    textDecoration: 'none'
+                  }}>
+                  <span>☎️</span>
+                  <span>मदत व संपर्क</span>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/roles-matrix"
+                  onClick={handleLinkClick}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '9px 12px',
+                    background: '#FFF7ED',
+                    border: '1px solid #FED7AA',
+                    borderRadius: '8px',
+                    color: '#C2410C',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    textDecoration: 'none'
+                  }}>
+                  <span>⚖️</span>
+                  <span>५६ पदे मॅट्रिक्स</span>
+                </Link>
+                <Link
+                  to="/calendar"
+                  onClick={handleLinkClick}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '9px 12px',
+                    background: '#FFFBEB',
+                    border: '1px solid #FDE68A',
+                    borderRadius: '8px',
+                    color: '#92400E',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    textDecoration: 'none'
+                  }}>
+                  <span>📅</span>
+                  <span>दिनदर्शिका</span>
+                </Link>
+              </>
+            )}
           </div>
 
           {!user ? (
@@ -714,22 +741,6 @@ export default function SiteHeader({ onOpenSearch }) {
                 <div>
                   <div style={{ color: '#9A3412', fontWeight: 900 }}>सहभागी का व्हावे? (सदस्यत्वाचे लाभ)</div>
                   <small style={{ color: '#C2410C' }}>८ मुख्य फायदे व डिजिटल स्मार्ट कार्ड</small>
-                </div>
-              </Link>
-
-              <Link to="/roles-matrix" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
-                <span style={{ fontSize: '1.2rem' }}>⚖️</span>
-                <div>
-                  <div style={{ color: '#0F172A', fontWeight: 800 }}>५६ पदे व पात्रता मॅट्रिक्स</div>
-                  <small style={{ color: '#64748B' }}>पदांची रचना व रेफरल पात्रता</small>
-                </div>
-              </Link>
-
-              <Link to="/card" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
-                <span style={{ fontSize: '1.2rem' }}>🪪</span>
-                <div>
-                  <div style={{ color: '#0F172A', fontWeight: 800 }}>डिजिटल सभासद ओळखपत्र</div>
-                  <small style={{ color: '#64748B' }}>स्मार्ट कार्ड पूर्वावलोकन व पडताळणी</small>
                 </div>
               </Link>
 
