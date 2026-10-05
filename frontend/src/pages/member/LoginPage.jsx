@@ -39,22 +39,34 @@ export default function LoginPage() {
     }
 
     if (activeTab === 'otp') {
+      if (!loginId || !loginId.trim() || !loginId.includes('@')) {
+        setMessage('कृपया आपला वैध नोंदणीकृत ईमेल पत्ता प्रविष्ट करा.');
+        return;
+      }
       if (!otpCode || otpCode.trim().length < 4) {
-        setMessage('कृपया प्राप्त झालेला ६-अंकी OTP प्रविष्ट करा.');
+        setMessage('कृपया ईमेलवर प्राप्त झालेला ६-अंकी OTP प्रविष्ट करा.');
         return;
       }
       setLoading(true);
       setMessage('');
       try {
-        const res = await login(loginId.trim(), 'CM@' + otpCode.trim());
-        if (res && res.success) {
+        const verifyRes = await api.auth.verifyOtp(loginId.trim(), otpCode.trim());
+        if (verifyRes && (verifyRes.success || verifyRes.resetToken || verifyRes.verified || verifyRes.data)) {
+          const userObj = {
+            name: loginId.split('@')[0],
+            email: loginId.trim(),
+            role: roleMode === 'business' ? 'business' : 'member',
+            tier: 'Gold',
+            district: 'पुणे'
+          };
+          localStorage.setItem('cm_logged_in', 'true');
+          localStorage.setItem('cm_user_data', JSON.stringify(userObj));
           navigate('/dashboard');
         } else {
-          // Fallback direct OTP login
-          navigate('/dashboard');
+          setMessage('अवैध किंवा कालबाह्य OTP कोड.');
         }
       } catch (err) {
-        navigate('/dashboard');
+        setMessage(err.message || 'OTP पडताळणी अयशस्वी. कृपया OTP तपासा.');
       } finally {
         setLoading(false);
       }
@@ -83,17 +95,22 @@ export default function LoginPage() {
     }
   };
 
-  const handleSendOtp = () => {
-    if (!loginId || !loginId.trim() || loginId.trim().length < 10) {
-      setMessage('कृपया वैध १० अंकी मोबाईल नंबर प्रविष्ट करा.');
+  const handleSendOtp = async () => {
+    if (!loginId || !loginId.trim() || !loginId.includes('@')) {
+      setMessage('कृपया प्रथम आपला नोंदणीकृत ईमेल पत्ता प्रविष्ट करा.');
       return;
     }
     setLoading(true);
-    setTimeout(() => {
+    setMessage('');
+    try {
+      const res = await api.auth.forgotPassword(loginId.trim());
       setOtpSent(true);
+      setMessage(res?.message || 'आपल्या नोंदणीकृत ईमेलवर ६-अंकी OTP पाठवण्यात आला आहे. इनबॉक्स किंवा स्पॅम तपासा.');
+    } catch (err) {
+      setMessage(err.message || 'OTP पाठवता आला नाही. कृपया नोंदणीकृत ईमेल तपासा.');
+    } finally {
       setLoading(false);
-      setMessage('आपल्या नोंदणीकृत मोबाईल नंबरवर ६-अंकी OTP पाठवण्यात आला आहे (उदा. 167430).');
-    }, 400);
+    }
   };
 
   // 1. Send OTP to user's registered email
@@ -488,22 +505,24 @@ export default function LoginPage() {
 
             {/* PANE 2: OTP LOGIN */}
             {activeTab === 'otp' && (
-              <div>
+              <form onSubmit={handleLoginSubmit}>
                 <div style={{ marginBottom: '14px' }}>
                   <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, color: '#374151', marginBottom: '5px' }}>
-                    नोंदणीकृत मोबाईल नंबर
+                    नोंदणीकृत ईमेल (Registered Email)
                   </label>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <input
-                      type="tel"
+                      type="email"
                       value={loginId}
                       onChange={(e) => setLoginId(e.target.value)}
-                      placeholder="१० अंकी मोबाईल नंबर"
-                      style={{ flex: 1, padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #D1D5DB', fontSize: '0.92rem' }}
+                      placeholder="उदा. yourname@example.com"
+                      required
+                      style={{ flex: 1, padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #D1D5DB', fontSize: '0.92rem', outline: 'none' }}
                     />
                     <button
                       type="button"
                       onClick={handleSendOtp}
+                      disabled={loading}
                       style={{
                         padding: '10px 16px',
                         borderRadius: '8px',
@@ -515,28 +534,29 @@ export default function LoginPage() {
                         cursor: 'pointer',
                         whiteSpace: 'nowrap'
                       }}>
-                      OTP पाठवा
+                      {loading ? 'पाठवत आहे...' : 'OTP पाठवा'}
                     </button>
                   </div>
                 </div>
 
                 <div style={{ marginBottom: '18px' }}>
                   <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, color: '#374151', marginBottom: '5px' }}>
-                    प्राप्त झालेला ६-अंकी OTP प्रविष्ट करा
+                    ईमेलवर प्राप्त झालेला ६-अंकी OTP प्रविष्ट करा
                   </label>
                   <input
                     type="text"
                     maxLength="6"
                     value={otpCode}
                     onChange={(e) => setOtpCode(e.target.value)}
-                    placeholder="उदा. 167430"
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #D1D5DB', fontSize: '1.1rem', letterSpacing: '4px', textAlign: 'center', boxSizing: 'border-box' }}
+                    placeholder="उदा. 482910"
+                    required
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #D1D5DB', fontSize: '1.1rem', letterSpacing: '4px', textAlign: 'center', boxSizing: 'border-box', outline: 'none' }}
                   />
                 </div>
 
                 <button
-                  type="button"
-                  onClick={() => handleLoginSubmit()}
+                  type="submit"
+                  disabled={loading}
                   style={{
                     width: '100%',
                     padding: '12px 18px',
@@ -551,9 +571,9 @@ export default function LoginPage() {
                     boxShadow: '0 4px 14px rgba(244,81,30,0.35)',
                     marginBottom: '14px'
                   }}>
-                  ✓ पडताळा आणि लॉगिन करा ➔
+                  {loading ? 'पडताळत आहे...' : '✓ OTP पडताळा आणि लॉगिन करा ➔'}
                 </button>
-              </div>
+              </form>
             )}
 
             {/* Separator */}
