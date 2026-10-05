@@ -439,7 +439,11 @@ export default function App() {
             {/* Role-Specific Live Enterprise CRM Suite — Protected for Authenticated Staff/Admins */}
             <Route path="/crm" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
             <Route path="/crm/roles" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
-            <Route path="/crm/admin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/crm/admin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/admin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/admin/dashboard" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/admin/users" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/admin/members" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
 
             <Route path="/crm/ceo" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEOPage /></CRMProtectedRoute>} />
             <Route path="/ceo" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEOPage /></CRMProtectedRoute>} />

@@ -143,6 +143,11 @@ export default function SuperAdminDashboardPage() {
     setModalType('addUser');
   };
 
+  const handleOpenViewUser = (u) => {
+    setActiveItem(u);
+    setModalType('viewUser');
+  };
+
   const handleOpenEditUser = (u) => {
     setActiveItem(u);
     setFormData({
@@ -839,9 +844,12 @@ export default function SuperAdminDashboardPage() {
                     users.map(u => (
                       <tr key={u.id} style={{ borderBottom: '1px solid #334155' }}>
                         <td style={{ padding: '14px 16px' }}>
-                          <div style={{ fontWeight: 700, color: '#F8FAFC', fontSize: '0.92rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <div 
+                            onClick={() => handleOpenViewUser(u)}
+                            style={{ fontWeight: 700, color: '#38BDF8', fontSize: '0.92rem', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
+                            title="संपूर्ण प्रोफाइल तपशील पाहण्यासाठी क्लिक करा">
                             <span>{u.role === 'superadmin' ? '👑 ' : u.role === 'admin' ? '🏛️ ' : '👤 '}</span>
-                            <span>{u.name}</span>
+                            <span style={{ textDecoration: 'underline' }}>{u.name}</span>
                             {u.isOnline && (
                               <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981', display: 'inline-block' }} title="ऑनलाइन"></span>
                             )}
@@ -909,13 +917,13 @@ export default function SuperAdminDashboardPage() {
                               fontSize: '0.8rem',
                               fontWeight: 700
                             }}>
-                            <option value="superadmin">👑 superadmin</option>
-                            <option value="ceo">🦅 ceo</option>
-                            <option value="admin">🏛️ admin</option>
-                            <option value="district_admin">📍 district_admin</option>
-                            <option value="chapter_president">💼 chapter_president</option>
-                            <option value="seva_helpdesk">🩺 seva_helpdesk</option>
-                            <option value="member">👤 member</option>
+                              <option value="superadmin">👑 superadmin</option>
+                              <option value="ceo">🦅 ceo</option>
+                              <option value="admin">🏛️ admin</option>
+                              <option value="district_admin">📍 district_admin</option>
+                              <option value="chapter_president">💼 chapter_president</option>
+                              <option value="seva_helpdesk">🩺 seva_helpdesk</option>
+                              <option value="member">👤 member</option>
                           </select>
                         </td>
                         <td style={{ padding: '14px 16px' }}>
@@ -943,6 +951,12 @@ export default function SuperAdminDashboardPage() {
                         <td style={{ padding: '14px 16px', textAlign: 'right' }}>
                           <div style={{ display: 'inline-flex', gap: '6px' }}>
                             <button
+                              onClick={() => handleOpenViewUser(u)}
+                              style={{ padding: '6px 12px', background: '#0284C7', border: 'none', color: '#FFF', borderRadius: '6px', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700 }}
+                              title="संपूर्ण तपशील पहा">
+                              👁️ तपशील
+                            </button>
+                            <button
                               onClick={() => handleOpenEditUser(u)}
                               style={{ padding: '6px 12px', background: '#3B82F6', border: 'none', color: '#FFF', borderRadius: '6px', cursor: 'pointer', fontSize: '0.78rem' }}
                               title="माहिती संपादित करा">
@@ -967,6 +981,7 @@ export default function SuperAdminDashboardPage() {
                         </td>
                       </tr>
                     ))
+
                   )}
                 </tbody>
               </table>
@@ -1323,6 +1338,7 @@ export default function SuperAdminDashboardPage() {
             {/* Modal Title */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #334155', paddingBottom: '16px', marginBottom: '20px' }}>
               <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>
+                {modalType === 'viewUser' && `🪪 वापरकर्ता संपूर्ण तपशील: ${activeItem?.name}`}
                 {modalType === 'addUser' && '➕ नवीन वापरकर्ता तयार करा'}
                 {modalType === 'editUser' && `✏️ वापरकर्ता संपादन: ${activeItem?.name}`}
                 {modalType === 'addDoctor' && '🩺 नवीन डॉक्टर जोडा'}
@@ -1342,7 +1358,182 @@ export default function SuperAdminDashboardPage() {
               </button>
             </div>
 
+            {/* VIEW USER DETAILS MODAL */}
+            {modalType === 'viewUser' && activeItem && (
+              <div>
+                {/* Header Profile Card */}
+                <div style={{
+                  background: 'linear-gradient(135deg, #1E1B4B 0%, #312E81 100%)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  border: '1px solid #4338CA',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '16px'
+                }}>
+                  <div style={{
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #F59E0B, #D97706)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '28px',
+                    fontWeight: 900,
+                    color: '#000',
+                    boxShadow: '0 4px 14px rgba(245,158,11,0.4)'
+                  }}>
+                    {activeItem.avatar || '👤'}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <h4 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800, color: '#FFFFFF' }}>{activeItem.name}</h4>
+                      {activeItem.isOnline && (
+                        <span style={{
+                          background: 'rgba(16,185,129,0.2)',
+                          border: '1px solid #10B981',
+                          color: '#34D399',
+                          padding: '2px 8px',
+                          borderRadius: '12px',
+                          fontSize: '0.72rem',
+                          fontWeight: 800
+                        }}>
+                          🟢 थेट सक्रिय (Online)
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '0.84rem', color: '#CBD5E1', marginTop: '4px' }}>
+                      <strong>सदस्य आयडी:</strong> <span style={{ color: '#FDE68A', fontFamily: 'monospace', fontWeight: 700 }}>{activeItem.id}</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+                      <span style={{ background: '#4C1D95', color: '#E9D5FF', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700 }}>
+                        भूमिका: {activeItem.role || 'member'}
+                      </span>
+                      <span style={{ background: '#065F46', color: '#A7F3D0', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700 }}>
+                        श्रेणी: {activeItem.tier || 'Gold'}
+                      </span>
+                      <span style={{ background: activeItem.verified ? '#14532D' : '#7F1D1D', color: activeItem.verified ? '#86EFAC' : '#FCA5A5', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700 }}>
+                        {activeItem.verified ? '✅ प्रमाणित सदस्य' : '⏳ पडताळणी प्रलंबित'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4-Section Information Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', marginBottom: '22px' }}>
+                  
+                  {/* Section 1: Contact & Account */}
+                  <div style={{ background: '#0F172A', padding: '16px', borderRadius: '10px', border: '1px solid #334155' }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#38BDF8', marginBottom: '10px' }}>
+                      📱 संपर्क व खाते माहिती
+                    </div>
+                    <div style={{ fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div><strong style={{ color: '#94A3B8' }}>मोबाईल:</strong> <span style={{ color: '#FFF' }}>{activeItem.phone || 'उपलब्ध नाही'}</span></div>
+                      <div><strong style={{ color: '#94A3B8' }}>ई-मेल:</strong> <span style={{ color: '#FFF' }}>{activeItem.email || 'उपलब्ध नाही'}</span></div>
+                      <div><strong style={{ color: '#94A3B8' }}>शेवटची सक्रियता:</strong> <span style={{ color: '#FFF' }}>{activeItem.lastActiveFormatted || 'काही वेळापूर्वी'}</span></div>
+                      <div><strong style={{ color: '#94A3B8' }}>नोंदणी दिनांक:</strong> <span style={{ color: '#FFF' }}>{activeItem.joined || activeItem.createdAt?.split('T')[0] || '२०२६'}</span></div>
+                    </div>
+                  </div>
+
+                  {/* Section 2: Social & Cultural */}
+                  <div style={{ background: '#0F172A', padding: '16px', borderRadius: '10px', border: '1px solid #334155' }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#FBBF24', marginBottom: '10px' }}>
+                      🚩 सामाजिक व कुळ माहिती
+                    </div>
+                    <div style={{ fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div><strong style={{ color: '#94A3B8' }}>९६ कुळ:</strong> <span style={{ color: '#FFF' }}>{activeItem.kul || '९६ कुळी मराठा'}</span></div>
+                      <div><strong style={{ color: '#94A3B8' }}>गोत्र / देवक:</strong> <span style={{ color: '#FFF' }}>{activeItem.gotra || 'नोंद नाही'}</span></div>
+                      <div><strong style={{ color: '#94A3B8' }}>जिल्हा:</strong> <span style={{ color: '#FFF' }}>{activeItem.district || 'महाराष्ट्र'}</span></div>
+                      <div><strong style={{ color: '#94A3B8' }}>तालुका / शहर:</strong> <span style={{ color: '#FFF' }}>{activeItem.taluka || activeItem.city || activeItem.district || 'पुणे'}</span></div>
+                    </div>
+                  </div>
+
+                  {/* Section 3: Professional */}
+                  <div style={{ background: '#0F172A', padding: '16px', borderRadius: '10px', border: '1px solid #334155' }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#34D399', marginBottom: '10px' }}>
+                      💼 व्यावसायिक व शैक्षणिक
+                    </div>
+                    <div style={{ fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div><strong style={{ color: '#94A3B8' }}>व्यवसाय / क्षेत्र:</strong> <span style={{ color: '#FFF' }}>{activeItem.profession || 'व्यवसायिक / नोकरी'}</span></div>
+                      <div><strong style={{ color: '#94A3B8' }}>कंपनी / प्रतिष्ठान:</strong> <span style={{ color: '#FFF' }}>{activeItem.business || 'नोंद नाही'}</span></div>
+                      <div><strong style={{ color: '#94A3B8' }}>रक्तगट:</strong> <span style={{ color: '#F87171' }}>{activeItem.bloodGroup || 'O+'}</span></div>
+                    </div>
+                  </div>
+
+                  {/* Section 4: Governance & Verification */}
+                  <div style={{ background: '#0F172A', padding: '16px', borderRadius: '10px', border: '1px solid #334155' }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#A78BFA', marginBottom: '10px' }}>
+                      🛡️ प्रशासकीय पडताळणी शेरा
+                    </div>
+                    <div style={{ fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div><strong style={{ color: '#94A3B8' }}>पडताळणी अधिकारी:</strong> <span style={{ color: '#FFF' }}>{activeItem.verifiedBy || 'मध्यवर्ती प्रशासक मंडळ'}</span></div>
+                      <div><strong style={{ color: '#94A3B8' }}>शेरा (Remarks):</strong> <span style={{ color: '#CBD5E1' }}>{activeItem.verificationRemarks || 'कागदपत्र पडताळणी पूर्ण झाली'}</span></div>
+                      <div><strong style={{ color: '#94A3B8' }}>अधिकार व्याप्ती:</strong> <span style={{ color: '#FFF' }}>{activeItem.assignedScope || activeItem.district || 'महाराष्ट्र'}</span></div>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Modal Action Buttons */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', borderTop: '1px solid #334155', paddingTop: '16px', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleToggleVerification(activeItem);
+                      setActiveItem({ ...activeItem, verified: !activeItem.verified });
+                    }}
+                    style={{
+                      padding: '10px 16px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: activeItem.verified ? '#991B1B' : '#15803D',
+                      color: '#FFF',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      fontSize: '0.85rem'
+                    }}>
+                    {activeItem.verified ? '❌ प्रमाणपत्र रद्द करा' : '✅ अधिकृत प्रमाणित करा'}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleOpenEditUser(activeItem)}
+                    style={{
+                      padding: '10px 16px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: '#2563EB',
+                      color: '#FFF',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      fontSize: '0.85rem'
+                    }}>
+                    ✏️ माहिती संपादन
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setModalType(null)}
+                    style={{
+                      padding: '10px 18px',
+                      borderRadius: '8px',
+                      border: '1px solid #475569',
+                      background: '#1E293B',
+                      color: '#CBD5E1',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      fontSize: '0.85rem'
+                    }}>
+                    बंद करा
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* User Form */}
+
             {(modalType === 'addUser' || modalType === 'editUser') && (
               <form onSubmit={handleSaveUser}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
