@@ -42,8 +42,9 @@ export function AuthProvider({ children }) {
   const login = async (identifier, password, customProfile = null) => {
     try {
       const res = await api.auth.login(identifier, password);
-      if (res && res.member) {
-        const finalUser = customProfile ? { ...res.member, ...customProfile } : res.member;
+      const member = res?.member || res?.data?.member || res?.data?.profile;
+      if (member) {
+        const finalUser = customProfile ? { ...member, ...customProfile } : member;
         setUser(finalUser);
         localStorage.setItem('cm_logged_in', 'true');
         localStorage.setItem('cm_user_data', JSON.stringify(finalUser));
@@ -58,11 +59,12 @@ export function AuthProvider({ children }) {
   const register = async (formData) => {
     try {
       const res = await api.auth.register(formData);
-      if (res && res.member) {
-        setUser(res.member);
+      const member = res?.member || res?.data?.member || res?.data?.profile;
+      if (member) {
+        setUser(member);
         localStorage.setItem('cm_logged_in', 'true');
-        localStorage.setItem('cm_user_data', JSON.stringify(res.member));
-        return { success: true, member: res.member };
+        localStorage.setItem('cm_user_data', JSON.stringify(member));
+        return { success: true, member };
       }
       return { success: false, error: res?.error || 'नोंदणी अयशस्वी झाली.' };
     } catch (err) {

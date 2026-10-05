@@ -92,12 +92,28 @@ router.post('/login', async (req, res) => {
 
     const { identifier, password } = sanitized;
 
+    const cleanId = String(identifier).trim().toLowerCase();
+    const cleanIdDigits = String(identifier).replace(/\D/g, ''); // only numbers
+
     const members = db.getCollection('members');
-    const member = members.find(m => 
-      String(m.id).toLowerCase() === String(identifier).toLowerCase() ||
-      (m.email && m.email.toLowerCase() === String(identifier).toLowerCase()) ||
-      (m.phone && m.phone.replace(/[\s-]/g, '') === String(identifier).replace(/[\s-]/g, ''))
-    );
+    const member = members.find(m => {
+      // 1. Match by Member ID
+      if (m.id && String(m.id).toLowerCase() === cleanId) return true;
+      // 2. Match by Email
+      if (m.email && m.email.toLowerCase() === cleanId) return true;
+      // 3. Match by Phone (compare full normalized digits or last 10 digits)
+      if (m.phone) {
+        const mDigits = String(m.phone).replace(/\D/g, '');
+        if (cleanIdDigits && mDigits) {
+          if (mDigits === cleanIdDigits) return true;
+          // Compare last 10 digits (handles with/without country code like +91)
+          if (mDigits.length >= 10 && cleanIdDigits.length >= 10) {
+            return mDigits.slice(-10) === cleanIdDigits.slice(-10);
+          }
+        }
+      }
+      return false;
+    });
 
     if (!member) {
       return sendError(res, 'सदस्य सापडला नाही. कृपया माहिती तपासा किंवा नोंदणी करा.', 'USER_NOT_FOUND', 404);

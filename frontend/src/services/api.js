@@ -35,9 +35,17 @@ export const api = {
   // 1. Authentication & Member Identity
   auth: {
     login: async (identifier, password) => {
+      const cleanId = String(identifier || '').trim();
+      const digitsOnly = cleanId.replace(/\D/g, '');
       const res = await request('/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ identifier, password })
+        body: JSON.stringify({
+          identifier: cleanId,
+          phone: digitsOnly.length >= 10 ? digitsOnly : cleanId,
+          mobile: digitsOnly.length >= 10 ? digitsOnly : cleanId,
+          email: cleanId,
+          password
+        })
       });
       const token = res.data?.token || res.token;
       if (token) {
@@ -46,9 +54,15 @@ export const api = {
       return res;
     },
     register: async (formData) => {
+      const cleanPhone = String(formData.phone || formData.mobile || '').trim();
+      const digitsOnly = cleanPhone.replace(/\D/g, '');
       const res = await request('/auth/register', {
         method: 'POST',
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          phone: digitsOnly.length >= 10 ? digitsOnly : cleanPhone,
+          mobile: digitsOnly.length >= 10 ? digitsOnly : cleanPhone
+        })
       });
       const token = res.data?.token || res.token;
       if (token) {
