@@ -286,60 +286,84 @@ export default function SiteHeader({ onOpenSearch }) {
             </Link>
 
             {user && user.id ? (
-              <div className="cm-user-menu-wrap" style={{ position: 'relative' }}>
+              <div className="cm-user-menu-wrap" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                 <Link
                   to="/dashboard"
-                  className="btn btn-primary"
                   onClick={handleLinkClick}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '6px',
+                    gap: '7px',
                     padding: '6px 14px',
-                    borderRadius: '20px',
-                    fontSize: '0.85rem',
-                    fontWeight: '800'
+                    borderRadius: '24px',
+                    background: 'linear-gradient(135deg, #EA580C, #C2410C)',
+                    color: '#FFFFFF',
+                    fontWeight: '800',
+                    fontSize: '0.86rem',
+                    textDecoration: 'none',
+                    boxShadow: '0 2px 10px rgba(234, 88, 12, 0.25)',
+                    border: 'none',
+                    transition: 'all 0.2s ease'
                   }}
                   title="माझा डॅशबोर्ड"
                 >
-                  <span>👤</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
                   <span style={{ maxWidth: '90px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {user.name?.split(' ')[0] || 'डॅशबोर्ड'}
                   </span>
                 </Link>
                 <Link
                   to="/card"
-                  className="btn btn-outline"
                   onClick={handleLinkClick}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '4px',
-                    padding: '5px 10px',
-                    borderRadius: '20px',
-                    fontSize: '0.82rem',
-                    fontWeight: '700'
+                    justifyContent: 'center',
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    background: '#FFF7ED',
+                    border: '1.5px solid #FED7AA',
+                    color: '#EA580C',
+                    textDecoration: 'none',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 2px 6px rgba(234, 88, 12, 0.08)'
                   }}
-                  title="माझे डिजिटल ओळखपत्र"
+                  title="माझे डिजिटल ओळखपत्र (Digital ID Card)"
                 >
-                  <span>🪪</span>
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2" />
+                    <line x1="2" y1="10" x2="22" y2="10" />
+                    <circle cx="7" cy="15" r="1.5" />
+                    <line x1="12" y1="15" x2="18" y2="15" />
+                  </svg>
                 </Link>
                 <button
                   onClick={logout}
-                  className="btn"
-                  title="खात्यातून बाहेर पडा (Logout)"
                   style={{
-                    background: '#FEE2E2',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    background: '#FEF2F2',
+                    border: '1.5px solid #FECACA',
                     color: '#DC2626',
-                    border: '1px solid #FCA5A5',
-                    padding: '5px 9px',
-                    borderRadius: '20px',
-                    fontSize: '0.82rem',
-                    fontWeight: '700',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 2px 6px rgba(220, 38, 38, 0.08)'
                   }}
+                  title="खात्यातून बाहेर पडा (Logout)"
                 >
-                  🚪
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
                 </button>
               </div>
             ) : (
@@ -501,17 +525,32 @@ export default function SiteHeader({ onOpenSearch }) {
                   </div>
                 </div>
                 <div className="cm-drawer-user-btns">
-                  <Link to="/dashboard" onClick={handleLinkClick} className="btn btn-primary">
-                    👤 डॅशबोर्ड
+                  <Link to="/dashboard" onClick={handleLinkClick} className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <span>डॅशबोर्ड</span>
                   </Link>
-                  <Link to="/card" onClick={handleLinkClick} className="btn btn-outline">
-                    🪪 ओळखपत्र
+                  <Link to="/card" onClick={handleLinkClick} className="btn btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="5" width="20" height="14" rx="2" />
+                      <line x1="2" y1="10" x2="22" y2="10" />
+                      <circle cx="7" cy="15" r="1.5" />
+                      <line x1="12" y1="15" x2="18" y2="15" />
+                    </svg>
+                    <span>ओळखपत्र</span>
                   </Link>
                   <button
                     onClick={() => { logout(); setMobileOpen(false); }}
                     className="btn"
-                    style={{ background: '#FEE2E2', color: '#DC2626', border: '1px solid #FCA5A5', fontWeight: 700 }}>
-                    🚪 बाहेर पडा
+                    style={{ background: '#FEE2E2', color: '#DC2626', border: '1.5px solid #FECACA', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    <span>बाहेर पडा</span>
                   </button>
                 </div>
               </>
