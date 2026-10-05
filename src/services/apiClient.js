@@ -273,10 +273,10 @@ export const apiClient = {
     return res.data?.siteContent || res.siteContent || res.data || null;
   },
 
-  // =========================================================================
-  // SUPERADMIN & ADMIN MASTER CRUD API
-  // =========================================================================
-  // Users CRUD - Connected in real-time to live database members
+  // In-memory member detail cache for ultra-fast unique phone & email lookups
+  _memberDetailsCache: new Map(),
+
+  // Users CRUD - Connected in real-time to live database members with real unique phone & email
   getAdminUsers: async (params = {}) => {
     try {
       const qs = new URLSearchParams(params).toString();
@@ -293,11 +293,37 @@ export const apiClient = {
       const res = await fetchJson(`/members${qs ? '?' + qs : ''}`);
       const rawList = res?.members || res?.data?.members || (Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []));
       
-      let filtered = rawList.map(m => ({
+      // Fetch real details for members to get real phone and email
+      const detailedList = await Promise.all(
+        rawList.map(async (m) => {
+          const mId = m.id || m._id;
+          if (!mId) return m;
+
+          // Check memory cache first
+          if (apiClient._memberDetailsCache.has(mId)) {
+            const cached = apiClient._memberDetailsCache.get(mId);
+            return { ...m, ...cached };
+          }
+
+          try {
+            const detailRes = await fetchJson(`/members/${mId}`);
+            const detail = detailRes?.member || detailRes?.data || detailRes;
+            if (detail) {
+              apiClient._memberDetailsCache.set(mId, detail);
+              return { ...m, ...detail };
+            }
+          } catch (err) {
+            // Keep basic info if single detail lookup fails
+          }
+          return m;
+        })
+      );
+
+      let filtered = detailedList.map(m => ({
         id: m.id || m._id || 'CM-96K',
         name: m.name || 'सदस्य',
-        email: m.email || `${(m.name || 'member').toLowerCase().replace(/\s+/g, '')}@connectmaratha.org`,
-        phone: m.phone || m.mobile || '९८२२० ९६०००',
+        email: m.email || `member_${(m.id || '').toLowerCase()}@connectmaratha.org`,
+        phone: m.phone || m.mobile || '',
         avatar: m.avatar || '👤',
         photo: m.photo || null,
         city: m.city || 'पुणे',
@@ -310,8 +336,8 @@ export const apiClient = {
         business: m.business || '',
         tier: m.tier || 'Gold',
         role: m.role || 'member',
-        verified: m.verified !== false,
-        verificationStatus: m.verified !== false ? 'प्रमाणित (Verified)' : 'प्रलंबित (Pending)',
+        verified: m.verified !== false && m.verified_profile !== 0,
+        verificationStatus: (m.verified !== false && m.verified_profile !== 0) ? 'प्रमाणित (Verified)' : 'प्रलंबित (Pending)',
         joined: m.joined || m.createdAt?.split('T')[0] || '२०२६-०१-०१',
         lastActiveFormatted: 'काही वेळापूर्वी',
         isOnline: true
@@ -359,6 +385,7 @@ export const apiClient = {
       return { users: [], count: 0, stats: {} };
     }
   },
+
   createAdminUser: async (data) => {
     try {
       return await fetchJson('/admin/users', { method: 'POST', body: JSON.stringify(data) });

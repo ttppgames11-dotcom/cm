@@ -143,9 +143,15 @@ export default function SuperAdminDashboardPage() {
     setModalType('addUser');
   };
 
-  const handleOpenViewUser = (u) => {
+  const handleOpenViewUser = async (u) => {
     setActiveItem(u);
     setModalType('viewUser');
+    try {
+      const full = await apiClient.getAdminUser(u.id);
+      if (full) {
+        setActiveItem(prev => ({ ...prev, ...full }));
+      }
+    } catch (e) {}
   };
 
   const handleOpenEditUser = (u) => {
