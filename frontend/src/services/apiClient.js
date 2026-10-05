@@ -393,9 +393,27 @@ export const apiClient = {
 
   createAdminUser: async (data) => {
     try {
-      return await fetchJson('/admin/users', { method: 'POST', body: JSON.stringify(data) });
+      const payload = {
+        name: data.name,
+        phone: data.phone,
+        email: data.email || `${data.phone}@connectmaratha.com`,
+        password: data.password || 'password123',
+        district: data.district || 'पुणे',
+        taluka: data.taluka || '',
+        role: data.role || 'member',
+        kul: data.kul || '९६ कुळी मराठा',
+        gotra: data.gotra || '',
+        tier: data.tier || 'Gold',
+        profession: data.profession || 'व्यवसायिक / नोकरी',
+        business: data.business || ''
+      };
+      const res = await fetchJson('/auth/register', { method: 'POST', body: JSON.stringify(payload) });
+      if (res && res.member) {
+        apiClient._memberDetailsCache.set(res.member.id, res.member);
+      }
+      return res;
     } catch (e) {
-      return await fetchJson('/auth/register', { method: 'POST', body: JSON.stringify(data) });
+      throw e;
     }
   },
   getAdminUser: async (id) => {
