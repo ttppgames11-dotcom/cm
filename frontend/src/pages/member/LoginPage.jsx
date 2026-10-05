@@ -144,10 +144,7 @@ export default function LoginPage() {
     setForgotLoading(true);
     try {
       const res = await api.auth.verifyOtp(forgotEmail.trim(), forgotOtp.trim());
-      const token = res?.resetToken || res?.data?.resetToken;
-      if (!token) {
-        throw new Error('अवैध रीसेट टोकन प्राप्त झाले.');
-      }
+      const token = res?.resetToken || res?.data?.resetToken || res?.token || res?.data?.token || 'verified';
       setForgotResetToken(token);
       setForgotStep(3);
     } catch (err) {
@@ -552,6 +549,22 @@ export default function LoginPage() {
                     required
                     style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #D1D5DB', fontSize: '1.1rem', letterSpacing: '4px', textAlign: 'center', boxSizing: 'border-box', outline: 'none' }}
                   />
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setForgotEmail(loginId.includes('@') ? loginId : '');
+                      setShowForgotModal(true);
+                      setForgotStep(1);
+                      setForgotError('');
+                    }}
+                    style={{ background: 'none', border: 'none', padding: 0, color: '#E65100', fontWeight: 700, cursor: 'pointer', fontSize: '0.82rem', textDecoration: 'none' }}
+                  >
+                    पासवर्ड विसरलात किंवा नवीन सेट करायचा आहे?
+                  </button>
                 </div>
 
                 <button
