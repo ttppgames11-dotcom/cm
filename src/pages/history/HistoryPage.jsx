@@ -329,7 +329,7 @@ export default function HistoryPage() {
           className="hero-bg-img"
           style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
         />
-        <div className="hero-overlay" style={{ background: 'radial-gradient(circle at 75% 35%, rgba(230,81,0,0.55), rgba(12,2,4,0.92) 80%)' }}></div>
+        <div className="hero-overlay" style={{ background: 'linear-gradient(135deg, rgba(60, 15, 15, 0.70) 0%, rgba(185, 28, 28, 0.40) 50%, rgba(217, 119, 6, 0.30) 100%)' }}></div>
 
         <div className="wrap hero-content" style={{ maxWidth: '1320px', width: '100%', padding: '50px 24px', position: 'relative', zIndex: 2 }}>
           <div className="hero-website-grid">
@@ -351,22 +351,28 @@ export default function HistoryPage() {
               </div>
             </div>
 
-            <div className="hero-real-card" style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '14px', overflow: 'hidden' }}>
+            <div className="hero-real-card" style={{
+              background: 'linear-gradient(145deg, #FFFFFF 0%, #FFFBEB 100%)',
+              border: '2px solid #F59E0B',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              boxShadow: '0 12px 28px rgba(0,0,0,0.16)'
+            }}>
               <div style={{ padding: '24px' }}>
-                <span className="card-badge" style={{ background: '#C73800', color: '#FFF', padding: '4px 10px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700 }}>
+                <span className="card-badge" style={{ background: 'linear-gradient(135deg, #C73800, #EA580C)', color: '#FFF', padding: '5px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800 }}>
                   🚩 हिंदवी स्वराज्य
                 </span>
-                <h4 style={{ color: '#FFFFFF', margin: '14px 0 8px', fontSize: '1.25rem', fontFamily: 'Baloo 2' }}>
+                <h4 style={{ color: '#7F1D1D', margin: '14px 0 8px', fontSize: '1.25rem', fontFamily: 'Baloo 2', fontWeight: 800 }}>
                   छत्रपती शिवाजी महाराज — अखंड स्वराज्य
                 </h4>
-                <p style={{ color: '#e5e7eb', fontSize: '0.9rem', lineHeight: 1.5 }}>
+                <p style={{ color: '#451A03', fontSize: '0.92rem', lineHeight: 1.6, fontWeight: 500 }}>
                   ६ जून १६७४ रोजी दुर्गराज रायगडावर ३२ मण सुवर्ण सिंहासनावर संपन्न झालेला ऐतिहासिक वैदिक राज्याभिषेक व स्वतंत्र सार्वभौम मराठा साम्राज्याची स्थापना.
                 </p>
-                <div style={{ marginTop: '16px', display: 'flex', gap: '10px' }}>
+                <div style={{ marginTop: '16px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                   <Link to="/history/shivaji-maharaj" className="btn btn-primary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
                     सविस्तर शिवचरित्र वाचा →
                   </Link>
-                  <Link to="/forts" className="btn btn-outline" style={{ color: '#FFFFFF', borderColor: '#FFFFFF', padding: '8px 16px', fontSize: '0.85rem' }}>
+                  <Link to="/forts" className="btn btn-outline" style={{ color: '#78350F', borderColor: '#D97706', padding: '8px 16px', fontSize: '0.85rem', fontWeight: 700 }}>
                     ३५०+ गड-किल्ले नकाशा 🏰
                   </Link>
                 </div>

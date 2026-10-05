@@ -1,31 +1,62 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useParams, Link } from 'react-router-dom';
 
 const articlesDatabase = {
   'shivaji-maharaj': {
     title: 'छत्रपती शिवाजी महाराज — अखंड हिंदवी स्वराज्य संस्थापक',
     eyebrow: 'श्रीमंत छत्रपती · युगपुरुष · भारतीय आरमाराचे जनक (१६३०–१६८०)',
-    heroImage: 'https://wallpapercave.com/wp/wp4518353.jpg',
-    tagline: 'रयतेचे राजे, रणनीतीकार आणि भारतीय नौदलाचे जनक — ३५०+ गड-किल्ले जिंकून हिंदवी स्वराज्याची स्थापना करणारे युगप्रवर्तक महापुरुष.',
+    heroImage: '/assets/images/real-shivaji-coronation.jpg',
+    cardImage: '/assets/images/real-shivaji-portrait.jpg',
+    tagline: 'रयतेचे राजे, अद्वितीय रणनीतीकार आणि भारतीय नौदलाचे जनक — ३५०+ गड-किल्ले जिंकून परकीय आक्रमक सत्तांना पराभूत करत अखंड लोककल्याणकारी हिंदवी स्वराज्याची स्थापना करणारे युगप्रवर्तक महापुरुष.',
     warCry: '|| प्रतिपच्चंद्रलेखेव वर्धिष्णुर्विश्ववंदिता शाहसूनोः शिवस्यैषा मुद्रा भद्राय राजते ||',
     stats: [
       { num: '१६३०', label: 'जन्म शिवनेरीवर' },
       { num: '३५०+', label: 'जिंकलेले गडकोट' },
       { num: '१६७४', label: 'रायगडावर राज्याभिषेक' },
-      { num: 'अष्टप्रधान', label: 'मंत्रिमंडळ व्यवस्था' }
+      { num: 'अष्टप्रधान', label: 'मंत्रिमंडळ व्यवस्था' },
+      { num: '२८ वर्षे', label: 'अपराजित संघर्ष' },
+      { num: 'पहिले आरमार', label: 'सागरी सार्वभौमत्व' }
     ],
     sections: [
       {
-        heading: 'स्वराज्याची प्रतिज्ञा व पहिले तोरण',
-        content: 'वयाच्या अवघ्या १६ व्या वर्षी छत्रपती शिवरायांनी रायरेश्वराच्या साक्षीने स्वराज्य स्थापनेची पवित्र शपथ घेतली आणि तोरणा किल्ला जिंकून स्वराज्याचे पहिले तोरण बांधले. त्यांनी रयतेच्या कल्याणासाठी जमीन महसूल पद्धती, स्वतंत्र नाणी (होन व शिवराई), आणि अष्टप्रधान मंडळ स्थापन केले.'
+        heading: '१. बालपण, जिजाऊ-शहाजीराजे संस्कार आणि रायरेश्वरावर स्वराज्याची शपथ (१६४५)',
+        content: '१९ फेब्रुवारी १६३० रोजी सह्याद्रीच्या कुशीतील किल्ले शिवनेरीवर छत्रपती शिवाजी महाराजांचा जन्म झाला. राष्ट्रमाता जिजाऊ माँसाहेब आणि पराक्रमी शहाजीराजे भोसले यांच्या उच्च संस्कारात शिवबांचे बालपण घडले. रामायण, महाभारत आणि महाराष्ट्राच्या लोकसंस्कृतीतून न्यायाची व स्वातंत्र्याची मूल्ये त्यांनी बालपणीच आत्मसात केली. वयाच्या अवघ्या १५ व्या वर्षी १६४५ मध्ये त्यांनी रायरेश्वराच्या पवित्र मंदिरात मावळ खोऱ्यातील सवंगड्यांसह स्वतःच्या रक्ताचा अभिषेक करून "हे राज्य व्हावे हे तो श्रींचे मनोगत!" अशी हिंदवी स्वराज्याची प्रतिज्ञा घेतली. कान्होजी जेधे, बाजी पासलकर, तानाजी मालुसरे, येसाजी कंक या निष्ठावंत मावळ्यांना सोबत घेऊन तोरणा किल्ला जिंकला आणि स्वराज्याचे पहिले तोरण बांधले.'
       },
       {
-        heading: 'जागतिक युद्धनीती व गनिमी कावा (Ganimi Kawa)',
-        content: 'सह्याद्रीच्या डोंगराळ भागाचा रणनीतिक वापर करून बलाढ्य शत्रूंचा पाडाव करण्याची गनिमी कावा ही युद्धनीती शिवरायांनी विकसित केली. प्रतापगडावर अफझलखानाचा वध आणि पावनखिंडीतील अभेद्य प्रतिकार हे जागतिक लष्करी इतिहासातील अद्वितीय अध्याय आहेत.'
+        heading: '२. जागतिक युद्धनीती — गनिमी कावा (Ganimi Kawa) आणि प्रतापगड महासंग्राम (१६५९)',
+        content: 'सह्याद्रीचे दुर्गम डोंगर आणि घनदाट जंगलांचा रणनीतिक उपयोग करून शिवरायांनी "गनिमी कावा" ही अजोड युद्धपद्धती विकसित केली. १० नोव्हेंबर १६५९ रोजी विजापूरच्या बलाढ्य सेनापती अफझलखानाने केलेल्या दगाफटक्याला चोख उत्तर देत शिवरायांनी वाघनखांनी त्याचा कोथळा बाहेर काढला. प्रतापगडाच्या पायथ्याशी झालेल्या या युद्धाने विजापूर सल्तनतीचा पाया हलवला. या लढाईत मराठा फौजांनी शत्रूच्या अफाट सैन्याचा पाडाव करून हजारो घोडे, हत्ती, तोफा आणि खजिना स्वराज्यासाठी हस्तगत केला.'
       },
       {
-        heading: 'भारतीय आरमाराचे जनक (Father of Indian Navy)',
-        content: 'समुद्रावरील परकीय सत्तांचा धोका ओळखून छत्रपती शिवरायांनी सिंधुदुर्ग, विजयदुर्ग, सुवर्णदुर्ग यांसारखे जलदुर्ग उभारले आणि समर्थ आरमारी लढाऊ जहाजांचा ताफा तयार केला. म्हणून त्यांना भारतीय आरमाराचे जनक मानले जाते.'
+        heading: '३. पावनखिंडीचा अमर संग्राम, लाल महालावरील सर्जिकल स्ट्राईक व सुरत मोहीम (१६६०–१६६४)',
+        content: '१३ जुलै १६६० रोजी पन्हाळगडावरून विशाळगडाकडे कूच करताना सिद्धी मसूदच्या अफाट सेनेला घोडखिंडीत रोखून धरत वीर बाजीप्रभू देशपांडे आणि ३०० बांदल मावळ्यांनी अद्वितीय शौर्य गाजवले. ५ एप्रिल १६६३ रोजी पुण्यात लाखो मोगल सेनेसह ठाण मांडून बसलेल्या शाहिस्तेखानावर मध्यरात्री अचूक सर्जिकल स्ट्राईक करून शिवरायांनी त्याची तीन बोटे छाटली. त्यानंतर ६-१० जानेवारी १६६४ रोजी मोगल साम्राज्याची आर्थिक राजधानी असलेल्या सुरत शहरावर धाडसी मोहीम काढून कोट्यवधी रुपयांचा खजिना स्वराज्याच्या संरक्षणासाठी आणि आरमाराच्या उभारणीसाठी सुरक्षित आणला.'
+      },
+      {
+        heading: '४. पुरंदरचा वेढा, आग्ऱ्याहून अद्वितीय सुटका आणि मोगल सत्तेला आव्हान (१६६५–१६६६)',
+        content: '१६६५ मध्ये मिर्झाराजे जयसिंग आणि दिलेरखानाने पुरंदरला वेढा घातला. मुरारबाजी देशपांड्यांनी अतुलनीय शौर्य गाजवत प्राणांचे बलिदान दिले. परिस्थिती ओळखून शिवरायांनी २३ किल्ले तात्पुरते देण्याचा मुत्सद्दी पुरंदर तह केला. १६६६ मध्ये आग्र्याला औरंगजेबाच्या दरबारात स्वाभिमानाला धक्का लागताच भर दरबारात बादशहाला आव्हान देणारे शिवराय जगातील एकमेव राजे ठरले. नजरकैदेत असताना मिठाईच्या पेटाऱ्यातून बाल संभाजीराजांसह सुरक्षित निसटून शिवराय स्वराज्यात परतले. ही सुटका जागतिक गुप्तहेर आणि रणनीती इतिहासातील अद्वितीय महाचमत्कार मानली जाते.'
+      },
+      {
+        heading: '५. दुर्गराज रायगडावर ऐतिहासिक वैदिक सुवर्ण शिवराज्याभिषेक (६ जून १६७४)',
+        content: '६ जून १६७४ (ज्येष्ठ शुद्ध त्रयोदशी, शके १५९६) रोजी दुर्गराज रायगडावर पंडित गागाभट्टांच्या उपस्थितीत छत्रपती शिवरायांचा वैदिक सुवर्ण राज्याभिषेक झाला. ३२ मण सोन्याच्या नवरत्नजडित सिंहासनावर आरूढ होऊन शिवरायांनी स्वतंत्र "शिवराज्याभिषेक शक" सुरू केला. स्वतःची सुवर्ण "होन" आणि तांब्याची "शिवराई" ही नाणी पाडून स्वराज्याचे राजकीय व आर्थिक सार्वभौमत्व सिद्ध केले. या सोहळ्याने शेकडो वर्षांच्या परकीय गुलामगिरीला संपवून रयतेचे स्वतंत्र सार्वभौम राज्य अस्तित्वात आले.'
+      },
+      {
+        heading: '६. भारतीय आरमाराचे जनक (Father of Indian Navy), सिंधुदुर्ग व सागरी साम्राज्य',
+        content: '"ज्याचा समुद्र त्याचा देश!" हे वैश्विक भू-राजकीय तत्त्व ओळखून छत्रपती शिवरायांनी १६५७ मध्ये कल्याण-भिवंडी येथे भारताच्या पहिल्या स्वतंत्र नौदलाची स्थापना केली. मालवणच्या समुद्रात खडकांवर ५० मण शिशाचा रस ओतून पायाभरणी केलेला सिंधुदुर्ग, तसेच विजयदुर्ग, सुवर्णदुर्ग, पद्मदुर्ग, खांदेरी-उंदेरी असे अभेद्य जलदुर्ग उभारले. गुराब, गलबत, पाल, मचवा अशी शेकडो लढाऊ जहाजे तयार करून इंग्रज, पोर्तुगीज, डच आणि जंजिऱ्याच्या सिद्दीच्या समुद्री आक्रमणांना समुद्रावरच कायमचे रोखून धरले.'
+      },
+      {
+        heading: '७. दक्षिण दिग्विजय मोहीम — जिंजी, वेल्लोर ते तंजावरपर्यंत मराठा ध्वज (१६७७–१६७८)',
+        content: 'राज्याभिषेकानंतर शिवरायांनी भारताच्या दक्षिणेकडे महामोहीम हाती घेतली. गोलकोंड्याच्या कुतुबशाहाशी मैत्री करून शिवरायांनी कर्नाटकात प्रवेश केला. श्रीशैलम येथे मल्लिकार्जुन ज्योतिर्लिंगाचे दर्शन घेऊन जिंजी, वेल्लोर, मदुरै आणि तंजावरपर्यंत मराठा सत्तेचा भगवा ध्वज फडकवला. जिंजीचा किल्ला इतका अभेद्य बनवला की पुढे छत्रपती राजाराम महाराजांच्या काळात याच जिंजीने मोगल फौजांना तब्बल ८ वर्षे झुंजवून मराठा साम्राज्याचे अस्तित्व सुरक्षित राखले.'
+      },
+      {
+        heading: '८. शेतकरी हित, अण्णाजी दत्तो जमीन महसूल सुधारणा व पर्यावरण आज्ञापत्र',
+        content: 'शिवरायांचे राज्य हे रयतेचे राज्य होते. अण्णाजी दत्तो यांच्या काठी मोजणी पद्धतीनुसार केवळ पिकांच्या प्रत्यक्ष उत्पन्नावर शेतसारा ठरवला गेला. दुष्काळात शेतकऱ्यांचा सारा संपूर्ण माफ करून त्यांना बिनव्याजी "तगाई कर्ज", बी-बियाणे आणि बैलजोडी दिली जाई. आज्ञापत्रात सक्त ताकीद दिली होती: "आरमारासाठी किंवा गडासाठी रयतेने पोटच्या पोरासारखी वाढवलेली आंबा, फणस अशी फळझाडे तोडू नयेत!" सैन्याला सक्त नियम होता की युद्धाच्या वेळी शेतातील भाजीच्या देठालाही हात लावू नये, आणि शत्रूच्या प्रदेशातीलही स्त्री व बालकांना मातेसमान सन्मान दिला गेला पाहिजे.'
+      },
+      {
+        heading: '९. शिवकालीन अष्टप्रधान मंत्रिमंडळ, गुप्तहेर यंत्रणा (बहिर्जी नाईक) व न्यायव्यवस्था',
+        content: 'प्रशासनाच्या सुलभतेसाठी शिवरायांनी अष्टप्रधान मंडळ स्थापन केले. कोणत्याही पदावर वंशपरंपरा न ठेवता केवळ गुणवत्तेवर नियुक्ती केली. बहिर्जी नाईक यांच्या नेतृत्वाखालील गुप्तहेर खात्याने शत्रूच्या गोटात शिरून प्रत्येक मोहिमेची अचूक माहिती मिळवली. न्यायव्यवस्थेत जात, धर्म किंवा पद न पाहता सर्वांना समान न्याय दिला जाई. स्वतःच्या नातेवाईकानेही गुन्हा केल्यास कठोर शासन करण्याचे ध्येय शिवरायांनी पाळले.'
+      },
+      {
+        heading: '१०. शिवकालीन शस्त्रसंपदा — भवानी तलवार, जगदंबा, वाघनखे आणि मराठा दांडपट्टा',
+        content: 'शिवकालीन सैन्याची शस्त्रे अत्यंत प्रभावी आणि चपळ हालचालींना अनुकूल होती. तुळजाभवानीचा आशीर्वाद मानली गेलेली "भवानी तलवार", अमोघ "जगदंबा तलवार", हाताच्या बोटांत लपवून प्राणघातक वार करणारी "वाघनखे", आणि दोन्ही हातांनी फिरवून शत्रूचे शिरकाण करणारा चार फुटी लवचीक "मराठा दांडपट्टा" ही शिवकालीन लष्कराची मुख्य शस्त्रे होती. या शस्त्रांच्या आणि निधड्या छातीच्या जोरावर मावळ्यांनी सह्याद्रीच्या कड्यांवर अद्भूत इतिहास घडवला.'
       }
     ]
   },
@@ -404,6 +435,7 @@ const slugAliases = {
 export default function GenericArticlePage() {
   const location = useLocation();
   const params = useParams();
+  const [activeFaq, setActiveFaq] = useState(null);
 
   // Normalize slug
   let rawSlug = params.slug || location.pathname.replace(/^\//, '');
@@ -456,66 +488,818 @@ export default function GenericArticlePage() {
         <span className="flame-icon">🔥</span>
       </div>
 
-      {/* Hero Section */}
-      <div className="hero" style={{ minHeight: '460px', position: 'relative', overflow: 'hidden' }}>
+      {/* Hero Section - Light Royal Maratha Heritage Theme */}
+      <div className="hero" style={{ minHeight: '480px', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #FFFDF8 0%, #FEF3C7 50%, #FFEDD5 100%)' }}>
         <img
           src={article.heroImage}
           alt={article.title}
           className="hero-bg-img"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
-          onError={(e) => { e.target.src = '/assets/images/maratha-samrajya.jpg'; }}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%', position: 'absolute', inset: 0, opacity: 1 }}
+          onError={(e) => { e.target.src = '/assets/images/real-shivaji-coronation.jpg'; }}
         />
-        <div className="hero-overlay" style={{ background: 'radial-gradient(circle at 75% 35%, rgba(230,81,0,0.6), rgba(12,2,4,0.92) 80%)' }}></div>
+        {/* Very light, translucent warm overlay - keeps the historic painting 100% visible and vivid */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(90deg, rgba(255, 250, 240, 0.38) 0%, rgba(255, 245, 230, 0.18) 50%, rgba(0, 0, 0, 0.04) 100%)',
+          zIndex: 1,
+          pointerEvents: 'none'
+        }}></div>
 
-        <div className="wrap hero-content" style={{ maxWidth: '1320px', width: '100%', padding: '40px 24px', position: 'relative', zIndex: 2 }}>
-          <div>
-            <div className="eyebrow" style={{ color: 'var(--gold-300)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.88rem' }}>
-              {article.eyebrow}
+        <div className="wrap hero-content" style={{ maxWidth: '1320px', width: '100%', padding: '44px 24px', position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '32px', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 580px', minWidth: '300px' }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'linear-gradient(135deg, #FEF3C7 0%, #FFEDD5 100%)',
+              color: '#9A3412',
+              border: '1.5px solid #FCD34D',
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              letterSpacing: '0.8px',
+              fontSize: '0.84rem',
+              padding: '6px 14px',
+              borderRadius: '20px',
+              boxShadow: '0 2px 6px rgba(217, 119, 6, 0.08)'
+            }}>
+              👑 {article.eyebrow}
             </div>
-            <h1 style={{ fontSize: 'clamp(2.2rem, 3.8vw, 3.6rem)', lineHeight: 1.15, color: '#FFFFFF', margin: '12px 0' }}>
+            <h1 style={{
+              fontSize: 'clamp(2.2rem, 3.8vw, 3.4rem)',
+              lineHeight: 1.18,
+              color: '#7F1D1D',
+              margin: '14px 0 10px',
+              fontFamily: "'Baloo 2', sans-serif",
+              fontWeight: 900,
+              textShadow: '0 2px 14px rgba(255, 255, 255, 0.98), 0 1px 4px rgba(255, 255, 255, 0.95), 0 0 20px rgba(255, 255, 255, 0.90)'
+            }}>
               {article.title}
             </h1>
-            <div className="rule" style={{ background: 'var(--gold-500)', height: '4px', width: '80px', margin: '12px 0' }}></div>
-            <p className="tagline" style={{ fontSize: '1.1rem', maxWidth: '60ch', color: '#FFF8F2', lineHeight: 1.6 }}>
+            <div style={{ background: 'linear-gradient(90deg, #EA580C, #F59E0B)', height: '4px', width: '90px', borderRadius: '2px', margin: '14px 0 14px' }}></div>
+            <p style={{
+              fontSize: '1.08rem',
+              maxWidth: '64ch',
+              color: '#1F2937',
+              lineHeight: 1.65,
+              fontWeight: 600,
+              margin: '0 0 20px',
+              background: 'rgba(255, 255, 255, 0.65)',
+              backdropFilter: 'blur(6px)',
+              WebkitBackdropFilter: 'blur(6px)',
+              padding: '12px 18px',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.85)',
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.06)'
+            }}>
               {article.tagline}
             </p>
 
-            <div className="stats-glass" style={{ marginTop: '24px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            <div style={{ marginTop: '20px', display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
               {article.stats.map((s, i) => (
-                <div key={i} className="stat-glass">
-                  <b>{s.num}</b>
-                  <span>{s.label}</span>
+                <div key={i} style={{
+                  background: '#FFFFFF',
+                  border: '1.5px solid #FDE68A',
+                  padding: '10px 16px',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 12px rgba(217,119,6,0.08)',
+                  textAlign: 'center',
+                  minWidth: '110px'
+                }}>
+                  <b style={{ color: '#B91C1C', fontSize: '1.25rem', display: 'block', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>{s.num}</b>
+                  <span style={{ color: '#78350F', fontSize: '0.8rem', fontWeight: 700 }}>{s.label}</span>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Dedicated Portrait Card (Light Royal Gold & Crisp Finish) */}
+          <div style={{
+            flex: '0 0 320px',
+            maxWidth: '360px',
+            width: '100%',
+            background: 'linear-gradient(145deg, #FFFFFF 0%, #FFFBEB 100%)',
+            padding: '14px',
+            borderRadius: '20px',
+            border: '2.5px solid #F59E0B',
+            boxShadow: '0 16px 36px rgba(185, 28, 28, 0.14), 0 4px 12px rgba(0, 0, 0, 0.05)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '100%',
+              height: '340px',
+              borderRadius: '14px',
+              overflow: 'hidden',
+              background: '#FFFDF9',
+              border: '1.5px solid #FDE68A',
+              position: 'relative'
+            }}>
+              <img
+                src={article.cardImage || article.heroImage}
+                alt={article.title}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  objectPosition: 'center',
+                  display: 'block'
+                }}
+                onError={(e) => { e.target.src = '/assets/images/real-shivaji-portrait.jpg'; }}
+              />
+              <span style={{
+                position: 'absolute',
+                bottom: '10px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'linear-gradient(135deg, #FFFBEB, #FEF3C7)',
+                color: '#9A3412',
+                padding: '4px 14px',
+                borderRadius: '20px',
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                border: '1.5px solid #FCD34D',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                whiteSpace: 'nowrap'
+              }}>
+                अस्सल समकालीन व्यक्तिरेखा
+              </span>
+            </div>
+            <div style={{ marginTop: '12px', color: '#7F1D1D', fontWeight: 800, fontSize: '1.05rem', fontFamily: "'Baloo 2', sans-serif" }}>
+              श्री राजा शिवछत्रपती
+            </div>
+            <div style={{ fontSize: '0.8rem', color: '#92400E', fontWeight: 700 }}>
+              {article.title.split('—')[0].trim()}
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="wrap" style={{ maxWidth: '1080px', padding: '40px 24px', margin: '0 auto' }}>
-        <div style={{ background: '#FFFFFF', borderRadius: '14px', padding: '36px', border: '1px solid var(--line)', boxShadow: 'var(--shadow-sm)' }}>
+      <div className="wrap" style={{ maxWidth: '1120px', padding: '40px 24px', margin: '0 auto' }}>
+        <div style={{ background: '#FFFFFF', borderRadius: '16px', padding: '36px', border: '1px solid var(--line)', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
           {article.sections.map((sec, idx) => (
-            <div key={idx} style={{ marginBottom: idx === article.sections.length - 1 ? 0 : '32px' }}>
-              <h3 style={{ fontFamily: 'Baloo 2', color: 'var(--maroon-900)', fontSize: '1.5rem', marginBottom: '12px', borderBottom: '2px solid var(--gold-300)', paddingBottom: '6px' }}>
-                {sec.heading}
+            <div key={idx} style={{ marginBottom: idx === article.sections.length - 1 ? 0 : '36px' }}>
+              <h3 style={{ fontFamily: 'Baloo 2', color: 'var(--maroon-900)', fontSize: '1.45rem', marginBottom: '14px', borderBottom: '2px solid var(--gold-300)', paddingBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>📜</span> {sec.heading}
               </h3>
-              <p style={{ fontSize: '1.05rem', lineHeight: 1.8, color: 'var(--ink-soft)' }}>
+              <p style={{ fontSize: '1.04rem', lineHeight: 1.85, color: '#374151', margin: 0, textAlign: 'justify' }}>
                 {sec.content}
               </p>
             </div>
           ))}
 
+          {/* ============================================================== */}
+          {/* SPECIAL RICH EXHIBIT: छत्रपती शिवाजी महाराज सखोल ऐतिहासिक दालने */}
+          {/* ============================================================== */}
+          {normalizedKey === 'shivaji-maharaj' && (
+            <>
+              {/* 1. शिवछत्रपतींची पवित्र राजमुद्रा — सखोल विश्लेषण */}
+              <div style={{ marginTop: '48px', padding: '32px 28px', background: 'linear-gradient(145deg, #FFFDF8 0%, #FEF3C7 50%, #FFEDD5 100%)', borderRadius: '18px', border: '2px solid #F59E0B', boxShadow: '0 12px 32px rgba(217, 119, 6, 0.12)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: '0 0 160px', width: '160px', height: '160px', margin: '0 auto', borderRadius: '50%', overflow: 'hidden', border: '4px solid #D97706', boxShadow: '0 8px 24px rgba(180, 83, 9, 0.25)', background: '#fff' }}>
+                    <img
+                      src="/assets/images/real-rajmudra-seal.jpg"
+                      alt="शिवराजमुद्रा"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => { e.target.src = '/assets/images/real-shivaji-portrait.jpg'; }}
+                    />
+                  </div>
+                  <div style={{ flex: '1 1 500px', minWidth: '280px' }}>
+                    <div style={{ display: 'inline-block', background: '#C73800', color: '#fff', fontSize: '0.78rem', fontWeight: 800, padding: '4px 12px', borderRadius: '20px', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '8px' }}>
+                      🚩 अखंड हिंदवी स्वराज्याची सार्वभौम मुद्रा
+                    </div>
+                    <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.65rem', margin: '0 0 8px', fontWeight: 900 }}>
+                      शिवराजमुद्रा — अर्थ, इतिहास व वैश्विक लोककल्याण
+                    </h3>
+                    <div style={{ background: '#7F1D1D', color: '#FEF3C7', padding: '12px 18px', borderRadius: '10px', fontSize: '1.08rem', fontWeight: 700, letterSpacing: '0.5px', fontFamily: "'Baloo 2', serif", margin: '12px 0 16px', borderLeft: '4px solid #F59E0B', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>
+                      || प्रतिपच्चंद्रलेखेव वर्धिष्णुर्विश्ववंदिता शाहसूनोः शिवस्यैषा मुद्रा भद्राय राजते ||
+                    </div>
+                    <p style={{ color: '#451A03', fontSize: '0.98rem', lineHeight: 1.7, margin: '0 0 14px' }}>
+                      मध्ययुगीन भारतातील सर्व सत्ताधीशांच्या राजमुद्रा या फारसी भाषेत आणि बादशहाच्या मांडलिकत्वाची साक्ष देणाऱ्या होत्या. छत्रपती शिवरायांनी वयाच्या अवघ्या १४ व्या वर्षी जगातील पहिली स्वतंत्र <b>संस्कृत राजमुद्रा</b> घडवून स्वराज्याचा पाया घातला. यात स्वतःच्या मोठेपणापेक्षा <b>"रयतेचे भद्र (लोककल्याण)"</b> हेच राज्याचे अंतिम ध्येय असल्याचे जगाला ठणकावून सांगितले.
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px', background: 'rgba(255,255,255,0.7)', padding: '14px', borderRadius: '12px', border: '1px solid #FDE68A' }}>
+                      <div><b style={{ color: '#9A3412' }}>प्रतिपच्चंद्रलेखेव:</b> <span style={{ fontSize: '0.88rem', color: '#374151' }}>प्रतिपदेच्या चंद्रकोरीप्रमाणे</span></div>
+                      <div><b style={{ color: '#9A3412' }}>वर्धिष्णुः:</b> <span style={{ fontSize: '0.88rem', color: '#374151' }}>दिवसेंदिवस वाढत जाणारी</span></div>
+                      <div><b style={{ color: '#9A3412' }}>विश्ववंदिता:</b> <span style={{ fontSize: '0.88rem', color: '#374151' }}>जगाला वंदनीय ठरणारी</span></div>
+                      <div><b style={{ color: '#9A3412' }}>शाहसूनोः शिवस्य:</b> <span style={{ fontSize: '0.88rem', color: '#374151' }}>शहाजीपुत्र शिवाजींची</span></div>
+                      <div><b style={{ color: '#9A3412' }}>एषा मुद्रा:</b> <span style={{ fontSize: '0.88rem', color: '#374151' }}>ही राजमुद्रा</span></div>
+                      <div><b style={{ color: '#9A3412' }}>भद्राय राजते:</b> <span style={{ fontSize: '0.88rem', color: '#374151' }}>केवळ लोककल्याणासाठी तळपते</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. शिवकाल गौरवशाली कालक्रम (Timeline १६३० – १६८०) */}
+              <div style={{ marginTop: '48px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                  <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
+                    ⏳ ऐतिहासिक टप्पे
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                    शिवकाल गौरवशाली कालक्रम (१६३० – १६८०)
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
+                    जन्म, स्वराज्याची शपथ, प्रतापगड ते राज्याभिषेक — हिंदवी स्वराज्याच्या स्थापनेचे १४ अद्वितीय सुवर्ण टप्पे
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: '16px' }}>
+                  {[
+                    { year: '१६३०', title: 'शिवनेरीवर जन्म (१९ फेब्रुवारी)', desc: 'सह्याद्रीच्या कुशीतील किल्ले शिवनेरीवर राष्ट्रमाता जिजाऊंच्या पोटी युगप्रवर्तक शिवरायांचा जन्म.' },
+                    { year: '१६४५', title: 'रायरेश्वरावर स्वराज्य शपथ', desc: 'वयाच्या अवघ्या १५ व्या वर्षी शिवलिंगावर रक्ताभिषेक करून "हे राज्य व्हावे हे तो श्रींचे मनोगत" अशी शपथ घेतली.' },
+                    { year: '१६४६', title: 'तोरणा दुर्ग विजय (पहिले तोरण)', desc: 'तोरणा किल्ला जिंकून स्वराज्याचे पहिले तोरण बांधले. किल्ल्यावरील गुप्त धनावर राजगडाची उभारणी सुरू केली.' },
+                    { year: '१६५६', title: 'जावळीचा ऐतिहासिक विजय', desc: 'चंद्रराव मोऱ्यांचा पाडाव करून जावळीचे दुर्गम अरण्य ताब्यात घेतले आणि किल्ले प्रतापगडाची निर्मिती केली.' },
+                    { year: '१६५९', title: 'प्रतापगड रणसंग्राम (१० नोव्हेंबर)', desc: 'बलाढ्य अफझलखानाचा वाघनखांनी कोथळा बाहेर काढून वध; विजापूर सल्तनतीचा जावळीच्या जंगलात संपूर्ण धुव्वा.' },
+                    { year: '१६६०', title: 'पावनखिंडीचा अमर रणसंग्राम (१३ जुलै)', desc: 'वीर बाजीप्रभू देशपांडे व बांदल मावळ्यांनी सिद्धी मसूदला घोडखिंडीत रोखून धरले; शिवराय विशाळगडावर सुखरूप.' },
+                    { year: '१६६३', title: 'लाल महालावर सर्जिकल स्ट्राईक (५ एप्रिल)', desc: 'पुण्यात लाखो सैन्यासह ठाण मांडलेल्या मोगल सुभेदार शाहिस्तेखानावर मध्यरात्री छापा; त्याची बोटे छाटली.' },
+                    { year: '१६६४', title: 'सुरतेची पहिली ऐतिहासिक मोहीम', desc: 'मोगलांची आर्थिक राजधानी सुरत लुटून कोट्यवधींचे धन स्वराज्याच्या संरक्षणासाठी आणि आरमारासाठी सुरक्षित आणले.' },
+                    { year: '१६६५', title: 'पुरंदरचा वेढा व तह', desc: 'मुरारबाजी देशपांड्यांचे असीम बलिदान. मिर्झाराजे जयसिंगासोबत २३ किल्ले तात्पुरते देण्याचा मुत्सद्दी तह.' },
+                    { year: '१६६६', title: 'आग्ऱ्याहून चमत्कारी सुटका (१७ ऑगस्ट)', desc: 'औरंगजेबाच्या दरबारात स्वाभिमान दाखवून नजरकैदेत असताना गोड मिठाईच्या पेटाऱ्यातून बाल संभाजींसह निसटले.' },
+                    { year: '१६७०', title: 'सिंहगड विजय (४ फेब्रुवारी)', desc: 'सुभेदार तानाजी मालुसरे यांनी घोरपडीच्या साहाय्याने कडा चढून सिंहगड जिंकला — "गड आला पण सिंह गेला!"' },
+                    { year: '१६७४', title: 'दुर्गराज रायगडावर राज्याभिषेक (६ जून)', desc: '३२ मण सोन्याच्या सिंहासनावर पंडित गागाभट्टांच्या उपस्थितीत वैदिक राज्याभिषेक; स्वतंत्र शिवराज्याभिषेक शक सुरू.' },
+                    { year: '१६७७', title: 'दक्षिण दिग्विजय महामोहीम', desc: 'जिंजी, वेल्लोर, मद्रास, तंजावरपर्यंत मराठा ध्वज फडकावून दक्षिणेत मराठा सत्तेची दूरगामी सुरक्षित फळी रचली.' },
+                    { year: '१६८०', title: 'रायगडावर महासमाधी (३ एप्रिल)', desc: 'अखंड स्वराज्य, ३५०+ गडकोट आणि अजिंक्य स्वातंत्र्याची देण देऊन शिवछत्रपती वयाच्या ५० व्या वर्षी अनंतात विलीन.' }
+                  ].map((t, idx) => (
+                    <div key={idx} style={{ background: '#FFFDF9', border: '1.5px solid #FDE68A', padding: '16px 20px', borderRadius: '14px', position: 'relative', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'linear-gradient(180deg, #EA580C, #F59E0B)' }}></div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <span style={{ background: '#7F1D1D', color: '#FEF3C7', padding: '3px 10px', borderRadius: '6px', fontWeight: 800, fontSize: '0.85rem', fontFamily: "'Baloo 2', sans-serif" }}>
+                          {t.year}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', color: '#9CA3AF', fontWeight: 700 }}>टप्पा #{idx + 1}</span>
+                      </div>
+                      <h4 style={{ margin: '0 0 6px', color: '#9A3412', fontSize: '1.02rem', fontWeight: 800, fontFamily: "'Baloo 2', sans-serif" }}>
+                        {t.title}
+                      </h4>
+                      <p style={{ margin: 0, fontSize: '0.88rem', color: '#4B5563', lineHeight: 1.6 }}>
+                        {t.desc}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 3. शिवरायांचे निष्ठावंत शिलेदार व सेनापती (Icons of Swarajya) */}
+              <div style={{ marginTop: '54px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                  <span style={{ background: '#FEF2F2', color: '#991B1B', border: '1.5px solid #FECACA', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
+                    ⚔️ पराक्रमी योद्धे
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                    शिवरायांचे निष्ठावंत शिलेदार, मावळे व सेनापती
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
+                    स्वराज्यासाठी प्राणांची आहुती देणारे आणि सह्याद्रीच्या कड्याकड्यांवर पराक्रमाचा इतिहास लिहिणारे महायोद्धे
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
+                  {[
+                    {
+                      name: 'सुभेदार तानाजी मालुसरे',
+                      title: 'सिंहगडाचा सिंह · सुभेदार',
+                      image: '/assets/images/real-tanaji-portrait.jpg',
+                      fallback: '/assets/images/real-tanaji-malusare.jpg',
+                      quote: 'आधी लगीन कोंढाण्याचं, मग माझ्या रायबाचं!',
+                      desc: '४ फेब्रुवारी १६७० रोजी घोरपडीच्या साहाय्याने द्रोणागिरी कडा चढून उदयभानविरुद्ध प्राणपणाने लढले आणि सिंहगडावर भगवा फडकवला.'
+                    },
+                    {
+                      name: 'वीर बाजीप्रभू देशपांडे',
+                      title: 'पावनखिंडीचे अमर सेनापती',
+                      image: '/assets/images/real-bajiprabhu-statue.jpg',
+                      fallback: '/assets/images/real-pavankhind.jpg',
+                      quote: 'तोफांचे आवाज होईपर्यंत खिंड सोडणार नाही!',
+                      desc: '१३ जुलै १६६० रोजी घोडखिंडीत सिद्धी मसूदच्या अजस्त्र सैन्याला ३०० बांदल मावळ्यांसह रोखून धरले आणि शिवरायांचे प्राण वाचवले.'
+                    },
+                    {
+                      name: 'मुरारबाजी देशपांडे',
+                      title: 'किल्ले पुरंदरचे झुंजार किल्लेदार',
+                      image: '/assets/images/real-battle-action-purandar.jpg',
+                      fallback: '/assets/images/real-purandar-fort.jpg',
+                      quote: 'आम्ही शिवरायांचे मावळे आहोत, मोगलांची जहागिरी नको!',
+                      desc: 'पुरंदरच्या वेढ्यात दिलेरखानाच्या अजस्त्र मोगल सैन्याला माचीवरून मागे रेटत स्वतःच्या तलवारीने शेकडो शत्रूंना लोळवणारे रणझुंजार वीर.'
+                    },
+                    {
+                      name: 'बहिर्जी नाईक',
+                      title: 'स्वराज्याचे गुप्तहेर प्रमुख (Intelligence Chief)',
+                      image: '/assets/images/real-maratha-sowar.jpg',
+                      fallback: '/assets/images/real-maratha-arms.jpg',
+                      quote: 'शत्रूच्या छावणीत वारा शिरण्याआधी बहिर्जींची नजर पोहोचत असे!',
+                      desc: 'सुरत मोहीम, अफझलखान वध, शाहिस्तेखान छापा व आग्रा सुटका या सर्व मोहिमांचे अचूक नकाशे व गुप्त माहिती देणारे अजोड गुप्तहेर.'
+                    },
+                    {
+                      name: 'सरनोबत हंबीरराव मोहिते',
+                      title: 'स्वराज्याचे सर्वोच्च लष्करप्रमुख (सरसेनापती)',
+                      image: '/assets/images/real-maratha-arms.jpg',
+                      fallback: '/assets/images/real-shivaji-portrait.jpg',
+                      quote: 'शिवरायांचे आणि शंभूराजांचे निष्ठावंत रणधुरंधर!',
+                      desc: 'कोपम, नेसरी, जालना आणि दक्षिण दिग्विजयात मोगल व आदिलशाही फौजांना धूळ चारून विजय मिळवणारे अजिंक्य सरसेनापती.'
+                    },
+                    {
+                      name: 'दौलत खान व मायनाक भंडारी',
+                      title: 'शिवकालीन आरमाराचे पराक्रमी कर्णधार',
+                      image: '/assets/images/real-sindhudurg-fort.jpg',
+                      fallback: '/assets/images/real-sindhudurg-fort.jpg',
+                      quote: 'ज्याचे आरमार त्याचा समुद्र!',
+                      desc: 'इंग्रज, पोर्तुगीज आणि जंजिऱ्याच्या सिद्दीच्या आरमारी आक्रमणांना समुद्रातच रोखून धरून सागरी सीमांचे रक्षण करणारे नौदल प्रमुख.'
+                    },
+                    {
+                      name: 'वीर जीवा महाला',
+                      title: 'शिवरायांचे अंगरक्षक व निष्ठावान सवंगडी',
+                      image: '/assets/images/real-khanda-sword.jpg',
+                      fallback: '/assets/images/real-dandpatta.jpg',
+                      quote: 'होता जीवा म्हणून वाचला शिवा!',
+                      desc: 'प्रतापगडाच्या शामियान्यात अफझलखानाचा अंगरक्षक सय्यद बंडा शिवरायांवर तलवारीचा वार करणार इतक्यात जीवा महालाने त्याचा हात हवेतच छाटला.'
+                    },
+                    {
+                      name: 'अमर वीर शिवा काशिद',
+                      title: 'पन्हाळगड वेढ्यातील आत्मबलिदानी वीर',
+                      image: '/assets/images/real-shivaji-portrait.jpg',
+                      fallback: '/assets/images/real-shivaji-contemporary.jpg',
+                      quote: 'राजांसाठी मरणे हे आमचे परम भाग्य आहे!',
+                      desc: 'पन्हाळगडावरून निसटताना स्वतः शिवरायांचा वेश परिधान करून शत्रूच्या छावणीत गेले आणि शिवरायांना विशाळगडाकडे सुरक्षित कूच करण्याची संधी दिली.'
+                    }
+                  ].map((s, idx) => (
+                    <div key={idx} style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FDE68A', overflow: 'hidden', boxShadow: '0 8px 20px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column' }}>
+                      <div style={{ height: '170px', overflow: 'hidden', position: 'relative', background: '#FEF3C7' }}>
+                        <img
+                          src={s.image}
+                          alt={s.name}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }}
+                          onError={(e) => { e.target.src = s.fallback; }}
+                        />
+                        <div style={{ position: 'absolute', bottom: 0, insetInline: 0, height: '60px', background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)' }}></div>
+                        <span style={{ position: 'absolute', bottom: '8px', left: '12px', color: '#fff', fontSize: '0.78rem', fontWeight: 800, textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
+                          {s.title}
+                        </span>
+                      </div>
+                      <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                        <h4 style={{ margin: '0 0 6px', color: '#7F1D1D', fontSize: '1.12rem', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>
+                          {s.name}
+                        </h4>
+                        <div style={{ background: '#FFFBEB', color: '#92400E', padding: '6px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, fontStyle: 'italic', marginBottom: '10px', borderLeft: '3px solid #F59E0B' }}>
+                          "{s.quote}"
+                        </div>
+                        <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6, flex: 1 }}>
+                          {s.desc}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 4. शिवकालीन चलनव्यवस्था व शेतकरी क्रांती */}
+              <div style={{ marginTop: '54px', padding: '30px', background: '#FFFDF9', borderRadius: '18px', border: '1.5px solid #FCD34D' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: '0 0 170px', width: '170px', height: '170px', margin: '0 auto', borderRadius: '16px', overflow: 'hidden', border: '3px solid #D97706', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}>
+                    <img
+                      src="/assets/images/real-shivrai-coin.jpg"
+                      alt="शिवराई नाणे"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => { e.target.src = '/assets/images/real-rajmudra-seal.jpg'; }}
+                    />
+                  </div>
+                  <div style={{ flex: '1 1 500px', minWidth: '280px' }}>
+                    <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800 }}>
+                      💰 आर्थिक सार्वभौमत्व व रयतेचे हित
+                    </span>
+                    <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.6rem', margin: '8px 0 10px', fontWeight: 900 }}>
+                      शिवकालीन चलनव्यवस्था (होन व शिवराई) आणि शेतकरी क्रांती
+                    </h3>
+                    <p style={{ color: '#374151', fontSize: '0.96rem', lineHeight: 1.7, margin: '0 0 16px' }}>
+                      परकीय पातशाह्यांची नाणी नाकारून शिवरायांनी स्वराज्याचे स्वतंत्र चलन पाडले. तसेच अण्णाजी दत्तो यांच्या नेतृत्वात शेतजमिनीची शास्त्रोक्त मोजणी करून शेतकऱ्यांना सावकारी पाशातून कायमचे मुक्त केले.
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
+                      <div style={{ background: '#FFFFFF', padding: '14px', borderRadius: '10px', border: '1px solid #FED7AA' }}>
+                        <b style={{ color: '#B45309', display: 'block', fontSize: '0.98rem', marginBottom: '4px' }}>🪙 सुवर्ण होन (Gold Coin):</b>
+                        <span style={{ fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.5 }}>
+                          २.८ ग्रॅम वजनाचे शुद्ध सोन्याचे नाणे. एका बाजूवर देवनागरीत "श्री राजा शिव" आणि दुसऱ्या बाजूवर "छत्रपती". १६७४ च्या राज्याभिषेकानंतर जारी.
+                        </span>
+                      </div>
+                      <div style={{ background: '#FFFFFF', padding: '14px', borderRadius: '10px', border: '1px solid #FED7AA' }}>
+                        <b style={{ color: '#B45309', display: 'block', fontSize: '0.98rem', marginBottom: '4px' }}>🪙 तांब्याची शिवराई (Copper):</b>
+                        <span style={{ fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.5 }}>
+                          सुमारे १० ग्रॅम वजनाचे तांब्याचे नाणे. सामान्य रयतेच्या दैनंदिन व्यवहारासाठी पाडले गेले. हे नाणे पुढील २०० वर्षे संपूर्ण महाराष्ट्रात चलनात राहिले.
+                        </span>
+                      </div>
+                      <div style={{ background: '#FFFFFF', padding: '14px', borderRadius: '10px', border: '1px solid #FED7AA' }}>
+                        <b style={{ color: '#B45309', display: 'block', fontSize: '0.98rem', marginBottom: '4px' }}>🌾 अण्णाजी दत्तो काठी मोजणी:</b>
+                        <span style={{ fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.5 }}>
+                          पाच हात व पाच मुठी लांबीची "शिवशाही काठी" जमिनीच्या मोजणीसाठी प्रमाणित केली. केवळ पिकाच्या प्रत्यक्ष उत्पन्नावर सारा ठरवला.
+                        </span>
+                      </div>
+                      <div style={{ background: '#FFFFFF', padding: '14px', borderRadius: '10px', border: '1px solid #FED7AA' }}>
+                        <b style={{ color: '#B45309', display: 'block', fontSize: '0.98rem', marginBottom: '4px' }}>💧 दुष्काळात तगाई कर्ज:</b>
+                        <span style={{ fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.5 }}>
+                          दुष्काळात शेतसारा संपूर्ण माफ केला जाई. शेतकऱ्यांना विहिरी खणण्यासाठी, बी-बियाणे आणि बैलजोडी खरेदीसाठी राजकोशातून बिनव्याजी कर्ज दिले जाई.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 5. शिवकालीन गडकोट स्थापत्य, जलव्यवस्थापन व दुर्ग प्रशासन */}
+              <div style={{ marginTop: '54px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                  <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
+                    🏰 अभेद्य दुर्ग स्थापत्य
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                    शिवकालीन गडकोट स्थापत्य, जलव्यवस्थापन व दुर्ग प्रशासन
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
+                    "गड म्हणजे केवळ दगड-धोंड्यांची भिंत नव्हे, तर ते स्वराज्याचे प्राण आहेत!" — रामचंद्रपंत अमात्य (आज्ञापत्र)
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+                  <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FDE68A', overflow: 'hidden', boxShadow: '0 8px 20px rgba(0,0,0,0.04)' }}>
+                    <div style={{ height: '160px', overflow: 'hidden' }}>
+                      <img src="/assets/images/real-raigad-panoramic.jpg" alt="रायगड" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.src = '/assets/images/real-shivaji-coronation.jpg'; }} />
+                    </div>
+                    <div style={{ padding: '20px' }}>
+                      <h4 style={{ margin: '0 0 8px', color: '#9A3412', fontSize: '1.2rem', fontWeight: 800, fontFamily: "'Baloo 2', sans-serif" }}>
+                        🛡️ दुर्ग प्रशासनाची अभेद्य त्रिसूत्री
+                      </h4>
+                      <p style={{ margin: '0 0 10px', fontSize: '0.88rem', color: '#4B5563', lineHeight: 1.6 }}>
+                        गडावर एकाधिकारशाही रोखण्यासाठी तीन प्रमुख अधिकारी नेमले गेले:
+                      </p>
+                      <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '0.86rem', color: '#374151', lineHeight: 1.7 }}>
+                        <li><b>हवालदार (मराठा):</b> सैन्याचे नेतृत्व, तोफांचे नियोजन आणि गडाचे लष्करी संरक्षण.</li>
+                        <li><b>सबनीस (ब्राह्मण):</b> जमाखर्च, आर्थिक व्यवहार, दप्तर तपासणी व सरकारी पत्रव्यवहार.</li>
+                        <li><b>कारखानीस (प्रभू):</b> धान्य कोठारे, दारूगोळा, रसद साठा व दुरुस्ती कामांची जबाबदारी.</li>
+                      </ul>
+                      <div style={{ marginTop: '10px', background: '#FEF2F2', color: '#991B1B', padding: '8px 12px', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 700 }}>
+                        ⚠️ तिन्ही अधिकाऱ्यांच्या संमतीशिवाय सूर्यास्तानंतर गडाचा दरवाजा उघडण्यास मनाई होती!
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FDE68A', overflow: 'hidden', boxShadow: '0 8px 20px rgba(0,0,0,0.04)' }}>
+                    <div style={{ height: '160px', overflow: 'hidden' }}>
+                      <img src="/assets/images/real-pratapgad-fort.jpg" alt="प्रतापगड" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.src = '/assets/images/real-raigad-panoramic.jpg'; }} />
+                    </div>
+                    <div style={{ padding: '20px' }}>
+                      <h4 style={{ margin: '0 0 8px', color: '#9A3412', fontSize: '1.2rem', fontWeight: 800, fontFamily: "'Baloo 2', sans-serif" }}>
+                        💧 पाषाणातील अद्वितीय जलव्यवस्थापन
+                      </h4>
+                      <p style={{ margin: '0 0 10px', fontSize: '0.88rem', color: '#4B5563', lineHeight: 1.6 }}>
+                        सह्याद्रीच्या कड्यांवर पाण्याचा थेंब न थेंब साठवण्यासाठी खास अभियांत्रिकी तंत्रज्ञान:
+                      </p>
+                      <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '0.86rem', color: '#374151', lineHeight: 1.7 }}>
+                        <li><b>पाषाणातील टाके:</b> कठीण बेसाल्ट खडकात कोरलेली खोल टाके, ज्यामुळे पाण्याचे बाष्पीभवन होत नसे.</li>
+                        <li><b>२ वर्षांचा राखीव साठा:</b> दोन वर्षे दुष्काळ पडला तरी किल्ल्यावरील रयतेला पाणी कमी पडू नये अशी रचना.</li>
+                        <li><b>नैसर्गिक फिल्टर पद्धत:</b> डोंगरउतारावरून येणारे पावसाचे पाणी वाळू व कोळशाच्या थरातून गाळून साठवले जाई.</li>
+                      </ul>
+                      <div style={{ marginTop: '10px', background: '#EFF6FF', color: '#1E40AF', padding: '8px 12px', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 700 }}>
+                        🌊 रायगडावर तब्बल ८४ पाण्याचे तलाव व टाक्यांचे जाळे आजही कार्यरत आहे!
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FDE68A', overflow: 'hidden', boxShadow: '0 8px 20px rgba(0,0,0,0.04)' }}>
+                    <div style={{ height: '160px', overflow: 'hidden' }}>
+                      <img src="/assets/images/real-sindhudurg-fort.jpg" alt="सिंधुदुर्ग" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.src = '/assets/images/real-raigad-panoramic.jpg'; }} />
+                    </div>
+                    <div style={{ padding: '20px' }}>
+                      <h4 style={{ margin: '0 0 8px', color: '#9A3412', fontSize: '1.2rem', fontWeight: 800, fontFamily: "'Baloo 2', sans-serif" }}>
+                        ⚓ जलदुर्गांची अनोखी पायाभरणी तंत्रज्ञान
+                      </h4>
+                      <p style={{ margin: '0 0 10px', fontSize: '0.88rem', color: '#4B5563', lineHeight: 1.6 }}>
+                        समुद्राच्या उसळणाऱ्या लाटांवर अभेद्य कोट उभारण्याची शिवकालीन जागतिक कीर्तीची कला:
+                      </p>
+                      <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '0.86rem', color: '#374151', lineHeight: 1.7 }}>
+                        <li><b>शिशाचा रस ओतून पायाभरणी:</b> सिंधुदुर्गाच्या पायात समुद्रातील खडकांवर ५० मण वितळलेले शिसे (Molten Lead) ओतून तटबंदी जोडली.</li>
+                        <li><b>लाटा कापणारे बुरुज:</b> समुद्राच्या लाटांचा थेट मारा तटबंदीवर होऊ नये म्हणून बुरुज अर्धगोलाकार व त्रिकोणी रचले.</li>
+                        <li><b>गोड्या पाण्याची विहीर:</b> चारही बाजूंना खारे पाणी असताना सिंधुदुर्गाच्या आत दुधबाव, दहीबाव व साखरबाव या गोड्या पाण्याच्या विहिरी खोदल्या.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 6. शिवकालीन शस्त्रसंपदा व गनिमी कावा युद्धकला */}
+              <div style={{ marginTop: '54px', padding: '30px', background: '#FFF8F2', borderRadius: '18px', border: '1.5px solid #FFCC80' }}>
+                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                  <span style={{ background: '#FEE2E2', color: '#991B1B', border: '1.5px solid #FCA5A5', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
+                    ⚔️ शस्त्रसंपदा व रणनीती
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.7rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                    शिवकालीन शस्त्रसंपदा व गनिमी कावा युद्धकला
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.94rem', margin: 0 }}>
+                    कमीतकमी साधनसंपत्तीत बलाढ्य शत्रूंचा पाडाव करणारी शिवकालीन ऐतिहासिक शस्त्रे व युद्धनीती
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                  <div style={{ background: '#fff', borderRadius: '12px', padding: '16px', border: '1px solid #FED7AA', textAlign: 'center' }}>
+                    <div style={{ height: '110px', overflow: 'hidden', borderRadius: '8px', marginBottom: '10px' }}>
+                      <img src="/assets/images/real-waghnakh.jpg" alt="वाघनखे" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.src = '/assets/images/real-maratha-arms.jpg'; }} />
+                    </div>
+                    <b style={{ color: '#9A3412', display: 'block', fontSize: '1.05rem', fontFamily: "'Baloo 2', sans-serif" }}>ऐतिहासिक वाघनखे (Waghnakh)</b>
+                    <p style={{ margin: '6px 0 0', fontSize: '0.84rem', color: '#4B5563', lineHeight: 1.5 }}>
+                      हाताच्या पंजात लपवता येणारे पोलादी नखे. १० नोव्हेंबर १६५९ रोजी प्रतापगडावर अफझलखानाचा दगाफटका हाणून पाडण्यासाठी वापरले.
+                    </p>
+                  </div>
+
+                  <div style={{ background: '#fff', borderRadius: '12px', padding: '16px', border: '1px solid #FED7AA', textAlign: 'center' }}>
+                    <div style={{ height: '110px', overflow: 'hidden', borderRadius: '8px', marginBottom: '10px' }}>
+                      <img src="/assets/images/real-dandpatta.jpg" alt="मराठा दांडपट्टा" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.src = '/assets/images/real-maratha-arms.jpg'; }} />
+                    </div>
+                    <b style={{ color: '#9A3412', display: 'block', fontSize: '1.05rem', fontFamily: "'Baloo 2', sans-serif" }}>मराठा दांडपट्टा (Dandpatta)</b>
+                    <p style={{ margin: '6px 0 0', fontSize: '0.84rem', color: '#4B5563', lineHeight: 1.5 }}>
+                      चार फूट लांब लवचीक पोलादी पट्टा. एका सेकंदात चारी बाजूंना गरगर फिरवून शेकडो शत्रूंना कापून काढणारे मराठ्यांचे अमोघ शस्त्र.
+                    </p>
+                  </div>
+
+                  <div style={{ background: '#fff', borderRadius: '12px', padding: '16px', border: '1px solid #FED7AA', textAlign: 'center' }}>
+                    <div style={{ height: '110px', overflow: 'hidden', borderRadius: '8px', marginBottom: '10px' }}>
+                      <img src="/assets/images/real-khanda-sword.jpg" alt="भवानी तलवार" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.src = '/assets/images/real-maratha-arms.jpg'; }} />
+                    </div>
+                    <b style={{ color: '#9A3412', display: 'block', fontSize: '1.05rem', fontFamily: "'Baloo 2', sans-serif" }}>भवानी व जगदंबा तलवार</b>
+                    <p style={{ margin: '6px 0 0', fontSize: '0.84rem', color: '#4B5563', lineHeight: 1.5 }}>
+                      तुळजाभवानीचा वरदहस्त मानली गेलेली पवित्र भवानी तलवार आणि लंडनच्या रॉयल कलेक्शनमध्ये असलेली जगदंबा तलवार.
+                    </p>
+                  </div>
+
+                  <div style={{ background: '#fff', borderRadius: '12px', padding: '16px', border: '1px solid #FED7AA', textAlign: 'center' }}>
+                    <div style={{ height: '110px', overflow: 'hidden', borderRadius: '8px', marginBottom: '10px', background: 'linear-gradient(135deg, #FEF3C7, #FFEDD5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem' }}>
+                      ⚡
+                    </div>
+                    <b style={{ color: '#9A3412', display: 'block', fontSize: '1.05rem', fontFamily: "'Baloo 2', sans-serif" }}>गनिमी कावा ४ सुवर्ण नियम</b>
+                    <p style={{ margin: '6px 0 0', fontSize: '0.84rem', color: '#4B5563', lineHeight: 1.5 }}>
+                      १. शत्रू मोठा असेल तर मैदानात थेट लढू नका. २. सह्याद्रीत आणून रसद तोडा. ३. अचानक झडप घाला. ४. स्वतःचे रक्षण प्रथम करा.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* New Interactive Block 1: शिवकालीन अष्टप्रधान मंडळ तक्ता */}
+          <div style={{ marginTop: '44px', padding: '24px', background: '#FFF8F2', borderRadius: '14px', border: '1px solid #FFCC80' }}>
+            <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.4rem', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>🏛️</span> शिवकालीन अष्टप्रधान मंत्रिमंडळ रचना (१६७४)
+            </h3>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.92rem' }}>
+                <thead>
+                  <tr style={{ background: '#C73800', color: '#fff', textAlign: 'left' }}>
+                    <th style={{ padding: '10px 14px', borderRadius: '6px 0 0 0' }}>पद</th>
+                    <th style={{ padding: '10px 14px' }}>शिवकालीन मंत्री</th>
+                    <th style={{ padding: '10px 14px' }}>प्रशासकीय अधिकार व खाते</th>
+                    <th style={{ padding: '10px 14px', borderRadius: '0 6px 0 0' }}>वार्षिक वेतन</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ borderBottom: '1px solid #FED7AA' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>पेशवा (मुख्य प्रधान)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>मोरोपंत त्र्यंबक पिंगळे</td>
+                    <td style={{ padding: '10px 14px' }}>राजांनंतर संपूर्ण राज्यकारभार चालवणे, युद्धप्रसंगी सैन्याचे नेतृत्व.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१५,००० होन</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #FED7AA', background: '#FFFDF9' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>अमात्य (अर्थमंत्री)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>रामचंद्र नीलकंठ मुजुमदार</td>
+                    <td style={{ padding: '10px 14px' }}>स्वराज्याची तिजोरी, जमाखर्च व महसूल व्यवस्था सांभाळणे.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१२,००० होन</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #FED7AA' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>सेनापती (सरनोबत)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>हंबीरराव मोहिते</td>
+                    <td style={{ padding: '10px 14px' }}>स्वराज्याच्या संपूर्ण घोडदळ व पायदळाचे सर्वोच्च लष्करप्रमुख.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१०,००० होन</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #FED7AA', background: '#FFFDF9' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>सचिव (सुरनीस)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>अण्णाजी दत्तो</td>
+                    <td style={{ padding: '10px 14px' }}>राजांच्या सर्व आज्ञापत्रांची शुद्धता तपासणे व जमीन महसूल मोजणी.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१०,००० होन</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #FED7AA' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>मंत्री (वाकनीस)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>दत्ताजी त्रिंबक वाकनीस</td>
+                    <td style={{ padding: '10px 14px' }}>राजांची दैनंदिनी, राजदरबारातील सुरक्षा व गुप्तहेर समन्वय.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१०,००० होन</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #FED7AA', background: '#FFFDF9' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>सुमंत (डबीर)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>रामचंद्र त्रिंबक डबीर</td>
+                    <td style={{ padding: '10px 14px' }}>परराष्ट्र संबंध, वकिलांशी बोलणी आणि राजकीय पत्रव्यवहार.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१०,००० होन</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #FED7AA' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>पंडितराव (धर्माध्यक्ष)</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>रघुनाथराव पंडितराव</td>
+                    <td style={{ padding: '10px 14px' }}>धर्मव्यवस्था, न्यायदान मार्गदर्शन, विद्वान सत्कार व दानधर्म.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१०,००० होन</td>
+                  </tr>
+                  <tr>
+                    <td style={{ padding: '10px 14px', fontWeight: 700, color: '#9A3412' }}>न्यायाधीश</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>निराजी रावजी</td>
+                    <td style={{ padding: '10px 14px' }}>स्वराज्यातील दिवाणी व फौजदारी खटल्यांवर निष्पक्ष न्यायनिवाडा.</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 700 }}>१०,००० होन</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* New Interactive Block 2: शिवकालीन आज्ञापत्र व प्रसिद्ध उद्गार */}
+          <div style={{ marginTop: '28px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+            <div style={{ background: '#FFFBEB', padding: '20px', borderRadius: '12px', borderLeft: '4px solid #F59E0B' }}>
+              <div style={{ fontWeight: 800, color: '#B45309', marginBottom: '6px' }}>📜 आरमारविषयक आज्ञापत्र:</div>
+              <p style={{ fontSize: '0.9rem', color: '#451A03', fontStyle: 'italic', margin: 0, lineHeight: 1.6 }}>
+                "ज्यांचे आरमार त्यांचा समुद्र! आरमार हे एक स्वतंत्रच राज्य आहे. ज्यास समुद्रतीराचे रक्षण करणे त्यास आरमार अवश्यकच आहे."
+              </p>
+              <div style={{ fontSize: '0.78rem', color: '#78350F', marginTop: '6px', textAlign: 'right' }}>— रामचंद्रपंत अमात्य लिखित आज्ञापत्र</div>
+            </div>
+
+            <div style={{ background: '#FEF2F2', padding: '20px', borderRadius: '12px', borderLeft: '4px solid #EF4444' }}>
+              <div style={{ fontWeight: 800, color: '#991B1B', marginBottom: '6px' }}>🌾 रयतेची काळजी घेणारा राजा:</div>
+              <p style={{ fontSize: '0.9rem', color: '#450A0A', fontStyle: 'italic', margin: 0, lineHeight: 1.6 }}>
+                "रयतेस काडीचाही उपद्रव न देणे. शेतातील भाजीच्या देठासही हात न लावणे. जबरदस्तीने कोणाचेही काही न घेणे."
+              </p>
+              <div style={{ fontSize: '0.78rem', color: '#7F1D1D', marginTop: '6px', textAlign: 'right' }}>— छत्रपती शिवरायांचे सेनापतींना पत्र (१६७४)</div>
+            </div>
+
+            <div style={{ background: '#F0FDF4', padding: '20px', borderRadius: '12px', borderLeft: '4px solid #10B981' }}>
+              <div style={{ fontWeight: 800, color: '#065F46', marginBottom: '6px' }}>⚔️ कवी भूषणांचे ऐतिहासिक गौरवगान:</div>
+              <p style={{ fontSize: '0.9rem', color: '#064E3B', fontStyle: 'italic', margin: 0, lineHeight: 1.6 }}>
+                "काशी की कला जाती, मथुरा की मसजिद होती, सिवाजी न होतो तो सुनति होत सबकी!"
+              </p>
+              <div style={{ fontSize: '0.78rem', color: '#047857', marginTop: '6px', textAlign: 'right' }}>— महाकवी भूषण कृत शिवराजभूषण</div>
+            </div>
+          </div>
+
+          {/* 7. जागतिक विचारवंत व राष्ट्रपुरुषांचे शिवरायांबद्दल गौरवगार & FAQ */}
+          {normalizedKey === 'shivaji-maharaj' && (
+            <>
+              <div style={{ marginTop: '54px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                  <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
+                    🌍 वैश्विक वंदना
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                    जागतिक विचारवंत, तत्त्वज्ञ व राष्ट्रपुरुषांचे शिवरायांबद्दल गौरवगार
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
+                    युगपुरुष छत्रपती शिवाजी महाराजांच्या चरित्र व कार्याला जगातील महान विभूतींनी वाहिलेली आदरांजली
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '18px' }}>
+                  {[
+                    {
+                      name: 'महात्मा ज्योतिराव फुले (१८६९)',
+                      tag: 'रायगड शिवसमाधी जीर्णोद्धार व पहिला शिवजयंती पोवाडा',
+                      quote: 'छत्रपती शिवाजी महाराज हे केवळ राजे नव्हते, तर ते या मातीतील कुळवाडी भूषण, शेतकऱ्यांचे आणि रयतेचे खरे कैवारी होते.'
+                    },
+                    {
+                      name: 'स्वामी विवेकानंद',
+                      tag: 'भारतीय तत्त्वज्ञान व जागतिक धर्म संसद',
+                      quote: 'Shivaji was the greatest Hindu king who combined within himself supreme statesmanship, military genius, and saintly moral purity.'
+                    },
+                    {
+                      name: 'कविवर्य रवींद्रनाथ टागोर',
+                      tag: 'नोबेल पारितोषिक विजेते महाकवी',
+                      quote: 'शिवरायांनी भारताला एकात्मतेचे आणि धर्मनिरपेक्ष स्वातंत्र्याचे उदात्त स्वप्न दिले. मराठ्यांची स्वराज्य चळवळ ही संपूर्ण भारताच्या मुक्तीची पहाट होती.'
+                    },
+                    {
+                      name: 'भारतरत्न डॉ. बाबासाहेब आंबेडकर',
+                      tag: 'भारतीय संविधानाचे शिल्पकार',
+                      quote: 'छत्रपती शिवाजी महाराजांचे स्वराज्य हे खऱ्या अर्थाने रयतेचे, दलितांचे व पददलितांचे राज्य होते. त्यांनी प्रत्येक जातीतील कर्तृत्ववान माणसाला स्वराज्यात सर्वोच्च स्थान दिले.'
+                    },
+                    {
+                      name: 'व्हिएतनाम राष्ट्रप्रमुख व सेनापती',
+                      tag: 'अमेरिकन सैन्याविरुद्ध गनिमी युद्ध विजय',
+                      quote: 'आम्ही बलाढ्य अमेरिकेचा पराभव करू शकलो, कारण आमच्या गनिमी युद्धनीतीचा खरा आदर्श छत्रपती शिवाजी महाराज होते!'
+                    },
+                    {
+                      name: 'सर जदुनाथ सरकार',
+                      tag: 'प्रख्यात आंतरराष्ट्रीय इतिहासकार',
+                      quote: 'Shivaji proved that the Marathas were capable of building a modern nation-state. He was not merely a military conqueror, but the father of a nation.'
+                    }
+                  ].map((w, idx) => (
+                    <div key={idx} style={{ background: '#FFFDF9', border: '1.5px solid #FDE68A', padding: '20px', borderRadius: '14px', position: 'relative', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                      <div style={{ color: '#C73800', fontSize: '1.8rem', lineHeight: 1, marginBottom: '6px', fontFamily: 'serif' }}>“</div>
+                      <p style={{ margin: '0 0 14px', fontSize: '0.92rem', color: '#1F2937', fontStyle: 'italic', lineHeight: 1.65 }}>
+                        {w.quote}
+                      </p>
+                      <div style={{ borderTop: '1px solid #FED7AA', paddingTop: '10px' }}>
+                        <b style={{ color: '#7F1D1D', display: 'block', fontSize: '0.98rem', fontFamily: "'Baloo 2', sans-serif" }}>{w.name}</b>
+                        <span style={{ fontSize: '0.78rem', color: '#92400E', fontWeight: 600 }}>{w.tag}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 8. नेहमी विचारले जाणारे ऐतिहासिक प्रश्न व उत्तरे (Interactive Accordion FAQ) */}
+              <div style={{ marginTop: '54px', padding: '32px 28px', background: '#FFFFFF', borderRadius: '18px', border: '1.5px solid #E5E7EB', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
+                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                  <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
+                    ❓ ज्ञान जिज्ञासा
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.75rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                    नेहमी विचारले जाणारे ऐतिहासिक प्रश्न व उत्तरे (FAQ)
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.94rem', margin: 0 }}>
+                    छत्रपती शिवरायांचे जीवन, राज्याभिषेक, नौदल आणि प्रशासनाबद्दल वारंवार विचारले जाणारे प्रश्न
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {[
+                    {
+                      q: '१. छत्रपती शिवाजी महाराजांचा राज्याभिषेक कधी आणि कोणत्या गडावर झाला?',
+                      a: 'छत्रपती शिवाजी महाराजांचा वैदिक सुवर्ण राज्याभिषेक ६ जून १६७४ (ज्येष्ठ शुद्ध त्रयोदशी, शके १५९६) रोजी दुर्गराज रायगडावर काशीचे विद्वान पंडित गागाभट्टांच्या उपस्थितीत संपन्न झाला. यावेळी शिवरायांना "क्षत्रियकुलावतंस श्री राजा शिवछत्रपती" ही पदवी प्रदान करण्यात आली आणि स्वतंत्र "शिवराज्याभिषेक शक" सुरू करण्यात आला.'
+                    },
+                    {
+                      q: '२. शिवरायांना "भारतीय आरमाराचे जनक" (Father of Indian Navy) का म्हटले जाते?',
+                      a: '१६५७ मध्ये कल्याण-भिवंडी येथे भारताच्या पहिल्या स्वतंत्र नौदलाची पायाभरणी शिवरायांनी केली. त्यांनी मालवणमध्ये सिंधुदुर्ग, विजयदुर्ग, सुवर्णदुर्ग यांसारखे अभेद्य जलदुर्ग उभारले आणि गुराब, गलबत, मचवा यांसारख्या शेकडो लढाऊ जहाजांचा ताफा निर्माण केला. परकीय सागरी आक्रमकांना समुद्रातच रोखणारे ते पहिले भारतीय राजे ठरले. म्हणूनच भारतीय नौदलाच्या अधिकृत ध्वजावर शिवरायांची राजमुद्रा सन्मानाने कोरण्यात आली आहे.'
+                    },
+                    {
+                      q: '३. अष्टप्रधान मंडळ म्हणजे काय आणि त्याचे प्रमुख कोण होते?',
+                      a: 'राज्याचा कारभार एकाधिकारशाहीने न चालवता लोकशाही व प्रशासकीय तत्त्वांवर चालवण्यासाठी शिवरायांनी १६७४ मध्ये ८ खात्यांचे मंत्रिमंडळ (अष्टप्रधान) स्थापन केले. पेशवा (मोरोपंत पिंगळे), अमात्य (रामचंद्रपंत), सेनापती (हंबीरराव मोहिते), सचिव (अण्णाजी दत्तो), मंत्री (दत्ताजी वाकनीस), सुमंत (रामचंद्र डबीर), पंडितराव (रघुनाथराव) आणि न्यायाधीश (निराजी रावजी). कोणतेही पद वंशपरंपरेने नसून केवळ गुणवत्तेवर दिले जाई.'
+                    },
+                    {
+                      q: '४. शिवरायांच्या स्वराज्यात एकूण किती गड-किल्ले होते?',
+                      a: 'शिवरायांच्या काळात स्वराज्यात सुमारे ३५० हून अधिक गड-किल्ले होते. त्यामध्ये १२० हून अधिक किल्ले शिवरायांनी स्वतः नव्याने बांधले, तर उर्वरित किल्ले दुरुस्त करून अभेद्य बनवले. यामध्ये सह्याद्रीच्या डोंगररांगांमधील गिरिदुर्ग (उदा. राजगड, रायगड, प्रतापगड), समुद्रातील जलदुर्ग (उदा. सिंधुदुर्ग, विजयदुर्ग, पद्मदुर्ग) आणि भुईकोट अशा तिन्ही प्रकारांचा समावेश होता.'
+                    },
+                    {
+                      q: '५. शिवरायांच्या सैन्यात महिला व रयतेच्या रक्षणाचे काय नियम होते?',
+                      a: 'शिवरायांच्या सैन्याला अत्यंत कडक लष्करी आचारसंहिता लागू होती. शत्रूच्या प्रदेशातही स्त्री, बालक, शेतकरी, वृद्ध आणि प्रार्थनास्थळांना (मंदिर किंवा मशीद) कोणताही धक्का लावण्यास सक्त मनाई होती. कल्याणच्या सुभेदाराच्या सुनेला शिवरायांनी सन्मानाने चोळी-बांगडी देऊन परत पाठवले, हे त्यांच्या स्त्री सन्मानाचे जागतिक उदाहरण मानले जाते.'
+                    },
+                    {
+                      q: '६. शिवकालीन चलनात "होन" आणि "शिवराई" यांचे काय महत्त्व होते?',
+                      a: 'परकीय पातशाह्यांची नाणी नाकारून शिवरायांनी स्वतःची सुवर्ण मुद्रा "होन" (२.८ ग्रॅम शुद्ध सोने) आणि तांब्याची "शिवराई" (सुमारे १० ग्रॅम) सुरू केली. हे केवळ चलन नव्हते, तर ते स्वराज्याचे आर्थिक स्वातंत्र्य व सार्वभौमत्व सिद्ध करणारे ऐतिहासिक पाऊल होते. शिवराई नाणे पुढील २०० वर्षे महाराष्ट्रात चलनात राहिले.'
+                    }
+                  ].map((faq, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        border: '1.5px solid #FDE68A',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        background: activeFaq === i ? '#FFFDF8' : '#FAFAFA',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setActiveFaq(activeFaq === i ? null : i)}
+                        style={{
+                          width: '100%',
+                          textAlign: 'left',
+                          padding: '16px 20px',
+                          background: 'none',
+                          border: 'none',
+                          outline: 'none',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '12px',
+                          color: '#7F1D1D',
+                          fontSize: '1.02rem',
+                          fontWeight: 800,
+                          fontFamily: "'Baloo 2', sans-serif"
+                        }}
+                      >
+                        <span>{faq.q}</span>
+                        <span style={{ fontSize: '1.2rem', color: '#D97706', transform: activeFaq === i ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                          ▼
+                        </span>
+                      </button>
+                      {activeFaq === i && (
+                        <div style={{ padding: '0 20px 18px', color: '#374151', fontSize: '0.94rem', lineHeight: 1.75, borderTop: '1px solid #FEF3C7', paddingTop: '12px' }}>
+                          {faq.a}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
           {/* Action / Navigation Bar */}
-          <div style={{ marginTop: '40px', paddingTop: '24px', borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-            <Link to="/history" className="btn btn-outline" style={{ padding: '8px 18px', fontSize: '0.88rem' }}>
+          <div style={{ marginTop: '44px', paddingTop: '24px', borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+            <Link to="/history" className="btn btn-outline" style={{ padding: '10px 20px', fontSize: '0.9rem', textDecoration: 'none', borderRadius: '8px', color: '#C73800', borderColor: '#C73800', fontWeight: 700 }}>
               ← इतिहास दालनात परत जा
             </Link>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <Link to="/forts" className="btn btn-outline" style={{ padding: '8px 18px', fontSize: '0.88rem' }}>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <Link to="/forts" className="btn btn-outline" style={{ padding: '10px 20px', fontSize: '0.9rem', textDecoration: 'none', borderRadius: '8px', color: '#374151', borderColor: '#D1D5DB', fontWeight: 700 }}>
                 ३५०+ गड-किल्ले 🏰
               </Link>
-              <Link to="/register" className="btn btn-primary" style={{ padding: '8px 20px', fontSize: '0.88rem' }}>
+              <Link to="/gallery" className="btn btn-outline" style={{ padding: '10px 20px', fontSize: '0.9rem', textDecoration: 'none', borderRadius: '8px', color: '#374151', borderColor: '#D1D5DB', fontWeight: 700 }}>
+                छायाचित्र दालन 🖼️
+              </Link>
+              <Link to="/register" className="btn btn-primary" style={{ padding: '10px 22px', fontSize: '0.9rem', textDecoration: 'none', borderRadius: '8px', background: 'linear-gradient(135deg, #C73800, #E65100)', color: '#fff', fontWeight: 700 }}>
                 🚩 व्यासपीठावर सामील व्हा
               </Link>
             </div>
