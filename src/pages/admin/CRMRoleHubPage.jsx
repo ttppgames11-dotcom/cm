@@ -294,7 +294,7 @@ export default function CRMRoleHubPage() {
             📋 अधिकृत भूमिका निवडा (Select Your Specific CRM Dashboard)
           </h2>
           <p style={{ color: '#78350f', fontSize: '0.88rem', margin: '0 0 24px' }}>
-            खालीलपैकी आपल्या अधिकृत पदाच्या डॅशबोर्डवर क्लिक करा किंवा चाचणीसाठी डेमो बटणाचा वापर करा:
+            खालीलपैकी आपल्या अधिकृत पदाच्या डॅशबोर्डवर क्लिक करा:
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px' }}>
@@ -403,7 +403,7 @@ export default function CRMRoleHubPage() {
                     type="button"
                     onClick={() => handleQuickDemoSwitch(role)}
                     disabled={switchingRole === role.id}
-                    title="या भूमिकेने डेमो लॉगिन करून डॅशबोर्ड उघडा"
+                    title="या भूमिकेने त्वरित लॉगिन करून डॅशबोर्ड उघडा"
                     style={{
                       padding: '10px 14px',
                       borderRadius: '8px',

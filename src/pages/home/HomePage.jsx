@@ -160,7 +160,7 @@ export default function HomePage() {
         )}
         {getContent('buttons.login.visible', true) && (
           <Link to={getContent('buttons.login.link', '/login')} className="btn-glass">
-            {getContent('buttons.login.label', '👤 Demo लॉगिन')}
+            {getContent('buttons.login.label', '👤 सभासद लॉगिन')}
           </Link>
         )}
         {getContent('buttons.directory.visible', true) && (
@@ -169,8 +169,8 @@ export default function HomePage() {
           </Link>
         )}
         {getContent('buttons.emergencyHelp.visible', true) && (
-          <Link to={getContent('buttons.emergencyHelp.link', '/governance')} className="btn-glass">
-            {getContent('buttons.emergencyHelp.label', '🧭 Product Blueprint')}
+          <Link to={getContent('buttons.emergencyHelp.link', '/goals')} className="btn-glass">
+            {getContent('buttons.emergencyHelp.label', '🏆 उद्दिष्टे व संकल्प')}
           </Link>
         )}
       </div>
