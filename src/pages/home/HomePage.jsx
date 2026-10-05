@@ -126,7 +126,7 @@ export default function HomePage() {
     />
   ))}
 
-  {/* Ambient Shadow & Saffron Vignette Overlay */}
+  {/* Ambient Warm White & Saffron Vignette Overlay */}
   <div 
     className="hero-overlay" 
     style={{
@@ -134,13 +134,13 @@ export default function HomePage() {
       inset: 0,
       zIndex: 1,
       pointerEvents: 'none',
-      background: 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(199,56,0,0.45) 45%, rgba(18,4,5,0.92) 100%)'
+      background: 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,248,240,0.78) 50%, rgba(255,255,255,0.95) 100%)'
     }}
   />
 
   <div className="hero-content" style={{ position: 'relative', zIndex: 2, width: '100%' }}>
     <div className="hero-copy" data-reveal="left">
-      <div className="eyebrow"><svg className="svg-flag" viewBox="0 0 24 24" fill="none"><path d="M4 2v20" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round"/><path d="M4 3.5c2.5-1.6 4.8-1.6 7 0s4.5 1.6 7 0v9c-2.5 1.6-4.8 1.6-7 0s-4.5-1.6-7 0V3.5z" fill="#F4511E"/></svg> अस्सल ऐतिहासिक वारसा · अखंड मराठा साम्राज्य</div>
+      <div className="eyebrow"><svg className="svg-flag" viewBox="0 0 24 24" fill="none"><path d="M4 2v20" stroke="#EA580C" strokeWidth="2" strokeLinecap="round"/><path d="M4 3.5c2.5-1.6 4.8-1.6 7 0s4.5 1.6 7 0v9c-2.5 1.6-4.8 1.6-7 0s-4.5-1.6-7 0V3.5z" fill="#EA580C"/></svg> अस्सल ऐतिहासिक वारसा · अखंड मराठा साम्राज्य</div>
       <h1>
         {getContent('hero.title', 'संघटित मराठा, शक्तिशाली महाराष्ट्र').split(',')[0]}
         {getContent('hero.title', '').includes(',') ? (
@@ -154,25 +154,27 @@ export default function HomePage() {
       </p>
       <div className="hero-ctas">
         {getContent('buttons.joinMember.visible', true) && (
-          <Link to={getContent('buttons.joinMember.link', '/register')} className="btn btn-primary">
+          <Link to={getContent('buttons.joinMember.link', '/register')} className="btn btn-primary hero-btn-main">
             {getContent('buttons.joinMember.label', '🚩 व्यासपीठावर सहभागी व्हा')}
           </Link>
         )}
-        {getContent('buttons.login.visible', true) && (
-          <Link to={getContent('buttons.login.link', '/login')} className="btn-glass">
-            {getContent('buttons.login.label', '👤 सभासद लॉगिन')}
-          </Link>
-        )}
-        {getContent('buttons.directory.visible', true) && (
-          <Link to={getContent('buttons.directory.link', '/business/directory')} className="btn-glass">
-            {getContent('buttons.directory.label', '🔎 सर्वत्र शोध')}
-          </Link>
-        )}
-        {getContent('buttons.emergencyHelp.visible', true) && (
-          <Link to={getContent('buttons.emergencyHelp.link', '/goals')} className="btn-glass">
-            {getContent('buttons.emergencyHelp.label', '🏆 उद्दिष्टे व संकल्प')}
-          </Link>
-        )}
+        <div className="hero-ctas-subgroup">
+          {getContent('buttons.login.visible', true) && (
+            <Link to={getContent('buttons.login.link', '/login')} className="btn-glass">
+              {getContent('buttons.login.label', '👤 सभासद लॉगिन')}
+            </Link>
+          )}
+          {getContent('buttons.directory.visible', true) && (
+            <Link to={getContent('buttons.directory.link', '/business/directory')} className="btn-glass">
+              {getContent('buttons.directory.label', '🔎 सर्वत्र शोध')}
+            </Link>
+          )}
+          {getContent('buttons.emergencyHelp.visible', true) && (
+            <Link to={getContent('buttons.emergencyHelp.link', '/goals')} className="btn-glass">
+              {getContent('buttons.emergencyHelp.label', '🏆 उद्दिष्टे')}
+            </Link>
+          )}
+        </div>
       </div>
       <div className="hero-stats-grid">
         <div className="stat-glass"><b data-countup="350" data-suffix="+">0</b><span>अभ्यासित गड-किल्ले</span></div>
@@ -190,7 +192,7 @@ export default function HomePage() {
           style={{
             objectFit: heroView === 'map' ? 'contain' : 'cover',
             objectPosition: heroView === 'hero' ? 'center 8%' : (heroView === 'map' ? 'center center' : 'center top'),
-            backgroundColor: '#1a0803',
+            backgroundColor: '#FFF8F0',
             padding: heroView === 'map' ? '4px' : '0'
           }}
         />
@@ -224,16 +226,16 @@ export default function HomePage() {
       display: 'flex',
       alignItems: 'center',
       gap: '12px',
-      background: 'rgba(20,5,5,0.85)',
-      backdropFilter: 'blur(8px)',
+      background: 'rgba(255,255,255,0.92)',
+      border: '1.5px solid #FED7AA',
+      boxShadow: '0 4px 16px rgba(234, 88, 12, 0.12)',
       padding: '7px 18px',
       borderRadius: '30px',
-      border: '1px solid rgba(255,204,128,0.4)',
-      color: '#FFFFFF',
+      color: '#EA580C',
       fontSize: '0.80rem',
-      boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
       whiteSpace: 'nowrap'
-    }}>
+    }}
+  >
     <button 
       type="button" 
       onClick={() => setBgIndex((prev) => (prev - 1 + heroBgSlides.length) % heroBgSlides.length)}
