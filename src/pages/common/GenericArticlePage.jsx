@@ -5,8 +5,12 @@ const articlesDatabase = {
   'shivaji-maharaj': {
     title: 'छत्रपती शिवाजी महाराज — अखंड हिंदवी स्वराज्य संस्थापक',
     eyebrow: 'श्रीमंत छत्रपती · युगपुरुष · भारतीय आरमाराचे जनक (१६३०–१६८०)',
+    heroBgImage: '/assets/images/real-shivaji-coronation.jpg',
     heroImage: '/assets/images/real-shivaji-coronation.jpg',
     cardImage: '/assets/images/real-shivaji-portrait.jpg',
+    portraitTitle: 'श्री राजा शिवछत्रपती',
+    portraitSubtitle: 'हिंदवी स्वराज्य संस्थापक',
+    badgeText: 'अस्सल समकालीन व्यक्तिरेखा',
     tagline: 'रयतेचे राजे, अद्वितीय रणनीतीकार आणि भारतीय नौदलाचे जनक — ३५०+ गड-किल्ले जिंकून परकीय आक्रमक सत्तांना पराभूत करत अखंड लोककल्याणकारी हिंदवी स्वराज्याची स्थापना करणारे युगप्रवर्तक महापुरुष.',
     warCry: '|| प्रतिपच्चंद्रलेखेव वर्धिष्णुर्विश्ववंदिता शाहसूनोः शिवस्यैषा मुद्रा भद्राय राजते ||',
     stats: [
@@ -63,7 +67,13 @@ const articlesDatabase = {
   'sambhaji-maharaj': {
     title: 'छत्रपती संभाजी महाराज — धर्मवीर व अजिंक्य योद्धा',
     eyebrow: '१२८ लढायांमध्ये अपराजित · संस्कृत महापंडित · बलिदान मास (१६५७–१६८९)',
-    heroImage: '/assets/images/real-sambhaji-portrait.png',
+    heroBgImage: null,
+    hideHeroBg: true,
+    cardImage: '/assets/images/real-sambhaji-warrior.jpg',
+    heroImage: '/assets/images/real-sambhaji-warrior.jpg',
+    portraitTitle: 'छत्रपती संभाजी महाराज',
+    portraitSubtitle: 'धर्मवीर व अजिंक्य सेनापती',
+    badgeText: 'अजिंक्य योद्धा · धर्मवीर',
     tagline: '१२८ लढाया लढून एकही लढाई न हरणारे अद्वितीय सेनापती, बुधभूषणम् ग्रंथकार आणि मातृभूमी व स्वराज्यासाठी सर्वोच्च बलिदान देणारे धर्मवीर.',
     warCry: '|| मरण आले तरी चालेल, पण स्वाभिमान सोडणार नाही — छत्रपती संभाजी महाराज अमर रहे! ||',
     stats: [
@@ -490,21 +500,25 @@ export default function GenericArticlePage() {
 
       {/* Hero Section - Light Royal Maratha Heritage Theme */}
       <div className="hero" style={{ minHeight: '480px', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #FFFDF8 0%, #FEF3C7 50%, #FFEDD5 100%)' }}>
-        <img
-          src={article.heroImage}
-          alt={article.title}
-          className="hero-bg-img"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%', position: 'absolute', inset: 0, opacity: 1 }}
-          onError={(e) => { e.target.src = '/assets/images/real-shivaji-coronation.jpg'; }}
-        />
-        {/* Very light, translucent warm overlay - keeps the historic painting 100% visible and vivid */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(90deg, rgba(255, 250, 240, 0.38) 0%, rgba(255, 245, 230, 0.18) 50%, rgba(0, 0, 0, 0.04) 100%)',
-          zIndex: 1,
-          pointerEvents: 'none'
-        }}></div>
+        {article.heroBgImage && !article.hideHeroBg && (
+          <>
+            <img
+              src={article.heroBgImage}
+              alt={article.title}
+              className="hero-bg-img"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%', position: 'absolute', inset: 0, opacity: 1 }}
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+            {/* Very light, translucent warm overlay - keeps the historic painting 100% visible and vivid */}
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(90deg, rgba(255, 250, 240, 0.38) 0%, rgba(255, 245, 230, 0.18) 50%, rgba(0, 0, 0, 0.04) 100%)',
+              zIndex: 1,
+              pointerEvents: 'none'
+            }}></div>
+          </>
+        )}
 
         <div className="wrap hero-content" style={{ maxWidth: '1320px', width: '100%', padding: '44px 24px', position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '32px', flexWrap: 'wrap' }}>
           <div style={{ flex: '1 1 580px', minWidth: '300px' }}>
@@ -604,7 +618,7 @@ export default function GenericArticlePage() {
                   objectPosition: 'center',
                   display: 'block'
                 }}
-                onError={(e) => { e.target.src = '/assets/images/real-shivaji-portrait.jpg'; }}
+                onError={(e) => { e.target.src = article.cardImage || '/assets/images/real-shivaji-portrait.jpg'; }}
               />
               <span style={{
                 position: 'absolute',
@@ -621,14 +635,14 @@ export default function GenericArticlePage() {
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                 whiteSpace: 'nowrap'
               }}>
-                अस्सल समकालीन व्यक्तिरेखा
+                {article.badgeText || 'अस्सल ऐतिहासिक प्रतिमा'}
               </span>
             </div>
             <div style={{ marginTop: '12px', color: '#7F1D1D', fontWeight: 800, fontSize: '1.05rem', fontFamily: "'Baloo 2', sans-serif" }}>
-              श्री राजा शिवछत्रपती
+              {article.portraitTitle || article.title.split('—')[0].trim()}
             </div>
             <div style={{ fontSize: '0.8rem', color: '#92400E', fontWeight: 700 }}>
-              {article.title.split('—')[0].trim()}
+              {article.portraitSubtitle || (article.eyebrow ? article.eyebrow.split('·')[0].trim() : article.title.split('—')[0].trim())}
             </div>
           </div>
         </div>
