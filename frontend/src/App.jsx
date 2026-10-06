@@ -34,6 +34,7 @@ import JobsPortalPage from './pages/jobs/JobsPortalPage';
 // Culture, Governance, Admin
 import PhotoGalleryPage from './pages/culture/PhotoGalleryPage';
 import GovernancePage from './pages/governance/GovernancePage';
+import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
 import AdminERPPage from './pages/admin/AdminERPPage';
 import CEODashboardPage from './pages/admin/CEODashboardPage';
 import CEOPage from './pages/admin/CEOPage';
@@ -544,6 +545,10 @@ export default function App() {
             <Route path="/governance/roles-matrix" element={<RoleEligibilityMatrixPage />} />
             <Route path="/roles-matrix" element={<RoleEligibilityMatrixPage />} />
             <Route path="/eligibility-matrix" element={<RoleEligibilityMatrixPage />} />
+
+            {/* Official Dedicated Privacy Policy Routes */}
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
 
             {/* Generic Article Route & Fallback */}
             <Route path="/article" element={<GenericArticlePage />} />
