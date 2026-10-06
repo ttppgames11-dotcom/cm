@@ -1392,29 +1392,45 @@ export default function GenericArticlePage() {
             <>
               {/* 1. जगातील सर्वांत उंच पुतळा — "स्टॅच्यू ऑफ हिंदूभूषण", मोशी, पिंपरी-चिंचवड (१८० फूट) */}
               <div style={{ marginTop: '48px', padding: '32px 28px', background: 'linear-gradient(145deg, #FFFDF8 0%, #FEF3C7 50%, #FFEDD5 100%)', borderRadius: '18px', border: '2px solid #F59E0B', boxShadow: '0 12px 32px rgba(217, 119, 6, 0.14)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '28px', flexWrap: 'wrap' }}>
-                  <div style={{ flex: '0 0 320px', maxWidth: '380px', width: '100%', margin: '0 auto', borderRadius: '16px', overflow: 'hidden', border: '3.5px solid #D97706', boxShadow: '0 10px 28px rgba(180, 83, 9, 0.3)', background: '#000', position: 'relative' }}>
+                <div style={{ display: 'flex', alignItems: 'stretch', gap: '28px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: '0 0 380px', maxWidth: '440px', width: '100%', minHeight: '480px', margin: '0 auto', borderRadius: '16px', overflow: 'hidden', border: '3.5px solid #D97706', boxShadow: '0 10px 28px rgba(180, 83, 9, 0.3)', background: '#000', position: 'relative', display: 'flex', flexDirection: 'column', alignSelf: 'stretch' }}>
                     <img
                       src="/assets/images/real-sambhaji-moshi-statue.jpg"
                       alt="स्टॅच्यू ऑफ हिंदूभूषण — छत्रपती संभाजी महाराज पुतळा, मोशी"
-                      style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
+                      style={{ width: '100%', height: '100%', minHeight: '460px', flex: 1, display: 'block', objectFit: 'cover', objectPosition: 'center 15%' }}
                       onError={(e) => { e.target.src = '/assets/images/real-sambhaji-warrior.jpg'; }}
                     />
                     <div style={{
                       position: 'absolute',
-                      bottom: '10px',
-                      left: '10px',
-                      right: '10px',
-                      background: 'rgba(0, 0, 0, 0.8)',
-                      backdropFilter: 'blur(4px)',
-                      color: '#FEF08A',
-                      padding: '6px 12px',
-                      borderRadius: '8px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      background: 'linear-gradient(to top, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.45) 70%, transparent 100%)',
+                      padding: '16px 14px 14px',
                       textAlign: 'center'
                     }}>
-                      📍 शंभू सृष्टी, मोशी (पिंपरी-चिंचवड), पुणे
+                      <div style={{
+                        background: 'rgba(199, 56, 0, 0.9)',
+                        color: '#fff',
+                        padding: '4px 12px',
+                        borderRadius: '12px',
+                        fontSize: '0.76rem',
+                        fontWeight: 800,
+                        display: 'inline-block',
+                        marginBottom: '6px',
+                        letterSpacing: '0.4px',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.4)'
+                      }}>
+                        🚩 जगातील सर्वांत उंच पुतळा (१८० फूट)
+                      </div>
+                      <div style={{
+                        color: '#FEF08A',
+                        fontSize: '0.84rem',
+                        fontWeight: 700,
+                        textShadow: '0 1px 3px rgba(0,0,0,0.8)'
+                      }}>
+                        📍 शंभू सृष्टी, मोशी (पिंपरी-चिंचवड), पुणे
+                      </div>
                     </div>
                   </div>
                   <div style={{ flex: '1 1 500px', minWidth: '290px' }}>
