@@ -782,7 +782,7 @@ export default function GenericArticlePage() {
                     {
                       name: 'बहिर्जी नाईक',
                       title: 'स्वराज्याचे गुप्तहेर प्रमुख (Intelligence Chief)',
-                      image: '/assets/images/real-bahirji-naik-memorial.jpg',
+                      image: '/assets/images/real-bahirji-naik.jpg',
                       fallback: '/assets/images/real-sahyadri-forest.jpg',
                       quote: 'शत्रूच्या छावणीत वारा शिरण्याआधी बहिर्जींची नजर पोहोचत असे!',
                       desc: 'सुरत मोहीम, अफझलखान वध, शाहिस्तेखान छापा व आग्रा सुटका या सर्व मोहिमांचे अचूक नकाशे व गुप्त माहिती देणारे अजोड गुप्तहेर.'
@@ -790,7 +790,7 @@ export default function GenericArticlePage() {
                     {
                       name: 'सरनोबत हंबीरराव मोहिते',
                       title: 'स्वराज्याचे सर्वोच्च लष्करप्रमुख (सरसेनापती)',
-                      image: '/assets/images/real-hambirrao-samadhi.jpg',
+                      image: '/assets/images/real-hambirrao-mohite.jpg',
                       fallback: '/assets/images/real-maratha-army-panoramic.jpg',
                       quote: 'शिवरायांचे आणि शंभूराजांचे निष्ठावंत रणधुरंधर!',
                       desc: 'कोपम, नेसरी, जालना आणि दक्षिण दिग्विजयात मोगल व आदिलशाही फौजांना धूळ चारून विजय मिळवणारे अजिंक्य सरसेनापती.'
@@ -798,15 +798,15 @@ export default function GenericArticlePage() {
                     {
                       name: 'दौलत खान व मायनाक भंडारी',
                       title: 'शिवकालीन आरमाराचे पराक्रमी कर्णधार',
-                      image: '/assets/images/real-maynak-bhandari-samadhi.jpg',
-                      fallback: '/assets/images/real-sindhudurg-fort.jpg',
+                      image: '/assets/images/real-daulat-maynak.jpg',
+                      fallback: '/assets/images/navy/maynak_daryasarang.jpg',
                       quote: 'ज्याचे आरमार त्याचा समुद्र!',
                       desc: 'इंग्रज, पोर्तुगीज आणि जंजिऱ्याच्या सिद्दीच्या आरमारी आक्रमणांना समुद्रातच रोखून धरून सागरी सीमांचे रक्षण करणारे नौदल प्रमुख.'
                     },
                     {
                       name: 'वीर जीवा महाला',
                       title: 'शिवरायांचे अंगरक्षक व निष्ठावान सवंगडी',
-                      image: '/assets/images/real-jiva-mahala-painting.jpg',
+                      image: '/assets/images/real-jiva-mahala.jpg',
                       fallback: '/assets/images/real-pratapgad-fort.jpg',
                       quote: 'होता जीवा म्हणून वाचला शिवा!',
                       desc: 'प्रतापगडाच्या शामियान्यात अफझलखानाचा अंगरक्षक सय्यद बंडा शिवरायांवर तलवारीचा वार करणार इतक्यात जीवा महालाने त्याचा हात हवेतच छाटला.'
