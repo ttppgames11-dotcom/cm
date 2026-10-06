@@ -837,7 +837,7 @@ export default function GenericArticlePage() {
                     {
                       name: 'सरनोबत हंबीरराव मोहिते',
                       title: 'स्वराज्याचे सर्वोच्च लष्करप्रमुख (सरसेनापती)',
-                      image: '/assets/images/real-hambirrao-mohite.jpg',
+                      image: '/assets/images/hambirrao-mohite.webp',
                       fallback: '/assets/images/real-maratha-army-panoramic.jpg',
                       quote: 'शिवरायांचे आणि शंभूराजांचे निष्ठावंत रणधुरंधर!',
                       desc: 'कोपम, नेसरी, जालना आणि दक्षिण दिग्विजयात मोगल व आदिलशाही फौजांना धूळ चारून विजय मिळवणारे अजिंक्य सरसेनापती.'
@@ -1586,7 +1586,7 @@ export default function GenericArticlePage() {
                       title: 'मराठा सैन्य सरनोबत',
                       quote: 'शंभूराजांच्या पाठीशी उभा राहिलेला सह्याद्रीचा सिंह!',
                       desc: 'शंभूराजांचे सख्खे मामा व सरसेनापती. बुरहानपूर छापा, खान्देश मोहीम आणि वाईच्या लढाईत धारातीर्थी पडेपर्यंत स्वराज्याचे अभेद्य कवच.',
-                      img: '/assets/images/real-hambirrao-mohite.jpg',
+                      img: '/assets/images/hambirrao-mohite.webp',
                       fallback: '/assets/images/real-maratha-arms.jpg'
                     },
                     {
