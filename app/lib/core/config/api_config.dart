@@ -41,7 +41,7 @@ class ApiConfig {
   /// Public privacy policy page (must match the Play Console listing).
   static const String privacyPolicyUrl = String.fromEnvironment(
     'PRIVACY_POLICY_URL',
-    defaultValue: 'https://api.connectmaratha.com/privacy',
+    defaultValue: 'https://www.connectmaratha.com/privacy',
   );
 
   /// Support address shown in the app and Play listing.
