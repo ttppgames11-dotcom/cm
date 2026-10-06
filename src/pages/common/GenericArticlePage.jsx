@@ -1461,13 +1461,18 @@ export default function GenericArticlePage() {
               {/* 2. शंभूछत्रपतींची पवित्र राजमुद्रा — सखोल विश्लेषण */}
               <div style={{ marginTop: '48px', padding: '32px 28px', background: 'linear-gradient(145deg, #FFFDF8 0%, #FEF3C7 50%, #FFEDD5 100%)', borderRadius: '18px', border: '2px solid #F59E0B', boxShadow: '0 12px 32px rgba(217, 119, 6, 0.12)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
-                  <div style={{ flex: '0 0 160px', width: '160px', height: '160px', margin: '0 auto', borderRadius: '50%', overflow: 'hidden', border: '4px solid #D97706', boxShadow: '0 8px 24px rgba(180, 83, 9, 0.25)', background: '#fff' }}>
-                    <img
-                      src="/assets/images/real-rajmudra-seal.jpg"
-                      alt="शंभूछत्रपतींची राजमुद्रा"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      onError={(e) => { e.target.src = '/assets/images/real-sambhaji-warrior.jpg'; }}
-                    />
+                  <div style={{ flex: '0 0 170px', textAlign: 'center', margin: '0 auto' }}>
+                    <div style={{ width: '170px', height: '170px', borderRadius: '50%', overflow: 'hidden', border: '4px solid #D97706', boxShadow: '0 8px 24px rgba(180, 83, 9, 0.25)', background: 'radial-gradient(circle, #FFFDF8 0%, #FEF3C7 100%)', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <img
+                        src="/assets/images/real-sambhaji-rajmudra.png"
+                        alt="छत्रपती संभाजी महाराज यांची मूळ राजमुद्रा"
+                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                        onError={(e) => { e.target.src = '/assets/images/real-sambhaji-warrior.jpg'; }}
+                      />
+                    </div>
+                    <div style={{ marginTop: '8px', fontSize: '0.78rem', color: '#9A3412', fontWeight: 800 }}>
+                      📜 मूळ वतनपत्रावरील प्रत्यक्ष ठसा (इ.स. १६८१)
+                    </div>
                   </div>
                   <div style={{ flex: '1 1 500px', minWidth: '280px' }}>
                     <div style={{ display: 'inline-block', background: '#C73800', color: '#fff', fontSize: '0.78rem', fontWeight: 800, padding: '4px 12px', borderRadius: '20px', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '8px' }}>
@@ -1480,7 +1485,7 @@ export default function GenericArticlePage() {
                       || श्री शंभो: शिवजातस्य मुद्रा द्यौरिव राजते | यदंकसेविनी लेखा वर्तते कस्य नोपरि ||
                     </div>
                     <p style={{ color: '#451A03', fontSize: '0.98rem', lineHeight: 1.7, margin: '0 0 14px' }}>
-                      १६ जानेवारी १६८१ रोजी दुर्गराज रायगडावर छत्रपती संभाजी महाराजांनी स्वतःची स्वतंत्र संस्कृत राजमुद्रा जारी केली. यात त्यांनी शिवपुत्र असल्याचा उत्तुंग स्वाभिमान व्यक्त करत सांगितले की, ही मुद्रा आकाशाप्रमाणे अमर्याद असून, सर्वांना छत्र देणारी ही सत्ता कोणाच्या मस्तकावर सन्मानाने अधिष्ठित नाही? (अर्थात ही मुद्रा सर्वांचेच रक्षण करणारी आहे!)
+                      १६ जानेवारी १६८१ रोजी दुर्गराज रायगडावर छत्रपती संभाजी महाराजांनी स्वतःची स्वतंत्र संस्कृत राजमुद्रा जारी केली. शिवरायांची राजमुद्रा अष्टकोनी होती, तर शंभूछत्रपतींची ही राजमुद्रा <b>उभट कमळ-पाकळी (तरंगित पानासारख्या) आकाराची</b> असून त्यात ७ ओळींमध्ये अत्यंत तेजस्वी संस्कृत श्लोक कोरलेला आहे. यात त्यांनी शिवपुत्र असल्याचा उत्तुंग स्वाभिमान व्यक्त करत सांगितले की, ही मुद्रा आकाशाप्रमाणे अमर्याद असून, सर्वांना छत्र देणारी ही सत्ता कोणाच्या मस्तकावर सन्मानाने अधिष्ठित नाही? (अर्थात ही मुद्रा सर्वांचेच रक्षण करणारी आहे!)
                     </p>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px', background: 'rgba(255,255,255,0.7)', padding: '14px', borderRadius: '12px', border: '1px solid #FDE68A' }}>
                       <div><b style={{ color: '#9A3412' }}>श्री शंभो::</b> <span style={{ fontSize: '0.88rem', color: '#374151' }}>स्वयंप्रकाशी शिवपुत्र छत्रपती संभाजी महाराज</span></div>

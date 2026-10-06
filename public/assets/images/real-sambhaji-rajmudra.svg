@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    <!-- Background filter for subtle antique parchment texture -->
+    <radialGradient id="parchment" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFDF9" />
+      <stop offset="85%" stop-color="#FAF4E8" />
+      <stop offset="100%" stop-color="#F2E6CF" />
+    </radialGradient>
+    <radialGradient id="goldRim" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#D97706" />
+      <stop offset="50%" stop-color="#B45309" />
+      <stop offset="100%" stop-color="#78350F" />
+    </radialGradient>
+    <filter id="inkBleed" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="0.5" flood-color="#1c1917" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="800" height="800" fill="url(#parchment)"/>
+
+  <!-- Ornate Decorative Outer Ring (subtle sacred aura) -->
+  <circle cx="400" cy="400" r="380" fill="none" stroke="#E6D3B3" stroke-width="2" stroke-dasharray="6,6"/>
+  <circle cx="400" cy="400" r="388" fill="none" stroke="#D1B892" stroke-width="1"/>
+
+  <!-- Outer Scalloped Lotus Petal / Pipal Leaf Border -->
+  <!-- Authentic 7-lobed historical scalloped border of Chhatrapati Sambhaji Maharaj's Rajmudra -->
+  <path d="
+    M 400 65
+    C 385 85, 345 105, 330 135
+    C 305 150, 265 185, 255 225
+    C 230 250, 205 295, 205 340
+    C 185 375, 185 425, 205 460
+    C 205 505, 230 550, 255 575
+    C 265 615, 305 650, 330 665
+    C 345 695, 385 715, 400 735
+    C 415 715, 455 695, 470 665
+    C 495 650, 535 615, 545 575
+    C 570 550, 595 505, 595 460
+    C 615 425, 615 375, 595 340
+    C 595 295, 570 250, 545 225
+    C 535 185, 495 150, 470 135
+    C 455 105, 415 85, 400 65
+    Z
+  " fill="#FCF8EE" stroke="#1C1917" stroke-width="7" stroke-linejoin="round" />
+
+  <!-- Inner Scalloped Border (Double border line) -->
+  <path d="
+    M 400 85
+    C 387 103, 353 121, 340 148
+    C 318 162, 282 193, 273 229
+    C 251 251, 229 292, 229 332
+    C 211 364, 211 408, 229 440
+    C 229 480, 251 521, 273 543
+    C 282 579, 318 610, 340 624
+    C 353 651, 387 669, 400 687
+    C 413 669, 447 651, 460 624
+    C 482 610, 518 579, 527 543
+    C 549 521, 571 480, 571 440
+    C 589 408, 589 364, 571 332
+    C 571 292, 549 251, 527 229
+    C 518 193, 482 162, 460 148
+    C 447 121, 413 103, 400 85
+    Z
+  " fill="none" stroke="#1C1917" stroke-width="3" stroke-linejoin="round" />
+
+  <!-- The 7 Sacred Lines of Sanskrit Devanagari Calligraphy -->
+  <!-- Authentic Shloka: श्री शंभो: शिवजातस्य मुद्रा द्यौरिव राजते | यदंकसेविनी लेखा वर्तते कस्य नोपरि || -->
+  <g fill="#1C1917" text-anchor="middle" font-family="'Yatra One', 'Rozha One', 'Baloo 2', 'Nirmala UI', 'Mangal', 'Noto Sans Devanagari', serif" font-weight="900" filter="url(#inkBleed)">
+    
+    <!-- Line 1: श्री -->
+    <text x="400" y="165" font-size="44" letter-spacing="4">॥ श्री ॥</text>
+
+    <!-- Line 2: शंभोः शिव- -->
+    <text x="400" y="248" font-size="52" letter-spacing="3">शंभोः शिव-</text>
+
+    <!-- Line 3: जातस्य मुद्रा -->
+    <text x="400" y="336" font-size="54" letter-spacing="2">जातस्य मुद्रा</text>
+
+    <!-- Line 4: द्यौरिव राजते । -->
+    <text x="400" y="425" font-size="52" letter-spacing="2">द्यौरिव राजते ।</text>
+
+    <!-- Line 5: यदंकसेविनी -->
+    <text x="400" y="512" font-size="50" letter-spacing="2">यदंकसेविनी</text>
+
+    <!-- Line 6: लेखा वर्तते -->
+    <text x="400" y="596" font-size="48" letter-spacing="3">लेखा वर्तते</text>
+
+    <!-- Line 7: कस्य नोपरि ॥ -->
+    <text x="400" y="675" font-size="44" letter-spacing="2">कस्य नोपरि ॥</text>
+  </g>
+
+  <!-- Historical Archival Signature Inscription at Bottom -->
+  <text x="400" y="776" fill="#78350F" text-anchor="middle" font-family="'Baloo 2', sans-serif" font-size="16" font-weight="700" letter-spacing="1">
+    छत्रपती संभाजी महाराज यांची अधिकृत संस्कृत राजमुद्रा (इ.स. १६८१)
+  </text>
+</svg>
