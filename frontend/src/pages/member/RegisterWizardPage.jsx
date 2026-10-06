@@ -196,7 +196,7 @@ export default function RegisterWizardPage() {
         setValidationError(res?.error || 'नोंदणी अयशस्वी झाली. कृपया माहिती तपासा.');
         return;
       }
-      resUser = res.user;
+      resUser = res.member || res.user;
     }
 
     // Record Real-time referral

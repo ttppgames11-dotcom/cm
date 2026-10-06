@@ -39,7 +39,11 @@ import GovernancePage from './pages/governance/GovernancePage';
 import AdminERPPage from './pages/admin/AdminERPPage';
 import CEODashboardPage from './pages/admin/CEODashboardPage';
 import CEOPage from './pages/admin/CEOPage';
+import DivisionAdminCRM from './pages/admin/DivisionAdminCRM';
 import DistrictAdminCRM from './pages/admin/DistrictAdminCRM';
+import TalukaAdminCRM from './pages/admin/TalukaAdminCRM';
+import BranchAdminCRM from './pages/admin/BranchAdminCRM';
+import CommunityCenterCRM from './pages/admin/CommunityCenterCRM';
 import ChapterPresidentCRM from './pages/admin/ChapterPresidentCRM';
 import SevaHelpdeskCRM from './pages/admin/SevaHelpdeskCRM';
 import FinanceLedgerCRM from './pages/admin/FinanceLedgerCRM';
@@ -116,6 +120,7 @@ import CommunityOralHistoryPage from './pages/community/CommunityOralHistoryPage
 import ShivkalFestivalsPage from './pages/culture/ShivkalFestivalsPage';
 import ConnectMarathaUniversePage from './pages/universe/ConnectMarathaUniversePage';
 import MaharashtraDataPlatformPage from './pages/platform/MaharashtraDataPlatformPage';
+import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
 
 
 // Complete 100% Mapping for Every Legacy .html File (All 81 Files Covered)
@@ -460,7 +465,20 @@ export default function App() {
             <Route path="/ceo" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEOPage /></CRMProtectedRoute>} />
             <Route path="/ceo-dashboard" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEOPage /></CRMProtectedRoute>} />
 
+            {/* Region / Division CRM */}
+            <Route path="/crm/division" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo', 'division_admin', 'division_head', 'division']}><DivisionAdminCRM /></CRMProtectedRoute>} />
+
+            {/* District CRM */}
             <Route path="/crm/district" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'district_admin', 'district']}><DistrictAdminCRM /></CRMProtectedRoute>} />
+
+            {/* Taluka CRM */}
+            <Route path="/crm/taluka" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'district_admin', 'taluka_admin', 'taluka_head', 'taluka']}><TalukaAdminCRM /></CRMProtectedRoute>} />
+
+            {/* Grassroots Branch / Shakha CRM */}
+            <Route path="/crm/branch" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'branch_head', 'branch_admin', 'branch', 'taluka_admin', 'district_admin']}><BranchAdminCRM /></CRMProtectedRoute>} />
+
+            {/* Physical Community Center Operational CRM */}
+            <Route path="/crm/center" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'center_manager', 'center_admin', 'center', 'center_partner', 'taluka_admin', 'district_admin']}><CommunityCenterCRM /></CRMProtectedRoute>} />
 
             <Route path="/crm/chapter" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'chapter_president', 'chapter']}><ChapterPresidentCRM /></CRMProtectedRoute>} />
 
@@ -570,6 +588,10 @@ export default function App() {
             <Route path="/governance/roles-matrix" element={<RoleEligibilityMatrixPage />} />
             <Route path="/roles-matrix" element={<RoleEligibilityMatrixPage />} />
             <Route path="/eligibility-matrix" element={<RoleEligibilityMatrixPage />} />
+
+            {/* Official Dedicated Privacy Policy Routes */}
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
 
             {/* Generic Article Route & Fallback */}
             <Route path="/article" element={<GenericArticlePage />} />

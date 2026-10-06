@@ -273,6 +273,16 @@ export const apiClient = {
     return res.data?.siteContent || res.siteContent || res.data || null;
   },
 
+  // Admin Metrics API (supports CEO macro view & admin dashboard)
+  getAdminMetrics: async () => {
+    try {
+      const res = await fetchJson('/admin/metrics');
+      return res.data?.metrics || res.metrics || res.data || null;
+    } catch (e) {
+      return null;
+    }
+  },
+
   // In-memory member detail cache for ultra-fast unique phone & email lookups
   _memberDetailsCache: new Map(),
 
@@ -519,6 +529,35 @@ export const apiClient = {
   },
   deleteAdminInformation: async (id) => {
     return await fetchJson(`/admin/information/${id}`, { method: 'DELETE' });
+  },
+
+  // Multi-tier Hierarchy & Community Centers API
+  getHierarchyMetrics: async () => {
+    const res = await fetchJson('/admin/hierarchy-metrics');
+    return res.data || res;
+  },
+  getCommunityCenters: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const endpoint = `/admin/community-centers${query ? `?${query}` : ''}`;
+    const res = await fetchJson(endpoint);
+    return res.data?.centers || res.centers || [];
+  },
+  createCommunityCenter: async (data) => {
+    return await fetchJson('/admin/community-centers', { method: 'POST', body: JSON.stringify(data) });
+  },
+  recordCenterAction: async (data) => {
+    return await fetchJson('/admin/center-action', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // Local Branch (Shakha) APIs
+  getBranches: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const endpoint = `/admin/branches${query ? `?${query}` : ''}`;
+    const res = await fetchJson(endpoint);
+    return res.data?.branches || res.branches || [];
+  },
+  recordBranchAction: async (data) => {
+    return await fetchJson('/admin/branch-action', { method: 'POST', body: JSON.stringify(data) });
   }
 };
 

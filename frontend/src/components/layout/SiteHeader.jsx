@@ -11,6 +11,8 @@ export default function SiteHeader({ onOpenSearch }) {
   const [expandedPillar, setExpandedPillar] = useState(null);
   const navigate = useNavigate();
 
+  const isLoggedIn = !!(user && (user.id || user._id) && (typeof window === 'undefined' || localStorage.getItem('cm_logged_in') === 'true'));
+
   const handleSearchClick = () => {
     if (onOpenSearch) {
       onOpenSearch();
@@ -99,7 +101,7 @@ export default function SiteHeader({ onOpenSearch }) {
 
           {/* Desktop Navigation (Hidden <= 1024px) */}
           <nav className="desktop-nav">
-            {!user ? (
+            {!isLoggedIn ? (
               <>
                 <NavLink to="/about" onClick={handleLinkClick}>
                   🏛️ आमच्याबद्दल
@@ -285,7 +287,7 @@ export default function SiteHeader({ onOpenSearch }) {
               <span className="universe-btn-text">महाविश्व</span>
             </Link>
 
-            {user && user.id ? (
+            {isLoggedIn ? (
               <div className="cm-user-menu-wrap" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                 <Link
                   to="/dashboard"
@@ -404,7 +406,7 @@ export default function SiteHeader({ onOpenSearch }) {
             <NavLink to="/" end onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
               <span className="subnav-pill-icon">🏠</span> मुख्यपृष्ठ
             </NavLink>
-            {!user ? (
+            {!isLoggedIn ? (
               <>
                 <NavLink to="/about" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">🏛️</span> आमच्याबद्दल
@@ -513,7 +515,7 @@ export default function SiteHeader({ onOpenSearch }) {
         <div className="cm-drawer-body">
           {/* User Status / Auth Action Card */}
           <div className="cm-drawer-user-card">
-            {user && user.id ? (
+            {isLoggedIn ? (
               <>
                 <div className="cm-drawer-user-header">
                   <div className="cm-drawer-user-avatar">👤</div>

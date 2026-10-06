@@ -49,6 +49,10 @@ export function formatMemberReferralCode(user) {
 
 // Generate realistic initial seed dataset if empty
 export function getInitialSeedReferrals() {
+  return [];
+}
+
+function _legacyUnusedSeeds() {
   const now = Date.now();
   const day = 86400000;
   return [
@@ -220,27 +224,25 @@ export function getInitialSeedReferrals() {
   ];
 }
 
-// Get all referrals from storage
+// Get all referrals from storage (real records only - zero fake seeds)
 export function getAllReferrals() {
   try {
     const raw = localStorage.getItem(REFERRALS_STORAGE_KEY);
-    if (!raw) {
-      const initialSeed = getInitialSeedReferrals();
-      localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(initialSeed));
-      return initialSeed;
-    }
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      const initialSeed = getInitialSeedReferrals();
-      localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(initialSeed));
-      return initialSeed;
+    if (!Array.isArray(parsed)) return [];
+    // Filter out old fake seed items
+    const realOnly = parsed.filter(item => item && !item.isSeed && !String(item.id || '').startsWith('REF-100'));
+    if (realOnly.length !== parsed.length) {
+      localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(realOnly));
     }
-    return parsed;
+    return realOnly;
   } catch (e) {
     console.error('Error reading referrals from storage', e);
-    return getInitialSeedReferrals();
+    return [];
   }
 }
+
 
 // Verify a referral member ID in real-time
 export function verifyReferrerId(code) {

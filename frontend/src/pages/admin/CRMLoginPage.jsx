@@ -42,6 +42,18 @@ const CRM_OFFICIAL_PROFILES = [
     badge: 'STATE EXECUTIVE'
   },
   {
+    role: 'division_admin',
+    name: 'प्रतापराव पवार (विभागीय अध्यक्ष)',
+    id: 'CM-DIV-0011',
+    phone: '9876500011',
+    passwords: ['division1674', 'admin123', 'password123'],
+    defaultPassword: 'division1674',
+    title: '🏛️ विभागीय अध्यक्ष (Division Head)',
+    desc: 'पुणे व नाशिक विभाग, ५-७ जिल्हे, तुलनात्मक कामगिरी व विभागीय कम्युनिटी सेंटर्स',
+    targetRoute: '/crm/division',
+    badge: 'DIVISION HEAD'
+  },
+  {
     role: 'district_admin',
     name: 'आनंदराव देशमुख (जिल्हा समन्वयक)',
     id: 'CM-DIST-0022',
@@ -52,6 +64,42 @@ const CRM_OFFICIAL_PROFILES = [
     desc: 'जिल्हा प्रशासन, तालुका समन्वय, ओळखपत्र छाननी व स्थानिक आकडेवारी',
     targetRoute: '/crm/district',
     badge: 'DISTRICT HEAD'
+  },
+  {
+    role: 'taluka_admin',
+    name: 'सागर पाटील (तालुकाध्यक्ष)',
+    id: 'CM-TAL-0077',
+    phone: '9876500077',
+    passwords: ['taluka1674', 'admin123', 'password123'],
+    defaultPassword: 'taluka1674',
+    title: '📍 तालुकाध्यक्ष (Taluka Head)',
+    desc: 'हवेली व कराड तालुका, स्थानिक शाखा, सदस्य पडताळणी व गाव पातळी समन्वय',
+    targetRoute: '/crm/taluka',
+    badge: 'TALUKA HEAD'
+  },
+  {
+    role: 'branch_head',
+    name: 'विजयराव कदम (शाखाध्यक्ष)',
+    id: 'CM-BR-0011',
+    phone: '9876500066',
+    passwords: ['branch1674', 'admin123', 'password123'],
+    defaultPassword: 'branch1674',
+    title: '🏠 शाखाध्यक्ष (Branch Head)',
+    desc: 'स्थानिक गाव/वॉर्ड शाखा, सदस्य जोडणी, स्वयंसेवक फळी व स्थानिक बैठक अहवाल',
+    targetRoute: '/crm/branch',
+    badge: 'BRANCH HEAD'
+  },
+  {
+    role: 'center_manager',
+    name: 'सचिन मोहिते (कम्युनिटी सेंटर व्यवस्थापक)',
+    id: 'CC-MGR-0099',
+    phone: '9876500099',
+    passwords: ['center1674', 'admin123', 'password123'],
+    defaultPassword: 'center1674',
+    title: '🏢 कम्युनिटी सेंटर मॅनेजर (Center Manager)',
+    desc: 'दैनिक अभ्यागत काउंटर, KYC छाननी, १२ सेवा कक्ष व दैनंदिन वर्गणी लेजर',
+    targetRoute: '/crm/center',
+    badge: 'CENTER MANAGER'
   },
   {
     role: 'chapter_president',
@@ -173,9 +221,13 @@ export default function CRMLoginPage() {
         let targetRoute = '/dashboard';
         if (role === 'superadmin') targetRoute = '/superadmin';
         else if (role === 'admin') targetRoute = '/admin';
-        else if (role === 'ceo') targetRoute = '/ceo';
-        else if (role === 'district_admin') targetRoute = '/crm/district';
-        else if (role === 'chapter_president') targetRoute = '/crm/chapter';
+        else if (role === 'ceo' || role === 'pradesh_head') targetRoute = '/ceo';
+        else if (role === 'division_admin' || role === 'division_head') targetRoute = '/crm/division';
+        else if (role === 'district_admin' || role === 'district_head') targetRoute = '/crm/district';
+        else if (role === 'taluka_admin' || role === 'taluka_head') targetRoute = '/crm/taluka';
+        else if (role === 'branch_head' || role === 'branch_admin' || role === 'branch') targetRoute = '/crm/branch';
+        else if (role === 'center_manager' || role === 'center_admin' || role === 'center_partner') targetRoute = '/crm/center';
+        else if (role === 'chapter_president' || role === 'chapter_head') targetRoute = '/crm/chapter';
         else if (role === 'seva_helpdesk') targetRoute = '/crm/helpdesk';
         else if (role === 'finance_officer') targetRoute = '/crm/finance';
 

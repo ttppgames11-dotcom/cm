@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { useSiteContent } from '../../context/SiteContentContext';
 
 const heroViews = {
@@ -47,13 +48,142 @@ const heroBgSlides = [
   { img: '/assets/images/real-maratha-court-1792.jpg', title: 'मराठा महादरबार (१७९२)', desc: 'सवाई माधवराव, नाना फडणवीस व महादजी शिंदे यांचा राजदरबार' }
 ];
 
+// Helper to verify genuine logged in state
+const isUserLoggedIn = (user) => {
+  if (!user) return false;
+  if (!user.id && !user._id && !user.phone) return false;
+  if (typeof window !== 'undefined') {
+    if (localStorage.getItem('cm_logged_in') !== 'true') return false;
+  }
+  return true;
+};
+
+// Dedicated AuthLink: Automatically halts navigation and prompts login modal if user is unauthenticated
+function AuthLink({ to, children, onClick, title, ...props }) {
+  const { user } = useAuth();
+  const toStr = typeof to === 'string' ? to : String(to || '');
+  const isPublic = !toStr || toStr === '/login' || toStr === '/register' || toStr.startsWith('/login') || toStr.startsWith('/register') || toStr.startsWith('#') || toStr.startsWith('http') || toStr.startsWith('tel:') || toStr.startsWith('mailto:');
+  const loggedIn = isUserLoggedIn(user);
+
+  const handleClick = (e) => {
+    if (!loggedIn && !isPublic) {
+      e.preventDefault();
+      e.stopPropagation();
+      sessionStorage.setItem('cm_login_redirect', toStr);
+      const featureTitle = (
+        title ||
+        (typeof children === 'string' ? children : '') ||
+        'Connect Maratha सुविधा'
+      ).trim().replace(/\s+/g, ' ').slice(0, 50);
+
+      if (typeof window !== 'undefined' && typeof window.__cmOpenLoginPrompt === 'function') {
+        window.__cmOpenLoginPrompt(toStr, featureTitle);
+      }
+      return;
+    }
+    if (onClick) onClick(e);
+  };
+
+  return (
+    <Link 
+      to={loggedIn || isPublic ? toStr : '#'} 
+      onClick={handleClick} 
+      title={title} 
+      {...props}
+    >
+      {children}
+    </Link>
+  );
+}
+
 export default function HomePage() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { getContent } = useSiteContent();
   const [heroView, setHeroView] = useState('hero');
   const [ecoTab, setEcoTab] = useState('tab-history');
   const [ecoQuery, setEcoQuery] = useState('');
   const [bgIndex, setBgIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [authRequiredPrompt, setAuthRequiredPrompt] = useState(null);
+
+  const loggedIn = isUserLoggedIn(user);
+
+  // Expose global prompt trigger so AuthLink or any other click can open the auth prompt modal
+  useEffect(() => {
+    window.__cmOpenLoginPrompt = (targetUrl, featureTitle) => {
+      setAuthRequiredPrompt({
+        targetUrl: targetUrl || '/history',
+        featureTitle: featureTitle || 'Connect Maratha सुविधा'
+      });
+    };
+    return () => {
+      delete window.__cmOpenLoginPrompt;
+    };
+  }, []);
+
+  // Global click interception: Require login for all internal features/cards/links
+  const handleGlobalClickCapture = (e) => {
+    // If user is already authenticated, allow unrestricted normal access!
+    if (loggedIn) return;
+
+    // Do not intercept if click is inside the auth prompt modal itself
+    if (e.target.closest('[data-auth-prompt]')) return;
+
+    // Allow switching hero view chips, slide controllers, or tabs
+    if (e.target.closest('.hero-switcher-chips') || e.target.closest('.hero-slider-bar') || e.target.closest('.eco-tabs')) {
+      return;
+    }
+
+    // Check if the click target is within a link or clickable card
+    const anchor = e.target.closest('a');
+    const standaloneCard = !anchor && (
+      e.target.closest('.card-bg') || 
+      e.target.closest('.eco-card') || 
+      e.target.closest('.hero-feature-card')
+    );
+
+    if (!anchor && !standaloneCard) return;
+
+    const href = anchor ? anchor.getAttribute('href') : null;
+
+    // Allow login, register, tel, mailto, or external links without blocking
+    if (href) {
+      if (
+        href === '/login' ||
+        href.startsWith('/login?') ||
+        href.startsWith('/login/') ||
+        href === '/register' ||
+        href.startsWith('/register?') ||
+        href.startsWith('/register/') ||
+        href.startsWith('tel:') ||
+        href.startsWith('mailto:') ||
+        href.startsWith('http')
+      ) {
+        return;
+      }
+      if (href === '#' || href === '') {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+    }
+
+    // Intercept click: user must login first! Stop navigation and prompt!
+    e.preventDefault();
+    e.stopPropagation();
+
+    const targetUrl = href || '/history';
+    const featureTitle = (
+      (anchor ? (anchor.getAttribute('title') || anchor.textContent) : (standaloneCard ? standaloneCard.textContent : 'सुविधा')) || 'सुविधा'
+    ).trim().replace(/\s+/g, ' ').slice(0, 50);
+
+    sessionStorage.setItem('cm_login_redirect', targetUrl);
+    setAuthRequiredPrompt({
+      targetUrl,
+      featureTitle: featureTitle || 'सुविधा'
+    });
+  };
 
   const activeHero = heroViews[heroView];
   const displayHeroImg = activeHero.img || getContent('images.heroBanner');
@@ -98,7 +228,36 @@ export default function HomePage() {
   }, [ecoTab, ecoQuery]);
 
   return (
-    <div className="home-page-root">
+    <div className="home-page-root" onClickCapture={handleGlobalClickCapture}>
+      {/* Informative Security & Access Bar for Non-logged Users */}
+      {!loggedIn && (
+        <div style={{
+          background: 'linear-gradient(90deg, #EA580C 0%, #C2410C 100%)',
+          color: '#FFFFFF',
+          padding: '10px 16px',
+          textAlign: 'center',
+          fontSize: '0.84rem',
+          fontWeight: 800,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '12px',
+          flexWrap: 'wrap',
+          borderBottom: '2px solid #FED7AA',
+          position: 'relative',
+          zIndex: 50
+        }}>
+          <span>🔐 🚩 Connect Maratha च्या सर्व सुविधा, इतिहास व व्यवसाय दालनांमध्ये प्रवेशासाठी सभासद लॉगिन आवश्यक आहे.</span>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <AuthLink to="/login" style={{ background: '#FFFFFF', color: '#EA580C', padding: '4px 14px', borderRadius: '8px', textDecoration: 'none', fontWeight: 900, fontSize: '0.8rem', boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}>
+              लॉगिन करा ➔
+            </AuthLink>
+            <AuthLink to="/register" style={{ background: '#FFF7ED', color: '#431407', border: '1px solid #FED7AA', padding: '4px 12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 800, fontSize: '0.8rem' }}>
+              मोफत नोंदणी
+            </AuthLink>
+          </div>
+        </div>
+      )}
 {/* ========== HERO SECTION (DYNAMIC CONTINUOUSLY CHANGING BACKGROUND) ========== */}
 <section 
   className="hero"
@@ -154,25 +313,25 @@ export default function HomePage() {
       </p>
       <div className="hero-ctas">
         {getContent('buttons.joinMember.visible', true) && (
-          <Link to={getContent('buttons.joinMember.link', '/register')} className="btn btn-primary hero-btn-main">
+          <AuthLink to={getContent('buttons.joinMember.link', '/register')} className="btn btn-primary hero-btn-main">
             {getContent('buttons.joinMember.label', '🚩 व्यासपीठावर सहभागी व्हा')}
-          </Link>
+          </AuthLink>
         )}
         <div className="hero-ctas-subgroup">
           {getContent('buttons.login.visible', true) && (
-            <Link to={getContent('buttons.login.link', '/login')} className="btn-glass">
+            <AuthLink to={getContent('buttons.login.link', '/login')} className="btn-glass">
               {getContent('buttons.login.label', '👤 सभासद लॉगिन')}
-            </Link>
+            </AuthLink>
           )}
           {getContent('buttons.directory.visible', true) && (
-            <Link to={getContent('buttons.directory.link', '/business/directory')} className="btn-glass">
+            <AuthLink to={getContent('buttons.directory.link', '/business/directory')} className="btn-glass">
               {getContent('buttons.directory.label', '🔎 सर्वत्र शोध')}
-            </Link>
+            </AuthLink>
           )}
           {getContent('buttons.emergencyHelp.visible', true) && (
-            <Link to={getContent('buttons.emergencyHelp.link', '/goals')} className="btn-glass">
+            <AuthLink to={getContent('buttons.emergencyHelp.link', '/goals')} className="btn-glass">
               {getContent('buttons.emergencyHelp.label', '🏆 उद्दिष्टे')}
-            </Link>
+            </AuthLink>
           )}
         </div>
       </div>
@@ -207,9 +366,9 @@ export default function HomePage() {
           <button type="button" className={`btn ${heroView === 'coronation' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setHeroView('coronation')}>👑 राज्याभिषेक</button>
           <button type="button" className={`btn ${heroView === 'map' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setHeroView('map')}>🗺️ साम्राज्य नकाशा</button>
         </div>
-        <Link to={activeHero.link} className="btn btn-primary" id="heroCardLink" style={{ marginTop: '8px', fontSize: '.8rem' }}>
+        <AuthLink to={activeHero.link} className="btn btn-primary" id="heroCardLink" style={{ marginTop: '8px', fontSize: '.8rem' }}>
           सविस्तर चरित्र वाचा →
-        </Link>
+        </AuthLink>
       </div>
     </div>
   </div>
@@ -296,9 +455,9 @@ export default function HomePage() {
       <span><strong>ऐतिहासिक स्मरण:</strong> १७२८ — पालखेडच्या रणांगणात थोरले बाजीराव पेशवे यांनी निजामाला शरण येण्यास भाग पाडले.</span>
     </div>
     <div style={{"display":"flex","alignItems":"center","gap":"14px","fontSize":"0.84rem"}}>
-      <Link to="/history/battles" style={{"color":"#FFE082","textDecoration":"underline","fontWeight":"700"}}>⚔️ पालखेड युद्ध इतिहास वाचा →</Link>
+      <AuthLink to="/history/battles" style={{"color":"#FFE082","textDecoration":"underline","fontWeight":"700"}}>⚔️ पालखेड युद्ध इतिहास वाचा →</AuthLink>
       <span style={{"color":"rgba(255,255,255,0.6)"}}>•</span>
-      <Link to="/history" style={{"color":"#FFFFFF","opacity":"0.95","textDecoration":"none"}}>सर्व ३६५ तिथी सूची</Link>
+      <AuthLink to="/history" style={{"color":"#FFFFFF","opacity":"0.95","textDecoration":"none"}}>सर्व ३६५ तिथी सूची</AuthLink>
     </div>
   </div>
 </div>
@@ -311,32 +470,32 @@ export default function HomePage() {
         <span className="eyebrow-sm">Section 2 • Four Primary Pillars</span>
         <h2>Connect Maratha चे ४ आधारस्तंभ</h2>
       </div>
-      <Link to="/governance" className="more-link">मास्टर ब्लूप्रिंट पहा →</Link>
+      <AuthLink to="/governance" className="more-link">मास्टर ब्लूप्रिंट पहा →</AuthLink>
     </div>
     <div className="grid-4" style={{"marginBottom":"40px"}} data-reveal-group>
       <div style={{"background":"linear-gradient(135deg, #FF5500, #E65100)","borderRadius":"16px","padding":"24px","color":"#FFFFFF","borderTop":"4px solid #FFFFFF"}}>
         <div style={{"fontSize":"2rem","marginBottom":"8px"}}>⚔️</div>
         <h4 style={{"color":"#FFFFFF","fontSize":"1.15rem","marginBottom":"6px"}}>१. जतन करा (PRESERVE)</h4>
         <p style={{"fontSize":"0.84rem","color":"rgba(255,255,255,0.92)","lineHeight":"1.55","marginBottom":"12px"}}>मराठा इतिहास, ३५०+ किल्ले, आरमार, समकालीन बखरी, पत्रे, नकाशे व बलिदान मास स्मृती.</p>
-        <Link to="/history" style={{"color":"#FFFFFF","fontSize":"0.82rem","fontWeight":"700"}}>इतिहास दालन →</Link>
+        <AuthLink to="/history" style={{"color":"#FFFFFF","fontSize":"0.82rem","fontWeight":"700"}}>इतिहास दालन →</AuthLink>
       </div>
       <div style={{"background":"linear-gradient(135deg, #E65100, #F4511E)","borderRadius":"16px","padding":"24px","color":"#FFFFFF","borderTop":"4px solid #FFFFFF"}}>
         <div style={{"fontSize":"2rem","marginBottom":"8px"}}>🌟</div>
         <h4 style={{"color":"#FFFFFF","fontSize":"1.15rem","marginBottom":"6px"}}>२. गौरव करा (CELEBRATE)</h4>
         <p style={{"fontSize":"0.84rem","color":"rgba(255,255,255,0.92)","lineHeight":"1.55","marginBottom":"12px"}}>मराठा गौरव — आधुनिक शास्त्रज्ञ, डीप टेक, डॉक्टर, ऑलिम्पिक क्रीडापटू, महिला व युवा नेतृत्व.</p>
-        <Link to="/about" style={{"color":"#FFFFFF","fontSize":"0.82rem","fontWeight":"700"}}>गौरव व अचीव्हर्स →</Link>
+        <AuthLink to="/about" style={{"color":"#FFFFFF","fontSize":"0.82rem","fontWeight":"700"}}>गौरव व अचीव्हर्स →</AuthLink>
       </div>
       <div style={{"background":"linear-gradient(135deg, #F4511E, #D84315)","borderRadius":"16px","padding":"24px","color":"#FFFFFF","borderTop":"4px solid #FFFFFF"}}>
         <div style={{"fontSize":"2rem","marginBottom":"8px"}}>🤝</div>
         <h4 style={{"color":"#FFFFFF","fontSize":"1.15rem","marginBottom":"6px"}}>३. जोडा (CONNECT)</h4>
         <p style={{"fontSize":"0.84rem","color":"rgba(255,255,255,0.92)","lineHeight":"1.55","marginBottom":"12px"}}>समुदाय व व्यवसाय — व्यवसाय संगम (BNI-शैली मराठा चॅप्टर्स), व्यावसायिक, विद्यार्थी व मेन्टॉर.</p>
-        <Link to="/sangam" style={{"color":"#FFFFFF","fontSize":"0.82rem","fontWeight":"700"}}>व्यवसाय संगम →</Link>
+        <AuthLink to="/sangam" style={{"color":"#FFFFFF","fontSize":"0.82rem","fontWeight":"700"}}>व्यवसाय संगम →</AuthLink>
       </div>
       <div style={{"background":"linear-gradient(135deg, #F4511E, #E65100)","borderRadius":"16px","padding":"24px","color":"#FFFFFF","borderTop":"4px solid #FFFFFF"}}>
         <div style={{"fontSize":"2rem","marginBottom":"8px"}}>🚀</div>
         <h4 style={{"color":"#FFFFFF","fontSize":"1.15rem","marginBottom":"6px"}}>४. घडवा (BUILD)</h4>
         <p style={{"fontSize":"0.84rem","color":"rgba(255,255,255,0.92)","lineHeight":"1.55","marginBottom":"12px"}}>भविष्य व संधी — करिअर, रोजगार, स्पर्धा परीक्षा, ग्लोबल मराठा नेटवर्किंग व सामाजिक प्रकल्प.</p>
-        <Link to="/jobs" style={{"color":"#FFFFFF","fontSize":"0.82rem","fontWeight":"700"}}>करिअर व संधी →</Link>
+        <AuthLink to="/jobs" style={{"color":"#FFFFFF","fontSize":"0.82rem","fontWeight":"700"}}>करिअर व संधी →</AuthLink>
       </div>
     </div>
 
@@ -350,7 +509,7 @@ export default function HomePage() {
           <p style={{"fontSize":"0.88rem","color":"rgba(255,248,231,0.95)","marginBottom":"12px"}}>
             सक्तीचे धार्मिक कर्मकांड नसून स्वैच्छिक कृतज्ञता स्मरण आणि रचनात्मक समाजसेवा — रक्तदान, दुर्ग स्वच्छता, वृक्षारोपण व ३० दिवसांचे "आजची स्मृती" कॅलेंडर.
           </p>
-          <Link to="/history" className="btn btn-primary" style={{"fontSize":"0.8rem","padding":"6px 14px"}}>बलिदान मास दालन पहा →</Link>
+          <AuthLink to="/history" className="btn btn-primary" style={{"fontSize":"0.8rem","padding":"6px 14px"}}>बलिदान मास दालन पहा →</AuthLink>
         </div>
       </div>
 
@@ -362,7 +521,7 @@ export default function HomePage() {
           <p style={{"fontSize":"0.88rem","color":"rgba(255,248,231,0.95)","marginBottom":"12px"}}>
             ५८ शांततापूर्ण मूक मोर्चे, विद्यार्थिनींचे नेतृत्व, सत्यशोधक व आरक्षण लढा — वस्तुनिष्ठ ऐतिहासिक दस्तऐवजीकरण.
           </p>
-          <Link to="/history" className="btn btn-primary" style={{"fontSize":"0.8rem","padding":"6px 14px"}}>मोर्चे व चळवळी दालन →</Link>
+          <AuthLink to="/history" className="btn btn-primary" style={{"fontSize":"0.8rem","padding":"6px 14px"}}>मोर्चे व चळवळी दालन →</AuthLink>
         </div>
       </div>
 
@@ -374,7 +533,7 @@ export default function HomePage() {
           <p style={{"fontSize":"0.88rem","color":"rgba(255,248,231,0.95)","marginBottom":"12px"}}>
             बखरी, बुधभूषणम्, आज्ञापत्र, मोडी पत्रे व नकाशे — ५-स्तरीय संपादकीय प्रमाण दर्जा (Level 1 Primary ते Level 5 Oral).
           </p>
-          <Link to="/history" className="btn btn-primary" style={{"fontSize":"0.8rem","padding":"6px 14px"}}>महाग्रंथालय उघडा →</Link>
+          <AuthLink to="/history" className="btn btn-primary" style={{"fontSize":"0.8rem","padding":"6px 14px"}}>महाग्रंथालय उघडा →</AuthLink>
         </div>
       </div>
 
@@ -386,7 +545,7 @@ export default function HomePage() {
           <p style={{"fontSize":"0.88rem","color":"rgba(255,248,231,0.95)","marginBottom":"12px"}}>
             डीप टेक, अंतराळ, संरक्षण, उद्योग, महिला व युवा नेतृत्वाची राष्ट्रीय व जागतिक निर्देशिका.
           </p>
-          <Link to="/about" className="btn btn-primary" style={{"fontSize":"0.8rem","padding":"6px 14px"}}>अचीव्हर्स निर्देशिका →</Link>
+          <AuthLink to="/about" className="btn btn-primary" style={{"fontSize":"0.8rem","padding":"6px 14px"}}>अचीव्हर्स निर्देशिका →</AuthLink>
         </div>
       </div>
     </div>
@@ -427,7 +586,7 @@ export default function HomePage() {
   <div className="container" style={{"display":"flex","justifyContent":"space-between","alignItems":"center","flexWrap":"wrap","gap":"12px"}}>
     <span style={{"background":"var(--gold-500)","color":"var(--maroon-950)","padding":"4px 12px","borderRadius":"20px","fontWeight":"700","fontSize":".8rem"}}>आजचा इतिहास</span>
     <span style={{"fontSize":".9rem"}}>६ जून १६७४ — दुर्गराज रायगडावर छत्रपती शिवाजी महाराजांचा वैदिक सुवर्ण राज्याभिषेक संपन्न झाला व 'शिवराज्याभिषेक शक' सुरू झाले.</span>
-    <Link to="/history" style={{"color":"var(--gold-400)","fontWeight":"700"}}>पूर्ण दिनदर्शिका पहा (आज, आठवडा, महिना) →</Link>
+    <AuthLink to="/history" style={{"color":"var(--gold-400)","fontWeight":"700"}}>पूर्ण दिनदर्शिका पहा (आज, आठवडा, महिना) →</AuthLink>
   </div>
 </div>
 
@@ -439,39 +598,39 @@ export default function HomePage() {
         <span className="eyebrow-sm">जलद प्रवेश</span>
         <h2>तुमच्यासाठी महत्त्वाचे विभाग</h2>
       </div>
-      <Link to="/gallery" className="more-link">सर्व विभाग पहा →</Link>
+      <AuthLink to="/gallery" className="more-link">सर्व विभाग पहा →</AuthLink>
     </div>
     <div className="quick-grid" data-reveal-group>
-      <Link to="/history" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-army-panoramic.jpg')","backgroundPosition":"center"}}>
+      <AuthLink to="/history" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-army-panoramic.jpg')","backgroundPosition":"center"}}>
         <span className="icon">⚔️</span>
         <h3>इतिहास</h3>
         <p>साम्राज्य, लढाया, कालपट आणि अस्सल संदर्भ.</p>
-      </Link>
-      <Link to="/forts" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-raigad-panoramic.jpg')","backgroundPosition":"center"}}>
+      </AuthLink>
+      <AuthLink to="/forts" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-raigad-panoramic.jpg')","backgroundPosition":"center"}}>
         <span className="icon">🏰</span>
         <h3>गड-किल्ले</h3>
         <p>३५०+ किल्ल्यांचे दालन, माहिती आणि नकाशा.</p>
-      </Link>
-      <Link to="/jobs" className="quick-card" style={{"backgroundImage":"url('/assets/images/maratha-services-care.jpg')","backgroundPosition":"center"}}>
+      </AuthLink>
+      <AuthLink to="/jobs" className="quick-card" style={{"backgroundImage":"url('/assets/images/maratha-services-care.jpg')","backgroundPosition":"center"}}>
         <span className="icon">🛠️</span>
         <h3>सेवा</h3>
         <p>समाजातील विश्वासू सेवा व तज्ज्ञ नेटवर्क.</p>
-      </Link>
-      <Link to="/directory" className="quick-card" style={{"backgroundImage":"url('/assets/images/connect-maratha-council.jpg')","backgroundPosition":"center 25%"}}>
+      </AuthLink>
+      <AuthLink to="/directory" className="quick-card" style={{"backgroundImage":"url('/assets/images/connect-maratha-council.jpg')","backgroundPosition":"center 25%"}}>
         <span className="icon">👥</span>
         <h3>समुदाय</h3>
         <p>बांधव, नेटवर्किंग आणि सामाजिक जोडणी.</p>
-      </Link>
-      <Link to="/sangam" className="quick-card" style={{"backgroundImage":"url('/assets/images/maratha-business-sangam.jpg')","backgroundPosition":"center 20%","backgroundSize":"cover"}}>
+      </AuthLink>
+      <AuthLink to="/sangam" className="quick-card" style={{"backgroundImage":"url('/assets/images/maratha-business-sangam.jpg')","backgroundPosition":"center 20%","backgroundSize":"cover"}}>
         <span className="icon">🤝</span>
         <h3>व्यवसाय संगम</h3>
         <p>व्यवसाय मंडळे, संधी, भेटी आणि विश्वासाधारित नेटवर्क.</p>
-      </Link>
-      <Link to="/business/directory" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-expansion-map.jpg')","backgroundPosition":"center 20%"}}>
+      </AuthLink>
+      <AuthLink to="/business/directory" className="quick-card" style={{"backgroundImage":"url('/assets/images/real-maratha-expansion-map.jpg')","backgroundPosition":"center 20%"}}>
         <span className="icon">🔎</span>
         <h3>सर्वत्र शोध</h3>
         <p>सदस्य, व्यवसाय, मंडळे, कार्यक्रम आणि मोहिमा शोधा.</p>
-      </Link>
+      </AuthLink>
     </div>
   </div>
 </section>
@@ -509,7 +668,7 @@ export default function HomePage() {
         <span className="card-tag">🚩 स्वराज्याचे प्रतीक</span>
         <h2>आजही अभिमानाने फडकणारा जिवंत भगवा ध्वज</h2>
         <p>"ज्यांचे आरमार त्यांचा समुद्र!" म्हणणाऱ्या छत्रपती शिवरायांचा भगवा ध्वज — शौर्य, स्वाभिमान आणि अखंड स्वराज्याचे प्रतीक. साडेतीनशे वर्षांपूर्वी सह्याद्रीच्या कड्यांवर व गडकोटांवर फडकलेला हा ध्वज आजही प्रत्येक मराठ्याच्या मनात तितक्याच जाज्वल्य निष्ठेने फडकत आहे.</p>
-        <Link to="/culture/symbols" className="btn btn-primary" style={{"marginTop":"6px"}}>राजमुद्रा व मराठा चिन्हे पहा →</Link>
+        <AuthLink to="/culture/symbols" className="btn btn-primary" style={{"marginTop":"6px"}}>राजमुद्रा व मराठा चिन्हे पहा →</AuthLink>
       </div>
     </div>
   </div>
@@ -523,7 +682,7 @@ export default function HomePage() {
         <span className="eyebrow-sm">🚩 ३.९ दशलक्ष चौ. किमी · अटकेपासून कटक व तंजावरपर्यंत</span>
         <h2>अखंड मराठा साम्राज्य (The Great Maratha Empire — १६७४ ते १८१८)</h2>
       </div>
-      <Link to="/history" className="more-link">सविस्तर साम्राज्य इतिहास पाहा →</Link>
+      <AuthLink to="/history" className="more-link">सविस्तर साम्राज्य इतिहास पाहा →</AuthLink>
     </div>
     <p className="muted" style={{"marginBottom":"24px"}}>
       छत्रपती शिवाजी महाराजांनी १६७४ मध्ये स्थापन केलेले सार्वभौम स्वराज्य, छत्रपती संभाजी महाराजांचा अभेद्य लढा, आणि पेशवे, शिंदे, होळकर, भोसले, गायकवाड, पवार घराण्यांनी भारतभर फडकवलेला भगवा ध्वज. १८ व्या शतकात संपूर्ण हिंदुस्थानवर मराठा सत्तेचा एकछत्री दरारा होता.
@@ -597,7 +756,7 @@ export default function HomePage() {
         <span className="eyebrow-sm">📸 उच्च-गुणवत्ता छायाचित्र दालन</span>
         <h2>गडकोटांचे वैभव (Fort Photo Gallery)</h2>
       </div>
-      <Link to="/forts" className="more-link">सर्व ३५०+ किल्ले पाहा →</Link>
+      <AuthLink to="/forts" className="more-link">सर्व ३५०+ किल्ले पाहा →</AuthLink>
     </div>
     <div className="grid-4" style={{"gridTemplateColumns":"repeat(auto-fit,minmax(200px,1fr))"}} data-reveal-group>
       <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-raigad-panoramic.jpg')","minHeight":"200px"}}><div className="card-bg-body"><h4>दुर्गराज रायगड</h4><p>स्वराज्याची राजधानी</p></div></div>
@@ -630,7 +789,7 @@ export default function HomePage() {
         <span className="eyebrow-sm">शिवकालीन राज्यव्यवस्था व सुशासन</span>
         <h2>छत्रपती शिवाजी महाराजांचे अष्टप्रधान मंडळ (Ashtapradhan Council)</h2>
       </div>
-      <Link to="/history/shivaji-maharaj" className="more-link">सविस्तर राज्यव्यवस्था →</Link>
+      <AuthLink to="/history/shivaji-maharaj" className="more-link">सविस्तर राज्यव्यवस्था →</AuthLink>
     </div>
     <p className="muted" style={{"marginBottom":"16px"}}>१६७४ च्या राज्याभिषेकानंतर छत्रपती शिवरायांनी स्वराज्याच्या प्रशासनासाठी स्थापन केलेले आशिया खंडातील पहिले आधुनिक मंत्रीमंडळ:</p>
     <div className="table-wrap">
@@ -659,9 +818,9 @@ export default function HomePage() {
         <span className="eyebrow-sm">सह्याद्रीचे गडकिल्ले · लष्करी अभियांत्रिकी</span>
         <h2>सह्याद्रीचे गडकिल्ले — ३५०+ किल्ले व स्थापत्यशास्त्र</h2>
       </div>
-      <Link to="/forts" className="more-link" style={{ background: 'var(--maroon-900)', color: '#FFFFFF', padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 700 }}>
+      <AuthLink to="/forts" className="more-link" style={{ background: 'var(--maroon-900)', color: '#FFFFFF', padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 700 }}>
         सर्व ३५०+ किल्ले पाहा →
-      </Link>
+      </AuthLink>
     </div>
     <div className="grid-3" data-reveal-group>
       <div className="card-bg" style={{"backgroundImage":"url('/assets/images/real-raigad-panoramic.jpg')","minHeight":"360px"}}>
@@ -738,7 +897,7 @@ export default function HomePage() {
         <span className="eyebrow-sm">🌊 सागरी सीमांचे अभेद्य रक्षण · 'ज्यांचे आरमार त्यांचा समुद्र'</span>
         <h2>मराठा आरमार व सागरी सार्वभौमत्व (Father of Indian Navy)</h2>
       </div>
-      <Link to="/forts" className="more-link">सागरी किल्ले नकाशा →</Link>
+      <AuthLink to="/forts" className="more-link">सागरी किल्ले नकाशा →</AuthLink>
     </div>
     <p className="muted" style={{"marginBottom":"24px"}}>छत्रपती शिवाजी महाराजांनी १६५७ मध्ये कल्याण-भिवंडीत भारताच्या पहिल्या स्वतंत्र आरमाराची पायाभरणी केली. पोर्तुगीज, ब्रिटिश, डच व जंजिऱ्याच्या सिद्दीच्या समुद्री वर्चस्वाला सुरुंग लावून मराठ्यांनी पश्चिम किनारपट्टीवर स्वतःचे निर्विवाद प्रभुत्व प्रस्थापित केले.</p>
     <div className="grid-2" data-reveal-group>
@@ -777,7 +936,7 @@ export default function HomePage() {
         <span className="eyebrow-sm">👑 राखेमधून पुन्हा उभे राहिलेले महासाम्राज्य · १७६१ ते १८०३</span>
         <h2>पानिपतनंतरचे महापुनरुत्थान व महादजी युग (The Great Resurgence)</h2>
       </div>
-      <Link to="/history" className="more-link">सविस्तर इतिहास →</Link>
+      <AuthLink to="/history" className="more-link">सविस्तर इतिहास →</AuthLink>
     </div>
     <p className="muted" style={{"marginBottom":"24px"}}>१४ जानेवारी १७६१ रोजी पानिपतच्या तिसऱ्या युद्धात मोठा आघात सहन केल्यानंतर जगाला वाटले होते की मराठा सत्ता संपली. परंतु अवघ्या १० वर्षांत पेशवे माधवराव, महादजी शिंदे, तुकोजी होळकर आणि नाना फडणवीस यांनी पुन्हा दिल्लीवर भगवा फडकवून मुघल बादशहाला मराठ्यांचे मांडलिक बनवले.</p>
     <div style={{"position":"relative","borderRadius":"var(--radius)","overflow":"hidden","marginBottom":"32px","backgroundColor":"#1a0a04","minHeight":"460px"}} data-reveal="zoom">
@@ -826,7 +985,7 @@ export default function HomePage() {
         <span className="eyebrow-sm">📚 अस्सल ऐतिहासिक पुरावे · संशोधकांची निष्पक्ष मीमांसा</span>
         <h2>इतिहास संशोधकांचे विचारमंथन व अभ्यास (Scholarly Authorities)</h2>
       </div>
-      <Link to="/history" className="more-link">इतिहास ग्रंथ दालन →</Link>
+      <AuthLink to="/history" className="more-link">इतिहास ग्रंथ दालन →</AuthLink>
     </div>
     <p className="muted" style={{"marginBottom":"24px"}}>मराठा साम्राज्याचा इतिहास हा केवळ काल्पनिक कथांवर नव्हे, तर समकालीन मोडी कागदपत्रे, बखरी, पोर्तुगीज-डच-ब्रिटिश पुराभिलेखागारे आणि प्रत्यक्ष गडकोटांच्या शास्त्रीय संशोधनावर अधिष्ठित आहे. महाराष्ट्रातील अग्रगण्य इतिहास संशोधकांचे हे अधिकृत निष्कर्ष:</p>
     <div className="researchers-grid" data-reveal-group>
@@ -886,7 +1045,7 @@ export default function HomePage() {
         <span className="eyebrow-sm">अखंड गौरवगाथा</span>
         <h2>मराठा साम्राज्य महत्त्वाचे कालखंड (1630 – 1818 Timeline)</h2>
       </div>
-      <Link to="/history" className="more-link">सविस्तर कालपट →</Link>
+      <AuthLink to="/history" className="more-link">सविस्तर कालपट →</AuthLink>
     </div>
     <div className="table-wrap">
       <table>
@@ -914,33 +1073,33 @@ export default function HomePage() {
         <span className="eyebrow-sm">इतिहास दालन</span>
         <h2>साम्राज्याचे महायोद्धे व ऐतिहासिक चरित्र ग्रंथ</h2>
       </div>
-      <Link to="/history" className="more-link">सर्व इतिहास पाहा →</Link>
+      <AuthLink to="/history" className="more-link">सर्व इतिहास पाहा →</AuthLink>
     </div>
     <div className="grid-3" data-reveal-group>
-      <Link to="/history/shivaji-maharaj" className="card-bg" style={{"backgroundImage":"url('/assets/images/maratha-hero.jpg')","minHeight":"350px","backgroundPosition":"center 8%","backgroundSize":"cover"}}>
+      <AuthLink to="/history/shivaji-maharaj" className="card-bg" style={{"backgroundImage":"url('/assets/images/maratha-hero.jpg')","minHeight":"350px","backgroundPosition":"center 8%","backgroundSize":"cover"}}>
         <div className="card-bg-body">
           <span className="card-tag">हिंदवी स्वराज्य संस्थापक</span>
           <h4>छत्रपती शिवाजी महाराज</h4>
           <p>रयतेचे राजे, आरमार पितामह, गनिमी काव्याचे जनक व अष्टप्रधान मंडळाचे शिल्पकार.</p>
           <span className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>सविस्तर चरित्र वाचा →</span>
         </div>
-      </Link>
-      <Link to="/history/sambhaji-maharaj" className="card-bg" style={{"backgroundImage":"url('/assets/images/Sambhaji_Maharaj.avif')","minHeight":"350px","backgroundPosition":"center 8%","backgroundSize":"cover"}}>
+      </AuthLink>
+      <AuthLink to="/history/sambhaji-maharaj" className="card-bg" style={{"backgroundImage":"url('/assets/images/Sambhaji_Maharaj.avif')","minHeight":"350px","backgroundPosition":"center 8%","backgroundSize":"cover"}}>
         <div className="card-bg-body">
           <span className="card-tag">अपराजित धर्मवीर</span>
           <h4>छत्रपती संभाजी महाराज</h4>
           <p>१२८ लढायांमध्ये अजिंक्य, 'बुधभूषणम्' संस्कृत ग्रंथकार व तुळापूरचे सर्वोच्च बलिदान.</p>
           <span className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>सविस्तर चरित्र वाचा →</span>
         </div>
-      </Link>
-      <Link to="/history/bajirao-peshwa" className="card-bg" style={{"backgroundImage":"url('/assets/images/real-bajirao-statue.jpg')","minHeight":"350px","backgroundPosition":"center 3%","backgroundSize":"160%"}}>
+      </AuthLink>
+      <AuthLink to="/history/bajirao-peshwa" className="card-bg" style={{"backgroundImage":"url('/assets/images/real-bajirao-statue.jpg')","minHeight":"350px","backgroundPosition":"center 3%","backgroundSize":"160%"}}>
         <div className="card-bg-body">
           <span className="card-tag">अपराजित सेनापती</span>
           <h4>श्रीमंत बाजीराव पेशवे</h4>
           <p>४१ लढाया, शून्य पराभव — पालखेड मोहीम, गनिमी घोडदौड व अटकेपार साम्राज्य विस्तार.</p>
           <span className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>सविस्तर चरित्र वाचा →</span>
         </div>
-      </Link>
+      </AuthLink>
     </div>
   </div>
 </section>
@@ -953,7 +1112,7 @@ export default function HomePage() {
         <span className="eyebrow-sm">समाजाचे स्वतःचे सेवा नेटवर्क</span>
         <h2>विश्वासू सेवा व उद्योग निर्देशिका</h2>
       </div>
-      <Link to="/jobs" className="more-link">सर्व सेवा पाहा →</Link>
+      <AuthLink to="/jobs" className="more-link">सर्व सेवा पाहा →</AuthLink>
     </div>
     <div className="grid-4" data-reveal-group>
       <div className="card-bg" style={{"backgroundImage":"linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(15,7,3,0.72) 65%, rgba(15,7,3,0.92) 100%),url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80')","minHeight":"280px","borderRadius":"16px","backgroundSize":"cover","backgroundPosition":"center"}}>
@@ -961,7 +1120,7 @@ export default function HomePage() {
           <div style={{"fontSize":"1.8rem","marginBottom":"4px"}}>💻</div>
           <h4>आयटी व सॉफ्टवेअर</h4>
           <p>वेबसाईट, ॲप डेव्हलपमेंट, क्लाउड सोल्युशन्स व डिजिटल मार्केटिंग.</p>
-          <Link to="/jobs" className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>सेवा बुक करा</Link>
+          <AuthLink to="/jobs" className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>सेवा बुक करा</AuthLink>
         </div>
       </div>
       <div className="card-bg" style={{"backgroundImage":"linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(15,7,3,0.72) 65%, rgba(15,7,3,0.92) 100%),url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80')","minHeight":"280px","borderRadius":"16px","backgroundSize":"cover","backgroundPosition":"center"}}>
@@ -969,7 +1128,7 @@ export default function HomePage() {
           <div style={{"fontSize":"1.8rem","marginBottom":"4px"}}>⚖️</div>
           <h4>कायदेशीर सल्ला व CA</h4>
           <p>हायकोर्ट वकिली, कर सल्लागार, जीएसटी, कंपनी रजिस्ट्रेशन व ऑडिट.</p>
-          <Link to="/jobs" className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>सल्ला घ्या</Link>
+          <AuthLink to="/jobs" className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>सल्ला घ्या</AuthLink>
         </div>
       </div>
       <div className="card-bg" style={{"backgroundImage":"linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(15,7,3,0.72) 65%, rgba(15,7,3,0.92) 100%),url('https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=800&q=80')","minHeight":"280px","borderRadius":"16px","backgroundSize":"cover","backgroundPosition":"center"}}>
@@ -977,7 +1136,7 @@ export default function HomePage() {
           <div style={{"fontSize":"1.8rem","marginBottom":"4px"}}>🌱</div>
           <h4>ॲग्री-टेक व आधुनिक शेती</h4>
           <p>ड्रोन फवारणी, सेंद्रिय खते, माती परीक्षण व थेट शेतकरी बाजारपेठ.</p>
-          <Link to="/jobs" className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>तपशील पाहा</Link>
+          <AuthLink to="/jobs" className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>तपशील पाहा</AuthLink>
         </div>
       </div>
       <div className="card-bg" style={{"backgroundImage":"linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(15,7,3,0.72) 65%, rgba(15,7,3,0.92) 100%),url('/assets/images/real-raigad-panoramic.jpg')","minHeight":"280px","borderRadius":"16px","backgroundSize":"cover","backgroundPosition":"center"}}>
@@ -985,7 +1144,7 @@ export default function HomePage() {
           <div style={{"fontSize":"1.8rem","marginBottom":"4px"}}>🥾</div>
           <h4>गडभ्रमंती व ट्रेक गाईड</h4>
           <p>इतिहास संशोधक गाईड्स, सुरक्षित ट्रेकिंग, कॅम्पिंग व गड संवर्धन.</p>
-          <Link to="/jobs" className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>गाईड बुक करा</Link>
+          <AuthLink to="/jobs" className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>गाईड बुक करा</AuthLink>
         </div>
       </div>
     </div>
@@ -1019,7 +1178,7 @@ export default function HomePage() {
     {/* Tab Pane 1: History & Rulers */}
     <div className="eco-tab-pane active" id="tab-history">
       <div className="eco-grid">
-        <Link to="/history" className="eco-card">
+        <AuthLink to="/history" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">📜</span>
             <div>
@@ -1028,8 +1187,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history/battles" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history/battles" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">⚔️</span>
             <div>
@@ -1038,8 +1197,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history/shivaji-maharaj" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history/shivaji-maharaj" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">👑</span>
             <div>
@@ -1048,8 +1207,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history/sambhaji-maharaj" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history/sambhaji-maharaj" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🛡️</span>
             <div>
@@ -1058,8 +1217,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history/rajmata-jijau" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history/rajmata-jijau" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🌸</span>
             <div>
@@ -1068,8 +1227,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history/tarabai" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history/tarabai" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🗡️</span>
             <div>
@@ -1078,8 +1237,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history/bajirao-peshwa" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history/bajirao-peshwa" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🐎</span>
             <div>
@@ -1088,8 +1247,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history/warriors" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history/warriors" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🚩</span>
             <div>
@@ -1098,8 +1257,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history/warriors" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history/warriors" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🥾</span>
             <div>
@@ -1108,8 +1267,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history/navy" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history/navy" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">⚓</span>
             <div>
@@ -1118,8 +1277,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history/rajaram-maharaj" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history/rajaram-maharaj" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">⚔️</span>
             <div>
@@ -1128,8 +1287,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history/shahu-maharaj" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history/shahu-maharaj" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">⚖️</span>
             <div>
@@ -1138,14 +1297,14 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
+        </AuthLink>
       </div>
     </div>
 
     {/* Tab Pane 2: Forts & Trails */}
     <div className="eco-tab-pane" id="tab-forts">
       <div className="eco-grid">
-        <Link to="/forts" className="eco-card">
+        <AuthLink to="/forts" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🏰</span>
             <div>
@@ -1154,8 +1313,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/forts" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/forts" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">👑</span>
             <div>
@@ -1164,8 +1323,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/forts" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/forts" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">⛰️</span>
             <div>
@@ -1174,8 +1333,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/forts" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/forts" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🚩</span>
             <div>
@@ -1184,8 +1343,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/forts" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/forts" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">⚔️</span>
             <div>
@@ -1194,8 +1353,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/gallery" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/gallery" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🖼️</span>
             <div>
@@ -1204,8 +1363,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/forts" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/forts" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🥾</span>
             <div>
@@ -1214,8 +1373,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/culture/temples" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/culture/temples" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🛕</span>
             <div>
@@ -1224,8 +1383,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/culture" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/culture" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🌍</span>
             <div>
@@ -1234,8 +1393,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/culture/dialects" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/culture/dialects" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🗣️</span>
             <div>
@@ -1244,8 +1403,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/culture/food" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/culture/food" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🍲</span>
             <div>
@@ -1254,8 +1413,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/culture/gramdevat-jatra" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/culture/gramdevat-jatra" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🎪</span>
             <div>
@@ -1264,8 +1423,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/culture/heritage-map" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/culture/heritage-map" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🗺️</span>
             <div>
@@ -1274,14 +1433,14 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
+        </AuthLink>
       </div>
     </div>
 
     {/* Tab Pane 3: Knowledge, Granths & Movements */}
     <div className="eco-tab-pane" id="tab-knowledge">
       <div className="eco-grid">
-        <Link to="/granthalaya" className="eco-card">
+        <AuthLink to="/granthalaya" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">📖</span>
             <div>
@@ -1290,8 +1449,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/dnyankosh" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/dnyankosh" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">💡</span>
             <div>
@@ -1300,8 +1459,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">📖</span>
             <div>
@@ -1310,8 +1469,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🕯️</span>
             <div>
@@ -1320,8 +1479,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🚩</span>
             <div>
@@ -1330,8 +1489,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history/dates" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history/dates" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">📅</span>
             <div>
@@ -1340,8 +1499,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/history/knowledge-graph" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/history/knowledge-graph" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">⚡</span>
             <div>
@@ -1350,8 +1509,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/community/oral-history" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/community/oral-history" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">✍️</span>
             <div>
@@ -1360,14 +1519,14 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
+        </AuthLink>
       </div>
     </div>
 
     {/* Tab Pane 4: Business, Jobs & Sangam */}
     <div className="eco-tab-pane" id="tab-business">
       <div className="eco-grid">
-        <Link to="/business/directory" className="eco-card">
+        <AuthLink to="/business/directory" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🏢</span>
             <div>
@@ -1376,8 +1535,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/sangam" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/sangam" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🤝</span>
             <div>
@@ -1386,8 +1545,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/jobs" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/jobs" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🛠️</span>
             <div>
@@ -1396,8 +1555,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/business/directory" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/business/directory" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">📈</span>
             <div>
@@ -1406,8 +1565,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/jobs" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/jobs" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">💼</span>
             <div>
@@ -1416,8 +1575,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/education" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/education" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🎓</span>
             <div>
@@ -1426,14 +1585,14 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
+        </AuthLink>
       </div>
     </div>
 
     {/* Tab Pane 5: Community & Governance */}
     <div className="eco-tab-pane" id="tab-community">
       <div className="eco-grid">
-        <Link to="/community" className="eco-card">
+        <AuthLink to="/community" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">💬</span>
             <div>
@@ -1442,8 +1601,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/about" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/about" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🏛️</span>
             <div>
@@ -1452,8 +1611,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/profile" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/profile" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">⚙️</span>
             <div>
@@ -1462,8 +1621,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/community" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/community" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🔔</span>
             <div>
@@ -1472,8 +1631,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/governance" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/governance" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🎯</span>
             <div>
@@ -1482,8 +1641,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
-        <Link to="/governance" className="eco-card">
+        </AuthLink>
+        <AuthLink to="/governance" className="eco-card">
           <div className="eco-card-top">
             <span className="eco-card-icon">🧭</span>
             <div>
@@ -1492,18 +1651,157 @@ export default function HomePage() {
             </div>
           </div>
           <div className="eco-card-action">दालन उघडा →</div>
-        </Link>
+        </AuthLink>
       </div>
     </div>
 
     {/* Directory Bottom Actions */}
     <div style={{"textAlign":"center","marginTop":"36px","display":"flex","justifyContent":"center","gap":"14px","flexWrap":"wrap"}}>
-      <Link to="/gallery" className="btn btn-outline" style={{"background":"rgba(255,255,255,0.08)","color":"#FFFFFF","borderColor":"rgba(255,255,255,0.4)","fontSize":"0.86rem","padding":"10px 22px"}}>📂 सर्व ७०+ दालनांची संपूर्ण निर्देशिका सूची</Link>
-      <Link to="/business/directory" className="btn btn-primary" style={{"fontSize":"0.86rem","padding":"10px 22px"}}>⚡ ग्लोबल सर्च इंजिन</Link>
+      <AuthLink to="/gallery" className="btn btn-outline" style={{"background":"rgba(255,255,255,0.08)","color":"#FFFFFF","borderColor":"rgba(255,255,255,0.4)","fontSize":"0.86rem","padding":"10px 22px"}}>📂 सर्व ७०+ दालनांची संपूर्ण निर्देशिका सूची</AuthLink>
+      <AuthLink to="/business/directory" className="btn btn-primary" style={{"fontSize":"0.86rem","padding":"10px 22px"}}>⚡ ग्लोबल सर्च इंजिन</AuthLink>
     </div>
-
   </div>
 </section>
+
+      {/* 🔐 AUTHENTICATION REQUIRED MODAL (TRIGGERED WHEN UNLOGGED VISITOR CLICKS ANY FEATURE) */}
+      {authRequiredPrompt && (
+        <div 
+          data-auth-prompt="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99999,
+            backgroundColor: 'rgba(67, 20, 7, 0.6)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
+          }}
+          onClick={() => setAuthRequiredPrompt(null)}
+        >
+          <div
+            data-auth-prompt="true"
+            style={{
+              background: '#FFFFFF',
+              border: '2px solid #FED7AA',
+              borderRadius: '24px',
+              padding: '30px 24px',
+              maxWidth: '500px',
+              width: '100%',
+              boxShadow: '0 24px 50px rgba(234, 88, 12, 0.25)',
+              position: 'relative',
+              textAlign: 'center',
+              animation: 'fadeIn 0.2s ease-out'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              type="button"
+              onClick={() => setAuthRequiredPrompt(null)}
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                background: '#FFF7ED',
+                border: '1px solid #FED7AA',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                fontSize: '1rem',
+                color: '#EA580C',
+                fontWeight: 900,
+                cursor: 'pointer',
+                display: 'grid',
+                placeItems: 'center'
+              }}
+            >
+              ✕
+            </button>
+
+            {/* Icon & Title */}
+            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🔐 🚩</div>
+            <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#431407', margin: '0 0 6px' }}>
+              Connect Maratha — सभासद लॉगिन आवश्यक
+            </h3>
+            <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', marginBottom: '14px' }}>
+              Please Login to Access Platform Features
+            </div>
+
+            {/* Feature Target Badge */}
+            <div style={{
+              background: '#FFF7ED',
+              border: '1.5px solid #FED7AA',
+              borderRadius: '12px',
+              padding: '10px 14px',
+              marginBottom: '16px',
+              fontSize: '0.88rem',
+              color: '#78350F',
+              fontWeight: 800
+            }}>
+              🎯 आपण निवडलेली सुविधा: <span style={{ color: '#EA580C' }}>"{authRequiredPrompt.featureTitle}"</span>
+            </div>
+
+            {/* Explanatory Text */}
+            <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: '1.6', margin: '0 0 24px' }}>
+              Connect Maratha वरील व्यवसाय, इतिहास, ३५०+ गडकोट, वधु-वर, रक्तपेढी, चॅप्टर्स आणि सर्व डिजिटल सुविधांचा लाभ घेण्यासाठी आपले अधिकृत सभासद खात्यात लॉगिन असणे आवश्यक आहे.
+            </p>
+
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  const target = authRequiredPrompt.targetUrl;
+                  setAuthRequiredPrompt(null);
+                  navigate(`/login?redirect=${encodeURIComponent(target)}`);
+                }}
+                style={{
+                  width: '100%',
+                  background: 'linear-gradient(135deg, #EA580C, #C2410C)',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '14px',
+                  fontWeight: 900,
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(234, 88, 12, 0.3)'
+                }}
+              >
+                👤 सभासद लॉगिन करा (Login Now) ➔
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const target = authRequiredPrompt.targetUrl;
+                  setAuthRequiredPrompt(null);
+                  navigate(`/register?redirect=${encodeURIComponent(target)}`);
+                }}
+                style={{
+                  width: '100%',
+                  background: '#FFFFFF',
+                  color: '#EA580C',
+                  border: '2px solid #FED7AA',
+                  borderRadius: '12px',
+                  padding: '12px',
+                  fontWeight: 800,
+                  fontSize: '0.92rem',
+                  cursor: 'pointer'
+                }}
+              >
+                🚩 नवीन मोफत नोंदणी करा (Register Free)
+              </button>
+            </div>
+
+            <div style={{ marginTop: '16px', fontSize: '0.75rem', color: '#94A3B8' }}>
+              लॉगिन झाल्यानंतर आपण थेट निवडलेल्या पानावर आपोआप पोहोचू शकाल.
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -1,9 +1,60 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { useSiteContent } from '../../context/SiteContentContext';
 
+const isUserLoggedIn = (user) => {
+  if (!user) return false;
+  if (!user.id && !user._id && !user.phone) return false;
+  if (typeof window !== 'undefined') {
+    if (localStorage.getItem('cm_logged_in') !== 'true') return false;
+  }
+  return true;
+};
+
 export default function SiteFooter() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { getContent } = useSiteContent();
+
+  const loggedIn = isUserLoggedIn(user);
+
+  const handleFooterClickCapture = (e) => {
+    if (loggedIn) return;
+
+    const anchor = e.target.closest('a');
+    if (!anchor) return;
+
+    const href = anchor.getAttribute('href');
+    if (!href) return;
+
+    // Allow auth pages and direct protocols
+    if (
+      href === '/login' ||
+      href.startsWith('/login?') ||
+      href.startsWith('/login/') ||
+      href === '/register' ||
+      href.startsWith('/register?') ||
+      href.startsWith('/register/') ||
+      href.startsWith('mailto:') ||
+      href.startsWith('tel:') ||
+      href.startsWith('http')
+    ) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const title = (anchor.textContent || anchor.getAttribute('title') || 'सुविधा').trim().replace(/\s+/g, ' ').slice(0, 50);
+    sessionStorage.setItem('cm_login_redirect', href);
+
+    if (typeof window !== 'undefined' && typeof window.__cmOpenLoginPrompt === 'function') {
+      window.__cmOpenLoginPrompt(href, title);
+    } else {
+      navigate(`/login?redirect=${encodeURIComponent(href)}`);
+    }
+  };
 
   return (
     <>
@@ -18,7 +69,7 @@ export default function SiteFooter() {
       </div>
 
       {/* ========== FOOTER (Streamlined, Non-repetitive, High-Trust) ========== */}
-      <footer className="website-footer">
+      <footer className="website-footer" onClickCapture={handleFooterClickCapture}>
         <div className="footer-grid">
           {/* Column 1: Brand & Mission */}
           <div>
@@ -80,7 +131,7 @@ export default function SiteFooter() {
               <li style={{ marginBottom: '8px' }}><Link to="/roles-matrix" style={{ color: '#FFE082', fontWeight: 800, textDecoration: 'none' }}>⚖️ ५६ पदे व पात्रता मॅट्रिक्स (Roles Matrix)</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/about" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🏛️ संस्था परिचय व सल्लागार मंडळ</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/governance" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🎯 व्हिजन, मिशन व धोरण</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/governance" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🔒 DPDP २०२३ गोपनीयता धोरण</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/privacy" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🔒 गोपनीयता धोरण (Privacy Policy)</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/profile" style={{ color: '#FFFFFF', textDecoration: 'none' }}>⚙️ खाते व वैयक्तिक सेटिंग्ज</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/community" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🔔 एकात्मिक सूचना केंद्र</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/goals" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🏆 प्रमुख उद्दिष्टे व संकल्प</Link></li>

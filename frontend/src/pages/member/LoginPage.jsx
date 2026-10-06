@@ -61,6 +61,13 @@ export default function LoginPage() {
           };
           localStorage.setItem('cm_logged_in', 'true');
           localStorage.setItem('cm_user_data', JSON.stringify(userObj));
+          const searchParams = new URLSearchParams(window.location.search);
+          const redirectUrl = searchParams.get('redirect') || sessionStorage.getItem('cm_login_redirect');
+          if (redirectUrl && redirectUrl.startsWith('/') && !redirectUrl.startsWith('/login') && !redirectUrl.startsWith('/register')) {
+            sessionStorage.removeItem('cm_login_redirect');
+            navigate(redirectUrl);
+            return;
+          }
           navigate('/dashboard');
         } else {
           setMessage('अवैध किंवा कालबाह्य OTP कोड.');
@@ -85,6 +92,13 @@ export default function LoginPage() {
       const res = await login(loginId.trim(), password);
       if (res && res.success) {
         const role = res.member?.role || 'member';
+        const searchParams = new URLSearchParams(window.location.search);
+        const redirectUrl = searchParams.get('redirect') || sessionStorage.getItem('cm_login_redirect');
+        if (redirectUrl && redirectUrl.startsWith('/') && !redirectUrl.startsWith('/login') && !redirectUrl.startsWith('/register')) {
+          sessionStorage.removeItem('cm_login_redirect');
+          navigate(redirectUrl);
+          return;
+        }
         if (role === 'superadmin') navigate('/superadmin');
         else if (role === 'admin') navigate('/admin');
         else if (role === 'ceo') navigate('/ceo');
@@ -367,6 +381,25 @@ export default function LoginPage() {
                 📱 OTP लॉगिन
               </button>
             </div>
+
+            {(new URLSearchParams(window.location.search).get('redirect') || sessionStorage.getItem('cm_login_redirect')) && (
+              <div style={{
+                padding: '10px 14px',
+                borderRadius: '10px',
+                fontSize: '0.84rem',
+                marginBottom: '16px',
+                background: '#FFF7ED',
+                color: '#9A3412',
+                border: '1.5px solid #FED7AA',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <span>🔐</span>
+                <span>निवडलेल्या सुविधेचा वापर करण्यासाठी कृपया प्रथम लॉगिन करा.</span>
+              </div>
+            )}
 
             {/* Title & Subtitle */}
             <h1 style={{ fontFamily: 'Baloo 2, sans-serif', fontSize: '1.75rem', fontWeight: 800, color: '#1A1A1A', margin: '0 0 4px' }}>
