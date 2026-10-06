@@ -2,10 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 import { useAuth } from '../../context/AuthContext';
+import {
+  getAdminReferralReport,
+  exportReferralsToCSV,
+  MAHARASHTRA_DISTRICTS,
+  DISTRICT_TALUKAS,
+  KNOWN_OFFICIAL_REFERRERS
+} from '../../services/referralService';
 
 export default function SuperAdminDashboardPage() {
   const { user, login } = useAuth();
-  const [activeTab, setActiveTab] = useState('users'); // 'users' | 'doctors' | 'services' | 'hotels' | 'information' | 'roles'
+  const [activeTab, setActiveTab] = useState('users'); // 'users' | 'referrals' | 'doctors' | 'services' | 'hotels' | 'information' | 'roles'
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
 
@@ -37,6 +44,63 @@ export default function SuperAdminDashboardPage() {
   const [userSearch, setUserSearch] = useState('');
   const [userRoleFilter, setUserRoleFilter] = useState('all');
   const [userVerifiedFilter, setUserVerifiedFilter] = useState('all');
+
+  // Referral Filter & Reporting states
+  const [refSearch, setRefSearch] = useState('');
+  const [refDistrict, setRefDistrict] = useState('all');
+  const [refTaluka, setRefTaluka] = useState('all');
+  const [refRole, setRefRole] = useState('all');
+  const [refTimeframe, setRefTimeframe] = useState('all'); // 'all' | 'today' | 'week' | 'month' | 'custom'
+  const [refStartDate, setRefStartDate] = useState('');
+  const [refEndDate, setRefEndDate] = useState('');
+  const [refStatus, setRefStatus] = useState('all'); // 'all' | 'active' | 'pending'
+  const [refReferrerId, setRefReferrerId] = useState('all');
+  const [referralReportData, setReferralReportData] = useState(() => getAdminReferralReport());
+
+  const refreshReferralReport = () => {
+    try {
+      const data = getAdminReferralReport({
+        search: refSearch,
+        district: refDistrict,
+        taluka: refTaluka,
+        role: refRole,
+        timeframe: refTimeframe,
+        startDate: refStartDate,
+        endDate: refEndDate,
+        status: refStatus,
+        referrerId: refReferrerId
+      });
+      setReferralReportData(data);
+    } catch (e) {
+      console.warn('Referral report loading error:', e);
+    }
+  };
+
+  useEffect(() => {
+    refreshReferralReport();
+  }, [refSearch, refDistrict, refTaluka, refRole, refTimeframe, refStartDate, refEndDate, refStatus, refReferrerId]);
+
+  useEffect(() => {
+    const handleUpdate = () => refreshReferralReport();
+    window.addEventListener('cm_referral_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('cm_referral_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, [refSearch, refDistrict, refTaluka, refRole, refTimeframe, refStartDate, refEndDate, refStatus, refReferrerId]);
+
+  const handleResetReferralFilters = () => {
+    setRefSearch('');
+    setRefDistrict('all');
+    setRefTaluka('all');
+    setRefRole('all');
+    setRefTimeframe('all');
+    setRefStartDate('');
+    setRefEndDate('');
+    setRefStatus('all');
+    setRefReferrerId('all');
+  };
 
   // Modals state
   const [modalType, setModalType] = useState(null);
@@ -676,12 +740,36 @@ export default function SuperAdminDashboardPage() {
             <div style={{ fontSize: '2.6rem', fontWeight: 900, color: '#7C3AED', marginTop: '4px', letterSpacing: '-0.5px' }}>{services.length}</div>
             <div style={{ fontSize: '0.82rem', color: '#64748B', marginTop: '4px', fontWeight: 600 }}>स्थानिक व्यावसायिक</div>
           </div>
+
+          {/* REFERRALS INTELLIGENCE CARD */}
+          <div 
+            onClick={() => setActiveTab('referrals')}
+            style={{ 
+              background: '#FFFFFF', 
+              padding: '22px', 
+              borderRadius: '16px', 
+              border: activeTab === 'referrals' ? '2.5px solid #EA580C' : '1.5px solid #FED7AA', 
+              boxShadow: activeTab === 'referrals' ? '0 8px 25px rgba(234, 88, 12, 0.2)' : '0 4px 15px rgba(0,0,0,0.03)',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }}>
+            <div style={{ fontSize: '0.9rem', color: '#EA580C', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '6px' }}>
+              🤝 एकूण रेफरल शिफारसी
+            </div>
+            <div style={{ fontSize: '2.6rem', fontWeight: 900, color: '#EA580C', marginTop: '4px', letterSpacing: '-0.5px' }}>
+              {referralReportData.stats.total}
+            </div>
+            <div style={{ fontSize: '0.82rem', color: '#16A34A', marginTop: '4px', fontWeight: 700 }}>
+              सक्रिय: {referralReportData.stats.activeCount} | ₹{referralReportData.stats.totalBonusPaid} वितरित
+            </div>
+          </div>
         </div>
 
         {/* Tab Navigation */}
         <div style={{ display: 'flex', gap: '10px', borderBottom: '2px solid #FED7AA', paddingBottom: '14px', marginBottom: '26px', overflowX: 'auto' }}>
           {[
             { id: 'users', label: '👥 वापरकर्ते (Users CRUD)', count: users.length },
+            { id: 'referrals', label: '🤝 रेफरल अहवाल (Referral Intelligence)', count: referralReportData.filtered.length },
             { id: 'doctors', label: '🩺 डॉक्टर्स (Doctors)', count: doctors.length },
             { id: 'services', label: '🛠️ सेवा व प्रदाते (Services)', count: services.length },
             { id: 'hotels', label: '🏨 हॉटेल्स व लॉजिंग (Hotels)', count: hotels.length },
@@ -933,6 +1021,650 @@ export default function SuperAdminDashboardPage() {
                   )}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB: REFERRAL REPORTS & AUDIT INTELLIGENCE (राज्यव्यापी रेफरल अहवाल)
+        ========================================================================= */}
+        {activeTab === 'referrals' && (
+          <div>
+            {/* Header with Title and Actions */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px', flexWrap: 'wrap', gap: '16px' }}>
+              <div>
+                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.35rem', color: '#431407', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span>🤝</span>
+                  <span>राज्यव्यापी रेफरल बुद्धिमत्ता व ऑडिट अहवाल</span>
+                </h3>
+                <p style={{ margin: 0, color: '#64748B', fontSize: '0.92rem', fontWeight: 600 }}>
+                  शहर, जिल्हा, तालुका, कालावधी (आज / आठवडा / महिना), भूमिका, सभासदत्व व शिफारसकर्ता आयडीनुसार अचूक विश्लेषण.
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={handleResetReferralFilters}
+                  style={{
+                    background: '#FFF7ED',
+                    border: '1.5px solid #FED7AA',
+                    color: '#EA580C',
+                    fontWeight: 900,
+                    padding: '10px 18px',
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                  <span>🔄</span>
+                  <span>फिल्टर्स रीसेट करा</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    exportReferralsToCSV(referralReportData.filtered);
+                    showToast('📥 रेफरल अहवाल CSV फाईल यशस्वीरित्या डाउनलोड झाली!', 'success');
+                  }}
+                  style={{
+                    background: 'linear-gradient(135deg, #EA580C, #C2410C)',
+                    border: 'none',
+                    color: '#FFFFFF',
+                    fontWeight: 900,
+                    padding: '11px 22px',
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    fontSize: '0.92rem',
+                    boxShadow: '0 4px 15px rgba(234, 88, 12, 0.25)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                  <span>📥</span>
+                  <span>एक्सेल / CSV अहवाल डाउनलोड करा ({referralReportData.filtered.length})</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Console Box */}
+            <div style={{
+              background: '#FFFFFF',
+              borderRadius: '16px',
+              border: '2px solid #FED7AA',
+              padding: '22px',
+              marginBottom: '26px',
+              boxShadow: '0 4px 20px rgba(234, 88, 12, 0.06)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', color: '#9A3412', fontWeight: 900, fontSize: '1rem' }}>
+                <span>🎯</span>
+                <span>रेफरल डेटा फिल्टर्स (Advanced Filters)</span>
+              </div>
+
+              {/* Grid of filters */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '14px' }}>
+                {/* 1. Search Query */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#7C2D12', marginBottom: '5px' }}>
+                    🔍 मोफत शोध (नाव / फोन / आयडी)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="शोधण्यासाठी टाईप करा..."
+                    value={refSearch}
+                    onChange={(e) => setRefSearch(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: '1.5px solid #FED7AA',
+                      background: '#FFF7ED',
+                      fontSize: '0.9rem',
+                      color: '#1E293B',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                {/* 2. District / City Filter */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#7C2D12', marginBottom: '5px' }}>
+                    🏙️ जिल्हा / शहर (City / District)
+                  </label>
+                  <select
+                    value={refDistrict}
+                    onChange={(e) => {
+                      setRefDistrict(e.target.value);
+                      setRefTaluka('all');
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: '1.5px solid #FED7AA',
+                      background: '#FFF7ED',
+                      fontSize: '0.9rem',
+                      color: '#1E293B',
+                      fontWeight: 700,
+                      boxSizing: 'border-box'
+                    }}>
+                    <option value="all">सर्व जिल्हे / शहरे (All Districts)</option>
+                    {MAHARASHTRA_DISTRICTS.map(d => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 3. Taluka Filter */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#7C2D12', marginBottom: '5px' }}>
+                    📍 तालुका (Taluka)
+                  </label>
+                  <select
+                    value={refTaluka}
+                    onChange={(e) => setRefTaluka(e.target.value)}
+                    disabled={refDistrict === 'all'}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: '1.5px solid #FED7AA',
+                      background: refDistrict === 'all' ? '#F1F5F9' : '#FFF7ED',
+                      fontSize: '0.9rem',
+                      color: refDistrict === 'all' ? '#94A3B8' : '#1E293B',
+                      fontWeight: 700,
+                      cursor: refDistrict === 'all' ? 'not-allowed' : 'pointer',
+                      boxSizing: 'border-box'
+                    }}>
+                    <option value="all">{refDistrict === 'all' ? 'सर्व तालुके (प्रथम जिल्हा निवडा)' : 'सर्व तालुके (All Talukas)'}</option>
+                    {refDistrict !== 'all' && (DISTRICT_TALUKAS[refDistrict] || []).map(t => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 4. Roles Filter */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#7C2D12', marginBottom: '5px' }}>
+                    💼 सभासद भूमिका (Role)
+                  </label>
+                  <select
+                    value={refRole}
+                    onChange={(e) => setRefRole(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: '1.5px solid #FED7AA',
+                      background: '#FFF7ED',
+                      fontSize: '0.9rem',
+                      color: '#1E293B',
+                      fontWeight: 700,
+                      boxSizing: 'border-box'
+                    }}>
+                    <option value="all">सर्व भूमिका (All Roles)</option>
+                    <option value="member">सामान्य सभासद (Member)</option>
+                    <option value="entrepreneur">उद्योजक (Entrepreneur)</option>
+                    <option value="business">व्यावसायिक (Business)</option>
+                    <option value="professional">नोकरदार/तज्ज्ञ (Professional)</option>
+                    <option value="chapter_president">शाखा अध्यक्ष (Chapter President)</option>
+                    <option value="district_admin">जिल्हा ॲडमिन (District Admin)</option>
+                    <option value="student">विद्यार्थी / युवा (Student)</option>
+                  </select>
+                </div>
+
+                {/* 5. Timeframe Shortcuts (Today / Week / Month / All) */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#7C2D12', marginBottom: '5px' }}>
+                    📅 कालावधी (Timeframe)
+                  </label>
+                  <select
+                    value={refTimeframe}
+                    onChange={(e) => setRefTimeframe(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: '1.5px solid #FED7AA',
+                      background: '#FFF7ED',
+                      fontSize: '0.9rem',
+                      color: '#1E293B',
+                      fontWeight: 700,
+                      boxSizing: 'border-box'
+                    }}>
+                    <option value="all">सर्व काळ (All Time)</option>
+                    <option value="today">⚡ आज (Today)</option>
+                    <option value="week">📅 चालू आठवडा (This Week - 7 Days)</option>
+                    <option value="month">🗓️ चालू महिना (This Month)</option>
+                    <option value="custom">🎯 विशिष्ट तारीख मर्यादा (Custom Range)</option>
+                  </select>
+                </div>
+
+                {/* 6. Date Range Start (Only active / visible when custom, or anytime) */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#7C2D12', marginBottom: '5px' }}>
+                    🗓️ तारीख पासून (Start Date)
+                  </label>
+                  <input
+                    type="date"
+                    value={refStartDate}
+                    onChange={(e) => {
+                      setRefStartDate(e.target.value);
+                      if (refTimeframe !== 'custom') setRefTimeframe('custom');
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      borderRadius: '8px',
+                      border: '1.5px solid #FED7AA',
+                      background: '#FFF7ED',
+                      fontSize: '0.88rem',
+                      color: '#1E293B',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                {/* 7. Date Range End */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#7C2D12', marginBottom: '5px' }}>
+                    🗓️ तारीख पर्यंत (End Date)
+                  </label>
+                  <input
+                    type="date"
+                    value={refEndDate}
+                    onChange={(e) => {
+                      setRefEndDate(e.target.value);
+                      if (refTimeframe !== 'custom') setRefTimeframe('custom');
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      borderRadius: '8px',
+                      border: '1.5px solid #FED7AA',
+                      background: '#FFF7ED',
+                      fontSize: '0.88rem',
+                      color: '#1E293B',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                {/* 8. Specific Referrer ID Filter */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#7C2D12', marginBottom: '5px' }}>
+                    🪪 शिफारसकर्ता आयडी (Referrer ID)
+                  </label>
+                  <select
+                    value={refReferrerId}
+                    onChange={(e) => setRefReferrerId(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: '1.5px solid #FED7AA',
+                      background: '#FFF7ED',
+                      fontSize: '0.9rem',
+                      color: '#1E293B',
+                      fontWeight: 700,
+                      boxSizing: 'border-box'
+                    }}>
+                    <option value="all">सर्व शिफारसकर्ते (All Referrers)</option>
+                    {KNOWN_OFFICIAL_REFERRERS.map(k => (
+                      <option key={k.id} value={k.id}>{k.id} - {k.name} ({k.district})</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 9. Subscription Status */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#7C2D12', marginBottom: '5px' }}>
+                    ⚡ सदस्यत्व स्थिती (Subscription)
+                  </label>
+                  <select
+                    value={refStatus}
+                    onChange={(e) => setRefStatus(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: '1.5px solid #FED7AA',
+                      background: '#FFF7ED',
+                      fontSize: '0.9rem',
+                      color: '#1E293B',
+                      fontWeight: 700,
+                      boxSizing: 'border-box'
+                    }}>
+                    <option value="all">सर्व स्थिती (All Status)</option>
+                    <option value="active">✅ सक्रिय व सशुल्क (Active Paid)</option>
+                    <option value="pending">⏳ प्रलंबित सदस्यत्व (Pending Subscription)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Filter Result Key Metrics Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px', marginBottom: '26px' }}>
+              <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '14px', border: '2px solid #EA580C', boxShadow: '0 4px 15px rgba(234, 88, 12, 0.08)' }}>
+                <div style={{ fontSize: '0.84rem', color: '#EA580C', fontWeight: 900 }}>📊 एकूण रेफरल शिफारसी</div>
+                <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#EA580C', marginTop: '4px' }}>
+                  {referralReportData.stats.total}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 600 }}>फिल्टर केलेल्या नोंदी</div>
+              </div>
+
+              <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '14px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '0.84rem', color: '#16A34A', fontWeight: 900 }}>✅ सक्रिय सशुल्क सभासद</div>
+                <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#16A34A', marginTop: '4px' }}>
+                  {referralReportData.stats.activeCount}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 600 }}>शुल्क भरलेले व सत्यापित</div>
+              </div>
+
+              <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '14px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '0.84rem', color: '#DC2626', fontWeight: 900 }}>⏳ प्रलंबित सदस्यत्व</div>
+                <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#DC2626', marginTop: '4px' }}>
+                  {referralReportData.stats.pendingCount}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 600 }}>नोंदणी पूर्ण, शुल्क बाकी</div>
+              </div>
+
+              <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '14px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '0.84rem', color: '#9A3412', fontWeight: 900 }}>💰 वितरित कमिशन (बोनस)</div>
+                <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#EA580C', marginTop: '4px' }}>
+                  ₹{referralReportData.stats.totalBonusPaid.toLocaleString()}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 600 }}>₹१०० प्रति सक्रिय सदस्य</div>
+              </div>
+
+              <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '14px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '0.84rem', color: '#D97706', fontWeight: 900 }}>⌛ प्रलंबित देय रक्कम</div>
+                <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#D97706', marginTop: '4px' }}>
+                  ₹{referralReportData.stats.pendingBonus.toLocaleString()}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 600 }}>सक्रिय झाल्यावर जमा होईल</div>
+              </div>
+
+              <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '14px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '0.84rem', color: '#2563EB', fontWeight: 900 }}>📈 यशस्विता दर (Conversion)</div>
+                <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#2563EB', marginTop: '4px' }}>
+                  {referralReportData.stats.conversionRate}%
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 600 }}>सक्रिय सदस्य रूपांतरण</div>
+              </div>
+            </div>
+
+            {/* SECTION 1: TOP REFERRERS LEADERBOARD */}
+            <div style={{
+              background: '#FFFFFF',
+              borderRadius: '16px',
+              border: '2px solid #FED7AA',
+              padding: '24px',
+              marginBottom: '28px',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 4px 0', fontSize: '1.2rem', color: '#431407', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>🏆</span>
+                    <span>अव्वल शिफारसकर्ते लीडरबोर्ड (Top Referrers Performance)</span>
+                  </h4>
+                  <p style={{ margin: 0, color: '#64748B', fontSize: '0.88rem', fontWeight: 600 }}>
+                    सध्याच्या फिल्टरनुसार सर्वाधिक नवीन सभासद आणणारे आघाडीचे शिफारसकर्ते.
+                  </p>
+                </div>
+                <span style={{ background: '#FFF7ED', color: '#EA580C', border: '1px solid #FED7AA', padding: '4px 14px', borderRadius: '20px', fontSize: '0.84rem', fontWeight: 900 }}>
+                  एकूण {referralReportData.topReferrers.length} सक्रिय शिफारसकर्ते
+                </span>
+              </div>
+
+              {referralReportData.topReferrers.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '30px', color: '#64748B', fontWeight: 700 }}>
+                  या फिल्टर अंतर्गत कोणतेही शिफारसकर्ते आढळले नाहीत.
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '700px' }}>
+                    <thead>
+                      <tr style={{ background: '#FFF7ED', borderBottom: '2px solid #FED7AA' }}>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>रँक</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>शिफारसकर्ता तपशील</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>जिल्हा / शहर</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, textAlign: 'center' }}>एकूण रेफरल्स</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, textAlign: 'center' }}>सक्रिय</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, textAlign: 'center' }}>प्रलंबित</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, textAlign: 'center' }}>कमाई (₹)</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, textAlign: 'right' }}>कृती</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {referralReportData.topReferrers.map((tr, idx) => {
+                        const rankMedal = idx === 0 ? '🥇 #1' : idx === 1 ? '🥈 #2' : idx === 2 ? '🥉 #3' : `#${idx + 1}`;
+                        const isSelected = refReferrerId === tr.referrerId;
+                        return (
+                          <tr key={tr.referrerId} style={{ borderBottom: '1px solid #FED7AA', background: isSelected ? '#FFF7ED' : idx % 2 === 0 ? '#FFFFFF' : '#FAFAF9' }}>
+                            <td style={{ padding: '12px 14px', fontWeight: 900, color: idx < 3 ? '#EA580C' : '#64748B', fontSize: '0.95rem' }}>
+                              {rankMedal}
+                            </td>
+                            <td style={{ padding: '12px 14px' }}>
+                              <div style={{ fontWeight: 900, color: '#1E293B' }}>{tr.referrerName}</div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                                <span style={{ fontFamily: 'monospace', fontWeight: 900, color: '#EA580C', fontSize: '0.82rem', background: '#FFF7ED', padding: '1px 6px', borderRadius: '4px', border: '1px solid #FED7AA' }}>
+                                  {tr.referrerId}
+                                </span>
+                              </div>
+                            </td>
+                            <td style={{ padding: '12px 14px', fontWeight: 700, color: '#475569', fontSize: '0.88rem' }}>
+                              📍 {tr.district}
+                            </td>
+                            <td style={{ padding: '12px 14px', textAlign: 'center', fontWeight: 900, color: '#1E293B', fontSize: '1.05rem' }}>
+                              {tr.total}
+                            </td>
+                            <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                              <span style={{ background: '#DCFCE7', color: '#15803D', padding: '3px 9px', borderRadius: '12px', fontWeight: 900, fontSize: '0.82rem' }}>
+                                {tr.active}
+                              </span>
+                            </td>
+                            <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                              <span style={{ background: '#FEF3C7', color: '#B45309', padding: '3px 9px', borderRadius: '12px', fontWeight: 900, fontSize: '0.82rem' }}>
+                                {tr.pending}
+                              </span>
+                            </td>
+                            <td style={{ padding: '12px 14px', textAlign: 'center', fontWeight: 900, color: '#EA580C', fontSize: '1rem' }}>
+                              ₹{tr.earnings.toLocaleString()}
+                            </td>
+                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                              {isSelected ? (
+                                <button
+                                  type="button"
+                                  onClick={() => setRefReferrerId('all')}
+                                  style={{
+                                    background: '#EA580C',
+                                    color: '#FFFFFF',
+                                    border: 'none',
+                                    padding: '6px 12px',
+                                    borderRadius: '6px',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 900,
+                                    cursor: 'pointer'
+                                  }}>
+                                  फिल्टर काढा ✕
+                                </button>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => setRefReferrerId(tr.referrerId)}
+                                  style={{
+                                    background: '#FFF7ED',
+                                    color: '#EA580C',
+                                    border: '1.5px solid #FED7AA',
+                                    padding: '6px 12px',
+                                    borderRadius: '6px',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 900,
+                                    cursor: 'pointer'
+                                  }}>
+                                  यांचा डेटा पहा 🔍
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {/* SECTION 2: DETAILED REFERRAL AUDIT LEDGER TABLE */}
+            <div style={{
+              background: '#FFFFFF',
+              borderRadius: '16px',
+              border: '2px solid #FED7AA',
+              padding: '24px',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 4px 0', fontSize: '1.2rem', color: '#431407', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>📋</span>
+                    <span>सविस्तर रेफरल नोंदी ऑडिट नोंदवही (Referral Audit Ledger)</span>
+                  </h4>
+                  <p style={{ margin: 0, color: '#64748B', fontSize: '0.88rem', fontWeight: 600 }}>
+                    निवडलेल्या निकषांनुसार प्रत्येक नवीन सदस्याची आणि त्याच्या शिफारसकर्त्याची नोंद.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ background: '#FFF7ED', color: '#EA580C', border: '1px solid #FED7AA', padding: '6px 14px', borderRadius: '20px', fontSize: '0.88rem', fontWeight: 900 }}>
+                    एकूण {referralReportData.filtered.length} नोंदी
+                  </span>
+                </div>
+              </div>
+
+              {referralReportData.filtered.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '50px 20px', background: '#FFF7ED', borderRadius: '12px', border: '1.5px dashed #FED7AA' }}>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🔍</div>
+                  <h4 style={{ margin: '0 0 6px 0', color: '#431407', fontWeight: 900, fontSize: '1.15rem' }}>कोणत्याही नोंदी आढळल्या नाहीत</h4>
+                  <p style={{ margin: '0 0 16px 0', color: '#64748B', fontSize: '0.9rem' }}>कृपया फिल्टर निकष बदला किंवा रीसेट करा.</p>
+                  <button
+                    type="button"
+                    onClick={handleResetReferralFilters}
+                    style={{ background: '#EA580C', color: '#FFFFFF', border: 'none', padding: '8px 20px', borderRadius: '8px', fontWeight: 900, cursor: 'pointer' }}>
+                    फिल्टर्स रीसेट करा
+                  </button>
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '950px' }}>
+                    <thead>
+                      <tr style={{ background: '#FFF7ED', borderBottom: '2px solid #FED7AA' }}>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>#</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>नोंदणी तारीख</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>नवीन सभासद (Referee)</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>स्थान (शहर/जिल्हा, तालुका)</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>भूमिका</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>शिफारसकर्ता (Referrer)</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, textAlign: 'center' }}>सदस्यत्व स्थिती</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, textAlign: 'center' }}>कमिशन स्थिती</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, textAlign: 'right' }}>कृती</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {referralReportData.filtered.map((item, idx) => {
+                        const isPaid = item.status === 'active';
+                        return (
+                          <tr key={item.id || idx} style={{ borderBottom: '1px solid #FED7AA', background: idx % 2 === 0 ? '#FFFFFF' : '#FAFAF9' }}>
+                            <td style={{ padding: '14px', color: '#64748B', fontWeight: 800, fontSize: '0.85rem' }}>
+                              {idx + 1}
+                            </td>
+                            <td style={{ padding: '14px', fontSize: '0.85rem', color: '#475569', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                              {item.registeredAt || item.date || 'नुकतेच'}
+                            </td>
+                            <td style={{ padding: '14px' }}>
+                              <div style={{ fontWeight: 900, color: '#1E293B', fontSize: '0.95rem' }}>{item.refereeName}</div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px', fontSize: '0.82rem', color: '#64748B' }}>
+                                <span>📞 {item.refereePhone}</span>
+                                <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#EA580C', background: '#FFF7ED', padding: '1px 6px', borderRadius: '4px', border: '1px solid #FED7AA' }}>
+                                  {item.refereeId}
+                                </span>
+                              </div>
+                            </td>
+                            <td style={{ padding: '14px' }}>
+                              <div style={{ fontWeight: 800, color: '#1E293B', fontSize: '0.88rem' }}>📍 {item.district || 'महाराष्ट्र'}</div>
+                              <div style={{ color: '#64748B', fontSize: '0.82rem', fontWeight: 600 }}>तालुका: {item.taluka || 'सर्व'}</div>
+                            </td>
+                            <td style={{ padding: '14px' }}>
+                              <span style={{ background: '#FFF7ED', color: '#EA580C', border: '1px solid #FED7AA', padding: '3px 8px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 800 }}>
+                                {item.role === 'entrepreneur' ? 'उद्योजक' :
+                                 item.role === 'business' ? 'व्यावसायिक' :
+                                 item.role === 'professional' ? 'प्रोेशनल' :
+                                 item.role === 'chapter_president' ? 'शाखा अध्यक्ष' :
+                                 item.role === 'district_admin' ? 'जिल्हा ॲडमिन' :
+                                 item.role === 'student' ? 'विद्यार्थी' : 'सभासद'}
+                              </span>
+                            </td>
+                            <td style={{ padding: '14px' }}>
+                              <div style={{ fontWeight: 800, color: '#1E293B', fontSize: '0.88rem' }}>{item.referrerName}</div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                                <span style={{ fontFamily: 'monospace', fontWeight: 900, color: '#EA580C', fontSize: '0.8rem', background: '#FFF7ED', padding: '1px 6px', borderRadius: '4px', border: '1px solid #FED7AA' }}>
+                                  {item.referrerId}
+                                </span>
+                                <span style={{ fontSize: '0.75rem', color: '#64748B' }}>({item.referrerDistrict || 'महाराष्ट्र'})</span>
+                              </div>
+                            </td>
+                            <td style={{ padding: '14px', textAlign: 'center' }}>
+                              {isPaid ? (
+                                <span style={{ background: '#DCFCE7', color: '#15803D', border: '1px solid #86EFAC', padding: '4px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 900, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                  <span>✓</span>
+                                  <span>सक्रिय सशुल्क</span>
+                                </span>
+                              ) : (
+                                <span style={{ background: '#FEF3C7', color: '#B45309', border: '1px solid #FDE68A', padding: '4px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 900, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                  <span>⏳</span>
+                                  <span>नोंदणी प्रलंबित</span>
+                                </span>
+                              )}
+                            </td>
+                            <td style={{ padding: '14px', textAlign: 'center' }}>
+                              {isPaid ? (
+                                <span style={{ background: '#FFF7ED', color: '#EA580C', border: '1px solid #FED7AA', padding: '4px 10px', borderRadius: '10px', fontSize: '0.82rem', fontWeight: 900 }}>
+                                  ₹१०० जमा (Paid)
+                                </span>
+                              ) : (
+                                <span style={{ background: '#F1F5F9', color: '#64748B', border: '1px solid #CBD5E1', padding: '4px 10px', borderRadius: '10px', fontSize: '0.82rem', fontWeight: 800 }}>
+                                  ₹१०० प्रलंबित (Pending)
+                                </span>
+                              )}
+                            </td>
+                            <td style={{ padding: '14px', textAlign: 'right' }}>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(item.refereeId || item.refereePhone);
+                                  showToast(`📋 सभासद आयडी (${item.refereeId}) कॉपी केला!`, 'success');
+                                }}
+                                title="सभासद आयडी कॉपी करा"
+                                style={{
+                                  background: '#FFF7ED',
+                                  border: '1px solid #FED7AA',
+                                  color: '#EA580C',
+                                  padding: '6px 10px',
+                                  borderRadius: '6px',
+                                  cursor: 'pointer',
+                                  fontWeight: 800,
+                                  fontSize: '0.78rem'
+                                }}>
+                                📋 कॉपी
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         )}
