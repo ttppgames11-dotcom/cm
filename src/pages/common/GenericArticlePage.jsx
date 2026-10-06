@@ -67,8 +67,7 @@ const articlesDatabase = {
   'sambhaji-maharaj': {
     title: 'छत्रपती संभाजी महाराज — धर्मवीर व अजिंक्य योद्धा',
     eyebrow: '१२८ लढायांमध्ये अपराजित · संस्कृत महापंडित · बलिदान मास (१६५७–१६८९)',
-    heroBgImage: null,
-    hideHeroBg: true,
+    heroBgImage: '/assets/images/real-raigad-mahadarwaja.jpg',
     cardImage: '/assets/images/real-sambhaji-warrior.jpg',
     heroImage: '/assets/images/real-sambhaji-warrior.jpg',
     portraitTitle: 'छत्रपती संभाजी महाराज',
