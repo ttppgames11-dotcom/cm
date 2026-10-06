@@ -1184,42 +1184,69 @@ export default function GenericArticlePage() {
                     {
                       name: 'महात्मा ज्योतिराव फुले (१८६९)',
                       tag: 'रायगड शिवसमाधी जीर्णोद्धार व पहिला शिवजयंती पोवाडा',
-                      quote: 'छत्रपती शिवाजी महाराज हे केवळ राजे नव्हते, तर ते या मातीतील कुळवाडी भूषण, शेतकऱ्यांचे आणि रयतेचे खरे कैवारी होते.'
+                      quote: 'छत्रपती शिवाजी महाराज हे केवळ राजे नव्हते, तर ते या मातीतील कुळवाडी भूषण, शेतकऱ्यांचे आणि रयतेचे खरे कैवारी होते.',
+                      img: '/assets/images/real-jyotirao-phule.jpg',
+                      pos: 'top center'
                     },
                     {
                       name: 'स्वामी विवेकानंद',
                       tag: 'भारतीय तत्त्वज्ञान व जागतिक धर्म संसद',
-                      quote: 'Shivaji was the greatest Hindu king who combined within himself supreme statesmanship, military genius, and saintly moral purity.'
+                      quote: 'Shivaji was the greatest Hindu king who combined within himself supreme statesmanship, military genius, and saintly moral purity.',
+                      img: '/assets/images/real-swami-vivekananda.jpg',
+                      pos: 'top center'
                     },
                     {
                       name: 'कविवर्य रवींद्रनाथ टागोर',
                       tag: 'नोबेल पारितोषिक विजेते महाकवी',
-                      quote: 'शिवरायांनी भारताला एकात्मतेचे आणि धर्मनिरपेक्ष स्वातंत्र्याचे उदात्त स्वप्न दिले. मराठ्यांची स्वराज्य चळवळ ही संपूर्ण भारताच्या मुक्तीची पहाट होती.'
+                      quote: 'शिवरायांनी भारताला एकात्मतेचे आणि धर्मनिरपेक्ष स्वातंत्र्याचे उदात्त स्वप्न दिले. मराठ्यांची स्वराज्य चळवळ ही संपूर्ण भारताच्या मुक्तीची पहाट होती.',
+                      img: '/assets/images/real-rabindranath-tagore.jpg',
+                      pos: 'top center'
                     },
                     {
                       name: 'भारतरत्न डॉ. बाबासाहेब आंबेडकर',
                       tag: 'भारतीय संविधानाचे शिल्पकार',
-                      quote: 'छत्रपती शिवाजी महाराजांचे स्वराज्य हे खऱ्या अर्थाने रयतेचे, दलितांचे व पददलितांचे राज्य होते. त्यांनी प्रत्येक जातीतील कर्तृत्ववान माणसाला स्वराज्यात सर्वोच्च स्थान दिले.'
+                      quote: 'छत्रपती शिवाजी महाराजांचे स्वराज्य हे खऱ्या अर्थाने रयतेचे, दलितांचे व पददलितांचे राज्य होते. त्यांनी प्रत्येक जातीतील कर्तृत्ववान माणसाला स्वराज्यात सर्वोच्च स्थान दिले.',
+                      img: '/assets/images/real-babasaheb-ambedkar.jpg',
+                      pos: 'top center'
                     },
                     {
                       name: 'व्हिएतनाम राष्ट्रप्रमुख व सेनापती',
                       tag: 'अमेरिकन सैन्याविरुद्ध गनिमी युद्ध विजय',
-                      quote: 'आम्ही बलाढ्य अमेरिकेचा पराभव करू शकलो, कारण आमच्या गनिमी युद्धनीतीचा खरा आदर्श छत्रपती शिवाजी महाराज होते!'
+                      quote: 'आम्ही बलाढ्य अमेरिकेचा पराभव करू शकलो, कारण आमच्या गनिमी युद्धनीतीचा खरा आदर्श छत्रपती शिवाजी महाराज होते!',
+                      img: '/assets/images/real-vietnam-general-giap.jpg',
+                      pos: 'top center'
                     },
                     {
                       name: 'सर जदुनाथ सरकार',
                       tag: 'प्रख्यात आंतरराष्ट्रीय इतिहासकार',
-                      quote: 'Shivaji proved that the Marathas were capable of building a modern nation-state. He was not merely a military conqueror, but the father of a nation.'
+                      quote: 'Shivaji proved that the Marathas were capable of building a modern nation-state. He was not merely a military conqueror, but the father of a nation.',
+                      img: '/assets/images/real-jadunath-sarkar.jpg',
+                      pos: 'top center'
                     }
                   ].map((w, idx) => (
-                    <div key={idx} style={{ background: '#FFFDF9', border: '1.5px solid #FDE68A', padding: '20px', borderRadius: '14px', position: 'relative', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-                      <div style={{ color: '#C73800', fontSize: '1.8rem', lineHeight: 1, marginBottom: '6px', fontFamily: 'serif' }}>“</div>
-                      <p style={{ margin: '0 0 14px', fontSize: '0.92rem', color: '#1F2937', fontStyle: 'italic', lineHeight: 1.65 }}>
-                        {w.quote}
-                      </p>
-                      <div style={{ borderTop: '1px solid #FED7AA', paddingTop: '10px' }}>
-                        <b style={{ color: '#7F1D1D', display: 'block', fontSize: '0.98rem', fontFamily: "'Baloo 2', sans-serif" }}>{w.name}</b>
-                        <span style={{ fontSize: '0.78rem', color: '#92400E', fontWeight: 600 }}>{w.tag}</span>
+                    <div key={idx} style={{ background: '#FFFDF9', border: '1.5px solid #FDE68A', padding: '20px', borderRadius: '16px', position: 'relative', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px', paddingBottom: '12px', borderBottom: '1px solid #FED7AA' }}>
+                          <div style={{ width: '68px', height: '68px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '2.5px solid #F59E0B', boxShadow: '0 3px 8px rgba(0,0,0,0.12)', background: '#FEF3C7' }}>
+                            <img
+                              src={w.img}
+                              alt={w.name}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: w.pos || 'top center' }}
+                              onError={(e) => { e.target.style.display = 'none'; }}
+                            />
+                          </div>
+                          <div>
+                            <b style={{ color: '#7F1D1D', display: 'block', fontSize: '1.02rem', fontFamily: "'Baloo 2', sans-serif" }}>{w.name}</b>
+                            <span style={{ fontSize: '0.8rem', color: '#92400E', fontWeight: 600 }}>{w.tag}</span>
+                          </div>
+                        </div>
+                        <div style={{ position: 'relative' }}>
+                          <span style={{ color: '#F59E0B', fontSize: '1.8rem', lineHeight: 1, fontFamily: 'serif', marginRight: '4px' }}>“</span>
+                          <p style={{ margin: '0', fontSize: '0.92rem', color: '#1F2937', fontStyle: 'italic', lineHeight: 1.65, display: 'inline' }}>
+                            {w.quote}
+                          </p>
+                          <span style={{ color: '#F59E0B', fontSize: '1.8rem', lineHeight: 1, fontFamily: 'serif', marginLeft: '4px' }}>”</span>
+                        </div>
                       </div>
                     </div>
                   ))}
