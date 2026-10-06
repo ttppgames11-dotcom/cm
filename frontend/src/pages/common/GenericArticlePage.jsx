@@ -350,7 +350,13 @@ const articlesDatabase = {
   'shivneri': {
     title: 'किल्ले शिवनेरी — छत्रपती शिवाजी महाराजांचे पावन जन्मस्थान',
     eyebrow: 'जुन्नर, पुणे जिल्हा · समुद्रसपाटीपासून ३,००० फूट · शिवजन्म स्थान',
+    heroBgImage: '/assets/images/real-shivneri-fort.jpg',
+    cardImage: '/assets/images/real-shivneri-fort.jpg',
     heroImage: '/assets/images/real-shivneri-fort.jpg',
+    cardImgHeight: '220px',
+    portraitTitle: 'किल्ले शिवनेरी',
+    portraitSubtitle: 'शिवजन्माची पावन पुण्यभूमी',
+    badgeText: 'अस्सल ऐतिहासिक दुर्ग',
     tagline: '१९ फेब्रुवारी १६३० रोजी याच गडावर युगपुरुष छत्रपती शिवाजी महाराजांचा जन्म झाला. शिवाई देवीच्या आशीर्वादाने स्वराज्याची पहाट उगवली.',
     warCry: '|| सह्याद्रीच्या कुशीत जन्मला रयतेचा राजा — किल्ले शिवनेरी! ||',
     stats: [
@@ -2148,7 +2154,7 @@ export default function GenericArticlePage() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '18px' }}>
                   <div style={{ background: '#FFFDF9', borderRadius: '14px', border: '1.5px solid #FED7AA', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
-                    <div style={{ height: '160px', overflow: 'hidden', background: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ height: '185px', overflow: 'hidden', background: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <img src="/assets/images/real-jijau-portrait.jpg" alt="सिंदखेड राजा" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
                     </div>
                     <div style={{ padding: '16px' }}>
@@ -2161,8 +2167,8 @@ export default function GenericArticlePage() {
                   </div>
 
                   <div style={{ background: '#FFFDF9', borderRadius: '14px', border: '1.5px solid #FED7AA', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
-                    <div style={{ height: '160px', overflow: 'hidden' }}>
-                      <img src="/assets/images/forts/shivneri-fort.jpg" alt="किल्ले शिवनेरी" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ height: '185px', overflow: 'hidden', background: '#F3F4F6' }}>
+                      <img src="/assets/images/real-shivneri-fort.jpg" alt="किल्ले शिवनेरी" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%' }} />
                     </div>
                     <div style={{ padding: '16px' }}>
                       <span style={{ color: '#D97706', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase' }}>जुन्नर, पुणे जिल्हा</span>
@@ -2174,8 +2180,8 @@ export default function GenericArticlePage() {
                   </div>
 
                   <div style={{ background: '#FFFDF9', borderRadius: '14px', border: '1.5px solid #FED7AA', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
-                    <div style={{ height: '160px', overflow: 'hidden' }}>
-                      <img src="/assets/images/real-lal-mahal-pune.jpg" alt="लाल महाल, पुणे" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ height: '185px', overflow: 'hidden' }}>
+                      <img src="/assets/images/real-lal-mahal-pune.jpg" alt="लाल महाल, पुणे" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%' }} />
                     </div>
                     <div style={{ padding: '16px' }}>
                       <span style={{ color: '#D97706', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase' }}>पुणे शहर</span>
@@ -2187,8 +2193,8 @@ export default function GenericArticlePage() {
                   </div>
 
                   <div style={{ background: '#FFFDF9', borderRadius: '14px', border: '1.5px solid #FED7AA', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
-                    <div style={{ height: '160px', overflow: 'hidden' }}>
-                      <img src="/assets/images/real-jijabai-samadhi-pachad.jpg" alt="पाचाड समाधी तीर्थ" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ height: '185px', overflow: 'hidden' }}>
+                      <img src="/assets/images/real-jijabai-samadhi-pachad.jpg" alt="पाचाड समाधी तीर्थ" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%' }} />
                     </div>
                     <div style={{ padding: '16px' }}>
                       <span style={{ color: '#D97706', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase' }}>रायगड पायथा</span>
