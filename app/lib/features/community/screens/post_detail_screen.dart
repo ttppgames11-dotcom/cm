@@ -225,12 +225,13 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           foregroundColor: const Color(0xFF2B1B12),
           elevation: 0.5,
           actions: [
-            if (post != null && !post.isMine)
-              IconButton(
-                tooltip: 'पोस्टची तक्रार करा',
-                icon: const Icon(Icons.flag_outlined),
-                onPressed: () => _report(targetType: 'post', targetId: post.id),
-              ),
+            // V1: Report UI hidden (backend intact for future use)
+            // if (post != null && !post.isMine)
+            //   IconButton(
+            //     tooltip: 'पोस्टची तक्रार करा',
+            //     icon: const Icon(Icons.flag_outlined),
+            //     onPressed: () => _report(targetType: 'post', targetId: post.id),
+            //   ),
           ],
         ),
         body: SafeArea(
