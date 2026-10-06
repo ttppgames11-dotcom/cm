@@ -190,13 +190,6 @@ export default function CRMLoginPage() {
     setErrorMsg('अवैध प्रशासकीय आयडी किंवा पासवर्ड. कृपया नोंदणीकृत अधिकारी क्रेडेंशियल्स प्रविष्ट करा.');
   };
 
-  // Helper to prefill form for testing
-  const handleAutoFill = (profile) => {
-    setOfficerId(profile.id);
-    setPassword(profile.defaultPassword);
-    setErrorMsg('');
-  };
-
   const isCurrentStaff = user && CRM_AUTHORIZED_ROLES.includes(user.role);
 
   return (
@@ -309,24 +302,21 @@ export default function CRMLoginPage() {
         )}
 
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(320px, 460px) minmax(320px, 1fr)',
-          gap: '28px',
-          alignItems: 'start'
+          maxWidth: '480px',
+          margin: '0 auto'
         }}>
-          
           {/* Main Credentials Box */}
           <div style={{
             background: '#FFFFFF',
             border: '2px solid #FED7AA',
             borderRadius: '20px',
-            padding: '32px 28px',
-            boxShadow: '0 10px 30px rgba(234, 88, 12, 0.08)'
+            padding: '36px 30px',
+            boxShadow: '0 12px 36px rgba(234, 88, 12, 0.1)'
           }}>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 900, margin: '0 0 6px', color: '#EA580C' }}>
+            <h2 style={{ fontSize: '1.45rem', fontWeight: 900, margin: '0 0 6px', color: '#EA580C', textAlign: 'center' }}>
               अधिकारी लॉगिन
             </h2>
-            <p style={{ color: '#7C2D12', fontSize: '0.90rem', margin: '0 0 22px', fontWeight: 600 }}>
+            <p style={{ color: '#7C2D12', fontSize: '0.90rem', margin: '0 0 24px', fontWeight: 600, textAlign: 'center' }}>
               आपला अधिकृत अधिकारी आयडी व पासवर्ड प्रविष्ट करा.
             </p>
 
@@ -359,7 +349,7 @@ export default function CRMLoginPage() {
                   required
                   style={{
                     width: '100%',
-                    padding: '12px 14px',
+                    padding: '13px 14px',
                     borderRadius: '10px',
                     background: '#FFFDF9',
                     border: '1.5px solid #FED7AA',
@@ -373,7 +363,7 @@ export default function CRMLoginPage() {
               </div>
 
               {/* Password Input */}
-              <div style={{ marginBottom: '22px' }}>
+              <div style={{ marginBottom: '24px' }}>
                 <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 800, color: '#EA580C', marginBottom: '6px' }}>
                   गोपनीय पासवर्ड (Password)
                 </label>
@@ -386,7 +376,7 @@ export default function CRMLoginPage() {
                     required
                     style={{
                       width: '100%',
-                      padding: '12px 42px 12px 14px',
+                      padding: '13px 44px 13px 14px',
                       borderRadius: '10px',
                       background: '#FFFDF9',
                       border: '1.5px solid #FED7AA',
@@ -408,7 +398,7 @@ export default function CRMLoginPage() {
                       background: 'none',
                       border: 'none',
                       cursor: 'pointer',
-                      fontSize: '1rem',
+                      fontSize: '1.1rem',
                       color: '#EA580C'
                     }}
                     title={showPassword ? 'लपवा' : 'दाखवा'}>
@@ -427,7 +417,7 @@ export default function CRMLoginPage() {
                   color: '#FFFFFF',
                   fontWeight: 900,
                   fontSize: '1.05rem',
-                  padding: '14px',
+                  padding: '15px',
                   borderRadius: '12px',
                   border: 'none',
                   cursor: loading ? 'wait' : 'pointer',
@@ -453,100 +443,21 @@ export default function CRMLoginPage() {
             </div>
           </div>
 
-          {/* Authorized Roles & Reference Credentials List */}
-          <div>
-            <div style={{ marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: '0 0 6px', color: '#EA580C' }}>
-                ⚡ अधिकृत पदभार व क्रेडेंशियल्स संदर्भ
-              </h3>
-              <p style={{ color: '#7C2D12', fontSize: '0.88rem', margin: 0, fontWeight: 600 }}>
-                सिस्टीममध्ये नोंदणीकृत असलेले अधिकारी आयडी व पासवर्ड. चाचणीसाठी 'क्रेडेंशियल्स भरा' वर क्लिक करू शकता:
-              </p>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {CRM_OFFICIAL_PROFILES.map((p) => (
-                <div
-                  key={p.role}
-                  style={{
-                    background: '#FFFFFF',
-                    border: '1.5px solid #FED7AA',
-                    borderRadius: '14px',
-                    padding: '14px 18px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    transition: 'all 0.2s ease',
-                    boxShadow: '0 2px 8px rgba(234, 88, 12, 0.04)'
-                  }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
-                      <span style={{ fontWeight: 900, fontSize: '0.98rem', color: '#EA580C' }}>{p.title}</span>
-                      <span style={{
-                        background: '#FFF7ED',
-                        color: '#EA580C',
-                        fontSize: '0.72rem',
-                        fontWeight: 900,
-                        padding: '2px 8px',
-                        borderRadius: '6px',
-                        border: '1px solid #FED7AA'
-                      }}>
-                        {p.badge}
-                      </span>
-                    </div>
-                    <div style={{ color: '#1C1917', fontSize: '0.84rem', marginBottom: '2px', fontWeight: 700 }}>
-                      आयडी: <strong style={{ color: '#EA580C' }}>{p.id}</strong> • पासवर्ड: <code style={{ background: '#FFF7ED', padding: '1px 6px', borderRadius: '4px', color: '#EA580C' }}>{p.defaultPassword}</code>
-                    </div>
-                    <div style={{ color: '#7C2D12', fontSize: '0.78rem' }}>
-                      पोर्टल मार्ग: {p.targetRoute}
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleAutoFill(p)}
-                    style={{
-                      background: '#FFF7ED',
-                      border: '1.5px solid #EA580C',
-                      borderRadius: '8px',
-                      padding: '7px 14px',
-                      fontSize: '0.82rem',
-                      fontWeight: 800,
-                      color: '#EA580C',
-                      whiteSpace: 'nowrap',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = '#EA580C';
-                      e.currentTarget.style.color = '#FFFFFF';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = '#FFF7ED';
-                      e.currentTarget.style.color = '#EA580C';
-                    }}>
-                    क्रेडेंशियल्स भरा ✍️
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {/* Security Notice */}
-            <div style={{
-              marginTop: '20px',
-              padding: '12px 16px',
-              background: '#FFF7ED',
-              borderRadius: '12px',
-              border: '1px solid #FED7AA',
-              fontSize: '0.84rem',
-              color: '#7C2D12',
-              lineHeight: 1.5,
-              fontWeight: 600
-            }}>
-              ⚖️ <strong>सुरक्षा सूचना:</strong> हे पोर्टल फक्त अधिकृत प्रशासकीय कामकाजासाठी आहे. प्रत्येक लॉगिनचा ऑडिट लॉग (Audit Trail) DPDP कायदा २०२३ अंतर्गत स्वयंचलित नोंदवला जातो.
-            </div>
+          {/* Security Notice */}
+          <div style={{
+            marginTop: '20px',
+            padding: '12px 16px',
+            background: '#FFF7ED',
+            borderRadius: '12px',
+            border: '1px solid #FED7AA',
+            fontSize: '0.84rem',
+            color: '#7C2D12',
+            lineHeight: 1.5,
+            fontWeight: 600,
+            textAlign: 'center'
+          }}>
+            ⚖️ <strong>सुरक्षा सूचना:</strong> हे पोर्टल फक्त अधिकृत प्रशासकीय कामकाजासाठी आहे. प्रत्येक लॉगिनचा ऑडिट लॉग (Audit Trail) DPDP कायदा २०२३ अंतर्गत स्वयंचलित नोंदवला जातो.
           </div>
-
         </div>
 
       </div>

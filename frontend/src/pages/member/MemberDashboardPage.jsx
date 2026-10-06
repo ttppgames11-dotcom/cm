@@ -137,45 +137,46 @@ export default function MemberDashboardPage() {
 
   return (
     <div className="container py-5" style={{ padding: '36px 16px', maxWidth: '1240px', margin: '0 auto' }}>
-      {/* Welcome Banner */}
-      <div style={{ background: 'linear-gradient(135deg, #7C1D05, #C2410C)', borderRadius: '20px', color: '#fff', padding: '30px 28px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', boxShadow: '0 8px 24px rgba(124, 29, 5, 0.15)' }}>
+      {/* Welcome Banner - Pure Bhagwa Orange */}
+      <div style={{ background: 'linear-gradient(135deg, #FF6A00 0%, #EA580C 100%)', borderRadius: '20px', color: '#FFFFFF', padding: '30px 28px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', boxShadow: '0 8px 24px rgba(234, 88, 12, 0.25)' }}>
         <div>
-          <div style={{ background: 'rgba(255,255,255,0.2)', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800, marginBottom: '10px' }}>
+          <div style={{ background: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.4)', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800, marginBottom: '10px', color: '#FFFFFF' }}>
             <span>🚩</span>
             <span>{member.tier || 'Gold'} सदस्य</span>
             <span>•</span>
             <span>Connect Maratha डॅशबोर्ड (Feature 28)</span>
           </div>
-          <h1 style={{ fontSize: '2rem', margin: '0 0 6px', fontWeight: 900 }}>सस्नेह जय शिवराय, {member.name}!</h1>
-          <p style={{ margin: 0, opacity: 0.92, fontSize: '0.96rem' }}>
+          <h1 style={{ fontSize: '2rem', margin: '0 0 6px', fontWeight: 900, color: '#FFFFFF' }}>सस्नेह जय शिवराय, {member.name}!</h1>
+          <p style={{ margin: 0, opacity: 0.95, fontSize: '0.96rem', color: '#FFFFFF' }}>
             सदस्य आयडी: <strong>{memberId}</strong> | 📍 {member.district || 'पुणे'} | 🏆 योगदान गुण: <strong>{scoreInfo.totalScore} ({scoreInfo.badge})</strong>
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <Link to="/card" className="btn" style={{ background: '#FFFFFF', color: '#7C1D05', border: 'none', fontWeight: 800, padding: '10px 18px', borderRadius: '10px', textDecoration: 'none' }}>
+          <Link to="/card" className="btn" style={{ background: '#FFFFFF', color: '#EA580C', border: 'none', fontWeight: 800, padding: '10px 18px', borderRadius: '10px', textDecoration: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
             🪪 संपूर्ण ओळखपत्र
           </Link>
-          <Link to="/referrals/create" className="btn" style={{ background: 'rgba(255,255,255,0.18)', border: '1.5px solid #FFFFFF', color: '#FFFFFF', fontWeight: 700, padding: '10px 18px', borderRadius: '10px', textDecoration: 'none' }}>
+          <Link to="/referrals/create" className="btn" style={{ background: 'rgba(255,255,255,0.2)', border: '1.5px solid #FFFFFF', color: '#FFFFFF', fontWeight: 800, padding: '10px 18px', borderRadius: '10px', textDecoration: 'none' }}>
             🤝 व्यवसाय संदर्भ द्या
           </Link>
-          <Link to="/calendar" className="btn" style={{ background: '#FEF3C7', color: '#92400E', border: 'none', fontWeight: 800, padding: '10px 18px', borderRadius: '10px', textDecoration: 'none' }}>
+          <Link to="/calendar" className="btn" style={{ background: '#FFFFFF', color: '#EA580C', border: 'none', fontWeight: 800, padding: '10px 18px', borderRadius: '10px', textDecoration: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
             📅 दिनदर्शिका २.०
           </Link>
           <button
             onClick={() => { logout(); navigate('/'); }}
             className="btn"
             style={{
-              background: 'rgba(254, 226, 226, 0.95)',
-              border: '1.5px solid #FCA5A5',
-              color: '#991B1B',
+              background: '#FFFFFF',
+              border: '1.5px solid #FED7AA',
+              color: '#EA580C',
               fontWeight: 800,
               padding: '10px 18px',
               borderRadius: '10px',
               cursor: 'pointer',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
             }}
             title="आपल्या खात्यातून सुरक्षित बाहेर पडा">
             🚪 बाहेर पडा (Logout)
