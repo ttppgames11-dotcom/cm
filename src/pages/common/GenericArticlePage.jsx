@@ -516,9 +516,9 @@ export default function GenericArticlePage() {
       {/* Breadcrumbs */}
       <div className="breadcrumbs-bar">
         <div className="breadcrumbs-inner" style={{ maxWidth: '1320px', margin: '0 auto', padding: '10px 24px' }}>
-          <Link to="/" title="होम" style={{ color: 'var(--maroon-900)', textDecoration: 'none' }}>🏠 होम</Link>
+          <Link to="/" title="होम" style={{ color: '#C73800', textDecoration: 'none' }}>🏠 होम</Link>
           <span className="sep" style={{ margin: '0 8px', color: '#9ca3af' }}>›</span>
-          <Link to="/history" style={{ color: 'var(--maroon-900)', textDecoration: 'none' }}>इतिहास व वारसा</Link>
+          <Link to="/history" style={{ color: '#C73800', textDecoration: 'none' }}>इतिहास व वारसा</Link>
           <span className="sep" style={{ margin: '0 8px', color: '#9ca3af' }}>›</span>
           <span className="current" style={{ fontWeight: 700, color: 'var(--muted)' }}>{article.title}</span>
         </div>
@@ -575,7 +575,7 @@ export default function GenericArticlePage() {
             <h1 style={{
               fontSize: 'clamp(2.2rem, 3.8vw, 3.4rem)',
               lineHeight: 1.18,
-              color: '#7F1D1D',
+              color: '#C73800',
               margin: '14px 0 10px',
               fontFamily: "'Baloo 2', sans-serif",
               fontWeight: 900,
@@ -613,7 +613,7 @@ export default function GenericArticlePage() {
                   textAlign: 'center',
                   minWidth: '110px'
                 }}>
-                  <b style={{ color: '#B91C1C', fontSize: '1.25rem', display: 'block', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>{s.num}</b>
+                  <b style={{ color: '#C73800', fontSize: '1.25rem', display: 'block', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>{s.num}</b>
                   <span style={{ color: '#78350F', fontSize: '0.8rem', fontWeight: 700 }}>{s.label}</span>
                 </div>
               ))}
@@ -671,7 +671,7 @@ export default function GenericArticlePage() {
                 {article.badgeText || 'अस्सल ऐतिहासिक प्रतिमा'}
               </span>
             </div>
-            <div style={{ marginTop: '12px', color: '#7F1D1D', fontWeight: 800, fontSize: '1.05rem', fontFamily: "'Baloo 2', sans-serif" }}>
+            <div style={{ marginTop: '12px', color: '#C73800', fontWeight: 800, fontSize: '1.05rem', fontFamily: "'Baloo 2', sans-serif" }}>
               {article.portraitTitle || article.title.split('—')[0].trim()}
             </div>
             <div style={{ fontSize: '0.8rem', color: '#92400E', fontWeight: 700 }}>
@@ -686,7 +686,7 @@ export default function GenericArticlePage() {
         <div style={{ background: '#FFFFFF', borderRadius: '16px', padding: '36px', border: '1px solid var(--line)', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
           {article.sections.map((sec, idx) => (
             <div key={idx} style={{ marginBottom: idx === article.sections.length - 1 ? 0 : '36px' }}>
-              <h3 style={{ fontFamily: 'Baloo 2', color: 'var(--maroon-900)', fontSize: '1.45rem', marginBottom: '14px', borderBottom: '2px solid var(--gold-300)', paddingBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.45rem', marginBottom: '14px', borderBottom: '2.5px solid #FDBA74', paddingBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span>📜</span> {sec.heading}
               </h3>
               <p style={{ fontSize: '1.04rem', lineHeight: 1.85, color: '#374151', margin: 0, textAlign: 'justify' }}>
@@ -715,10 +715,10 @@ export default function GenericArticlePage() {
                     <div style={{ display: 'inline-block', background: '#C73800', color: '#fff', fontSize: '0.78rem', fontWeight: 800, padding: '4px 12px', borderRadius: '20px', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '8px' }}>
                       🚩 अखंड हिंदवी स्वराज्याची सार्वभौम मुद्रा
                     </div>
-                    <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.65rem', margin: '0 0 8px', fontWeight: 900 }}>
+                    <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.65rem', margin: '0 0 8px', fontWeight: 900 }}>
                       शिवराजमुद्रा — अर्थ, इतिहास व वैश्विक लोककल्याण
                     </h3>
-                    <div style={{ background: '#7F1D1D', color: '#FEF3C7', padding: '12px 18px', borderRadius: '10px', fontSize: '1.08rem', fontWeight: 700, letterSpacing: '0.5px', fontFamily: "'Baloo 2', serif", margin: '12px 0 16px', borderLeft: '4px solid #F59E0B', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>
+                    <div style={{ background: 'linear-gradient(135deg, #C73800 0%, #EA580C 100%)', color: '#FEF3C7', padding: '12px 18px', borderRadius: '10px', fontSize: '1.08rem', fontWeight: 700, letterSpacing: '0.5px', fontFamily: "'Baloo 2', serif", margin: '12px 0 16px', borderLeft: '4px solid #F59E0B', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>
                       || प्रतिपच्चंद्रलेखेव वर्धिष्णुर्विश्ववंदिता शाहसूनोः शिवस्यैषा मुद्रा भद्राय राजते ||
                     </div>
                     <p style={{ color: '#451A03', fontSize: '0.98rem', lineHeight: 1.7, margin: '0 0 14px' }}>
@@ -742,7 +742,7 @@ export default function GenericArticlePage() {
                   <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
                     ⏳ ऐतिहासिक टप्पे
                   </span>
-                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
                     शिवकाल गौरवशाली कालक्रम (१६३० – १६८०)
                   </h3>
                   <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
@@ -770,7 +770,7 @@ export default function GenericArticlePage() {
                     <div key={idx} style={{ background: '#FFFDF9', border: '1.5px solid #FDE68A', padding: '16px 20px', borderRadius: '14px', position: 'relative', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
                       <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'linear-gradient(180deg, #EA580C, #F59E0B)' }}></div>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <span style={{ background: '#7F1D1D', color: '#FEF3C7', padding: '3px 10px', borderRadius: '6px', fontWeight: 800, fontSize: '0.85rem', fontFamily: "'Baloo 2', sans-serif" }}>
+                        <span style={{ background: 'linear-gradient(135deg, #C73800 0%, #EA580C 100%)', color: '#FEF3C7', padding: '3px 10px', borderRadius: '6px', fontWeight: 800, fontSize: '0.85rem', fontFamily: "'Baloo 2', sans-serif" }}>
                           {t.year}
                         </span>
                         <span style={{ fontSize: '0.75rem', color: '#9CA3AF', fontWeight: 700 }}>टप्पा #{idx + 1}</span>
@@ -792,7 +792,7 @@ export default function GenericArticlePage() {
                   <span style={{ background: '#FEF2F2', color: '#991B1B', border: '1.5px solid #FECACA', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
                     ⚔️ पराक्रमी योद्धे
                   </span>
-                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
                     शिवरायांचे निष्ठावंत शिलेदार, मावळे व सेनापती
                   </h3>
                   <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
@@ -896,7 +896,7 @@ export default function GenericArticlePage() {
                           position: 'absolute',
                           top: '10px',
                           left: '10px',
-                          background: 'rgba(127, 29, 29, 0.92)',
+                          background: 'rgba(199, 56, 0, 0.95)',
                           color: '#FEF08A',
                           fontSize: '0.74rem',
                           fontWeight: 800,
@@ -909,7 +909,7 @@ export default function GenericArticlePage() {
                         </span>
                       </div>
                       <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                        <h4 style={{ margin: '0 0 6px', color: '#7F1D1D', fontSize: '1.14rem', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>
+                        <h4 style={{ margin: '0 0 6px', color: '#C73800', fontSize: '1.14rem', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>
                           {s.name}
                         </h4>
                         <div style={{ background: '#FFFBEB', color: '#92400E', padding: '6px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, fontStyle: 'italic', marginBottom: '10px', borderLeft: '3px solid #F59E0B' }}>
@@ -939,7 +939,7 @@ export default function GenericArticlePage() {
                     <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800 }}>
                       💰 आर्थिक सार्वभौमत्व व रयतेचे हित
                     </span>
-                    <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.6rem', margin: '8px 0 10px', fontWeight: 900 }}>
+                    <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.6rem', margin: '8px 0 10px', fontWeight: 900 }}>
                       शिवकालीन चलनव्यवस्था (होन व शिवराई) आणि शेतकरी क्रांती
                     </h3>
                     <p style={{ color: '#374151', fontSize: '0.96rem', lineHeight: 1.7, margin: '0 0 16px' }}>
@@ -981,7 +981,7 @@ export default function GenericArticlePage() {
                   <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
                     🏰 अभेद्य दुर्ग स्थापत्य
                   </span>
-                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
                     शिवकालीन गडकोट स्थापत्य, जलव्यवस्थापन व दुर्ग प्रशासन
                   </h3>
                   <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
@@ -1061,7 +1061,7 @@ export default function GenericArticlePage() {
                   <span style={{ background: '#FEE2E2', color: '#991B1B', border: '1.5px solid #FCA5A5', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
                     ⚔️ शस्त्रसंपदा व रणनीती
                   </span>
-                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.7rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.7rem', margin: '10px 0 6px', fontWeight: 900 }}>
                     शिवकालीन शस्त्रसंपदा व गनिमी कावा युद्धकला
                   </h3>
                   <p style={{ color: '#6B7280', fontSize: '0.94rem', margin: 0 }}>
@@ -1196,7 +1196,7 @@ export default function GenericArticlePage() {
               <p style={{ fontSize: '0.9rem', color: '#450A0A', fontStyle: 'italic', margin: 0, lineHeight: 1.6 }}>
                 "रयतेस काडीचाही उपद्रव न देणे. शेतातील भाजीच्या देठासही हात न लावणे. जबरदस्तीने कोणाचेही काही न घेणे."
               </p>
-              <div style={{ fontSize: '0.78rem', color: '#7F1D1D', marginTop: '6px', textAlign: 'right' }}>— छत्रपती शिवरायांचे सेनापतींना पत्र (१६७४)</div>
+              <div style={{ fontSize: '0.78rem', color: '#C73800', marginTop: '6px', textAlign: 'right' }}>— छत्रपती शिवरायांचे सेनापतींना पत्र (१६७४)</div>
             </div>
 
             <div style={{ background: '#F0FDF4', padding: '20px', borderRadius: '12px', borderLeft: '4px solid #10B981' }}>
@@ -1214,7 +1214,7 @@ export default function GenericArticlePage() {
                   <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
                     🌍 वैश्विक वंदना
                   </span>
-                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
                     जागतिक विचारवंत, तत्त्वज्ञ व राष्ट्रपुरुषांचे शिवरायांबद्दल गौरवगार
                   </h3>
                   <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
@@ -1279,7 +1279,7 @@ export default function GenericArticlePage() {
                             />
                           </div>
                           <div>
-                            <b style={{ color: '#7F1D1D', display: 'block', fontSize: '1.02rem', fontFamily: "'Baloo 2', sans-serif" }}>{w.name}</b>
+                            <b style={{ color: '#C73800', display: 'block', fontSize: '1.02rem', fontFamily: "'Baloo 2', sans-serif" }}>{w.name}</b>
                             <span style={{ fontSize: '0.8rem', color: '#92400E', fontWeight: 600 }}>{w.tag}</span>
                           </div>
                         </div>
@@ -1302,7 +1302,7 @@ export default function GenericArticlePage() {
                   <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
                     ❓ ज्ञान जिज्ञासा
                   </span>
-                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.75rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.75rem', margin: '10px 0 6px', fontWeight: 900 }}>
                     नेहमी विचारले जाणारे ऐतिहासिक प्रश्न व उत्तरे (FAQ)
                   </h3>
                   <p style={{ color: '#6B7280', fontSize: '0.94rem', margin: 0 }}>
@@ -1362,7 +1362,7 @@ export default function GenericArticlePage() {
                           alignItems: 'center',
                           justifyContent: 'space-between',
                           gap: '12px',
-                          color: '#7F1D1D',
+                          color: '#C73800',
                           fontSize: '1.02rem',
                           fontWeight: 800,
                           fontFamily: "'Baloo 2', sans-serif"
@@ -1421,7 +1421,7 @@ export default function GenericArticlePage() {
                     <div style={{ display: 'inline-block', background: '#C73800', color: '#fff', fontSize: '0.8rem', fontWeight: 800, padding: '5px 14px', borderRadius: '20px', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '10px' }}>
                       🏆 लंडन बुक ऑफ रेकॉर्ड्स नोंद · जगातील सर्वांत उंच पुतळा (१८० फूट)
                     </div>
-                    <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.75rem', margin: '0 0 10px', fontWeight: 900 }}>
+                    <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.75rem', margin: '0 0 10px', fontWeight: 900 }}>
                       "स्टॅच्यू ऑफ हिंदूभूषण" — छत्रपती संभाजी महाराज यांचा जागतिक कीर्तीचा १८० फूट पुतळा
                     </h3>
                     <p style={{ color: '#451A03', fontSize: '0.98rem', lineHeight: 1.75, margin: '0 0 16px' }}>
@@ -1473,10 +1473,10 @@ export default function GenericArticlePage() {
                     <div style={{ display: 'inline-block', background: '#C73800', color: '#fff', fontSize: '0.78rem', fontWeight: 800, padding: '4px 12px', borderRadius: '20px', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '8px' }}>
                       🚩 अखंड स्वाभिमानाची व सार्वभौमत्वाची संस्कृत राजमुद्रा
                     </div>
-                    <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.65rem', margin: '0 0 8px', fontWeight: 900 }}>
+                    <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.65rem', margin: '0 0 8px', fontWeight: 900 }}>
                       शंभूछत्रपतींची राजमुद्रा — सखोल अर्थ, पदच्छेद व लोककल्याण
                     </h3>
-                    <div style={{ background: '#7F1D1D', color: '#FEF3C7', padding: '12px 18px', borderRadius: '10px', fontSize: '1.08rem', fontWeight: 700, letterSpacing: '0.5px', fontFamily: "'Baloo 2', serif", margin: '12px 0 16px', borderLeft: '4px solid #F59E0B', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>
+                    <div style={{ background: 'linear-gradient(135deg, #C73800 0%, #EA580C 100%)', color: '#FEF3C7', padding: '12px 18px', borderRadius: '10px', fontSize: '1.08rem', fontWeight: 700, letterSpacing: '0.5px', fontFamily: "'Baloo 2', serif", margin: '12px 0 16px', borderLeft: '4px solid #F59E0B', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>
                       || श्री शंभो: शिवजातस्य मुद्रा द्यौरिव राजते | यदंकसेविनी लेखा वर्तते कस्य नोपरि ||
                     </div>
                     <p style={{ color: '#451A03', fontSize: '0.98rem', lineHeight: 1.7, margin: '0 0 14px' }}>
@@ -1500,7 +1500,7 @@ export default function GenericArticlePage() {
                   <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
                     ⏳ ऐतिहासिक सुवर्ण टप्पे
                   </span>
-                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
                     शंभूकाल गौरवशाली कालक्रम (१६५७ – १६८९)
                   </h3>
                   <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
@@ -1528,7 +1528,7 @@ export default function GenericArticlePage() {
                     <div key={idx} style={{ background: '#FFFDF9', border: '1.5px solid #FDE68A', padding: '16px 20px', borderRadius: '14px', position: 'relative', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
                       <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'linear-gradient(180deg, #EA580C, #F59E0B)' }}></div>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <span style={{ background: '#7F1D1D', color: '#FEF3C7', padding: '3px 10px', borderRadius: '6px', fontWeight: 800, fontSize: '0.85rem', fontFamily: "'Baloo 2', sans-serif" }}>
+                        <span style={{ background: 'linear-gradient(135deg, #C73800 0%, #EA580C 100%)', color: '#FEF3C7', padding: '3px 10px', borderRadius: '6px', fontWeight: 800, fontSize: '0.85rem', fontFamily: "'Baloo 2', sans-serif" }}>
                           {t.year}
                         </span>
                         <span style={{ fontSize: '0.75rem', color: '#9CA3AF', fontWeight: 700 }}>टप्पा #{idx + 1}</span>
@@ -1550,7 +1550,7 @@ export default function GenericArticlePage() {
                   <span style={{ background: '#FEF2F2', color: '#991B1B', border: '1.5px solid #FECACA', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
                     ⚔️ पराक्रमी शिलेदार
                   </span>
-                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
                     शंभूकालीन निष्ठावंत शिलेदार, सेनापती व मुत्सद्दी
                   </h3>
                   <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
@@ -1613,7 +1613,7 @@ export default function GenericArticlePage() {
                           position: 'absolute',
                           top: '10px',
                           left: '10px',
-                          background: 'rgba(127, 29, 29, 0.92)',
+                          background: 'rgba(199, 56, 0, 0.95)',
                           color: '#FEF08A',
                           fontSize: '0.74rem',
                           fontWeight: 800,
@@ -1626,7 +1626,7 @@ export default function GenericArticlePage() {
                         </span>
                       </div>
                       <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                        <h4 style={{ margin: '0 0 6px', color: '#7F1D1D', fontSize: '1.14rem', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>
+                        <h4 style={{ margin: '0 0 6px', color: '#C73800', fontSize: '1.14rem', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>
                           {s.name}
                         </h4>
                         <div style={{ background: '#FFFBEB', color: '#92400E', padding: '6px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, fontStyle: 'italic', marginBottom: '10px', borderLeft: '3px solid #F59E0B' }}>
@@ -1647,7 +1647,7 @@ export default function GenericArticlePage() {
                   <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
                     📖 अलौकिक विद्वत्ता
                   </span>
-                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.75rem', margin: '8px 0 6px', fontWeight: 900 }}>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.75rem', margin: '8px 0 6px', fontWeight: 900 }}>
                     छत्रपती संभाजी महाराजांची अद्वितीय साहित्य संपदा
                   </h3>
                   <p style={{ color: '#6B7280', fontSize: '0.94rem', margin: 0 }}>
@@ -1657,7 +1657,7 @@ export default function GenericArticlePage() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
                   <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '12px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-                    <div style={{ display: 'inline-block', background: '#7F1D1D', color: '#FEF3C7', fontSize: '0.75rem', fontWeight: 800, padding: '2px 8px', borderRadius: '6px', marginBottom: '6px' }}>
+                    <div style={{ display: 'inline-block', background: 'linear-gradient(135deg, #C73800 0%, #EA580C 100%)', color: '#FEF3C7', fontSize: '0.75rem', fontWeight: 800, padding: '2px 8px', borderRadius: '6px', marginBottom: '6px' }}>
                       संस्कृत महाग्रंथ
                     </div>
                     <b style={{ color: '#9A3412', display: 'block', fontSize: '1.15rem', fontFamily: "'Baloo 2', sans-serif" }}>बुधभूषणम् (Budhabhushan)</b>
@@ -1704,7 +1704,7 @@ export default function GenericArticlePage() {
                   <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
                     🛡️ अजेय रणनीती
                   </span>
-                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
                     शंभूकालीन अजोड युद्धनीती व जागतिक विक्रम
                   </h3>
                   <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
@@ -1714,7 +1714,7 @@ export default function GenericArticlePage() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '18px' }}>
                   <div style={{ background: '#FFFFFF', borderRadius: '14px', padding: '22px', border: '1.5px solid #FDE68A', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', textAlign: 'center' }}>
-                    <div style={{ fontSize: '2.4rem', color: '#B91C1C', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>१२८</div>
+                    <div style={{ fontSize: '2.4rem', color: '#C73800', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>१२८</div>
                     <b style={{ color: '#9A3412', fontSize: '1.1rem', display: 'block', margin: '4px 0 8px', fontFamily: "'Baloo 2', sans-serif" }}>अपराजित लढाया (१००% विजय)</b>
                     <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6 }}>
                       ९ वर्षांच्या राजवटीत सलग १२८ लढाया लढून एकही लढाई न हरणारे छत्रपती संभाजी महाराज हे जगाच्या लष्करी इतिहासातील एकमेव अपराजित सम्राट आहेत.
@@ -1722,7 +1722,7 @@ export default function GenericArticlePage() {
                   </div>
 
                   <div style={{ background: '#FFFFFF', borderRadius: '14px', padding: '22px', border: '1.5px solid #FDE68A', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', textAlign: 'center' }}>
-                    <div style={{ fontSize: '2.4rem', color: '#B91C1C', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>५</div>
+                    <div style={{ fontSize: '2.4rem', color: '#C73800', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>५</div>
                     <b style={{ color: '#9A3412', fontSize: '1.1rem', display: 'block', margin: '4px 0 8px', fontFamily: "'Baloo 2', sans-serif" }}>आघाड्यांवर एकाच वेळी युद्ध</b>
                     <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6 }}>
                       उत्तरेकडून मुघल (औरंगजेब), पश्चिमेकडून सिद्दी, दक्षिणेकडून आदिलशाही व कुतुबशाही आणि समुद्रात पोर्तुगीज — पाचही आघाड्यांवर एकाच वेळी मराठा भगवा फडकावला.
@@ -1730,7 +1730,7 @@ export default function GenericArticlePage() {
                   </div>
 
                   <div style={{ background: '#FFFFFF', borderRadius: '14px', padding: '22px', border: '1.5px solid #FDE68A', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', textAlign: 'center' }}>
-                    <div style={{ fontSize: '2.4rem', color: '#B91C1C', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>६ वर्षे</div>
+                    <div style={{ fontSize: '2.4rem', color: '#C73800', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>६ वर्षे</div>
                     <b style={{ color: '#9A3412', fontSize: '1.1rem', display: 'block', margin: '4px 0 8px', fontFamily: "'Baloo 2', sans-serif" }}>रामशेज किल्ला अभेद्य वेढा</b>
                     <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6 }}>
                       अवघ्या ६०० मावळ्यांनी मुघलांच्या ५०,००० फौजेला नाशिकजवळ ६ वर्षे रोखून धरले. जगातील सर्वात प्रदीर्घ यशस्वी किल्ला संरक्षणाचा हा अद्वितीय विक्रम आहे.
@@ -1738,7 +1738,7 @@ export default function GenericArticlePage() {
                   </div>
 
                   <div style={{ background: '#FFFFFF', borderRadius: '14px', padding: '22px', border: '1.5px solid #FDE68A', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', textAlign: 'center' }}>
-                    <div style={{ fontSize: '2.4rem', color: '#B91C1C', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>०</div>
+                    <div style={{ fontSize: '2.4rem', color: '#C73800', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>०</div>
                     <b style={{ color: '#9A3412', fontSize: '1.1rem', display: 'block', margin: '4px 0 8px', fontFamily: "'Baloo 2', sans-serif" }}>किल्ले मुघलांच्या स्वाधीन</b>
                     <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6 }}>
                       औरंगजेब ५ लाख सैन्य, शेकडो तोफा आणि प्रचंड खजिना घेऊन आला, परंतु शंभूराजे जिवंत असेपर्यंत मुघलांना एकही किल्ला जिंकता आला नाही.
@@ -1762,7 +1762,7 @@ export default function GenericArticlePage() {
                     <span style={{ background: '#FEF2F2', color: '#991B1B', border: '1.5px solid #FECACA', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800 }}>
                       🪔 अखंड स्वाभिमानाचे महातीर्थ
                     </span>
-                    <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.65rem', margin: '8px 0 10px', fontWeight: 900 }}>
+                    <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.65rem', margin: '8px 0 10px', fontWeight: 900 }}>
                       तुळापूर व वडू बुद्रुक — सर्वोच्च आत्मबलिदान व पेटलेला स्वातंत्र्यसंग्राम
                     </h3>
                     <p style={{ color: '#374151', fontSize: '0.96rem', lineHeight: 1.7, margin: '0 0 16px' }}>
@@ -1792,7 +1792,7 @@ export default function GenericArticlePage() {
                   <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
                     📜 ऐतिहासिक साक्ष
                   </span>
-                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
                     समकालीन परदेशी दस्तऐवज व इतिहासकारांचे उद्गार
                   </h3>
                   <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
@@ -1826,7 +1826,7 @@ export default function GenericArticlePage() {
                     <div key={idx} style={{ background: '#FFFDF9', border: '1.5px solid #FDE68A', padding: '20px', borderRadius: '16px', position: 'relative', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                       <div>
                         <div style={{ marginBottom: '12px', paddingBottom: '10px', borderBottom: '1px solid #FED7AA' }}>
-                          <b style={{ color: '#7F1D1D', display: 'block', fontSize: '1.02rem', fontFamily: "'Baloo 2', sans-serif" }}>{w.name}</b>
+                          <b style={{ color: '#C73800', display: 'block', fontSize: '1.02rem', fontFamily: "'Baloo 2', sans-serif" }}>{w.name}</b>
                           <span style={{ fontSize: '0.8rem', color: '#92400E', fontWeight: 600 }}>{w.tag}</span>
                         </div>
                         <div style={{ position: 'relative' }}>
@@ -1848,7 +1848,7 @@ export default function GenericArticlePage() {
                   <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
                     ❓ ज्ञान जिज्ञासा
                   </span>
-                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.75rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.75rem', margin: '10px 0 6px', fontWeight: 900 }}>
                     नेहमी विचारले जाणारे ऐतिहासिक प्रश्न व उत्तरे (FAQ)
                   </h3>
                   <p style={{ color: '#6B7280', fontSize: '0.94rem', margin: 0 }}>
@@ -1908,7 +1908,7 @@ export default function GenericArticlePage() {
                           alignItems: 'center',
                           justifyContent: 'space-between',
                           gap: '12px',
-                          color: '#7F1D1D',
+                          color: '#C73800',
                           fontSize: '1.02rem',
                           fontWeight: 800,
                           fontFamily: "'Baloo 2', sans-serif"
