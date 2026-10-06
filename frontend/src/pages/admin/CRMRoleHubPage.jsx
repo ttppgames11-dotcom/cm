@@ -129,10 +129,10 @@ const CRM_ROLES = [
     subtitle: 'डिजिटल ओळखपत्र, व्यवसाय संदर्भ व प्रोफाइल व्यवस्थापन',
     route: '/dashboard',
     icon: '👤',
-    gradient: 'linear-gradient(135deg, #4338ca, #6366f1)',
-    accentColor: '#6366f1',
+    gradient: 'linear-gradient(135deg, #FF6A00, #EA580C)',
+    accentColor: '#EA580C',
     badge: 'सदस्य कक्ष (MEMBER)',
-    targetOfficial: 'नोंदणीकृत मराठा महासंघ सदस्य व व्यावसायिक',
+    targetOfficial: 'नोंदणीकृत Connect Maratha सदस्य व व्यावसायिक',
     scopeText: 'वैयक्तिक प्रोफाइल • डिजिटल कार्ड • स्थानिक चॅप्टर',
     features: [
       'राजमुद्रा प्रमाणित डिजिटल सदस्य ओळखपत्र डाउनलोड',

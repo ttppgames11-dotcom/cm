@@ -50,7 +50,7 @@ export const defaultSiteContent = {
     manufacturersHero: "/assets/images/generated/maratha_manufacturers_hero.jpg"
   },
   texts: {
-    tagline: "अखिल भारतीय मराठा समाजाचे अधिकृत डिजिटल व्यासपीठ",
+    tagline: "Connect Maratha — जागतिक मराठा समाजाचे अधिकृत डिजिटल व्यासपीठ",
     missionStatement: "मराठा समाजातील प्रत्येक घटकाचा सर्वांगीण आर्थिक, शैक्षणिक, सांस्कृतिक व सामाजिक विकास साधणे.",
     visionStatement: "जागतिक पातळीवर संघटित, स्वाभिमानी व आत्मनिर्भर मराठा समाज आणि उद्योजक पिढीची निर्मिती करणे.",
     emergencyNotice: "२४x७ मराठा समाज साहाय्य व आपत्कालीन रक्तदाता समन्वय कक्ष सदैव तत्पर.",
@@ -87,7 +87,7 @@ export const defaultSiteContent = {
   },
   forms: {
     memberRegistration: {
-      title: "महासंघ अधिकृत डिजिटल सदस्यता नोंदणी",
+      title: "Connect Maratha अधिकृत डिजिटल सदस्यता नोंदणी",
       enabled: true,
       instructions: "कृपया आधार/ओळखपत्रावरील नाव आणि अचूक तपशील प्रविष्ट करा.",
       welcomeNotice: "नोंदणीनंतर लगेच डिजिटल ओळखपत्र सक्रिय होईल."
@@ -102,7 +102,7 @@ export const defaultSiteContent = {
       title: "मराठा व्यवसाय / फर्म नोंदणी",
       enabled: true,
       approvalRequired: true,
-      discountNotice: "मराठा महासंघ सदस्यांसाठी विशेष व्यावसायिक सवलत."
+      discountNotice: "Connect Maratha सदस्यांसाठी विशेष व्यावसायिक सवलत."
     },
     contactSupport: {
       email: "support@connectmaratha.com",
@@ -112,7 +112,7 @@ export const defaultSiteContent = {
   },
   footer: {
     copyright: "© २०२६ Connect Maratha (कनेक्ट मराठा) • सर्व हक्क राखीव",
-    poweredBy: "अखिल भारतीय मराठा महासंघ डिजिटल मिशन"
+    poweredBy: "Connect Maratha डिजिटल मिशन"
   }
 };
 

@@ -188,7 +188,7 @@ export default function SocialWorkersPage() {
                 field: v.field || 'आपत्ती व्यवस्थापन व सामाजिक मदत',
                 location: v.district || 'महाराष्ट्र',
                 experience: v.availability ? `उपलब्धता: ${v.availability}` : 'सक्रिय स्वयंसेवक',
-                impact: `मराठा महासंघ सेवा कक्ष स्वयंसेवक (रक्तगट: ${v.bloodGroup || 'O+'})`,
+                impact: `Connect Maratha सेवा कक्ष स्वयंसेवक (रक्तगट: ${v.bloodGroup || 'O+'})`,
                 icon: '🤝',
                 category: 'all',
                 phone: v.phone,

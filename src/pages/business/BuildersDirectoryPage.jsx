@@ -19,7 +19,7 @@ export const initialBuildersData = [
     image: '/assets/images/real-estate-pune-apartments.jpg',
     amenities: ['ऑलिम्पिक साइज पूल', 'क्लबहाऊस व जिम', 'मराठा वास्तू सौंदर्य', 'EV चार्जिंग स्टेशन'],
     badge: 'पुणे प्रीमियर बिल्डर',
-    discount: 'मराठा महासंघ सदस्यांसाठी थेट ३% विशेष सवलत',
+    discount: 'Connect Maratha सदस्यांसाठी थेट ३% विशेष सवलत',
     desc: 'पुणे शहरातील विश्वासार्ह व दर्जेदार गृहप्रकल्प उभारणीतील अग्रगण्य मराठा ब्रँड. वेळेवर ताबा व १००% कायदेशीर पारदर्शकता.'
   },
   {
@@ -214,7 +214,7 @@ export default function BuildersDirectoryPage() {
             image: b.image || (initialBuildersData[idx % initialBuildersData.length]?.image) || '/assets/images/real-estate-pune-apartments.jpg',
             amenities: b.amenities || ['क्लबहाऊस', 'पार्किंग', 'सुरक्षा', 'सोलर वॉटर'],
             badge: b.badge || 'रेरा अधिकृत',
-            discount: b.discountForMembers || b.discount || 'मराठा महासंघ सदस्यांसाठी विशेष सवलत',
+            discount: b.discountForMembers || b.discount || 'Connect Maratha सदस्यांसाठी विशेष सवलत',
             desc: b.desc || 'विश्वासार्ह व दर्जेदार गृहप्रकल्प उभारणीतील अग्रगण्य मराठा ब्रँड.'
           }));
           setBuilders(mapped);
@@ -351,7 +351,7 @@ export default function BuildersDirectoryPage() {
           }}>
             <span>🚩 CONNECT मराठा</span>
             <span style={{ color: '#FFFFFF', opacity: 0.6 }}>|</span>
-            <span>बांधकाम व रिअल इस्टेट महासंघ</span>
+            <span>बांधकाम व रिअल इस्टेट मंच</span>
           </div>
 
           <h1 style={{

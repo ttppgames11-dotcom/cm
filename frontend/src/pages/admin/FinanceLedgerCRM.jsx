@@ -151,7 +151,7 @@ export default function FinanceLedgerCRM() {
               <span>80G प्रमाणित</span>
             </div>
             <h1 style={{ margin: '4px 0 8px 0', fontSize: '2.1rem', fontWeight: 900, color: '#FFFFFF' }}>
-              महासंघ वित्त, लेजर व 80G ऑडिट नियंत्रण केंद्र
+              Connect Maratha वित्त, लेजर व 80G ऑडिट नियंत्रण केंद्र
             </h1>
             <p style={{ margin: 0, color: '#CBD5E1', fontSize: '0.95rem' }}>
               देणगी पावत्या, सदस्यत्व वर्गणी संकलन, खर्च व्हाउचर मंजुरी आणि वार्षिक ऑडिट ताळेबंद.
@@ -343,7 +343,7 @@ export default function FinanceLedgerCRM() {
                         </td>
                         <td style={{ padding: '14px 16px' }}>
                           <span style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA', padding: '3px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>
-                            {d.cause || d.campaignTitle || 'अखिल भारतीय मराठा महासंघ सामाजिक निधी'}
+                            {d.cause || d.campaignTitle || 'Connect Maratha सामाजिक निधी'}
                           </span>
                         </td>
                         <td style={{ padding: '14px 16px', fontWeight: 800, color: '#0F766E', fontSize: '0.95rem' }}>

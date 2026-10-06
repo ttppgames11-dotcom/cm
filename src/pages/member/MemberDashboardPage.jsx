@@ -322,7 +322,7 @@ export default function MemberDashboardPage() {
                     आपले अधिकृत डिजिटल सभासद ओळखपत्र (Smart ID Card)
                   </h2>
                   <span style={{ fontSize: '0.8rem', color: '#6B7280' }}>
-                    अखिल भारतीय कनेक्ट मराठा महासंघ • प्रमाणित डिजिटल ओळख
+                    Connect Maratha • प्रमाणित डिजिटल ओळख
                   </span>
                 </div>
               </div>
@@ -404,11 +404,11 @@ export default function MemberDashboardPage() {
                             style={{ width: '38px', height: '38px', borderRadius: '50%', border: '1.5px solid #F59E0B', background: '#FFFFFF', padding: '1px', objectFit: 'contain' }}
                           />
                           <div>
-                            <div style={{ fontSize: '1.05rem', fontWeight: 900, letterSpacing: '0.6px', color: '#7C1D05' }}>
+                            <div style={{ fontSize: '1.05rem', fontWeight: 900, letterSpacing: '0.6px', color: '#EA580C' }}>
                               CONNECT MARATHA
                             </div>
                             <div style={{ fontSize: '0.64rem', color: '#64748B', letterSpacing: '0.5px', fontWeight: 600 }}>
-                              अखिल भारतीय अधिकृत सभासद ओळखपत्र
+                              Connect Maratha अधिकृत सभासद ओळखपत्र
                             </div>
                           </div>
                         </div>
@@ -609,8 +609,8 @@ export default function MemberDashboardPage() {
                   alt="Connect Maratha Seal"
                   style={{ height: '62px', objectFit: 'contain', marginBottom: '6px' }}
                 />
-                <div style={{ fontFamily: 'Baloo 2', fontSize: '1.28rem', fontWeight: 800, color: '#7C1D05' }}>
-                  अखिल भारतीय मराठा महासंघ • कनेक्ट मराठा परिषद
+                <div style={{ fontFamily: 'Baloo 2', fontSize: '1.28rem', fontWeight: 800, color: '#EA580C' }}>
+                  Connect Maratha • कनेक्ट मराठा परिषद
                 </div>
                 <div style={{ fontSize: '0.78rem', color: '#B45309', fontWeight: 800, letterSpacing: '1px' }}>
                   || स्वराज्य समाज संघटन व अधिकृत सभासदत्व गौरव पत्र ||

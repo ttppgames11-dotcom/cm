@@ -560,7 +560,7 @@ export default function SuperAdminDashboardPage() {
               केंद्रीय प्रशासकीय व्यवस्थापन केंद्र (Admin Management Hub)
             </h1>
             <p style={{ margin: 0, color: '#9A3412', fontSize: '1rem', fontWeight: 700 }}>
-              सर्व ३६ जिल्हे, वापरकर्ते, भूमिका, डॉक्टर्स, सेवा, हॉटेल्स आणि महासंघ माहितीवरील संपूर्ण रीअल-टाइम CRUD नियंत्रण.
+              सर्व ३६ जिल्हे, वापरकर्ते, भूमिका, डॉक्टर्स, सेवा, हॉटेल्स आणि Connect Maratha माहितीवरील संपूर्ण रीअल-टाइम CRUD नियंत्रण.
             </p>
           </div>
           <div style={{ display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -1220,7 +1220,7 @@ export default function SuperAdminDashboardPage() {
           <div>
             <div style={{ marginBottom: '26px' }}>
               <h3 style={{ margin: '0 0 4px 0', fontSize: '1.35rem', color: '#431407', fontWeight: 900 }}>🛡️ पद व अधिकार मॅट्रिक्स (Roles & Access Control)</h3>
-              <p style={{ margin: 0, color: '#64748B', fontSize: '0.95rem', fontWeight: 600 }}>महासंघातील प्रत्येक पदाचे अधिकार, कार्यकक्षा व नियमन रचना.</p>
+              <p style={{ margin: 0, color: '#64748B', fontSize: '0.95rem', fontWeight: 600 }}>Connect Maratha मधील प्रत्येक पदाचे अधिकार, कार्यकक्षा व नियमन रचना.</p>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
@@ -1526,7 +1526,7 @@ export default function SuperAdminDashboardPage() {
                       <option value="chapter_president">💼 chapter_president (चॅप्टर अध्यक्ष)</option>
                       <option value="district_admin">📍 district_admin (जिल्हा प्रमुख)</option>
                       <option value="seva_helpdesk">🩺 seva_helpdesk (मदत कक्ष)</option>
-                      <option value="admin">🏛️ admin (महासंघ व्यवस्थापक)</option>
+                      <option value="admin">🏛️ admin (Connect Maratha व्यवस्थापक)</option>
                       <option value="ceo">🦅 ceo (मुख्य कार्यकारी अधिकारी)</option>
                       <option value="superadmin">👑 superadmin (सर्वोच्च प्रशासक)</option>
                     </select>

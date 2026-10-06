@@ -265,7 +265,7 @@ export default function MarathaDairyPage() {
           }}>
             <span>🚩 CONNECT मराठा</span>
             <span style={{ color: '#FFFFFF', opacity: 0.6 }}>|</span>
-            <span>दुग्ध व्यवसाय व गो-संवर्धन महासंघ</span>
+            <span>दुग्ध व्यवसाय व गो-संवर्धन मंच</span>
           </div>
 
           <p style={{

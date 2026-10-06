@@ -105,7 +105,7 @@ export default function WhyJoinPage() {
             marginBottom: '16px'
           }}>
             <span>🚩</span>
-            <span>अखिल भारतीय डिजिटल महासंघ • अधिकृत सभासदत्व</span>
+            <span>Connect Maratha • अधिकृत सभासदत्व</span>
           </div>
 
           <h1 style={{

@@ -247,7 +247,7 @@ export default function DigitalMemberCardPage({ defaultTab }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <span style={{ color: '#FCD34D', fontWeight: 800 }}>🚩 CONNECT MARATHA</span>
             <span>•</span>
-            <span>अखिल भारतीय अधिकृत सभासद ओळखपत्र व डिजिटल QR प्रमाणीकरण व्यासपीठ</span>
+            <span>Connect Maratha अधिकृत सभासद ओळखपत्र व डिजिटल QR प्रमाणीकरण व्यासपीठ</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <span>२४x७ समाज हेल्पलाईन: <strong>१८००-१२३-१६७४</strong></span>
@@ -546,8 +546,8 @@ export default function DigitalMemberCardPage({ defaultTab }) {
                   alt="Connect Maratha Seal"
                   style={{ height: '76px', objectFit: 'contain', marginBottom: '8px' }}
                 />
-                <div style={{ fontFamily: 'Baloo 2', fontSize: '1.45rem', fontWeight: 800, color: '#7C1D05', letterSpacing: '1px' }}>
-                  अखिल भारतीय मराठा महासंघ • कनेक्ट मराठा परिषद
+                <div style={{ fontFamily: 'Baloo 2', fontSize: '1.45rem', fontWeight: 800, color: '#EA580C', letterSpacing: '1px' }}>
+                  Connect Maratha • कनेक्ट मराठा परिषद
                 </div>
                 <div style={{ fontSize: '0.85rem', color: '#B45309', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1.5px' }}>
                   || स्वराज्य समाज संघटन व अधिकृत सभासदत्व गौरव पत्र ||
@@ -812,7 +812,7 @@ export default function DigitalMemberCardPage({ defaultTab }) {
                           CONNECT MARATHA
                         </div>
                         <div style={{ fontSize: '0.65rem', color: '#CBD5E1', letterSpacing: '0.5px' }}>
-                          अखिल भारतीय अधिकृत सभासद ओळखपत्र
+                          Connect Maratha अधिकृत सभासद ओळखपत्र
                         </div>
                       </div>
                     </div>
@@ -1273,9 +1273,9 @@ export default function DigitalMemberCardPage({ defaultTab }) {
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '18px' }}>
                   <div>
-                    <h3 style={{ margin: '0 0 6px', fontSize: '1.35rem', color: '#7C1D05', fontFamily: 'Baloo 2', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ margin: '0 0 6px', fontSize: '1.35rem', color: '#EA580C', fontFamily: 'Baloo 2', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span>🛡️</span>
-                      <span>अखिल भारतीय मराठा महासंघ — केंद्रीय डिजिटल पडताळणी केंद्र</span>
+                      <span>Connect Maratha — केंद्रीय डिजिटल पडताळणी केंद्र</span>
                     </h3>
                     <p style={{ color: '#4B5563', fontSize: '0.88rem', margin: 0, lineHeight: 1.5 }}>
                       कोणत्याही सभासद ओळखपत्र, पावती किंवा प्रमाणपत्राचा कोड/आयडी प्रविष्ट करा अथवा कॅमेरा स्कॅन करा.
