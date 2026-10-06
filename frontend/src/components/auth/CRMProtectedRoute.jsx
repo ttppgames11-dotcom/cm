@@ -22,12 +22,21 @@ export const CRM_AUTHORIZED_ROLES = [
  * Regular users (or unauthenticated visitors) are redirected to /crm/login.
  */
 export default function CRMProtectedRoute({ children, allowedRoles }) {
-  if (import.meta.env.DEV) return children;
-
   const { user, loading } = useAuth();
   const location = useLocation();
 
-  if (loading) {
+  // Rehydrate from localStorage immediately so deployed routes don't kick out active sessions
+  let activeUser = user;
+  if (!activeUser) {
+    try {
+      const saved = localStorage.getItem('cm_user_data');
+      if (saved && localStorage.getItem('cm_logged_in') === 'true') {
+        activeUser = JSON.parse(saved);
+      }
+    } catch {}
+  }
+
+  if (loading && !activeUser) {
     return (
       <div style={{
         minHeight: '60vh',
@@ -36,37 +45,37 @@ export default function CRMProtectedRoute({ children, allowedRoles }) {
         justifyContent: 'center',
         flexDirection: 'column',
         gap: '16px',
-        color: '#7C1D05'
+        color: '#EA580C'
       }}>
         <div style={{ fontSize: '2.5rem' }}>🔒</div>
-        <div style={{ fontWeight: 700, fontSize: '1.1rem' }}>प्रशासकीय सुरक्षा पडताळणी सुरू आहे...</div>
-        <div style={{ color: '#64748B', fontSize: '0.9rem' }}>Verifying CRM credentials & security tokens</div>
+        <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#EA580C' }}>प्रशासकीय सुरक्षा पडताळणी सुरू आहे...</div>
+        <div style={{ color: '#7C2D12', fontSize: '0.9rem' }}>Verifying CRM credentials & security tokens</div>
       </div>
     );
   }
 
   // If user is not logged in at all, redirect to the dedicated CRM Login
-  if (!user || !user.id) {
-    return <Navigate to="/crm/login" state={{ from: location, reason: 'login_required' }} replace />;
+  if (!activeUser || !activeUser.id) {
+    return <Navigate to="/admin/crm-login" state={{ from: location, reason: 'login_required' }} replace />;
   }
 
   // Check if current user has an authorized staff/CRM role
-  const isCrmStaff = CRM_AUTHORIZED_ROLES.includes(user.role);
+  const isCrmStaff = CRM_AUTHORIZED_ROLES.includes(activeUser.role);
 
   if (!isCrmStaff) {
     // User is logged in, but only as a standard member or general public account
-    return <Navigate to="/crm/login" state={{ from: location, reason: 'unauthorized_member' }} replace />;
+    return <Navigate to="/admin/crm-login" state={{ from: location, reason: 'unauthorized_member' }} replace />;
   }
 
   // If this specific CRM page requires specific roles (e.g. only SuperAdmin or only CEO)
   if (allowedRoles && allowedRoles.length > 0) {
     // SuperAdmin and general admin have universal access across all CRM modules
-    const isSuperOrAdmin = user.role === 'superadmin' || user.role === 'admin';
-    const hasSpecificRole = allowedRoles.includes(user.role);
+    const isSuperOrAdmin = activeUser.role === 'superadmin' || activeUser.role === 'admin';
+    const hasSpecificRole = allowedRoles.includes(activeUser.role);
 
     if (!isSuperOrAdmin && !hasSpecificRole) {
       // Officer is logged into CRM, but does not have permission for this specific sub-module
-      return <Navigate to="/crm" state={{ reason: 'role_mismatch', currentRole: user.role }} replace />;
+      return <Navigate to="/crm" state={{ reason: 'role_mismatch', currentRole: activeUser.role }} replace />;
     }
   }
 

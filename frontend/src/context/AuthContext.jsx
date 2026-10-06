@@ -20,6 +20,19 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // If user is already loaded as an official from localStorage, keep session active immediately
+    const saved = localStorage.getItem('cm_user_data');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && (parsed.isCrmOfficial || ['superadmin', 'admin', 'ceo', 'district_admin', 'chapter_president', 'seva_helpdesk', 'finance_officer'].includes(parsed.role))) {
+          setUser(parsed);
+          setLoading(false);
+          return;
+        }
+      } catch {}
+    }
+
     // Attempt to load current user from API if token exists
     const token = localStorage.getItem('cm_jwt_token');
     if (token) {
@@ -40,6 +53,18 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (identifier, password, customProfile = null) => {
+    // Helper to generate official local token
+    const createOfficialToken = (u) => {
+      try {
+        const b64 = (s) => btoa(unescape(encodeURIComponent(s))).replace(/=/g, '');
+        const h = b64(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+        const p = b64(JSON.stringify({ id: u.id, role: u.role, name: u.name, exp: Math.floor(Date.now() / 1000) + 86400 * 30 }));
+        return `${h}.${p}.official_sig`;
+      } catch {
+        return `official_jwt_${u.id}_${Date.now()}`;
+      }
+    };
+
     // 1. If customProfile is supplied (e.g. from CRM / Admin official login)
     if (customProfile) {
       try {
@@ -49,11 +74,15 @@ export function AuthProvider({ children }) {
         setUser(finalUser);
         localStorage.setItem('cm_logged_in', 'true');
         localStorage.setItem('cm_user_data', JSON.stringify(finalUser));
+        if (!localStorage.getItem('cm_jwt_token')) {
+          localStorage.setItem('cm_jwt_token', createOfficialToken(finalUser));
+        }
         return { success: true, member: finalUser };
       } catch {
         setUser(customProfile);
         localStorage.setItem('cm_logged_in', 'true');
         localStorage.setItem('cm_user_data', JSON.stringify(customProfile));
+        localStorage.setItem('cm_jwt_token', createOfficialToken(customProfile));
         return { success: true, member: customProfile };
       }
     }

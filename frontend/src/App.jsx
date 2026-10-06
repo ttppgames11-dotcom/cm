@@ -445,6 +445,7 @@ export default function App() {
             {/* Dedicated Secure CRM Login Gateways */}
             <Route path="/crm/login" element={<CRMLoginPage />} />
             <Route path="/admin/login" element={<CRMLoginPage />} />
+            <Route path="/admin/crm-login" element={<CRMLoginPage />} />
 
             {/* Role-Specific Live Enterprise CRM Suite — Protected for Authenticated Staff/Admins */}
             <Route path="/crm" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
