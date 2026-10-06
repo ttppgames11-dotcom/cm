@@ -128,20 +128,63 @@ const articlesDatabase = {
   },
   'rajmata-jijau': {
     title: 'राष्ट्रमाता राजमाता जिजाऊ — हिंदवी स्वराज्याची प्रेरिका',
-    eyebrow: 'सिंदखेड राजा · शिवनेरी · पाचाड (१५९८–१६७४)',
+    eyebrow: 'सिंदखेड राजा · शिवनेरी · लाल महाल · पाचाड (१५९८–१६७४)',
+    heroBgImage: '/assets/images/real-lal-mahal-pune.jpg',
+    cardImage: '/assets/images/real-jijau-portrait.jpg',
     heroImage: '/assets/images/real-jijau-portrait.jpg',
-    tagline: 'छत्रपती शिवाजी महाराजांना घडवणाऱ्या, रयतेला न्याय देणाऱ्या आणि गुलामगिरीच्या अंधारात स्वराज्याची ज्योत पेटवणाऱ्या युगमाता.',
-    warCry: '|| जिजाऊंचे संस्कार, शिवरायांचे विचार — हेच आमचे जीवन! ||',
+    portraitTitle: 'राष्ट्रमाता राजमाता जिजाऊ माँसाहेब',
+    portraitSubtitle: 'स्वराज्य प्रेरिका व संस्कारमूर्ती',
+    badgeText: 'अस्सल ऐतिहासिक तैलचित्र',
+    tagline: 'छत्रपती शिवाजी महाराजांना घडवणाऱ्या, उध्वस्त पुण्यात सोन्याचा नांगर फिरवून रयतेचे राज्य उभारणाऱ्या, अजोड न्यायदात्री आणि अखंड महाराष्ट्राच्या वंदनीय युगमाता.',
+    warCry: '|| जिजाऊंचे संस्कार, शिवरायांचे विचार — अखंड स्वराज्याची अमर मशाल! ||',
     stats: [
-      { num: 'सिंदखेड', label: 'जन्मस्थान' },
-      { num: 'पुणे', label: 'सुवर्ण नांगराने नांगरले' },
-      { num: 'संस्कार', label: 'शिवरायांची घडण' },
-      { num: 'पाचाड', label: 'समाधी स्थळ' }
+      { num: 'सिंदखेड राजा', label: 'पवित्र जन्मस्थान' },
+      { num: 'शिवनेरी', label: 'शिवजन्माची पुण्यभूमी' },
+      { num: 'लाल महाल', label: 'पुणे जहागीर व सोन्याचा नांगर' },
+      { num: 'पाचाड', label: 'समाधी तीर्थ (रायगड)' },
+      { num: '१५९८–१६७४', label: 'जीवनकाळ (७६ वर्षे)' },
+      { num: 'स्वराज्य प्रेरिका', label: 'राष्ट्रमाता पदवी' }
     ],
     sections: [
       {
-        heading: 'स्वराज्य निर्मितीतील मातृत्व व मार्गदर्शन',
-        content: 'उध्वस्त झालेल्या पुण्यात सोन्याचा नांगर फिरवून जिजाऊंनी शेती आणि व्यापार पुन्हा सुरू केला. शिवरायांच्या बालपणापासून त्यांच्या मनात स्वाभिमान, राष्ट्रभक्ती आणि रयतेच्या रक्षणाची मूल्ये त्यांनी रुजवली.'
+        heading: '१. सिंदखेड राजा येथील जन्म व यादव कुळाचा वारसा (१२ जानेवारी १५९८)',
+        content: '१२ जानेवारी १५९८ रोजी विदर्भातील सिंदखेड राजा (बुलढाणा) येथे लखुजीराव जाधवराव व म्हाळसाबाई यांच्या पोटी राष्ट्रमाता जिजाऊंचा जन्म झाला. देवगिरीच्या यादव सम्राटांच्या थेट वंशातील हे वैभवशाली घराणे. बालपणापासूनच जिजाऊंनी केवळ राजवैभव न पाहता, तलवारबाजी, दांडपट्टा, युद्धशास्त्र, अश्वारोहण आणि दख्खनच्या राजकारणाचे सखोल धडे गिरवले. परकीय सत्ताधीशांच्या दरबारातील मराठ्यांची अंतर्गत भांडणे पाहून "आपले स्वतःचे रयतेचे राज्य हवे" ही तळमळ त्यांच्या मनात बालपणीच निर्माण झाली.'
+      },
+      {
+        heading: '२. शहाजीराजे भोसले यांच्याशी शुभविवाह व दोन पराक्रमी घराण्यांचे ऐक्य (१६०५)',
+        content: 'वेरुळचे शूर मालोजीराजे भोसले यांचे सुपुत्र शहाजीराजे यांच्याशी जिजाऊंचा विवाह झाला. भोसले आणि जाधवराव या महाराष्ट्रातील दोन बलाढ्य मराठा घराण्यांचा हा संगम होता. शहाजीराजांच्या अफाट शौर्याला जिजाऊंच्या मुत्सद्दीपणाची आणि कणखर मनाची भक्कम साथ लाभली. दोघांनीही परकीय पातशाह्यांची चाकरी करण्यापेक्षा स्वतंत्र मराठा सत्तेची स्वप्ने पाहिली.'
+      },
+      {
+        heading: '३. किल्ले शिवनेरीवरील खडतर दिवस, शिवाई देवीची आराधना व शिवजन्म (१६३०)',
+        content: 'शहाजीराजे जेव्हा मोगल आणि विजापूरकरांच्या आक्रमणांशी दोन हात करत होते, तेव्हा त्यांनी गरोदर जिजाऊंची सुरक्षित व्यवस्था जुन्नरच्या अभेद्य किल्ले शिवनेरीवर केली. जिजाऊंनी गडावरील कुलस्वामिनी शिवाई देवीची अखंड आराधना केली आणि प्रार्थना केली: "आई भवानी, परकीय गुलामगिरी नष्ट करून रयतेला सुखी ठेवणारा, न्यायाची प्रतिष्ठापना करणारा पुत्र माझ्या पोटी जन्माला घाल!" अखेर १९ फेब्रुवारी १६३० रोजी याच शिवनेरीवर महाराष्ट्राचे भाग्यसूर्य छत्रपती शिवाजी महाराज जन्माला आले.'
+      },
+      {
+        heading: '४. उध्वस्त पुण्यात प्रवेश, सोन्याचा नांगर व लाल महालाची स्थापना (१६३६–१६४०)',
+        content: '१६३० च्या सुमारास विजापूरच्या मुरार जगदेवाने पुण्यावर गाढवाचा नांगर फिरवून, लोखंडी पहार जमिनीत ठोकून "हे शहर शापित व उध्वस्त आहे, येथे जो वस्ती करेल त्याचा विनाश होईल" असा विटाळ लावला होता. जिजाऊ माँसाहेबांनी बाल शिवरायांसह पुण्यात पाऊल ठेवले. ती शापित पहार उखडून फेकली आणि बाल शिवबांच्या हातात सोन्याचा नांगर देऊन पुण्याची भूमी पवित्रपणे नांगरून काढली. विस्कटलेली प्रजा, शेतकरी, कारागीर यांना कौल देऊन बोलावले आणि राहण्यासाठी लाल महाल उभारला.'
+      },
+      {
+        heading: '५. बाल शिवरायांची अलौकिक जडणघडण व संस्कारमूर्ती आई',
+        content: 'जिजाऊ केवळ माता नव्हत्या, तर त्या शिवरायांच्या पहिल्या गुरू आणि रणनीतीकार होत्या. बाल वयातच त्यांनी शिवबांना रामायण, महाभारत आणि महाराष्ट्रातील संतांच्या शिकवणीतून धर्म, नीती व न्यायाचे संस्कार दिले. "रयतेचे रक्षण करणे हाच खरा राजधर्म आहे" ही शिकवण मनात बिंबवली. शस्त्रास्त्रांचे प्रशिक्षण, दांडपट्टा, अश्वविद्या, आणि सह्याद्रीतील मावळ्यांशी भावनिक नाते जोडण्याची प्रेरणा जिजाऊंनीच दिली.'
+      },
+      {
+        heading: '६. कुशल प्रशासक, रयतेची आई व ऐतिहासिक निस्पृह न्यायनिवाडे',
+        content: 'छत्रपती शिवराय मोहिमेवर असताना स्वराज्याचा संपूर्ण मुलकी आणि न्याय कारभार जिजाऊ माँसाहेब सांभाळत असत. त्यांच्या दरबारात गरीब-श्रीमंत असा भेद नव्हता. रांझे गावच्या बाबाजी गुजर (पाटील) याने एका गरीब स्त्रीवर अत्याचार केल्याचे समजताच, जिजाऊंनी कसलाही मुलाहिजा न बाळगता त्याचे हात-पाय तोडण्याचा कडक शासन आदेश दिला. महिलांच्या अब्रूचे रक्षण हे स्वराज्याचे सर्वोच्च मूल्य जिजाऊंनीच प्रस्थापित केले.'
+      },
+      {
+        heading: '७. संकटसमयी अढळ मनोधैर्य व मावळ्यांना पाठीशी उभे करणे',
+        content: 'शहाजीराजे विजापूरच्या कैदेत असताना, अफझलखानाने तुळजापूर-पंढरपूर उद्ध्वस्त करत स्वराज्यावर चाल केली तेव्हा, पन्हाळगडावर शिवराय वेढ्यात अडकले असताना किंवा शिवराय-शंभूराजे आग्र्याच्या कैदेत असताना — जिजाऊ माँसाहेबांनी जराही धीर सोडला नाही. त्या स्वतः मावळ खोऱ्यातील सरदारांना एकत्र करत म्हणत, "शिवबा संकटावर मात करून सुखरूप परत येईल, तोपर्यंत स्वराज्याची एकही इंच जमीन शत्रूच्या हाती जाता कामा नये!"'
+      },
+      {
+        heading: '८. बजाजी निंबाळकरांचे शुद्धीकरण — पुरोगामी सामाजिक क्रांती',
+        content: 'विजापूरच्या आदिलशहाने फलटणचे बजाजी निंबाळकर यांना बळजबरीने बाटवून मुसलमान केले होते. जेव्हा बजाजींना पुन्हा स्वधर्मात यायचे होते, तेव्हा तत्कालीन सनातनी समाजाने विरोध केला. परंतु जिजाऊ माँसाहेबांनी अत्यंत धाडसाने पुढे येत खंडोबाच्या साक्षीने बजाजींचे विधिवत शुद्धीकरण केले आणि स्वतःची कन्या सखुबाई यांचा विवाह बजाजींच्या मुलाशी लावून देऊन समाजातील जातीय व धार्मिक संकुचिततेला मोठा सुरुंग लावला.'
+      },
+      {
+        heading: '९. बाल शंभूराजांचे संगोपन व संस्कार (१६५७–१६६६)',
+        content: '१४ मे १६५७ रोजी पुरंदरवर संभाजी महाराजांचा जन्म झाला. आई सईबाईंच्या अकाली निधनानंतर अवघ्या दोन वर्षांच्या बाल शंभूराजांचे संगोपन जिजाऊंनी स्वतःच्या पदराखाली केले. त्यांना अत्यंत प्रेमाने वाढवले, युद्धकला, राजकारण व संस्कृतचे संस्कार दिले. वयाच्या अवघ्या नवव्या वर्षी आग्र्याला जाताना शंभूराजांना निधड्या छातीचे बाळकडू जिजाऊंनीच दिले.'
+      },
+      {
+        heading: '१०. सुवर्ण शिवराज्याभिषेक दर्शन (६ जून १६७४) व पाचाड येथे महापरिनिर्वाण (१७ जून १६७४)',
+        content: '६ जून १६७४ रोजी रायगडावर छत्रपती शिवरायांचा वैदिक सुवर्ण राज्याभिषेक झाला. ३२ मण सोन्याच्या सिंहासनावर रयतेचा राजा छत्रपती म्हणून विराजमान झालेला पाहून जिजाऊंच्या डोळ्यांत आनंदाश्रू तरळले. ७६ वर्षांच्या अखंड तपश्चर्येचे आणि हिंदवी स्वराज्याच्या संकल्पाचे चीज झाले. राज्याभिषेकानंतर अवघ्या १२ दिवसांनी, १७ जून १६७४ रोजी रायगडाच्या पायथ्याशी पाचाड येथे या युगमातेने समाधानाने देह ठेवला.'
       }
     ]
   },
@@ -1941,6 +1984,385 @@ export default function GenericArticlePage() {
                         </span>
                       </button>
                       {activeFaq === (100 + i) && (
+                        <div style={{ padding: '0 20px 18px', color: '#374151', fontSize: '0.94rem', lineHeight: 1.75, borderTop: '1px solid #FEF3C7', paddingTop: '12px' }}>
+                          {faq.a}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* SPECIAL RICH EXHIBITS: RAJMATA JIJAU */}
+          {normalizedKey === 'rajmata-jijau' && (
+            <>
+              {/* 1. सुवर्ण नांगर व लाल महाल ऐतिहासिक दालन (Lal Mahal Pune Showcase) */}
+              <div style={{ marginTop: '54px', padding: '32px', background: 'linear-gradient(135deg, #FFFDF9 0%, #FEF3C7 60%, #FFEDD5 100%)', borderRadius: '20px', border: '2px solid #F59E0B', boxShadow: '0 10px 30px rgba(199,56,0,0.08)' }}>
+                <div style={{ textAlign: 'center', marginBottom: '26px' }}>
+                  <span style={{ background: '#C73800', color: '#FEF08A', padding: '4px 16px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 900, letterSpacing: '0.5px' }}>
+                    🚩 स्वराज्याची पायाभरणी
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.9rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                    सुवर्ण नांगर, लाल महाल व उध्वस्त पुण्याचे पुनरुज्जीवन
+                  </h3>
+                  <p style={{ color: '#78350F', fontSize: '0.98rem', maxWidth: '780px', margin: '0 auto', lineHeight: 1.6, fontWeight: 600 }}>
+                    विजापूरच्या आदिलशाहीने शापित ठरवून गाढवाचा नांगर फिरवलेल्या पुण्यावर जिजाऊ माँसाहेबांनी सोन्याचा नांगर फिरवून हिंदवी स्वराज्याची भाग्यबीजे पेरली!
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '22px' }}>
+                  <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FDE68A', overflow: 'hidden', boxShadow: '0 6px 18px rgba(0,0,0,0.06)' }}>
+                    <div style={{ height: '240px', overflow: 'hidden', position: 'relative' }}>
+                      <img
+                        src="/assets/images/real-lal-mahal-pune.jpg"
+                        alt="ऐतिहासिक लाल महाल, पुणे"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                      <span style={{ position: 'absolute', bottom: '10px', left: '10px', background: 'rgba(0,0,0,0.75)', color: '#FEF3C7', padding: '4px 12px', borderRadius: '6px', fontSize: '0.76rem', fontWeight: 700 }}>
+                        🏰 ऐतिहासिक लाल महाल (पुणे)
+                      </span>
+                    </div>
+                    <div style={{ padding: '20px' }}>
+                      <h4 style={{ color: '#C73800', margin: '0 0 8px', fontSize: '1.2rem', fontFamily: 'Baloo 2', fontWeight: 800 }}>
+                        लाल महालाची स्थापना (इ.स. १६३६–१६४०)
+                      </h4>
+                      <p style={{ color: '#4B5563', fontSize: '0.9rem', lineHeight: 1.7, margin: 0 }}>
+                        शहाजीराजे कर्नाटकातील मोहिमेवर असताना त्यांनी दादोजी कोंडदेव यांच्या मदतीने जिजाऊ व बाल शिवबांसाठी पुण्यात लाल महाल बांधला. याच वास्तूत शिवरायांनी अस्त्र-शस्त्र, राजकारण आणि धर्मशास्त्राचे धडे गिरवले. पुढे याच लाल महालात छत्रपती शिवाजी महाराजांनी शाहिस्तेखानावर मध्यरात्री धाडसी छापा टाकून त्याची बोटे छाटली होती!
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FDE68A', overflow: 'hidden', boxShadow: '0 6px 18px rgba(0,0,0,0.06)' }}>
+                    <div style={{ height: '240px', overflow: 'hidden', position: 'relative', background: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <img
+                        src="/assets/images/real-jijabai-lal-mahal.jpg"
+                        alt="लाल महाल येथील जिजाऊ व बाल शिवराय शिल्प"
+                        style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                      />
+                      <span style={{ position: 'absolute', bottom: '10px', left: '10px', background: 'rgba(199,56,0,0.92)', color: '#fff', padding: '4px 12px', borderRadius: '6px', fontSize: '0.76rem', fontWeight: 700 }}>
+                        🌾 सोन्याचा नांगर व कौलनामा
+                      </span>
+                    </div>
+                    <div style={{ padding: '20px' }}>
+                      <h4 style={{ color: '#C73800', margin: '0 0 8px', fontSize: '1.2rem', fontFamily: 'Baloo 2', fontWeight: 800 }}>
+                        शापित पहार उखडली व रयतेला अभय दिले
+                      </h4>
+                      <p style={{ color: '#4B5563', fontSize: '0.9rem', lineHeight: 1.7, margin: 0 }}>
+                        मुरार जगदेवाने पुण्यात लोखंडी पहार ठोकून दहशत निर्माण केली होती. जिजाऊंनी ती पहार उखडून तेथे पांढरे निशाण लावून जनतेला निर्भयतेचा कौल दिला. शेतकऱ्यांना बैलांच्या जोड्या, अवजारे व बी-बियाणे वाटले. कसबा गणपतीची स्थापना करून पुण्यात नवीन पेठा वसवल्या आणि उध्वस्त पुणे पुन्हा वैभवाच्या शिखरावर नेले.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. किल्ले शिवनेरी — बाल शिवाजी व जिजाऊ माँसाहेब ऐतिहासिक शिल्प (Shivneri Bronze Showcase) */}
+              <div style={{ marginTop: '48px', padding: '30px', background: '#FFFFFF', borderRadius: '20px', border: '1.5px solid #FDE68A', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '30px', alignItems: 'center' }}>
+                  <div style={{ flex: '1 1 340px', minWidth: '280px', height: '360px', borderRadius: '16px', overflow: 'hidden', background: '#FFFBEB', border: '2px solid #F59E0B', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img
+                      src="/assets/images/real-jijabai-statue.jpg"
+                      alt="जिजाऊ माँसाहेब व बाल शिवाजी महाराज शिल्प"
+                      style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                    />
+                  </div>
+                  <div style={{ flex: '1 1 420px', minWidth: '300px' }}>
+                    <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800 }}>
+                      🗡️ संस्कार व शस्त्रदीक्षा
+                    </span>
+                    <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '10px 0 12px', fontWeight: 900 }}>
+                      शिवनेरीवरील 'जिजाऊ-बाल शिवराय' अजरामर शिल्प
+                    </h3>
+                    <p style={{ color: '#374151', fontSize: '0.95rem', lineHeight: 1.75, marginBottom: '16px' }}>
+                      किल्ले शिवनेरीवर उभे असलेले हे जागतिक कीर्तीचे कांस्य शिल्प म्हणजे मातृत्व आणि राष्ट्रनिर्मितीचा अद्भूत संगम आहे. आई जिजाऊ बाल शिवरायांच्या खांद्यावर हात ठेवून त्यांच्या हातात भवानी तलवार सोपवत असल्याचे हे दृश्य म्हणजे महाराष्ट्राच्या स्वातंत्र्याची खरी दीक्षा आहे.
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                      <div style={{ background: '#FFFDF9', padding: '12px', borderRadius: '10px', borderLeft: '4px solid #EA580C' }}>
+                        <b style={{ color: '#C73800', fontSize: '0.92rem', display: 'block' }}>धर्म व नीतिमूल्यांची शिकवण</b>
+                        <span style={{ fontSize: '0.82rem', color: '#4B5563' }}>रामायण-महाभारतातील प्रसंगांतून न्यायाची व परस्त्री मातृसमान मानण्याची शिकवण दिली.</span>
+                      </div>
+                      <div style={{ background: '#FFFDF9', padding: '12px', borderRadius: '10px', borderLeft: '4px solid #D97706' }}>
+                        <b style={{ color: '#C73800', fontSize: '0.92rem', display: 'block' }}>दख्खनच्या राजकारणाची जाण</b>
+                        <span style={{ fontSize: '0.82rem', color: '#4B5563' }}>पातशाह्यांचे डावपेच, फंदफितुरी ओळखण्याचे कसब आणि मुत्सद्दीपणा शिकवला.</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. जिजाऊ कालक्रम (Chronological Timeline १५९८ – १६७४) */}
+              <div style={{ marginTop: '48px', padding: '30px', background: 'linear-gradient(145deg, #FFFDF8 0%, #FEF3C7 100%)', borderRadius: '20px', border: '2px solid #FCD34D' }}>
+                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                  <span style={{ background: '#9A3412', color: '#FEF08A', padding: '4px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800 }}>
+                    ⏳ गौरवशाली जीवनप्रवास
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '8px 0 6px', fontWeight: 900 }}>
+                    जिजाऊ जीवन कालक्रम (Timeline १५९८ – १६७४)
+                  </h3>
+                  <p style={{ color: '#78350F', fontSize: '0.92rem', margin: 0 }}>
+                    ७६ वर्षांचे तपस्वी आयुष्य — पारतंत्र्याच्या अंधारातून सुवर्ण स्वराज्याच्या अभिषेकापर्यंत
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
+                  {[
+                    { year: '१२ जाने १५९८', event: 'सिंदखेड राजा जन्म', desc: 'लखुजीराव जाधवराव व म्हाळसाबाई यांच्या पोटी जन्म. यादव घराण्याचा वारसा.' },
+                    { year: 'इ.स. १६०५', event: 'शहाजीराजांशी विवाह', desc: 'वेरुळच्या भोसले घराण्यातील पराक्रमी शहाजीराजांशी शुभविवाह.' },
+                    { year: '१९ फेब्रु १६३०', event: 'शिवनेरीवर शिवजन्म', desc: 'किल्ले शिवनेरीवर शिवाई देवीच्या आशीर्वादाने बाल शिवरायांचा जन्म.' },
+                    { year: 'इ.स. १६३६', event: 'पुणे जहागीर व सोन्याचा नांगर', desc: 'उध्वस्त पुण्यात सोन्याचा नांगर फिरवून जनतेला अभय कौल दिला.' },
+                    { year: 'इ.स. १६४०', event: 'लाल महाल स्थापना', desc: 'पुण्यात लाल महालाची उभारणी व कसबा गणपती मंदिराची पुनर्स्थापना.' },
+                    { year: 'इ.स. १६४५', event: 'स्वराज्य प्रतिज्ञा पाठबळ', desc: 'रायरेश्वराच्या मंदिरात १६ व्या वर्षी घेतलेल्या स्वराज्य प्रतिज्ञेला संपूर्ण आशीर्वाद.' },
+                    { year: 'इ.स. १६४६', event: 'रांझे पाटलाचा निवाडा', desc: 'स्त्री अत्याचाराविरुद्ध बाबाजी गुजर याचे हात-पाय तोडण्याचा कडक शासन आदेश.' },
+                    { year: 'इ.स. १६४९', event: 'शहाजीराजे संकट व नेतृत्व', desc: 'शहाजीराजे विजापूरच्या कैदेत असताना स्वराज्याची धुरा कणखरपणे सांभाळली.' },
+                    { year: 'इ.स. १६५७', event: 'बाल संभाजीराजेंचे संगोपन', desc: 'सईबाईंच्या निधनानंतर बाल शंभूराजांचे आईच्या मायेने संगोपन व संस्कृत-शस्त्र संस्कार.' },
+                    { year: 'इ.स. १६५९', event: 'अफझलखान संकटसमयी खंबीरता', desc: 'अफझलखानाच्या आक्रमणात शिवरायांना आशीर्वाद व मावळ्यांचे मनोबल वाढवले.' },
+                    { year: '६ जून १६७४', event: 'सुवर्ण शिवराज्याभिषेक', desc: 'रायगडावर ३२ मण सुवर्ण सिंहासनावर शिवरायांचा राज्याभिषेक — तपश्चर्येचे चीज!' },
+                    { year: '१७ जून १६७४', event: 'पाचाड महापरिनिर्वाण', desc: 'राज्याभिषेकानंतर १२ दिवसांनी रायगडाच्या पायथ्याशी पाचाड येथे शांत समाधी.' }
+                  ].map((t, idx) => (
+                    <div key={idx} style={{ background: '#FFFFFF', padding: '16px', borderRadius: '12px', border: '1.5px solid #FDE68A', boxShadow: '0 3px 8px rgba(0,0,0,0.04)' }}>
+                      <span style={{ display: 'inline-block', background: 'linear-gradient(135deg, #C73800 0%, #EA580C 100%)', color: '#fff', fontSize: '0.78rem', fontWeight: 800, padding: '2px 10px', borderRadius: '6px', marginBottom: '6px' }}>
+                        {t.year}
+                      </span>
+                      <b style={{ color: '#9A3412', display: 'block', fontSize: '1.02rem', fontFamily: 'Baloo 2' }}>{t.event}</b>
+                      <p style={{ margin: '6px 0 0', fontSize: '0.84rem', color: '#4B5563', lineHeight: 1.55 }}>
+                        {t.desc}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 4. जिजाऊंची ४ पावन तीर्थक्षेत्रे (Four Sacred Shrines) */}
+              <div style={{ marginTop: '48px', padding: '30px', background: '#FFFFFF', borderRadius: '20px', border: '1.5px solid #FDE68A' }}>
+                <div style={{ textAlign: 'center', marginBottom: '26px' }}>
+                  <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800 }}>
+                    🌸 पवित्र तीर्थक्षेत्रे
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '8px 0 6px', fontWeight: 900 }}>
+                    राष्ट्रमाता जिजाऊ माँसाहेबांची ४ पावन तीर्थस्थळे
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.92rem', margin: 0 }}>
+                    प्रत्येक शिवभक्ताने व महाराष्ट्रीयाने नतमस्तक व्हावे अशी चार प्रेरणास्थाने
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '18px' }}>
+                  <div style={{ background: '#FFFDF9', borderRadius: '14px', border: '1.5px solid #FED7AA', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
+                    <div style={{ height: '160px', overflow: 'hidden', background: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <img src="/assets/images/real-jijau-portrait.jpg" alt="सिंदखेड राजा" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                    </div>
+                    <div style={{ padding: '16px' }}>
+                      <span style={{ color: '#D97706', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase' }}>बुलढाणा जिल्हा</span>
+                      <h4 style={{ color: '#C73800', margin: '4px 0 6px', fontSize: '1.1rem', fontFamily: 'Baloo 2' }}>१. सिंदखेड राजा (जन्मस्थान)</h4>
+                      <p style={{ fontSize: '0.85rem', color: '#4B5563', lineHeight: 1.6, margin: 0 }}>
+                        लखुजीराव जाधवांची ऐतिहासिक गढी, रंगमहाल, काळाकोट व नीळकंठेश्वर मंदिर. येथे दरवर्षी १२ जानेवारीला राष्ट्रीय जिजाऊ जन्मोत्सव साजरा होतो.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#FFFDF9', borderRadius: '14px', border: '1.5px solid #FED7AA', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
+                    <div style={{ height: '160px', overflow: 'hidden' }}>
+                      <img src="/assets/images/forts/shivneri-fort.jpg" alt="किल्ले शिवनेरी" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div style={{ padding: '16px' }}>
+                      <span style={{ color: '#D97706', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase' }}>जुन्नर, पुणे जिल्हा</span>
+                      <h4 style={{ color: '#C73800', margin: '4px 0 6px', fontSize: '1.1rem', fontFamily: 'Baloo 2' }}>२. किल्ले शिवनेरी (शिवजन्मभूमी)</h4>
+                      <p style={{ fontSize: '0.85rem', color: '#4B5563', lineHeight: 1.6, margin: 0 }}>
+                        शिवाई देवीचे मंदिर आणि बाल शिवरायांचे जन्मस्थान. जिजाऊंच्या कठीण तपश्चर्येचे आणि महाराष्ट्राच्या भाग्यसूर्याच्या उदयाचे पवित्र ठिकाण.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#FFFDF9', borderRadius: '14px', border: '1.5px solid #FED7AA', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
+                    <div style={{ height: '160px', overflow: 'hidden' }}>
+                      <img src="/assets/images/real-lal-mahal-pune.jpg" alt="लाल महाल, पुणे" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div style={{ padding: '16px' }}>
+                      <span style={{ color: '#D97706', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase' }}>पुणे शहर</span>
+                      <h4 style={{ color: '#C73800', margin: '4px 0 6px', fontSize: '1.1rem', fontFamily: 'Baloo 2' }}>३. लाल महाल (पुणे जहागीर)</h4>
+                      <p style={{ fontSize: '0.85rem', color: '#4B5563', lineHeight: 1.6, margin: 0 }}>
+                        सोन्याचा नांगर फिरवून स्थापन केलेली कर्मभूमी. शिवरायांचे बालपण, कसबा गणपती प्रतिष्ठापना आणि शाहिस्तेखानाची फजिती झालेली ऐतिहासिक वास्तू.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#FFFDF9', borderRadius: '14px', border: '1.5px solid #FED7AA', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
+                    <div style={{ height: '160px', overflow: 'hidden' }}>
+                      <img src="/assets/images/real-jijabai-samadhi-pachad.jpg" alt="पाचाड समाधी तीर्थ" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div style={{ padding: '16px' }}>
+                      <span style={{ color: '#D97706', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase' }}>रायगड पायथा</span>
+                      <h4 style={{ color: '#C73800', margin: '4px 0 6px', fontSize: '1.1rem', fontFamily: 'Baloo 2' }}>४. पाचाड समाधी (महापरिनिर्वाण)</h4>
+                      <p style={{ fontSize: '0.85rem', color: '#4B5563', lineHeight: 1.6, margin: 0 }}>
+                        रायगडाच्या पायथ्याशी जिजाऊंचा वाडा, विहीर आणि पाषाणी समाधी मंदिर. शिवरायांच्या सुवर्ण राज्याभिषेकानंतर याच पावन भूमीत जिजाऊंनी देह ठेवला.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 5. जिजाऊंचे ऐतिहासिक न्यायनिवाडे व पुरोगामी विचार (Justice & Governance) */}
+              <div style={{ marginTop: '48px', padding: '30px', background: 'linear-gradient(135deg, #FFFDF8 0%, #FEF3C7 100%)', borderRadius: '20px', border: '2px solid #FCD34D' }}>
+                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                  <span style={{ background: '#C73800', color: '#FEF08A', padding: '4px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800 }}>
+                    ⚖️ निस्पृह न्याय व सुधारणा
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '8px 0 6px', fontWeight: 900 }}>
+                    जिजाऊंचे ऐतिहासिक न्यायनिवाडे व पुरोगामी राज्यकारभार
+                  </h3>
+                  <p style={{ color: '#78350F', fontSize: '0.94rem', margin: 0 }}>
+                    जाती-धर्माच्या पलीकडे जाऊन महिलांचा सन्मान आणि रयतेचे कल्याण करणारी राज्यव्यवस्था
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+                  <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '12px', border: '1.5px solid #FDE68A' }}>
+                    <b style={{ color: '#C73800', display: 'block', fontSize: '1.08rem', fontFamily: 'Baloo 2', marginBottom: '6px' }}>
+                      ⚖️ रांझे पाटील खटला (महिला सन्मान)
+                    </b>
+                    <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.65 }}>
+                      रांझे गावचा पाटील बाबाजी गुजर याने एका गरीब स्त्रीवर अत्याचार केल्याचे समजताच, जिजाऊंनी वतनदारीची तमा न बाळगता त्याचे हात-पाय तोडण्याचे (चौरंग) फर्मान काढले. स्वराज्यात महिलांच्या केसालाही धक्का लागल्यास गय केली जाणार नाही हा धाक जिजाऊंनीच निर्माण केला.
+                    </p>
+                  </div>
+
+                  <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '12px', border: '1.5px solid #FDE68A' }}>
+                    <b style={{ color: '#C73800', display: 'block', fontSize: '1.08rem', fontFamily: 'Baloo 2', marginBottom: '6px' }}>
+                      🤝 बजाजी निंबाळकर शुद्धीकरण (धार्मिक क्रांती)
+                    </b>
+                    <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.65 }}>
+                      मुसलमानी सत्तेने बाटवलेल्या बजाजींना पुन्हा स्वधर्मात घेण्यासाठी कर्मठ पंडितांनी बंदी घातली. जिजाऊंनी स्वतः पुढाकार घेऊन खंडोबाच्या साक्षीने त्यांना स्वधर्मात घेतले आणि आपली कन्या सखुबाई यांचा विवाह बजाजींच्या मुलाशी करून सामाजिक क्रांती घडवली.
+                    </p>
+                  </div>
+
+                  <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '12px', border: '1.5px solid #FDE68A' }}>
+                    <b style={{ color: '#C73800', display: 'block', fontSize: '1.08rem', fontFamily: 'Baloo 2', marginBottom: '6px' }}>
+                      🌾 शेतकरी तगाई व दुष्काळ निवारण
+                    </b>
+                    <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.65 }}>
+                      दख्खनच्या भीषण दुष्काळात जिजाऊंनी शेतकऱ्यांचा शेतसारा पूर्ण माफ केला. खजिन्यातून बिनव्याजी कर्ज (तगाई), पेरणीसाठी बियाणे आणि नांगरट करण्यासाठी बैल पुरवले. "रयतेच्या भाजीच्या देठालाही हात लावू नका" हा नियम जिजाऊंच्या मार्गदर्शनातून आला.
+                    </p>
+                  </div>
+
+                  <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '12px', border: '1.5px solid #FDE68A' }}>
+                    <b style={{ color: '#C73800', display: 'block', fontSize: '1.08rem', fontFamily: 'Baloo 2', marginBottom: '6px' }}>
+                      🛡️ आग्र्याहून सुटकेपर्यंत स्वराज्याचे रक्षण
+                    </b>
+                    <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.65 }}>
+                      १६६६ मध्ये छत्रपती शिवराय व ९ वर्षांचे शंभूराजे आग्र्यात औरंगजेबाच्या कैदेत असताना संपूर्ण स्वराज्याचे नेतृत्व जिजाऊंनी केले. मोरोपंत पिंगळे व अण्णाजी दत्तोंच्या मदतीने किल्ले, खजिना आणि सैन्याला एकसंध ठेवून शत्रूचा एकही डाव यशस्वी होऊ दिला नाही.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 6. ऐतिहासिक उद्धरणे (Historic Quotes) */}
+              <div style={{ marginTop: '48px', padding: '30px', background: '#FFFFFF', borderRadius: '20px', border: '1.5px solid #FDE68A' }}>
+                <div style={{ textAlign: 'center', marginBottom: '22px' }}>
+                  <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800 }}>
+                    📜 ऐतिहासिक साक्ष
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '8px 0 6px', fontWeight: 900 }}>
+                    इतिहासकारांचे व संतांचे जिजाऊ माँसाहेबांबद्दल विचार
+                  </h3>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+                  {[
+                    { author: 'कवींद्र परमानंद (श्री शिवभारत)', quote: 'साक्षात् महालक्ष्मी व राष्ट्रशक्तीच्या रूपात अवतरलेली जिजाऊ! त्यांच्या मनात स्वराज्याचा संकल्प नसता, तर सह्याद्रीत स्वातंत्र्याचा सूर्य उगवलाच नसता.' },
+                    { author: 'कृष्णाजी अनंत सभासद (सभासद बखर)', quote: 'आईसाहेबांनी शिवबांस असे लहानाचे मोठे केले, युद्धशास्त्र व राजधर्म शिकविला की ज्यामुळे महाराष्ट्रात पातशाह्या धुळीस मिळाल्या आणि हिंदवी स्वराज्य उभे राहिले.' },
+                    { author: 'महात्मा ज्योतिराव फुले', quote: 'जिजाऊ माँसाहेबांच्या तेजस्वी संस्कारांची फलश्रुती म्हणजे छत्रपती शिवाजी महाराज! त्यांनी रयतेच्या उद्धाराचा खरा पाया रचला.' },
+                    { author: 'लोकमान्य बाळ गंगाधर टिळक', quote: 'शिवछत्रपतींच्या पाठीशी उभ्या असणाऱ्या जिजाऊ म्हणजे केवळ माता नव्हत्या, तर त्या स्वराज्याची पहिली प्रेरणा व राष्ट्रनिर्मात्या होत्या.' }
+                  ].map((q, idx) => (
+                    <div key={idx} style={{ background: '#FFFDF9', padding: '18px', borderRadius: '12px', borderLeft: '4px solid #C73800', borderTop: '1px solid #FEF3C7', borderRight: '1px solid #FEF3C7', borderBottom: '1px solid #FEF3C7' }}>
+                      <p style={{ margin: '0 0 10px', fontSize: '0.9rem', color: '#374151', fontStyle: 'italic', lineHeight: 1.65 }}>
+                        "{q.quote}"
+                      </p>
+                      <b style={{ color: '#C73800', fontSize: '0.86rem', display: 'block', fontFamily: 'Baloo 2' }}>
+                        — {q.author}
+                      </b>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 7. नेहमी विचारले जाणारे ऐतिहासिक प्रश्न व उत्तरे (Interactive FAQ) */}
+              <div style={{ marginTop: '48px', padding: '30px', background: 'linear-gradient(145deg, #FFFFFF 0%, #FFFBEB 100%)', borderRadius: '20px', border: '1.5px solid #FCD34D' }}>
+                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                  <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
+                    ❓ ज्ञान संवर्धन
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.8rem', margin: '8px 0 6px', fontWeight: 900 }}>
+                    राष्ट्रमाता जिजाऊंबद्दल वारंवार विचारले जाणारे प्रश्न (FAQ)
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.92rem', margin: 0 }}>
+                    प्रश्नावर क्लिक करून ऐतिहासिक संदर्भ व अधिकृत माहिती वाचा
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {[
+                    {
+                      q: '१. राष्ट्रमाता जिजाऊंचा जन्म कधी आणि कुठे झाला?',
+                      a: 'राष्ट्रमाता जिजाऊंचा जन्म १२ जानेवारी १५९८ रोजी विदर्भातील बुलढाणा जिल्ह्यातील सिंदखेड राजा येथे झाला. त्यांचे वडील लखुजीराव जाधवराव हे देवगिरीच्या यादव घराण्याचे वंशज आणि विदर्भातील मातब्बर सरदार होते, तर आईचे नाव म्हाळसाबाई होते.'
+                    },
+                    {
+                      q: '२. जिजाऊंनी पुण्यात सोन्याचा नांगर का फिरवला?',
+                      a: '१६३० च्या सुमारास विजापूरच्या आदिलशाही सैन्याने पुण्याची लूट करून गाढवाचा नांगर फिरवला होता आणि लोखंडी पहार ठोकून "हे शहर शापित आहे" अशी दहशत पसरवली होती. जिजाऊंनी पुण्यात येऊन ती पहार उपटून फेकली आणि बाल शिवबांच्या हातात सोन्याचा नांगर देऊन जमीन नांगरली. यामुळे लोकांच्या मनातील अंधश्रद्धा नष्ट होऊन त्यांनी पुण्यात पुन्हा वस्ती केली.'
+                    },
+                    {
+                      q: '३. जिजाऊंनी बाल शिवरायांना कोणते संस्कार व शिक्षण दिले?',
+                      a: 'जिजाऊंनी बाल शिवरायांना रामायण, महाभारत आणि संत साहित्याच्या कथांतून नीती, धर्म आणि पराक्रमाचे धडे दिले. शस्त्रास्त्रांचे शिक्षण (तलवार, दांडपट्टा, धनुर्विद्या), अश्वारोहण, आणि दख्खनच्या राजकारणाची मुत्सद्देगिरी शिकवली. सर्वात महत्त्वाचे म्हणजे "रयतेचे रक्षण हाच खरा राजधर्म आहे" आणि "स्त्री सन्मान हा सर्वोच्च आहे" हे मूल्य बिंबवले.'
+                    },
+                    {
+                      q: '४. रांझे पाटील खटल्यात जिजाऊंनी कोणता ऐतिहासिक न्यायनिवाडा केला?',
+                      a: 'रांझे गावचा पाटील बाबाजी गुजर याने एका गरीब स्त्रीवर अत्याचार केल्याचे समजताच, जिजाऊंनी कसलाही वतनदारीचा मुलाहिजा न ठेवता त्याचे दोन्ही हात व पाय तोडण्याचा (चौरंग) कठोर आदेश दिला. या निकालामुळे संपूर्ण महाराष्ट्रात महिलांच्या अब्रूचे रक्षण ही स्वराज्याची सर्वोच्च प्राथमिकता बनली.'
+                    },
+                    {
+                      q: '५. बजाजी निंबाळकरांच्या शुद्धीकरणातून जिजाऊंचा कोणता पुरोगामी विचार दिसून येतो?',
+                      a: 'आदिलशहाने फलटणच्या बजाजी निंबाळकरांचे बळजबरीने धर्मांतर केले होते. जेव्हा त्यांना स्वधर्मात यायचे होते, तेव्हा तत्कालीन सनातनी समाजाने विरोध केला. जिजाऊंनी पुढे होऊन खंडोबाच्या साक्षीने बजाजींचे शुद्धीकरण केले आणि स्वतःची कन्या सखुबाई यांचा विवाह बजाजींच्या मुलाशी लावून देऊन संकुचित कर्मठतेला आव्हान दिले.'
+                    },
+                    {
+                      q: '६. जिजाऊ माँसाहेबांची समाधी कुठे आहे आणि त्यांचे महापरिनिर्वाण कधी झाले?',
+                      a: '६ जून १६७४ रोजी रायगडावर छत्रपती शिवरायांचा सुवर्ण राज्याभिषेक संपन्न झाला. स्वराज्याची स्वप्नपूर्ती झाल्यानंतर अवघ्या १२ दिवसांनी, १७ जून १६७४ रोजी रायगडाच्या पायथ्याशी पाचाड येथे जिजाऊ माँसाहेबांचे महापरिनिर्वाण झाले. पाचाड येथे जिजाऊंचा वाडा, पायऱ्यांची विहीर आणि ऐतिहासिक समाधी मंदिर आजही लाखो शिवभक्तांचे श्रद्धास्थान आहे.'
+                    }
+                  ].map((faq, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        border: '1.5px solid #FDE68A',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        background: activeFaq === (200 + i) ? '#FFFDF8' : '#FAFAFA',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setActiveFaq(activeFaq === (200 + i) ? null : (200 + i))}
+                        style={{
+                          width: '100%',
+                          textAlign: 'left',
+                          padding: '16px 20px',
+                          background: 'none',
+                          border: 'none',
+                          outline: 'none',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '12px',
+                          color: '#C73800',
+                          fontSize: '1.02rem',
+                          fontWeight: 800,
+                          fontFamily: "'Baloo 2', sans-serif"
+                        }}
+                      >
+                        <span>{faq.q}</span>
+                        <span style={{ fontSize: '1.2rem', color: '#D97706', transform: activeFaq === (200 + i) ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                          ▼
+                        </span>
+                      </button>
+                      {activeFaq === (200 + i) && (
                         <div style={{ padding: '0 20px 18px', color: '#374151', fontSize: '0.94rem', lineHeight: 1.75, borderTop: '1px solid #FEF3C7', paddingTop: '12px' }}>
                           {faq.a}
                         </div>
