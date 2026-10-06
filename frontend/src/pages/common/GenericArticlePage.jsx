@@ -132,6 +132,7 @@ const articlesDatabase = {
     heroBgImage: '/assets/images/real-lal-mahal-pune.jpg',
     cardImage: '/assets/images/real-jijau-portrait.jpg',
     heroImage: '/assets/images/real-jijau-portrait.jpg',
+    cardImgHeight: '220px',
     portraitTitle: 'राष्ट्रमाता राजमाता जिजाऊ माँसाहेब',
     portraitSubtitle: 'स्वराज्य प्रेरिका व संस्कारमूर्ती',
     badgeText: 'अस्सल ऐतिहासिक तैलचित्र',
@@ -139,11 +140,9 @@ const articlesDatabase = {
     warCry: '|| जिजाऊंचे संस्कार, शिवरायांचे विचार — अखंड स्वराज्याची अमर मशाल! ||',
     stats: [
       { num: 'सिंदखेड राजा', label: 'पवित्र जन्मस्थान' },
-      { num: 'शिवनेरी', label: 'शिवजन्माची पुण्यभूमी' },
-      { num: 'लाल महाल', label: 'पुणे जहागीर व सोन्याचा नांगर' },
-      { num: 'पाचाड', label: 'समाधी तीर्थ (रायगड)' },
-      { num: '१५९८–१६७४', label: 'जीवनकाळ (७६ वर्षे)' },
-      { num: 'स्वराज्य प्रेरिका', label: 'राष्ट्रमाता पदवी' }
+      { num: 'किल्ले शिवनेरी', label: 'शिवजन्म भूमी' },
+      { num: 'लाल महाल', label: 'पुणे जहागीर व नांगरट' },
+      { num: 'पाचाड तीर्थ', label: 'समाधी (१५९८–१६७४)' }
     ],
     sections: [
       {
@@ -575,89 +574,89 @@ export default function GenericArticlePage() {
       </div>
 
       {/* Hero Section - Light Royal Maratha Heritage Theme */}
-      <div className="hero" style={{ minHeight: '480px', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #FFFDF8 0%, #FEF3C7 50%, #FFEDD5 100%)' }}>
+      <div className="hero" style={{ minHeight: '360px', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #FFFDF8 0%, #FEF3C7 50%, #FFEDD5 100%)' }}>
         {article.heroBgImage && !article.hideHeroBg && (
           <>
             <img
               src={article.heroBgImage}
               alt={article.title}
               className="hero-bg-img"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%', position: 'absolute', inset: 0, opacity: 1 }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', position: 'absolute', inset: 0, opacity: 1 }}
               onError={(e) => { e.target.style.display = 'none'; }}
             />
             {/* Very light, translucent warm overlay - keeps the historic painting 100% visible and vivid */}
             <div style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(90deg, rgba(255, 250, 240, 0.38) 0%, rgba(255, 245, 230, 0.18) 50%, rgba(0, 0, 0, 0.04) 100%)',
+              background: 'linear-gradient(90deg, rgba(255, 250, 240, 0.45) 0%, rgba(255, 245, 230, 0.22) 50%, rgba(0, 0, 0, 0.05) 100%)',
               zIndex: 1,
               pointerEvents: 'none'
             }}></div>
           </>
         )}
 
-        <div className="wrap hero-content" style={{ maxWidth: '1320px', width: '100%', padding: '44px 24px', position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '32px', flexWrap: 'wrap' }}>
-          <div style={{ flex: '1 1 580px', minWidth: '300px' }}>
+        <div className="wrap hero-content" style={{ maxWidth: '1320px', width: '100%', padding: '28px 24px 32px', position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '28px', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 540px', minWidth: '300px' }}>
             <div style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '8px',
+              gap: '6px',
               background: 'linear-gradient(135deg, #FEF3C7 0%, #FFEDD5 100%)',
               color: '#9A3412',
               border: '1.5px solid #FCD34D',
               fontWeight: 800,
               textTransform: 'uppercase',
-              letterSpacing: '0.8px',
-              fontSize: '0.84rem',
-              padding: '6px 14px',
+              letterSpacing: '0.6px',
+              fontSize: '0.8rem',
+              padding: '5px 12px',
               borderRadius: '20px',
               boxShadow: '0 2px 6px rgba(217, 119, 6, 0.08)'
             }}>
               👑 {article.eyebrow}
             </div>
             <h1 style={{
-              fontSize: 'clamp(2.2rem, 3.8vw, 3.4rem)',
+              fontSize: 'clamp(1.85rem, 3.2vw, 2.65rem)',
               lineHeight: 1.18,
               color: '#C73800',
-              margin: '14px 0 10px',
+              margin: '10px 0 8px',
               fontFamily: "'Baloo 2', sans-serif",
               fontWeight: 900,
               textShadow: '0 2px 14px rgba(255, 255, 255, 0.98), 0 1px 4px rgba(255, 255, 255, 0.95), 0 0 20px rgba(255, 255, 255, 0.90)'
             }}>
               {article.title}
             </h1>
-            <div style={{ background: 'linear-gradient(90deg, #EA580C, #F59E0B)', height: '4px', width: '90px', borderRadius: '2px', margin: '14px 0 14px' }}></div>
+            <div style={{ background: 'linear-gradient(90deg, #EA580C, #F59E0B)', height: '3.5px', width: '80px', borderRadius: '2px', margin: '10px 0 12px' }}></div>
             <p style={{
-              fontSize: '1.08rem',
+              fontSize: '0.98rem',
               maxWidth: '64ch',
               color: '#1F2937',
-              lineHeight: 1.65,
+              lineHeight: 1.6,
               fontWeight: 600,
-              margin: '0 0 20px',
-              background: 'rgba(255, 255, 255, 0.65)',
+              margin: '0 0 16px',
+              background: 'rgba(255, 255, 255, 0.70)',
               backdropFilter: 'blur(6px)',
               WebkitBackdropFilter: 'blur(6px)',
-              padding: '12px 18px',
-              borderRadius: '12px',
+              padding: '10px 16px',
+              borderRadius: '10px',
               border: '1px solid rgba(255, 255, 255, 0.85)',
-              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.06)'
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.05)'
             }}>
               {article.tagline}
             </p>
 
-            <div style={{ marginTop: '20px', display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+            <div style={{ marginTop: '14px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               {article.stats.map((s, i) => (
                 <div key={i} style={{
                   background: '#FFFFFF',
                   border: '1.5px solid #FDE68A',
-                  padding: '10px 16px',
-                  borderRadius: '12px',
-                  boxShadow: '0 4px 12px rgba(217,119,6,0.08)',
+                  padding: '8px 14px',
+                  borderRadius: '10px',
+                  boxShadow: '0 3px 10px rgba(217,119,6,0.07)',
                   textAlign: 'center',
-                  minWidth: '110px'
+                  minWidth: '100px'
                 }}>
-                  <b style={{ color: '#C73800', fontSize: '1.25rem', display: 'block', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>{s.num}</b>
-                  <span style={{ color: '#78350F', fontSize: '0.8rem', fontWeight: 700 }}>{s.label}</span>
+                  <b style={{ color: '#C73800', fontSize: '1.14rem', display: 'block', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>{s.num}</b>
+                  <span style={{ color: '#78350F', fontSize: '0.76rem', fontWeight: 700 }}>{s.label}</span>
                 </div>
               ))}
             </div>
@@ -665,20 +664,20 @@ export default function GenericArticlePage() {
 
           {/* Dedicated Portrait Card (Light Royal Gold & Crisp Finish) */}
           <div style={{
-            flex: '0 0 320px',
-            maxWidth: '360px',
+            flex: '0 0 270px',
+            maxWidth: '290px',
             width: '100%',
             background: 'linear-gradient(145deg, #FFFFFF 0%, #FFFBEB 100%)',
-            padding: '14px',
-            borderRadius: '20px',
-            border: '2.5px solid #F59E0B',
-            boxShadow: '0 16px 36px rgba(185, 28, 28, 0.14), 0 4px 12px rgba(0, 0, 0, 0.05)',
+            padding: '12px',
+            borderRadius: '16px',
+            border: '2px solid #F59E0B',
+            boxShadow: '0 12px 28px rgba(185, 28, 28, 0.12), 0 4px 10px rgba(0, 0, 0, 0.04)',
             textAlign: 'center'
           }}>
             <div style={{
               width: '100%',
-              height: '340px',
-              borderRadius: '14px',
+              height: article.cardImgHeight || '230px',
+              borderRadius: '12px',
               overflow: 'hidden',
               background: '#FFFDF9',
               border: '1.5px solid #FDE68A',
@@ -698,26 +697,26 @@ export default function GenericArticlePage() {
               />
               <span style={{
                 position: 'absolute',
-                bottom: '10px',
+                bottom: '8px',
                 left: '50%',
                 transform: 'translateX(-50%)',
                 background: 'linear-gradient(135deg, #FFFBEB, #FEF3C7)',
                 color: '#9A3412',
-                padding: '4px 14px',
-                borderRadius: '20px',
-                fontSize: '0.78rem',
+                padding: '3px 12px',
+                borderRadius: '16px',
+                fontSize: '0.74rem',
                 fontWeight: 800,
-                border: '1.5px solid #FCD34D',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                border: '1px solid #FCD34D',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
                 whiteSpace: 'nowrap'
               }}>
                 {article.badgeText || 'अस्सल ऐतिहासिक प्रतिमा'}
               </span>
             </div>
-            <div style={{ marginTop: '12px', color: '#C73800', fontWeight: 800, fontSize: '1.05rem', fontFamily: "'Baloo 2', sans-serif" }}>
+            <div style={{ marginTop: '10px', color: '#C73800', fontWeight: 800, fontSize: '0.98rem', fontFamily: "'Baloo 2', sans-serif" }}>
               {article.portraitTitle || article.title.split('—')[0].trim()}
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#92400E', fontWeight: 700 }}>
+            <div style={{ fontSize: '0.78rem', color: '#92400E', fontWeight: 700 }}>
               {article.portraitSubtitle || (article.eyebrow ? article.eyebrow.split('·')[0].trim() : article.title.split('—')[0].trim())}
             </div>
           </div>
