@@ -73,22 +73,56 @@ const articlesDatabase = {
     portraitTitle: 'छत्रपती संभाजी महाराज',
     portraitSubtitle: 'धर्मवीर व अजिंक्य सेनापती',
     badgeText: 'अजिंक्य योद्धा · धर्मवीर',
-    tagline: '१२८ लढाया लढून एकही लढाई न हरणारे अद्वितीय सेनापती, बुधभूषणम् ग्रंथकार आणि मातृभूमी व स्वराज्यासाठी सर्वोच्च बलिदान देणारे धर्मवीर.',
+    tagline: '१२८ लढाया लढून एकही लढाई न हरणारे अद्वितीय सेनापती, बुधभूषणम् ग्रंथकार, १८० फूट उंच "स्टॅच्यू ऑफ हिंदूभूषण" स्मारकाचे प्रेरणास्थान आणि स्वराज्यासाठी सर्वोच्च बलिदान देणारे धर्मवीर.',
     warCry: '|| मरण आले तरी चालेल, पण स्वाभिमान सोडणार नाही — छत्रपती संभाजी महाराज अमर रहे! ||',
     stats: [
       { num: '१२८', label: 'अपराजित लढाया' },
       { num: '०', label: 'पराभव' },
-      { num: 'बुधभूषणम्', label: 'संस्कृत ग्रंथ' },
-      { num: 'तुळापूर', label: 'बलिदान तीर्थ' }
+      { num: '१८० फूट', label: 'जगातील सर्वांत उंच पुतळा (मोशी)' },
+      { num: '१६८१', label: 'रायगडावर राज्याभिषेक' },
+      { num: '४+', label: 'संस्कृत/ब्रज ग्रंथ रचना' },
+      { num: 'तुळापूर', label: 'सर्वोच्च बलिदान तीर्थ' }
     ],
     sections: [
       {
-        heading: 'अजिंक्य सेनापती व मोगल साम्राज्याला आव्हान',
-        content: 'छत्रपती संभाजी महाराजांच्या ९ वर्षांच्या राजवटीत औरंगजेब ५ लाख फौजेसह महाराष्ट्रात आला, परंतु संभाजी महाराजांनी एकही किल्ला मोगलांच्या हाती जाऊ दिला नाही. जंजिरा मोहीम, पोर्तुगीज युद्ध आणि बुरहानपूर छापा हे त्यांचे देदीप्यमान विजय आहेत.'
+        heading: '१. बालपण, किल्ले पुरंदर जन्म व राष्ट्रमाता जिजाऊंचे संस्कार (१६५७–१६६६)',
+        content: '१४ मे १६५७ रोजी सह्याद्रीच्या दुर्गम किल्ले पुरंदरवर राष्ट्रमाता जिजाऊंच्या मार्गदर्शनाखाली बाल शंभूराजांचा जन्म झाला. आई सईबाईंचे अल्पवयातच निधन झाल्यानंतर जिजाऊ माँसाहेबांनी अत्यंत प्रेमाने व कठोर शिस्तीने बाल शंभूराजांना घडवले. वयाच्या अवघ्या पाचव्या-सहाव्या वर्षापासून त्यांना घोडेस्वारी, मल्लविद्या, दांडपट्टा, धनुर्विद्या आणि संस्कृत व्याकरण, राजनीती व धर्मशास्त्राचे सखोल शिक्षण देण्यात आले. शिवरायांच्या स्वराज्याचे भावी वारसदार म्हणून त्यांची घडण अलौकिक झाली.'
       },
       {
-        heading: 'साहित्य रचना व विद्वत्ता',
-        content: 'संभाजी राजे केवळ रणांगणावरचे वीर नव्हते, तर ते अत्यंत प्रतिभावान कवी व संस्कृत महापंडित होते. त्यांनी बुधभूषणम्, नखशिख, नायिकाभेद आणि सातसतक हे श्रेष्ठ ग्रंथ रचले.'
+        heading: '२. वयाच्या अवघ्या नवव्या वर्षी आग्ऱ्याहून ऐतिहासिक सुटका व मुत्सद्देगिरी (१६६६)',
+        content: '१६६६ मध्ये मिर्झाराजे जयसिंगाच्या शब्दावर विश्वास ठेवून शिवराय आग्र्याला गेले, तेव्हा बाल संभाजीही त्यांच्यासोबत होते. औरंगजेबाच्या कुटील दरबारात शिवरायांनी स्वाभिमान दाखवला तेव्हा दोघांना नजरकैदेत टाकण्यात आले. वयाच्या अवघ्या ९ व्या वर्षी बाल शंभूराजांनी मोगल पहारेकऱ्यांसमोर कमालीचे धैर्य आणि प्रसंगावधान दाखवले. मिठाईच्या पेटाऱ्यातून सुखरूप निसटल्यानंतर शिवरायांनी सुरक्षिततेसाठी शंभूराजांना मथुरेत मोरोपंत पिंगळेंच्या नातेवाईकांकडे ठेवले. पुढे वेषांतर करून बाल संभाजी सुरक्षित राजगडावर परतले, तेव्हा संपूर्ण महाराष्ट्रात आनंदाची लाट उसळली.'
+      },
+      {
+        heading: '३. संस्कृत महापंडित, बुधभूषणम् ग्रंथ व बहुभाषिक अलौकिक विद्वत्ता',
+        content: 'छत्रपती संभाजी महाराज हे केवळ रणांगणावरील पराक्रमी योद्धे नव्हते, तर ते भारतीय इतिहासातील अत्यंत प्रतिभावान कवी, लेखक व संस्कृत महापंडित होते. वयाच्या अवघ्या १४ व्या वर्षी शृंगारपूर येथे वास्तव्यास असताना त्यांनी संस्कृतमध्ये "बुधभूषणम्" हा अद्वितीय राजनीती ग्रंथ रचला. याशिवाय त्यांनी ब्रज भाषेत "नखशिख", "नायिकाभेद" आणि "सातसतक" हे अत्यंत उच्च दर्जाचे काव्यग्रंथ लिहिले. त्यांना संस्कृत, प्राकृत, मराठी, ब्रज, फारसी, इंग्रजी आणि पोर्तुगीज अशा अनेक भाषांचे अस्खलित ज्ञान होते.'
+      },
+      {
+        heading: '४. दुर्गराज रायगडावर ऐतिहासिक सुवर्ण राज्याभिषेक (१६ जानेवारी १६८१)',
+        content: 'छत्रपती शिवरायांच्या महापरिनिर्वाणानंतर स्वराज्यासमोर अनेक अंतर्गत व बाह्य संकटे उभी राहिली. परंतु संभाजी महाराजांनी पन्हाळ्यावरून सर्व कटकारस्थाने मोडून काढून १६ जानेवारी १६८१ रोजी दुर्गराज रायगडावर वैदिक परंपरेने सुवर्ण राज्याभिषेक करवून घेतला. "|| श्री शंभो: शिवजातस्य मुद्रा द्यौरिव राजते | यदंकसेविनी लेखा वर्तते कस्य नोपरि ||" ही स्वतःची तेजस्वी संस्कृत राजमुद्रा जारी करून त्यांनी स्वराज्याचे सार्वभौमत्व पुन्हा प्रस्थापित केले आणि मराठ्यांच्या सैन्यामध्ये नवा उत्साह फुंकला.'
+      },
+      {
+        heading: '५. बुरहानपूरचा आकस्मिक छापा व मोगल तिजोरी जप्त (१६८१)',
+        content: 'राज्याभिषेक झाल्यानंतर संभाजी महाराजांनी मोगल साम्राज्याला पहिला मोठा तडाखा दिला. मोगलांच्या दक्षिण सुभ्याची सर्वांत मोठी आर्थिक व व्यापारी राजधानी असलेल्या बुरहानपूरवर मराठ्यांनी वादळी वेगाने छापा टाकला. मोगल सुभेदार काकर खान भयभीत होऊन किल्ल्यात लपून बसला. मराठ्यांनी सलग तीन दिवस शहरातील मोगल गोदामांतून कोट्यवधी रुपयांची सुवर्ण नाणी, हत्ती, घोडे व दारूगोळा जप्त करून स्वराज्यात आणला. या हल्ल्याने औरंगजेब दिल्लीच्या दरबारात हादरून गेला.'
+      },
+      {
+        heading: '६. रामशेजचा अभेद्य वेढा — ६०० मावळ्यांची ६ वर्षे मोगल सेनेशी अजोड झुंज (१६८२–१६८८)',
+        content: 'नाशिकजवळील रामशेज किल्ला जिंकण्यासाठी औरंगजेबाने शहाबुद्दीन खान, कासिम खान आणि ५०,००० मुघल सैनिकांची अफाट फौज पाठवली. मोगलांना वाटले होते हा किल्ला दोन दिवसांत शरण येईल. परंतु किल्ल्यावरील किल्लेदार सूर्यराव जेधे आणि अवघ्या ६०० मावळ्यांनी शंभूराजांच्या प्रेरणेने लाकडी तोफा आणि गोफणींच्या साहाय्याने मोगलांना तब्बल ६ वर्षे (१६८२ ते १६८८) रोखून धरले. जगाच्या युद्ध इतिहासातील ही सर्वांत प्रदीर्घ व यशस्वी किल्ला संरक्षणाची लढाई मानली जाते.'
+      },
+      {
+        heading: '७. अजोड पोर्तुगीज मोहीम — फोंड्याचा संग्राम आणि व्हाइसरॉयचा थरकाप (१६८३)',
+        content: 'गोव्याच्या पोर्तुगीजांनी मोगलांशी हातमिळवणी करून मराठ्यांच्या पाठीत खंजीर खुपसण्याचा प्रयत्न केला. संभाजी महाराजांनी स्वतः फोंडा किल्ल्यावर चाल केली. फोंड्याच्या ऐतिहासिक युद्धात मराठ्यांनी पोर्तुगीज फौजेची दाणादाण उडवली. स्वतः पोर्तुगीज व्हाइसरॉय फ्रान्सिस्को द ताव्होरा जखमी झाला आणि सैन्यासह पळून गेला. संभाजी महाराजांच्या घोड्याने खाडीचे पाणी ओलांडून पोर्तुगीजांना जुने गोवे येथे घेरले. पोर्तुगीजांनी भयभीत होऊन सेंट झेवियरच्या शवपेटीसमोर अश्रू ढाळत प्रार्थना केली. अखेर पोर्तुगीजांनी मराठ्यांच्या सर्व अटी मान्य करून शरणागती पत्करली.'
+      },
+      {
+        heading: '८. जंजिरा मोहीम, समुद्रात दगडी सेतू आणि मराठा आरमार मजबुती',
+        content: 'मराठ्यांच्या किनारपट्टीला त्रास देणाऱ्या सिद्दीच्या जंजिरा जलदुर्गाला नेस्तनाबूत करण्यासाठी संभाजी महाराजांनी समुद्रात तब्बल ८०० मीटर लांबीचा दगडी सेतू (पुलाव) बांधण्याचे अचाट अभियांत्रिकी धाडस दाखवले. त्यांनी मराठा आरमाराची सूत्रे दूरदृष्टीने सरखेल कान्होजी आंग्रे यांच्याकडे सोपवली. गुराब, गलबत व मचव्यांचा आरमारी ताफा भक्कम करून मराठ्यांनी अरबी समुद्रातील इंग्रज, डच, पोर्तुगीज व सिद्दी यांच्या आरमारी हालचालींवर पूर्ण नियंत्रण मिळवले.'
+      },
+      {
+        heading: '९. शेतकरी हित, जलव्यवस्थापन व सर्वधर्मसमभावाचे लोककल्याणकारी राज्य',
+        content: 'छत्रपती संभाजी महाराज हे युद्धाप्रमाणेच प्रजाहितासाठीही तितकेच दक्ष होते. दुष्काळ पडला असता त्यांनी शेतकऱ्यांना संपूर्ण शेतसारा माफ केला. शेतीसाठी विहिरी खणणे, कालवे बांधणे, नांगर व बी-बियाणे खरेदीसाठी राजकोषातून बिनव्याजी तगाई कर्जे दिली. शिवकालीन सैन्याप्रमाणेच "रयतेच्या भाजीच्या देठासही हात लावू नये" ही सक्त लष्करी आचारसंहिता त्यांनी कायम ठेवली. मंदिरांना, मठांना तसेच मशिदींना दिलेली वतने अबाधित ठेवून धार्मिक सहिष्णुतेचा आदर्श त्यांनी घालून दिला.'
+      },
+      {
+        heading: '१०. तुळापूरचा अमर संग्राम — सर्वोच्च आत्मबलिदान व अखंड स्वाभिमान (११ मार्च १६८९)',
+        content: 'संगमेश्वर येथे एका गुप्त बैठकीत असताना फितुरीमुळे मुकर्रब खानाने केलेल्या अचानक छाप्यात कवी कलश व छत्रपती संभाजी महाराज मोगलांच्या हाती सापडले. औरंगजेबाने स्वराज्य आणि धर्म सोडल्यास जीवदान देण्याची अट घातली, परंतु शंभूराजांनी ताठ मानेने ती धुडकावून लावली. सलग ४० दिवस डोळे काढणे, नखे उपटणे, जीभ छाटणे असा अमानुष छळ करण्यात आला; परंतु शंभूराजांनी स्वाभिमानाचा एकही शब्द सोडला नाही. ११ मार्च १६८९ (फाल्गुन अमावास्या) रोजी भीमा-इंद्रायणीच्या संगमावर तुळापूर येथे त्यांनी सर्वोच्च बलिदान दिले. या अमर बलिदानाने संपूर्ण महाराष्ट्रातील मावळ्यांच्या रक्तात अशी आग पेटवली की पुढील १८ वर्षांत मराठ्यांनी मुघल साम्राज्याला धुळीस मिळवून औरंगजेबाची कबर याच महाराष्ट्राच्या मातीत खोदली!'
       }
     ]
   },
@@ -1077,11 +1111,9 @@ export default function GenericArticlePage() {
                   </div>
                 </div>
               </div>
-            </>
-          )}
 
-          {/* New Interactive Block 1: शिवकालीन अष्टप्रधान मंडळ तक्ता */}
-          <div style={{ marginTop: '44px', padding: '24px', background: '#FFF8F2', borderRadius: '14px', border: '1px solid #FFCC80' }}>
+              {/* New Interactive Block 1: शिवकालीन अष्टप्रधान मंडळ तक्ता */}
+              <div style={{ marginTop: '44px', padding: '24px', background: '#FFF8F2', borderRadius: '14px', border: '1px solid #FFCC80' }}>
             <h3 style={{ fontFamily: 'Baloo 2', color: '#C73800', fontSize: '1.4rem', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span>🏛️</span> शिवकालीन अष्टप्रधान मंत्रिमंडळ रचना (१६७४)
             </h3>
@@ -1177,9 +1209,7 @@ export default function GenericArticlePage() {
           </div>
 
           {/* 7. जागतिक विचारवंत व राष्ट्रपुरुषांचे शिवरायांबद्दल गौरवगार & FAQ */}
-          {normalizedKey === 'shivaji-maharaj' && (
-            <>
-              <div style={{ marginTop: '54px' }}>
+          <div style={{ marginTop: '54px' }}>
                 <div style={{ textAlign: 'center', marginBottom: '28px' }}>
                   <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
                     🌍 वैश्विक वंदना
@@ -1344,6 +1374,552 @@ export default function GenericArticlePage() {
                         </span>
                       </button>
                       {activeFaq === i && (
+                        <div style={{ padding: '0 20px 18px', color: '#374151', fontSize: '0.94rem', lineHeight: 1.75, borderTop: '1px solid #FEF3C7', paddingTop: '12px' }}>
+                          {faq.a}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ============================================================== */}
+          {/* SPECIAL RICH EXHIBIT: धर्मवीर छत्रपती संभाजी महाराज सखोल ऐतिहासिक दालने */}
+          {/* ============================================================== */}
+          {normalizedKey === 'sambhaji-maharaj' && (
+            <>
+              {/* 1. जगातील सर्वांत उंच पुतळा — "स्टॅच्यू ऑफ हिंदूभूषण", मोशी, पिंपरी-चिंचवड (१८० फूट) */}
+              <div style={{ marginTop: '48px', padding: '32px 28px', background: 'linear-gradient(145deg, #FFFDF8 0%, #FEF3C7 50%, #FFEDD5 100%)', borderRadius: '18px', border: '2px solid #F59E0B', boxShadow: '0 12px 32px rgba(217, 119, 6, 0.14)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '28px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: '0 0 320px', maxWidth: '380px', width: '100%', margin: '0 auto', borderRadius: '16px', overflow: 'hidden', border: '3.5px solid #D97706', boxShadow: '0 10px 28px rgba(180, 83, 9, 0.3)', background: '#000', position: 'relative' }}>
+                    <img
+                      src="/assets/images/real-sambhaji-moshi-statue.jpg"
+                      alt="स्टॅच्यू ऑफ हिंदूभूषण — छत्रपती संभाजी महाराज पुतळा, मोशी"
+                      style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
+                      onError={(e) => { e.target.src = '/assets/images/real-sambhaji-warrior.jpg'; }}
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '10px',
+                      left: '10px',
+                      right: '10px',
+                      background: 'rgba(0, 0, 0, 0.8)',
+                      backdropFilter: 'blur(4px)',
+                      color: '#FEF08A',
+                      padding: '6px 12px',
+                      borderRadius: '8px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      textAlign: 'center'
+                    }}>
+                      📍 शंभू सृष्टी, मोशी (पिंपरी-चिंचवड), पुणे
+                    </div>
+                  </div>
+                  <div style={{ flex: '1 1 500px', minWidth: '290px' }}>
+                    <div style={{ display: 'inline-block', background: '#C73800', color: '#fff', fontSize: '0.8rem', fontWeight: 800, padding: '5px 14px', borderRadius: '20px', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '10px' }}>
+                      🏆 लंडन बुक ऑफ रेकॉर्ड्स नोंद · जगातील सर्वांत उंच पुतळा (१८० फूट)
+                    </div>
+                    <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.75rem', margin: '0 0 10px', fontWeight: 900 }}>
+                      "स्टॅच्यू ऑफ हिंदूभूषण" — छत्रपती संभाजी महाराज यांचा जागतिक कीर्तीचा १८० फूट पुतळा
+                    </h3>
+                    <p style={{ color: '#451A03', fontSize: '0.98rem', lineHeight: 1.75, margin: '0 0 16px' }}>
+                      पुण्यातील <b>मोशी (पिंपरी-चिंचवड)</b> येथील <b>'शंभू सृष्टी'</b> आंतरराष्ट्रीय स्मारक संकुलामध्ये धर्मवीर छत्रपती संभाजी महाराज यांचा जगातील सर्वांत उंच भव्य पूर्णाकृती कांस्य पुतळा साकारण्यात आला आहे. आंतरराष्ट्रीय कीर्तीचे ज्येष्ठ शिल्पकार <b>पद्मभूषण राम सुतार</b> यांनी हे अलौकिक शिल्प घडवले असून, प्रख्यात इतिहासकार <b>डॉ. विश्वास पाटील</b> यांचे या स्मारकाला ऐतिहासिक मार्गदर्शन लाभले आहे.
+                    </p>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '10px', background: 'rgba(255,255,255,0.85)', padding: '16px', borderRadius: '12px', border: '1.5px solid #FDE68A' }}>
+                      <div>
+                        <b style={{ color: '#9A3412', display: 'block', fontSize: '0.92rem' }}>📐 एकूण उंची १८० फूट:</b>
+                        <span style={{ fontSize: '0.86rem', color: '#374151' }}>१४० फूट कांस्य पुतळा + ४० फूट गडकोट पादपीठ</span>
+                      </div>
+                      <div>
+                        <b style={{ color: '#9A3412', display: 'block', fontSize: '0.92rem' }}>🎨 शिल्पकार:</b>
+                        <span style={{ fontSize: '0.86rem', color: '#374151' }}>पद्मभूषण राम सुतार (Statue of Unity शिल्पकार)</span>
+                      </div>
+                      <div>
+                        <b style={{ color: '#9A3412', display: 'block', fontSize: '0.92rem' }}>📜 लंडन बुक ऑफ रेकॉर्ड्स:</b>
+                        <span style={{ fontSize: '0.86rem', color: '#374151' }}>शंभूछत्रपतींचा जगातील सर्वोच्च पुतळा म्हणून नोंद</span>
+                      </div>
+                      <div>
+                        <b style={{ color: '#9A3412', display: 'block', fontSize: '0.92rem' }}>🥁 ५,०००+ ढोल-ताशा मानवंदना:</b>
+                        <span style={{ fontSize: '0.86rem', color: '#374151' }}>१५१ पथकांचे एकत्रित वादन — आशियाई विश्वविक्रम</span>
+                      </div>
+                      <div>
+                        <b style={{ color: '#9A3412', display: 'block', fontSize: '0.92rem' }}>🏰 शंभू सृष्टी संकुल:</b>
+                        <span style={{ fontSize: '0.86rem', color: '#374151' }}>हंबीरराव मोहिते व १६ सरदारांचे पुतळे, ओपन थिएटर</span>
+                      </div>
+                      <div>
+                        <b style={{ color: '#9A3412', display: 'block', fontSize: '0.92rem' }}>💡 आधुनिक तंत्रज्ञान:</b>
+                        <span style={{ fontSize: '0.86rem', color: '#374151' }}>होलोग्राम लेसर शो, कांस्य भित्तिचित्रे व डिजिटल गॅलरी</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. शंभूछत्रपतींची पवित्र राजमुद्रा — सखोल विश्लेषण */}
+              <div style={{ marginTop: '48px', padding: '32px 28px', background: 'linear-gradient(145deg, #FFFDF8 0%, #FEF3C7 50%, #FFEDD5 100%)', borderRadius: '18px', border: '2px solid #F59E0B', boxShadow: '0 12px 32px rgba(217, 119, 6, 0.12)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: '0 0 160px', width: '160px', height: '160px', margin: '0 auto', borderRadius: '50%', overflow: 'hidden', border: '4px solid #D97706', boxShadow: '0 8px 24px rgba(180, 83, 9, 0.25)', background: '#fff' }}>
+                    <img
+                      src="/assets/images/real-rajmudra-seal.jpg"
+                      alt="शंभूछत्रपतींची राजमुद्रा"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => { e.target.src = '/assets/images/real-sambhaji-warrior.jpg'; }}
+                    />
+                  </div>
+                  <div style={{ flex: '1 1 500px', minWidth: '280px' }}>
+                    <div style={{ display: 'inline-block', background: '#C73800', color: '#fff', fontSize: '0.78rem', fontWeight: 800, padding: '4px 12px', borderRadius: '20px', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '8px' }}>
+                      🚩 अखंड स्वाभिमानाची व सार्वभौमत्वाची संस्कृत राजमुद्रा
+                    </div>
+                    <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.65rem', margin: '0 0 8px', fontWeight: 900 }}>
+                      शंभूछत्रपतींची राजमुद्रा — सखोल अर्थ, पदच्छेद व लोककल्याण
+                    </h3>
+                    <div style={{ background: '#7F1D1D', color: '#FEF3C7', padding: '12px 18px', borderRadius: '10px', fontSize: '1.08rem', fontWeight: 700, letterSpacing: '0.5px', fontFamily: "'Baloo 2', serif", margin: '12px 0 16px', borderLeft: '4px solid #F59E0B', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>
+                      || श्री शंभो: शिवजातस्य मुद्रा द्यौरिव राजते | यदंकसेविनी लेखा वर्तते कस्य नोपरि ||
+                    </div>
+                    <p style={{ color: '#451A03', fontSize: '0.98rem', lineHeight: 1.7, margin: '0 0 14px' }}>
+                      १६ जानेवारी १६८१ रोजी दुर्गराज रायगडावर छत्रपती संभाजी महाराजांनी स्वतःची स्वतंत्र संस्कृत राजमुद्रा जारी केली. यात त्यांनी शिवपुत्र असल्याचा उत्तुंग स्वाभिमान व्यक्त करत सांगितले की, ही मुद्रा आकाशाप्रमाणे अमर्याद असून, सर्वांना छत्र देणारी ही सत्ता कोणाच्या मस्तकावर सन्मानाने अधिष्ठित नाही? (अर्थात ही मुद्रा सर्वांचेच रक्षण करणारी आहे!)
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px', background: 'rgba(255,255,255,0.7)', padding: '14px', borderRadius: '12px', border: '1px solid #FDE68A' }}>
+                      <div><b style={{ color: '#9A3412' }}>श्री शंभो::</b> <span style={{ fontSize: '0.88rem', color: '#374151' }}>स्वयंप्रकाशी शिवपुत्र छत्रपती संभाजी महाराज</span></div>
+                      <div><b style={{ color: '#9A3412' }}>शिवजातस्य:</b> <span style={{ fontSize: '0.88rem', color: '#374151' }}>छत्रपती शिवाजी महाराजांचे थोरले सुपुत्र</span></div>
+                      <div><b style={{ color: '#9A3412' }}>मुद्रा द्यौरिव:</b> <span style={{ fontSize: '0.88rem', color: '#374151' }}>आकाशाप्रमाणे (द्यौ:) अमर्याद व अथांग</span></div>
+                      <div><b style={{ color: '#9A3412' }}>राजते:</b> <span style={{ fontSize: '0.88rem', color: '#374151' }}>सार्वभौम वैभवाने तळपणारी</span></div>
+                      <div><b style={{ color: '#9A3412' }}>यदंकसेविनी लेखा:</b> <span style={{ fontSize: '0.88rem', color: '#374151' }}>ज्यांच्या मांडीवर बसलेली ही रयतेची राजसत्ता</span></div>
+                      <div><b style={{ color: '#9A3412' }}>वर्तते कस्य नोपरि:</b> <span style={{ fontSize: '0.88rem', color: '#374151' }}>कोणाच्या मस्तकावर छत्र नाही? (सर्वांचेच कल्याण)</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. शंभूकाल गौरवशाली ऐतिहासिक कालक्रम (Timeline १६५७ – १६८९) */}
+              <div style={{ marginTop: '48px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                  <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
+                    ⏳ ऐतिहासिक सुवर्ण टप्पे
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                    शंभूकाल गौरवशाली कालक्रम (१६५७ – १६८९)
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
+                    किल्ले पुरंदर जन्म, आग्ऱ्याहून सुटका, रायगड राज्याभिषेक ते तुळापूरचे सर्वोच्च बलिदान — १४ तेजस्वी टप्पे
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: '16px' }}>
+                  {[
+                    { year: '१६५७', title: 'किल्ले पुरंदरवर जन्म (१४ मे)', desc: 'सह्याद्रीच्या उत्तुंग पुरंदर दुर्गावर राष्ट्रमाता जिजाऊंच्या मार्गदर्शनाखाली बाल शंभूराजांचा जन्म. आई सईबाईंचे अल्पवयात निधन.' },
+                    { year: '१६६५', title: 'पुरंदरचा तह व मुघल मनसब', desc: 'अवघ्या ८ व्या वर्षी पुरंदरच्या तहानंतर मिर्झाराजे जयसिंगाकडून ५ हजारी मनसबदार पद स्वीकारून मुत्सद्देगिरीचे पहिले धडे गिरवले.' },
+                    { year: '१६६६', title: 'आग्ऱ्याहून अद्वितीय सुटका', desc: 'औरंगजेबाच्या कुटील दरबारात शिवरायांसोबत धैर्य दाखवले; नजरकैदेतून गोड मिठाईच्या पेटाऱ्यातून निसटून मथुरेमार्गे सुखरूप राजगडावर परतले.' },
+                    { year: '१६७०', title: "'बुधभूषणम्' संस्कृत ग्रंथाची रचना", desc: 'वयाच्या अवघ्या १४ व्या वर्षी शृंगारपूर येथे वास्तव्यास असताना संस्कृतमध्ये राजनीती, समाजशास्त्र व युद्धशास्त्रावर आधारित महान ग्रंथ रचला.' },
+                    { year: '१६७४', title: 'शिवराज्याभिषेकात युवराज सहभाग', desc: 'दुर्गराज रायगडावर शिवछत्रपतींच्या सुवर्ण राज्याभिषेकात युवराज म्हणून उपस्थित राहून जनतेचे आशीर्वाद आणि राज्याचे नेतृत्व स्वीकारले.' },
+                    { year: '१६८०', title: 'पन्हाळ्यावरून स्वराज्याची सूत्रे', desc: 'शिवरायांच्या महापरिनिर्वाणानंतर पन्हाळ्यावरून सर्व कटकारस्थाने मोडून काढून मराठा साम्राज्याची संपूर्ण सूत्रे स्वतःच्या समर्थ हाती घेतली.' },
+                    { year: '१६८१', title: 'दुर्गराज रायगडावर सुवर्ण राज्याभिषेक', desc: '१६ जानेवारी १६८१ रोजी वैदिक परंपरेने छत्रपती पदी विधिवत राज्यारोहण; "शंभो: शिवजातस्य" ही स्वतःची संस्कृत राजमुद्रा जारी केली.' },
+                    { year: '१६८१', title: 'बुरहानपूरचा आकस्मिक छापा', desc: 'मोगलांच्या दक्षिण सुभ्याची आर्थिक राजधानी असलेल्या बुरहानपूरवर प्रचंड वेगाने छापा घालून मुघल तिजोरी व कोट्यवधींचे धन जप्त केले.' },
+                    { year: '१६८२', title: 'जंजिरा मोहीम व सागरात दगडी सेतू', desc: 'सिद्दीचा जंजिरा जलदुर्ग जिंकण्यासाठी समुद्रात ८०० मीटर लांब दगडी सेतू बांधण्याचे अचाट अभियांत्रिकी धाडस दाखवून सिद्दीला नमवले.' },
+                    { year: '१६८२–८८', title: 'रामशेजचा ६ वर्षे चाललेला अभेद्य वेढा', desc: 'अवघ्या ६०० मावळ्यांनी मुघलांच्या ५०,००० फौजेला तब्बल ६ वर्षे थोपवून धरले; जगातील सर्वात प्रदीर्घ यशस्वी किल्ला संरक्षणाचा जागतिक विक्रम.' },
+                    { year: '१६८३', title: 'पोर्तुगीजांविरुद्ध फोंड्याचा संग्राम', desc: 'गोव्यात व्हाइसरॉय फ्रान्सिस्को द ताव्होराच्या सैन्याची दाणादाण उडवून समुद्रात पळवून लावले; पोर्तुगीजांनी शरणागती पत्करली.' },
+                    { year: '१६८५', title: 'औरंगजेबाच्या ५ लाख फौजेला खीळ', desc: 'औरंगजेबाने ५ लाख फौजेसह संपूर्ण महाराष्ट्र घेरला, परंतु संभाजी महाराजांनी एकही किल्ला मुघलांच्या स्वाधीन होऊ दिला नाही.' },
+                    { year: '१६८९', title: 'संगमेश्वर येथे कपटाने अटक (१ फेब्रु)', desc: 'गणोजी शिर्के यांच्या फितुरीमुळे मुकर्रब खानाने केलेल्या अचानक छाप्यात कवी कलश यांच्यासह छत्रपती संभाजी महाराज पकडले गेले.' },
+                    { year: '१६८९', title: 'तुळापूरचे सर्वोच्च बलिदान (११ मार्च)', desc: '४० दिवस अमानुष छळ सहन करूनही स्वाभिमान न सोडणारे अमर आत्मबलिदान; पेटलेल्या स्वातंत्र्यसंग्रामात औरंगजेबाचा अंत महाराष्ट्रातच झाला.' }
+                  ].map((t, idx) => (
+                    <div key={idx} style={{ background: '#FFFDF9', border: '1.5px solid #FDE68A', padding: '16px 20px', borderRadius: '14px', position: 'relative', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'linear-gradient(180deg, #EA580C, #F59E0B)' }}></div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <span style={{ background: '#7F1D1D', color: '#FEF3C7', padding: '3px 10px', borderRadius: '6px', fontWeight: 800, fontSize: '0.85rem', fontFamily: "'Baloo 2', sans-serif" }}>
+                          {t.year}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', color: '#9CA3AF', fontWeight: 700 }}>टप्पा #{idx + 1}</span>
+                      </div>
+                      <h4 style={{ margin: '0 0 6px', color: '#9A3412', fontSize: '1.02rem', fontWeight: 800, fontFamily: "'Baloo 2', sans-serif" }}>
+                        {t.title}
+                      </h4>
+                      <p style={{ margin: 0, fontSize: '0.88rem', color: '#4B5563', lineHeight: 1.6 }}>
+                        {t.desc}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 4. शंभूकालीन निष्ठावंत शिलेदार व सेनापती (Icons of Swarajya) */}
+              <div style={{ marginTop: '54px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                  <span style={{ background: '#FEF2F2', color: '#991B1B', border: '1.5px solid #FECACA', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
+                    ⚔️ पराक्रमी शिलेदार
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                    शंभूकालीन निष्ठावंत शिलेदार, सेनापती व मुत्सद्दी
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
+                    छत्रपती संभाजी महाराजांच्या खांद्याला खांदा लावून पाच पातशाह्यांशी लढणारे स्वराज्याचे पोलादी आधारस्तंभ
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
+                  {[
+                    {
+                      name: 'सरसेनापती हंबीरराव मोहिते',
+                      title: 'मराठा सैन्य सरनोबत',
+                      quote: 'शंभूराजांच्या पाठीशी उभा राहिलेला सह्याद्रीचा सिंह!',
+                      desc: 'शंभूराजांचे सख्खे मामा व सरसेनापती. बुरहानपूर छापा, खान्देश मोहीम आणि वाईच्या लढाईत धारातीर्थी पडेपर्यंत स्वराज्याचे अभेद्य कवच.',
+                      img: '/assets/images/real-hambirrao-mohite.jpg',
+                      fallback: '/assets/images/real-maratha-arms.jpg'
+                    },
+                    {
+                      name: 'सरखेल कान्होजी आंग्रे',
+                      title: 'मराठा आरमार प्रमुख',
+                      quote: 'ज्यांचे आरमार त्यांचा समुद्र — सागरावर मराठा भगवा!',
+                      desc: 'संभाजी महाराजांनी कान्होजींच्या अफाट शौर्याची पारख करून आरमारी जबाबदारी दिली. त्यांनी इंग्रज, डच, पोर्तुगीज व सिद्दींच्या नाकात समुद्रात वेसण घातली.',
+                      img: '/assets/images/real-kanhoji-angre.jpg',
+                      fallback: '/assets/images/real-sindhudurg-fort.jpg'
+                    },
+                    {
+                      name: 'कविवर्य कलश (छंदोगामात्य)',
+                      title: 'महापंडित व निष्ठावंत सखा',
+                      quote: 'यावच्चंद्रदिवाकरौ — मृत्यूपर्यंत शंभूराजांची अभेद्य साथ!',
+                      desc: 'संस्कृत व ब्रज भाषेचे प्रकांड विद्वान आणि संभाजी महाराजांचे जीवलग मित्र. संगमेश्वरपासून तुळापूरच्या बलिदानापर्यंत शेवटच्या श्वासापर्यंत महाराजांसोबत राहिले.',
+                      img: '/assets/images/real-sambhaji-shahu-color.jpg',
+                      fallback: '/assets/images/real-sambhaji-warrior.jpg'
+                    },
+                    {
+                      name: 'रामचंद्र नीलकंठ पंत अमात्य',
+                      title: 'अमात्य व मुत्सद्दी',
+                      quote: 'दुर्ग म्हणजे केवळ दगड नव्हेत, तर स्वराज्याचे प्राण आहेत!',
+                      desc: 'संभाजी महाराजांच्या मंत्रिमंडळातील धुरंधर मुत्सद्दी. शंभूराजांनंतरच्या स्वातंत्र्यसंग्रामात त्यांनी मराठा साम्राज्याला आर्थिक व प्रशासकीय नेतृत्व देऊन "आज्ञापत्र" रचले.',
+                      img: '/assets/images/connect-maratha-council.jpg',
+                      fallback: '/assets/images/real-maratha-court-1792.jpg'
+                    }
+                  ].map((s, idx) => (
+                    <div key={idx} style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FDE68A', overflow: 'hidden', boxShadow: '0 6px 18px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column' }}>
+                      <div style={{ height: '220px', overflow: 'hidden', background: '#FEF3C7', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <img
+                          src={s.img}
+                          alt={s.name}
+                          style={{
+                            maxWidth: '100%',
+                            maxHeight: '100%',
+                            width: 'auto',
+                            height: 'auto',
+                            objectFit: 'contain',
+                            borderRadius: '10px',
+                            boxShadow: '0 4px 14px rgba(0,0,0,0.12)'
+                          }}
+                          onError={(e) => { e.target.src = s.fallback; }}
+                        />
+                        <span style={{
+                          position: 'absolute',
+                          top: '10px',
+                          left: '10px',
+                          background: 'rgba(127, 29, 29, 0.92)',
+                          color: '#FEF08A',
+                          fontSize: '0.74rem',
+                          fontWeight: 800,
+                          padding: '3px 10px',
+                          borderRadius: '12px',
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                          letterSpacing: '0.3px'
+                        }}>
+                          {s.title}
+                        </span>
+                      </div>
+                      <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                        <h4 style={{ margin: '0 0 6px', color: '#7F1D1D', fontSize: '1.14rem', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>
+                          {s.name}
+                        </h4>
+                        <div style={{ background: '#FFFBEB', color: '#92400E', padding: '6px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, fontStyle: 'italic', marginBottom: '10px', borderLeft: '3px solid #F59E0B' }}>
+                          "{s.quote}"
+                        </div>
+                        <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6, flex: 1 }}>
+                          {s.desc}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 5. शंभूराजांची अद्वितीय साहित्य संपदा (Literary Masterpieces) */}
+              <div style={{ marginTop: '54px', padding: '30px', background: '#FFFDF9', borderRadius: '18px', border: '1.5px solid #FCD34D' }}>
+                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                  <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
+                    📖 अलौकिक विद्वत्ता
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.75rem', margin: '8px 0 6px', fontWeight: 900 }}>
+                    छत्रपती संभाजी महाराजांची अद्वितीय साहित्य संपदा
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.94rem', margin: 0 }}>
+                    संस्कृत व ब्रज भाषेतील अभिजात ग्रंथसंपदा — रणांगणावरील तलवारीसोबतच लेखणीचेही अद्भूत तेज!
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                  <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '12px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                    <div style={{ display: 'inline-block', background: '#7F1D1D', color: '#FEF3C7', fontSize: '0.75rem', fontWeight: 800, padding: '2px 8px', borderRadius: '6px', marginBottom: '6px' }}>
+                      संस्कृत महाग्रंथ
+                    </div>
+                    <b style={{ color: '#9A3412', display: 'block', fontSize: '1.15rem', fontFamily: "'Baloo 2', sans-serif" }}>बुधभूषणम् (Budhabhushan)</b>
+                    <p style={{ margin: '8px 0 0', fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6 }}>
+                      वयाच्या अवघ्या १४ व्या वर्षी रचलेला ३ अध्यायांचा संस्कृत राजनीती ग्रंथ. राजाचे कर्तव्य, दुर्गसंरक्षण, मंत्रिमंडळ, न्यायव्यवस्था आणि लष्करी रणनीतीचे सखोल मार्गदर्शन यात केले आहे.
+                    </p>
+                  </div>
+
+                  <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '12px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                    <div style={{ display: 'inline-block', background: '#C73800', color: '#fff', fontSize: '0.75rem', fontWeight: 800, padding: '2px 8px', borderRadius: '6px', marginBottom: '6px' }}>
+                      ब्रज भाषा काव्य
+                    </div>
+                    <b style={{ color: '#9A3412', display: 'block', fontSize: '1.15rem', fontFamily: "'Baloo 2', sans-serif" }}>नखशिख (Nakhshikh)</b>
+                    <p style={{ margin: '8px 0 0', fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6 }}>
+                      भारतीय सौंदर्यशास्त्र, काव्यसौंदर्य, निसर्गवर्णन आणि अलंकारशास्त्राचा अप्रतिम नमुना. नखांपासून शिखेपर्यंतच्या शास्त्रीय सौंदर्यवर्णनाची सुरेख काव्यरचना.
+                    </p>
+                  </div>
+
+                  <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '12px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                    <div style={{ display: 'inline-block', background: '#C73800', color: '#fff', fontSize: '0.75rem', fontWeight: 800, padding: '2px 8px', borderRadius: '6px', marginBottom: '6px' }}>
+                      ब्रज भाषा नाट्यकाव्य
+                    </div>
+                    <b style={{ color: '#9A3412', display: 'block', fontSize: '1.15rem', fontFamily: "'Baloo 2', sans-serif" }}>नायिकाभेद (Nayikabhed)</b>
+                    <p style={{ margin: '8px 0 0', fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6 }}>
+                      रसशास्त्र, मानवी भावनांचे सूक्ष्म बारकावे, नाट्यकला आणि शास्त्रीय संगीताचा मधुर मिलाफ. शंभूराजांच्या सूक्ष्म रसिकतेची आणि मनोविश्लेषणाची साक्ष देणारा ग्रंथ.
+                    </p>
+                  </div>
+
+                  <div style={{ background: '#FFFFFF', padding: '18px', borderRadius: '12px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                    <div style={{ display: 'inline-block', background: '#C73800', color: '#fff', fontSize: '0.75rem', fontWeight: 800, padding: '2px 8px', borderRadius: '6px', marginBottom: '6px' }}>
+                      ७०० दोहे संग्रह
+                    </div>
+                    <b style={{ color: '#9A3412', display: 'block', fontSize: '1.15rem', fontFamily: "'Baloo 2', sans-serif" }}>सातसतक (Saatsatak)</b>
+                    <p style={{ margin: '8px 0 0', fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6 }}>
+                      गाथा सप्तशतीच्या धर्तीवर लिहिलेले ७०० प्रासादिक दोहे. यामध्ये नीतिशास्त्र, अध्यात्म, सामाजिक प्रबोधन, लोकसंस्कृती आणि जीवनाचे उदात्त तत्त्वज्ञान मांडले आहे.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 6. शंभूकालीन अजोड युद्धनीती व जागतिक विक्रम */}
+              <div style={{ marginTop: '54px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                  <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
+                    🛡️ अजेय रणनीती
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                    शंभूकालीन अजोड युद्धनीती व जागतिक विक्रम
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
+                    ९ वर्षांच्या अखंड युद्धात ५ बलाढ्य पातशाह्यांना एकाच वेळी पाणी पाजणारे जगातील अद्वितीय सेनापती
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '18px' }}>
+                  <div style={{ background: '#FFFFFF', borderRadius: '14px', padding: '22px', border: '1.5px solid #FDE68A', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', textAlign: 'center' }}>
+                    <div style={{ fontSize: '2.4rem', color: '#B91C1C', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>१२८</div>
+                    <b style={{ color: '#9A3412', fontSize: '1.1rem', display: 'block', margin: '4px 0 8px', fontFamily: "'Baloo 2', sans-serif" }}>अपराजित लढाया (१००% विजय)</b>
+                    <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6 }}>
+                      ९ वर्षांच्या राजवटीत सलग १२८ लढाया लढून एकही लढाई न हरणारे छत्रपती संभाजी महाराज हे जगाच्या लष्करी इतिहासातील एकमेव अपराजित सम्राट आहेत.
+                    </p>
+                  </div>
+
+                  <div style={{ background: '#FFFFFF', borderRadius: '14px', padding: '22px', border: '1.5px solid #FDE68A', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', textAlign: 'center' }}>
+                    <div style={{ fontSize: '2.4rem', color: '#B91C1C', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>५</div>
+                    <b style={{ color: '#9A3412', fontSize: '1.1rem', display: 'block', margin: '4px 0 8px', fontFamily: "'Baloo 2', sans-serif" }}>आघाड्यांवर एकाच वेळी युद्ध</b>
+                    <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6 }}>
+                      उत्तरेकडून मुघल (औरंगजेब), पश्चिमेकडून सिद्दी, दक्षिणेकडून आदिलशाही व कुतुबशाही आणि समुद्रात पोर्तुगीज — पाचही आघाड्यांवर एकाच वेळी मराठा भगवा फडकावला.
+                    </p>
+                  </div>
+
+                  <div style={{ background: '#FFFFFF', borderRadius: '14px', padding: '22px', border: '1.5px solid #FDE68A', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', textAlign: 'center' }}>
+                    <div style={{ fontSize: '2.4rem', color: '#B91C1C', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>६ वर्षे</div>
+                    <b style={{ color: '#9A3412', fontSize: '1.1rem', display: 'block', margin: '4px 0 8px', fontFamily: "'Baloo 2', sans-serif" }}>रामशेज किल्ला अभेद्य वेढा</b>
+                    <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6 }}>
+                      अवघ्या ६०० मावळ्यांनी मुघलांच्या ५०,००० फौजेला नाशिकजवळ ६ वर्षे रोखून धरले. जगातील सर्वात प्रदीर्घ यशस्वी किल्ला संरक्षणाचा हा अद्वितीय विक्रम आहे.
+                    </p>
+                  </div>
+
+                  <div style={{ background: '#FFFFFF', borderRadius: '14px', padding: '22px', border: '1.5px solid #FDE68A', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', textAlign: 'center' }}>
+                    <div style={{ fontSize: '2.4rem', color: '#B91C1C', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>०</div>
+                    <b style={{ color: '#9A3412', fontSize: '1.1rem', display: 'block', margin: '4px 0 8px', fontFamily: "'Baloo 2', sans-serif" }}>किल्ले मुघलांच्या स्वाधीन</b>
+                    <p style={{ margin: 0, fontSize: '0.86rem', color: '#4B5563', lineHeight: 1.6 }}>
+                      औरंगजेब ५ लाख सैन्य, शेकडो तोफा आणि प्रचंड खजिना घेऊन आला, परंतु शंभूराजे जिवंत असेपर्यंत मुघलांना एकही किल्ला जिंकता आला नाही.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 7. तुळापूर व वडू बुद्रुक — सर्वोच्च बलिदान तीर्थ */}
+              <div style={{ marginTop: '54px', padding: '30px', background: '#FFFDF9', borderRadius: '18px', border: '1.5px solid #FCD34D' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '26px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: '0 0 260px', width: '260px', height: '200px', margin: '0 auto', borderRadius: '16px', overflow: 'hidden', border: '3px solid #D97706', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}>
+                    <img
+                      src="/assets/images/tulapur-sangam.jpg"
+                      alt="तुळापूर बलिदान तीर्थ"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => { e.target.src = '/assets/images/real-sambhaji-warrior.jpg'; }}
+                    />
+                  </div>
+                  <div style={{ flex: '1 1 500px', minWidth: '280px' }}>
+                    <span style={{ background: '#FEF2F2', color: '#991B1B', border: '1.5px solid #FECACA', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800 }}>
+                      🪔 अखंड स्वाभिमानाचे महातीर्थ
+                    </span>
+                    <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.65rem', margin: '8px 0 10px', fontWeight: 900 }}>
+                      तुळापूर व वडू बुद्रुक — सर्वोच्च आत्मबलिदान व पेटलेला स्वातंत्र्यसंग्राम
+                    </h3>
+                    <p style={{ color: '#374151', fontSize: '0.96rem', lineHeight: 1.7, margin: '0 0 16px' }}>
+                      ११ मार्च १६८९ (फाल्गुन वद्य अमावास्या) रोजी भीमा, भामा आणि इंद्रायणी नद्यांच्या पवित्र त्रिवेणी संगमावर तुळापूर येथे धर्मवीर छत्रपती संभाजी महाराजांचे सर्वोच्च बलिदान झाले. सलग ४० दिवस अमानुष शारीरिक हाल सहन करूनही त्यांनी स्वराज्य व स्वाभिमानाचा सौदा केला नाही. वडू बुद्रुक येथील शिवप्रेमी ग्रामस्थांनी (गोविंद गोपाळ महार व त्यांच्या सहकाऱ्यांनी) मोगलांच्या दहशतीची तमा न बाळगता शंभूराजांच्या पवित्र देहावर अंत्यसंस्कार केले. या बलिदानाने पेटून उठलेल्या मावळ्यांनी पुढील २७ वर्षे गनिमी काव्याने औरंगजेबाला याच महाराष्ट्राच्या मातीत गाडले!
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                      <div style={{ background: '#FFFFFF', padding: '12px 14px', borderRadius: '10px', border: '1px solid #FED7AA' }}>
+                        <b style={{ color: '#B45309', display: 'block', fontSize: '0.92rem' }}>⚡ ४० दिवस असीम सहनशीलता:</b>
+                        <span style={{ fontSize: '0.84rem', color: '#4B5563' }}>डोळे काढले, जीभ छाटली, तरीही वाकला नाही स्वाभिमान</span>
+                      </div>
+                      <div style={{ background: '#FFFFFF', padding: '12px 14px', borderRadius: '10px', border: '1px solid #FED7AA' }}>
+                        <b style={{ color: '#B45309', display: 'block', fontSize: '0.92rem' }}>🚩 वडू बुद्रुक समाधी स्थळ:</b>
+                        <span style={{ fontSize: '0.84rem', color: '#4B5563' }}>शूर शिवप्रेमी मावळ्यांनी केलेले ऐतिहासिक अंत्यसंस्कार</span>
+                      </div>
+                      <div style={{ background: '#FFFFFF', padding: '12px 14px', borderRadius: '10px', border: '1px solid #FED7AA' }}>
+                        <b style={{ color: '#B45309', display: 'block', fontSize: '0.92rem' }}>🔥 २७ वर्षांचा स्वातंत्र्यसंग्राम:</b>
+                        <span style={{ fontSize: '0.84rem', color: '#4B5563' }}>संताजी-धनाजींच्या नेतृत्वात मुघल साम्राज्याची अखेर</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 8. समकालीन परदेशी दस्तऐवज व इतिहासकारांचे उद्गार */}
+              <div style={{ marginTop: '54px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                  <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
+                    📜 ऐतिहासिक साक्ष
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.8rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                    समकालीन परदेशी दस्तऐवज व इतिहासकारांचे उद्गार
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.95rem', margin: 0 }}>
+                    शत्रूंनी आणि समकालीन जगाने छत्रपती संभाजी महाराजांच्या अद्वितीय शौर्याला दिलेली ऐतिहासिक दाद
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '18px' }}>
+                  {[
+                    {
+                      name: 'पोर्तुगीज व्हाइसरॉय फ्रान्सिस्को द ताव्होरा (१६८३)',
+                      tag: 'गोवा पोर्तुगीज गव्हर्नर जनरल',
+                      quote: 'संभाजी हा केवळ राजा नाही, तर तो रणांगणावर प्रत्यक्ष मृत्यूसारखा धावून येतो. त्याच्या तलवारीचा तडाखा रोखणे मानवी शक्तीच्या पलीकडचे आहे!'
+                    },
+                    {
+                      name: 'मुघल इतिहासकार खाफी खान',
+                      tag: 'मुंतखाब-उल-लुबाब ग्रंथकार (मुघल दरबारी इतिहासकार)',
+                      quote: 'संभाजी हा शिवाजींपेक्षाही अधिक शूर, चपळ आणि धाडसी होता. त्याच्या अचानक हल्ल्यांनी बादशहाची संपूर्ण सेना कायम दहशतीत राहत असे.'
+                    },
+                    {
+                      name: 'सुरत ब्रिटिश कौन्सिल अहवाल (१६८२)',
+                      tag: 'ईस्ट इंडिया कंपनी अधिकृत दस्तऐवज',
+                      quote: 'संभाजी इतका वेगवान आणि पराक्रमी आहे की तो आज कुठे आहे आणि उद्या कुठे घाव घालेल याचा अंदाज बांधणे अशक्य आहे.'
+                    },
+                    {
+                      name: 'इतिहासकार रियासतकार गो. स. सरदेसाई',
+                      tag: 'प्रख्यात मराठा इतिहास संशोधक',
+                      quote: 'संभाजी महाराजांनी ९ वर्षे औरंगजेबाला दक्षिणेत थोपवून ठेवले नसते, तर औरंगजेबाने उत्तर भारताप्रमाणेच संपूर्ण दक्षिण भारत उद्ध्वस्त केला असता.'
+                    }
+                  ].map((w, idx) => (
+                    <div key={idx} style={{ background: '#FFFDF9', border: '1.5px solid #FDE68A', padding: '20px', borderRadius: '16px', position: 'relative', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                      <div>
+                        <div style={{ marginBottom: '12px', paddingBottom: '10px', borderBottom: '1px solid #FED7AA' }}>
+                          <b style={{ color: '#7F1D1D', display: 'block', fontSize: '1.02rem', fontFamily: "'Baloo 2', sans-serif" }}>{w.name}</b>
+                          <span style={{ fontSize: '0.8rem', color: '#92400E', fontWeight: 600 }}>{w.tag}</span>
+                        </div>
+                        <div style={{ position: 'relative' }}>
+                          <span style={{ color: '#F59E0B', fontSize: '1.8rem', lineHeight: 1, fontFamily: 'serif', marginRight: '4px' }}>“</span>
+                          <p style={{ margin: '0', fontSize: '0.92rem', color: '#1F2937', fontStyle: 'italic', lineHeight: 1.65, display: 'inline' }}>
+                            {w.quote}
+                          </p>
+                          <span style={{ color: '#F59E0B', fontSize: '1.8rem', lineHeight: 1, fontFamily: 'serif', marginLeft: '4px' }}>”</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 9. धर्मवीर संभाजी महाराज — नेहमी विचारले जाणारे ऐतिहासिक प्रश्न व उत्तरे (FAQ) */}
+              <div style={{ marginTop: '54px', padding: '32px 28px', background: '#FFFFFF', borderRadius: '18px', border: '1.5px solid #E5E7EB', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
+                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                  <span style={{ background: '#FEF3C7', color: '#9A3412', border: '1.5px solid #FCD34D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800 }}>
+                    ❓ ज्ञान जिज्ञासा
+                  </span>
+                  <h3 style={{ fontFamily: 'Baloo 2', color: '#7F1D1D', fontSize: '1.75rem', margin: '10px 0 6px', fontWeight: 900 }}>
+                    नेहमी विचारले जाणारे ऐतिहासिक प्रश्न व उत्तरे (FAQ)
+                  </h3>
+                  <p style={{ color: '#6B7280', fontSize: '0.94rem', margin: 0 }}>
+                    छत्रपती संभाजी महाराजांचे जीवन, लढाया, साहित्य, मोशी येथील १८० फूट पुतळा व बलिदान याबद्दल वारंवार विचारले जाणारे प्रश्न
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {[
+                    {
+                      q: '१. मोशी (पुणे) येथील छत्रपती संभाजी महाराजांचा पुतळा का ऐतिहासिक मानला जातो?',
+                      a: 'पुण्यातील मोशी (पिंपरी-चिंचवड) येथील "शंभू सृष्टी" स्मारक संकुलात उभारलेला "स्टॅच्यू ऑफ हिंदूभूषण" हा एकूण १८० फूट (१४० फूट कांस्य पुतळा + ४० फूट गडकोट पादपीठ) उंच आहे. हा जगातील छत्रपती संभाजी महाराजांचा सर्वांत उंच पूर्णाकृती पुतळा असून त्याची लंडन बुक ऑफ रेकॉर्ड्समध्ये नोंद झाली आहे. ज्येष्ठ शिल्पकार पद्मभूषण राम सुतार यांनी हे शिल्प घडवले आहे.'
+                    },
+                    {
+                      q: '२. छत्रपती संभाजी महाराजांनी एकूण किती लढाया लढल्या आणि त्यांचे काय यश होते?',
+                      a: 'छत्रपती संभाजी महाराजांनी आपल्या ९ वर्षांच्या राजवटीत तब्बल १२८ लढाया लढल्या आणि आश्चर्याची गोष्ट म्हणजे त्यातील एकाही लढाईत त्यांचा पराभव झाला नाही (१००% विजय दर). जगाच्या लष्करी इतिहासात १०० हून अधिक लढाया लढून एकही लढाई न हरणारे ते एकमेव अपराजित सेनापती आहेत.'
+                    },
+                    {
+                      q: '३. "बुधभूषणम्" या ग्रंथाची निर्मिती संभाजी महाराजांनी केव्हा व का केली?',
+                      a: 'छत्रपती संभाजी महाराजांनी वयाच्या अवघ्या १४ व्या वर्षी शृंगारपूर येथे वास्तव्यास असताना "बुधभूषणम्" या संस्कृत ग्रंथाची रचना केली. यात राजनीती, राजाचे आदर्श गुण, मंत्र्यांची निवड, गडकोटांचे महत्त्व, गुप्तहेर यंत्रणा आणि प्रजाहित यावर अत्यंत सखोल मार्गदर्शन केले आहे.'
+                    },
+                    {
+                      q: '४. रामशेज किल्ल्याचा ६ वर्षे चाललेला वेढा का जगप्रसिद्ध आहे?',
+                      a: 'नाशिकजवळील रामशेज किल्ला जिंकण्यासाठी मुघल बादशहा औरंगजेबाने ५०,००० फौजेचा अफाट लवाजमा पाठवला होता. किल्ल्यावर अवघे ६०० मावळे होते. किल्लेदार सूर्यराव जेधे यांच्या नेतृत्वात मावळ्यांनी लाकडी तोफा आणि गोफणींच्या साहाय्याने मुघलांना तब्बल ६ वर्षे (१६८२ ते १६८८) थोपवून धरले. जगातील सर्वात प्रदीर्घ यशस्वी किल्ला संरक्षणाची ही लढाई ठरली.'
+                    },
+                    {
+                      q: '५. पोर्तुगीजांविरुद्ध फोंड्याच्या लढाईत संभाजी महाराजांनी काय पराक्रम केला?',
+                      a: '१६८३ मध्ये गोव्याच्या पोर्तुगीजांनी मुघलांशी हातमिळवणी केल्यानंतर संभाजी महाराजांनी स्वतः फोंड्यावर हल्ला चढवला. त्यांनी पोर्तुगीज सैन्याची दाणादाण उडवून व्हाइसरॉय फ्रान्सिस्को द ताव्होरा याला जखमी केले. संभाजी महाराजांच्या घोड्याने खाडीचे पाणी ओलांडून पोर्तुगीजांना जुने गोवे येथे घेरले आणि त्यांना शरणागती पत्करण्यास भाग पाडले.'
+                    },
+                    {
+                      q: '६. छत्रपती संभाजी महाराजांच्या बलिदानाचे महाराष्ट्रासाठी काय महत्त्व आहे?',
+                      a: '११ मार्च १६८९ रोजी तुळापूर येथे संभाजी महाराजांनी ४० दिवस अमानुष छळ सहन करूनही स्वाभिमान सोडला नाही आणि सर्वोच्च बलिदान दिले. या अमर बलिदानाने संपूर्ण महाराष्ट्रातील मावळ्यांमध्ये अशी ज्वाला पेटवली की छत्रपती राजाराम महाराज, संताजी घोरपडे व धनाजी जाधव यांच्या नेतृत्वात मराठ्यांनी मुघल साम्राज्याला धूळ चारून शेवटी औरंगजेबाची कबर याच महाराष्ट्रात खोदली.'
+                    }
+                  ].map((faq, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        border: '1.5px solid #FDE68A',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        background: activeFaq === (100 + i) ? '#FFFDF8' : '#FAFAFA',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setActiveFaq(activeFaq === (100 + i) ? null : (100 + i))}
+                        style={{
+                          width: '100%',
+                          textAlign: 'left',
+                          padding: '16px 20px',
+                          background: 'none',
+                          border: 'none',
+                          outline: 'none',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '12px',
+                          color: '#7F1D1D',
+                          fontSize: '1.02rem',
+                          fontWeight: 800,
+                          fontFamily: "'Baloo 2', sans-serif"
+                        }}
+                      >
+                        <span>{faq.q}</span>
+                        <span style={{ fontSize: '1.2rem', color: '#D97706', transform: activeFaq === (100 + i) ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                          ▼
+                        </span>
+                      </button>
+                      {activeFaq === (100 + i) && (
                         <div style={{ padding: '0 20px 18px', color: '#374151', fontSize: '0.94rem', lineHeight: 1.75, borderTop: '1px solid #FEF3C7', paddingTop: '12px' }}>
                           {faq.a}
                         </div>
