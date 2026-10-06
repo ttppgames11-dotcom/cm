@@ -84,7 +84,15 @@ export default function LoginPage() {
     try {
       const res = await login(loginId.trim(), password);
       if (res && res.success) {
-        navigate('/dashboard');
+        const role = res.member?.role || 'member';
+        if (role === 'superadmin') navigate('/superadmin');
+        else if (role === 'admin') navigate('/admin');
+        else if (role === 'ceo') navigate('/ceo');
+        else if (role === 'district_admin') navigate('/crm/district');
+        else if (role === 'chapter_president') navigate('/crm/chapter');
+        else if (role === 'seva_helpdesk') navigate('/crm/helpdesk');
+        else if (role === 'finance_officer') navigate('/crm/finance');
+        else navigate('/dashboard');
       } else {
         setMessage(res?.error || 'लॉगिन अयशस्वी. कृपया आपले क्रेडेंशियल तपासा.');
       }
