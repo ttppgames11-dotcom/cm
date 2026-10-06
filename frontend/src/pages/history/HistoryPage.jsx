@@ -215,7 +215,7 @@ const historicalFigures = [
     badge: 'स्वराज्याचे सरसेनापती',
     desc: 'छत्रपती शिवाजी महाराज व संभाजी महाराज या दोन्ही छत्रपतींच्या काळात अतुलनीय शौर्य गाजवणारे सरसेनापती.',
     link: '/history/warriors',
-    image: '/assets/images/real-maratha-sowar.jpg',
+    image: '/assets/images/real-hambirrao-mohite.jpg',
     objectPosition: 'center 20%',
     objectFit: 'contain'
   }
