@@ -2154,8 +2154,8 @@ export default function GenericArticlePage() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '18px' }}>
                   <div style={{ background: '#FFFDF9', borderRadius: '14px', border: '1.5px solid #FED7AA', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
-                    <div style={{ height: '185px', overflow: 'hidden', background: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <img src="/assets/images/real-jijau-portrait.jpg" alt="सिंदखेड राजा" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                    <div style={{ height: '185px', overflow: 'hidden', background: '#F3F4F6' }}>
+                      <img src="/assets/images/real-sindkhed-raja.jpg" alt="सिंदखेड राजा (जन्मस्थान)" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%' }} />
                     </div>
                     <div style={{ padding: '16px' }}>
                       <span style={{ color: '#D97706', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase' }}>बुलढाणा जिल्हा</span>
