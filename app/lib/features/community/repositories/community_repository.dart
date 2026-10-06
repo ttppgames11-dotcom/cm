@@ -165,6 +165,7 @@ class CommunityRepository {
       timeAgo: _timeAgo((p['created_at'] ?? '').toString()),
       content: (p['text'] ?? '').toString(),
       imageUrl: ApiConfig.mediaUrl(p['image']?.toString()),
+      isLikedByMe: p['is_liked'] == true || p['is_liked'] == 1,
       likesCount: (p['likes_count'] as num?)?.toInt() ?? 0,
       commentsCount: comments is List ? comments.length : 0,
       comments: _commentsFrom(comments, myMemberId),

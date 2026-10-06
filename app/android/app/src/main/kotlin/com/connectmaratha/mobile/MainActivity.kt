@@ -1,4 +1,4 @@
-package com.connectmaratha.app
+package com.connectmaratha.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

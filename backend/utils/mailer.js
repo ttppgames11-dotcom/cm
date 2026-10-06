@@ -131,4 +131,114 @@ noreply@connectmaratha.com
   return { success: true, delivered: Boolean(transporter), previewOtp: otp };
 }
 
-export default { sendPasswordResetOtpEmail };
+/**
+ * Sends a welcome email to newly registered members.
+ * Uses noreply@connectmaratha.com / info@connectmaratha.com
+ */
+export async function sendWelcomeEmail({ to, name = 'सदस्य', memberId }) {
+  const subject = '🚩 [Connect Maratha] कनेक्ट मराठा परिवारात आपले सहर्ष स्वागत!';
+
+  const textContent = `
+जय शिवराय ${name},
+
+कनेक्ट मराठा (Connect Maratha) परिवारात आपले सहर्ष स्वागत आहे!
+आपली नोंदणी यशस्वीरीत्या पूर्ण झाली आहे.
+
+आपला सदस्य आयडी (Member ID): ${memberId || 'उपलब्ध नाही'}
+
+कनेक्ट मराठा ॲपमधील प्रमुख वैशिष्ट्ये:
+• समाज नेटवर्क आणि व्यवसाय देवाणघेवाण (Sangam)
+• गडकिल्ले इतिहास आणि मराठा साम्राज्य कालपट
+• नोकऱ्या आणि करिअर मार्गदर्शन
+• डिजिटल सदस्य ओळखपत्र
+
+ॲपमध्ये लॉगिन करून आपल्या प्रोफाइलची माहिती पूर्ण करा.
+
+सस्नेह,
+टीम कनेक्ट मराठा
+info@connectmaratha.com
+`;
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #FDF8F2; margin: 0; padding: 24px; color: #2C1810; }
+    .container { max-width: 540px; margin: 0 auto; background: #FFFFFF; border-radius: 16px; border: 1px solid #F0DFD0; overflow: hidden; box-shadow: 0 4px 20px rgba(184, 80, 24, 0.08); }
+    .header { background: linear-gradient(135deg, #B85018 0%, #D86B27 100%); padding: 32px 24px; text-align: center; color: #FFFFFF; }
+    .header h1 { margin: 0; font-size: 26px; letter-spacing: 0.5px; }
+    .header p { margin: 8px 0 0; font-size: 14px; opacity: 0.95; }
+    .content { padding: 32px 28px; }
+    .greeting { font-size: 19px; font-weight: 700; color: #2C1810; margin-bottom: 12px; }
+    .desc { font-size: 15px; line-height: 1.6; color: #5C4538; margin-bottom: 24px; }
+    .card-box { background: #FFF7EE; border: 1px solid #EAC8AB; border-radius: 12px; padding: 18px 20px; margin: 20px 0; }
+    .card-title { font-size: 13px; color: #8C6A54; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
+    .card-id { font-size: 24px; font-weight: 800; color: #B85018; margin-top: 6px; font-family: monospace; }
+    .features-list { list-style: none; padding: 0; margin: 20px 0; }
+    .features-list li { padding: 10px 0; border-bottom: 1px dashed #F2E3D5; font-size: 14px; color: #4A3326; display: flex; align-items: center; }
+    .features-list li:last-child { border-bottom: none; }
+    .footer { border-top: 1px solid #F5ECE3; padding: 22px; text-align: center; font-size: 12px; color: #A88F7E; background: #FAF5F0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚩 || सहर्ष स्वागत || 🚩</h1>
+      <p>Connect Maratha — समाज, संस्कृती आणि व्यापार</p>
+    </div>
+    <div class="content">
+      <div class="greeting">सस्नेह जय शिवराय, ${name}!</div>
+      <div class="desc">
+        कनेक्ट मराठा (Connect Maratha) च्या डिजिटल व्यासपीठावर आपले मनःपूर्वक स्वागत. मराठा समाजाला एकत्र आणण्यासाठी, व्यवसायाची देवाणघेवाण करण्यासाठी आणि आपला समृद्ध इतिहास जपण्यासाठी आम्ही कटिबद्ध आहोत.
+      </div>
+
+      <div class="card-box">
+        <div class="card-title">आपला सदस्य आयडी (Member ID)</div>
+        <div class="card-id">${memberId || 'नोंदणीकृत'}</div>
+      </div>
+
+      <ul class="features-list">
+        <li>🤝 <strong>संगम (Sangam):</strong> समाजातील उद्योजक आणि व्यावसायिकांचे नेटवर्क</li>
+        <li>🏰 <strong>गडकिल्ले व इतिहास:</strong> शिवकालीन ऐतिहासिक माहिती आणि कालपट</li>
+        <li>💼 <strong>नोकऱ्या:</strong> समाजातील तरुणांसाठी करिअर आणि रोजगाराच्या संधी</li>
+        <li>🪪 <strong>डिजिटल ओळखपत्र:</strong> आपले अधिकृत व्हर्च्युअल सदस्य कार्ड</li>
+      </ul>
+
+      <p style="font-size: 14px; color: #5C4538; margin-top: 20px;">
+        आपण आता ॲपमध्ये लॉगिन करून आपले डिजिटल ओळखपत्र पाहू शकता आणि नेटवर्कमध्ये सहभागी होऊ शकता.
+      </p>
+    </div>
+    <div class="footer">
+      टीम कनेक्ट मराठा | <a href="mailto:info@connectmaratha.com" style="color: #B85018; text-decoration: none;">info@connectmaratha.com</a><br/>
+      हा ईमेल स्वयंचलित प्रणालीद्वारे पाठवला आहे.
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+  const transporter = getTransporter();
+  if (transporter) {
+    try {
+      const info = await transporter.sendMail({
+        from: MAIL_FROM,
+        to,
+        replyTo: 'info@connectmaratha.com',
+        subject,
+        text: textContent,
+        html: htmlContent,
+      });
+      console.log(`[MAILER] Welcome email sent to ${to}: Message ID ${info.messageId}`);
+      return { success: true, messageId: info.messageId };
+    } catch (err) {
+      console.error(`[MAILER] Failed to send welcome email via SMTP to ${to}:`, err.message);
+    }
+  }
+
+  console.log(`📩 [WELCOME EMAIL DISPATCH] (Simulated): To: ${to}, Name: ${name}, ID: ${memberId}`);
+  return { success: true, delivered: Boolean(transporter) };
+}
+
+export default { sendPasswordResetOtpEmail, sendWelcomeEmail };

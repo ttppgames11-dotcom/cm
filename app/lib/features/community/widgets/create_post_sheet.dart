@@ -36,6 +36,19 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
   String? _error;
 
   @override
+  void initState() {
+    super.initState();
+    _checkLostPhoto();
+  }
+
+  Future<void> _checkLostPhoto() async {
+    final recovered = await recoverLostProfilePhoto();
+    if (recovered != null && mounted) {
+      setState(() => _photoPath = recovered);
+    }
+  }
+
+  @override
   void dispose() {
     _text.dispose();
     super.dispose();
@@ -62,7 +75,9 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
         myMemberId: widget.myMemberId,
         imagePath: _photoPath,
       );
-      if (mounted) Navigator.pop(context, created);
+      if (mounted) {
+        Navigator.of(context).pop(created);
+      }
     } catch (e) {
       if (!mounted) return;
       setState(() {

@@ -41,7 +41,10 @@ Future<PhotoChoice?> pickProfilePhoto(
 
 /// Lets the member take or choose a photo to attach to a community post.
 /// Returns the picked file's path, or null when they cancel.
-Future<String?> pickPostPhoto(BuildContext context) async {
+Future<String?> pickPostPhoto(
+  BuildContext context, {
+  Future<void> Function()? beforeLaunch,
+}) async {
   final choice = await _pickPhoto(
     context,
     title: 'पोस्टसाठी फोटो',
@@ -49,6 +52,7 @@ Future<String?> pickPostPhoto(BuildContext context) async {
     icon: Icons.image_rounded,
     maxSide: 1600,
     camera: CameraDevice.rear,
+    beforeLaunch: beforeLaunch,
   );
   return choice is PhotoPicked ? choice.path : null;
 }

@@ -169,6 +169,8 @@ CREATE TABLE IF NOT EXISTS post_likes (
   member_id TEXT
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_post_likes_post_member ON post_likes(post_id, member_id);
+
 CREATE TABLE IF NOT EXISTS post_comments (
   id TEXT PRIMARY KEY,
   post_id TEXT,

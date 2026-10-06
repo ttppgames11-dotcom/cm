@@ -89,9 +89,47 @@ export async function get(sql, params = []) {
   return rows.length > 0 ? rows[0] : null;
 }
 
+
+/**
+ * Runs fn inside a single transaction. fn receives { runQuery, all, get }
+ * bound to that transaction; any thrown error rolls everything back.
+ */
+export async function transaction(fn) {
+  const database = await getDatabase();
+  database.run('BEGIN TRANSACTION');
+  const tx = {
+    runQuery: async (sql, params = []) => {
+      database.run(sql, params);
+      return { success: true };
+    },
+    all: async (sql, params = []) => {
+      const stmt = database.prepare(sql);
+      if (params && params.length > 0) stmt.bind(params);
+      const results = [];
+      while (stmt.step()) results.push(stmt.getAsObject());
+      stmt.free();
+      return results;
+    },
+    get: async (sql, params = []) => {
+      const rows = await tx.all(sql, params);
+      return rows.length > 0 ? rows[0] : null;
+    }
+  };
+  try {
+    const result = await fn(tx);
+    database.run('COMMIT');
+    saveDatabase();
+    return result;
+  } catch (err) {
+    try { database.run('ROLLBACK'); } catch (_) {}
+    throw err;
+  }
+}
+
 export default {
   getDatabase,
   saveDatabase,
+  transaction,
   runQuery,
   all,
   get

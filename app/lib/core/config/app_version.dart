@@ -2,5 +2,5 @@
 ///
 /// Must equal `version:` in pubspec.yaml — `test/app_version_test.dart` fails
 /// when they differ, so the number on screen can never lag behind a release.
-const appVersionName = '1.0.1';
-const appBuildNumber = 2;
+const appVersionName = '1.0.2';
+const appBuildNumber = 3;

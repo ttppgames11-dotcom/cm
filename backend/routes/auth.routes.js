@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { runQuery, get, all } from '../../database/database.js';
+import { runQuery, get, all, transaction } from '../../database/database.js';
 import { generateToken, authenticateToken } from '../middleware/auth.js';
-import { sendPasswordResetOtpEmail } from '../utils/mailer.js';
+import { sendPasswordResetOtpEmail, sendWelcomeEmail } from '../utils/mailer.js';
 import { validateLocationHierarchy } from './locations.routes.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'connect_maratha_secret_key_2026';
@@ -119,6 +119,15 @@ router.post('/register', async (req, res, next) => {
     }
 
     const token = generateToken(newMember);
+
+    // Asynchronously dispatch welcome email if registered with email
+    if (newMember.email && newMember.email.includes('@')) {
+      sendWelcomeEmail({
+        to: newMember.email,
+        name: newMember.name,
+        memberId: newMember.id,
+      }).catch(e => console.error('[REGISTER] Welcome email error:', e.message));
+    }
 
     res.status(201).json({
       success: true,
@@ -289,9 +298,17 @@ router.post('/forgot-password', async (req, res, next) => {
 
     // Store/replace in password_resets table
     await runQuery(`
-      INSERT OR REPLACE INTO password_resets (email, otp_hash, expires_at, attempts, created_at)
-      VALUES (?, ?, ?, 0, datetime('now'))
-    `, [cleanEmail, otpHash, expiresAt]);
+      INSERT INTO password_resets
+        (email, member_id, otp_hash, expires_at, attempts, created_at)
+      VALUES (?, ?, ?, ?, 0, NOW())
+      ON CONFLICT (email)
+      DO UPDATE SET
+        member_id = EXCLUDED.member_id,
+        otp_hash = EXCLUDED.otp_hash,
+        expires_at = EXCLUDED.expires_at,
+        attempts = 0,
+        created_at = NOW()
+    `, [cleanEmail, member.id, otpHash, expiresAt]);
 
     // Send email using noreply mailer
     await sendPasswordResetOtpEmail({
@@ -447,5 +464,137 @@ router.post('/reset-password', async (req, res, next) => {
   }
 });
 
-export default router;
+// DELETE /api/auth/account
+router.delete('/account', authenticateToken, async (req, res, next) => {
+  const memberId = req.user?.id;
+  if (!memberId) {
+    return res.status(401).json({ success: false, error: 'प्रमाणीकरण आवश्यक आहे (Authentication required)' });
+  }
 
+  const { confirm, password, idToken } = req.body || {};
+  if (confirm !== 'DELETE') {
+    return res.status(400).json({
+      success: false,
+      code: 'CONFIRMATION_REQUIRED',
+      error: 'खाते हटवण्यासाठी कृपया DELETE शब्द टाईप करा (Please enter DELETE to confirm)'
+    });
+  }
+
+  try {
+    const member = await get('SELECT * FROM members WHERE id = ?', [memberId]);
+    if (!member) {
+      return res.status(404).json({
+        success: false,
+        code: 'USER_NOT_FOUND',
+        error: 'सदस्य आढळला नाही (Member not found)'
+      });
+    }
+
+    // Verify Password if member has password_hash
+    if (member.password_hash) {
+      if (!password) {
+        return res.status(401).json({
+          success: false,
+          code: 'INVALID_PASSWORD',
+          error: 'कृपया आपला पासवर्ड प्रविष्ट करा (Please provide your password)'
+        });
+      }
+      const isPasswordValid = bcrypt.compareSync(password, member.password_hash);
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          success: false,
+          code: 'INVALID_PASSWORD',
+          error: 'चुकीचा पासवर्ड (Incorrect password)'
+        });
+      }
+    }
+
+    await transaction(async (t) => {
+      // 1. Likes placed by this member on OTHER posts
+      const otherPostLikes = await t.all('SELECT post_id FROM post_likes WHERE member_id = ?', [memberId]);
+      await t.runQuery('DELETE FROM post_likes WHERE member_id = ?', [memberId]);
+      for (const pl of otherPostLikes) {
+        if (pl.post_id) {
+          const remLikes = await t.get('SELECT COUNT(*) as cnt FROM post_likes WHERE post_id = ?', [pl.post_id]);
+          await t.runQuery('UPDATE posts SET likes_count = ? WHERE id = ?', [remLikes ? remLikes.cnt : 0, pl.post_id]);
+        }
+      }
+
+      // 2. Comments written by this member on ANY post
+      await t.runQuery('DELETE FROM post_comments WHERE author_id = ?', [memberId]);
+
+      // 3. Posts authored by this member (and their attached likes/comments)
+      const memberPosts = await t.all('SELECT id FROM posts WHERE author_id = ?', [memberId]);
+      for (const p of memberPosts) {
+        if (p.id) {
+          await t.runQuery('DELETE FROM post_comments WHERE post_id = ?', [p.id]);
+          await t.runQuery('DELETE FROM post_likes WHERE post_id = ?', [p.id]);
+        }
+      }
+      await t.runQuery('DELETE FROM posts WHERE author_id = ?', [memberId]);
+
+      // 4. Media owned by this member (check table existence safely)
+      try {
+        await t.runQuery('DELETE FROM media WHERE owner_id = ?', [memberId]);
+      } catch (_) {
+        // Ignored if media table is not present in local SQLite environment
+      }
+
+      // 5. Notifications
+      await t.runQuery('DELETE FROM notifications WHERE member_id = ?', [memberId]);
+
+      // 6. Refresh tokens (Production session table)
+      try {
+        await t.runQuery('DELETE FROM refresh_tokens WHERE member_id = ?', [memberId]);
+      } catch (_) {
+        // Ignored if refresh_tokens table is not present in local SQLite environment
+      }
+
+      // 7. Group memberships and recount
+      const memberGroups = await t.all('SELECT group_id FROM group_members WHERE member_id = ?', [memberId]);
+      await t.runQuery('DELETE FROM group_members WHERE member_id = ?', [memberId]);
+      for (const g of memberGroups) {
+        if (g.group_id) {
+          const remMembers = await t.get('SELECT COUNT(*) as cnt FROM group_members WHERE group_id = ?', [g.group_id]);
+          await t.runQuery('UPDATE groups SET members_count = ? WHERE id = ?', [remMembers ? remMembers.cnt : 0, g.group_id]);
+        }
+      }
+
+      // 8. Event RSVPs and recount
+      const memberRsvps = await t.all('SELECT event_id FROM event_rsvps WHERE member_id = ?', [memberId]);
+      await t.runQuery('DELETE FROM event_rsvps WHERE member_id = ?', [memberId]);
+      for (const r of memberRsvps) {
+        if (r.event_id) {
+          const remRsvps = await t.get('SELECT COUNT(*) as cnt FROM event_rsvps WHERE event_id = ?', [r.event_id]);
+          await t.runQuery('UPDATE events SET rsvp_count = ? WHERE id = ?', [remRsvps ? remRsvps.cnt : 0, r.event_id]);
+        }
+      }
+
+      // 9. Sangam Meetings
+      await t.runQuery('DELETE FROM meetings WHERE requester_id = ? OR recipient_id = ?', [memberId, memberId]);
+
+      // 10. Sangam Referrals
+      await t.runQuery('DELETE FROM referrals WHERE giver_id = ? OR recipient_id = ?', [memberId, memberId]);
+
+      // 11. Donations (Anonymize donor identity to preserve historical financial integrity)
+      await t.runQuery("UPDATE donations SET donor_id = NULL, donor_name = 'Deleted Member' WHERE donor_id = ?", [memberId]);
+
+      // 12. Password resets matching member email
+      if (member.email) {
+        await t.runQuery('DELETE FROM password_resets WHERE LOWER(email) = ?', [member.email.toLowerCase()]);
+      }
+
+      // 13. Delete primary member record
+      await t.runQuery('DELETE FROM members WHERE id = ?', [memberId]);
+    });
+
+    return res.json({
+      success: true,
+      message: 'खाते आणि सर्व वैयक्तिक डेटा यशस्वीरित्या कायमस्वरूपी हटवला गेला आहे (Account and personal data deleted successfully).'
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+export default router;

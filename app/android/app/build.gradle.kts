@@ -17,7 +17,7 @@ val keystoreProperties = Properties().apply {
 val hasReleaseKeystore = keystoreProperties.getProperty("storeFile") != null
 
 android {
-    namespace = "com.connectmaratha.app"
+    namespace = "com.connectmaratha.mobile"
     compileSdk = 36
     ndkVersion = "27.0.12077973"
 
@@ -32,7 +32,7 @@ android {
 
     defaultConfig {
         // FINAL application ID: it cannot be changed after the first Play upload.
-        applicationId = "com.connectmaratha.app"
+        applicationId = "com.connectmaratha.mobile"
         minSdk = 23 // flutter_secure_storage requires API 23+
         targetSdk = 36
         versionCode = flutter.versionCode

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../core/theme/home_theme.dart';
 import '../data/forts_data.dart';
@@ -9,6 +11,10 @@ import '../features/business/models/directory_models.dart';
 import '../core/config/api_config.dart';
 import '../features/community/data/community_data.dart';
 import '../features/community/models/community_models.dart';
+import '../features/community/providers/community_provider.dart';
+import '../features/auth/providers/current_user_provider.dart';
+import '../features/auth/models/user_profile.dart';
+import '../core/profile/member_avatar.dart';
 import '../widgets/home/home_models.dart';
 
 enum SearchCategory {
@@ -47,7 +53,19 @@ class SearchResultItem {
   });
 }
 
-class SearchScreen extends StatefulWidget {
+class _DiscoveryShortcut {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _DiscoveryShortcut({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+}
+
+class SearchScreen extends ConsumerStatefulWidget {
   final String initialQuery;
   final SearchCategory initialCategory;
 
@@ -58,14 +76,18 @@ class SearchScreen extends StatefulWidget {
   });
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  ConsumerState<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends ConsumerState<SearchScreen> {
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
   late SearchCategory _selectedCategory;
   String _query = '';
+
+  List<CommunityMember> _realMembers = [];
+  bool _isLoadingMembers = false;
+  String? _membersError;
 
   @override
   void initState() {
@@ -81,6 +103,33 @@ class _SearchScreenState extends State<SearchScreen> {
         _focusNode.requestFocus();
       }
     });
+
+    _fetchRealMembers();
+  }
+
+  Future<void> _fetchRealMembers() async {
+    final user = ref.read(currentUserProvider);
+    if (user == null) return; // Authenticated members only
+
+    setState(() {
+      _isLoadingMembers = true;
+      _membersError = null;
+    });
+
+    try {
+      final members = await ref.read(communityRepositoryProvider).fetchMembers();
+      if (!mounted) return;
+      setState(() {
+        _realMembers = members;
+        _isLoadingMembers = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoadingMembers = false;
+        _membersError = e.toString();
+      });
+    }
   }
 
   @override
@@ -201,7 +250,24 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     // 4. Community Members — sample people exist only in the offline demo
-    // build; real members must never be mixed with invented ones.
+    // 4. Community Members
+    // Include real registered members fetched securely from /api/members
+    for (final member in _realMembers) {
+      items.add(
+        SearchResultItem(
+          title: member.name,
+          subtitle: '${member.roleOrTitle} • ${member.location}',
+          categoryTag: 'सदस्य / Community',
+          type: SearchCategory.community,
+          imageAsset: member.avatarAsset,
+          icon: Icons.person_rounded,
+          extraBadge: member.tier,
+          onTap: () => context.push('/community'),
+        ),
+      );
+    }
+
+    // Sample members only in offline demoMode
     for (final member
         in ApiConfig.demoMode
             ? CommunityData.members
@@ -303,6 +369,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = ref.watch(currentUserProvider);
     final allItems = _getAllItems();
     final filteredResults = _filterItems(allItems);
 
@@ -326,7 +393,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 children: [
                   Text(
                     _query.isEmpty
-                        ? 'लोकप्रिय शोध आणि शिफारसी (${filteredResults.length})'
+                        ? 'शोध व समुदाय शिफारसी (${filteredResults.length})'
                         : 'शोध निकाल: "$_query" (${filteredResults.length})',
                     style: HomeTheme.marathiBody(
                       fontSize: 12.5,
@@ -338,19 +405,531 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
 
-            // Results List / Empty State
+            // Results List / Empty State with Community Discovery Layer
             Expanded(
               child:
-                  filteredResults.isEmpty
+                  filteredResults.isEmpty && _query.isNotEmpty
                       ? _buildEmptyState()
-                      : ListView.builder(
+                      : ListView(
                         physics: const BouncingScrollPhysics(),
                         padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-                        itemCount: filteredResults.length,
-                        itemBuilder: (context, index) {
-                          return _buildResultCard(filteredResults[index]);
-                        },
+                        children: [
+                          // ──────── NEW COMMUNITY DISCOVERY LAYER ────────
+                          if (_query.isEmpty &&
+                              (_selectedCategory == SearchCategory.all ||
+                                  _selectedCategory == SearchCategory.community)) ...[
+                            _buildCommunityDiscoveryLayer(currentUser),
+                            const SizedBox(height: 16),
+                            // Divider or heading before standard recommendations
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10, left: 2),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.auto_awesome_rounded,
+                                    size: 16,
+                                    color: HomeTheme.primaryOrange,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'लोकप्रिय शिफारसी',
+                                    style: GoogleFonts.mukta(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w800,
+                                      color: HomeTheme.textDark,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+
+                          // Existing search results or popular recommendations
+                          ...filteredResults.map((item) => _buildResultCard(item)),
+                        ],
                       ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ─── NEW COMMUNITY DISCOVERY LAYER ─────────────────────────────────────────
+
+  Widget _buildCommunityDiscoveryLayer(UserProfile? currentUser) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFF2ECE4), width: 1.1),
+        boxShadow: HomeTheme.subtleShadow,
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header: Find People / सदस्य शोधा
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF2EB),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.person_search_rounded,
+                  color: HomeTheme.primaryOrange,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'सदस्य शोधा (Find People)',
+                      style: GoogleFonts.mukta(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: HomeTheme.textDark,
+                      ),
+                    ),
+                    Text(
+                      'आपल्या मराठा समाजातील बांधवांशी जोडा',
+                      style: GoogleFonts.mukta(
+                        fontSize: 12,
+                        color: HomeTheme.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              InkWell(
+                onTap: () => context.push('/community'),
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  child: Text(
+                    'समुदाय →',
+                    style: GoogleFonts.mukta(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: HomeTheme.primaryOrange,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+
+          // Discovery Shortcuts: Village, Profession, District, Skills, Education
+          _buildDiscoveryShortcuts(currentUser),
+
+          // Privacy Check: Only authenticated users can view community members
+          if (currentUser == null) ...[
+            const SizedBox(height: 14),
+            _buildLoginPromptCard(),
+          ] else ...[
+            const SizedBox(height: 16),
+            const Divider(height: 1, color: Color(0xFFF4ECE4)),
+            const SizedBox(height: 14),
+
+            // "People from your village" section
+            _buildVillageMembersSection(currentUser),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDiscoveryShortcuts(UserProfile? currentUser) {
+    final userCity = (currentUser?.city ?? '').trim();
+    final villageLabel = userCity.isNotEmpty ? 'गाव: $userCity' : 'गाव (Village)';
+
+    final shortcuts = [
+      _DiscoveryShortcut(
+        icon: Icons.holiday_village_rounded,
+        label: villageLabel,
+        onTap: () {
+          if (userCity.isNotEmpty) {
+            _controller.text = userCity;
+            setState(() {
+              _query = userCity;
+              _selectedCategory = SearchCategory.community;
+            });
+          } else {
+            // Prompt to update profile or view community
+            context.push('/community');
+          }
+        },
+      ),
+      _DiscoveryShortcut(
+        icon: Icons.work_outline_rounded,
+        label: 'व्यवसाय (Profession)',
+        onTap: () {
+          setState(() {
+            _selectedCategory = SearchCategory.community;
+          });
+          _focusNode.requestFocus();
+        },
+      ),
+      _DiscoveryShortcut(
+        icon: Icons.location_on_outlined,
+        label: 'जिल्हा (District)',
+        onTap: () {
+          setState(() {
+            _selectedCategory = SearchCategory.community;
+          });
+          _focusNode.requestFocus();
+        },
+      ),
+      _DiscoveryShortcut(
+        icon: Icons.handyman_outlined,
+        label: 'कौशल्ये (Skills)',
+        onTap: () {
+          setState(() {
+            _selectedCategory = SearchCategory.community;
+          });
+          _focusNode.requestFocus();
+        },
+      ),
+      _DiscoveryShortcut(
+        icon: Icons.school_outlined,
+        label: 'शिक्षण (Education)',
+        onTap: () {
+          setState(() {
+            _selectedCategory = SearchCategory.community;
+          });
+          _focusNode.requestFocus();
+        },
+      ),
+    ];
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: shortcuts.map((s) {
+        return InkWell(
+          onTap: s.onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFBF7F2),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFEFE6DC), width: 1),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(s.icon, size: 15, color: HomeTheme.primaryOrange),
+                const SizedBox(width: 6),
+                Text(
+                  s.label,
+                  style: GoogleFonts.mukta(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: HomeTheme.textDark,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildLoginPromptCard() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF9F5),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFF5E4D7)),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.lock_outline_rounded,
+            color: HomeTheme.primaryOrange,
+            size: 20,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'समाज बांधवांची माहिती पाहण्यासाठी कृपया लॉगिन करा.',
+              style: GoogleFonts.mukta(
+                fontSize: 12.5,
+                color: HomeTheme.textDark,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: HomeTheme.primaryOrange,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              minimumSize: Size.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            onPressed: () => context.push('/login'),
+            child: Text(
+              'लॉगिन',
+              style: GoogleFonts.mukta(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVillageMembersSection(UserProfile currentUser) {
+    final userCity = currentUser.city.trim();
+
+    // Match members whose location or city contains the user's village / city
+    final villageMembers = _realMembers.where((m) {
+      if (userCity.isEmpty) return false;
+      // Do not include the user themselves in recommendations
+      if (m.id == currentUser.id) return false;
+      final loc = m.location.toLowerCase();
+      final target = userCity.toLowerCase();
+      return loc.contains(target);
+    }).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                const Icon(
+                  Icons.holiday_village_rounded,
+                  size: 16,
+                  color: HomeTheme.primaryOrange,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  userCity.isNotEmpty
+                      ? 'तुमच्या गावातील बांधव ($userCity)'
+                      : 'गावातील समाज बांधव',
+                  style: GoogleFonts.mukta(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w800,
+                    color: HomeTheme.textDark,
+                  ),
+                ),
+              ],
+            ),
+            if (villageMembers.isNotEmpty)
+              Text(
+                '${villageMembers.length} सदस्य',
+                style: GoogleFonts.mukta(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: HomeTheme.textMuted,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 10),
+
+        if (_isLoadingMembers)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Center(
+              child: SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          )
+        else if (_membersError != null)
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFBF8F4),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.error_outline_rounded,
+                  size: 18,
+                  color: HomeTheme.textMuted,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'सदस्य माहिती लोड करण्यात अडचण आली.',
+                    style: GoogleFonts.mukta(
+                      fontSize: 12,
+                      color: HomeTheme.textMuted,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: _fetchRealMembers,
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                  ),
+                  child: Text(
+                    'पुन्हा प्रयत्न',
+                    style: GoogleFonts.mukta(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: HomeTheme.primaryOrange,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else if (userCity.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFBF8F4),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.info_outline_rounded,
+                  size: 18,
+                  color: HomeTheme.textMuted,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'गावातील बांधव शोधण्यासाठी तुमच्या प्रोफाईलमध्ये गाव/शहर जोडा.',
+                    style: GoogleFonts.mukta(
+                      fontSize: 12,
+                      color: HomeTheme.textMuted,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => context.push('/profile/personal-info'),
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                  ),
+                  child: Text(
+                    'जोडा',
+                    style: GoogleFonts.mukta(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: HomeTheme.primaryOrange,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else if (villageMembers.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFBF8F4),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.people_outline_rounded,
+                  size: 18,
+                  color: HomeTheme.textMuted,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '$userCity येथील इतर नोंदणीकृत सदस्य सध्या उपलब्ध नाहीत.',
+                    style: GoogleFonts.mukta(
+                      fontSize: 12,
+                      color: HomeTheme.textMuted,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          SizedBox(
+            height: 120,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              itemCount: villageMembers.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              itemBuilder: (context, index) {
+                final member = villageMembers[index];
+                return _buildVillageMemberCard(member);
+              },
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildVillageMemberCard(CommunityMember member) {
+    return InkWell(
+      onTap: () => context.push('/community'),
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        width: 125,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFDFBF9),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFEDE4D8)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            MemberAvatar(
+              name: member.name,
+              photoUrl: member.photoUrl,
+              size: 42,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              member.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.mukta(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w800,
+                color: HomeTheme.textDark,
+              ),
+            ),
+            Text(
+              member.roleOrTitle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.mukta(
+                fontSize: 10.5,
+                fontWeight: FontWeight.w600,
+                color: HomeTheme.primaryOrange,
+              ),
             ),
           ],
         ),

@@ -6,7 +6,7 @@ import '../config/api_config.dart';
 
 /// Where people can get the app; added to what is shared from it.
 const appStoreLink =
-    'https://play.google.com/store/apps/details?id=com.connectmaratha.app';
+    'https://play.google.com/store/apps/details?id=com.connectmaratha.mobile';
 
 /// Shown when the share sheet could not be opened and the text was copied
 /// instead, so the member knows what happened and what to do next.
