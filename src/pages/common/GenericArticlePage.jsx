@@ -753,13 +753,13 @@ export default function GenericArticlePage() {
                   </p>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '22px' }}>
                   {[
                     {
                       name: 'सुभेदार तानाजी मालुसरे',
                       title: 'सिंहगडाचा सिंह · सुभेदार',
-                      image: '/assets/images/real-tanaji-portrait.jpg',
-                      fallback: '/assets/images/real-tanaji-malusare.jpg',
+                      image: '/assets/images/real-sardar-tanaji.jpg',
+                      fallback: '/assets/images/real-sinhagad-fort.jpg',
                       quote: 'आधी लगीन कोंढाण्याचं, मग माझ्या रायबाचं!',
                       desc: '४ फेब्रुवारी १६७० रोजी घोरपडीच्या साहाय्याने द्रोणागिरी कडा चढून उदयभानविरुद्ध प्राणपणाने लढले आणि सिंहगडावर भगवा फडकवला.'
                     },
@@ -774,7 +774,7 @@ export default function GenericArticlePage() {
                     {
                       name: 'मुरारबाजी देशपांडे',
                       title: 'किल्ले पुरंदरचे झुंजार किल्लेदार',
-                      image: '/assets/images/real-battle-action-purandar.jpg',
+                      image: '/assets/images/real-murarbaji-statue.jpg',
                       fallback: '/assets/images/real-purandar-fort.jpg',
                       quote: 'आम्ही शिवरायांचे मावळे आहोत, मोगलांची जहागिरी नको!',
                       desc: 'पुरंदरच्या वेढ्यात दिलेरखानाच्या अजस्त्र मोगल सैन्याला माचीवरून मागे रेटत स्वतःच्या तलवारीने शेकडो शत्रूंना लोळवणारे रणझुंजार वीर.'
@@ -782,23 +782,23 @@ export default function GenericArticlePage() {
                     {
                       name: 'बहिर्जी नाईक',
                       title: 'स्वराज्याचे गुप्तहेर प्रमुख (Intelligence Chief)',
-                      image: '/assets/images/real-maratha-sowar.jpg',
-                      fallback: '/assets/images/real-maratha-arms.jpg',
+                      image: '/assets/images/real-bahirji-naik-memorial.jpg',
+                      fallback: '/assets/images/real-sahyadri-forest.jpg',
                       quote: 'शत्रूच्या छावणीत वारा शिरण्याआधी बहिर्जींची नजर पोहोचत असे!',
                       desc: 'सुरत मोहीम, अफझलखान वध, शाहिस्तेखान छापा व आग्रा सुटका या सर्व मोहिमांचे अचूक नकाशे व गुप्त माहिती देणारे अजोड गुप्तहेर.'
                     },
                     {
                       name: 'सरनोबत हंबीरराव मोहिते',
                       title: 'स्वराज्याचे सर्वोच्च लष्करप्रमुख (सरसेनापती)',
-                      image: '/assets/images/real-maratha-arms.jpg',
-                      fallback: '/assets/images/real-shivaji-portrait.jpg',
+                      image: '/assets/images/real-hambirrao-samadhi.jpg',
+                      fallback: '/assets/images/real-maratha-army-panoramic.jpg',
                       quote: 'शिवरायांचे आणि शंभूराजांचे निष्ठावंत रणधुरंधर!',
                       desc: 'कोपम, नेसरी, जालना आणि दक्षिण दिग्विजयात मोगल व आदिलशाही फौजांना धूळ चारून विजय मिळवणारे अजिंक्य सरसेनापती.'
                     },
                     {
                       name: 'दौलत खान व मायनाक भंडारी',
                       title: 'शिवकालीन आरमाराचे पराक्रमी कर्णधार',
-                      image: '/assets/images/real-sindhudurg-fort.jpg',
+                      image: '/assets/images/real-maynak-bhandari-samadhi.jpg',
                       fallback: '/assets/images/real-sindhudurg-fort.jpg',
                       quote: 'ज्याचे आरमार त्याचा समुद्र!',
                       desc: 'इंग्रज, पोर्तुगीज आणि जंजिऱ्याच्या सिद्दीच्या आरमारी आक्रमणांना समुद्रातच रोखून धरून सागरी सीमांचे रक्षण करणारे नौदल प्रमुख.'
@@ -806,35 +806,63 @@ export default function GenericArticlePage() {
                     {
                       name: 'वीर जीवा महाला',
                       title: 'शिवरायांचे अंगरक्षक व निष्ठावान सवंगडी',
-                      image: '/assets/images/real-khanda-sword.jpg',
-                      fallback: '/assets/images/real-dandpatta.jpg',
+                      image: '/assets/images/real-jiva-mahala-painting.jpg',
+                      fallback: '/assets/images/real-pratapgad-fort.jpg',
                       quote: 'होता जीवा म्हणून वाचला शिवा!',
                       desc: 'प्रतापगडाच्या शामियान्यात अफझलखानाचा अंगरक्षक सय्यद बंडा शिवरायांवर तलवारीचा वार करणार इतक्यात जीवा महालाने त्याचा हात हवेतच छाटला.'
                     },
                     {
                       name: 'अमर वीर शिवा काशिद',
                       title: 'पन्हाळगड वेढ्यातील आत्मबलिदानी वीर',
-                      image: '/assets/images/real-shivaji-portrait.jpg',
-                      fallback: '/assets/images/real-shivaji-contemporary.jpg',
+                      image: '/assets/images/real-shiva-kashid-statue.jpg',
+                      fallback: '/assets/images/real-panhala-fort.jpg',
                       quote: 'राजांसाठी मरणे हे आमचे परम भाग्य आहे!',
                       desc: 'पन्हाळगडावरून निसटताना स्वतः शिवरायांचा वेश परिधान करून शत्रूच्या छावणीत गेले आणि शिवरायांना विशाळगडाकडे सुरक्षित कूच करण्याची संधी दिली.'
                     }
                   ].map((s, idx) => (
-                    <div key={idx} style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FDE68A', overflow: 'hidden', boxShadow: '0 8px 20px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column' }}>
-                      <div style={{ height: '170px', overflow: 'hidden', position: 'relative', background: '#FEF3C7' }}>
+                    <div key={idx} style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FDE68A', overflow: 'hidden', boxShadow: '0 8px 20px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}>
+                      <div style={{
+                        height: '240px',
+                        position: 'relative',
+                        background: 'linear-gradient(180deg, #FEF9C3 0%, #FEF08A 100%)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '12px',
+                        overflow: 'hidden'
+                      }}>
                         <img
                           src={s.image}
                           alt={s.name}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }}
+                          style={{
+                            maxWidth: '100%',
+                            maxHeight: '100%',
+                            width: 'auto',
+                            height: 'auto',
+                            objectFit: 'contain',
+                            borderRadius: '10px',
+                            boxShadow: '0 4px 14px rgba(0,0,0,0.12)'
+                          }}
                           onError={(e) => { e.target.src = s.fallback; }}
                         />
-                        <div style={{ position: 'absolute', bottom: 0, insetInline: 0, height: '60px', background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)' }}></div>
-                        <span style={{ position: 'absolute', bottom: '8px', left: '12px', color: '#fff', fontSize: '0.78rem', fontWeight: 800, textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
+                        <span style={{
+                          position: 'absolute',
+                          top: '10px',
+                          left: '10px',
+                          background: 'rgba(127, 29, 29, 0.92)',
+                          color: '#FEF08A',
+                          fontSize: '0.74rem',
+                          fontWeight: 800,
+                          padding: '3px 10px',
+                          borderRadius: '12px',
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                          letterSpacing: '0.3px'
+                        }}>
                           {s.title}
                         </span>
                       </div>
                       <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                        <h4 style={{ margin: '0 0 6px', color: '#7F1D1D', fontSize: '1.12rem', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>
+                        <h4 style={{ margin: '0 0 6px', color: '#7F1D1D', fontSize: '1.14rem', fontWeight: 900, fontFamily: "'Baloo 2', sans-serif" }}>
                           {s.name}
                         </h4>
                         <div style={{ background: '#FFFBEB', color: '#92400E', padding: '6px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, fontStyle: 'italic', marginBottom: '10px', borderLeft: '3px solid #F59E0B' }}>
