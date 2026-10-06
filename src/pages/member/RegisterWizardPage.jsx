@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { checkRepetitiveInput } from '../../utils/memberValidation';
+import { verifyReferrerId, recordNewReferral } from '../../services/referralService';
 
 const PERSONAS = [
   { id: 'Professional', title: 'व्यावसायिक (Professional)', icon: '💼' },
@@ -42,22 +43,51 @@ const CONNECT_GOALS = [
 export default function RegisterWizardPage() {
   const [activeScreen, setActiveScreen] = useState('signup');
   const [validationError, setValidationError] = useState('');
+  const [searchParams] = useSearchParams();
+  const urlRef = searchParams.get('ref') || searchParams.get('referral') || '';
+
+  const [referralCode, setReferralCode] = useState(urlRef || '');
+  const [referrerInfo, setReferrerInfo] = useState(null);
+  const [referralStatus, setReferralStatus] = useState({ checking: false, valid: false, message: '' });
+
+  // Live real-time verification
+  useEffect(() => {
+    if (!referralCode || !referralCode.trim()) {
+      setReferrerInfo(null);
+      setReferralStatus({ checking: false, valid: false, message: 'कृपया शिफारसकर्ता सभासद आयडी प्रविष्ट करा.' });
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      const res = verifyReferrerId(referralCode.trim());
+      if (res.isValid) {
+        setReferrerInfo(res);
+        setReferralStatus({ checking: false, valid: true, message: `सत्यापित शिफारसकर्ता: ${res.name} (${res.chapter || res.district})` });
+      } else {
+        setReferrerInfo(null);
+        setReferralStatus({ checking: false, valid: false, message: res.message });
+      }
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [referralCode]);
+
   const [formData, setFormData] = useState({
-    name: 'संभाजी विलासराव पाटील',
-    displayName: 'संभाजी पाटील',
-    mobile: '9822123456',
-    email: 'sambhajip@connectmaratha.org',
+    name: '',
+    displayName: '',
+    mobile: '',
+    email: '',
     password: '',
     confirmPassword: '',
-    dob: '1992-06-06',
+    dob: '',
     gender: 'पुरुष',
-    state: 'महाराष्ट्र (Maharashtra)',
-    city: 'पुणे (Pune)',
-    avatar: '🧑',
+    state: 'महाराष्ट्र',
+    city: 'पुणे',
+    avatar: '👤',
     persona: 'Professional',
-    profession: 'Agri-Tech उद्योजक',
-    organization: 'सह्याद्री ॲग्रो फूड्स',
-    experience: '३–५ वर्षे',
+    profession: '',
+    organization: '',
+    experience: '',
     interests: ['इतिहास', 'गड-किल्ले', 'उद्योग', 'शिक्षण', 'करिअर'],
     goals: [
       'माझ्या क्षेत्रातील बांधव व तज्ज्ञांशी जोडले जाणे',
@@ -69,7 +99,6 @@ export default function RegisterWizardPage() {
     language: 'mr'
   });
 
-  const [otp, setOtp] = useState(['1', '6', '7', '4', '3', '5']);
   const [showPassword, setShowPassword] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -115,57 +144,70 @@ export default function RegisterWizardPage() {
       return;
     }
 
+    // Compulsory Referral Validation
+    if (!referralCode || !referralCode.trim()) {
+      setValidationError('शिफारसकर्ता सभासद आयडी (Referral Member ID) अनिवार्य आहे. कृपया आयडी प्रविष्ट करा किंवा अधिकृत कोड वापरा.');
+      return;
+    }
+
+    const refCheck = verifyReferrerId(referralCode.trim());
+    if (!refCheck.isValid) {
+      setValidationError('प्रविष्ट केलेला शिफारसकर्ता सभासद आयडी अवैध आहे. कृपया अचूक आयडी टाका.');
+      return;
+    }
+
+    if (referralCode.trim() === formData.mobile.trim()) {
+      setValidationError('आपण स्वतःचा नंबर रेफरल म्हणून वापरू शकत नाही.');
+      return;
+    }
+
     if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
       setValidationError('दोन्ही पासवर्ड जुळत नाहीत (Passwords do not match).');
       return;
     }
 
-    setActiveScreen('otp');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleOtpVerify = () => {
     setActiveScreen('profile');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleCompleteRegistration = () => {
-    // Generate a guaranteed unique, non-repetitive sequential Member ID
-    const cityCode = (formData.city || 'PUN').split(' ')[0].replace(/[^A-Za-z]/g, '').slice(0, 3).toUpperCase() || 'MH';
-    const uniqueMemberId = `CM-MH-${cityCode}-${Date.now().toString().slice(-6)}`;
-    const uniqueToken = `CM-VAL-SEC-${Date.now().toString(16).toUpperCase()}`;
-
+  const handleCompleteRegistration = async () => {
+    setValidationError('');
     const memberPayload = {
-      id: uniqueMemberId,
-      name: formData.name,
-      displayName: formData.displayName || formData.name,
-      mobile: formData.mobile,
-      phone: `+९१ ${formData.mobile}`,
-      email: formData.email,
-      city: formData.city,
-      district: formData.city?.split(' ')[0] || 'पुणे',
-      chapter: `${formData.city?.split(' ')[0] || 'पुणे'} – स्वराज्य चॅप्टर`,
-      profession: formData.profession,
-      organization: formData.organization,
-      avatar: formData.avatar,
-      persona: formData.persona,
-      interests: formData.interests,
-      tier: 'GOLD FOUNDER MEMBER',
-      bloodGroup: 'O +ve (नोंदणीकृत रक्तदाता)',
-      issueDate: new Date().toLocaleDateString('mr-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
-      validThru: 'आजीवन वैध (DPDP २०२३ व ISO २७००१ प्रमाणित)',
-      token: uniqueToken
+      name: formData.name.trim(),
+      email: formData.email ? formData.email.trim() : '',
+      phone: formData.mobile ? formData.mobile.trim() : '',
+      password: formData.password,
+      city: formData.city || 'पुणे',
+      district: (formData.city || 'पुणे').split(' ')[0],
+      state: formData.state || 'महाराष्ट्र',
+      country: 'भारत',
+      profession: formData.profession ? formData.profession.trim() : '',
+      business: formData.organization ? formData.organization.trim() : '',
+      education: formData.education || '',
+      skills: formData.skills ? (Array.isArray(formData.skills) ? formData.skills : [formData.skills]) : [],
+      about: formData.about || '',
+      referredBy: referralCode.trim()
     };
 
+    let resUser = null;
     if (register) {
-      register(memberPayload);
+      const res = await register(memberPayload);
+      if (!res || !res.success) {
+        setValidationError(res?.error || 'नोंदणी अयशस्वी झाली. कृपया माहिती तपासा.');
+        return;
+      }
+      resUser = res.user;
     }
-    try {
-      localStorage.setItem('cm_user_data', JSON.stringify(memberPayload));
-      localStorage.setItem('cm_logged_in', 'true');
-    } catch (e) {
-      console.warn(e);
-    }
+
+    // Record Real-time referral
+    recordNewReferral({
+      newMemberId: resUser?.id || `CM-MH-${formData.mobile.slice(-4)}`,
+      newMemberName: formData.name.trim(),
+      newMemberPhone: formData.mobile.trim(),
+      newMemberDistrict: formData.city || 'पुणे',
+      referrerCode: referralCode.trim(),
+      isSubscribed: true
+    });
 
     setActiveScreen('welcome');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -276,12 +318,11 @@ export default function RegisterWizardPage() {
       <nav className="devnav">
         {[
           { id: 'signup', label: '१. नवीन नोंदणी' },
-          { id: 'otp', label: '२. OTP पडताळणी' },
-          { id: 'profile', label: '३. प्रोफाईल' },
-          { id: 'persona', label: '४. भूमिका' },
-          { id: 'interests', label: '५. आवडी' },
-          { id: 'connect', label: '६. जोडणी प्राधान्य' },
-          { id: 'welcome', label: '७. पूर्ण' }
+          { id: 'profile', label: '२. प्रोफाईल' },
+          { id: 'persona', label: '३. भूमिका' },
+          { id: 'interests', label: '४. आवडी' },
+          { id: 'connect', label: '५. जोडणी प्राधान्य' },
+          { id: 'welcome', label: '६. पूर्ण' }
         ].map((s) => (
           <button
             key={s.id}
@@ -369,6 +410,68 @@ export default function RegisterWizardPage() {
                   </div>
                 </div>
 
+                {/* COMPULSORY REFERRAL MEMBER ID WITH REAL-TIME VERIFICATION */}
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px', flexWrap: 'wrap', gap: '4px' }}>
+                    <label style={{ fontSize: '12.5px', fontWeight: 800, color: '#431407', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <span>🚩 शिफारसकर्ता सभासद आयडी (Referral ID)</span>
+                      <span style={{ color: '#EA580C' }}>* (अनिवार्य)</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setReferralCode('CM-OFFICIAL-2026')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#EA580C',
+                        fontSize: '11.5px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        textDecoration: 'underline',
+                        padding: 0
+                      }}
+                      title="अधिकृत केंद्रीय महामंडळ कोड वापरा"
+                    >
+                      अधिकृत कोड वापरा (Use Official ID)
+                    </button>
+                  </div>
+
+                  <div className="input-box" style={{ borderColor: referralStatus.valid ? '#10B981' : (referralCode ? '#EA580C' : '#CBD5E1') }}>
+                    <span className="prefix" style={{ background: '#FFF7ED', color: '#EA580C', fontWeight: 800 }}>REF</span>
+                    <input
+                      type="text"
+                      required
+                      value={referralCode}
+                      onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                      placeholder="उदा. CM-PUN-0842 किंवा मित्राचा सभासद आयडी"
+                      style={{ textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 700 }}
+                    />
+                  </div>
+
+                  {referralCode ? (
+                    <div style={{
+                      marginTop: '8px',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      background: referralStatus.valid ? '#ECFDF5' : '#FEF2F2',
+                      border: `1.5px solid ${referralStatus.valid ? '#10B981' : '#FCA5A5'}`,
+                      color: referralStatus.valid ? '#065F46' : '#991B1B'
+                    }}>
+                      <span>{referralStatus.valid ? '✅' : '❌'}</span>
+                      <span>{referralStatus.message}</span>
+                    </div>
+                  ) : (
+                    <p style={{ margin: '4px 0 0', fontSize: '11.5px', color: '#64748B' }}>
+                      * आपणास ज्या सदस्याने शिफारस केली आहे त्यांचा अधिकृत आयडी टाका किंवा वरील अधिकृत कोड वापरा.
+                    </p>
+                  )}
+                </div>
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, marginBottom: '6px' }}>पासवर्ड</label>
@@ -435,53 +538,7 @@ export default function RegisterWizardPage() {
         )}
 
         {/* ============ 2. OTP ============ */}
-        {activeScreen === 'otp' && (
-          <div className="split-card" style={{ maxWidth: '480px', gridTemplateColumns: '1fr' }}>
-            <div className="form-pane" style={{ padding: '48px 42px' }}>
-              <button
-                type="button"
-                onClick={() => setActiveScreen('signup')}
-                style={{ background: 'none', border: 'none', fontSize: '13px', color: '#5c534b', textAlign: 'left', cursor: 'pointer', fontWeight: 700, marginBottom: '20px' }}
-              >
-                ← मागे जा (Back)
-              </button>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ width: '68px', height: '68px', borderRadius: '50%', background: '#fdf3e6', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px', fontSize: '28px' }}>
-                  🔒
-                </div>
-                <h1 style={{ fontFamily: 'Baloo 2', fontSize: '24px', fontWeight: 700, margin: '0 0 6px' }}>खाते पडताळणी (OTP)</h1>
-                <p style={{ color: '#5c534b', fontSize: '14px', margin: '0 0 20px' }}>
-                  आम्ही ६ अंकी पडताळणी कोड पाठवला आहे:<br />
-                  <strong style={{ color: '#2b2420', fontSize: '1.05rem' }}>+91 {formData.mobile}</strong>
-                </p>
-              </div>
 
-              <div className="otp-inputs">
-                {otp.map((digit, idx) => (
-                  <input
-                    key={idx}
-                    type="text"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => {
-                      const next = [...otp];
-                      next[idx] = e.target.value.slice(-1);
-                      setOtp(next);
-                    }}
-                  />
-                ))}
-              </div>
-
-              <p style={{ textAlign: 'center', fontSize: '13px', color: '#a89d90', marginBottom: '26px' }}>
-                पुन्हा कोड पाठवा: <strong style={{ color: '#5c534b' }}>00:42</strong>
-              </p>
-
-              <button type="button" className="btn-brand-primary" onClick={handleOtpVerify}>
-                सत्यापित करा व पुढे जा (Verify & continue) →
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* ============ 3. PROFILE ============ */}
         {activeScreen === 'profile' && (
@@ -558,9 +615,14 @@ export default function RegisterWizardPage() {
                 </div>
               </div>
 
-              <button type="button" className="btn-brand-primary" onClick={() => setActiveScreen('persona')}>
-                पुढे चला (Continue) →
-              </button>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button type="button" className="btn-brand-outline" onClick={() => setActiveScreen('signup')}>
+                  ← मागे
+                </button>
+                <button type="button" className="btn-brand-primary" onClick={() => setActiveScreen('persona')}>
+                  पुढे चला (Continue) →
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -726,6 +788,21 @@ export default function RegisterWizardPage() {
                   );
                 })}
               </div>
+
+              {validationError && (
+                <div style={{
+                  color: '#991B1B',
+                  background: '#FEE2E2',
+                  border: '1.5px solid #F87171',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  marginBottom: '16px',
+                  fontWeight: 700,
+                  fontSize: '0.85rem'
+                }}>
+                  ⚠️ {validationError}
+                </div>
+              )}
 
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button type="button" className="btn-brand-outline" onClick={() => setActiveScreen('interests')}>

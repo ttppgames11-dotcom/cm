@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { checkRepetitiveInput } from '../../utils/memberValidation';
+import { verifyReferrerId, recordNewReferral } from '../../services/referralService';
 
 const PERSONAS = [
   { id: 'Professional', title: 'व्यावसायिक (Professional)', icon: '💼' },
@@ -42,6 +43,35 @@ const CONNECT_GOALS = [
 export default function RegisterWizardPage() {
   const [activeScreen, setActiveScreen] = useState('signup');
   const [validationError, setValidationError] = useState('');
+  const [searchParams] = useSearchParams();
+  const urlRef = searchParams.get('ref') || searchParams.get('referral') || '';
+
+  const [referralCode, setReferralCode] = useState(urlRef || '');
+  const [referrerInfo, setReferrerInfo] = useState(null);
+  const [referralStatus, setReferralStatus] = useState({ checking: false, valid: false, message: '' });
+
+  // Live real-time verification
+  useEffect(() => {
+    if (!referralCode || !referralCode.trim()) {
+      setReferrerInfo(null);
+      setReferralStatus({ checking: false, valid: false, message: 'कृपया शिफारसकर्ता सभासद आयडी प्रविष्ट करा.' });
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      const res = verifyReferrerId(referralCode.trim());
+      if (res.isValid) {
+        setReferrerInfo(res);
+        setReferralStatus({ checking: false, valid: true, message: `सत्यापित शिफारसकर्ता: ${res.name} (${res.chapter || res.district})` });
+      } else {
+        setReferrerInfo(null);
+        setReferralStatus({ checking: false, valid: false, message: res.message });
+      }
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [referralCode]);
+
   const [formData, setFormData] = useState({
     name: '',
     displayName: '',
@@ -114,6 +144,23 @@ export default function RegisterWizardPage() {
       return;
     }
 
+    // Compulsory Referral Validation
+    if (!referralCode || !referralCode.trim()) {
+      setValidationError('शिफारसकर्ता सभासद आयडी (Referral Member ID) अनिवार्य आहे. कृपया आयडी प्रविष्ट करा किंवा अधिकृत कोड वापरा.');
+      return;
+    }
+
+    const refCheck = verifyReferrerId(referralCode.trim());
+    if (!refCheck.isValid) {
+      setValidationError('प्रविष्ट केलेला शिफारसकर्ता सभासद आयडी अवैध आहे. कृपया अचूक आयडी टाका.');
+      return;
+    }
+
+    if (referralCode.trim() === formData.mobile.trim()) {
+      setValidationError('आपण स्वतःचा नंबर रेफरल म्हणून वापरू शकत नाही.');
+      return;
+    }
+
     if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
       setValidationError('दोन्ही पासवर्ड जुळत नाहीत (Passwords do not match).');
       return;
@@ -138,16 +185,29 @@ export default function RegisterWizardPage() {
       business: formData.organization ? formData.organization.trim() : '',
       education: formData.education || '',
       skills: formData.skills ? (Array.isArray(formData.skills) ? formData.skills : [formData.skills]) : [],
-      about: formData.about || ''
+      about: formData.about || '',
+      referredBy: referralCode.trim()
     };
 
+    let resUser = null;
     if (register) {
       const res = await register(memberPayload);
       if (!res || !res.success) {
         setValidationError(res?.error || 'नोंदणी अयशस्वी झाली. कृपया माहिती तपासा.');
         return;
       }
+      resUser = res.user;
     }
+
+    // Record Real-time referral
+    recordNewReferral({
+      newMemberId: resUser?.id || `CM-MH-${formData.mobile.slice(-4)}`,
+      newMemberName: formData.name.trim(),
+      newMemberPhone: formData.mobile.trim(),
+      newMemberDistrict: formData.city || 'पुणे',
+      referrerCode: referralCode.trim(),
+      isSubscribed: true
+    });
 
     setActiveScreen('welcome');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -348,6 +408,68 @@ export default function RegisterWizardPage() {
                       placeholder="you@example.com"
                     />
                   </div>
+                </div>
+
+                {/* COMPULSORY REFERRAL MEMBER ID WITH REAL-TIME VERIFICATION */}
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px', flexWrap: 'wrap', gap: '4px' }}>
+                    <label style={{ fontSize: '12.5px', fontWeight: 800, color: '#431407', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <span>🚩 शिफारसकर्ता सभासद आयडी (Referral ID)</span>
+                      <span style={{ color: '#EA580C' }}>* (अनिवार्य)</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setReferralCode('CM-OFFICIAL-2026')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#EA580C',
+                        fontSize: '11.5px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        textDecoration: 'underline',
+                        padding: 0
+                      }}
+                      title="अधिकृत केंद्रीय महामंडळ कोड वापरा"
+                    >
+                      अधिकृत कोड वापरा (Use Official ID)
+                    </button>
+                  </div>
+
+                  <div className="input-box" style={{ borderColor: referralStatus.valid ? '#10B981' : (referralCode ? '#EA580C' : '#CBD5E1') }}>
+                    <span className="prefix" style={{ background: '#FFF7ED', color: '#EA580C', fontWeight: 800 }}>REF</span>
+                    <input
+                      type="text"
+                      required
+                      value={referralCode}
+                      onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                      placeholder="उदा. CM-PUN-0842 किंवा मित्राचा सभासद आयडी"
+                      style={{ textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 700 }}
+                    />
+                  </div>
+
+                  {referralCode ? (
+                    <div style={{
+                      marginTop: '8px',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      background: referralStatus.valid ? '#ECFDF5' : '#FEF2F2',
+                      border: `1.5px solid ${referralStatus.valid ? '#10B981' : '#FCA5A5'}`,
+                      color: referralStatus.valid ? '#065F46' : '#991B1B'
+                    }}>
+                      <span>{referralStatus.valid ? '✅' : '❌'}</span>
+                      <span>{referralStatus.message}</span>
+                    </div>
+                  ) : (
+                    <p style={{ margin: '4px 0 0', fontSize: '11.5px', color: '#64748B' }}>
+                      * आपणास ज्या सदस्याने शिफारस केली आहे त्यांचा अधिकृत आयडी टाका किंवा वरील अधिकृत कोड वापरा.
+                    </p>
+                  )}
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
