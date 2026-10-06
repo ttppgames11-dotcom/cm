@@ -1044,12 +1044,12 @@ export default function GenericArticlePage() {
                   </div>
 
                   <div style={{ background: '#fff', borderRadius: '12px', padding: '16px', border: '1px solid #FED7AA', textAlign: 'center' }}>
-                    <div style={{ height: '125px', overflow: 'hidden', borderRadius: '8px', marginBottom: '10px' }}>
-                      <img src="/assets/images/real-bhavani-talwar.jpg" alt="आई भवानी तलवार" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} onError={(e) => { e.target.src = '/assets/images/real-maratha-arms.jpg'; }} />
+                    <div style={{ height: '125px', overflow: 'hidden', borderRadius: '8px', marginBottom: '10px', background: '#F9FAFB', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px' }}>
+                      <img src="/assets/images/real-jagdamba-talwar.jpg" alt="ऐतिहासिक जगदंबा व भवानी तलवार" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => { e.target.src = '/assets/images/real-khanda-sword.jpg'; }} />
                     </div>
-                    <b style={{ color: '#9A3412', display: 'block', fontSize: '1.05rem', fontFamily: "'Baloo 2', sans-serif" }}>आई भवानी व जगदंबा तलवार</b>
+                    <b style={{ color: '#9A3412', display: 'block', fontSize: '1.05rem', fontFamily: "'Baloo 2', sans-serif" }}>ऐतिहासिक जगदंबा व भवानी तलवार</b>
                     <p style={{ margin: '6px 0 0', fontSize: '0.84rem', color: '#4B5563', lineHeight: 1.5 }}>
-                      तुळजाभवानीचा वरदहस्त मानली गेलेली पवित्र भवानी तलवार आणि लंडनच्या रॉयल कलेक्शनमध्ये असलेली जगदंबा तलवार.
+                      लंडनच्या रॉयल कलेक्शनमधील छत्रपती शिवरायांची जगदंबा तलवार आणि तुळजाभवानीचा वरदहस्त मानली गेलेली पवित्र भवानी तलवार.
                     </p>
                   </div>
 
