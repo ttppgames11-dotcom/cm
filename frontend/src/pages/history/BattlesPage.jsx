@@ -193,39 +193,36 @@ export default function BattlesPage() {
           className="hero-bg-img"
           style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover' }}
         />
+        <div
+          className="hero-overlay"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(90deg, rgba(14, 4, 6, 0.76) 0%, rgba(14, 4, 6, 0.46) 48%, rgba(14, 4, 6, 0.10) 100%)'
+          }}
+        />
         <div className="wrap hero-content" style={{ position: 'relative', zIndex: 2, maxWidth: '1200px', padding: '56px 20px', color: '#fff' }}>
-          <div style={{
-            maxWidth: '680px',
-            background: 'rgba(20, 8, 10, 0.40)',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
-            padding: '30px 34px',
-            borderRadius: '16px',
-            border: '1px solid rgba(255, 255, 255, 0.18)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.35)'
-          }}>
-            <div className="eyebrow" style={{ color: '#FFD54F', textTransform: 'uppercase', fontSize: '0.82rem', letterSpacing: '1.5px', fontWeight: 800 }}>
-              लष्करी रणनीती व युद्ध इतिहास
-            </div>
-            <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', lineHeight: 1.15, color: '#fff', margin: '8px 0 14px', fontFamily: 'Baloo 2', textShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
-              मराठा युद्धे, लढाया व{' '}
-              <span style={{ color: '#FF8A65' }}>
-                रणव्यूह दालन
-              </span>
-            </h1>
-            <div style={{ background: '#FF8A65', width: '70px', height: '3px', marginBottom: '14px' }} />
-            <p style={{ color: 'rgba(255,255,255,0.95)', fontSize: '1.05rem', lineHeight: 1.6, textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>
-              गनिमी कावा, वेगवान अश्वदल, जलदुर्ग वेढा व डोंगररांगांमधील अजोड रणनीती • पावनखिंड ते पालखेड, वसई ते पानिपत — मराठा लष्करी इतिहासाची सत्य व संदर्भयुक्त शौर्यगाथा.
-            </p>
+          <div className="eyebrow" style={{ color: '#FFD54F', textTransform: 'uppercase', fontSize: '0.82rem', letterSpacing: '1.5px', fontWeight: 800 }}>
+            लष्करी रणनीती व युद्ध इतिहास
+          </div>
+          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3.4rem)', lineHeight: 1.15, color: '#fff', margin: '8px 0 14px', fontFamily: 'Baloo 2', textShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
+            मराठा युद्धे, लढाया व{' '}
+            <span style={{ color: '#FF8A65' }}>
+              रणव्यूह दालन
+            </span>
+          </h1>
+          <div style={{ background: '#FF8A65', width: '70px', height: '3px', marginBottom: '14px' }} />
+          <p style={{ color: 'rgba(255,255,255,0.92)', fontSize: '1.05rem', maxWidth: '64ch', lineHeight: 1.55, textShadow: '0 1px 4px rgba(0,0,0,0.7)' }}>
+            गनिमी कावा, वेगवान अश्वदल, जलदुर्ग वेढा व डोंगररांगांमधील अजोड रणनीती • पावनखिंड ते पालखेड, वसई ते पानिपत — मराठा लष्करी इतिहासाची सत्य व संदर्भयुक्त शौर्यगाथा.
+          </p>
 
-            <div style={{ display: 'flex', gap: '14px', marginTop: '24px', flexWrap: 'wrap' }}>
-              <a href="#battlesList" className="btn btn-primary" style={{ padding: '10px 22px', fontWeight: 700, background: '#F4511E', color: '#fff', borderRadius: '8px', border: 'none', boxShadow: '0 4px 14px rgba(244,81,30,0.4)' }}>
-                ⚔️ प्रमुख लढाया पहा
-              </a>
-              <Link to="/forts" className="btn btn-outline" style={{ padding: '10px 22px', color: '#fff', borderColor: '#FFD54F', background: 'rgba(0,0,0,0.25)', borderRadius: '8px', fontWeight: 600 }}>
-                🗺️ युद्धस्थळांचा नकाशा
-              </Link>
-            </div>
+          <div style={{ display: 'flex', gap: '14px', marginTop: '24px', flexWrap: 'wrap' }}>
+            <a href="#battlesList" className="btn btn-primary" style={{ padding: '10px 22px', fontWeight: 700, background: '#F4511E', color: '#fff', borderRadius: '8px', border: 'none', boxShadow: '0 4px 14px rgba(244,81,30,0.4)' }}>
+              ⚔️ प्रमुख लढाया पहा
+            </a>
+            <Link to="/forts" className="btn btn-outline" style={{ padding: '10px 22px', color: '#fff', borderColor: '#FFD54F', background: 'rgba(0,0,0,0.30)', borderRadius: '8px', fontWeight: 600 }}>
+              🗺️ युद्धस्थळांचा नकाशा
+            </Link>
           </div>
         </div>
       </div>
