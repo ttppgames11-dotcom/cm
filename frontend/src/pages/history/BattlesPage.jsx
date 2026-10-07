@@ -198,21 +198,36 @@ export default function BattlesPage() {
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(90deg, rgba(14, 4, 6, 0.76) 0%, rgba(14, 4, 6, 0.46) 48%, rgba(14, 4, 6, 0.10) 100%)'
+            background: 'linear-gradient(90deg, rgba(14, 4, 6, 0.85) 0%, rgba(14, 4, 6, 0.60) 38%, rgba(14, 4, 6, 0.25) 70%, rgba(14, 4, 6, 0.05) 100%)'
           }}
         />
         <div className="wrap hero-content" style={{ position: 'relative', zIndex: 2, maxWidth: '1200px', padding: '56px 20px', color: '#fff' }}>
           <div className="eyebrow" style={{ color: '#FFD54F', textTransform: 'uppercase', fontSize: '0.82rem', letterSpacing: '1.5px', fontWeight: 800 }}>
             लष्करी रणनीती व युद्ध इतिहास
           </div>
-          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3.4rem)', lineHeight: 1.15, color: '#fff', margin: '8px 0 14px', fontFamily: 'Baloo 2', textShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
+          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3.4rem)', lineHeight: 1.15, color: '#fff', margin: '8px 0 14px', fontFamily: 'Baloo 2', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
             मराठा युद्धे, लढाया व{' '}
             <span style={{ color: '#FF8A65' }}>
               रणव्यूह दालन
             </span>
           </h1>
-          <div style={{ background: '#FF8A65', width: '70px', height: '3px', marginBottom: '14px' }} />
-          <p style={{ color: 'rgba(255,255,255,0.92)', fontSize: '1.05rem', maxWidth: '64ch', lineHeight: 1.55, textShadow: '0 1px 4px rgba(0,0,0,0.7)' }}>
+          <div style={{ background: '#FF8A65', width: '70px', height: '3px', marginBottom: '16px' }} />
+          <p style={{
+            color: '#FFF8E7',
+            fontSize: '1.10rem',
+            fontWeight: 600,
+            maxWidth: '64ch',
+            lineHeight: 1.65,
+            background: 'rgba(15, 3, 5, 0.42)',
+            backdropFilter: 'blur(6px)',
+            WebkitBackdropFilter: 'blur(6px)',
+            padding: '12px 18px',
+            borderRadius: '8px',
+            borderLeft: '4px solid #FF8A65',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+            textShadow: '0 2px 6px rgba(0,0,0,0.9), 0 1px 2px rgba(0,0,0,0.9)',
+            margin: '0 0 8px'
+          }}>
             गनिमी कावा, वेगवान अश्वदल, जलदुर्ग वेढा व डोंगररांगांमधील अजोड रणनीती • पावनखिंड ते पालखेड, वसई ते पानिपत — मराठा लष्करी इतिहासाची सत्य व संदर्भयुक्त शौर्यगाथा.
           </p>
 
