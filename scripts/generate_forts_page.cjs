@@ -1,4 +1,7 @@
-import React, { useState, useMemo } from 'react';
+const fs = require('fs');
+const path = require('path');
+
+const fileContent = `import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { FORTS_DATABASE } from '../../data/forts350Data';
 import { FORT_HISTORICAL_DETAILS } from '../../data/fortHistoryDetails';
@@ -463,7 +466,7 @@ export default function FortsMapPage() {
                           justifyContent: 'space-between',
                           alignItems: 'center'
                         }}>
-                          <span>📍 {f.district}{f.taluka ? ` (${f.taluka})` : ''}</span>
+                          <span>📍 {f.district}{f.taluka ? \` (\${f.taluka})\` : ''}</span>
                           <span style={{ color: '#888' }}>{f.height}</span>
                         </div>
 
@@ -661,7 +664,7 @@ export default function FortsMapPage() {
                 <div style={{ background: '#FFF7ED', padding: '12px', borderRadius: '10px', border: '1px solid #FFEDD5' }}>
                   <div style={{ fontSize: '0.75rem', color: '#9A3412', fontWeight: 600 }}>📍 जिल्हा</div>
                   <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--maroon-950)', marginTop: '2px' }}>
-                    {selectedFort.district}{selectedFort.taluka ? ` (${selectedFort.taluka})` : ''}
+                    {selectedFort.district}{selectedFort.taluka ? \` (\${selectedFort.taluka})\` : ''}
                   </div>
                 </div>
 
@@ -690,7 +693,7 @@ export default function FortsMapPage() {
               {/* Rich Historical Information & Details */}
               {(() => {
                 const details = FORT_HISTORICAL_DETAILS[selectedFort.id] || {};
-                const historyText = details.history || selectedFort.desc || `${selectedFort.marathiName || selectedFort.name} हा महाराष्ट्र राज्यातील ${selectedFort.district} जिल्ह्यातील एक ऐतिहासिक व महत्त्वाचा किल्ला आहे. सह्याद्रीच्या डोंगररांगांमध्ये आणि मराठा साम्राज्याच्या गौरवशाली इतिहासात या किल्ल्याला अनन्यसाधारण स्थान लाभले आहे.`;
+                const historyText = details.history || selectedFort.desc || \`\${selectedFort.marathiName || selectedFort.name} हा महाराष्ट्र राज्यातील \${selectedFort.district} जिल्ह्यातील एक ऐतिहासिक व महत्त्वाचा किल्ला आहे. सह्याद्रीच्या डोंगररांगांमध्ये आणि मराठा साम्राज्याच्या गौरवशाली इतिहासात या किल्ल्याला अनन्यसाधारण स्थान लाभले आहे.\`;
                 const monumentsList = details.monuments || [];
                 const strategicValue = details.strategicImportance;
                 const bestSeason = details.bestTimeToVisit;
@@ -804,7 +807,7 @@ export default function FortsMapPage() {
               {/* Actions */}
               <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                 <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((selectedFort.marathiName || selectedFort.name) + ' ' + selectedFort.district + ' Maharashtra')}`}
+                  href={\`https://www.google.com/maps/search/?api=1&query=\${encodeURIComponent((selectedFort.marathiName || selectedFort.name) + ' ' + selectedFort.district + ' Maharashtra')}\`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn"
@@ -848,3 +851,8 @@ export default function FortsMapPage() {
     </div>
   );
 }
+`;
+
+fs.writeFileSync(path.resolve(__dirname, '../src/pages/forts/FortsMapPage.jsx'), fileContent, 'utf8');
+fs.writeFileSync(path.resolve(__dirname, '../frontend/src/pages/forts/FortsMapPage.jsx'), fileContent, 'utf8');
+console.log('✅ FortsMapPage.jsx successfully updated in both src/ and frontend/src/!');
