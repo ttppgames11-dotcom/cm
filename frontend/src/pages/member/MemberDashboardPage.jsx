@@ -98,7 +98,7 @@ export default function MemberDashboardPage() {
           <div style={{ background: 'rgba(255,255,255,0.2)', display: 'inline-block', padding: '3px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, marginBottom: '8px' }}>
             🚩 {member.tier || 'Gold'} सदस्य
           </div>
-          <h1 style={{ fontSize: '1.8rem', margin: 0 }}>सस्नेह जय शिवराय, {member.name}!</h1>
+          <h1 style={{ fontSize: '1.8rem', margin: 0 }}>सस्नेह नमस्कार, जय शिवराय, {member.name}!</h1>
           <p style={{ margin: '6px 0 0', opacity: 0.9, fontSize: '0.95rem' }}>
             आपला सदस्य आयडी: <strong>{memberId}</strong> | 📍 {member.district || 'पुणे'}
           </p>
