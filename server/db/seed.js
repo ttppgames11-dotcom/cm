@@ -273,6 +273,17 @@ export async function seed() {
       donors: 5890,
       cover: '/assets/images/real-farmer-field.jpg',
       desc: 'अतिवृष्टी व दुष्काळग्रस्त शेतकरी कुटुंबांना तात्काळ आर्थिक व कृषी अवजारे साहाय्य.'
+    },
+    {
+      id: 'C04',
+      cat: 'health',
+      title: 'मराठा आरोग्य कवच व मोफत वैद्यकीय/रक्तदान निधी',
+      icon: '🩸',
+      target: 1500000,
+      collected: 980000,
+      donors: 4320,
+      cover: '/assets/images/generated/maratha_blood_help_hero.jpg',
+      desc: 'दुर्धर आजारग्रस्त मराठा बांधवांना औषधोपचार, मोफत शस्त्रक्रिया साहाय्य व २४x७ राज्यव्यापी आपत्कालीन रक्तदान सेवा शिबिरे.'
     }
   ];
 

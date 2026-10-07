@@ -95,7 +95,7 @@
     const campaigns = [
       {
         id: 'C01', cat: 'fort', title: 'रायगड संवर्धन अभियान', icon: '🏰', target: 1000000, collected: 672450, donors: 3240,
-        cover: 'assets/images/real-raigad-panoramic.jpg',
+        cover: '/assets/images/real-raigad-panoramic.jpg',
         desc: 'दुर्गराज रायगडावरील ऐतिहासिक वास्तूंचे जतन, स्वच्छता मोहीम व पायवाट दुरुस्तीसाठी हा निधी वापरला जातो.',
         expenses: [ { item: 'तटबंदी दुरुस्ती साहित्य', amount: 210000 }, { item: 'स्वयंसेवक वाहतूक व निवास', amount: 95000 }, { item: 'सुरक्षा कठडे उभारणी', amount: 180000 }, { item: 'स्वच्छता मोहीम साधने', amount: 45000 } ],
         updates: [ { date: '2026-08-20', text: 'बालेकिल्ल्याजवळील तटबंदीचे प्रथम टप्प्यातील काम पूर्ण.' }, { date: '2026-07-05', text: '५०० स्वयंसेवकांसह स्वच्छता मोहीम यशस्वी.' } ],
@@ -103,7 +103,7 @@
       },
       {
         id: 'C02', cat: 'edu', title: 'विद्यार्थी शिक्षण सहाय्य निधी', icon: '🎓', target: 500000, collected: 200000, donors: 890,
-        cover: 'assets/images/real-shaniwar-wada.jpg',
+        cover: '/assets/images/library.jpg',
         desc: 'गरजू व होतकरू विद्यार्थ्यांना शालेय/महाविद्यालयीन शुल्क, पुस्तके व स्पर्धा परीक्षा साहित्यासाठी मदत.',
         expenses: [ { item: 'शिष्यवृत्ती वितरण (४२ विद्यार्थी)', amount: 140000 }, { item: 'स्पर्धा परीक्षा पुस्तके', amount: 35000 }, { item: 'ऑनलाइन कोचिंग सहाय्य', amount: 25000 } ],
         updates: [ { date: '2026-08-10', text: '४२ विद्यार्थ्यांना शिष्यवृत्ती वितरित.' } ],
@@ -111,7 +111,7 @@
       },
       {
         id: 'C03', cat: 'health', title: 'रक्तदान अभियान निधी', icon: '🩸', target: 100000, collected: 82000, donors: 410,
-        cover: 'assets/images/real-raigad-panoramic.jpg',
+        cover: '/assets/images/generated/maratha_blood_help_hero.jpg',
         desc: 'रक्तदान शिबिरांचे आयोजन, रक्तपेढी सहकार्य व आणीबाणी रक्त पुरवठा नेटवर्कसाठी निधी.',
         expenses: [ { item: 'शिबिर आयोजन खर्च', amount: 32000 }, { item: 'वैद्यकीय तपासणी किट्स', amount: 28000 } ],
         updates: [ { date: '2026-08-25', text: '६ शहरांत एकाच दिवशी रक्तदान शिबिर.' } ],
@@ -119,7 +119,7 @@
       },
       {
         id: 'C04', cat: 'relief', title: 'आपत्ती मदत निधी (पूरग्रस्त सहाय्य)', icon: '🏠', target: 800000, collected: 415000, donors: 1560,
-        cover: 'assets/images/real-raigad-panoramic.jpg',
+        cover: '/assets/images/real-farmer-field.jpg',
         desc: 'नैसर्गिक आपत्तीग्रस्त कुटुंबांना अन्नधान्य, कपडे व तात्पुरत्या निवाऱ्यासाठी मदत.',
         expenses: [ { item: 'अन्नधान्य किट वाटप', amount: 220000 }, { item: 'तात्पुरता निवारा साहित्य', amount: 130000 } ],
         updates: [ { date: '2026-07-15', text: '३०० कुटुंबांना अन्नधान्य किट वाटप पूर्ण.' } ],

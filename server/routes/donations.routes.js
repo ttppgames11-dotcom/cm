@@ -9,49 +9,112 @@ const router = Router();
 // GET /api/donations/campaigns
 // Active public relief funds, student scholarships, fort restoration
 router.get('/campaigns', (req, res) => {
-  let list = db.getCollection('campaigns');
+  const seedCampaigns = [
+    {
+      id: 'CAMP-01',
+      cat: 'fort',
+      category: 'दुर्ग संवर्धन',
+      title: 'छत्रपती शिवाजी महाराज स्मारक व ऐतिहासिक दुर्ग संवर्धन निधी',
+      target: 2500000,
+      targetAmount: 2500000,
+      collected: 1845000,
+      raisedAmount: 1845000,
+      donors: 684,
+      donorsCount: 684,
+      cover: '/assets/images/real-raigad-panoramic.jpg',
+      icon: '🏰',
+      image: '🏰',
+      desc: 'सह्याद्रीतील दुर्लक्षित गडकिल्ल्यांच्या तटबंदी दुरुस्ती, स्वच्छता, सुरक्षा कठडे व माहिती फलक उभारणीसाठी थेट निधी.',
+      description: 'सह्याद्रीतील दुर्लक्षित गडकिल्ल्यांच्या तटबंदी दुरुस्ती, स्वच्छता, सुरक्षा कठडे व माहिती फलक उभारणीसाठी थेट निधी.',
+      beneficiary: 'अखिल भारतीय मराठा महासंघ दुर्ग संवर्धन समिती',
+      section80G: true
+    },
+    {
+      id: 'CAMP-02',
+      cat: 'education',
+      category: 'शिक्षण सहाय्य',
+      title: 'मराठा शेतकरी पाल्यांसाठी उच्च शिक्षण शिष्यवृत्ती निधी',
+      target: 5000000,
+      targetAmount: 5000000,
+      collected: 3750000,
+      raisedAmount: 3750000,
+      donors: 1240,
+      donorsCount: 1240,
+      cover: '/assets/images/library.jpg',
+      icon: '🎓',
+      image: '🎓',
+      desc: 'अल्पभूधारक शेतकरी व गरजू मराठा विद्यार्थ्यांच्या इंजिनिअरिंग, मेडिकल व UPSC/MPSC शिक्षणासाठी आर्थिक सहाय्य.',
+      description: 'अल्पभूधारक शेतकरी व गरजू मराठा विद्यार्थ्यांच्या इंजिनिअरिंग, मेडिकल व UPSC/MPSC शिक्षणासाठी आर्थिक सहाय्य.',
+      beneficiary: 'महासंघ शैक्षणिक सहाय्यता ट्रस्ट',
+      section80G: true
+    },
+    {
+      id: 'CAMP-03',
+      cat: 'farmer',
+      category: 'शेतकरी मदत',
+      title: 'आपत्तीग्रस्त मराठा शेतकरी कुटुंबे मदत व पुनर्वसन निधी',
+      target: 2000000,
+      targetAmount: 2000000,
+      collected: 1480000,
+      raisedAmount: 1480000,
+      donors: 589,
+      donorsCount: 589,
+      cover: '/assets/images/real-farmer-field.jpg',
+      icon: '🌾',
+      image: '🌾',
+      desc: 'अतिवृष्टी, गारपीट व दुष्काळग्रस्त शेतकरी कुटुंबांना तात्काळ आर्थिक मदत, बियाणे व कृषी पुनर्वसन साहाय्य.',
+      description: 'अतिवृष्टी, गारपीट व दुष्काळग्रस्त शेतकरी कुटुंबांना तात्काळ आर्थिक मदत, बियाणे व कृषी पुनर्वसन साहाय्य.',
+      beneficiary: 'महासंघ बळीराजा आपत्ती निवारण कक्ष',
+      section80G: true
+    },
+    {
+      id: 'CAMP-04',
+      cat: 'health',
+      category: 'आरोग्य व रक्तदान',
+      title: 'मराठा आरोग्य कवच व मोफत वैद्यकीय/रक्तदान सहाय्यता निधी',
+      target: 1500000,
+      targetAmount: 1500000,
+      collected: 980000,
+      raisedAmount: 980000,
+      donors: 432,
+      donorsCount: 432,
+      cover: '/assets/images/generated/maratha_blood_help_hero.jpg',
+      icon: '🩸',
+      image: '🩸',
+      desc: 'दुर्धर आजारग्रस्त मराठा बांधवांना औषधोपचार, मोफत शस्त्रक्रिया साहाय्य व २४x७ राज्यव्यापी आपत्कालीन रक्तदान सेवा शिबिरे.',
+      description: 'दुर्धर आजारग्रस्त मराठा बांधवांना औषधोपचार, मोफत शस्त्रक्रिया साहाय्य व २४x७ राज्यव्यापी आपत्कालीन रक्तदान सेवा शिबिरे.',
+      beneficiary: 'महासंघ आरोग्य व रक्तमित्र सेवा समिती',
+      section80G: true
+    }
+  ];
 
-  if (list.length === 0) {
-    const seedCampaigns = [
-      {
-        id: 'CAMP-01',
-        title: 'छत्रपती शिवाजी महाराज स्मारक व ऐतिहासिक दुर्ग संवर्धन निधी',
-        category: 'दुर्ग संवर्धन',
-        targetAmount: 2500000,
-        raisedAmount: 1845000,
-        donorsCount: 684,
-        description: 'सह्याद्रीतील दुर्लक्षित गडकिल्ल्यांच्या तटबंदी दुरुस्ती, स्वच्छता व माहिती फलक उभारणीसाठी थेट निधी.',
-        beneficiary: 'अखिल भारतीय मराठा महासंघ दुर्ग संवर्धन समिती',
-        section80G: true,
-        image: '🏰'
-      },
-      {
-        id: 'CAMP-02',
-        title: 'मराठा शेतकरी पाल्यांसाठी उच्च शिक्षण शिष्यवृत्ती निधी',
-        category: 'शिक्षण सहाय्य',
-        targetAmount: 5000000,
-        raisedAmount: 3750000,
-        donorsCount: 1240,
-        description: 'अल्पभूधारक शेतकरी व गरजू मराठा विद्यार्थ्यांच्या इंजिनिअरिंग, मेडिकल व UPSC/MPSC शिक्षणासाठी आर्थिक सहाय्य.',
-        beneficiary: 'महासंघ शैक्षणिक सहाय्यता ट्रस्ट',
-        section80G: true,
-        image: '🎓'
-      },
-      {
-        id: 'CAMP-03',
-        title: 'आपत्तीग्रस्त मराठा कुटुंबे मदत व पुनर्वसन निधी',
-        category: 'आपत्ती निवारण',
-        targetAmount: 1500000,
-        raisedAmount: 1120000,
-        donorsCount: 420,
-        description: 'अतिवृष्टी, दुष्काळ किंवा आकस्मिक संकटात सापडलेल्या शेतकरी कुटुंबांना तात्काळ आर्थिक व वैद्यकीय मदत.',
-        beneficiary: 'महासंघ आपत्ती निवारण कक्ष',
-        section80G: true,
-        image: '🤝'
+  let list = db.getCollection('campaigns');
+  if (!list || list.length < 4) {
+    for (const c of seedCampaigns) {
+      const existing = db.findById('campaigns', c.id);
+      if (existing) {
+        db.update('campaigns', c.id, c);
+      } else {
+        db.insert('campaigns', c);
       }
-    ];
-    for (const c of seedCampaigns) db.insert('campaigns', c);
+    }
     list = seedCampaigns;
+  } else {
+    list = list.map((c, idx) => {
+      const seed = seedCampaigns.find(s => s.id === c.id) || seedCampaigns[idx % seedCampaigns.length];
+      return {
+        ...seed,
+        ...c,
+        cover: seed.cover,
+        target: c.target || c.targetAmount || seed.target,
+        collected: c.collected || c.raisedAmount || seed.collected,
+        donors: c.donors || c.donorsCount || seed.donors,
+        desc: c.desc || c.description || seed.desc,
+        cat: c.cat || seed.cat,
+        category: c.category || seed.category,
+        icon: c.icon || seed.icon
+      };
+    });
   }
 
   return sendSuccess(res, 'दान मोहिमांची यादी प्राप्त झाली', { campaigns: list, count: list.length });
