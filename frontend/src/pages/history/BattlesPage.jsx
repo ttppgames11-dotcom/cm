@@ -113,8 +113,8 @@ export default function BattlesPage() {
       title: 'गनिमी कावा (Guerrilla Warfare)',
       subtitle: 'आकस्मिक हल्ले व अचूक नियोजन',
       accent: '#F4511E',
-      image: '/assets/images/real-ganimi-kawa.jpg',
-      imageCaption: '🚩 सह्याद्रीतील गनिमी कावा व डोंगररांगांमधील आकस्मिक हल्ला',
+      image: '/assets/images/battle-action-pavankhind.jpg',
+      imageCaption: '🚩 सह्याद्रीच्या डोंगर-खिंडीत गनिमी कावा: मूठभर मावळ्यांचा अफाट फौजेवर अभेद्य गनिमी हल्ला',
       quote: '"शत्रूवर संकट कोसळण्याआधी मराठ्यांचे अस्त्र पोहोचले पाहिजे."',
       keyPoints: [
         'भौगोलिक परिस्थितीचा आणि दुर्गम डोंगराळ भागाचा रणनीतिक वापर',
@@ -129,8 +129,8 @@ export default function BattlesPage() {
       title: 'वेगवान अश्वदल (Light Cavalry)',
       subtitle: 'झंझावाती वेग व हालचाल',
       accent: '#D84315',
-      image: '/assets/images/real-maratha-sowar.jpg',
-      imageCaption: '🐎 मराठा बारगीर व शिलेदार वेगवान अश्वदल',
+      image: '/assets/images/bhavya-maratha-army.jpg',
+      imageCaption: '🐎 मराठा वेगवान घोडदळ: भीमथडी तट्टांवर स्वार होऊन झंझावाती वेगाने मुसंडी मारणारे अश्वदल',
       quote: '"दिवसभरात ५०-६० मैल मजल मारणारे जगातील सर्वांत चपळ घोडदळ."',
       keyPoints: [
         'थोरले बाजीराव पेशवे व धनाजी-संताजी यांच्या काळात जागतिक ख्याती',
@@ -177,8 +177,8 @@ export default function BattlesPage() {
       title: 'दुर्ग संरक्षण व रसद साखळी',
       subtitle: '३५०+ किल्ल्यांचे अभेद्य जाळे',
       accent: '#6A1B9A',
-      image: '/assets/images/real-pratapgad-fort.jpg',
-      imageCaption: '🏰 सह्याद्रीचे अभेद्य गडकोट व संरक्षण जाळे (प्रतापगड)',
+      image: '/assets/images/forts/raigad-fort.jpg',
+      imageCaption: '🏰 सह्याद्रीचे दुर्गवैभव: ३५०+ गडकोटांचे अभेद्य संरक्षण जाळे व तटबंदी (किल्ले रायगड)',
       quote: '"किल्ला म्हणजे केवळ दगड-धोंडे नव्हे, तर स्वराज्याचे अभेद्य कवच."',
       keyPoints: [
         'डोंगरी, भुईकोट व जलदुर्गांचे परस्परपूरक संरक्षण जाळे',
