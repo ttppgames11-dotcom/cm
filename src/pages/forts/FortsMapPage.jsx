@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { FORTS_DATABASE } from '../../data/forts350Data';
 import { FORT_HISTORICAL_DETAILS } from '../../data/fortHistoryDetails';
+import { ALL_FORTS_350_DIRECTORY } from '../../data/allForts350Directory';
 
 const DIVISION_FILTERS = [
   { id: 'all', label: 'सर्व विभाग' },
@@ -26,6 +27,44 @@ export default function FortsMapPage() {
   const [selectedDiv, setSelectedDiv] = useState('all');
   const [selectedDistrict, setSelectedDistrict] = useState('all');
   const [selectedFort, setSelectedFort] = useState(null);
+
+  // Directory (350+ Forts) State
+  const [dirSearch, setDirSearch] = useState('');
+  const [dirDivision, setDirDivision] = useState('all');
+  const [dirDistrict, setDirDistrict] = useState('all');
+  const [dirType, setDirType] = useState('all');
+  const [dirPhotoStatus, setDirPhotoStatus] = useState('all');
+  const [dirVisibleCount, setDirVisibleCount] = useState(36);
+
+  // Compute available districts across all 369 forts
+  const dirDistricts = useMemo(() => {
+    const list = dirDivision === 'all'
+      ? ALL_FORTS_350_DIRECTORY
+      : ALL_FORTS_350_DIRECTORY.filter(f => f.division === dirDivision);
+    const set = new Set(list.map(f => f.district));
+    return Array.from(set).sort();
+  }, [dirDivision]);
+
+  // Filtering for 350+ directory
+  const filteredDirectory = useMemo(() => {
+    return ALL_FORTS_350_DIRECTORY.filter(f => {
+      const matchDiv = dirDivision === 'all' || f.division === dirDivision;
+      const matchDist = dirDistrict === 'all' || f.district === dirDistrict;
+      const matchType = dirType === 'all' || f.type === dirType;
+      const matchPhoto = dirPhotoStatus === 'all' ||
+        (dirPhotoStatus === 'with_photo' ? f.hasVerifiedPhoto : !f.hasVerifiedPhoto);
+      
+      const q = dirSearch.trim().toLowerCase();
+      const matchSearch = !q ||
+        f.marathiName.toLowerCase().includes(q) ||
+        (f.englishName && f.englishName.toLowerCase().includes(q)) ||
+        f.district.toLowerCase().includes(q) ||
+        (f.taluka && f.taluka.toLowerCase().includes(q)) ||
+        (f.desc && f.desc.toLowerCase().includes(q));
+
+      return matchDiv && matchDist && matchType && matchPhoto && matchSearch;
+    });
+  }, [dirDivision, dirDistrict, dirType, dirPhotoStatus, dirSearch]);
 
   // Compute available districts for the selected division
   const availableDistricts = useMemo(() => {
@@ -97,14 +136,55 @@ export default function FortsMapPage() {
             </h1>
             <div className="rule" style={{ background: 'var(--gold-500)', height: '4px', width: '80px', margin: '12px 0' }}></div>
             <p className="tagline" style={{ fontSize: '1.1rem', maxWidth: '65ch', color: '#FFF8F2', lineHeight: 1.6 }}>
-              प्रत्येक किल्ला जपणारा प्रत्येक मावळा आमचा अभिमान! महाराष्ट्रातील सर्व १७१ ऐतिहासिक गडकोटांचे अस्सल छायाचित्रे आणि नावासह संपूर्ण डिजिटल दालन.
+              प्रत्येक किल्ला जपणारा प्रत्येक मावळा आमचा अभिमान! १७१ प्रमाणित गडकोटांचे अस्सल छायाचित्र दालन आणि महाराष्ट्रातील सर्व ३६९ गडकोटांची अधिकृत ऐतिहासिक संदर्भ सूची.
             </p>
 
             <div className="stats-glass" style={{ marginTop: '24px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <div className="stat-glass"><b>{FORTS_DATABASE.length}</b><span>सर्व गडकोट एकाच ठिकाणी</span></div>
-              <div className="stat-glass"><b>२१</b><span>जिल्हे व्याप्ती</span></div>
+              <div className="stat-glass"><b>{FORTS_DATABASE.length}</b><span>📸 छायाचित्र प्रमाणित किल्ले</span></div>
+              <div className="stat-glass"><b>{ALL_FORTS_350_DIRECTORY.length}</b><span>📜 समग्र संदर्भ सूची (एकूण)</span></div>
+              <div className="stat-glass"><b>३६</b><span>जिल्हे व्याप्ती</span></div>
               <div className="stat-glass"><b>१२</b><span>UNESCO नामांकित किल्ले</span></div>
-              <div className="stat-glass"><b>४००+ वर्षे</b><span>अजिंक्य वारसा</span></div>
+            </div>
+
+            <div style={{ marginTop: '20px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <a
+                href="#photo-gallery-section"
+                style={{
+                  background: 'linear-gradient(135deg, #C73800, #EA580C)',
+                  color: '#FFFFFF',
+                  padding: '10px 20px',
+                  borderRadius: '25px',
+                  fontSize: '0.88rem',
+                  fontWeight: 800,
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <span>📸 छायाचित्र प्रमाणित दालन (१७१)</span>
+                <span>↓</span>
+              </a>
+              <a
+                href="#all-forts-directory"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.92)',
+                  color: '#78350F',
+                  padding: '10px 20px',
+                  borderRadius: '25px',
+                  fontSize: '0.88rem',
+                  fontWeight: 800,
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <span>📜 ३५०+ समग्र संदर्भ सूची (३६९)</span>
+                <span>↓</span>
+              </a>
             </div>
           </div>
         </div>
@@ -113,7 +193,15 @@ export default function FortsMapPage() {
       <div className="wrap" style={{ maxWidth: '1320px', padding: '36px 24px', margin: '0 auto' }}>
         
         {/* Search & Administrative Navigation */}
-        <section style={{ marginBottom: '28px' }}>
+        <section id="photo-gallery-section" style={{ marginBottom: '28px' }}>
+          <div style={{ marginBottom: '18px' }}>
+            <h2 style={{ fontFamily: 'Baloo 2', color: '#C73800', margin: 0, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>📸</span> छायाचित्र प्रमाणित गडकोट दालन (१७१ किल्ले)
+            </h2>
+            <span style={{ fontSize: '0.84rem', color: '#6B7280', fontWeight: 600 }}>
+              प्रत्येक किल्ल्याचे प्रत्यक्ष पडताळलेले १००% अस्सल छायाचित्र व तपशील
+            </span>
+          </div>
           <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
             <div style={{ flex: 1, minWidth: '280px', position: 'relative' }}>
               <input
@@ -494,6 +582,458 @@ export default function FortsMapPage() {
               })}
             </div>
           )}
+        </section>
+
+        {/* ========================================================================= */}
+        {/* SECTION: महाराष्ट्रातील ३५०+ गडकोट समग्र संदर्भ सूची (350+ Forts Directory) */}
+        {/* ========================================================================= */}
+        <section id="all-forts-directory" style={{ marginTop: '56px', paddingTop: '40px', borderTop: '2.5px dashed #FCD34D' }}>
+          
+          {/* Section Header */}
+          <div style={{
+            background: 'linear-gradient(135deg, #FFFDF8 0%, #FEF3C7 50%, #FFEDD5 100%)',
+            borderRadius: '20px',
+            padding: '32px 28px',
+            border: '2px solid #FCD34D',
+            boxShadow: '0 8px 24px rgba(217, 119, 6, 0.08)',
+            marginBottom: '32px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+              <div>
+                <span style={{
+                  background: '#C73800',
+                  color: '#FEF08A',
+                  padding: '5px 16px',
+                  borderRadius: '20px',
+                  fontSize: '0.82rem',
+                  fontWeight: 800,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  📜 अधिकृत ऐतिहासिक निर्देशिका · ३६९ गडकोट
+                </span>
+                <h2 style={{
+                  fontFamily: 'Baloo 2',
+                  fontSize: 'clamp(1.75rem, 3vw, 2.35rem)',
+                  color: '#C73800',
+                  margin: '12px 0 8px',
+                  fontWeight: 900
+                }}>
+                  महाराष्ट्रातील ३५०+ गडकोट समग्र संदर्भ सूची
+                </h2>
+                <p style={{ color: '#78350F', fontSize: '0.98rem', margin: 0, maxWidth: '85ch', lineHeight: 1.6, fontWeight: 600 }}>
+                  छत्रपती शिवाजी महाराज, मराठा साम्राज्य व दख्खनच्या इतिहासातील सर्व ३६९ गडकोटांची तालुका, जिल्हा व प्रकारानिहाय अधिकृत संदर्भ यादी.
+                </p>
+              </div>
+
+              {/* Policy badge guaranteeing zero wrong images */}
+              <div style={{
+                background: '#FFFFFF',
+                border: '1.5px solid #FDE68A',
+                borderRadius: '14px',
+                padding: '14px 18px',
+                maxWidth: '380px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.04)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#166534', fontWeight: 800, fontSize: '0.88rem' }}>
+                  <span>🛡️</span>
+                  <span>प्रमाणित छायाचित्र धोरण (Zero Fake Policy)</span>
+                </div>
+                <p style={{ margin: '6px 0 0', fontSize: '0.8rem', color: '#4B5563', lineHeight: 1.55 }}>
+                  वरील गॅलरीतील १७१ किल्ले प्रत्यक्ष प्रमाणित छायाचित्रांसह आहेत. उर्वरित ऐतिहासिक किल्ल्यांवर चुकीचे किंवा खोटे छायाचित्र न लावता, त्यांची खरी ऐतिहासिक नोंद व नकाशा स्थान दिले आहे.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Directory Search & Filters Bar */}
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            border: '1.5px solid #E5E7EB',
+            padding: '24px',
+            boxShadow: '0 4px 14px rgba(0,0,0,0.04)',
+            marginBottom: '28px'
+          }}>
+            {/* Search + Dropdowns Row */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px', marginBottom: '16px' }}>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="search"
+                  placeholder="किल्ल्याचे नाव, तालुका किंवा इतिहास शोधा..."
+                  value={dirSearch}
+                  onChange={(e) => { setDirSearch(e.target.value); setDirVisibleCount(36); }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    borderRadius: '10px',
+                    border: '1.5px solid #D1D5DB',
+                    fontSize: '0.94rem',
+                    boxSizing: 'border-box',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
+              {/* Division Dropdown */}
+              <select
+                value={dirDivision}
+                onChange={(e) => { setDirDivision(e.target.value); setDirDistrict('all'); setDirVisibleCount(36); }}
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #D1D5DB',
+                  fontSize: '0.92rem',
+                  fontWeight: 600,
+                  background: '#FFFFFF',
+                  color: '#1F2937',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="all">सर्व विभाग ({ALL_FORTS_350_DIRECTORY.length})</option>
+                {DIVISION_FILTERS.filter(d => d.id !== 'all').map(d => (
+                  <option key={d.id} value={d.id}>
+                    {d.label} ({ALL_FORTS_350_DIRECTORY.filter(f => f.division === d.id).length})
+                  </option>
+                ))}
+              </select>
+
+              {/* District Dropdown */}
+              <select
+                value={dirDistrict}
+                onChange={(e) => { setDirDistrict(e.target.value); setDirVisibleCount(36); }}
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #D1D5DB',
+                  fontSize: '0.92rem',
+                  fontWeight: 600,
+                  background: '#FFFFFF',
+                  color: '#1F2937',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="all">सर्व जिल्हे ({dirDistricts.length})</option>
+                {dirDistricts.map(dist => (
+                  <option key={dist} value={dist}>
+                    📍 {dist} ({ALL_FORTS_350_DIRECTORY.filter(f => f.district === dist).length})
+                  </option>
+                ))}
+              </select>
+
+              {/* Quick Reset */}
+              {(dirSearch || dirDivision !== 'all' || dirDistrict !== 'all' || dirType !== 'all' || dirPhotoStatus !== 'all') && (
+                <button
+                  onClick={() => {
+                    setDirSearch('');
+                    setDirDivision('all');
+                    setDirDistrict('all');
+                    setDirType('all');
+                    setDirPhotoStatus('all');
+                    setDirVisibleCount(36);
+                  }}
+                  style={{
+                    padding: '12px 18px',
+                    borderRadius: '10px',
+                    border: '1.5px solid #FCA5A5',
+                    background: '#FEF2F2',
+                    color: '#B91C1C',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  🔄 सर्व फिल्टर्स रिसेट
+                </button>
+              )}
+            </div>
+
+            {/* Filter Pills for Type & Photo Status */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', borderTop: '1px solid #F3F4F6', paddingTop: '16px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {[
+                  { id: 'all', label: 'सर्व प्रकार' },
+                  { id: 'giridurg', label: '⛰️ गिरीदुर्ग' },
+                  { id: 'jaladurg', label: '🌊 जलदुर्ग' },
+                  { id: 'bhuikot', label: '🏰 भुईकोट' }
+                ].map(t => {
+                  const isSel = dirType === t.id;
+                  const count = ALL_FORTS_350_DIRECTORY.filter(f => {
+                    const matchDiv = dirDivision === 'all' || f.division === dirDivision;
+                    const matchDist = dirDistrict === 'all' || f.district === dirDistrict;
+                    const matchT = t.id === 'all' || f.type === t.id;
+                    return matchDiv && matchDist && matchT;
+                  }).length;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => { setDirType(t.id); setDirVisibleCount(36); }}
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        border: isSel ? '1.5px solid #C73800' : '1px solid #E5E7EB',
+                        background: isSel ? '#FFF7ED' : '#F9FAFB',
+                        color: isSel ? '#C73800' : '#4B5563',
+                        fontSize: '0.84rem',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {t.label} ({count})
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {[
+                  { id: 'all', label: 'सर्व (३६९)' },
+                  { id: 'with_photo', label: '✅ छायाचित्र उपलब्ध (१७१)' },
+                  { id: 'historical_only', label: '📜 ऐतिहासिक नोंद (१९८)' }
+                ].map(p => {
+                  const isSel = dirPhotoStatus === p.id;
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => { setDirPhotoStatus(p.id); setDirVisibleCount(36); }}
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        border: isSel ? '1.5px solid #16A34A' : '1px solid #E5E7EB',
+                        background: isSel ? '#F0FDF4' : '#F9FAFB',
+                        color: isSel ? '#166534' : '#4B5563',
+                        fontSize: '0.84rem',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {p.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Directory Count Summary */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+            <span style={{ fontSize: '0.94rem', color: '#374151', fontWeight: 700 }}>
+              शोध निकाल: <b style={{ color: '#C73800' }}>{filteredDirectory.length}</b> गडकोट सापडले
+            </span>
+            <span style={{ fontSize: '0.84rem', color: '#6B7280' }}>
+              दाखवत असलेले: {Math.min(dirVisibleCount, filteredDirectory.length)} / {filteredDirectory.length}
+            </span>
+          </div>
+
+          {/* Cards Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))',
+            gap: '16px'
+          }}>
+            {filteredDirectory.slice(0, dirVisibleCount).map((f) => (
+              <div
+                key={f.id}
+                style={{
+                  background: '#FFFFFF',
+                  borderRadius: '14px',
+                  border: f.hasVerifiedPhoto ? '1.5px solid #FED7AA' : '1.5px solid #E5E7EB',
+                  overflow: 'hidden',
+                  boxShadow: '0 3px 10px rgba(0,0,0,0.03)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'transform 0.2s, box-shadow 0.2s'
+                }}
+              >
+                {/* Header Strip with Type & Photo Status */}
+                <div style={{
+                  padding: '12px 16px',
+                  background: f.hasVerifiedPhoto ? 'linear-gradient(135deg, #FFF7ED 0%, #FEF3C7 100%)' : '#F9FAFB',
+                  borderBottom: '1px solid #F3F4F6',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#9A3412' }}>
+                    {f.typeLabel}
+                  </span>
+                  {f.hasVerifiedPhoto ? (
+                    <span style={{
+                      background: '#DCFCE7',
+                      color: '#166534',
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      padding: '2px 8px',
+                      borderRadius: '10px',
+                      border: '1px solid #BBF7D0'
+                    }}>
+                      ✅ अस्सल फोटो उपलब्ध
+                    </span>
+                  ) : (
+                    <span style={{
+                      background: '#FEF3C7',
+                      color: '#854D0E',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      padding: '2px 8px',
+                      borderRadius: '10px',
+                      border: '1px solid #FDE68A'
+                    }}>
+                      📜 ऐतिहासिक नोंद
+                    </span>
+                  )}
+                </div>
+
+                {/* Card Body */}
+                <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '8px' }}>
+                    <div style={{
+                      width: '38px',
+                      height: '38px',
+                      borderRadius: '8px',
+                      background: f.hasVerifiedPhoto ? '#FEF3C7' : '#F3F4F6',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.25rem',
+                      flexShrink: 0
+                    }}>
+                      {f.type === 'jaladurg' ? '🌊' : (f.type === 'bhuikot' ? '🏰' : '⛰️')}
+                    </div>
+                    <div>
+                      <h4 style={{
+                        margin: 0,
+                        fontSize: '1.08rem',
+                        fontFamily: 'Baloo 2',
+                        color: '#C73800',
+                        fontWeight: 800,
+                        lineHeight: 1.3
+                      }}>
+                        {f.marathiName}
+                      </h4>
+                      <span style={{ fontSize: '0.76rem', color: '#6B7280', fontWeight: 600 }}>
+                        {f.englishName} Fort {f.taluka ? `· ता. ${f.taluka}` : ''}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Location & Height Details */}
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: '0.8rem',
+                    color: '#78350F',
+                    fontWeight: 700,
+                    margin: '6px 0 10px',
+                    padding: '6px 10px',
+                    background: '#FFFDF9',
+                    borderRadius: '8px',
+                    border: '1px solid #FEF3C7'
+                  }}>
+                    <span>📍 {f.district} ({f.division})</span>
+                    <span>{f.height}</span>
+                  </div>
+
+                  {/* Historical Description */}
+                  <p style={{
+                    fontSize: '0.84rem',
+                    color: '#4B5563',
+                    lineHeight: 1.6,
+                    margin: '0 0 14px',
+                    flex: 1
+                  }}>
+                    {f.desc}
+                  </p>
+
+                  {/* Action Button */}
+                  <div style={{ marginTop: 'auto', paddingTop: '10px', borderTop: '1px dashed #E5E7EB', display: 'flex', gap: '8px' }}>
+                    {f.hasVerifiedPhoto ? (
+                      <button
+                        onClick={() => {
+                          const originalItem = FORTS_DATABASE.find(item => item.id === f.id);
+                          if (originalItem) {
+                            setSelectedFort(originalItem);
+                          }
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '8px 12px',
+                          borderRadius: '8px',
+                          border: '1px solid #F97316',
+                          background: '#FFF7ED',
+                          color: '#C2410C',
+                          fontWeight: 700,
+                          fontSize: '0.82rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        <span>🔍 छायाचित्र व सविस्तर माहिती</span>
+                      </button>
+                    ) : (
+                      <a
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.marathiName + ' ' + f.district + ' किल्ला महाराष्ट्र')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          width: '100%',
+                          padding: '8px 12px',
+                          borderRadius: '8px',
+                          border: '1px solid #D1D5DB',
+                          background: '#F9FAFB',
+                          color: '#374151',
+                          fontWeight: 700,
+                          fontSize: '0.82rem',
+                          textDecoration: 'none',
+                          textAlign: 'center',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        <span>🗺️ Google Maps वर स्थान पहा</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Load More Button */}
+          {filteredDirectory.length > dirVisibleCount && (
+            <div style={{ textAlign: 'center', marginTop: '32px' }}>
+              <button
+                onClick={() => setDirVisibleCount(prev => prev + 36)}
+                style={{
+                  padding: '12px 32px',
+                  borderRadius: '30px',
+                  background: 'linear-gradient(135deg, #C73800, #EA580C)',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  fontSize: '0.96rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(199, 56, 0, 0.25)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <span>अधिक गडकोट दाखवा (+३६)</span>
+                <span>▼</span>
+              </button>
+              <div style={{ marginTop: '8px', fontSize: '0.82rem', color: '#6B7280' }}>
+                उर्वरित {filteredDirectory.length - dirVisibleCount} किल्ले पाहण्यासाठी क्लिक करा
+              </div>
+            </div>
+          )}
+
         </section>
 
       </div>
