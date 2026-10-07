@@ -846,42 +846,178 @@ export default function FortsMapPage() {
                   transition: 'transform 0.2s, box-shadow 0.2s'
                 }}
               >
-                {/* Header Strip with Type & Photo Status */}
+                {/* Fort Image / Visual Header */}
                 <div style={{
-                  padding: '12px 16px',
-                  background: f.hasVerifiedPhoto ? 'linear-gradient(135deg, #FFF7ED 0%, #FEF3C7 100%)' : '#F9FAFB',
-                  borderBottom: '1px solid #F3F4F6',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
+                  height: '165px',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  background: f.hasVerifiedPhoto && f.image ? '#1c0a05' : (
+                    f.type === 'jaladurg'
+                      ? 'linear-gradient(135deg, #0C2340 0%, #06121E 100%)'
+                      : (f.type === 'bhuikot'
+                        ? 'linear-gradient(135deg, #3A1B0E 0%, #1A0B05 100%)'
+                        : 'linear-gradient(135deg, #421B07 0%, #1E0A02 100%)')
+                  )
                 }}>
-                  <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#9A3412' }}>
-                    {f.typeLabel}
-                  </span>
-                  {f.hasVerifiedPhoto ? (
-                    <span style={{
-                      background: '#DCFCE7',
-                      color: '#166534',
-                      fontSize: '0.72rem',
-                      fontWeight: 800,
-                      padding: '2px 8px',
-                      borderRadius: '10px',
-                      border: '1px solid #BBF7D0'
+                  {f.hasVerifiedPhoto && f.image ? (
+                    <img
+                      src={f.image}
+                      alt={f.marathiName}
+                      loading="lazy"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transition: 'transform 0.3s ease'
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        if (e.target.nextElementSibling) e.target.nextElementSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+
+                  {/* Visual Archival Emblem Banner (When photo not available or image fails to load) */}
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      display: (f.hasVerifiedPhoto && f.image) ? 'none' : 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      padding: '12px 14px',
+                      boxSizing: 'border-box',
+                      position: 'relative'
+                    }}
+                  >
+                    {/* Background Silhouette Watermark */}
+                    <div style={{
+                      position: 'absolute',
+                      right: '6px',
+                      bottom: '-4px',
+                      fontSize: '4.5rem',
+                      opacity: 0.16,
+                      userSelect: 'none',
+                      pointerEvents: 'none'
                     }}>
-                      ✅ अस्सल फोटो उपलब्ध
-                    </span>
-                  ) : (
-                    <span style={{
-                      background: '#FEF3C7',
-                      color: '#854D0E',
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      padding: '2px 8px',
-                      borderRadius: '10px',
-                      border: '1px solid #FDE68A'
+                      {f.type === 'jaladurg' ? '🌊' : (f.type === 'bhuikot' ? '🏰' : '⛰️')}
+                    </div>
+
+                    {/* Top Row: Type and Historical Record Badge */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 1 }}>
+                      <span style={{
+                        background: 'rgba(255, 255, 255, 0.16)',
+                        backdropFilter: 'blur(4px)',
+                        color: '#FED7AA',
+                        fontSize: '0.70rem',
+                        fontWeight: 800,
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        border: '1px solid rgba(254, 215, 170, 0.25)'
+                      }}>
+                        {f.typeLabel}
+                      </span>
+                      <span style={{
+                        background: 'rgba(217, 119, 6, 0.35)',
+                        backdropFilter: 'blur(4px)',
+                        color: '#FDE68A',
+                        fontSize: '0.68rem',
+                        fontWeight: 700,
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        border: '1px solid rgba(253, 230, 138, 0.35)'
+                      }}>
+                        📜 ऐतिहासिक नोंद
+                      </span>
+                    </div>
+
+                    {/* Middle: Fort Name Title */}
+                    <div style={{ zIndex: 1 }}>
+                      <div style={{
+                        color: '#FFFFFF',
+                        fontFamily: 'Baloo 2',
+                        fontSize: '1.08rem',
+                        fontWeight: 800,
+                        lineHeight: 1.25,
+                        textShadow: '0 2px 4px rgba(0,0,0,0.7)'
+                      }}>
+                        {f.marathiName}
+                      </div>
+                      <div style={{ color: '#FCD34D', fontSize: '0.74rem', fontWeight: 600 }}>
+                        {f.englishName} Fort {f.taluka ? `· ता. ${f.taluka}` : ''}
+                      </div>
+                    </div>
+
+                    {/* Bottom Row: Division & Elevation */}
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      zIndex: 1,
+                      borderTop: '1px solid rgba(255, 255, 255, 0.12)',
+                      paddingTop: '6px'
                     }}>
-                      📜 ऐतिहासिक नोंद
-                    </span>
+                      <span style={{ fontSize: '0.68rem', color: '#E2E8F0', fontWeight: 600 }}>
+                        📍 {f.district} ({f.division})
+                      </span>
+                      <span style={{ fontSize: '0.68rem', color: '#FDE68A', fontWeight: 700 }}>
+                        उंची: {f.height}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Overlays for Verified Real Photo */}
+                  {f.hasVerifiedPhoto && f.image && (
+                    <>
+                      <span style={{
+                        position: 'absolute',
+                        top: '8px',
+                        left: '8px',
+                        background: 'rgba(22, 101, 52, 0.92)',
+                        backdropFilter: 'blur(4px)',
+                        color: '#FFFFFF',
+                        fontSize: '0.68rem',
+                        fontWeight: 800,
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}>
+                        <span>📸</span> अस्सल फोटो
+                      </span>
+
+                      <span style={{
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        background: 'rgba(0,0,0,0.70)',
+                        backdropFilter: 'blur(4px)',
+                        color: '#FED7AA',
+                        fontSize: '0.68rem',
+                        fontWeight: 700,
+                        padding: '2px 7px',
+                        borderRadius: '6px'
+                      }}>
+                        {f.typeLabel}
+                      </span>
+
+                      <span style={{
+                        position: 'absolute',
+                        bottom: '8px',
+                        right: '8px',
+                        background: 'rgba(0,0,0,0.75)',
+                        backdropFilter: 'blur(4px)',
+                        color: '#FFFFFF',
+                        fontSize: '0.70rem',
+                        fontWeight: 700,
+                        padding: '2px 8px',
+                        borderRadius: '4px'
+                      }}>
+                        📍 {f.district}
+                      </span>
+                    </>
                   )}
                 </div>
 
