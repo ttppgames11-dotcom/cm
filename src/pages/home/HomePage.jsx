@@ -407,7 +407,7 @@ export default function HomePage() {
       <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/Sambhaji_Maharaj.avif')","backgroundPosition":"center 8%","backgroundSize":"cover"}}>
         <div className="portrait-body"><h4>छत्रपती संभाजी महाराज</h4><span>अपराजित धर्मवीर</span></div>
       </div>
-      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-bajirao-statue.jpg')","backgroundPosition":"center 4%","backgroundSize":"155%"}}>
+      <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-bajirao-pune-statue.jpg')","backgroundPosition":"center 20%","backgroundSize":"cover"}}>
         <div className="portrait-body"><h4>श्रीमंत बाजीराव पेशवे</h4><span>अपराजित सेनापती</span></div>
       </div>
       <div className="portrait-card" style={{"backgroundImage":"url('/assets/images/real-maratha-confederacy-map.png')","backgroundPosition":"center"}}>
@@ -931,7 +931,7 @@ export default function HomePage() {
           <span className="btn btn-outline" style={{"marginTop":"10px","fontSize":".78rem","color":"#E65100","borderColor":"#E65100"}}>सविस्तर चरित्र वाचा →</span>
         </div>
       </Link>
-      <Link to="/history/bajirao-peshwa" className="card-bg" style={{"backgroundImage":"url('/assets/images/real-bajirao-statue.jpg')","minHeight":"350px","backgroundPosition":"center 3%","backgroundSize":"160%"}}>
+      <Link to="/history/bajirao-peshwa" className="card-bg" style={{"backgroundImage":"url('/assets/images/real-bajirao-pune-statue.jpg')","minHeight":"350px","backgroundPosition":"center 20%","backgroundSize":"cover"}}>
         <div className="card-bg-body">
           <span className="card-tag">अपराजित सेनापती</span>
           <h4>श्रीमंत बाजीराव पेशवे</h4>
