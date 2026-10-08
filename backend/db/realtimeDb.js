@@ -106,7 +106,10 @@ class RealtimeDatabase {
       'centerActivities',
       'territoryOfficers',
       'branches',
-      'branchActivities'
+      'branchActivities',
+      'organizationUnits',
+      'staff',
+      'tickets'
     ];
 
     for (const col of collections) {

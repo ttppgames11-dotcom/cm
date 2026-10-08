@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
+import CRMScopeSwitcher from '../../components/layout/CRMScopeSwitcher';
 
 export default function BranchAdminCRM() {
   const [branches, setBranches] = useState([]);
@@ -84,8 +85,10 @@ export default function BranchAdminCRM() {
   };
 
   return (
-    <div style={{ background: '#FFFDF9', minHeight: '100vh', padding: '32px 16px 80px', color: '#1C1917', fontFamily: 'system-ui, sans-serif' }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+    <div style={{ background: '#FFFDF9', minHeight: '100vh' }}>
+      <CRMScopeSwitcher currentScope="branch" />
+      <div style={{ padding: '32px 16px 80px', color: '#1C1917', fontFamily: 'system-ui, sans-serif' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
 
         {/* Toast */}
         {toastMsg && (
@@ -400,5 +403,6 @@ export default function BranchAdminCRM() {
 
       </div>
     </div>
-  );
+  </div>
+);
 }

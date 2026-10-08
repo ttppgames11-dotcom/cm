@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
+import CRMScopeSwitcher from '../../components/layout/CRMScopeSwitcher';
 
 const MAHARASHTRA_DIVISIONS = [
   { id: 'पुणे विभाग', name: 'पुणे विभाग (Pune Division)', head: 'श्री. प्रतापराव पवार', districts: ['पुणे', 'सातारा', 'सांगली', 'सोलापूर', 'कोल्हापूर'], targetProgress: 88 },
@@ -89,8 +90,10 @@ export default function DivisionAdminCRM() {
   };
 
   return (
-    <div style={{ background: '#FDFBF7', minHeight: '100vh', padding: '32px 16px 80px', color: '#1C1917', fontFamily: 'system-ui, sans-serif' }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+    <div style={{ minHeight: '100vh', background: '#FDFBF7' }}>
+      <CRMScopeSwitcher currentScope="division" />
+      <div style={{ padding: '32px 16px 80px', color: '#1C1917', fontFamily: 'system-ui, sans-serif' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
         
         {/* Toast */}
         {toastMsg && (
@@ -463,5 +466,6 @@ export default function DivisionAdminCRM() {
 
       </div>
     </div>
-  );
+  </div>
+);
 }

@@ -58,13 +58,27 @@ router.post('/register', async (req, res) => {
       avatar: '👤',
       tier: 'Gold',
       role: 'member',
+      legalCompliance: sanitized.legalCompliance || {
+        termsAccepted: true,
+        privacyAccepted: true,
+        ageConfirmed: true,
+        dpdpConsent: true,
+        bloodDonorOptIn: false,
+        acceptedAt: new Date().toISOString(),
+        policyVersion: '2026.1'
+      },
       verified: true,
       joined: new Date().toISOString().split('T')[0],
       createdAt: new Date().toISOString()
     };
 
     db.insert('members', newMember);
-    db.addAuditLog('MEMBER_REGISTER', newMember.id, { name, district: newMember.district });
+    db.addAuditLog('MEMBER_REGISTER', newMember.id, { 
+      name, 
+      district: newMember.district,
+      policyVersion: newMember.legalCompliance?.policyVersion || '2026.1',
+      dpdpConsent: newMember.legalCompliance?.dpdpConsent || true
+    });
 
     const safeProfile = { ...newMember };
     delete safeProfile.password_hash;

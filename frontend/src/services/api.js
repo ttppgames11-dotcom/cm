@@ -255,6 +255,22 @@ export const api = {
     })
   },
 
+  // 10b. Business Enquiries & Leads
+  enquiries: {
+    getAll: (params = {}) => {
+      const qs = new URLSearchParams(params).toString();
+      return request(`/enquiries${qs ? '?' + qs : ''}`);
+    },
+    create: (data) => request('/enquiries', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }),
+    submitQuote: (id, quoteData) => request(`/enquiries/${id}/quote`, {
+      method: 'POST',
+      body: JSON.stringify(quoteData)
+    })
+  },
+
   // 11. Culture, History & Quiz
   culture: {
     getOralHistory: () => request('/culture/oral-history'),
@@ -280,6 +296,8 @@ export const api = {
     getMetrics: () => request('/admin/metrics'),
     getAuditLogs: () => request('/admin/audit-logs'),
     getRolesMatrix: () => request('/admin/roles-matrix'),
+    getJobApplications: () => request('/admin/job-applications'),
+    getEnquiriesSummary: () => request('/admin/enquiries-summary'),
     verifyMember: (id, status, remarks) => request(`/admin/verify-member/${id}`, {
       method: 'POST',
       body: JSON.stringify({ status, remarks })

@@ -558,6 +558,47 @@ export const apiClient = {
   },
   recordBranchAction: async (data) => {
     return await fetchJson('/admin/branch-action', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // 🚩 Unified CRM Operations & 12 Golden Rules APIs
+  getUnifiedCRMDashboard: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const endpoint = `/crm/unified-dashboard${query ? `?${query}` : ''}`;
+    const res = await fetchJson(endpoint);
+    return res.data || res;
+  },
+  getUnifiedTickets: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const endpoint = `/crm/tickets${query ? `?${query}` : ''}`;
+    const res = await fetchJson(endpoint);
+    return res.data?.tickets || res.tickets || [];
+  },
+  createUnifiedTicket: async (data) => {
+    return await fetchJson('/crm/tickets', { method: 'POST', body: JSON.stringify(data) });
+  },
+  escalateUnifiedTicket: async (id, reason) => {
+    return await fetchJson(`/crm/tickets/${id}/escalate`, { method: 'PATCH', body: JSON.stringify({ reason }) });
+  },
+  updateUnifiedTicketStatus: async (id, status, note = '') => {
+    return await fetchJson(`/crm/tickets/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status, note }) });
+  },
+  checkinCommunityVisitor: async (centerId, data) => {
+    return await fetchJson(`/crm/community-centers/${centerId}/checkin`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  recordCenterLedgerTransaction: async (centerId, data) => {
+    return await fetchJson(`/crm/community-centers/${centerId}/transaction`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  getStaffRoster: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const endpoint = `/crm/staff${query ? `?${query}` : ''}`;
+    const res = await fetchJson(endpoint);
+    return res.data?.staff || res.staff || [];
+  },
+  getOrganizationUnits: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const endpoint = `/crm/organization-units${query ? `?${query}` : ''}`;
+    const res = await fetchJson(endpoint);
+    return res.data?.units || res.units || [];
   }
 };
 

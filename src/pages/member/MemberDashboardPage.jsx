@@ -15,6 +15,7 @@ import {
   MASTER_ROLES,
   evaluateCandidateEligibility
 } from '../../data/rolesMatrixData';
+import { downloadCardPDF, printOrSaveCardPDF } from '../../utils/cardPdfGenerator';
 
 export default function MemberDashboardPage() {
   const { user, logout } = useAuth();
@@ -496,7 +497,7 @@ export default function MemberDashboardPage() {
                           <img
                             src="/assets/images/logo.png"
                             alt="Connect Maratha Seal"
-                            style={{ width: '38px', height: '38px', borderRadius: '50%', border: '1.5px solid #F59E0B', background: '#FFFFFF', padding: '1px', objectFit: 'contain' }}
+                            style={{ width: '42px', height: '42px', objectFit: 'contain' }}
                           />
                           <div>
                             <div style={{ fontSize: '1.05rem', fontWeight: 900, letterSpacing: '0.6px', color: '#EA580C' }}>
@@ -814,7 +815,52 @@ export default function MemberDashboardPage() {
 
               <button
                 type="button"
-                onClick={() => window.print()}
+                onClick={async () => {
+                  await downloadCardPDF({
+                    name: memberName,
+                    memberId: memberIdFormatted,
+                    tier: memberTier,
+                    role: memberRole,
+                    chapter: memberChapter,
+                    city: memberCity,
+                    bloodGroup,
+                    emergencyPhone,
+                    photo: memberPhoto
+                  }, cardMode);
+                }}
+                style={{
+                  padding: '9px 20px',
+                  background: 'linear-gradient(135deg, #C73800 0%, #991B1B 100%)',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontWeight: 800,
+                  fontSize: '0.86rem',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  boxShadow: '0 2px 10px rgba(199,56,0,0.25)'
+                }}
+              >
+                <span>📥</span> ओळखपत्र PDF डाऊनलोड (.pdf)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  printOrSaveCardPDF({
+                    name: memberName,
+                    memberId: memberIdFormatted,
+                    tier: memberTier,
+                    role: memberRole,
+                    chapter: memberChapter,
+                    city: memberCity,
+                    bloodGroup,
+                    emergencyPhone,
+                    photo: memberPhoto
+                  }, cardMode);
+                }}
                 style={{
                   padding: '9px 18px',
                   background: '#1F2937',
@@ -830,7 +876,7 @@ export default function MemberDashboardPage() {
                   boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                 }}
               >
-                <span>🖨️</span> प्रिंट / PDF सेव्ह करा
+                <span>🖨️</span> प्रिंट करा (Print)
               </button>
 
               <button

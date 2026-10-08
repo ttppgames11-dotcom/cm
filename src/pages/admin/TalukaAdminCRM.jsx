@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 import { MAHARASHTRA_DISTRICTS, DISTRICT_TALUKAS } from '../../services/referralService';
+import CRMScopeSwitcher from '../../components/layout/CRMScopeSwitcher';
 
 export default function TalukaAdminCRM() {
   const [selectedDistrict, setSelectedDistrict] = useState('पुणे');
@@ -95,8 +96,10 @@ export default function TalukaAdminCRM() {
   };
 
   return (
-    <div style={{ background: '#FFFDF9', minHeight: '100vh', padding: '32px 16px 80px', color: '#1C1917', fontFamily: 'system-ui, sans-serif' }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+    <div style={{ background: '#FFFDF9', minHeight: '100vh' }}>
+      <CRMScopeSwitcher currentScope="taluka" />
+      <div style={{ padding: '32px 16px 80px', color: '#1C1917', fontFamily: 'system-ui, sans-serif' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
 
         {/* Toast */}
         {toastMsg && (
@@ -396,5 +399,6 @@ export default function TalukaAdminCRM() {
 
       </div>
     </div>
-  );
+  </div>
+);
 }

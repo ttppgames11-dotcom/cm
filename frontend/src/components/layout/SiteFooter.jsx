@@ -59,13 +59,27 @@ export default function SiteFooter() {
   return (
     <>
       {/* ========== QUOTE BANNER ========== */}
-      <div style={{ background: 'linear-gradient(135deg, var(--maroon-900, #D84315), var(--maroon-800, #E65100))', color: '#FFFFFF', textAlign: 'center', padding: '44px 24px', borderTop: '1px solid rgba(255,255,255,0.15)' }}>
-        <div style={{ fontSize: '1.35rem', fontWeight: 700, color: '#FFE082', maxWidth: '800px', margin: '0 auto' }}>
-          " मराठा तितुका मेळवावा । महाराष्ट्र धर्म वाढवावा ॥ "
+      <div style={{
+        position: 'relative',
+        background: 'url("/assets/images/foot2.jpeg") center/cover no-repeat',
+        color: '#431407',
+        textAlign: 'center',
+        padding: '50px 24px',
+        borderTop: '2px solid rgba(254, 215, 170, 0.35)'
+      }}>
+        <div style={{
+          position: 'relative',
+          zIndex: 2,
+          maxWidth: '860px',
+          margin: '0 auto'
+        }}>
+          <div className="quote-banner-text" style={{ fontSize: 'clamp(1.15rem, 3.8vw, 1.55rem)', fontWeight: 900, color: '#431407', fontFamily: 'Baloo 2, sans-serif', letterSpacing: '0.5px', textShadow: '0 1px 3px rgba(255, 255, 255, 0.9)', wordBreak: 'break-word', padding: '0 10px', lineHeight: 1.35 }}>
+            " मराठा तितुका मेळवावा । महाराष्ट्र धर्म वाढवावा ॥ "
+          </div>
+          <span style={{ display: 'block', margin: '8px 0 0', fontSize: 'clamp(0.82rem, 2.6vw, 1rem)', color: '#7C2D12', fontWeight: 800, textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)', padding: '0 10px' }}>
+            — समर्थ रामदास स्वामी · शिवकालीन ऐतिहासिक संदेश
+          </span>
         </div>
-        <span style={{ display: 'block', margin: '10px 0 0', fontSize: '0.88rem', color: 'rgba(255,255,255,0.92)' }}>
-          — समर्थ रामदास स्वामी · शिवकालीन ऐतिहासिक संदेश
-        </span>
       </div>
 
       {/* ========== FOOTER (Streamlined, Non-repetitive, High-Trust) ========== */}
@@ -74,11 +88,11 @@ export default function SiteFooter() {
           {/* Column 1: Brand & Mission */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-              <img src={getContent('images.brandLogo', '/assets/images/logo.png')} alt="Connect Maratha" style={{ width: '44px', height: '44px', objectFit: 'contain', borderRadius: '50%' }} />
+              <img src={getContent('images.brandLogo', '/assets/images/logo.png')} alt="Connect Maratha" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
               <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#FFFFFF' }}>{getContent('header.brandTitle', 'CONNECT मराठा')}</span>
             </div>
             <p className="footer-brand-copy" style={{ fontSize: '0.86rem', lineHeight: 1.6, marginBottom: '14px', color: '#FFFFFF', opacity: 0.95 }}>
-              {getContent('texts.footerAbout', 'भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी. अखंड मराठा इतिहास, संस्कृती, व्यवसाय आणि सामाजिक एकतेचे अधिकृत डिजिटल व्यासपीठ.')}
+              {getContent('texts.footerAbout', 'Connect Maratha (कनेक्ट मराठा) हे जागतिक मराठा समाजाचे अधिकृत डिजिटल व्यासपीठ आहे — रोजगार संधी, बिझनेस संगम, ऐतिहासिक वारसा आणि समाज सक्षमीकरण.')}
             </p>
             <div style={{ background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,204,128,0.3)', borderRadius: '8px', padding: '10px 12px', fontSize: '0.8rem', color: '#FFF3E0' }}>
               📞 समाज हेल्पलाईन: <strong>{getContent('forms.contactSupport.emergencyHelpline', '१८००-१२३-१६७४')}</strong><br />
@@ -132,6 +146,7 @@ export default function SiteFooter() {
               <li style={{ marginBottom: '8px' }}><Link to="/about" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🏛️ संस्था परिचय व सल्लागार मंडळ</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/governance" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🎯 व्हिजन, मिशन व धोरण</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/privacy" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🔒 गोपनीयता धोरण (Privacy Policy)</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/terms" style={{ color: '#FFFFFF', textDecoration: 'none' }}>📜 नियम व अटी (Terms & Conditions)</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/profile" style={{ color: '#FFFFFF', textDecoration: 'none' }}>⚙️ खाते व वैयक्तिक सेटिंग्ज</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/community" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🔔 एकात्मिक सूचना केंद्र</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/goals" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🏆 प्रमुख उद्दिष्टे व संकल्प</Link></li>

@@ -1154,4 +1154,80 @@ router.post('/branch-action', authenticateToken, (req, res) => {
   return sendSuccess(res, 'शाखेची स्थानिक कृती डेटाबेसमध्ये यशस्वीरीत्या नोंदवली गेली!');
 });
 
+// GET /api/admin/job-applications
+// List all applications received for jobs across Maharashtra
+router.get('/job-applications', authenticateToken, requireRole('admin', 'ceo', 'superadmin', 'district_admin'), (req, res) => {
+  let apps = db.getCollection('jobApplications');
+  if (apps.length === 0) {
+    const seedApps = [
+      {
+        id: 'APP-101',
+        jobId: 'JOB-001',
+        jobTitle: 'सिनिअर सॉफ्टवेअर इंजिनिअर (React / Node.js)',
+        company: 'सह्याद्री टेक सोल्यूशन्स',
+        applicantName: 'सुशांत पाटील (Sushant Patil)',
+        applicantEmail: 'sushant.patil@example.com',
+        applicantPhone: '9822012345',
+        district: 'पुणे',
+        resumeUrl: 'B.E. Computer, 4 Yrs MERN Stack Exp',
+        coverNote: 'Full stack developer experienced in MERN stack and cloud architecture.',
+        status: 'मुलाखतीसाठी निवड (Shortlisted)',
+        appliedAt: new Date(Date.now() - 86400000 * 2).toISOString()
+      },
+      {
+        id: 'APP-102',
+        jobId: 'JOB-002',
+        jobTitle: 'अकाउंटंट व टॅक्सेशन मॅनेजर (CA Inter / B.Com)',
+        company: 'राजमुद्रा फायनान्शिअल ग्रुप',
+        applicantName: 'प्रिया कदम (Priya Kadam)',
+        applicantEmail: 'priya.kadam@example.com',
+        applicantPhone: '9833456789',
+        district: 'मुंबई',
+        resumeUrl: 'M.Com, Tally Prime, GST Expert',
+        coverNote: '3 वर्षांचा टॅक्सेशन व कॉर्पोरेट अकाउंटिंगचा अनुभव.',
+        status: 'अर्ज पुनरावलोकन (In Review)',
+        appliedAt: new Date(Date.now() - 86400000).toISOString()
+      },
+      {
+        id: 'APP-103',
+        jobId: 'JOB-003',
+        jobTitle: 'उत्पादन पर्यवेक्षक (Production Supervisor)',
+        company: 'मराठा ऑटोपार्ट्स प्रायव्हेट लिमिटेड',
+        applicantName: 'अजिंक्य मोहिते (Ajinkya Mohite)',
+        applicantEmail: 'ajinkya.m@example.com',
+        applicantPhone: '9890123456',
+        district: 'पुणे',
+        resumeUrl: 'DME Mechanical, Chakan MIDC Experience',
+        coverNote: 'Automobile component manufacturing line lead experience.',
+        status: 'अर्ज सादर झाला (Applied)',
+        appliedAt: new Date().toISOString()
+      }
+    ];
+    seedApps.forEach(a => db.insert('jobApplications', a));
+    apps = seedApps;
+  }
+
+  const { district, status } = req.query;
+  let filtered = apps;
+  if (district && district !== 'all' && district !== 'सर्व') {
+    filtered = filtered.filter(a => (a.district || '').toLowerCase().includes(district.toLowerCase()));
+  }
+  if (status && status !== 'all') {
+    filtered = filtered.filter(a => (a.status || '').toLowerCase().includes(status.toLowerCase()));
+  }
+
+  return sendSuccess(res, 'नोकरी अर्ज यादी', { applications: filtered, count: filtered.length });
+});
+
+// GET /api/admin/enquiries-summary
+// Summary of all client enquiries & B2B leads for CRM administration
+router.get('/enquiries-summary', authenticateToken, requireRole('admin', 'ceo', 'superadmin', 'district_admin'), (req, res) => {
+  let enqs = db.getCollection('clientEnquiries');
+  const { district } = req.query;
+  if (district && district !== 'all' && district !== 'सर्व') {
+    enqs = enqs.filter(e => (e.district || e.city || '').toLowerCase().includes(district.toLowerCase()));
+  }
+  return sendSuccess(res, 'क्लायंट Enquiries व B2B Leads सारांश', { enquiries: enqs, count: enqs.length });
+});
+
 export default router;

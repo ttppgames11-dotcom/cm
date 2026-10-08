@@ -6,6 +6,7 @@ import {
   validateMemberCode,
   getNextScanMember
 } from '../../utils/memberValidation';
+import { downloadCardPDF, printOrSaveCardPDF } from '../../utils/cardPdfGenerator';
 
 export default function DigitalMemberCardPage({ defaultTab }) {
   const { user } = useAuth();
@@ -68,8 +69,44 @@ export default function DigitalMemberCardPage({ defaultTab }) {
   // Professional real photograph or high-res avatar
   const selectedPhoto = selectedMember?.avatar || '/assets/images/officers/officer_tukaram.jpg';
 
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    setIsDownloadingPdf(true);
+    try {
+      await downloadCardPDF({
+        name: candidateName,
+        memberId,
+        tier: memberTier,
+        role: memberRole,
+        chapter: memberChapter,
+        city: memberCity,
+        bloodGroup,
+        emergencyPhone,
+        issueDate,
+        photo: selectedPhoto
+      }, viewMode);
+    } catch (e) {
+      console.error('PDF error:', e);
+      alert('PDF तयार करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.');
+    } finally {
+      setIsDownloadingPdf(false);
+    }
+  };
+
   const handlePrintCertificate = () => {
-    window.print();
+    printOrSaveCardPDF({
+      name: candidateName,
+      memberId,
+      tier: memberTier,
+      role: memberRole,
+      chapter: memberChapter,
+      city: memberCity,
+      bloodGroup,
+      emergencyPhone,
+      issueDate,
+      photo: selectedPhoto
+    }, viewMode);
   };
 
   const handleShare = () => {
@@ -113,27 +150,30 @@ export default function DigitalMemberCardPage({ defaultTab }) {
   return (
     <>
       <style>{`
-        /* Print Styles: Isolates the Certificate ID card for high-resolution print/PDF */
+        /* Print Styles: Isolates the Member Card for high-resolution print/PDF */
         @media print {
-          body * {
-            visibility: hidden !important;
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
           }
-          #printable-certificate-id, #printable-certificate-id * {
-            visibility: visible !important;
+          .no-print, .topbar, header, footer {
+            display: none !important;
+          }
+          body {
+            background: #FFFFFF !important;
+            padding: 0 !important;
+            margin: 0 !important;
           }
           #printable-certificate-id {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-            margin: 0 !important;
-            padding: 36px !important;
+            border-width: 8px !important;
             box-shadow: none !important;
-            border-width: 10px !important;
-            background: #FFFDF9 !important;
+            max-width: 100% !important;
+            margin: 0 auto !important;
           }
-          .no-print {
-            display: none !important;
+          #digitalCard {
+            box-shadow: none !important;
+            margin: 0 auto !important;
           }
         }
 
@@ -447,6 +487,30 @@ export default function DigitalMemberCardPage({ defaultTab }) {
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             <button
               type="button"
+              onClick={handleDownloadPDF}
+              disabled={isDownloadingPdf}
+              style={{
+                padding: '10px 22px',
+                background: 'linear-gradient(135deg, #C73800 0%, #991B1B 100%)',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 800,
+                fontSize: '0.9rem',
+                cursor: isDownloadingPdf ? 'wait' : 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 14px rgba(199,56,0,0.3)',
+                opacity: isDownloadingPdf ? 0.75 : 1
+              }}
+            >
+              <span>{isDownloadingPdf ? '⏳' : '📥'}</span>
+              <span>{isDownloadingPdf ? 'PDF तयार होत आहे...' : 'ओळखपत्र PDF डाऊनलोड (.pdf)'}</span>
+            </button>
+
+            <button
+              type="button"
               onClick={handlePrintCertificate}
               style={{
                 padding: '10px 18px',
@@ -463,7 +527,7 @@ export default function DigitalMemberCardPage({ defaultTab }) {
                 boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
               }}
             >
-              <span>🖨️</span> ओळखपत्र प्रिंट / PDF डाऊनलोड
+              <span>🖨️</span> प्रिंट करा (Print)
             </button>
 
             <button
@@ -805,7 +869,7 @@ export default function DigitalMemberCardPage({ defaultTab }) {
                       <img
                         src="/assets/images/logo.png"
                         alt="Logo"
-                        style={{ width: '38px', height: '38px', borderRadius: '50%', border: '1.5px solid #F59E0B' }}
+                        style={{ width: '42px', height: '42px', objectFit: 'contain' }}
                       />
                       <div>
                         <div style={{ fontSize: '1.05rem', fontWeight: 800, letterSpacing: '0.5px', color: '#F8FAFC' }}>

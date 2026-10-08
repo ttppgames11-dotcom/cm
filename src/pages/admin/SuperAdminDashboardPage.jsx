@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
+import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import {
   getAdminReferralReport,
@@ -12,7 +13,7 @@ import {
 
 export default function SuperAdminDashboardPage() {
   const { user, login } = useAuth();
-  const [activeTab, setActiveTab] = useState('users'); // 'users' | 'referrals' | 'doctors' | 'services' | 'hotels' | 'information' | 'roles'
+  const [activeTab, setActiveTab] = useState('users'); // 'users' | 'referrals' | 'doctors' | 'services' | 'hotels' | 'information' | 'roles' | 'opportunities'
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
 
@@ -39,6 +40,8 @@ export default function SuperAdminDashboardPage() {
   const [hotels, setHotels] = useState([]);
   const [information, setInformation] = useState([]);
   const [rolesMatrix, setRolesMatrix] = useState([]);
+  const [jobApps, setJobApps] = useState([]);
+  const [enquiries, setEnquiries] = useState([]);
 
   // Filter states
   const [userSearch, setUserSearch] = useState('');
@@ -116,7 +119,7 @@ export default function SuperAdminDashboardPage() {
   const loadAllData = async () => {
     setLoading(true);
     try {
-      const [usersRes, docsRes, srvsRes, htlsRes, infoRes, rolesRes] = await Promise.all([
+      const [usersRes, docsRes, srvsRes, htlsRes, infoRes, rolesRes, appsRes, enqsRes] = await Promise.all([
         apiClient.getAdminUsers({
           search: userSearch,
           role: userRoleFilter,
@@ -126,7 +129,9 @@ export default function SuperAdminDashboardPage() {
         apiClient.getAdminServices().catch(() => []),
         apiClient.getAdminHotels().catch(() => []),
         apiClient.getAdminInformation().catch(() => []),
-        apiClient.getRolesMatrix().catch(() => [])
+        apiClient.getRolesMatrix().catch(() => []),
+        api.admin.getJobApplications().catch(() => ({ applications: [] })),
+        api.admin.getEnquiriesSummary().catch(() => ({ enquiries: [] }))
       ]);
 
       setUsers(usersRes.users || []);
@@ -136,6 +141,8 @@ export default function SuperAdminDashboardPage() {
       setHotels(htlsRes || []);
       setInformation(infoRes || []);
       setRolesMatrix(rolesRes || []);
+      setJobApps(appsRes.applications || []);
+      setEnquiries(enqsRes.enquiries || []);
     } catch (err) {
       console.error('Admin load error:', err);
       showToast('माहिती लोड करताना अडचण आली.', 'error');
@@ -769,6 +776,7 @@ export default function SuperAdminDashboardPage() {
         <div style={{ display: 'flex', gap: '10px', borderBottom: '2px solid #FED7AA', paddingBottom: '14px', marginBottom: '26px', overflowX: 'auto' }}>
           {[
             { id: 'users', label: '👥 वापरकर्ते (Users CRUD)', count: users.length },
+            { id: 'opportunities', label: '💼 नोकऱ्या व लीड्स (Jobs & Leads)', count: jobApps.length + enquiries.length },
             { id: 'referrals', label: '🤝 रेफरल अहवाल (Referral Intelligence)', count: referralReportData.filtered.length },
             { id: 'doctors', label: '🩺 डॉक्टर्स (Doctors)', count: doctors.length },
             { id: 'services', label: '🛠️ सेवा व प्रदाते (Services)', count: services.length },
@@ -1980,6 +1988,204 @@ export default function SuperAdminDashboardPage() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB 7: OPPORTUNITIES, JOBS & CLIENT LEADS HUB
+        ========================================================================= */}
+        {activeTab === 'opportunities' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+            
+            {/* Top Stat Summary */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+              <div style={{ background: '#FFFFFF', padding: '20px', borderRadius: '14px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '0.82rem', color: '#64748B', fontWeight: 800 }}>एकूण नोकरी अर्ज (Applications)</div>
+                <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#EA580C', margin: '4px 0', fontFamily: 'Baloo 2' }}>
+                  {jobApps.length}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#16A34A', fontWeight: 700 }}>राज्यभरातून प्राप्त अर्ज</div>
+              </div>
+
+              <div style={{ background: '#FFFFFF', padding: '20px', borderRadius: '14px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '0.82rem', color: '#64748B', fontWeight: 800 }}>मुलाखतीसाठी निवड (Shortlisted)</div>
+                <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#15803D', margin: '4px 0', fontFamily: 'Baloo 2' }}>
+                  {jobApps.filter(a => a.status?.includes('Shortlist')).length}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 700 }}>अंतिम निवड प्रक्रियेत</div>
+              </div>
+
+              <div style={{ background: '#FFFFFF', padding: '20px', borderRadius: '14px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '0.82rem', color: '#64748B', fontWeight: 800 }}>ग्राहक Enquiries व B2B Leads</div>
+                <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#C2410C', margin: '4px 0', fontFamily: 'Baloo 2' }}>
+                  {enquiries.length}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#D97706', fontWeight: 700 }}>व्यावसायिक कोटेशन्स सुरू</div>
+              </div>
+
+              <div style={{ background: '#FFFFFF', padding: '20px', borderRadius: '14px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '0.82rem', color: '#64748B', fontWeight: 800 }}>सक्रिय संधी (Live Opportunities)</div>
+                <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#0F172A', margin: '4px 0', fontFamily: 'Baloo 2' }}>
+                  १२८+
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#16A34A', fontWeight: 700 }}>पोर्टलवर थेट उपलब्ध</div>
+              </div>
+            </div>
+
+            {/* 1. Job Applications Table */}
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 4px', fontSize: '1.35rem', color: '#431407', fontFamily: 'Baloo 2', fontWeight: 900 }}>
+                    💼 नोकरी अर्ज व उमेदवार यादी (Candidate Applications)
+                  </h3>
+                  <p style={{ margin: 0, color: '#64748B', fontSize: '0.9rem' }}>
+                    Connect Maratha Jobs Portal द्वारे महाराष्ट्रातील कंपन्यांसाठी आलेले सर्व अधिकृत उमेदवारांचे अर्ज.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <Link
+                    to="/jobs"
+                    target="_blank"
+                    style={{ background: '#FFF7ED', color: '#EA580C', border: '1.5px solid #FED7AA', padding: '8px 16px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 800, textDecoration: 'none' }}
+                  >
+                    Jobs Portal थेट पहा ➔
+                  </Link>
+                </div>
+              </div>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                  <thead>
+                    <tr style={{ background: '#FFF7ED', color: '#9A3412', borderBottom: '2px solid #FED7AA' }}>
+                      <th style={{ padding: '12px 14px' }}>अर्ज क्र.</th>
+                      <th style={{ padding: '12px 14px' }}>उमेदवाराचे नाव</th>
+                      <th style={{ padding: '12px 14px' }}>पद (Job Title)</th>
+                      <th style={{ padding: '12px 14px' }}>कंपनी</th>
+                      <th style={{ padding: '12px 14px' }}>जिल्हा</th>
+                      <th style={{ padding: '12px 14px' }}>मोबाईल</th>
+                      <th style={{ padding: '12px 14px' }}>शिक्षण व सारांश</th>
+                      <th style={{ padding: '12px 14px' }}>स्थिती (Status)</th>
+                      <th style={{ padding: '12px 14px' }}>तारीख</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {jobApps.length === 0 ? (
+                      <tr>
+                        <td colSpan="9" style={{ padding: '36px', textAlign: 'center', color: '#94A3B8' }}>
+                          सध्या कोणताही नोकरी अर्ज नोंद झालेला नाही.
+                        </td>
+                      </tr>
+                    ) : (
+                      jobApps.map(app => (
+                        <tr key={app.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                          <td style={{ padding: '12px 14px', fontWeight: 800, color: '#C2410C' }}>{app.id}</td>
+                          <td style={{ padding: '12px 14px', fontWeight: 800, color: '#1E293B' }}>{app.applicantName}</td>
+                          <td style={{ padding: '12px 14px', fontWeight: 800, color: '#431407' }}>{app.jobTitle}</td>
+                          <td style={{ padding: '12px 14px', color: '#475569' }}>{app.company}</td>
+                          <td style={{ padding: '12px 14px', color: '#1E293B' }}>{app.district || 'पुणे'}</td>
+                          <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontWeight: 700 }}>{app.applicantPhone || '-'}</td>
+                          <td style={{ padding: '12px 14px', color: '#64748B', maxWidth: '200px' }}>{app.resumeUrl}</td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <span style={{
+                              background: app.status?.includes('Shortlist') ? '#DCFCE7' : '#FEF3C7',
+                              color: app.status?.includes('Shortlist') ? '#15803D' : '#92400E',
+                              padding: '4px 10px',
+                              borderRadius: '6px',
+                              fontSize: '0.78rem',
+                              fontWeight: 900
+                            }}>
+                              {app.status || 'Applied'}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px 14px', color: '#64748B', fontSize: '0.8rem' }}>
+                            {new Date(app.appliedAt).toLocaleDateString('mr-IN')}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* 2. Client Enquiries & B2B Leads Table */}
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 4px', fontSize: '1.35rem', color: '#431407', fontFamily: 'Baloo 2', fontWeight: 900 }}>
+                    🏢 ग्राहक Enquiries व B2B व्यावसायिक Leads
+                  </h3>
+                  <p style={{ margin: 0, color: '#64748B', fontSize: '0.9rem' }}>
+                    राज्यभरातील ग्राहकांनी नोंदवलेल्या थेट व्यावसायिक गरजा आणि व्यावसायिकांचे प्रतिसाद.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <Link
+                    to="/leads"
+                    target="_blank"
+                    style={{ background: '#FFF7ED', color: '#EA580C', border: '1.5px solid #FED7AA', padding: '8px 16px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 800, textDecoration: 'none' }}
+                  >
+                    Leads Portal थेट पहा ➔
+                  </Link>
+                </div>
+              </div>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                  <thead>
+                    <tr style={{ background: '#FFF7ED', color: '#9A3412', borderBottom: '2px solid #FED7AA' }}>
+                      <th style={{ padding: '12px 14px' }}>क्र.</th>
+                      <th style={{ padding: '12px 14px' }}>गरजेचे स्वरूप (Requirement)</th>
+                      <th style={{ padding: '12px 14px' }}>उद्योग श्रेणी</th>
+                      <th style={{ padding: '12px 14px' }}>जिल्हा / शहर</th>
+                      <th style={{ padding: '12px 14px' }}>अंदाजे बजेट</th>
+                      <th style={{ padding: '12px 14px' }}>ग्राहक नाव</th>
+                      <th style={{ padding: '12px 14px' }}>मोबाईल</th>
+                      <th style={{ padding: '12px 14px' }}>कोटेशन्स</th>
+                      <th style={{ padding: '12px 14px' }}>स्थिती</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {enquiries.length === 0 ? (
+                      <tr>
+                        <td colSpan="9" style={{ padding: '36px', textAlign: 'center', color: '#94A3B8' }}>
+                          सध्या कोणतीही ग्राहक Enquiry नोंद झालेली नाही.
+                        </td>
+                      </tr>
+                    ) : (
+                      enquiries.map(enq => (
+                        <tr key={enq.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                          <td style={{ padding: '12px 14px', fontWeight: 800, color: '#C2410C' }}>{enq.id}</td>
+                          <td style={{ padding: '12px 14px', fontWeight: 800, color: '#1E293B', maxWidth: '240px' }}>{enq.title}</td>
+                          <td style={{ padding: '12px 14px', color: '#78350F', fontWeight: 800 }}>{enq.category}</td>
+                          <td style={{ padding: '12px 14px', color: '#1E293B' }}>{enq.city || enq.district}</td>
+                          <td style={{ padding: '12px 14px', color: '#15803D', fontWeight: 900 }}>{enq.budget || 'चर्चेनुसार'}</td>
+                          <td style={{ padding: '12px 14px', color: '#475569' }}>{enq.clientName || 'सभासद'}</td>
+                          <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontWeight: 700 }}>{enq.phone || '-'}</td>
+                          <td style={{ padding: '12px 14px', textAlign: 'center', fontWeight: 900, color: '#EA580C' }}>
+                            {enq.quotesCount || (enq.quotes ? enq.quotes.length : 0)}
+                          </td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <span style={{
+                              background: '#DCFCE7',
+                              color: '#15803D',
+                              padding: '4px 10px',
+                              borderRadius: '6px',
+                              fontSize: '0.78rem',
+                              fontWeight: 900
+                            }}>
+                              ● {enq.status || 'सक्रिय'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
           </div>
         )}
       </div>

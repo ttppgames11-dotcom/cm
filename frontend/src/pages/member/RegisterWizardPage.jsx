@@ -99,6 +99,13 @@ export default function RegisterWizardPage() {
     language: 'mr'
   });
 
+  const [complianceConsent, setComplianceConsent] = useState({
+    termsAndPrivacy: false,
+    ageConfirmation: false,
+    dpdpDataProcessing: false,
+    bloodDonorOptIn: false
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -166,6 +173,21 @@ export default function RegisterWizardPage() {
       return;
     }
 
+    if (!complianceConsent.termsAndPrivacy) {
+      setValidationError('कृपया नोंदणीसाठी Connect Maratha चे "नियम व अटी" आणि "गोपनीयता धोरण" मान्य करा.');
+      return;
+    }
+
+    if (!complianceConsent.ageConfirmation) {
+      setValidationError('Google Play Console आणि DPDP नियमांनुसार नोंदणीसाठी आपले वय १८ वर्षे किंवा त्याहून अधिक असणे अनिवार्य आहे.');
+      return;
+    }
+
+    if (!complianceConsent.dpdpDataProcessing) {
+      setValidationError('कृपया डिजिटल वैयक्तिक डेटा संरक्षण (DPDP Act 2023) अंतर्गत माहिती प्रक्रियेस संमती द्या.');
+      return;
+    }
+
     setActiveScreen('profile');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -186,7 +208,16 @@ export default function RegisterWizardPage() {
       education: formData.education || '',
       skills: formData.skills ? (Array.isArray(formData.skills) ? formData.skills : [formData.skills]) : [],
       about: formData.about || '',
-      referredBy: referralCode.trim()
+      referredBy: referralCode.trim(),
+      legalCompliance: {
+        termsAccepted: true,
+        privacyAccepted: true,
+        ageConfirmed: true,
+        dpdpConsent: true,
+        bloodDonorOptIn: !!complianceConsent.bloodDonorOptIn,
+        acceptedAt: new Date().toISOString(),
+        policyVersion: '2026.1'
+      }
     };
 
     let resUser = null;
@@ -499,11 +530,107 @@ export default function RegisterWizardPage() {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#5c534b', margin: '10px 0 20px' }}>
-                  <input type="checkbox" defaultChecked required style={{ marginTop: '3px', accentColor: '#7a1c1c' }} />
-                  <span>
-                    मी Connect Maratha चे नियम व अटी आणि गोपनीयता धोरण (DPDP 2023) मान्य करतो.
-                  </span>
+                {/* Google Play Console & DPDP Act 2023 Compliance Agreement Card */}
+                <div style={{
+                  background: '#fcfaf6',
+                  border: '1px solid #e7ded2',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  margin: '16px 0 20px',
+                  fontSize: '12.5px',
+                  color: '#3d342d',
+                  boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.02)'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '10px',
+                    paddingBottom: '8px',
+                    borderBottom: '1px solid #ebd9c8'
+                  }}>
+                    <span style={{ fontWeight: 800, color: '#681313', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      🛡️ कायदेशीर संमती व डेटा सुरक्षा (Data Safety & Compliance)
+                    </span>
+                    <span style={{
+                      fontSize: '10.5px',
+                      background: '#e8f0fe',
+                      color: '#1a73e8',
+                      padding: '2px 8px',
+                      borderRadius: '10px',
+                      fontWeight: 700
+                    }}>
+                      Google Play & DPDP 2023
+                    </span>
+                  </div>
+
+                  {/* 1. Mandatory Terms & Privacy */}
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '10px', cursor: 'pointer', lineHeight: 1.45 }}>
+                    <input
+                      type="checkbox"
+                      checked={complianceConsent.termsAndPrivacy}
+                      onChange={(e) => setComplianceConsent({ ...complianceConsent, termsAndPrivacy: e.target.checked })}
+                      style={{ marginTop: '2px', accentColor: '#7a1c1c', width: '16px', height: '16px', flexShrink: 0 }}
+                    />
+                    <span>
+                      <strong style={{ color: '#8b1e1e' }}>* अनिवार्य:</strong> मी Connect Maratha चे{' '}
+                      <Link to="/terms" target="_blank" rel="noopener noreferrer" style={{ color: '#7a1c1c', fontWeight: 700, textDecoration: 'underline' }}>
+                        नियम व अटी (Terms & Conditions)
+                      </Link>{' '}
+                      आणि{' '}
+                      <Link to="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: '#7a1c1c', fontWeight: 700, textDecoration: 'underline' }}>
+                        गोपनीयता धोरण (Privacy Policy)
+                      </Link>{' '}
+                      वाचले असून मला पूर्णपणे मान्य आहेत.
+                    </span>
+                  </label>
+
+                  {/* 2. Age Assurance (18+) */}
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '10px', cursor: 'pointer', lineHeight: 1.45 }}>
+                    <input
+                      type="checkbox"
+                      checked={complianceConsent.ageConfirmation}
+                      onChange={(e) => setComplianceConsent({ ...complianceConsent, ageConfirmation: e.target.checked })}
+                      style={{ marginTop: '2px', accentColor: '#7a1c1c', width: '16px', height: '16px', flexShrink: 0 }}
+                    />
+                    <span>
+                      <strong style={{ color: '#8b1e1e' }}>* अनिवार्य:</strong> माझे वय १८ वर्षे पूर्ण किंवा त्याहून अधिक आहे (Age 18+ Assurance).
+                    </span>
+                  </label>
+
+                  {/* 3. DPDP Act 2023 Data Processing Consent */}
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '10px', cursor: 'pointer', lineHeight: 1.45 }}>
+                    <input
+                      type="checkbox"
+                      checked={complianceConsent.dpdpDataProcessing}
+                      onChange={(e) => setComplianceConsent({ ...complianceConsent, dpdpDataProcessing: e.target.checked })}
+                      style={{ marginTop: '2px', accentColor: '#7a1c1c', width: '16px', height: '16px', flexShrink: 0 }}
+                    />
+                    <span>
+                      <strong style={{ color: '#8b1e1e' }}>* अनिवार्य:</strong> डिजिटल वैयक्तिक डेटा संरक्षण कायदा (DPDP Act 2023) अंतर्गत माझे नाव, मोबाइल क्रमांक आणि व्यावसायिक माहिती सभासद ओळखपत्र व कम्युनिटी सेंटर समन्वयासाठी वापरण्यास माझी संमती आहे.
+                    </span>
+                  </label>
+
+                  {/* 4. Optional Blood Donor / Volunteer Opt-in */}
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer', lineHeight: 1.45, paddingTop: '6px', borderTop: '1px dashed #ebd9c8' }}>
+                    <input
+                      type="checkbox"
+                      checked={complianceConsent.bloodDonorOptIn}
+                      onChange={(e) => setComplianceConsent({ ...complianceConsent, bloodDonorOptIn: e.target.checked })}
+                      style={{ marginTop: '2px', accentColor: '#166534', width: '16px', height: '16px', flexShrink: 0 }}
+                    />
+                    <span style={{ color: '#4a4036' }}>
+                      <strong style={{ color: '#166534' }}>[ऐच्छिक Opt-in]:</strong> सामाजिक आपत्कालीन सेवा व रक्तदान मोहिमेसाठी माझा संपर्क क्रमांक अधिकृत मदतनीसांना दर्शविण्यास माझी संमती आहे.
+                    </span>
+                  </label>
+
+                  <div style={{ marginTop: '10px', fontSize: '11px', color: '#796f64', textAlign: 'right' }}>
+                    खाते व डेटा हटवण्यासाठी आमचे{' '}
+                    <Link to="/privacy#deletion" target="_blank" rel="noopener noreferrer" style={{ color: '#8b1e1e', textDecoration: 'underline' }}>
+                      Account Deletion Policy
+                    </Link>{' '}
+                    पहा.
+                  </div>
                 </div>
 
                 {validationError && (

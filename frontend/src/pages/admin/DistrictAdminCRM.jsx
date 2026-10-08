@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
+import api from '../../services/api';
 import { MAHARASHTRA_DISTRICTS, DISTRICT_TALUKAS } from '../../services/referralService';
+import CRMScopeSwitcher from '../../components/layout/CRMScopeSwitcher';
 
 export default function DistrictAdminCRM() {
   const [selectedDistrict, setSelectedDistrict] = useState('पुणे');
-  const [activeTab, setActiveTab] = useState('kyc'); // 'kyc', 'mandals', 'stats', 'grievances'
+  const [activeTab, setActiveTab] = useState('kyc'); // 'kyc', 'mandals', 'stats', 'opportunities'
   const [loading, setLoading] = useState(true);
   const [realUsers, setRealUsers] = useState([]);
   const [realBusinesses, setRealBusinesses] = useState([]);
+  const [jobApps, setJobApps] = useState([]);
+  const [enquiries, setEnquiries] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [talukaFilter, setTalukaFilter] = useState('all');
   const [toastMessage, setToastMessage] = useState(null);
@@ -21,16 +25,22 @@ export default function DistrictAdminCRM() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [usersRes, bizRes] = await Promise.all([
+      const [usersRes, bizRes, appsRes, enqsRes] = await Promise.all([
         apiClient.getAdminUsers().catch(() => ({ users: [] })),
-        apiClient.get('businesses').catch(() => ({ data: { businesses: [] } }))
+        apiClient.get('businesses').catch(() => ({ data: { businesses: [] } })),
+        api.admin.getJobApplications().catch(() => ({ applications: [] })),
+        api.admin.getEnquiriesSummary().catch(() => ({ enquiries: [] }))
       ]);
 
       const usersList = usersRes.users || [];
       const bizList = bizRes.data?.businesses || bizRes.businesses || (Array.isArray(bizRes) ? bizRes : []);
+      const appsList = appsRes.applications || [];
+      const enqsList = enqsRes.enquiries || [];
 
       setRealUsers(usersList);
       setRealBusinesses(bizList);
+      setJobApps(appsList);
+      setEnquiries(enqsList);
     } catch (err) {
       console.warn('District CRM loading error:', err);
     } finally {
@@ -53,6 +63,18 @@ export default function DistrictAdminCRM() {
     const bDist = (b.district || b.city || '').toLowerCase();
     const sDist = selectedDistrict.toLowerCase();
     return bDist.includes(sDist) || sDist.includes(bDist);
+  });
+
+  const distApps = jobApps.filter(a => {
+    const d = (a.district || '').toLowerCase();
+    const s = selectedDistrict.toLowerCase();
+    return d.includes(s) || s.includes(d);
+  });
+
+  const distEnqs = enquiries.filter(e => {
+    const d = (e.district || e.city || '').toLowerCase();
+    const s = selectedDistrict.toLowerCase();
+    return d.includes(s) || s.includes(d);
   });
 
   // Calculate live statistics from actual DB members
@@ -113,6 +135,7 @@ export default function DistrictAdminCRM() {
 
   return (
     <div style={{ background: '#FFFDF9', minHeight: '100vh', paddingBottom: '60px' }}>
+      <CRMScopeSwitcher currentScope="district" />
       
       {/* Toast Notification */}
       {toastMessage && (
@@ -276,6 +299,7 @@ export default function DistrictAdminCRM() {
         <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #FED7AA', marginBottom: '20px', overflowX: 'auto' }}>
           {[
             { id: 'kyc', label: '📋 ओळखपत्र पडताळणी कक्ष (Live KYC Queue)', count: filteredMembers.length },
+            { id: 'opportunities', label: '💼 संधी, नोकऱ्या व लीड्स', count: distApps.length + distEnqs.length },
             { id: 'stats', label: '📊 तालुकानिहाय सांख्यिकी (Taluka Stats)', count: talukaStats.length }
           ].map(tab => (
             <button
@@ -473,6 +497,175 @@ export default function DistrictAdminCRM() {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {/* TAB 3: OPPORTUNITIES, JOBS & B2B LEADS */}
+        {activeTab === 'opportunities' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            
+            {/* 1. Job Applications in District */}
+            <div style={{ background: '#fff', borderRadius: '14px', border: '1.5px solid #FED7AA', padding: '24px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#431407', fontFamily: 'Baloo 2', fontWeight: 900 }}>
+                    💼 {selectedDistrict} जिल्ह्यातील नोकरी अर्ज (Job Candidate Applications)
+                  </h3>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#64748B' }}>
+                    स्थानिक कंपन्यांकडे Connect Maratha द्वारे आलेले थेट उमेदवारांचे अर्ज
+                  </p>
+                </div>
+                <Link
+                  to="/jobs"
+                  target="_blank"
+                  style={{
+                    background: '#FFF7ED',
+                    color: '#C2410C',
+                    border: '1px solid #FED7AA',
+                    padding: '6px 14px',
+                    borderRadius: '8px',
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    textDecoration: 'none'
+                  }}
+                >
+                  Jobs Portal उघडा ➔
+                </Link>
+              </div>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.86rem' }}>
+                  <thead>
+                    <tr style={{ background: '#FFF7ED', borderBottom: '2px solid #FED7AA', textAlign: 'left', color: '#7C2D12' }}>
+                      <th style={{ padding: '10px 12px' }}>अर्ज क्र.</th>
+                      <th style={{ padding: '10px 12px' }}>उमेदवाराचे नाव</th>
+                      <th style={{ padding: '10px 12px' }}>पद (Job Role)</th>
+                      <th style={{ padding: '10px 12px' }}>कंपनी</th>
+                      <th style={{ padding: '10px 12px' }}>मोबाईल</th>
+                      <th style={{ padding: '10px 12px' }}>शिक्षण / अनुभव</th>
+                      <th style={{ padding: '10px 12px' }}>स्थिती (Status)</th>
+                      <th style={{ padding: '10px 12px' }}>तारीख</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {distApps.length === 0 ? (
+                      <tr>
+                        <td colSpan="8" style={{ padding: '30px', textAlign: 'center', color: '#94A3B8' }}>
+                          या जिल्ह्यासाठी सध्या कोणताही नोकरी अर्ज प्रलंबित नाही.
+                        </td>
+                      </tr>
+                    ) : (
+                      distApps.map(app => (
+                        <tr key={app.id} style={{ borderBottom: '1px solid #FED7AA' }}>
+                          <td style={{ padding: '10px 12px', fontWeight: 800, color: '#C2410C' }}>{app.id}</td>
+                          <td style={{ padding: '10px 12px', fontWeight: 700, color: '#1E293B' }}>{app.applicantName}</td>
+                          <td style={{ padding: '10px 12px', color: '#431407', fontWeight: 800 }}>{app.jobTitle}</td>
+                          <td style={{ padding: '10px 12px', color: '#475569' }}>{app.company}</td>
+                          <td style={{ padding: '10px 12px', color: '#1E293B', fontFamily: 'monospace' }}>{app.applicantPhone || '-'}</td>
+                          <td style={{ padding: '10px 12px', color: '#64748B' }}>{app.resumeUrl}</td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <span style={{
+                              background: app.status?.includes('Shortlist') ? '#DCFCE7' : '#FEF3C7',
+                              color: app.status?.includes('Shortlist') ? '#15803D' : '#92400E',
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              fontSize: '0.74rem',
+                              fontWeight: 800
+                            }}>
+                              {app.status || 'Applied'}
+                            </span>
+                          </td>
+                          <td style={{ padding: '10px 12px', color: '#64748B', fontSize: '0.78rem' }}>
+                            {new Date(app.appliedAt).toLocaleDateString('mr-IN')}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* 2. Client Enquiries & B2B Leads in District */}
+            <div style={{ background: '#fff', borderRadius: '14px', border: '1.5px solid #FED7AA', padding: '24px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#431407', fontFamily: 'Baloo 2', fontWeight: 900 }}>
+                    🏢 {selectedDistrict} जिल्ह्यातील ग्राहक Enquiries व B2B व्यावसायिक Leads
+                  </h3>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#64748B' }}>
+                    स्थानिक व्यावसायिकांसाठी उपलब्ध झालेल्या ग्राहक मागण्या व कोटेशन्स
+                  </p>
+                </div>
+                <Link
+                  to="/leads"
+                  target="_blank"
+                  style={{
+                    background: '#FFF7ED',
+                    color: '#C2410C',
+                    border: '1px solid #FED7AA',
+                    padding: '6px 14px',
+                    borderRadius: '8px',
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    textDecoration: 'none'
+                  }}
+                >
+                  Leads Portal उघडा ➔
+                </Link>
+              </div>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.86rem' }}>
+                  <thead>
+                    <tr style={{ background: '#FFF7ED', borderBottom: '2px solid #FED7AA', textAlign: 'left', color: '#7C2D12' }}>
+                      <th style={{ padding: '10px 12px' }}>क्र.</th>
+                      <th style={{ padding: '10px 12px' }}>गरजेचे स्वरूप (Requirement)</th>
+                      <th style={{ padding: '10px 12px' }}>उद्योग श्रेणी</th>
+                      <th style={{ padding: '10px 12px' }}>अंदाजे बजेट</th>
+                      <th style={{ padding: '10px 12px' }}>ग्राहक नाव</th>
+                      <th style={{ padding: '10px 12px' }}>मोबाईल</th>
+                      <th style={{ padding: '10px 12px' }}>कोटेशन्स प्राप्त</th>
+                      <th style={{ padding: '10px 12px' }}>स्थिती</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {distEnqs.length === 0 ? (
+                      <tr>
+                        <td colSpan="8" style={{ padding: '30px', textAlign: 'center', color: '#94A3B8' }}>
+                          या जिल्ह्यात सध्या कोणतीही ग्राहक Enquiry नोंद झालेली नाही.
+                        </td>
+                      </tr>
+                    ) : (
+                      distEnqs.map(enq => (
+                        <tr key={enq.id} style={{ borderBottom: '1px solid #FED7AA' }}>
+                          <td style={{ padding: '10px 12px', fontWeight: 800, color: '#C2410C' }}>{enq.id}</td>
+                          <td style={{ padding: '10px 12px', fontWeight: 700, color: '#1E293B', maxWidth: '240px' }}>{enq.title}</td>
+                          <td style={{ padding: '10px 12px', color: '#78350F', fontWeight: 700 }}>{enq.category}</td>
+                          <td style={{ padding: '10px 12px', color: '#15803D', fontWeight: 800 }}>{enq.budget || 'चर्चेनुसार'}</td>
+                          <td style={{ padding: '10px 12px', color: '#475569' }}>{enq.clientName || 'सभासद'}</td>
+                          <td style={{ padding: '10px 12px', color: '#1E293B', fontFamily: 'monospace' }}>{enq.phone || '-'}</td>
+                          <td style={{ padding: '10px 12px', fontWeight: 800, textAlign: 'center' }}>{enq.quotesCount || (enq.quotes ? enq.quotes.length : 0)}</td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <span style={{
+                              background: '#DCFCE7',
+                              color: '#15803D',
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              fontSize: '0.74rem',
+                              fontWeight: 800
+                            }}>
+                              ● {enq.status || 'सक्रिय'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
           </div>
         )}
 

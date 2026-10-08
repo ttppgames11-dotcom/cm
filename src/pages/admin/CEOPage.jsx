@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import apiClient from '../../services/apiClient';
+import api from '../../services/api';
 import {
   getAllReferrals,
   KNOWN_OFFICIAL_REFERRERS,
@@ -95,6 +96,12 @@ export default function CEOPage() {
   const [editingRecord, setEditingRecord] = useState(null);
   const [formData, setFormData] = useState({});
 
+  // Opportunities, Jobs & Leads States
+  const [jobApps, setJobApps] = useState([]);
+  const [enquiries, setEnquiries] = useState([]);
+  const [opportunitiesTab, setOpportunitiesTab] = useState('all'); // 'all' | 'jobs' | 'enquiries'
+  const [loadingOpportunities, setLoadingOpportunities] = useState(false);
+
   const triggerNotice = (msg) => {
     setInlineNotice({ msg, time: new Date().toLocaleTimeString('mr-IN') });
     setTimeout(() => {
@@ -102,17 +109,21 @@ export default function CEOPage() {
     }, 8000);
   };
 
-  // Fetch live real data from database via apiClient
+  // Fetch live real data from database via apiClient & api
   useEffect(() => {
     setLoading(true);
     Promise.all([
       (typeof apiClient?.getAdminUsers === 'function' ? apiClient.getAdminUsers() : Promise.resolve({ users: [] })).catch(() => ({ users: [] })),
       (typeof apiClient?.getAdminMetrics === 'function' ? apiClient.getAdminMetrics() : Promise.resolve(null)).catch(() => null),
-      Promise.resolve(typeof getAllReferrals === 'function' ? getAllReferrals() : [])
-    ]).then(([usersRes, metRes, refs]) => {
+      Promise.resolve(typeof getAllReferrals === 'function' ? getAllReferrals() : []),
+      api.admin.getJobApplications().catch(() => ({ applications: [] })),
+      api.admin.getEnquiriesSummary().catch(() => ({ enquiries: [] }))
+    ]).then(([usersRes, metRes, refs, appsRes, enqsRes]) => {
       const usersList = usersRes?.users || [];
       setRealUsers(usersList);
       setRealReferrals(refs || []);
+      setJobApps(appsRes?.applications || []);
+      setEnquiries(enqsRes?.enquiries || []);
       setLoading(false);
     }).catch(err => {
       console.warn('CEO Dashboard data load warning:', err);
@@ -353,6 +364,7 @@ export default function CEOPage() {
       group: '🚩 CEO COMMAND CENTER',
       items: [
         { id: 'command_center', label: '🏠 मुख्य कमांड सेंटर (Macro Hub)', icon: '🏠' },
+        { id: 'opportunities_hub', label: '💼 संधी, नोकऱ्या व ग्राहक Leads', icon: '💼' },
         { id: 'geo_drilldown', label: '🗺️ महाराष्ट्र रेफरल हीटमॅप व ड्रिल-डाउन', icon: '🗺️' },
         { id: 'funnel_growth', label: '📈 सभासद वाढ व रेफरल फनेल', icon: '📈' },
         { id: 'leadership_hierarchy', label: '🏛️ संघटनात्मक नेतृत्व अहवाल', icon: '🏛️' },
@@ -2256,6 +2268,293 @@ export default function CEOPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {/* VIEW: OPPORTUNITIES & LEADS HUB (CEO COMMAND) */}
+          {activeView === 'opportunities_hub' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+              {/* Header Strip */}
+              <div style={{
+                background: 'linear-gradient(135deg, #431407 0%, #7C2D12 100%)',
+                color: '#FFFFFF',
+                padding: '24px',
+                borderRadius: '20px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '16px',
+                boxShadow: '0 8px 24px rgba(67, 20, 7, 0.2)'
+              }}>
+                <div>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.15)', padding: '4px 12px', borderRadius: '999px', fontSize: '0.8rem', fontWeight: 800, marginBottom: '8px' }}>
+                    💼 CEO EXECUTIVE DESK • संधी व ग्राहक लीड्स कमांड
+                  </div>
+                  <h2 style={{ fontSize: '1.65rem', fontWeight: 900, margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
+                    नोकऱ्या, ग्राहक लीड्स व कम्युनिटी संधी
+                  </h2>
+                  <p style={{ margin: 0, fontSize: '0.88rem', color: '#FED7AA', maxWidth: '680px' }}>
+                    Connect Maratha वरील तिन्ही कमाई व व्यवसाय संधींचे थेट लाइव्ह मॉनिटरिंग. राज्यभरातून येणारे नोकरी अर्ज, ग्राहक चौकशी (B2B/B2C Leads) आणि रेफरल रिवॉर्ड्सचा तपशील.
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <Link
+                    to="/jobs"
+                    target="_blank"
+                    style={{ background: '#FFFFFF', color: '#431407', padding: '10px 16px', borderRadius: '12px', fontWeight: 800, fontSize: '0.84rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    👔 नोकऱ्या पोर्टल ↗
+                  </Link>
+                  <Link
+                    to="/leads"
+                    target="_blank"
+                    style={{ background: '#EA580C', color: '#FFFFFF', padding: '10px 16px', borderRadius: '12px', fontWeight: 800, fontSize: '0.84rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    💼 बिझनेस लीड्स ↗
+                  </Link>
+                  <Link
+                    to="/referrals"
+                    target="_blank"
+                    style={{ background: '#F97316', color: '#FFFFFF', padding: '10px 16px', borderRadius: '12px', fontWeight: 800, fontSize: '0.84rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    🎁 रेफरल्स पोर्टल ↗
+                  </Link>
+                </div>
+              </div>
+
+              {/* KPI Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '18px' }}>
+                  <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 800 }}>👔 एकूण नोकरी अर्ज (Job Applicants)</div>
+                  <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#431407', margin: '6px 0' }}>{jobApps.length}</div>
+                  <div style={{ fontSize: '0.78rem', color: '#16A34A', fontWeight: 700 }}>● थेट डेटाबेसवरून लाइव्ह अर्ज</div>
+                </div>
+
+                <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '18px' }}>
+                  <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 800 }}>💼 ग्राहक चौकशी व लीड्स (Client Enquiries)</div>
+                  <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#EA580C', margin: '6px 0' }}>{enquiries.length}</div>
+                  <div style={{ fontSize: '0.78rem', color: '#EA580C', fontWeight: 700 }}>● उद्योजकांसाठी उपलब्ध ग्राहकांच्या थेट गरजा</div>
+                </div>
+
+                <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '18px' }}>
+                  <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 800 }}>💰 संभाव्य व्यवसाय मूल्य (Pipeline Value)</div>
+                  <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#15803D', margin: '6px 0' }}>₹ ३.५० Cr+</div>
+                  <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 700 }}>महाराष्ट्रभर कोटेशन्स व वर्क ऑर्डर्स</div>
+                </div>
+
+                <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '18px' }}>
+                  <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 800 }}>🤝 ९ Referral Bands सन्मान निधी</div>
+                  <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#7C2D12', margin: '6px 0' }}>₹ ५,००० - ₹ १.५L</div>
+                  <div style={{ fontSize: '0.78rem', color: '#16A34A', fontWeight: 700 }}>प्रति यशस्वी संदर्भ मानधन वितरण</div>
+                </div>
+              </div>
+
+              {/* 3 Portal Visual Banners Strip */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                <div style={{ background: '#FFFFFF', borderRadius: '16px', overflow: 'hidden', border: '1.5px solid #FED7AA', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                  <img src="/assets/images/job-opportunities-banner.jpg" alt="Jobs" style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
+                  <div style={{ padding: '14px' }}>
+                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', fontWeight: 900, color: '#431407' }}>१. रोजगार व करिअर संधी</h4>
+                    <p style={{ margin: '0 0 10px 0', fontSize: '0.8rem', color: '#64748B', lineHeight: '1.4' }}>पुणे, मुंबई व जिल्हास्तरीय नामांकित मराठा व्यावसायिकांकडील नोकऱ्या.</p>
+                    <Link to="/jobs" style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', textDecoration: 'none' }}>थेट पोर्टल पहा →</Link>
+                  </div>
+                </div>
+
+                <div style={{ background: '#FFFFFF', borderRadius: '16px', overflow: 'hidden', border: '1.5px solid #FED7AA', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                  <img src="/assets/images/business-growth-banner.jpg" alt="Business Growth" style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
+                  <div style={{ padding: '14px' }}>
+                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', fontWeight: 900, color: '#431407' }}>२. ग्राहक व B2B ऑर्डर्स</h4>
+                    <p style={{ margin: '0 0 10px 0', fontSize: '0.8rem', color: '#64748B', lineHeight: '1.4' }}>स्थानिक ग्राहकांच्या थेट मागण्या व कोटेशन्स सबमिट करण्याचे व्यासपीठ.</p>
+                    <Link to="/leads" style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', textDecoration: 'none' }}>थेट पोर्टल पहा →</Link>
+                  </div>
+                </div>
+
+                <div style={{ background: '#FFFFFF', borderRadius: '16px', overflow: 'hidden', border: '1.5px solid #FED7AA', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                  <img src="/assets/images/referral-rewards-banner.jpg" alt="Referral Rewards" style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
+                  <div style={{ padding: '14px' }}>
+                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', fontWeight: 900, color: '#431407' }}>३. रेफरल रिवॉर्ड्स व सन्मान</h4>
+                    <p style={{ margin: '0 0 10px 0', fontSize: '0.8rem', color: '#64748B', lineHeight: '1.4' }}>बांधवांना जोडण्याबद्दल ९ Bands मधील सन्मान व मानधन कमाई.</p>
+                    <Link to="/referrals" style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', textDecoration: 'none' }}>थेट पोर्टल पहा →</Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sub-Tabs Selector */}
+              <div style={{ display: 'flex', gap: '10px', borderBottom: '2px solid #FED7AA', paddingBottom: '10px' }}>
+                <button
+                  onClick={() => setOpportunitiesTab('all')}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: '10px',
+                    fontWeight: 800,
+                    fontSize: '0.88rem',
+                    cursor: 'pointer',
+                    background: opportunitiesTab === 'all' ? '#EA580C' : '#FFFFFF',
+                    color: opportunitiesTab === 'all' ? '#FFFFFF' : '#431407',
+                    border: '1.5px solid #FED7AA'
+                  }}
+                >
+                  सर्व अहवाल
+                </button>
+                <button
+                  onClick={() => setOpportunitiesTab('jobs')}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: '10px',
+                    fontWeight: 800,
+                    fontSize: '0.88rem',
+                    cursor: 'pointer',
+                    background: opportunitiesTab === 'jobs' ? '#EA580C' : '#FFFFFF',
+                    color: opportunitiesTab === 'jobs' ? '#FFFFFF' : '#431407',
+                    border: '1.5px solid #FED7AA'
+                  }}
+                >
+                  👔 नोकरी अर्जदार ({jobApps.length})
+                </button>
+                <button
+                  onClick={() => setOpportunitiesTab('enquiries')}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: '10px',
+                    fontWeight: 800,
+                    fontSize: '0.88rem',
+                    cursor: 'pointer',
+                    background: opportunitiesTab === 'enquiries' ? '#EA580C' : '#FFFFFF',
+                    color: opportunitiesTab === 'enquiries' ? '#FFFFFF' : '#431407',
+                    border: '1.5px solid #FED7AA'
+                  }}
+                >
+                  💼 ग्राहक व बिझनेस लीड्स ({enquiries.length})
+                </button>
+              </div>
+
+              {/* Live Job Applications Table */}
+              {(opportunitiesTab === 'all' || opportunitiesTab === 'jobs') && (
+                <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#431407' }}>
+                      👔 नोकरी अर्जदार (Job Applications)
+                    </h3>
+                    <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 700 }}>
+                      एकूण {jobApps.length} अर्ज नोंदवले गेले आहेत
+                    </span>
+                  </div>
+
+                  {jobApps.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '30px', color: '#94A3B8', fontSize: '0.9rem' }}>
+                      सध्या कोणतेही नोकरी अर्ज उपलब्ध नाहीत.
+                    </div>
+                  ) : (
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+                        <thead>
+                          <tr style={{ background: '#FFF7ED', color: '#EA580C' }}>
+                            <th style={{ padding: '10px 12px' }}>अर्जदार नाव</th>
+                            <th style={{ padding: '10px 12px' }}>पद / भूमिका</th>
+                            <th style={{ padding: '10px 12px' }}>अनुभव</th>
+                            <th style={{ padding: '10px 12px' }}>जिल्हा</th>
+                            <th style={{ padding: '10px 12px' }}>मोबाईल</th>
+                            <th style={{ padding: '10px 12px' }}>तारीख</th>
+                            <th style={{ padding: '10px 12px' }}>स्थिती</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {jobApps.map((app, idx) => (
+                            <tr key={app.id || idx} style={{ borderBottom: '1px solid #FFF7ED' }}>
+                              <td style={{ padding: '10px 12px', fontWeight: 800, color: '#431407' }}>
+                                {app.candidateName || app.name || 'सभासद'}
+                              </td>
+                              <td style={{ padding: '10px 12px', fontWeight: 700, color: '#EA580C' }}>
+                                {app.jobTitle || app.title || 'General Application'}
+                              </td>
+                              <td style={{ padding: '10px 12px' }}>{app.experience || '२-३ वर्षे'}</td>
+                              <td style={{ padding: '10px 12px' }}>
+                                <span style={{ background: '#FFEDD5', color: '#C2410C', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, fontSize: '0.78rem' }}>
+                                  {app.district || 'पुणे'}
+                                </span>
+                              </td>
+                              <td style={{ padding: '10px 12px', fontFamily: 'monospace' }}>{app.phone || 'उपलब्ध'}</td>
+                              <td style={{ padding: '10px 12px', color: '#64748B' }}>
+                                {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString('mr-IN') : 'आज'}
+                              </td>
+                              <td style={{ padding: '10px 12px' }}>
+                                <span style={{ background: '#DCFCE7', color: '#15803D', padding: '3px 8px', borderRadius: '6px', fontWeight: 800, fontSize: '0.75rem' }}>
+                                  {app.status || 'Under Review'}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Live Client Enquiries / Business Leads Table */}
+              {(opportunitiesTab === 'all' || opportunitiesTab === 'enquiries') && (
+                <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#431407' }}>
+                      💼 ग्राहक चौकशी व व्यवसाय लीड्स (Client Enquiries & B2B Leads)
+                    </h3>
+                    <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 700 }}>
+                      एकूण {enquiries.length} लीड्स नोंदवले गेले आहेत
+                    </span>
+                  </div>
+
+                  {enquiries.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '30px', color: '#94A3B8', fontSize: '0.9rem' }}>
+                      सध्या कोणत्याही ग्राहक चौकशी लीड्स उपलब्ध नाहीत.
+                    </div>
+                  ) : (
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+                        <thead>
+                          <tr style={{ background: '#FFF7ED', color: '#EA580C' }}>
+                            <th style={{ padding: '10px 12px' }}>शीर्षक / गरज</th>
+                            <th style={{ padding: '10px 12px' }}>श्रेणी</th>
+                            <th style={{ padding: '10px 12px' }}>जिल्हा</th>
+                            <th style={{ padding: '10px 12px' }}>ग्राहक नाव</th>
+                            <th style={{ padding: '10px 12px' }}>अंदाजित बजेट</th>
+                            <th style={{ padding: '10px 12px' }}>कोटेशन्स</th>
+                            <th style={{ padding: '10px 12px' }}>स्थिती</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {enquiries.map((enq, idx) => (
+                            <tr key={enq.id || idx} style={{ borderBottom: '1px solid #FFF7ED' }}>
+                              <td style={{ padding: '10px 12px', fontWeight: 800, color: '#431407' }}>
+                                {enq.title || enq.requirement}
+                              </td>
+                              <td style={{ padding: '10px 12px' }}>
+                                <span style={{ background: '#FEF3C7', color: '#92400E', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, fontSize: '0.78rem' }}>
+                                  {enq.category || 'General'}
+                                </span>
+                              </td>
+                              <td style={{ padding: '10px 12px' }}>{enq.district || 'महाराष्ट्र'}</td>
+                              <td style={{ padding: '10px 12px', fontWeight: 700 }}>{enq.userName || enq.name || 'ग्राहक'}</td>
+                              <td style={{ padding: '10px 12px', fontWeight: 800, color: '#15803D' }}>{enq.budget || 'चर्चा सुरू'}</td>
+                              <td style={{ padding: '10px 12px' }}>
+                                <span style={{ background: '#EFF6FF', color: '#1D4ED8', padding: '2px 8px', borderRadius: '4px', fontWeight: 800, fontSize: '0.75rem' }}>
+                                  {enq.quotesCount || (enq.quotes && enq.quotes.length) || 0} कोट्स प्राप्त
+                                </span>
+                              </td>
+                              <td style={{ padding: '10px 12px' }}>
+                                <span style={{ background: '#DCFCE7', color: '#15803D', padding: '3px 8px', borderRadius: '6px', fontWeight: 800, fontSize: '0.75rem' }}>
+                                  {enq.status || 'Active'}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 

@@ -648,3 +648,24 @@ export function exportReferralsToCSV(records) {
   document.body.removeChild(link);
 }
 
+// Get individual member's direct referrals
+export function getMemberReferrals(memberId) {
+  const all = getAllReferrals();
+  if (!memberId) return all;
+  const clean = String(memberId).toUpperCase();
+  return all.filter(r => String(r.referrerId || '').toUpperCase() === clean || String(r.referrerCode || '').toUpperCase() === clean);
+}
+
+// Get member's aggregated referral statistics
+export function getMemberReferralStats(memberId) {
+  const refs = getMemberReferrals(memberId);
+  const total = refs.length;
+  const active = refs.filter(r => r.status === 'active').length;
+  const pending = total - active;
+  return {
+    total,
+    active,
+    pending,
+    earnings: active * 100
+  };
+}

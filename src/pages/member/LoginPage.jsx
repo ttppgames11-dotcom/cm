@@ -255,7 +255,7 @@ export default function LoginPage() {
                 <img 
                   src="/assets/images/logo.png" 
                   alt="Connect Maratha" 
-                  style={{ width: '44px', height: '44px', objectFit: 'contain', background: '#FFFFFF', borderRadius: '50%', padding: '3px' }} 
+                  style={{ width: '48px', height: '48px', objectFit: 'contain' }} 
                 />
                 <div>
                   <div style={{ fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: '#F0DED0', fontWeight: 700 }}>
