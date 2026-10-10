@@ -147,7 +147,18 @@ GoRouter buildAppRouterWithAuth({
       ),
       GoRoute(
         path: '/business/directory',
-        builder: (context, state) => const BusinessDirectoryScreen(),
+        builder:
+            (context, state) =>
+                ApiConfig.demoMode
+                    ? const BusinessDirectoryScreen()
+                    : const NothingListedScreen(
+                      title: 'व्यवसाय निर्देशिका',
+                      icon: Icons.storefront_rounded,
+                      message:
+                          'समाजबांधवांचे व्यवसाय येथे दिसतील. तुमचा व्यवसाय '
+                          'नोंदवण्यासाठी आम्हाला लिहा.',
+                      contactSubject: 'व्यवसाय नोंदणी / Business listing',
+                    ),
       ),
       GoRoute(
         path: '/business/hub',
@@ -170,7 +181,18 @@ GoRouter buildAppRouterWithAuth({
       ),
       GoRoute(
         path: '/business/dairy',
-        builder: (context, state) => const DairyScreen(),
+        builder:
+            (context, state) =>
+                ApiConfig.demoMode
+                    ? const DairyScreen()
+                    : const NothingListedScreen(
+                      title: 'दूध व संकलन केंद्र',
+                      icon: Icons.water_drop_rounded,
+                      message:
+                          'समाजातील दुग्धव्यवसाय व संकलन केंद्रे येथे दिसतील. '
+                          'तुमचे केंद्र जोडण्यासाठी आम्हाला लिहा.',
+                      contactSubject: 'दुग्धव्यवसाय नोंदणी / Dairy listing',
+                    ),
       ),
       GoRoute(
         path: '/business/builders',
