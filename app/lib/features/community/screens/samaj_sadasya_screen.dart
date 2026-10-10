@@ -733,23 +733,8 @@ class _SamajSadasyaScreenState extends ConsumerState<SamajSadasyaScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(
+      bottomNavigationBar: const CustomBottomNavBar(
         currentIndex: 1, // "समुदाय" active tab
-        onTap: (index) {
-          if (index == 0) {
-            if (Navigator.of(context).canPop()) {
-              Navigator.of(context).pop();
-            } else {
-              context.go('/home');
-            }
-          } else if (index == 2) {
-            context.push('/business');
-          } else if (index == 3) {
-            context.push('/search');
-          } else if (index == 4) {
-            context.push('/profile');
-          }
-        },
       ),
     );
   }
@@ -1033,28 +1018,34 @@ class _SamajSadasyaScreenState extends ConsumerState<SamajSadasyaScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem(
-            icon: Icons.groups_rounded,
-            iconBg: const Color(0xFFFFDFC4),
-            iconColor: const Color(0xFFE65100),
-            count: _members.isNotEmpty ? totalCount : '12,450+',
-            label: 'समाज सदस्य',
+          Expanded(
+            child: _buildStatItem(
+              icon: Icons.groups_rounded,
+              iconBg: const Color(0xFFFFDFC4),
+              iconColor: const Color(0xFFE65100),
+              count: _members.isNotEmpty ? totalCount : '12,450+',
+              label: 'समाज सदस्य',
+            ),
           ),
           Container(width: 1, height: 32, color: const Color(0xFFEFE5DC)),
-          _buildStatItem(
-            icon: Icons.location_on_rounded,
-            iconBg: const Color(0xFFFFEBEE),
-            iconColor: const Color(0xFFD32F2F),
-            count: _members.isNotEmpty ? '$distinctCities+' : '350+',
-            label: 'शहरे / गाव',
+          Expanded(
+            child: _buildStatItem(
+              icon: Icons.location_on_rounded,
+              iconBg: const Color(0xFFFFEBEE),
+              iconColor: const Color(0xFFD32F2F),
+              count: _members.isNotEmpty ? '$distinctCities+' : '350+',
+              label: 'शहरे / गाव',
+            ),
           ),
           Container(width: 1, height: 32, color: const Color(0xFFEFE5DC)),
-          _buildStatItem(
-            icon: Icons.business_center_rounded,
-            iconBg: const Color(0xFFFFF8E1),
-            iconColor: const Color(0xFFFFA000),
-            count: _members.isNotEmpty ? '$distinctDomains+' : '120+',
-            label: 'व्यवसाय क्षेत्रे',
+          Expanded(
+            child: _buildStatItem(
+              icon: Icons.business_center_rounded,
+              iconBg: const Color(0xFFFFF8E1),
+              iconColor: const Color(0xFFFFA000),
+              count: _members.isNotEmpty ? '$distinctDomains+' : '120+',
+              label: 'व्यवसाय क्षेत्रे',
+            ),
           ),
         ],
       ),
@@ -1068,47 +1059,59 @@ class _SamajSadasyaScreenState extends ConsumerState<SamajSadasyaScreen> {
     required String count,
     required String label,
   }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 34,
-          height: 34,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: iconBg,
-          ),
-          child: Center(
-            child: Icon(icon, color: iconColor, size: 18),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              count,
-              style: const TextStyle(
-                fontSize: 13.5,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFFB71C1C),
-                height: 1.1,
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: iconBg,
             ),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 10.5,
-                color: Color(0xFF6D4C41),
-                fontWeight: FontWeight.w500,
-              ),
+            child: Center(
+              child: Icon(icon, color: iconColor, size: 15),
             ),
-          ],
+          ),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+            children: [
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  count,
+                  style: const TextStyle(
+                    fontSize: 13.0,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFFB71C1C),
+                    height: 1.1,
+                  ),
+                ),
+              ),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 10.0,
+                    color: Color(0xFF6D4C41),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildMemberAvatarWidget(SamajMember member, {double size = 56}) {
     return Stack(
