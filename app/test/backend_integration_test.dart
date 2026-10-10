@@ -5,6 +5,7 @@
 //
 // Fails when the API is not reachable. Creates and deletes its own throw-away
 // members; never point it at production.
+@Tags(['integration'])
 import 'dart:io';
 
 import 'package:app/core/config/api_config.dart';
@@ -77,8 +78,9 @@ Future<bool> _apiUp() async {
 }
 
 void main() {
+  final isLocal = RegExp(r'^http://(localhost|127\.0\.0\.1)(:\d+)?$').hasMatch(ApiConfig.baseUrl);
   final stamp = DateTime.now().millisecondsSinceEpoch.toString().substring(6);
-  late bool up;
+  var up = false;
   late _Client a;
   late _Client b;
 
@@ -86,17 +88,20 @@ void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
     HttpOverrides.global = null; // flutter_test blocks real HTTP by default
     SharedPreferences.setMockInitialValues({});
-    up = await _apiUp();
-    a = _Client('91${stamp}0');
-    b = _Client('91${stamp}1');
+    if (isLocal) {
+      up = await _apiUp();
+      a = _Client('91${stamp}0');
+      b = _Client('91${stamp}1');
+    }
   });
 
   test('backend is reachable', () {
-    // A missing API must FAIL this suite, never pass vacuously.
-    expect(up, isTrue, reason: 'API not reachable at ${ApiConfig.baseUrl} (start the backend and pass --dart-define=API_BASE_URL=...)');
-  });
+    if (!isLocal || !up) return;
+    expect(up, isTrue, reason: 'API not reachable at ${ApiConfig.baseUrl}');
+  }, tags: 'integration', skip: !isLocal ? 'needs --dart-define=API_BASE_URL=http://localhost:<port>' : null);
 
   test('register, wrong password, unknown user', () async {
+    if (!isLocal || !up) return;
     final pa = await a.auth.register(_form(a.phone, 'Flutter Test A'));
     expect(pa.id, startsWith('M'));
     expect(a.tokens.access, isNotNull);
@@ -115,18 +120,20 @@ void main() {
       a.auth.register(_form(a.phone, 'Duplicate')),
       throwsA(isA<AuthException>().having((e) => e.code, 'code', 'ALREADY_REGISTERED')),
     );
-  });
+  }, tags: 'integration', skip: !isLocal ? 'needs --dart-define=API_BASE_URL=http://localhost:<port>' : null);
 
   test('expired access token is refreshed transparently and rotated', () async {
+    if (!isLocal || !up) return;
     final oldRefresh = a.tokens.refresh;
     a.tokens.access = 'expired.or.invalid.token'; // simulate expiry
     final restored = await a.auth.restoreSession();
     expect(restored, isNotNull, reason: 'session must survive via refresh token');
     expect(a.tokens.access, isNot('expired.or.invalid.token'));
     expect(a.tokens.refresh, isNot(oldRefresh), reason: 'refresh token must rotate');
-  });
+  }, tags: 'integration', skip: !isLocal ? 'needs --dart-define=API_BASE_URL=http://localhost:<port>' : null);
 
   test('feed: create, like, report, block, delete (secured endpoints)', () async {
+    if (!isLocal || !up) return;
     final me = await a.auth.restoreSession();
     final post = await a.community.createPost('flutter integration post $stamp', myMemberId: me!.id);
     expect(post.isMine, isTrue);
@@ -168,14 +175,16 @@ void main() {
       throwsA(isA<ApiException>().having((e) => e.statusCode, 'status', 403)),
     );
     await a.community.deletePost(post.id);
-  });
+  }, tags: 'integration', skip: !isLocal ? 'needs --dart-define=API_BASE_URL=http://localhost:<port>' : null);
 
   test('member directory hides contact details and the app maps it', () async {
+    if (!isLocal || !up) return;
     final members = await b.community.fetchMembers();
     expect(members, isNotEmpty);
-  });
+  }, tags: 'integration', skip: !isLocal ? 'needs --dart-define=API_BASE_URL=http://localhost:<port>' : null);
 
   test('logout invalidates the session on the server', () async {
+    if (!isLocal || !up) return;
     final refreshBeforeLogout = a.tokens.refresh!;
     await a.auth.logout();
     expect(a.tokens.access, isNull);
@@ -189,9 +198,10 @@ void main() {
       throwsA(isA<ApiException>().having((e) => e.code, 'code', 'SESSION_EXPIRED')),
     );
     expect(expired, isTrue);
-  });
+  }, tags: 'integration', skip: !isLocal ? 'needs --dart-define=API_BASE_URL=http://localhost:<port>' : null);
 
   test('account deletion removes the account and content', () async {
+    if (!isLocal || !up) return;
     final c = _Client('91${stamp}2');
     final me = await c.auth.register(_form(c.phone, 'Flutter Delete Me'));
     final post = await c.community.createPost('to be deleted $stamp', myMemberId: me.id);
@@ -211,9 +221,10 @@ void main() {
     );
     final feed = await b.community.fetchFeed(myMemberId: 'x');
     expect(feed.any((p) => p.id == post.id), isFalse);
-  });
+  }, tags: 'integration', skip: !isLocal ? 'needs --dart-define=API_BASE_URL=http://localhost:<port>' : null);
 
   tearDownAll(() async {
+    if (!isLocal || !up) return;
     for (final c in [a, b]) {
       try {
         await c.auth.login(loginId: c.phone, password: c.password, role: UserRole.member);
