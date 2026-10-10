@@ -11,6 +11,7 @@ import 'package:app/widgets/home/home_header.dart';
 import 'package:app/widgets/home/hero_banner.dart';
 import 'package:app/widgets/home/member_id_card.dart';
 import 'package:app/widgets/home/quick_actions_grid.dart';
+import 'package:app/widgets/home/quick_actions_nav_bar.dart';
 import 'package:app/widgets/home/upcoming_event_card.dart';
 import 'package:app/widgets/home/heritage_scroll_section.dart';
 import 'package:app/widgets/home/community_activity_card.dart';
@@ -100,6 +101,67 @@ void main() {
       expect(find.text('सेवा व कार्य'), findsOneWidget);
       expect(find.text('महाराष्ट्र नेटवर्क'), findsOneWidget);
       expect(find.byIcon(Icons.arrow_forward_rounded), findsNWidgets(5));
+    },
+  );
+
+  testWidgets(
+    'QuickActionsNavBar renders all 8 circular action buttons',
+    (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(home: Scaffold(body: QuickActionsNavBar())),
+      );
+
+      expect(find.byType(QuickActionsNavBar), findsOneWidget);
+      expect(find.text('समुदाय'), findsOneWidget);
+      expect(find.text('Community'), findsOneWidget);
+      expect(find.text('व्यवसाय'), findsOneWidget);
+      expect(find.text('Business'), findsOneWidget);
+      expect(find.text('शिक्षण'), findsOneWidget);
+      expect(find.text('Education'), findsOneWidget);
+      expect(find.text('रोजगार'), findsOneWidget);
+      expect(find.text('Employment'), findsOneWidget);
+      expect(find.text('नेटवर्किंग'), findsOneWidget);
+      expect(find.text('Networking'), findsOneWidget);
+      expect(find.text('इतिहास'), findsOneWidget);
+      expect(find.text('History'), findsOneWidget);
+      expect(find.text('संस्कृती'), findsOneWidget);
+      expect(find.text('Culture'), findsOneWidget);
+      expect(find.text('सर्व पहा'), findsOneWidget);
+      expect(find.text('More'), findsOneWidget);
+      expect(find.byIcon(Icons.groups_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.storefront_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.school_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.business_center_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.public_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.castle_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.flag_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.grid_view_rounded), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'QuickActionsNavBar tapping सर्व पहा opens modal displaying all icons',
+    (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(home: Scaffold(body: QuickActionsNavBar())),
+      );
+
+      // Tap on सर्व पहा (More)
+      await tester.tap(find.text('सर्व पहा'));
+      await tester.pumpAndSettle();
+
+      // Modal is open
+      expect(find.text('सर्व दालने व सेवा · All Services & Categories'), findsOneWidget);
+      // Other options from the full catalog are displayed for active features
+      expect(find.text('समाज सदस्य'), findsOneWidget);
+      expect(find.text('समुदाय पोस्ट'), findsOneWidget);
+      expect(find.text('व्यवसाय निर्देशिका'), findsOneWidget);
+      expect(find.text('कार्यक्रम'), findsOneWidget);
+      expect(find.byIcon(Icons.chat_bubble_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.calendar_month_rounded), findsOneWidget);
+      // Placeholders / fake helplines hidden
+      expect(find.text('रक्त मदत'), findsNothing);
+      expect(find.byIcon(Icons.water_drop_rounded), findsNothing);
     },
   );
 
@@ -199,7 +261,7 @@ void main() {
     expect(find.byType(WarCryBanner), findsOneWidget);
     expect(find.byType(EmpireStatsStrip), findsOneWidget);
     expect(find.byType(MemberIdCard), findsOneWidget);
-    expect(find.byType(QuickActionsGrid), findsOneWidget);
+    expect(find.byType(QuickActionsNavBar), findsOneWidget);
     expect(find.byType(AshtapradhanSection), findsOneWidget);
     expect(find.byType(FortArchitectureSection), findsOneWidget);
     expect(find.byType(CustomBottomNavBar), findsOneWidget);

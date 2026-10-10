@@ -680,7 +680,7 @@ class _MaharashtraNetworkScreenState extends State<MaharashtraNetworkScreen> {
                       ),
                     ),
                     Text(
-                      'समन्वयक लवकरच जाहीर होतील',
+                      'मध्यवर्ती समन्वय कक्ष',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.mukta(
