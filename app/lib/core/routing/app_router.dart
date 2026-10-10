@@ -158,6 +158,7 @@ GoRouter buildAppRouterWithAuth({
                           'समाजबांधवांचे व्यवसाय येथे दिसतील. तुमचा व्यवसाय '
                           'नोंदवण्यासाठी आम्हाला लिहा.',
                       contactSubject: 'व्यवसाय नोंदणी / Business listing',
+                      bottomNavIndex: 2,
                     ),
       ),
       GoRoute(
@@ -177,6 +178,7 @@ GoRouter buildAppRouterWithAuth({
                           'स्थानिक व्यवसाय मंडळे (Chapters) सुरू झाल्यावर येथे '
                           'दिसतील. तुमच्या शहरात मंडळ सुरू करण्यासाठी आम्हाला लिहा.',
                       contactSubject: 'व्यवसाय संगम / Business chapter',
+                      bottomNavIndex: 2,
                     ),
       ),
       GoRoute(
@@ -192,6 +194,7 @@ GoRouter buildAppRouterWithAuth({
                           'समाजातील दुग्धव्यवसाय व संकलन केंद्रे येथे दिसतील. '
                           'तुमचे केंद्र जोडण्यासाठी आम्हाला लिहा.',
                       contactSubject: 'दुग्धव्यवसाय नोंदणी / Dairy listing',
+                      bottomNavIndex: 2,
                     ),
       ),
       GoRoute(
@@ -207,6 +210,7 @@ GoRouter buildAppRouterWithAuth({
                           'समाजातील अधिकृत बांधकाम व्यावसायिक व प्रकल्प येथे दिसतील. '
                           'तुमचा प्रकल्प नोंदवण्यासाठी आम्हाला लिहा.',
                       contactSubject: 'बिल्डर प्रकल्प नोंदणी / Builder listing',
+                      bottomNavIndex: 2,
                     ),
       ),
       GoRoute(
@@ -245,6 +249,7 @@ GoRouter buildAppRouterWithAuth({
                           'समाजातील उत्पादक व उद्योग येथे दिसतील. तुमचा उद्योग '
                           'जोडण्यासाठी आम्हाला लिहा.',
                       contactSubject: 'उत्पादक नोंदणी / Manufacturer listing',
+                      bottomNavIndex: 2,
                     ),
       ),
       GoRoute(
@@ -305,6 +310,7 @@ GoRouter buildAppRouterWithAuth({
                       message:
                           'तुम्ही नोंदणी केलेले कार्यक्रम येथे दिसतील. सध्या '
                           'कोणताही कार्यक्रम जाहीर झालेला नाही.',
+                      bottomNavIndex: 4,
                     ),
       ),
       GoRoute(
@@ -466,7 +472,7 @@ GoRouter buildAppRouterWithAuth({
         path: '/search',
         builder: (context, state) {
           final query = state.uri.queryParameters['q'] ?? '';
-          return SearchScreen(initialQuery: query);
+          return SearchScreen(initialQuery: query, showBottomNav: true);
         },
       ),
       GoRoute(

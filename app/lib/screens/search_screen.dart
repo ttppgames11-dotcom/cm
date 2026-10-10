@@ -16,6 +16,7 @@ import '../features/auth/providers/current_user_provider.dart';
 import '../features/auth/models/user_profile.dart';
 import '../core/profile/member_avatar.dart';
 import '../widgets/home/home_models.dart';
+import '../widgets/home/custom_bottom_nav_bar.dart';
 
 enum SearchCategory {
   all('सर्व', 'All', Icons.auto_awesome_rounded),
@@ -68,11 +69,13 @@ class _DiscoveryShortcut {
 class SearchScreen extends ConsumerStatefulWidget {
   final String initialQuery;
   final SearchCategory initialCategory;
+  final bool showBottomNav;
 
   const SearchScreen({
     super.key,
     this.initialQuery = '',
     this.initialCategory = SearchCategory.all,
+    this.showBottomNav = false,
   });
 
   @override
@@ -101,22 +104,21 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _focusNode.requestFocus();
+        _fetchRealMembers();
       }
     });
-
-    _fetchRealMembers();
   }
 
   Future<void> _fetchRealMembers() async {
-    final user = ref.read(currentUserProvider);
-    if (user == null) return; // Authenticated members only
-
-    setState(() {
-      _isLoadingMembers = true;
-      _membersError = null;
-    });
-
     try {
+      final user = ref.read(currentUserProvider);
+      if (user == null) return; // Authenticated members only
+
+      setState(() {
+        _isLoadingMembers = true;
+        _membersError = null;
+      });
+
       final members = await ref.read(communityRepositoryProvider).fetchMembers();
       if (!mounted) return;
       setState(() {
@@ -369,7 +371,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = ref.watch(currentUserProvider);
+    UserProfile? currentUser;
+    try {
+      currentUser = ref.watch(currentUserProvider);
+    } catch (_) {
+      // Running outside ProviderScope (e.g. standalone test)
+      currentUser = null;
+    }
     final allItems = _getAllItems();
     final filteredResults = _filterItems(allItems);
 
@@ -452,6 +460,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: widget.showBottomNav
+          ? const CustomBottomNavBar(
+              currentIndex: 3, // "शोध" active tab
+            )
+          : null,
     );
   }
 
@@ -569,7 +582,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       ),
       _DiscoveryShortcut(
         icon: Icons.work_outline_rounded,
-        label: 'व्यवसाय (Profession)',
+        label: 'व्यवसाय क्षेत्र (Profession)',
         onTap: () {
           setState(() {
             _selectedCategory = SearchCategory.community;
@@ -1061,6 +1074,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           final isSelected = _selectedCategory == cat;
 
           return GestureDetector(
+            key: Key('category_${cat.name}'),
             onTap: () {
               setState(() {
                 _selectedCategory = cat;
