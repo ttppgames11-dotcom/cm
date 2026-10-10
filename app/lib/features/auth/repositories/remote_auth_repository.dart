@@ -204,6 +204,12 @@ class RemoteAuthRepository implements AuthRepository {
           'skills': d.skills.trim(),
           'interests': d.interest,
           'about': d.about.trim(),
+          'legalCompliance': {
+            'termsAccepted': d.termsAccepted,
+            'privacyAccepted': d.privacyAccepted,
+            'ageConfirmed': d.ageConfirmed,
+            'dpdpConsent': d.dpdpConsent,
+          },
         },
       );
       return _startSession(data, role: d.role);

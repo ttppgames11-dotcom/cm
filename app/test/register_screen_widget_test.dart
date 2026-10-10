@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app/core/auth/auth_scope.dart';
 import 'package:app/features/auth/auth_controller.dart';
 import 'package:app/features/auth/data/auth_local_data_source.dart';
+import 'package:app/features/auth/models/register_form_data.dart';
+import 'package:app/features/auth/models/user_profile.dart';
 import 'package:app/features/auth/providers/auth_provider.dart';
 import 'package:app/features/auth/providers/location_provider.dart';
 import 'package:app/features/auth/screens/register_screen.dart';
@@ -59,12 +61,14 @@ void main() {
       );
       await tester.enterText(find.byType(TextField).at(3), 'swarajya123');
 
-      // Agree to guidelines
-      await tester.tap(find.byType(CheckboxListTile));
+      // Agree to terms, privacy, and age confirmation
+      await tester.tap(find.byKey(const Key('register_terms_checkbox')));
+      await tester.tap(find.byKey(const Key('register_privacy_checkbox')));
+      await tester.tap(find.byKey(const Key('register_age_checkbox')));
       await tester.pumpAndSettle();
 
       // Proceed to Step 1 (Profile Form)
-      await tester.tap(find.text('पुढे → / Next'));
+      await tester.tap(find.byKey(const Key('register_next_button')));
       await tester.pumpAndSettle();
 
       // Verify Step 1 Header
@@ -195,9 +199,11 @@ void main() {
     await tester.enterText(find.byType(TextField).at(0), 'Test User');
     await tester.enterText(find.byType(TextField).at(1), '9876543210');
     await tester.enterText(find.byType(TextField).at(3), 'short1');
-    await tester.tap(find.byType(CheckboxListTile));
+    await tester.tap(find.byKey(const Key('register_terms_checkbox')));
+    await tester.tap(find.byKey(const Key('register_privacy_checkbox')));
+    await tester.tap(find.byKey(const Key('register_age_checkbox')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('पुढे → / Next'));
+    await tester.tap(find.byKey(const Key('register_next_button')));
     await tester.pumpAndSettle();
 
     expect(find.text('पासवर्ड किमान ८ अक्षरांचा असावा.'), findsOneWidget);
@@ -254,4 +260,123 @@ void main() {
       expect(prefs.containsKey('cm_registration_draft'), isFalse);
     },
   );
+
+  testWidgets(
+    'RegisterScreen: Next button is disabled until all 3 checkboxes are ticked, and registration carries all 4 flags',
+    (tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      SharedPreferences.setMockInitialValues({});
+      RegisterFormData? submittedData;
+
+      final mockRepo = _CapturingAuthRepository(
+        onRegister: (data) => submittedData = data,
+      );
+      final authController = AuthController(mockRepo);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authControllerProvider.overrideWith((ref) => authController),
+            locationRepositoryProvider.overrideWithValue(TestLocationRepository()),
+          ],
+          child: AuthScope(
+            controller: authController,
+            child: const MaterialApp(home: RegisterScreen()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Enter basic credentials
+      await tester.enterText(find.byKey(const Key('register_name_field')), 'अशोक कदम');
+      await tester.enterText(find.byKey(const Key('register_mobile_field')), '9811223344');
+      await tester.enterText(find.byKey(const Key('register_password_field')), 'password123');
+      await tester.pumpAndSettle();
+
+      final nextButtonFinder = find.byKey(const Key('register_next_button'));
+      FilledButton button = tester.widget<FilledButton>(nextButtonFinder);
+
+      // Initially disabled
+      expect(button.onPressed, isNull);
+
+      // Tick only 1st (Terms) -> still disabled
+      await tester.tap(find.byKey(const Key('register_terms_checkbox')));
+      await tester.pumpAndSettle();
+      button = tester.widget<FilledButton>(nextButtonFinder);
+      expect(button.onPressed, isNull);
+
+      // Tick 2nd (Privacy) -> still disabled
+      await tester.tap(find.byKey(const Key('register_privacy_checkbox')));
+      await tester.pumpAndSettle();
+      button = tester.widget<FilledButton>(nextButtonFinder);
+      expect(button.onPressed, isNull);
+
+      // Tick 3rd (Age 18+) -> now ENABLED
+      await tester.tap(find.byKey(const Key('register_age_checkbox')));
+      await tester.pumpAndSettle();
+      button = tester.widget<FilledButton>(nextButtonFinder);
+      expect(button.onPressed, isNotNull);
+
+      // Proceed to Step 1
+      await tester.tap(nextButtonFinder);
+      await tester.pumpAndSettle();
+      expect(find.text('प्रोफाईल माहिती / Profile Form'), findsOneWidget);
+
+      // Select 5-level location to satisfy step 2 validation
+      await tester.tap(find.text('देश निवडा / Select Country'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('India / भारत').last);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('राज्य निवडा / Select State'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Maharashtra / महाराष्ट्र').last);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('जिल्हा निवडा / Select District'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Pune / पुणे').last);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('तालुका निवडा / Select Taluka'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Haveli / हवेली').last);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('गाव निवडा / Select Village'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Manjari / मांजरी').last);
+      await tester.pumpAndSettle();
+
+      // Finish registration
+      await tester.ensureVisible(find.text('नोंदणी पूर्ण करा / Finish'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('नोंदणी पूर्ण करा / Finish'));
+      await tester.pumpAndSettle();
+
+      // Verify the four legal compliance flags were captured
+      expect(submittedData, isNotNull);
+      expect(submittedData!.termsAccepted, isTrue);
+      expect(submittedData!.privacyAccepted, isTrue);
+      expect(submittedData!.ageConfirmed, isTrue);
+      expect(submittedData!.dpdpConsent, isTrue);
+    },
+  );
 }
+
+class _CapturingAuthRepository extends LocalAuthRepository {
+  _CapturingAuthRepository({required this.onRegister})
+      : super(AuthLocalDataSource());
+
+  final void Function(RegisterFormData data) onRegister;
+
+  @override
+  Future<UserProfile> register(RegisterFormData data) async {
+    onRegister(data);
+    return super.register(data);
+  }
+}
+

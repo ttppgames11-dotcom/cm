@@ -9,6 +9,10 @@ class RegisterFormData {
     this.email = '',
     this.password = '',
     this.agreedToGuidelines = false,
+    this.termsAccepted = false,
+    this.privacyAccepted = false,
+    this.ageConfirmed = false,
+    this.dpdpConsent = false,
     this.countryId,
     this.country = '',
     this.stateId,
@@ -35,6 +39,10 @@ class RegisterFormData {
   String email;
   String password;
   bool agreedToGuidelines;
+  bool termsAccepted;
+  bool privacyAccepted;
+  bool ageConfirmed;
+  bool dpdpConsent;
   String? countryId;
   String country;
   String? stateId;

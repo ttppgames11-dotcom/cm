@@ -44,6 +44,12 @@ class ApiConfig {
     defaultValue: 'https://www.connectmaratha.com/privacy',
   );
 
+  /// Terms of use URL
+  static const String termsOfUseUrl = String.fromEnvironment(
+    'TERMS_OF_USE_URL',
+    defaultValue: 'https://www.connectmaratha.com/terms',
+  );
+
   /// Support address shown in the app and Play listing.
   static const String supportEmail = String.fromEnvironment(
     'SUPPORT_EMAIL',

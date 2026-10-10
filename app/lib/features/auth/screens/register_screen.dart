@@ -6,7 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../../core/auth/auth_scope.dart';
+import '../../../core/config/legal_urls_config.dart';
 import '../../../core/profile/member_avatar.dart';
 import '../../../core/profile/photo_picker_sheet.dart';
 import '../../../core/profile/profile_photo.dart';
@@ -38,7 +41,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _mobileController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _agreed = false;
+  bool _termsAccepted = false;
+  bool _privacyAccepted = false;
+  bool _ageConfirmed = false;
 
   // Step 2 (Profile Form) - Dynamic Hierarchical Location Data (5 Levels)
   List<LocationItem> _countries = [];
@@ -91,7 +96,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     'name': _fullNameController.text,
     'mobile': _mobileController.text,
     'email': _emailController.text,
-    'agreed': _agreed,
+    'termsAccepted': _termsAccepted,
+    'privacyAccepted': _privacyAccepted,
+    'ageConfirmed': _ageConfirmed,
     'role': _selectedRole.name,
     'skills': _skillsController.text,
     'education': _selectedEducation,
@@ -125,7 +132,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       _mobileController.text = fields['mobile'] as String? ?? '';
       _emailController.text = fields['email'] as String? ?? '';
       _passwordController.text = password;
-      _agreed = fields['agreed'] == true;
+      _termsAccepted = fields['termsAccepted'] == true || fields['agreed'] == true;
+      _privacyAccepted = fields['privacyAccepted'] == true;
+      _ageConfirmed = fields['ageConfirmed'] == true;
       _selectedRole = UserRole.values.firstWhere(
         (r) => r.name == fields['role'],
         orElse: () => UserRole.member,
@@ -189,10 +198,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       );
       return;
     }
-    if (!_agreed) {
+    if (!_termsAccepted || !_privacyAccepted || !_ageConfirmed) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('कृपया समुदाय मार्गदर्शक तत्त्वांशी सहमती द्या.'),
+          content: Text('कृपया सर्व अटी, गोपनीयता धोरण व वयाची पुष्टी मान्य करा.'),
         ),
       );
       return;
@@ -464,7 +473,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       ..mobile = _mobileController.text
       ..email = _emailController.text
       ..password = _passwordController.text
-      ..agreedToGuidelines = _agreed
+      ..agreedToGuidelines = _termsAccepted
+      ..termsAccepted = _termsAccepted
+      ..privacyAccepted = _privacyAccepted
+      ..ageConfirmed = _ageConfirmed
+      ..dpdpConsent = _privacyAccepted
       ..countryId = _selectedCountry!.id
       ..stateId = _selectedState!.id
       ..districtId = _selectedDistrict!.id
@@ -590,9 +603,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   mobileController: _mobileController,
                   emailController: _emailController,
                   passwordController: _passwordController,
-                  agreed: _agreed,
-                  onAgreedChanged:
-                      (value) => setState(() => _agreed = value ?? false),
+                  termsAccepted: _termsAccepted,
+                  onTermsChanged:
+                      (value) => setState(() => _termsAccepted = value ?? false),
+                  privacyAccepted: _privacyAccepted,
+                  onPrivacyChanged:
+                      (value) => setState(() => _privacyAccepted = value ?? false),
+                  ageConfirmed: _ageConfirmed,
+                  onAgeChanged:
+                      (value) => setState(() => _ageConfirmed = value ?? false),
                   onNext: _handleStep0Next,
                 ),
                 1 => _Step2Profile(
@@ -725,8 +744,12 @@ class _Step1Basic extends StatelessWidget {
     required this.mobileController,
     required this.emailController,
     required this.passwordController,
-    required this.agreed,
-    required this.onAgreedChanged,
+    required this.termsAccepted,
+    required this.onTermsChanged,
+    required this.privacyAccepted,
+    required this.onPrivacyChanged,
+    required this.ageConfirmed,
+    required this.onAgeChanged,
     required this.onNext,
   });
 
@@ -734,12 +757,23 @@ class _Step1Basic extends StatelessWidget {
   final TextEditingController mobileController;
   final TextEditingController emailController;
   final TextEditingController passwordController;
-  final bool agreed;
-  final ValueChanged<bool?> onAgreedChanged;
+  final bool termsAccepted;
+  final ValueChanged<bool?> onTermsChanged;
+  final bool privacyAccepted;
+  final ValueChanged<bool?> onPrivacyChanged;
+  final bool ageConfirmed;
+  final ValueChanged<bool?> onAgeChanged;
   final VoidCallback onNext;
+
+  Future<void> _openUrl(String url) async {
+    final uri = Uri.parse(url);
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final canProceed = termsAccepted && privacyAccepted && ageConfirmed;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -761,6 +795,7 @@ class _Step1Basic extends StatelessWidget {
         ),
         const SizedBox(height: 18),
         TextField(
+          key: const Key('register_name_field'),
           controller: fullNameController,
           decoration: const InputDecoration(
             labelText: 'पूर्ण नाव / Full Name',
@@ -770,6 +805,7 @@ class _Step1Basic extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         TextField(
+          key: const Key('register_mobile_field'),
           controller: mobileController,
           keyboardType: TextInputType.phone,
           decoration: const InputDecoration(
@@ -780,6 +816,7 @@ class _Step1Basic extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         TextField(
+          key: const Key('register_email_field'),
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
           decoration: const InputDecoration(
@@ -790,6 +827,7 @@ class _Step1Basic extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         TextField(
+          key: const Key('register_password_field'),
           controller: passwordController,
           obscureText: true,
           decoration: const InputDecoration(
@@ -798,44 +836,144 @@ class _Step1Basic extends StatelessWidget {
             prefixIcon: Icon(Icons.lock_outline),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
+
+        // 1. Terms of Use & Community Guidelines Checkbox
         CheckboxListTile(
-          value: agreed,
-          onChanged: onAgreedChanged,
+          key: const Key('register_terms_checkbox'),
+          value: termsAccepted,
+          onChanged: onTermsChanged,
+          contentPadding: EdgeInsets.zero,
+          controlAffinity: ListTileControlAffinity.leading,
+          title: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text(
+                'मी वापराच्या अटी व समुदाय मार्गदर्शक तत्त्वांशी सहमत आहे (',
+                style: GoogleFonts.mukta(
+                  fontSize: 13,
+                  color: const Color(0xFF4B5563),
+                ),
+              ),
+              InkWell(
+                onTap: () => _openUrl(LegalUrlsConfig.termsOfUseUrl),
+                child: Text(
+                  'Terms of Use',
+                  style: GoogleFonts.mukta(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFFE84C10),
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+              Text(
+                ' )',
+                style: GoogleFonts.mukta(
+                  fontSize: 13,
+                  color: const Color(0xFF4B5563),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Extra in-app guidelines reading option
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 32),
+            child: InkWell(
+              onTap: () => context.push('/guidelines'),
+              child: Text(
+                '📖 ॲपमधील मार्गदर्शक तत्त्वे वाचा (In-App Guidelines)',
+                style: GoogleFonts.mukta(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF7A6A5D),
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 4),
+
+        // 2. Privacy Policy Checkbox
+        CheckboxListTile(
+          key: const Key('register_privacy_checkbox'),
+          value: privacyAccepted,
+          onChanged: onPrivacyChanged,
+          contentPadding: EdgeInsets.zero,
+          controlAffinity: ListTileControlAffinity.leading,
+          title: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text(
+                'मी गोपनीयता धोरण वाचले असून DPDP २०२३ अन्वये संमती देतो (',
+                style: GoogleFonts.mukta(
+                  fontSize: 13,
+                  color: const Color(0xFF4B5563),
+                ),
+              ),
+              InkWell(
+                onTap: () => _openUrl(LegalUrlsConfig.privacyPolicyUrl),
+                child: Text(
+                  'Privacy Policy',
+                  style: GoogleFonts.mukta(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFFE84C10),
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+              Text(
+                ' )',
+                style: GoogleFonts.mukta(
+                  fontSize: 13,
+                  color: const Color(0xFF4B5563),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 4),
+
+        // 3. Age Confirmation Checkbox (18+)
+        CheckboxListTile(
+          key: const Key('register_age_checkbox'),
+          value: ageConfirmed,
+          onChanged: onAgeChanged,
           contentPadding: EdgeInsets.zero,
           controlAffinity: ListTileControlAffinity.leading,
           title: Text(
-            'मी Connect Maratha च्या समुदाय मार्गदर्शक तत्त्वांशी व वापराच्या अटींशी सहमत आहे.',
+            'माझे वय १८ वर्षे किंवा त्याहून अधिक आहे (Age 18+ confirmation).',
             style: GoogleFonts.mukta(
               fontSize: 13,
               color: const Color(0xFF4B5563),
             ),
           ),
         ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: TextButton.icon(
-            onPressed: () => context.push('/guidelines'),
-            icon: const Icon(Icons.description_outlined, size: 18),
-            label: Text(
-              'मार्गदर्शक तत्त्वे व अटी वाचा',
-              style: GoogleFonts.mukta(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
+
         const SizedBox(height: 14),
+
+        // Next / Register Button — disabled until all required checkboxes are ticked
         FilledButton(
+          key: const Key('register_next_button'),
           style: FilledButton.styleFrom(
             backgroundColor: const Color(0xFFE84C10),
+            disabledBackgroundColor: const Color(0xFFE5E7EB),
+            foregroundColor: Colors.white,
+            disabledForegroundColor: const Color(0xFF9CA3AF),
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          onPressed: onNext,
+          onPressed: canProceed ? onNext : null,
           child: Text(
             'पुढे → / Next',
             style: GoogleFonts.mukta(fontSize: 15, fontWeight: FontWeight.bold),
