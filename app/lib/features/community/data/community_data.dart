@@ -263,7 +263,7 @@ class CommunityData {
       regionKey: 'mumbai',
       avatarAsset: 'assets/avatars/profile_sunset_avatar.webp',
       tier: 'Gold',
-      skills: ['कायदेशीर सल्ला', 'RERA', 'करारांचे नियमन'],
+      skills: ['कायदेशीर सल्ला', 'मालमत्ता कायदे', 'करारांचे नियमन'],
     ),
     CommunityMember(
       id: 'cm-8',

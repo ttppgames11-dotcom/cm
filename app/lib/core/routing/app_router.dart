@@ -13,13 +13,23 @@ import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
-import '../../features/business/data/builders_data.dart';
 import '../../features/business/data/manufacturers_data.dart';
+import '../../features/business/models/business_models.dart';
+import '../../features/business/screens/add_business_screen.dart';
+import '../../features/business/screens/business_detail_screen.dart';
 import '../../features/business/screens/business_directory_screen.dart';
 import '../../features/business/screens/business_hub_screen.dart';
 import '../../features/business/screens/business_sangam_screen.dart';
-import '../../features/business/screens/maratha_dairy_screen.dart';
+import '../../features/business/dairy/presentation/screens/dairy_screen.dart';
 import '../../features/business/screens/simple_directory_screen.dart';
+import '../../features/business/referrals/domain/models/referral.dart';
+import '../../features/business/referrals/presentation/screens/create_referral_screen.dart';
+import '../../features/business/referrals/presentation/screens/referral_detail_screen.dart';
+import '../../features/business/referrals/presentation/screens/referral_tracker_screen.dart';
+import '../../features/business/meetings/presentation/screens/meetings_list_screen.dart';
+import '../../features/business/meetings/presentation/screens/request_meeting_screen.dart';
+import '../../features/business/builders/presentation/screens/builders_list_screen.dart';
+import '../../features/business/builders/presentation/screens/builder_detail_screen.dart';
 import '../../features/about/screens/about_organisation_screen.dart';
 import '../../features/about/screens/community_guidelines_screen.dart';
 import '../../features/culture/screens/agri_koli_screen.dart';
@@ -49,6 +59,7 @@ import '../../features/history/screens/swarajya_admin_screen.dart';
 import '../../features/history/screens/warriors_screen.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/community/screens/community_screen.dart';
+import '../../features/community/screens/samaj_sadasya_screen.dart';
 import '../../features/profile/screens/about_app_screen.dart';
 import '../../features/profile/screens/help_support_screen.dart';
 import '../../features/profile/screens/my_events_screen.dart';
@@ -120,7 +131,15 @@ GoRouter buildAppRouterWithAuth({
       GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
       GoRoute(
         path: '/community',
+        builder: (context, state) => const SamajSadasyaScreen(),
+      ),
+      GoRoute(
+        path: '/community/feed',
         builder: (context, state) => const CommunityScreen(),
+      ),
+      GoRoute(
+        path: '/members',
+        builder: (context, state) => const SamajSadasyaScreen(),
       ),
       GoRoute(
         path: '/business',
@@ -128,18 +147,11 @@ GoRouter buildAppRouterWithAuth({
       ),
       GoRoute(
         path: '/business/directory',
-        builder:
-            (context, state) =>
-                ApiConfig.demoMode
-                    ? const BusinessDirectoryScreen()
-                    : const NothingListedScreen(
-                      title: 'व्यवसाय निर्देशिका',
-                      icon: Icons.storefront_rounded,
-                      message:
-                          'समाजबांधवांचे व्यवसाय येथे दिसतील. तुमचा व्यवसाय '
-                          'जोडण्यासाठी आम्हाला लिहा.',
-                      contactSubject: 'व्यवसाय नोंदणी / Business listing',
-                    ),
+        builder: (context, state) => const BusinessDirectoryScreen(),
+      ),
+      GoRoute(
+        path: '/business/hub',
+        builder: (context, state) => const BusinessHubScreen(),
       ),
       GoRoute(
         path: '/business/sangam',
@@ -158,33 +170,43 @@ GoRouter buildAppRouterWithAuth({
       ),
       GoRoute(
         path: '/business/dairy',
-        builder:
-            (context, state) =>
-                ApiConfig.demoMode
-                    ? const MarathaDairyScreen()
-                    : const NothingListedScreen(
-                      title: 'दूध व संकलन केंद्र',
-                      icon: Icons.water_drop_rounded,
-                      message:
-                          'समाजातील दुग्धव्यवसाय व संकलन केंद्रे येथे दिसतील. '
-                          'तुमचे केंद्र जोडण्यासाठी आम्हाला लिहा.',
-                      contactSubject: 'दुग्धव्यवसाय नोंदणी / Dairy listing',
-                    ),
+        builder: (context, state) => const DairyScreen(),
       ),
       GoRoute(
         path: '/business/builders',
         builder:
             (context, state) =>
                 ApiConfig.demoMode
-                    ? SimpleDirectoryScreen(config: buildersDirectoryConfig)
+                    ? const BuildersListScreen()
                     : const NothingListedScreen(
-                      title: 'बिल्डर्स व डेव्हलपर्स',
+                      title: 'मराठा बिल्डर्स व डेव्हलपर्स',
                       icon: Icons.apartment_rounded,
                       message:
-                          'समाजातील बांधकाम व्यावसायिक येथे दिसतील. तुमची संस्था '
-                          'जोडण्यासाठी आम्हाला लिहा.',
-                      contactSubject: 'बिल्डर नोंदणी / Builder listing',
+                          'समाजातील अधिकृत बांधकाम व्यावसायिक व प्रकल्प येथे दिसतील. '
+                          'तुमचा प्रकल्प नोंदवण्यासाठी आम्हाला लिहा.',
+                      contactSubject: 'बिल्डर प्रकल्प नोंदणी / Builder listing',
                     ),
+      ),
+      GoRoute(
+        path: '/business/builders/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return ApiConfig.demoMode
+              ? BuilderDetailScreen(builderId: id)
+              : const NothingListedScreen(
+                title: 'मराठा बिल्डर्स व डेव्हलपर्स',
+                icon: Icons.apartment_rounded,
+                message:
+                    'समाजातील अधिकृत बांधकाम व्यावसायिक व प्रकल्प येथे दिसतील.',
+                contactSubject: 'बिल्डर प्रकल्प नोंदणी / Builder listing',
+              );
+        },
+      ),
+      GoRoute(
+        path: '/business/add',
+        builder: (context, state) => AddBusinessScreen(
+          initialBusiness: state.extra as Business?,
+        ),
       ),
       GoRoute(
         path: '/business/manufacturers',
@@ -202,6 +224,40 @@ GoRouter buildAppRouterWithAuth({
                           'जोडण्यासाठी आम्हाला लिहा.',
                       contactSubject: 'उत्पादक नोंदणी / Manufacturer listing',
                     ),
+      ),
+      GoRoute(
+        path: '/business/referrals',
+        builder: (context, state) => const ReferralTrackerScreen(),
+      ),
+      GoRoute(
+        path: '/business/referrals/new',
+        builder: (context, state) => const CreateReferralScreen(),
+      ),
+      GoRoute(
+        path: '/business/referrals/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          final referral = state.extra as Referral?;
+          return ReferralDetailScreen(
+            referralId: id,
+            initialReferral: referral,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/business/meetings',
+        builder: (context, state) => const MeetingsListScreen(),
+      ),
+      GoRoute(
+        path: '/business/meetings/new',
+        builder: (context, state) => const RequestMeetingScreen(),
+      ),
+      GoRoute(
+        path: '/business/:id',
+        builder: (context, state) => BusinessDetailScreen(
+          businessId: state.pathParameters['id']!,
+          initialBusiness: state.extra as Business?,
+        ),
       ),
       GoRoute(
         path: '/profile',
@@ -403,6 +459,12 @@ GoRouter buildAppRouterWithAuth({
       // Terms & guidelines must be readable before registering and after.
       if (location == '/guidelines') return null;
 
+      // Builders directory and details are public:
+      if (location.startsWith('/business/builders')) return null;
+
+      // Dairy directory and tabs are public:
+      if (location.startsWith('/business/dairy')) return null;
+
       // Public auth pages are always accessible when unauthenticated.
       if (_publicPaths.contains(location)) {
         // Already logged in → bounce to home, unless a member who has just
@@ -414,11 +476,15 @@ GoRouter buildAppRouterWithAuth({
         return null;
       }
 
-      // Protected pages: /home, /profile, /heritage, /fort/*, /warrior/*
+      // Protected pages: /home, /profile, /heritage, /fort/*, /warrior/*, /business/referrals/*
       if (status == AuthStatus.unauthenticated || status == AuthStatus.error) {
-        // A shared-post link opened while signed out: log in first, then
-        // continue to that post.
-        if (location.startsWith('/post/')) rememberDeepLink(location);
+        // A shared-post or referral link opened while signed out: log in first, then
+        // continue to that route.
+        if (location.startsWith('/post/') ||
+            location.startsWith('/business/referrals') ||
+            location.startsWith('/business/meetings')) {
+          rememberDeepLink(state.uri.toString());
+        }
         return '/login';
       }
 
