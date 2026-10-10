@@ -35,8 +35,14 @@ Future<void> _fillStep0AndProceed(WidgetTester tester) async {
   await tester.enterText(find.byType(TextField).at(1), '9876543210');
   await tester.enterText(find.byType(TextField).at(2), 'aditya@example.com');
   await tester.enterText(find.byType(TextField).at(3), 'swarajya123');
-  await tester.tap(find.byType(CheckboxListTile));
+  await tester.ensureVisible(find.byKey(const Key('register_terms_checkbox')));
+  await tester.tap(find.byKey(const Key('register_terms_checkbox')));
+  await tester.ensureVisible(find.byKey(const Key('register_privacy_checkbox')));
+  await tester.tap(find.byKey(const Key('register_privacy_checkbox')));
+  await tester.ensureVisible(find.byKey(const Key('register_age_checkbox')));
+  await tester.tap(find.byKey(const Key('register_age_checkbox')));
   await tester.pumpAndSettle();
+  await tester.ensureVisible(find.text('पुढे → / Next'));
   await tester.tap(find.text('पुढे → / Next'));
   await tester.pumpAndSettle();
 }

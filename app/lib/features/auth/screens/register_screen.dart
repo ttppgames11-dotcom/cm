@@ -900,7 +900,7 @@ class _Step1Basic extends StatelessWidget {
 
         const SizedBox(height: 4),
 
-        // 2. Privacy Policy Checkbox
+        // 2. Privacy Policy & DPDP Personal Data Processing Consent Checkbox
         CheckboxListTile(
           key: const Key('register_privacy_checkbox'),
           value: privacyAccepted,
@@ -911,7 +911,7 @@ class _Step1Basic extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text(
-                'मी गोपनीयता धोरण वाचले असून DPDP २०२३ अन्वये संमती देतो (',
+                'मी गोपनीयता धोरण वाचले असून DPDP कायदा २०२३ अन्वये माझा वैयक्तिक डेटा प्रक्रिया करण्यास माझी संमती आहे (',
                 style: GoogleFonts.mukta(
                   fontSize: 13,
                   color: const Color(0xFF4B5563),
