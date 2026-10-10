@@ -450,6 +450,13 @@ GoRouter buildAppRouterWithAuth({
         },
       ),
       GoRoute(
+        path: '/post',
+        builder: (context, state) {
+          final id = state.uri.queryParameters['id'] ?? '';
+          return PostDetailScreen(postId: id);
+        },
+      ),
+      GoRoute(
         path: '/post/:id',
         builder:
             (context, state) =>

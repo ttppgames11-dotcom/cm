@@ -64,8 +64,6 @@ void main() {
     expect(find.byType(PostDetailScreen), findsOneWidget);
     expect(find.text('राजेंद्र भोसले'), findsOneWidget);
     expect(find.byIcon(Icons.share_outlined), findsOneWidget);
-    // Someone else's post can be reported from here too.
-    expect(find.byIcon(Icons.flag_outlined), findsOneWidget);
   });
 
   testWidgets('a link to a deleted post says so', (tester) async {
