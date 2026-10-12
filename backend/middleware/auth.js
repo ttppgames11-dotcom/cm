@@ -27,4 +27,20 @@ export function generateToken(user) {
   );
 }
 
-export default { authenticateToken, generateToken };
+export function optionalToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return next();
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (!err && user) {
+      req.user = user;
+    }
+    next();
+  });
+}
+
+export default { authenticateToken, optionalToken, generateToken };

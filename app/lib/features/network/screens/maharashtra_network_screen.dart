@@ -196,21 +196,8 @@ class _MaharashtraNetworkScreenState extends State<MaharashtraNetworkScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(
+      bottomNavigationBar: const CustomBottomNavBar(
         currentIndex: -1,
-        onTap: (index) {
-          if (index == 0) {
-            context.go('/home');
-          } else if (index == 1) {
-            context.push('/community');
-          } else if (index == 2) {
-            context.push('/business');
-          } else if (index == 3) {
-            context.push('/search');
-          } else if (index == 4) {
-            context.push('/profile');
-          }
-        },
       ),
     );
   }

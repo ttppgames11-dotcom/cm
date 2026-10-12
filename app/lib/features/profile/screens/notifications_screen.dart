@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../widgets/profile_subpage_header.dart';
+import '../../../widgets/home/custom_bottom_nav_bar.dart';
 
 /// "सूचना" — the member's notification inbox. The server does not send
 /// notifications yet, so this shows an honest empty state instead of sample
@@ -70,6 +71,7 @@ class NotificationsScreen extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 4),
     );
   }
 }

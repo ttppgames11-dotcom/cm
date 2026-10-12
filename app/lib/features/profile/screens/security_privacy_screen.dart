@@ -8,6 +8,7 @@ import '../../../core/auth/auth_scope.dart';
 import '../../../core/config/api_config.dart';
 import '../../../core/profile/profile_photo.dart';
 import '../widgets/profile_subpage_header.dart';
+import '../../../widgets/home/custom_bottom_nav_bar.dart';
 
 /// "सुरक्षा आणि गोपनीयता" — privacy policy, support and permanent account
 /// deletion. Only actions that really work are shown here; there are no
@@ -116,6 +117,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 4),
     );
   }
 

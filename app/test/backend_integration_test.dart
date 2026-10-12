@@ -6,6 +6,8 @@
 // Fails when the API is not reachable. Creates and deletes its own throw-away
 // members; never point it at production.
 @Tags(['integration'])
+library;
+
 import 'dart:io';
 
 import 'package:app/core/config/api_config.dart';

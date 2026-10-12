@@ -81,10 +81,6 @@ void main() {
       // 5. Verify Registration Callout Box
       expect(find.text('नवीन सदस्य आहात?'), findsOneWidget);
       expect(find.text('नोंदणी करा'), findsOneWidget);
-
-      // 6. Verify Guest Preview button
-      expect(find.text('पाहुणे म्हणून पाहा'), findsOneWidget);
-      expect(find.text('Guest Preview — नोंदणीशिवाय'), findsOneWidget);
     },
   );
 

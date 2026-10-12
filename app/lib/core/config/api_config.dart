@@ -24,9 +24,8 @@ class ApiConfig {
 
   /// Offline demo build for showing the app to people before the backend is
   /// live: login and the community feed use on-device sample data and no
-  /// request reaches any server. NEVER upload a demo build to Google Play.
-  ///   flutter build apk --release --dart-define=DEMO_MODE=true
-  static const bool demoMode = bool.fromEnvironment('DEMO_MODE');
+  /// request reaches any server. Release builds can NEVER enable demo mode.
+  static const bool demoMode = !kReleaseMode && bool.fromEnvironment('DEMO_MODE');
 
   /// Web OAuth client ID used to obtain a Google ID token the backend can verify.
   static const String googleWebClientId = String.fromEnvironment(

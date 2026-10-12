@@ -9,7 +9,7 @@ import '../widgets/home/hero_banner.dart';
 import '../widgets/home/home_header.dart';
 import '../widgets/home/home_models.dart';
 import '../widgets/home/member_id_card.dart';
-import '../widgets/home/quick_actions_grid.dart';
+import '../widgets/home/quick_actions_nav_bar.dart';
 import '../widgets/home/war_cry_banner.dart';
 import '../widgets/home/empire_stats_strip.dart';
 import '../widgets/home/ashtapradhan_section.dart';
@@ -52,17 +52,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final _directoryKey = GlobalKey();
 
-  void _scrollToDirectory() {
-    final target = _directoryKey.currentContext;
-    if (target != null) {
-      Scrollable.ensureVisible(
-        target,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOutCubic,
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final homeStateAsync = ref.watch(homeProvider);
@@ -76,31 +65,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         widget.heroData ??
         homeState?.heroBanner ??
         HeroBannerData.defaultBanner;
-    final rawActions =
-        widget.quickActions ??
-        homeState?.quickActions ??
-        QuickActionData.defaultActions;
-    final actions = [
-      for (final action in rawActions)
-        action.onTap != null
-            ? action
-            : QuickActionData(
-              id: action.id,
-              titleMr: action.titleMr,
-              subtitleEn: action.subtitleEn,
-              icon: action.icon,
-              overlayColor: action.overlayColor,
-              backgroundImage: action.backgroundImage,
-              onTap: switch (action.id) {
-                'heritage' => () => context.push('/history'),
-                'community' => () => context.push('/community'),
-                'business' => () => context.push('/business'),
-                'network' => () => context.push('/network'),
-                'services' => () => context.push('/business'),
-                _ => null,
-              },
-            ),
-    ];
     final today = todayInHistory(DateTime.now());
     final heritage =
         widget.heritageList ??
@@ -160,8 +124,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
               const SizedBox(height: 12),
 
-              // 6. QuickActionsGrid (इतिहास, व्यवसाय, समुदाय, सेवा व कार्य, महाराष्ट्र नेटवर्क)
-              QuickActionsGrid(actions: actions, onSeeAll: _scrollToDirectory),
+              // 6. Quick Actions Nav Bar (Community, Business, Education, Employment, Networking, History, Culture)
+              const QuickActionsNavBar(),
 
               const SizedBox(height: 14),
 
@@ -271,21 +235,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
 
       // 8. CustomBottomNavBar + 9. Footer Tagline
-      bottomNavigationBar: CustomBottomNavBar(
+      bottomNavigationBar: const CustomBottomNavBar(
         currentIndex: 0, // "होम"
-        onTap: (index) {
-          // Home stays the highlighted tab: the other tabs open as their own
-          // screens on top of it.
-          if (index == 1) {
-            context.push('/community');
-          } else if (index == 2) {
-            context.push('/business');
-          } else if (index == 3) {
-            context.push('/search');
-          } else if (index == 4) {
-            context.push('/profile');
-          }
-        },
       ),
     );
   }

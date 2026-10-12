@@ -8,15 +8,23 @@ import '../storage/secure_token_store.dart';
 /// A failed API call, already translated into a message that is safe to show
 /// to the user (never a stack trace or raw server text for 5xx errors).
 class ApiException implements Exception {
-  ApiException(this.message, {this.statusCode, this.code});
+  ApiException(this.message, {this.statusCode, this.code, this.data});
 
   final String message;
   final int? statusCode;
 
   /// Machine-readable reason from the backend, e.g. `USER_NOT_FOUND`,
-  /// `INVALID_PASSWORD`, `ALREADY_REGISTERED`, or a client-side reason
+  /// `INVALID_PASSWORD`, `ALREADY_REGISTERED`, `VALIDATION_ERROR`, or a client-side reason
   /// (`NO_INTERNET`, `TIMEOUT`, `SESSION_EXPIRED`, `BAD_RESPONSE`).
   final String? code;
+
+  /// Raw response JSON from the server, if any.
+  final Map<String, dynamic>? data;
+
+  /// Server-side validation errors (e.g. from 400/422 VALIDATION_ERROR responses).
+  Map<String, dynamic>? get validationErrors =>
+      (data?['validationErrors'] as Map<String, dynamic>?) ??
+      (data?['errors'] as Map<String, dynamic>?);
 
   bool get isNetworkError => code == 'NO_INTERNET' || code == 'TIMEOUT';
 
@@ -149,6 +157,14 @@ class ApiClient {
     }
   }
 
+  static String _normalizePath(String path) {
+    if (path.startsWith('/api') || path.startsWith('/media')) {
+      return path;
+    }
+    final clean = path.startsWith('/') ? path : '/$path';
+    return '/api$clean';
+  }
+
   Future<_Raw> _once(
     String method,
     String path, {
@@ -159,9 +175,10 @@ class ApiClient {
     final timeout = bytes == null ? _requestTimeout : _uploadTimeout;
     final client = HttpClient()..connectionTimeout = _connectTimeout;
     try {
+      final normalizedPath = _normalizePath(path);
       final req = await client.openUrl(
         method,
-        Uri.parse('${ApiConfig.baseUrl}$path'),
+        Uri.parse('${ApiConfig.baseUrl}$normalizedPath'),
       );
       req.headers.set(HttpHeaders.acceptHeader, 'application/json');
       if (token != null) {
@@ -216,6 +233,7 @@ class ApiClient {
               : 'काहीतरी चुकले (${r.status}). कृपया पुन्हा प्रयत्न करा.'),
       statusCode: r.status,
       code: code,
+      data: r.json,
     );
   }
 

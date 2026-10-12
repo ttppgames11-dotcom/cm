@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../widgets/profile_subpage_header.dart';
+import '../../../widgets/home/custom_bottom_nav_bar.dart';
 
 class _EventEntry {
   const _EventEntry(this.title, this.date, this.venue, this.status, this.icon);
@@ -246,6 +247,7 @@ class _MyEventsScreenState extends State<MyEventsScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 4),
     );
   }
 

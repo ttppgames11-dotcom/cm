@@ -23,6 +23,7 @@ import adminRoutes from './routes/admin.routes.js';
 import cultureRoutes from './routes/culture.routes.js';
 import locationsRoutes from './routes/locations.routes.js';
 import mediaRoutes from './routes/media.routes.js';
+import directoriesRoutes from './routes/directories.routes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -48,6 +49,15 @@ app.use('/api/jobs', jobsRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/culture', cultureRoutes);
+app.use('/api/builders', directoriesRoutes);
+app.use('/api/dairy', directoriesRoutes);
+
+// Fallback route aliases for local dev & legacy paths
+app.use('/sangam', sangamRoutes);
+app.use('/businesses', businessesRoutes);
+app.use('/members', membersRoutes);
+app.use('/builders', directoriesRoutes);
+app.use('/dairy', directoriesRoutes);
 
 // Helper functions for reading and writing to DB
 function readData() {
@@ -209,20 +219,7 @@ app.post('/api/women/help', (req, res) => {
   res.status(201).json({ success: true, message: '🌸 मदत व मार्गदर्शनाची विनंती नोंदवली गेली!', help: item });
 });
 
-// --- BUILDERS & REAL ESTATE ---
-app.get('/api/builders', (req, res) => {
-  const db = readData();
-  res.json(db.builders || []);
-});
-
-app.post('/api/builders', (req, res) => {
-  const db = readData();
-  db.builders = db.builders || [];
-  const item = { id: `BLD-${Date.now().toString().slice(-4)}`, ...req.body };
-  db.builders.unshift(item);
-  writeData(db);
-  res.status(201).json({ success: true, message: '🏗️ बिल्डर प्रोजेक्ट चौकशी यशस्वीरीत्या नोंदवली गेली!', project: item });
-});
+// --- BUILDERS & REAL ESTATE: Handled by directoriesRoutes (routes/directories.routes.js) ---
 
 // --- MARATHA BANK & LOANS ---
 app.get('/api/bank/loans', (req, res) => {

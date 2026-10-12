@@ -116,10 +116,10 @@ void main() {
       expect(find.text('Community'), findsOneWidget);
       expect(find.text('व्यवसाय'), findsOneWidget);
       expect(find.text('Business'), findsOneWidget);
-      expect(find.text('शिक्षण'), findsOneWidget);
-      expect(find.text('Education'), findsOneWidget);
-      expect(find.text('रोजगार'), findsOneWidget);
-      expect(find.text('Employment'), findsOneWidget);
+      expect(find.text('डिजिटल ग्रंथालय'), findsOneWidget);
+      expect(find.text('Library'), findsOneWidget);
+      expect(find.text('गड-किल्ले'), findsOneWidget);
+      expect(find.text('Forts'), findsOneWidget);
       expect(find.text('नेटवर्किंग'), findsOneWidget);
       expect(find.text('Networking'), findsOneWidget);
       expect(find.text('इतिहास'), findsOneWidget);
@@ -130,8 +130,8 @@ void main() {
       expect(find.text('More'), findsOneWidget);
       expect(find.byIcon(Icons.groups_rounded), findsOneWidget);
       expect(find.byIcon(Icons.storefront_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.school_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.business_center_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.menu_book_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.fort_rounded), findsOneWidget);
       expect(find.byIcon(Icons.public_rounded), findsOneWidget);
       expect(find.byIcon(Icons.castle_rounded), findsOneWidget);
       expect(find.byIcon(Icons.flag_rounded), findsOneWidget);

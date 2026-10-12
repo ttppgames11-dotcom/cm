@@ -1,0 +1,737 @@
+/* ==========================================================================
+   CONNECT MARATHA — MAHARASHTRA DATA PLATFORM STYLESHEET (platform.css)
+   Rich, royal Marathi aesthetic: Saffron, Maroon, Gold, Warm Slate, Emerald
+   ========================================================================== */
+
+:root {
+  --cm-primary-orange: #C2410C;
+  --cm-primary-saffron: #EA580C;
+  --cm-royal-maroon: #7C1D05;
+  --cm-gold: #D97706;
+  --cm-gold-light: #FEF3C7;
+  --cm-gold-border: #FDE68A;
+  --cm-dark-bg: #0F172A;
+  --cm-card-bg: #FFFFFF;
+  --cm-card-border: #E2E8F0;
+  --cm-text-main: #1E293B;
+  --cm-text-muted: #64748B;
+  --cm-emerald: #059669;
+  --cm-emerald-bg: #ECFDF5;
+  --cm-emerald-border: #A7F3D0;
+}
+
+.platform-container {
+  font-family: 'Baloo 2', 'Yantramanav', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #F8FAFC;
+  color: var(--cm-text-main);
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+/* 1. Hero Section */
+.platform-hero {
+  background: linear-gradient(135deg, #7C1D05 0%, #C2410C 50%, #B45309 100%);
+  color: #FFFFFF;
+  padding: 50px 24px 40px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(124, 29, 5, 0.25);
+}
+
+.platform-hero-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.platform-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  color: #FED7AA;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(254, 215, 170, 0.3);
+  margin-bottom: 16px;
+}
+
+.platform-hero-title {
+  font-size: 2.8rem;
+  font-weight: 900;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.platform-hero-title span {
+  color: #FDE68A;
+}
+
+.platform-hero-subtitle {
+  font-size: 1.15rem;
+  color: #FFEDD5;
+  max-width: 840px;
+  line-height: 1.6;
+  margin: 0 0 28px 0;
+}
+
+/* Omnibox Search */
+.platform-search-wrapper {
+  position: relative;
+  max-width: 800px;
+  margin-bottom: 32px;
+}
+
+.platform-search-box {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.platform-search-icon {
+  position: absolute;
+  left: 18px;
+  font-size: 1.3rem;
+  pointer-events: none;
+}
+
+.platform-search-input {
+  width: 100%;
+  padding: 16px 50px 16px 52px;
+  font-size: 1.05rem;
+  border-radius: 16px;
+  border: 2px solid #FED7AA;
+  background-color: #FFFFFF;
+  color: #1E293B;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  outline: none;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.platform-search-input:focus {
+  border-color: #F59E0B;
+  box-shadow: 0 14px 35px rgba(245, 158, 11, 0.35);
+}
+
+.platform-search-clear {
+  position: absolute;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #94A3B8;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.platform-search-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  border: 1px solid #E2E8F0;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.platform-search-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border: none;
+  background: none;
+  text-align: left;
+  border-bottom: 1px solid #F1F5F9;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.platform-search-item:hover {
+  background-color: #FEF3C7;
+}
+
+.platform-search-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #FFEDD5;
+  color: #9A3412;
+  margin-right: 8px;
+}
+
+.platform-search-item-title {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #1E293B;
+}
+
+.platform-search-item-sub {
+  font-size: 0.8rem;
+  color: #64748B;
+  margin-top: 2px;
+}
+
+/* Metrics Counter Grid */
+.platform-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.platform-stat-card {
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 14px 10px;
+  text-align: center;
+}
+
+.platform-stat-number {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #FDE68A;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.platform-stat-label {
+  font-size: 0.8rem;
+  color: #FFEDD5;
+  font-weight: 600;
+}
+
+/* 2. Accuracy Standards Bar */
+.platform-standards-bar {
+  background: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 14px 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.platform-standards-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.platform-tier-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.platform-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.tier-badge-A { background: #ECFDF5; color: #065F46; border-color: #A7F3D0; }
+.tier-badge-B { background: #EFF6FF; color: #1E40AF; border-color: #BFDBFE; }
+.tier-badge-C { background: #EEF2FF; color: #3730A3; border-color: #C7D2FE; }
+.tier-badge-D { background: #FFFBEB; color: #92400E; border-color: #FDE68A; }
+.tier-badge-E { background: #FFF1F2; color: #9F1239; border-color: #FECDD3; }
+
+/* 3. Sticky World Navigator Tabs */
+.platform-tabs-nav {
+  position: sticky;
+  top: 60px;
+  z-index: 30;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  border-bottom: 1.5px solid #E2E8F0;
+  padding: 8px 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.platform-tabs-scroll {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.platform-tab-btn {
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  background: #F1F5F9;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.platform-tab-btn:hover {
+  background: #E2E8F0;
+  color: #1E293B;
+}
+
+.platform-tab-btn.active {
+  background: linear-gradient(135deg, #C2410C 0%, #EA580C 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.3);
+}
+
+/* 4. Main Body Content Area */
+.platform-content {
+  max-width: 1240px;
+  margin: 32px auto;
+  padding: 0 24px;
+}
+
+.platform-section-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1.5px solid #E2E8F0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.platform-section-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #1E293B;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.platform-section-desc {
+  font-size: 0.95rem;
+  color: #64748B;
+  margin: 4px 0 0 0;
+}
+
+/* Atlas World Cards */
+.platform-division-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.platform-division-btn {
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  border: 1px solid #CBD5E1;
+  background: #FFFFFF;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.platform-division-btn.active {
+  background: #C2410C;
+  color: #FFFFFF;
+  border-color: #C2410C;
+  box-shadow: 0 2px 8px rgba(194, 65, 12, 0.25);
+}
+
+.platform-division-container {
+  background: #FFF7ED;
+  border: 1.5px solid #FED7AA;
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 30px;
+}
+
+.platform-districts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.platform-district-card {
+  background: #FFFFFF;
+  border: 1.5px solid #FED7AA;
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.platform-district-card:hover {
+  border-color: #F59E0B;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.15);
+}
+
+.platform-district-card.active {
+  border-color: #C2410C;
+  box-shadow: 0 0 0 2px #C2410C;
+}
+
+.platform-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.platform-card-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1E293B;
+  margin: 0;
+}
+
+.platform-card-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #FFEDD5;
+  color: #C2410C;
+}
+
+.platform-card-body {
+  font-size: 0.85rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+/* Taluka Deep Explorer */
+.platform-taluka-panel {
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+
+.platform-taluka-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.platform-taluka-card {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 18px;
+  transition: border-color 0.2s ease;
+}
+
+.platform-taluka-card:hover {
+  border-color: #CBD5E1;
+}
+
+/* Fort Registry Spotlight Card */
+.platform-fort-spotlight {
+  background: #FFFFFF;
+  border: 2px solid #FED7AA;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 8px 30px rgba(194, 65, 12, 0.08);
+  margin-bottom: 30px;
+}
+
+.platform-fort-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #7C1D05;
+  margin: 8px 0 4px;
+}
+
+.platform-attributes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  padding: 20px 0;
+  border-top: 1px solid #E2E8F0;
+  border-bottom: 1px solid #E2E8F0;
+  margin: 20px 0;
+}
+
+.platform-attr-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #94A3B8;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.platform-attr-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.platform-fort-btn-primary {
+  background: #C2410C;
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.25);
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.platform-fort-btn-primary:hover {
+  background: #9A3412;
+}
+
+.platform-fort-btn-secondary {
+  background: #F1F5F9;
+  color: #1E293B;
+  border: 1px solid #CBD5E1;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.platform-fort-btn-secondary:hover {
+  background: #E2E8F0;
+}
+
+/* Battle Cards */
+.platform-battle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+  gap: 24px;
+}
+
+.platform-battle-card {
+  background: #FFFFFF;
+  border: 1.5px solid #FED7AA;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+
+.platform-battle-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #7C1D05;
+  margin: 8px 0;
+}
+
+.platform-commanders-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  background: #FFF7ED;
+  padding: 14px;
+  border-radius: 12px;
+  margin: 14px 0;
+  font-size: 0.85rem;
+}
+
+/* Modi Script Visualizer */
+.platform-modi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.platform-modi-card {
+  background: #FFFFFF;
+  border: 1.5px solid #FED7AA;
+  border-radius: 12px;
+  padding: 14px 8px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.platform-modi-card:hover {
+  border-color: #EA580C;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(234, 88, 12, 0.15);
+}
+
+.platform-modi-glyph {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #C2410C;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+/* Dialect Comparison Table */
+.platform-table-card {
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 18px;
+  padding: 24px;
+  overflow-x: auto;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+}
+
+.platform-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.platform-table th {
+  background: #F8FAFC;
+  padding: 12px 16px;
+  font-weight: 800;
+  color: #475569;
+  border-bottom: 2px solid #E2E8F0;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.platform-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #F1F5F9;
+  color: #1E293B;
+}
+
+.platform-table tr:hover td {
+  background: #FEF3C7;
+}
+
+/* Audio Player */
+.platform-audio-player {
+  background: linear-gradient(135deg, #7C1D05 0%, #C2410C 50%, #B45309 100%);
+  color: #FFFFFF;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(124, 29, 5, 0.25);
+  margin-bottom: 30px;
+}
+
+.platform-audio-playbtn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  color: #C2410C;
+  border: none;
+  font-size: 1.6rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+  transition: transform 0.15s ease;
+}
+
+.platform-audio-playbtn:hover {
+  transform: scale(1.08);
+}
+
+.platform-audio-progress {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.25);
+  height: 8px;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin: 16px 0 6px;
+}
+
+.platform-audio-progress-bar {
+  background: #FDE68A;
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+/* REST API Terminal Explorer */
+.platform-api-terminal {
+  background: #0F172A;
+  color: #F8FAFC;
+  border-radius: 18px;
+  padding: 24px;
+  font-family: 'Courier New', Courier, monospace;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.platform-api-item {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.platform-api-badge-get {
+  background: #1E3A8A;
+  color: #93C5FD;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.75rem;
+}
+
+.platform-api-badge-post {
+  background: #064E3B;
+  color: #6EE7B7;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.75rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .platform-hero-title { font-size: 2rem; }
+  .platform-battle-grid { grid-template-columns: 1fr; }
+  .platform-tabs-nav { top: 50px; }
+  .platform-fort-spotlight { padding: 18px; }
+}

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../providers/profile_provider.dart';
 import '../widgets/profile_subpage_header.dart';
+import '../../../widgets/home/custom_bottom_nav_bar.dart';
 
 /// "वैयक्तिक माहिती" — the member edits their own name, mobile number and
 /// city. "Save" sends the change to the server; the profile, Home card and
@@ -188,6 +189,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 4),
     );
   }
 

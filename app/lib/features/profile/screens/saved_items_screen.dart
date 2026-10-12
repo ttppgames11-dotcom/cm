@@ -6,6 +6,7 @@ import '../../../core/favorites/favorites_store.dart';
 import '../../../data/forts_data.dart';
 import '../../../data/warriors_data.dart';
 import '../widgets/profile_subpage_header.dart';
+import '../../../widgets/home/custom_bottom_nav_bar.dart';
 
 /// "जतन केलेले" — the forts and warriors the member marked with the heart
 /// button ([FavoritesStore]). Only what was really saved is listed; with
@@ -69,6 +70,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 4),
     );
   }
 

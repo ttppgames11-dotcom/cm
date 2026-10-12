@@ -67,28 +67,28 @@ class QuickActionsNavBar extends StatefulWidget {
       route: '/business',
     ),
 
-    // 3. Education (शिक्षण)
+    // 3. Digital Library (डिजिटल ग्रंथालय)
     CircularQuickAction(
       id: 'education',
-      titleMr: 'शिक्षण',
-      subtitleEn: 'Education',
+      titleMr: 'डिजिटल ग्रंथालय',
+      subtitleEn: 'Library',
       category: 'education',
-      icon: Icons.school_rounded,
+      icon: Icons.menu_book_rounded,
       circleColor: Color(0xFFEDE7F6), // Soft lavender purple
       iconColor: Color(0xFF512DA8),   // Royal purple graduation cap
       route: '/history/granthalaya',
     ),
 
-    // 4. Employment (रोजगार)
+    // 4. Forts (गड-किल्ले)
     CircularQuickAction(
-      id: 'employment',
-      titleMr: 'रोजगार',
-      subtitleEn: 'Employment',
-      category: 'business',
-      icon: Icons.business_center_rounded,
-      circleColor: Color(0xFFFFE0B2), // Warm pale orange
-      iconColor: Color(0xFF8D2B0B),   // Deep red-brown briefcase
-      route: '/business',
+      id: 'forts',
+      titleMr: 'गड-किल्ले',
+      subtitleEn: 'Forts',
+      category: 'heritage',
+      icon: Icons.fort_rounded,
+      circleColor: Color(0xFFFFF3E0), // Warm pale orange
+      iconColor: Color(0xFF795548),   // Earth brown
+      route: '/heritage',
     ),
 
     // 5. Networking (नेटवर्किंग)
@@ -246,10 +246,10 @@ class QuickActionsNavBar extends StatefulWidget {
     ),
     CircularQuickAction(
       id: 'education',
-      titleMr: 'शिक्षण',
-      subtitleEn: 'Education',
+      titleMr: 'डिजिटल ग्रंथालय',
+      subtitleEn: 'Digital Library',
       category: 'education',
-      icon: Icons.school_rounded,
+      icon: Icons.menu_book_rounded,
       circleColor: Color(0xFFEDE7F6),
       iconColor: Color(0xFF512DA8),
       route: '/history/granthalaya',

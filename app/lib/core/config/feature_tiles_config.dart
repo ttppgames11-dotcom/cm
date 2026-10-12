@@ -31,7 +31,6 @@ class FeatureTilesConfig {
     'all',              // 'सर्व पहा' (More sheet launcher)
     'members',          // /members (Samaj Sadasya Screen - Real members)
     'feed',             // /community/feed (Community Feed - Real posts)
-    'employment',       // /business (Employment/Business)
     'community',        // /community (Samaj Sadasya Screen - Real members)
     'business_hub',     // /business (Business Hub)
     'education',        // /history/granthalaya (Granthalaya catalogue)
@@ -41,7 +40,6 @@ class FeatureTilesConfig {
     'culture',          // /culture (Culture Hub)
     'forts',            // /heritage (Forts list)
     'battles',          // /history (Shivkal battles)
-    'events',           // /profile/events
     'directory',        // /business/directory
   };
 

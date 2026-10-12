@@ -316,6 +316,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
     }
   }
 
+  // ignore: unused_element
   Future<void> _confirmBlock(String memberId, String name) async {
     final ok = await showDialog<bool>(
       context: context,
@@ -727,19 +728,8 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(
+      bottomNavigationBar: const CustomBottomNavBar(
         currentIndex: 1, // "समुदाय" tab active
-        onTap: (index) {
-          if (index == 0) {
-            context.go('/home');
-          } else if (index == 2) {
-            context.push('/business');
-          } else if (index == 3) {
-            context.push('/search');
-          } else if (index == 4) {
-            context.push('/profile');
-          }
-        },
       ),
     );
   }

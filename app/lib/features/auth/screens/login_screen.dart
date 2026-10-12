@@ -20,7 +20,6 @@ import '../models/user_role.dart';
 /// - Inline validation errors under fields (not just SnackBar)
 /// - Removed "Remember Me" (mobile sessions always persist)
 /// - textInputAction.next / done between fields
-/// - Demo login styled as a proper Guest Preview CTA
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -317,7 +316,6 @@ class _LoginScreenState extends State<LoginScreen>
                     _buildOrDivider(),
                     const SizedBox(height: 16),
                   ],
-                  _buildGuestPreviewButton(),
                   const SizedBox(height: 24),
                 ],
               ),
@@ -1583,76 +1581,6 @@ class _LoginScreenState extends State<LoginScreen>
           ],
         ),
         duration: const Duration(seconds: 4),
-      ),
-    );
-  }
-
-  // ─── Guest Preview Button ────────────────────────────────────────────────────
-
-  Widget _buildGuestPreviewButton() {
-    return GestureDetector(
-      // Navigate to the dedicated Guest Preview screen — no login required.
-      onTap: _isSubmitting ? null : () => context.push('/guest'),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFE5DCD0)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(7),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFBEFE6),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.preview_rounded,
-                color: Color(0xFFE84C10),
-                size: 18,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'पाहुणे म्हणून पाहा',
-                  style: GoogleFonts.mukta(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF2B1B12),
-                  ),
-                ),
-                Text(
-                  'Guest Preview — नोंदणीशिवाय',
-                  style: GoogleFonts.mukta(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF9CA3AF),
-                  ),
-                ),
-              ],
-            ),
-            const Spacer(),
-            const Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 14,
-              color: Color(0xFFE84C10),
-            ),
-          ],
-        ),
       ),
     );
   }

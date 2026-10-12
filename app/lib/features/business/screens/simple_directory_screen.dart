@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/home_theme.dart';
 import '../models/directory_models.dart';
 import '../widgets/business_page_header.dart';
+import '../../../widgets/home/custom_bottom_nav_bar.dart';
 
 /// Reusable browsable-directory screen: banner, search, category chips and
 /// a card list. Driven entirely by a [DirectoryConfig], so one widget can
@@ -212,6 +213,7 @@ class _SimpleDirectoryScreenState extends State<SimpleDirectoryScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 2),
     );
   }
 }

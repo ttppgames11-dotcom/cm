@@ -35,6 +35,16 @@ export async function getDatabase() {
     db.run(schemaSql);
   }
 
+  // Ensure meetings table has location and updated_at columns
+  const meetingColumns = ['location', 'updated_at'];
+  for (const col of meetingColumns) {
+    try {
+      db.run('ALTER TABLE meetings ADD COLUMN ' + col + ' TEXT;');
+    } catch (_) {
+      // Column already exists
+    }
+  }
+
   // Ensure members table has hierarchical location columns
   const locationColumns = ['country_id', 'state_id', 'district_id', 'taluka_id', 'village_id', 'taluka', 'village'];
   for (const col of locationColumns) {

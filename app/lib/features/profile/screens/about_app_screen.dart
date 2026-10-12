@@ -7,6 +7,7 @@ import '../../../core/config/api_config.dart';
 import '../../../core/config/app_version.dart';
 import '../../../core/diagnostics/error_reporter.dart';
 import '../widgets/profile_subpage_header.dart';
+import '../../../widgets/home/custom_bottom_nav_bar.dart';
 
 /// "अ‍ॅप विषयी" — app version, mission statement, and legal links.
 class AboutAppScreen extends StatelessWidget {
@@ -176,6 +177,7 @@ class AboutAppScreen extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 4),
     );
   }
 

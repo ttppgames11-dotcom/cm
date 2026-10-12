@@ -270,25 +270,8 @@ class _HeritageListScreenState extends State<HeritageListScreen> {
       ),
 
       // 6. CustomBottomNavBar (none of the 5 tabs marked active)
-      bottomNavigationBar: CustomBottomNavBar(
+      bottomNavigationBar: const CustomBottomNavBar(
         currentIndex: -1,
-        onTap: (index) {
-          if (index == 0) {
-            if (Navigator.of(context).canPop()) {
-              Navigator.of(context).pop();
-            } else {
-              context.go('/home');
-            }
-          } else if (index == 1) {
-            context.push('/community');
-          } else if (index == 2) {
-            context.push('/business');
-          } else if (index == 3) {
-            context.push('/search');
-          } else if (index == 4) {
-            context.push('/profile');
-          }
-        },
       ),
     );
   }

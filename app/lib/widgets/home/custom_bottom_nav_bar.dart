@@ -1,16 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/theme/home_theme.dart';
 
 /// Section 8: CustomBottomNavBar & Section 9: Footer Tagline (Light Theme)
 /// - 5 navigation tabs: Home, Community, Business, Discover (compass icon), Profile
 /// - Outlined icons in muted gray-brown #7A6A5D for inactive items
-/// - Active item (Home) in solid orange #E8631A (filled icon + orange text + small orange indicator)
+/// - Active item in solid orange #E8631A (filled icon + orange text + small orange indicator)
 /// - Footer tagline "|| जय शिवराय ||" below the bottom nav bar
+/// - Built-in unified navigation across top-level tabs via GoRouter ([defaultOnTap])
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int>? onTap;
 
   const CustomBottomNavBar({super.key, this.currentIndex = 0, this.onTap});
+
+  void _handleTap(BuildContext context, int index) {
+    if (onTap != null) {
+      onTap!(index);
+    } else {
+      defaultOnTap(context, index);
+    }
+  }
+
+  /// Default clean navigation across the 5 primary tabs.
+  /// Uses [context.go] to switch directly to the top-level route without stacking.
+  static void defaultOnTap(BuildContext context, int index) {
+    try {
+      final router = GoRouter.maybeOf(context);
+      if (router == null) return;
+
+      final currentRoute = GoRouterState.of(context).matchedLocation;
+
+      switch (index) {
+        case 0:
+          if (currentRoute != '/home') {
+            context.go('/home');
+          }
+          break;
+        case 1:
+          if (currentRoute != '/community') {
+            context.go('/community');
+          }
+          break;
+        case 2:
+          if (currentRoute != '/business') {
+            context.go('/business');
+          }
+          break;
+        case 3:
+          if (currentRoute != '/search') {
+            context.go('/search');
+          }
+          break;
+        case 4:
+          if (currentRoute != '/profile') {
+            context.go('/profile');
+          }
+          break;
+      }
+    } catch (_) {
+      // Fallback for widget testing environments without GoRouter
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +94,7 @@ class CustomBottomNavBar extends StatelessWidget {
                 children: [
                   // 1. Home (Active by default)
                   _buildNavItem(
+                    context: context,
                     index: 0,
                     outlineIcon: Icons.home_outlined,
                     filledIcon: Icons.home_rounded,
@@ -52,6 +104,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
                   // 2. Community
                   _buildNavItem(
+                    context: context,
                     index: 1,
                     outlineIcon: Icons.groups_outlined,
                     filledIcon: Icons.groups_rounded,
@@ -61,6 +114,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
                   // 3. Business
                   _buildNavItem(
+                    context: context,
                     index: 2,
                     outlineIcon: Icons.storefront_outlined,
                     filledIcon: Icons.storefront_rounded,
@@ -70,6 +124,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
                   // 4. Discover (Compass Icon)
                   _buildNavItem(
+                    context: context,
                     index: 3,
                     outlineIcon: Icons.explore_outlined,
                     filledIcon: Icons.explore_rounded,
@@ -79,6 +134,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
                   // 5. Profile
                   _buildNavItem(
+                    context: context,
                     index: 4,
                     outlineIcon: Icons.person_outline_rounded,
                     filledIcon: Icons.person_rounded,
@@ -110,6 +166,7 @@ class CustomBottomNavBar extends StatelessWidget {
   }
 
   Widget _buildNavItem({
+    required BuildContext context,
     required int index,
     required IconData outlineIcon,
     required IconData filledIcon,
@@ -124,7 +181,7 @@ class CustomBottomNavBar extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () => onTap?.call(index),
+        onTap: () => _handleTap(context, index),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,

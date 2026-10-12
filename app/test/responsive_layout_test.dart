@@ -38,7 +38,6 @@ void main() {
     '/login',
     '/register',
     '/forgot-password',
-    '/guest',
   ];
   const memberRoutes = [
     '/home',

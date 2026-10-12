@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/config/api_config.dart';
+import '../../widgets/home/custom_bottom_nav_bar.dart';
 
 /// Honest empty state for a section that has no real entries yet.
 ///
@@ -17,6 +18,7 @@ class NothingListedScreen extends StatelessWidget {
     required this.icon,
     required this.message,
     this.contactSubject,
+    this.bottomNavIndex,
   });
 
   /// Section name shown in the app bar, e.g. "व्यवसाय निर्देशिका".
@@ -28,6 +30,9 @@ class NothingListedScreen extends StatelessWidget {
 
   /// When set, a "write to us" button opens an email with this subject.
   final String? contactSubject;
+
+  /// When set, renders the bottom navigation bar with this tab active.
+  final int? bottomNavIndex;
 
   Future<void> _write(BuildContext context) async {
     final uri = Uri(
@@ -130,6 +135,10 @@ class NothingListedScreen extends StatelessWidget {
           ),
         ),
       ),
+      bottomNavigationBar:
+          bottomNavIndex != null
+              ? CustomBottomNavBar(currentIndex: bottomNavIndex!)
+              : null,
     );
   }
 }

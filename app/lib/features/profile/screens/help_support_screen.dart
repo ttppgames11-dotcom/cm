@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/api_config.dart';
 import '../widgets/profile_subpage_header.dart';
+import '../../../widgets/home/custom_bottom_nav_bar.dart';
 
 class _Faq {
   const _Faq(this.question, this.answer);
@@ -119,6 +120,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 4),
     );
   }
 

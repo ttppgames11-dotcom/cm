@@ -13,6 +13,7 @@ import '../features/auth/models/user_role.dart';
 import '../features/auth/providers/auth_provider.dart'
     show authControllerProvider;
 import '../features/profile/providers/profile_provider.dart';
+import '../widgets/home/custom_bottom_nav_bar.dart';
 
 /// Pixel-accurate Maratha-themed Profile Screen matching the Connect Maratha design mockup.
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -220,6 +221,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: const CustomBottomNavBar(
+        currentIndex: 4, // "प्रोफाईल" active tab
       ),
     );
   }

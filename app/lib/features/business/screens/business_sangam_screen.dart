@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/home_theme.dart';
 import '../models/sangam_models.dart';
 import '../widgets/business_page_header.dart';
+import '../../../widgets/home/custom_bottom_nav_bar.dart';
 
 /// "चेंबर्स व लीडरशिप" — local business-networking chapters ("मंडळ"), where
 /// members meet weekly to refer business to each other. Ported from the
@@ -70,6 +71,7 @@ class BusinessSangamScreen extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 2),
     );
   }
 }

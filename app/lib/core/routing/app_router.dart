@@ -43,7 +43,6 @@ import '../../features/culture/screens/heritage_places_screen.dart';
 import '../../features/culture/screens/shivkal_festivals_screen.dart';
 import '../../features/culture/screens/symbols_screen.dart';
 import '../../features/culture/screens/temples_screen.dart';
-import '../../features/guest/guest_preview_screen.dart';
 import '../../features/history/screens/balidan_maas_screen.dart';
 import '../../features/history/screens/battles_screen.dart';
 import '../../features/history/screens/dnyankosh_screen.dart';
@@ -76,7 +75,7 @@ import '../../shared/widgets/nothing_listed_screen.dart';
 import '../../screens/search_screen.dart';
 import '../../screens/warrior_detail_screen.dart';
 
-const _publicPaths = {'/login', '/register', '/forgot-password', '/guest'};
+const _publicPaths = {'/login', '/register', '/forgot-password'};
 
 /// Riverpod provider for the application [GoRouter], built from the same
 /// app-wide [AuthController] instance the auth screens use via `AuthScope`
@@ -123,10 +122,6 @@ GoRouter buildAppRouterWithAuth({
       GoRoute(
         path: '/forgot-password',
         builder: (context, state) => const ForgotPasswordScreen(),
-      ),
-      GoRoute(
-        path: '/guest',
-        builder: (context, state) => const GuestPreviewScreen(),
       ),
       GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
       GoRoute(
@@ -183,19 +178,7 @@ GoRouter buildAppRouterWithAuth({
       ),
       GoRoute(
         path: '/business/dairy',
-        builder:
-            (context, state) =>
-                ApiConfig.demoMode
-                    ? const DairyScreen()
-                    : const NothingListedScreen(
-                      title: 'दूध व संकलन केंद्र',
-                      icon: Icons.water_drop_rounded,
-                      message:
-                          'समाजातील दुग्धव्यवसाय व संकलन केंद्रे येथे दिसतील. '
-                          'तुमचे केंद्र जोडण्यासाठी आम्हाला लिहा.',
-                      contactSubject: 'दुग्धव्यवसाय नोंदणी / Dairy listing',
-                      bottomNavIndex: 2,
-                    ),
+        builder: (context, state) => const DairyScreen(),
       ),
       GoRoute(
         path: '/business/builders',

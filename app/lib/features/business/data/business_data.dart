@@ -1,12 +1,10 @@
 import '../models/business_models.dart';
 
-/// Local data source for the Business Directory feature.
-/// Can be replaced with an ApiDataSource (REST / Spring Boot) later.
+/// Local & seeded data source for the Business Directory feature.
 class BusinessData {
   BusinessData._();
 
-  /// Maharashtra districts, matching the website's `MAHARASHTRA_DISTRICTS`
-  /// filter list — 'सर्व' (all) always comes first.
+  /// Maharashtra districts matching website and mobile directory filters
   static const districts = [
     'सर्व',
     'पुणे',
@@ -32,8 +30,127 @@ class BusinessData {
   ];
 
   static final List<Business> businesses = [
+    // 1. Reference Image Item 1: शिवसाई फॅमिली रेस्टॉरंट
     Business(
-      id: 'biz-1',
+      id: 'biz-ref-1',
+      name: 'शिवसाई फॅमिली रेस्टॉरंट',
+      ownerName: 'प्रो. अमोल पाटील',
+      category: BusinessCategory.restaurant,
+      city: 'पुणे',
+      district: 'पुणे',
+      phone: '9876500011',
+      whatsapp: '9876500011',
+      photoEmoji: '🍛',
+      rating: 4.5,
+      reviewsCount: 128,
+      tags: const ['हॉटेल्स', 'फॅमिली रेस्टॉरंट', 'व्हेज / नॉन-व्हेज'],
+      services: const ['मराठी थाळी', 'फॅमिली डायनिंग', 'कॅटरिंग', 'होम डिलिव्हरी'],
+      description: 'शुद्ध, स्वादिष्ट आणि घरगुती जेवणाची अनुभूती. मराठी खाद्यपदार्थांची विशेषता.',
+      hours: 'सकाळी ११:०० ते रात्री ११:००',
+      offer: 'समाज सदस्यांना १०% विशेष सवलत',
+      reviews: const [
+        BusinessReview(
+          memberName: 'संदीप कदम',
+          rating: 5,
+          text: 'अस्सल घरगुती चव आणि उत्कृष्ट सर्व्हिस!',
+          date: '२ दिवसांपूर्वी',
+        ),
+        BusinessReview(
+          memberName: 'राजेंद्र भोसले',
+          rating: 4,
+          text: 'फॅमिली सोबत जेवणासाठी उत्तम जागा.',
+          date: '१ आठवड्यापूर्वी',
+        ),
+      ],
+    ),
+
+    // 2. Reference Image Item 2: TechMaratha Solutions
+    Business(
+      id: 'biz-ref-2',
+      name: 'TechMaratha Solutions',
+      ownerName: 'प्रो. रोहित जगताप',
+      category: BusinessCategory.it,
+      city: 'नाशिक',
+      district: 'नाशिक',
+      phone: '9876500022',
+      whatsapp: '9876500022',
+      photoEmoji: '💻',
+      rating: 4.8,
+      reviewsCount: 76,
+      tags: const ['IT सेवा', 'वेब डेव्हलपमेंट', 'मोबाईल अ‍ॅप', 'IT कन्सल्टिंग'],
+      services: const ['वेबसाईट निर्मिती', 'मोबाईल अ‍ॅप्स', 'सॉफ्टवेअर सोल्युशन्स', 'क्लाउड होस्टिंग'],
+      description: 'वेबसाईट, मोबाईल अ‍ॅप आणि सॉफ्टवेअर सोल्युशन्ससाठी विश्वासार्ह भागीदार.',
+      hours: 'सोम-शनि, सकाळी १०:०० ते संध्याकाळी ६:००',
+      offer: 'पहिल्या प्रोजेक्टवर मोफत IT कन्सल्टेशन',
+      reviews: const [
+        BusinessReview(
+          memberName: 'अक्षय मोरे',
+          rating: 5,
+          text: 'आमच्या कंपनीचे अ‍ॅप वेळेत आणि दर्जेदार पूर्ण केले.',
+          date: '३ दिवसांपूर्वी',
+        ),
+      ],
+    ),
+
+    // 3. Reference Image Item 3: पाटील कन्स्ट्रक्शन
+    Business(
+      id: 'biz-ref-3',
+      name: 'पाटील कन्स्ट्रक्शन',
+      ownerName: 'प्रो. संदीप पाटील',
+      category: BusinessCategory.realEstate,
+      city: 'कोल्हापूर',
+      district: 'कोल्हापूर',
+      phone: '9876500033',
+      whatsapp: '9876500033',
+      photoEmoji: '🏗️',
+      rating: 4.6,
+      reviewsCount: 52,
+      tags: const ['रिअल इस्टेट', 'बांधकाम', 'इंटीरियर', 'आर्किटेक्चर'],
+      services: const ['निवासी बांधकाम', 'कमर्शियल प्रोजेक्ट', 'इंटीरियर डिझाईन', 'प्लॉटिंग'],
+      description: 'घर, बंगलो, कमर्शियल प्रोजेक्टसाठी दर्जेदार बांधकाम सेवा.',
+      hours: 'सकाळी ९:०० ते संध्याकाळी ७:००',
+      offer: 'मोफत 3D डिझाईन व एस्टिमेट सल्ला',
+      reviews: const [
+        BusinessReview(
+          memberName: 'सचिन गायकवाड',
+          rating: 5,
+          text: 'अतिशय पारदर्शक व्यवहार आणि दर्जेदार काम.',
+          date: '५ दिवसांपूर्वी',
+        ),
+      ],
+    ),
+
+    // 4. Reference Image Item 4: शिवम मल्टीस्पेशालिटी क्लिनिक
+    Business(
+      id: 'biz-ref-4',
+      name: 'शिवम मल्टीस्पेशालिटी क्लिनिक',
+      ownerName: 'डॉ. मयूर देशमुख',
+      category: BusinessCategory.healthcare,
+      city: 'पुणे',
+      district: 'पुणे',
+      phone: '9876500044',
+      whatsapp: '9876500044',
+      photoEmoji: '🩺',
+      rating: 4.7,
+      reviewsCount: 94,
+      tags: const ['आरोग्य सेवा', 'जनरल फिजिशियन', 'हार्ट स्पेशालिस्ट', 'लॅब सुविधा'],
+      services: const ['आरोग्य तपासणी', 'ईसीजी', 'रक्त चाचण्या', 'ज्येष्ठ नागरिक सल्ला'],
+      description: 'सर्वसामान्य तपासणी ते विशेष उपचार – आपल्या आरोग्यासाठी सदैव तत्पर.',
+      hours: 'सकाळी ९:०० ते रात्री ९:००',
+      offer: 'समाज बांधवांना मोफत बीपी व शुगर तपासणी',
+      reviews: const [
+        BusinessReview(
+          memberName: 'सुनील निंबाळकर',
+          rating: 5,
+          text: 'डॉक्टरांचे मार्गदर्शन आणि स्टाफ खूप नम्र आहे.',
+          date: 'काल',
+        ),
+      ],
+    ),
+
+    // Additional verified businesses
+    Business(
+      id: 'biz-5',
       name: 'स्वराज्य ॲग्रो प्रॉडक्ट्स',
       ownerName: 'संजय पाटील',
       category: BusinessCategory.manufacturing,
@@ -43,19 +160,15 @@ class BusinessData {
       whatsapp: '9876543210',
       photoEmoji: '🌾',
       rating: 4.8,
+      reviewsCount: 65,
+      tags: const ['उत्पादन', 'सेंद्रिय गूळ', 'शेतमाल'],
       services: const ['सेंद्रिय गूळ', 'शेतमाल प्रक्रिया', 'घाऊक विक्री'],
-      hours: 'सकाळी ९ ते संध्याकाळी ७',
+      description: 'उत्कृष्ट दर्जाचा सेंद्रिय गूळ व पारंपरिक शेतमाल थेट शेतातून.',
+      hours: 'सकाळी ९:०० ते संध्याकाळी ७:००',
       offer: 'समाज बांधवांना १०% सवलत',
-      reviews: const [
-        BusinessReview(
-          memberName: 'राजेंद्र भोसले',
-          rating: 5,
-          text: 'उत्कृष्ट गुणवत्ता आणि वेळेत डिलिव्हरी!',
-        ),
-      ],
     ),
     Business(
-      id: 'biz-2',
+      id: 'biz-6',
       name: 'सह्याद्री टूर्स & ट्रेक्स',
       ownerName: 'तानाजी सावंत',
       category: BusinessCategory.travel,
@@ -65,87 +178,29 @@ class BusinessData {
       whatsapp: '9822004455',
       photoEmoji: '🚌',
       rating: 4.9,
+      reviewsCount: 110,
+      tags: const ['प्रवास व पर्यटन', 'किल्ले ट्रेक', 'कॅम्पिंग'],
       services: const ['किल्ले ट्रेक', 'ग्रुप टूर', 'कॅम्पिंग'],
-      hours: 'सर्व दिवस उपलब्ध',
+      description: 'सह्याद्रीच्या ३५०+ किल्ल्यांवर सुरक्षित आणि ऐतिहासिक ट्रेकिंग मोहीम.',
+      hours: '२४x७ बुकिंग उपलब्ध',
       offer: 'मोफत गड-किल्ले माहिती पुस्तिका',
     ),
     Business(
-      id: 'biz-3',
+      id: 'biz-7',
       name: 'शिवमुद्रा वस्त्रदालन',
       ownerName: 'प्रिया देशमुख',
-      category: BusinessCategory.services,
+      category: BusinessCategory.shopping,
       city: 'कोल्हापूर',
       district: 'कोल्हापूर',
       phone: '9766112233',
-      photoEmoji: '🧵',
+      whatsapp: '9766112233',
+      photoEmoji: '🛍️',
       rating: 4.6,
-      services: const ['पारंपरिक पोशाख', 'साडी', 'ब्लाउज शिलाई'],
-      hours: 'सकाळी १० ते रात्री ८',
-    ),
-    Business(
-      id: 'biz-4',
-      name: 'राजगड इंजिनिअरिंग वर्क्स',
-      ownerName: 'विक्रम मोरे',
-      category: BusinessCategory.manufacturing,
-      city: 'पुणे',
-      district: 'पुणे',
-      phone: '9812345678',
-      whatsapp: '9812345678',
-      photoEmoji: '⚙️',
-      rating: 4.7,
-      services: const ['CNC मशिनिंग', 'फॅब्रिकेशन', 'स्पेअर पार्ट्स'],
-      hours: 'सोम-शनि, सकाळी ९ ते संध्याकाळी ६',
-      offer: 'समाज सदस्यांना मोफत सल्ला',
-    ),
-    Business(
-      id: 'biz-5',
-      name: 'मराठा डिजिटल सोल्युशन्स',
-      ownerName: 'ओंकार जाधव',
-      category: BusinessCategory.it,
-      city: 'मुंबई',
-      district: 'मुंबई',
-      phone: '9930011223',
-      whatsapp: '9930011223',
-      photoEmoji: '💻',
-      rating: 4.9,
-      services: const ['वेब डिझाईन', 'मोबाइल अ‍ॅप', 'SEO'],
-      hours: 'सोम-शुक्र, सकाळी १० ते संध्याकाळी ७',
-      offer: 'नवीन व्यवसायांना २०% सवलत',
-      reviews: const [
-        BusinessReview(
-          memberName: 'सुरेश निंबाळकर',
-          rating: 5,
-          text: 'आमच्या दुकानाचे अ‍ॅप उत्तम बनवले, वेळेत काम झाले.',
-        ),
-      ],
-    ),
-    Business(
-      id: 'biz-6',
-      name: 'अस्सल कोल्हापुरी मिसळ',
-      ownerName: 'सुनीता चव्हाण',
-      category: BusinessCategory.restaurant,
-      city: 'कोल्हापूर',
-      district: 'कोल्हापूर',
-      phone: '9765432198',
-      photoEmoji: '🍛',
-      rating: 4.8,
-      services: const ['मिसळ', 'कोल्हापुरी थाळी', 'पार्सल सेवा'],
-      hours: 'सकाळी ८ ते रात्री १०',
-      offer: 'सोमवारी सर्व थाळीवर ५% सवलत',
-    ),
-    Business(
-      id: 'biz-7',
-      name: 'भोसले बांधकाम व रिअल इस्टेट',
-      ownerName: 'गणेश भोसले',
-      category: BusinessCategory.realEstate,
-      city: 'नाशिक',
-      district: 'नाशिक',
-      phone: '9856781234',
-      whatsapp: '9856781234',
-      photoEmoji: '🏗️',
-      rating: 4.5,
-      services: const ['निवासी प्रकल्प', 'प्लॉट विक्री', 'बांधकाम सल्ला'],
-      hours: 'सर्व दिवस, सकाळी ९ ते संध्याकाळी ७',
+      reviewsCount: 48,
+      tags: const ['खरेदी', 'पारंपरिक पोशाख', 'पैठणी'],
+      services: const ['पारंपरिक पोशाख', 'पैठणी साडी', 'डिझायनर कपडे'],
+      description: 'अस्सल कोल्हापुरी साड्या आणि शिवकालीन पारंपरिक पोशाखांचे दालन.',
+      hours: 'सकाळी १०:०० ते रात्री ८:३०',
     ),
   ];
 }

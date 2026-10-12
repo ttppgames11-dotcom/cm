@@ -126,10 +126,12 @@ CREATE TABLE IF NOT EXISTS meetings (
   recipient_name TEXT,
   date TEXT,
   time TEXT,
+  location TEXT,
   topic TEXT,
   status TEXT DEFAULT 'Confirmed',
   notes TEXT,
-  created_at TEXT
+  created_at TEXT,
+  updated_at TEXT
 );
 
 CREATE TABLE IF NOT EXISTS groups (
