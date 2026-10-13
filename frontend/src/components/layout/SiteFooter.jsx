@@ -147,6 +147,7 @@ export default function SiteFooter() {
               <li style={{ marginBottom: '8px' }}><Link to="/governance" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🎯 व्हिजन, मिशन व धोरण</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/privacy" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🔒 गोपनीयता धोरण (Privacy Policy)</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/terms" style={{ color: '#FFFFFF', textDecoration: 'none' }}>📜 नियम व अटी (Terms & Conditions)</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/delete-account" style={{ color: '#FCA5A5', fontWeight: 700, textDecoration: 'none' }}>🗑️ खाते व डेटा हटवा (Delete Account)</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/profile" style={{ color: '#FFFFFF', textDecoration: 'none' }}>⚙️ खाते व वैयक्तिक सेटिंग्ज</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/community" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🔔 एकात्मिक सूचना केंद्र</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/goals" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🏆 प्रमुख उद्दिष्टे व संकल्प</Link></li>

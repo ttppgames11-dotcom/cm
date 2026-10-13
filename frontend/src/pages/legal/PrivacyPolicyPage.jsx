@@ -50,8 +50,8 @@ export default function PrivacyPolicyPage() {
             >
               📜 नियम व अटी (Terms & Conditions)
             </Link>
-            <a
-              href="#deletion"
+            <Link
+              to="/delete-account"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -67,7 +67,7 @@ export default function PrivacyPolicyPage() {
               }}
             >
               🗑️ खाते हटवा (Delete Account)
-            </a>
+            </Link>
           </div>
         </div>
 

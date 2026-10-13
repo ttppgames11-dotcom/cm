@@ -63,6 +63,7 @@ import ConnectMarathaAIAgentPage from './pages/ai/ConnectMarathaAIAgentPage';
 import GenericArticlePage from './pages/common/GenericArticlePage';
 import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
 import TermsAndConditionsPage from './pages/legal/TermsAndConditionsPage';
+import DeleteAccountPage from './pages/legal/DeleteAccountPage';
 
 // Specialized Converted Feature Pages
 import SearchPage from './pages/common/SearchPage';
@@ -613,6 +614,10 @@ export default function App() {
             <Route path="/terms-and-conditions" element={<TermsAndConditionsPage />} />
             <Route path="/terms-of-service" element={<TermsAndConditionsPage />} />
             <Route path="/legal/terms" element={<TermsAndConditionsPage />} />
+            <Route path="/delete-account" element={<DeleteAccountPage />} />
+            <Route path="/account-deletion" element={<DeleteAccountPage />} />
+            <Route path="/delete-data" element={<DeleteAccountPage />} />
+            <Route path="/legal/delete-account" element={<DeleteAccountPage />} />
 
             {/* Generic Article Route & Fallback */}
             <Route path="/article" element={<GenericArticlePage />} />
