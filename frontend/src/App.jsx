@@ -38,7 +38,6 @@ import ReferralPortalPage from './pages/member/ReferralPortalPage';
 // Culture, Governance, Admin
 import PhotoGalleryPage from './pages/culture/PhotoGalleryPage';
 import GovernancePage from './pages/governance/GovernancePage';
-import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
 import AdminERPPage from './pages/admin/AdminERPPage';
 import CEODashboardPage from './pages/admin/CEODashboardPage';
 import CEOPage from './pages/admin/CEOPage';
