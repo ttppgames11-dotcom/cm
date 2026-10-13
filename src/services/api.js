@@ -85,7 +85,13 @@ export const api = {
     resetPassword: (email, resetToken, newPassword) => request('/auth/reset-password', {
       method: 'POST',
       body: JSON.stringify({ identifier: email, email, resetToken, newPassword })
-    })
+    }),
+    deleteAccount: (payload) => request('/auth/delete-account', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    }),
+    verifyReferral: (code) => request(`/auth/referrals/verify/${encodeURIComponent(code)}`),
+    getMyReferrals: () => request('/auth/referrals/my-referrals')
   },
 
   // 2. Members & Profiles

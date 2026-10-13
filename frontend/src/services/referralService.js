@@ -39,12 +39,15 @@ export const DISTRICT_TALUKAS = {
 // Helper to get formatted referral code for any user
 export function formatMemberReferralCode(user) {
   if (!user) return 'CM-OFFICIAL-2026';
+  if (user.referral_id) return user.referral_id;
+  if (user.reference_id) return user.reference_id;
+  if (user.referralCode) return user.referralCode;
   const id = String(user.id || user.memberId || user.phone || '9822011924');
-  if (id.startsWith('CM-')) return id;
+  if (id.startsWith('REF-') || id.startsWith('CM-')) return id;
   if (/^\d{10}$/.test(id)) {
-    return `CM-MH-${id.slice(-4)}`;
+    return `REF-MH-${id.slice(-4)}`;
   }
-  return `CM-${id.toUpperCase()}`;
+  return `REF-${id.toUpperCase()}`;
 }
 
 // Generate realistic initial seed dataset if empty
@@ -307,8 +310,8 @@ export function verifyReferrerId(code) {
     console.warn('Error checking stored users for referral', e);
   }
 
-  // 3. Fallback: If code matches standard format CM-XXXX-XXXX or valid phone
-  if (clean.startsWith('CM-') && clean.length >= 6) {
+  // 3. Fallback: If code matches standard format REF-XXXX or CM-XXXX or valid phone
+  if ((clean.startsWith('REF-') || clean.startsWith('CM-')) && clean.length >= 6) {
     return {
       isValid: true,
       memberId: clean,
@@ -322,7 +325,7 @@ export function verifyReferrerId(code) {
   if (/^\d{10}$/.test(clean)) {
     return {
       isValid: true,
-      memberId: `CM-MH-${clean.slice(-4)}`,
+      memberId: `REF-MH-${clean.slice(-4)}`,
       name: 'सत्यापित सभासद (मोबाईल आयडी)',
       district: 'महाराष्ट्र',
       chapter: 'महाराष्ट्र चॅप्टर',
@@ -334,6 +337,34 @@ export function verifyReferrerId(code) {
     isValid: false,
     message: 'हा सभासद आयडी आढळला नाही. कृपया अचूक आयडी टाका किंवा अधिकृत कोड वापरा.'
   };
+}
+
+// Asynchronous backend verification with local fallback
+export async function verifyReferrerIdApi(code) {
+  if (!code || typeof code !== 'string' || !code.trim()) {
+    return { isValid: false, message: 'कृपया वैध रेफरल आयडी प्रविष्ट करा.' };
+  }
+
+  try {
+    const res = await fetch(`/api/auth/referrals/verify/${encodeURIComponent(code.trim())}`);
+    const data = await res.json();
+    if (res.ok && data.success && data.data?.isValid) {
+      const ref = data.data.referrer;
+      return {
+        isValid: true,
+        memberId: ref.referral_id || ref.reference_id || ref.id,
+        name: ref.name,
+        district: ref.district,
+        city: ref.city || '',
+        chapter: `${ref.district || 'महाराष्ट्र'} चॅप्टर`,
+        role: 'member'
+      };
+    }
+  } catch (err) {
+    // If backend offline or network error, fallback to local verification
+  }
+
+  return verifyReferrerId(code);
 }
 
 // Record a new referral when someone registers

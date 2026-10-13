@@ -89,7 +89,9 @@ export const api = {
     deleteAccount: (payload) => request('/auth/delete-account', {
       method: 'POST',
       body: JSON.stringify(payload)
-    })
+    }),
+    verifyReferral: (code) => request(`/auth/referrals/verify/${encodeURIComponent(code)}`),
+    getMyReferrals: () => request('/auth/referrals/my-referrals')
   },
 
   // 2. Members & Profiles

@@ -382,6 +382,58 @@ export default function LoginPage() {
               </button>
             </div>
 
+            {(() => {
+              const refParam = new URLSearchParams(window.location.search).get('ref') || 
+                new URLSearchParams(window.location.search).get('referral') || 
+                (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('cm_referral_code') : '') || 
+                (typeof localStorage !== 'undefined' ? localStorage.getItem('cm_referral_code') : '');
+              if (!refParam) return null;
+              return (
+                <div style={{
+                  padding: '12px 16px',
+                  borderRadius: '12px',
+                  fontSize: '0.86rem',
+                  marginBottom: '18px',
+                  background: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)',
+                  color: '#9A3412',
+                  border: '1.5px solid #EA580C',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '10px',
+                  flexWrap: 'wrap',
+                  boxShadow: '0 4px 12px rgba(234, 88, 12, 0.12)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '1.3rem' }}>🤝</span>
+                    <div>
+                      <div style={{ fontWeight: 800, color: '#C2410C' }}>रेफरल आमंत्रण प्राप्त झाले!</div>
+                      <div style={{ fontSize: '0.80rem', color: '#7C2D12' }}>
+                        कोड: <strong>{refParam}</strong> द्वारे आपण कनेक्ट होत आहात.
+                      </div>
+                    </div>
+                  </div>
+                  <Link
+                    to={`/register?ref=${encodeURIComponent(refParam)}`}
+                    style={{
+                      background: '#EA580C',
+                      color: '#FFFFFF',
+                      padding: '7px 14px',
+                      borderRadius: '8px',
+                      fontWeight: 800,
+                      textDecoration: 'none',
+                      fontSize: '0.82rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    नवीन नोंदणी करा ➔
+                  </Link>
+                </div>
+              );
+            })()}
+
             {(new URLSearchParams(window.location.search).get('redirect') || sessionStorage.getItem('cm_login_redirect')) && (
               <div style={{
                 padding: '10px 14px',
@@ -678,9 +730,18 @@ export default function LoginPage() {
               color: '#BF360C',
               marginBottom: '12px'
             }}>
-              🚀 <strong>ऑनबोर्डिंग स्टुडिओ:</strong> सर्व ९ परस्परसंवादी स्क्रीन पाहण्यासाठी{' '}
-              <Link to="/register" style={{ color: '#C73800', fontWeight: 800, textDecoration: 'underline' }}>
-                येथे क्लिक करा →
+              🚀 <strong>ऑनबोर्डिंग स्टुडिओ:</strong> नवीन सभासद नोंदणी व सर्व परस्परसंवादी स्क्रीन पाहण्यासाठी{' '}
+              <Link 
+                to={(() => {
+                  const r = new URLSearchParams(window.location.search).get('ref') || 
+                    new URLSearchParams(window.location.search).get('referral') || 
+                    (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('cm_referral_code') : '') || 
+                    (typeof localStorage !== 'undefined' ? localStorage.getItem('cm_referral_code') : '');
+                  return r ? `/register?ref=${encodeURIComponent(r)}` : '/register';
+                })()} 
+                style={{ color: '#C73800', fontWeight: 800, textDecoration: 'underline' }}
+              >
+                येथे नोंदणी करा →
               </Link>
             </div>
 

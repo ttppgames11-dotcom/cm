@@ -2307,6 +2307,42 @@
   ],
   "members": [
     {
+      "id": "CM-96K-0048",
+      "name": "Abhay",
+      "phone": "+919322070578",
+      "email": "abhaygond269@gmail.com",
+      "password_hash": "$2a$08$1gseaWb71d0KPISnARAU1upLeKllq0T7zO9MyYE/NFQuWeeTIVhF.",
+      "district": "पुणे",
+      "taluka": "",
+      "city": "पुणे",
+      "state": "महाराष्ट्र",
+      "country": "भारत",
+      "kul": "९६ कुळी मराठा",
+      "gotra": "",
+      "profession": "व्यवसायिक / नोकरी",
+      "about": "",
+      "avatar": "👤",
+      "tier": "Gold",
+      "role": "member",
+      "legalCompliance": {
+        "termsAccepted": true,
+        "privacyAccepted": true,
+        "ageConfirmed": true,
+        "dpdpConsent": true,
+        "bloodDonorOptIn": true,
+        "acceptedAt": "2026-10-13T09:54:45.930Z",
+        "policyVersion": "2026.1"
+      },
+      "verified": true,
+      "joined": "2026-10-13",
+      "createdAt": "2026-10-13T09:54:46.240Z",
+      "last_active_at": "2026-10-13T10:20:52.243Z",
+      "referral_id": "REF-96K-0048",
+      "reference_id": "REF-96K-0048",
+      "total_referrals": 0,
+      "updatedAt": "2026-10-13T10:38:16.564Z"
+    },
+    {
       "id": "CM-96K-0037",
       "name": "विजय पाटील (User B)",
       "phone": "+919822022961",
@@ -7476,6 +7512,186 @@
   "quizSubmissions": [],
   "quizLeaderboard": [],
   "auditLogs": [
+    {
+      "id": "LOG-1791887896562-23",
+      "action": "MEMBER_REGISTER",
+      "performedBy": "CM-96K-0049",
+      "details": {
+        "name": "Test Ref User",
+        "district": "पुणे",
+        "referral_id": "REF-96K-0049",
+        "referred_by": "REF-96K-0048",
+        "policyVersion": "2026.1",
+        "dpdpConsent": true
+      },
+      "timestamp": "2026-10-13T10:38:16.562Z"
+    },
+    {
+      "id": "LOG-1791885286241-519",
+      "action": "MEMBER_REGISTER",
+      "performedBy": "CM-96K-0048",
+      "details": {
+        "name": "Abhay",
+        "district": "पुणे",
+        "policyVersion": "2026.1",
+        "dpdpConsent": true
+      },
+      "timestamp": "2026-10-13T09:54:46.241Z"
+    },
+    {
+      "id": "LOG-1791871614286-26",
+      "action": "ACCOUNT_DELETED",
+      "performedBy": "CM-96K-0048",
+      "details": {
+        "reason": "Web deletion test",
+        "requestId": "DEL-614025-686",
+        "deletedFromDb": true,
+        "deletedAt": "2026-10-13T06:06:54.286Z"
+      },
+      "timestamp": "2026-10-13T06:06:54.286Z"
+    },
+    {
+      "id": "LOG-1791871614012-961",
+      "action": "MEMBER_REGISTER",
+      "performedBy": "CM-96K-0048",
+      "details": {
+        "name": "Web User Test",
+        "district": "सातारा",
+        "policyVersion": "2026.1",
+        "dpdpConsent": true
+      },
+      "timestamp": "2026-10-13T06:06:54.012Z"
+    },
+    {
+      "id": "LOG-1791871548227-469",
+      "action": "ACCOUNT_DELETED",
+      "performedBy": "CM-96K-0048",
+      "details": {
+        "reason": "Self requested deletion",
+        "requestId": "DEL-548226-738",
+        "deletedFromDb": true,
+        "deletedAt": "2026-10-13T06:05:48.227Z"
+      },
+      "timestamp": "2026-10-13T06:05:48.227Z"
+    },
+    {
+      "id": "LOG-1791871548200-102",
+      "action": "MEMBER_REGISTER",
+      "performedBy": "CM-96K-0048",
+      "details": {
+        "name": "Flutter App User Test",
+        "district": "पुणे",
+        "policyVersion": "2026.1",
+        "dpdpConsent": true
+      },
+      "timestamp": "2026-10-13T06:05:48.200Z"
+    },
+    {
+      "id": "LOG-1791870072449-89",
+      "action": "ACCOUNT_DELETED",
+      "performedBy": "CM-96K-0048",
+      "details": {
+        "reason": "Self requested deletion",
+        "requestId": "DEL-072380-439",
+        "deletedFromDb": true,
+        "deletedAt": "2026-10-13T05:41:12.449Z"
+      },
+      "timestamp": "2026-10-13T05:41:12.449Z"
+    },
+    {
+      "id": "LOG-1791870072362-339",
+      "action": "MEMBER_REGISTER",
+      "performedBy": "CM-96K-0048",
+      "details": {
+        "name": "ID Delete Test",
+        "district": "पुणे",
+        "policyVersion": "2026.1",
+        "dpdpConsent": true
+      },
+      "timestamp": "2026-10-13T05:41:12.362Z"
+    },
+    {
+      "id": "LOG-1791870063270-894",
+      "action": "ACCOUNT_DELETED",
+      "performedBy": "CM-96K-0048",
+      "details": {
+        "reason": "Self requested deletion",
+        "requestId": "DEL-063204-515",
+        "deletedFromDb": true,
+        "deletedAt": "2026-10-13T05:41:03.270Z"
+      },
+      "timestamp": "2026-10-13T05:41:03.270Z"
+    },
+    {
+      "id": "LOG-1791870063199-220",
+      "action": "MEMBER_REGISTER",
+      "performedBy": "CM-96K-0048",
+      "details": {
+        "name": "Real Deletion Test (Re-registered)",
+        "district": "सातारा",
+        "policyVersion": "2026.1",
+        "dpdpConsent": true
+      },
+      "timestamp": "2026-10-13T05:41:03.199Z"
+    },
+    {
+      "id": "LOG-1791870063173-800",
+      "action": "ACCOUNT_DELETED",
+      "performedBy": "CM-96K-0048",
+      "details": {
+        "reason": "Testing phone deletion",
+        "requestId": "DEL-062957-155",
+        "deletedFromDb": true,
+        "deletedAt": "2026-10-13T05:41:03.173Z"
+      },
+      "timestamp": "2026-10-13T05:41:03.173Z"
+    },
+    {
+      "id": "LOG-1791870062924-694",
+      "action": "MEMBER_REGISTER",
+      "performedBy": "CM-96K-0048",
+      "details": {
+        "name": "Real Deletion Test",
+        "district": "सातारा",
+        "policyVersion": "2026.1",
+        "dpdpConsent": true
+      },
+      "timestamp": "2026-10-13T05:41:02.924Z"
+    },
+    {
+      "id": "LOG-1791869412575-481",
+      "action": "ACCOUNT_DELETION_REQUESTED",
+      "performedBy": "M9956",
+      "details": {
+        "reason": "Direct deletion from Delete Account Page",
+        "requestId": "DEL-412574-487",
+        "receivedAt": "2026-10-13T05:30:12.575Z"
+      },
+      "timestamp": "2026-10-13T05:30:12.575Z"
+    },
+    {
+      "id": "LOG-1791869216870-888",
+      "action": "ACCOUNT_DELETED",
+      "performedBy": "CM-96K-0048",
+      "details": {
+        "reason": "Google Play Store compliance deletion testing",
+        "requestId": "DEL-216869-947",
+        "deletedAt": "2026-10-13T05:26:56.870Z"
+      },
+      "timestamp": "2026-10-13T05:26:56.870Z"
+    },
+    {
+      "id": "LOG-1791869216796-51",
+      "action": "MEMBER_REGISTER",
+      "performedBy": "CM-96K-0048",
+      "details": {
+        "name": "Test Play Store User",
+        "district": "पुणे",
+        "policyVersion": "2026.1",
+        "dpdpConsent": true
+      },
+      "timestamp": "2026-10-13T05:26:56.796Z"
+    },
     {
       "id": "LOG-1791435220112-464",
       "action": "MEMBER_LOGIN",

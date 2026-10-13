@@ -235,6 +235,17 @@ const legacyRedirects = [
 ];
 
 export default function App() {
+  React.useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref') || params.get('referral');
+      if (ref && ref.trim()) {
+        sessionStorage.setItem('cm_referral_code', ref.trim());
+        localStorage.setItem('cm_referral_code', ref.trim());
+      }
+    } catch {}
+  }, []);
+
   return (
     <ToastProvider>
       <LanguageProvider>

@@ -16,8 +16,52 @@ import {
 
 const router = Router();
 
+// Helper to ensure member has unique referral_id, reference_id and total_referrals count
+export function ensureMemberReferral(m) {
+  if (!m) return m;
+  let changed = false;
+  const updates = {};
+
+  if (!m.referral_id && !m.reference_id) {
+    const cleanIdPart = String(m.id || '').replace(/^CM-96K-/i, '').replace(/^CM-/i, '');
+    updates.referral_id = `REF-96K-${cleanIdPart || Math.floor(1000 + Math.random() * 9000)}`;
+    updates.reference_id = updates.referral_id;
+    changed = true;
+  } else if (!m.referral_id && m.reference_id) {
+    updates.referral_id = m.reference_id;
+    changed = true;
+  } else if (!m.reference_id && m.referral_id) {
+    updates.reference_id = m.referral_id;
+    changed = true;
+  }
+
+  if (m.total_referrals === undefined || m.total_referrals === null) {
+    const members = db.getCollection('members') || [];
+    const myCode = (updates.referral_id || m.referral_id || '').toUpperCase();
+    const myRefId = (updates.reference_id || m.reference_id || '').toUpperCase();
+    const myId = String(m.id || '').toUpperCase();
+    const count = members.filter(other => 
+      other.id !== m.id && (
+        (other.referred_by && String(other.referred_by).toUpperCase() === myCode) ||
+        (other.referred_by && String(other.referred_by).toUpperCase() === myRefId) ||
+        (other.referred_by && String(other.referred_by).toUpperCase() === myId) ||
+        (other.referred_by_id && String(other.referred_by_id).toUpperCase() === myId) ||
+        (other.reference_id_by && String(other.reference_id_by).toUpperCase() === myRefId)
+      )
+    ).length;
+    updates.total_referrals = count;
+    changed = true;
+  }
+
+  if (changed) {
+    db.update('members', m.id, updates);
+    return { ...m, ...updates };
+  }
+  return m;
+}
+
 // POST /api/auth/register
-// Register new member (name, phone, email, district, taluka, password, kul, gotra)
+// Register new member (name, phone, email, district, taluka, password, kul, gotra, referredBy)
 router.post('/register', async (req, res) => {
   try {
     const { isValid, errors, sanitized } = validateRegister(req.body);
@@ -42,8 +86,37 @@ router.post('/register', async (req, res) => {
 
     const memberCount = members.length + 1;
     const memberId = `CM-96K-${String(memberCount).padStart(4, '0')}`;
+    const referralId = `REF-96K-${String(memberCount).padStart(4, '0')}`;
     const salt = bcrypt.genSaltSync(8);
     const passwordHash = bcrypt.hashSync(password || 'password123', salt);
+
+    // Look up referrer if referral code or reference_id was supplied (optional)
+    const rawRefCode = String(
+      req.body.referredBy || 
+      req.body.referralCode || 
+      req.body.reference_id || 
+      req.body.referral_id || 
+      sanitized.referredBy || 
+      sanitized.reference_id ||
+      ''
+    ).trim();
+
+    let referrer = null;
+    if (rawRefCode) {
+      const cleanRefUpper = rawRefCode.toUpperCase();
+      const cleanRefDigits = rawRefCode.replace(/\D/g, '');
+      referrer = members.find(m => {
+        if (m.referral_id && String(m.referral_id).toUpperCase() === cleanRefUpper) return true;
+        if (m.reference_id && String(m.reference_id).toUpperCase() === cleanRefUpper) return true;
+        if (m.id && String(m.id).toUpperCase() === cleanRefUpper) return true;
+        if (m.email && String(m.email).toLowerCase() === rawRefCode.toLowerCase()) return true;
+        if (m.phone) {
+          const mDigits = String(m.phone).replace(/\D/g, '');
+          if (cleanRefDigits && cleanRefDigits.length >= 10 && mDigits.slice(-10) === cleanRefDigits.slice(-10)) return true;
+        }
+        return false;
+      });
+    }
 
     const newMember = {
       id: memberId,
@@ -63,6 +136,13 @@ router.post('/register', async (req, res) => {
       avatar: '👤',
       tier: 'Gold',
       role: 'member',
+      // Unique Referral and Reference IDs
+      referral_id: referralId,
+      reference_id: referralId,
+      total_referrals: 0,
+      referred_by: referrer ? (referrer.referral_id || referrer.reference_id || referrer.id) : (rawRefCode || null),
+      referred_by_name: referrer ? referrer.name : null,
+      referred_by_id: referrer ? referrer.id : null,
       legalCompliance: sanitized.legalCompliance || {
         termsAccepted: true,
         privacyAccepted: true,
@@ -81,9 +161,36 @@ router.post('/register', async (req, res) => {
     db.addAuditLog('MEMBER_REGISTER', newMember.id, { 
       name, 
       district: newMember.district,
+      referral_id: newMember.referral_id,
+      referred_by: newMember.referred_by,
       policyVersion: newMember.legalCompliance?.policyVersion || '2026.1',
       dpdpConsent: newMember.legalCompliance?.dpdpConsent || true
     });
+
+    // If referrer was found, increment total_referrals and record referral log in DB
+    if (referrer) {
+      const updatedTotal = Number(referrer.total_referrals || 0) + 1;
+      db.update('members', referrer.id, { total_referrals: updatedTotal });
+
+      const referralLog = {
+        id: `REF-REG-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        type: 'member_registration',
+        referral_id: referralId,
+        reference_id: referralId,
+        referrer_id: referrer.id,
+        referrer_referral_id: referrer.referral_id || referrer.id,
+        referrer_name: referrer.name,
+        referee_id: newMember.id,
+        referee_referral_id: referralId,
+        referee_name: newMember.name,
+        referee_phone: newMember.phone ? `${String(newMember.phone).slice(0, 4)} •••••` : '',
+        referee_district: newMember.district,
+        referee_city: newMember.city,
+        status: 'active',
+        created_at: new Date().toISOString()
+      };
+      db.insert('referrals', referralLog);
+    }
 
     const safeProfile = { ...newMember };
     delete safeProfile.password_hash;
@@ -147,7 +254,8 @@ router.post('/login', async (req, res) => {
       }
     }
 
-    const safeProfile = { ...member };
+    const populatedMember = ensureMemberReferral(member);
+    const safeProfile = { ...populatedMember };
     delete safeProfile.password_hash;
 
     const token = generateToken(safeProfile);
@@ -185,7 +293,8 @@ router.get('/me', authenticateToken, async (req, res) => {
       return sendError(res, 'सदस्य प्रोफाइल सापडले नाही.', 'PROFILE_NOT_FOUND', 404);
     }
 
-    const safeProfile = { ...member };
+    const populatedMember = ensureMemberReferral(member);
+    const safeProfile = { ...populatedMember };
     delete safeProfile.password_hash;
 
     return sendSuccess(res, 'प्रमाणीकृत सदस्य माहिती', {
@@ -196,6 +305,120 @@ router.get('/me', authenticateToken, async (req, res) => {
     });
   } catch (err) {
     return sendError(res, err.message, 'FETCH_ME_FAILED', 500);
+  }
+});
+
+// GET /api/auth/referrals/verify/:code
+// Public: Verify referral code / reference_id
+router.get('/referrals/verify/:code', (req, res) => {
+  try {
+    const rawCode = String(req.params.code || '').trim();
+    if (!rawCode) {
+      return sendError(res, 'रेफरल कोड आवश्यक आहे.', 'MISSING_CODE', 400);
+    }
+
+    const cleanUpper = rawCode.toUpperCase();
+    const cleanDigits = rawCode.replace(/\D/g, '');
+    const members = db.getCollection('members') || [];
+
+    // Search members
+    let referrer = members.find(m => {
+      if (m.referral_id && String(m.referral_id).toUpperCase() === cleanUpper) return true;
+      if (m.reference_id && String(m.reference_id).toUpperCase() === cleanUpper) return true;
+      if (m.id && String(m.id).toUpperCase() === cleanUpper) return true;
+      if (m.email && String(m.email).toLowerCase() === rawCode.toLowerCase()) return true;
+      if (m.phone) {
+        const mDigits = String(m.phone).replace(/\D/g, '');
+        if (cleanDigits && cleanDigits.length >= 10 && mDigits.slice(-10) === cleanDigits.slice(-10)) return true;
+      }
+      return false;
+    });
+
+    if (referrer) {
+      return sendSuccess(res, 'सत्यापित रेफरल कोड', {
+        isValid: true,
+        referrer: {
+          id: referrer.id,
+          name: referrer.name,
+          referral_id: referrer.referral_id || referrer.id,
+          reference_id: referrer.reference_id || referrer.referral_id || referrer.id,
+          district: referrer.district || 'महाराष्ट्र',
+          city: referrer.city || ''
+        }
+      });
+    }
+
+    // Official fallbacks
+    const officialCodes = {
+      'CM-OFFICIAL-2026': { name: 'Connect Maratha अधिकृत केंद्रीय मंच', district: 'महाराष्ट्र' },
+      'CM-ADMIN-001': { name: 'Connect Maratha मुख्य नियामक कार्यालय', district: 'महाराष्ट्र' },
+      'CM-PUN-0842': { name: 'अमोल तुकाराम जाधव', district: 'पुणे' }
+    };
+    if (officialCodes[cleanUpper]) {
+      return sendSuccess(res, 'अधिकृत रेफरल कोड', {
+        isValid: true,
+        referrer: {
+          id: cleanUpper,
+          name: officialCodes[cleanUpper].name,
+          referral_id: cleanUpper,
+          reference_id: cleanUpper,
+          district: officialCodes[cleanUpper].district
+        }
+      });
+    }
+
+    return sendError(res, 'हा रेफरल आयडी आढळला नाही.', 'INVALID_REFERRAL_CODE', 404, { isValid: false });
+  } catch (err) {
+    return sendError(res, err.message, 'VERIFICATION_FAILED', 500);
+  }
+});
+
+// GET /api/auth/referrals/my-referrals
+// Authenticated: Get current user's referral stats and list of referred members
+router.get('/referrals/my-referrals', authenticateToken, (req, res) => {
+  try {
+    const rawMember = db.findById('members', req.user.id);
+    if (!rawMember) {
+      return sendError(res, 'सदस्य सापडला नाही.', 'MEMBER_NOT_FOUND', 404);
+    }
+    const member = ensureMemberReferral(rawMember);
+
+    const members = db.getCollection('members') || [];
+    const myCode = (member.referral_id || '').toUpperCase();
+    const myRefId = (member.reference_id || '').toUpperCase();
+    const myId = String(member.id || '').toUpperCase();
+
+    // Find all members who joined via this member's referral code or ID
+    const referredMembers = members.filter(other => 
+      other.id !== member.id && (
+        (other.referred_by && String(other.referred_by).toUpperCase() === myCode) ||
+        (other.referred_by && String(other.referred_by).toUpperCase() === myRefId) ||
+        (other.referred_by && String(other.referred_by).toUpperCase() === myId) ||
+        (other.referred_by_id && String(other.referred_by_id).toUpperCase() === myId)
+      )
+    ).map(m => ({
+      id: m.id,
+      name: m.name,
+      phone: m.phone ? `${String(m.phone).slice(0, 4)} •••••` : '',
+      district: m.district || m.city || 'पुणे',
+      city: m.city || m.district || '',
+      joined: m.joined || (m.createdAt ? String(m.createdAt).split('T')[0] : '2026-03-01'),
+      status: 'सक्रिय (Active)'
+    }));
+
+    const totalCount = Math.max(Number(member.total_referrals) || 0, referredMembers.length);
+    const origin = req.get('origin') || 'https://www.connectmaratha.com';
+    const shareLink = `${origin}/register?ref=${member.referral_id || member.id}`;
+
+    return sendSuccess(res, 'माझे रेफरल तपशील', {
+      referral_id: member.referral_id || `REF-96K-${member.id.replace('CM-96K-', '')}`,
+      reference_id: member.reference_id || member.referral_id,
+      total_referrals: totalCount,
+      share_link: shareLink,
+      referred_members: referredMembers
+    });
+  } catch (err) {
+    return sendError(res, err.message, 'FETCH_REFERRALS_FAILED', 500);
   }
 });
 

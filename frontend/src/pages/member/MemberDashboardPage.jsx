@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { api } from '../../services/api';
 import CMDB from '../../services/cmdb';
 import {
   getMemberReferralData,
@@ -139,11 +140,29 @@ export default function MemberDashboardPage() {
 
   // Real-time Referral & Incentive System State
   const [referralData, setReferralData] = useState(() => getMemberReferralData(member));
+  const [apiReferralData, setApiReferralData] = useState(null);
   const [copiedReferral, setCopiedReferral] = useState(false);
+  const [copiedCodeOnly, setCopiedCodeOnly] = useState(false);
   const [payoutUpi, setPayoutUpi] = useState('');
   const [payoutAmount, setPayoutAmount] = useState('100');
   const [payoutMsg, setPayoutMsg] = useState({ text: '', type: '' });
   const [isRequestingPayout, setIsRequestingPayout] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchApiReferrals = async () => {
+      try {
+        const res = await api.auth.getMyReferrals();
+        if (res && res.success && res.data && isMounted) {
+          setApiReferralData(res.data);
+        }
+      } catch (e) {
+        // Fallback to local
+      }
+    };
+    fetchApiReferrals();
+    return () => { isMounted = false; };
+  }, [member?.id]);
 
   useEffect(() => {
     const handleSync = () => {
@@ -158,8 +177,14 @@ export default function MemberDashboardPage() {
     };
   }, [member]);
 
-  const myReferralCode = formatMemberReferralCode(member);
-  const shareUrl = `https://www.connectmaratha.com/register?ref=${myReferralCode}`;
+  const myReferralCode = apiReferralData?.referral_id || apiReferralData?.reference_id || member?.referral_id || member?.reference_id || formatMemberReferralCode(member);
+  const totalUserReferrals = apiReferralData?.total_referrals ?? member?.total_referrals ?? referralData.totalReferred ?? 0;
+  const referredMembersList = (apiReferralData?.referred_members && apiReferralData.referred_members.length > 0)
+    ? apiReferralData.referred_members
+    : (referralData.referrals || []);
+  const shareUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/register?ref=${myReferralCode}`
+    : `https://www.connectmaratha.com/register?ref=${myReferralCode}`;
 
   const handleCopyLink = () => {
     if (navigator.clipboard) {
@@ -221,7 +246,7 @@ export default function MemberDashboardPage() {
           </div>
           <h1 style={{ fontSize: '2rem', margin: '0 0 6px', fontWeight: 900, color: '#FFFFFF' }}>सस्नेह जय शिवराय, {member.name}!</h1>
           <p style={{ margin: 0, opacity: 0.95, fontSize: '0.96rem', color: '#FFFFFF' }}>
-            सदस्य आयडी: <strong>{myReferralCode}</strong> | 📍 {member.district || 'पुणे'} | 🏆 रेफरल मानधन: <strong>₹{referralData.withdrawableBalance}</strong>
+            रेफरल आयडी: <strong style={{ letterSpacing: '0.5px' }}>{myReferralCode}</strong> | 📍 {member.district || 'पुणे'} | 🤝 एकूण रेफरल्स: <strong style={{ background: 'rgba(255,255,255,0.25)', padding: '2px 8px', borderRadius: '6px' }}>{totalUserReferrals}</strong> | 🏆 मानधन: <strong>₹{referralData.withdrawableBalance}</strong>
           </p>
         </div>
 
@@ -243,7 +268,7 @@ export default function MemberDashboardPage() {
               boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
             }}
           >
-            🤝 रेफरल मानधन (₹{referralData.withdrawableBalance})
+            🤝 रेफरल हब (एकूण: {totalUserReferrals})
           </button>
           <Link to="/card" className="btn" style={{ background: '#FFFFFF', color: '#EA580C', border: 'none', fontWeight: 800, padding: '10px 18px', borderRadius: '10px', textDecoration: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
             🪪 संपूर्ण ओळखपत्र
@@ -291,7 +316,7 @@ export default function MemberDashboardPage() {
       }}>
         {[
           { id: 'overview', label: '🏠 मुख्य डॅशबोर्ड व ओळखपत्र' },
-          { id: 'referral_hub', label: `🤝 शिफारस व मानधन (Referral Hub) [₹${referralData.withdrawableBalance}]` },
+          { id: 'referral_hub', label: `🤝 शिफारस व रेफरल हब (एकूण: ${totalUserReferrals})` },
           { id: 'saved_places', label: '🏰 जतन केलेली ठिकाणे (' + savedPlaces.length + ')' },
           { id: 'saved_people', label: '👑 ऐतिहासिक व्यक्ती (' + savedPeople.length + ')' },
           { id: 'calendar_events', label: '📅 दिनदर्शिका व स्मरणपत्रे (' + reminders.length + ')' },
@@ -945,8 +970,49 @@ export default function MemberDashboardPage() {
               </p>
             </div>
 
+            {/* Total Referrals Stat Card */}
+            <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '14px', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <h3 style={{ fontSize: '1.1rem', margin: 0, color: '#7C1D05', fontWeight: 800 }}>🤝 एकूण रेफरल्स (Total Referrals)</h3>
+                  <span style={{ fontSize: '0.78rem', background: '#FFF7ED', color: '#EA580C', padding: '3px 8px', borderRadius: '6px', fontWeight: 800, border: '1px solid #FED7AA' }}>
+                    {myReferralCode}
+                  </span>
+                </div>
+                <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#EA580C', marginBottom: '4px' }}>
+                  {totalUserReferrals} <span style={{ fontSize: '1rem', color: '#888', fontWeight: 400 }}>नोंदणीकृत</span>
+                </div>
+                <p style={{ fontSize: '0.82rem', color: '#666', margin: '0 0 14px' }}>
+                  आपल्या रेफरल लिंकद्वारे नोंदणी झालेले सभासद. मानधन शिल्लक: <strong>₹{referralData.withdrawableBalance}</strong>
+                </p>
+              </div>
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setActiveDashTab('referral_hub')}
+                  style={{
+                    width: '100%',
+                    background: 'linear-gradient(135deg, #FF6A00, #EA580C)',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '9px 14px',
+                    fontSize: '0.84rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  माझे रेफरल्स व शेअर लिंक पहा →
+                </button>
+              </div>
+            </div>
+
             <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '14px', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
-              <h3 style={{ fontSize: '1.1rem', margin: '0 0 16px', color: '#7C1D05', fontWeight: 800 }}>💼 व्यवसाय संदर्भ (Referrals)</h3>
+              <h3 style={{ fontSize: '1.1rem', margin: '0 0 16px', color: '#7C1D05', fontWeight: 800 }}>💼 व्यवसाय संदर्भ (Sangam Leads)</h3>
               <div style={{ display: 'flex', justifyContent: 'space-around', textAlign: 'center' }}>
                 <div>
                   <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#15803D' }}>{referrals.length}</div>
@@ -1062,6 +1128,434 @@ export default function MemberDashboardPage() {
             </div>
           </div>
         </>
+      )}
+
+      {/* TAB: REFERRAL HUB (FEATURE: MEMBER REGISTRATION REFERRAL SYSTEM) */}
+      {activeDashTab === 'referral_hub' && (
+        <div style={{ marginBottom: '32px' }}>
+          {/* 1. Header Banner */}
+          <div style={{
+            background: 'linear-gradient(135deg, #431407 0%, #7C1D05 100%)',
+            borderRadius: '20px',
+            padding: '28px 32px',
+            color: '#FFFFFF',
+            marginBottom: '24px',
+            boxShadow: '0 10px 25px rgba(67, 20, 7, 0.15)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.15)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 800, marginBottom: '10px' }}>
+                <span>🚩</span>
+                <span>Connect Maratha अधिकृत रेफरल प्रणाली</span>
+              </div>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: 900, margin: '0 0 8px', color: '#FFFFFF', fontFamily: 'Baloo 2' }}>
+                🤝 माझी शिफारस व रेफरल केंद्र (My Referral Hub)
+              </h2>
+              <p style={{ margin: 0, color: '#FED7AA', fontSize: '0.94rem', maxWidth: '750px', lineHeight: 1.5 }}>
+                आपल्या कुटुंबातील व मित्रपरिवारातील मराठा बांधवांना Connect Maratha व्यासपीठावर आमंत्रित करा. आपल्या रेफरल लिंकचा वापर करून नवीन सभासद नोंदणी होताच त्यांना व आपल्याला विशेष सन्मान आणि मानधन प्राप्त होईल.
+              </p>
+            </div>
+          </div>
+
+          {/* 2. Personalized Referral ID & Shareable Link Box */}
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '18px',
+            border: '2px solid #FED7AA',
+            padding: '26px',
+            marginBottom: '24px',
+            boxShadow: '0 6px 20px rgba(234, 88, 12, 0.08)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '20px' }}>
+              <div>
+                <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#EA580C', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  YOUR UNIQUE REFERRAL ID & SHARE LINK
+                </span>
+                <h3 style={{ margin: '4px 0 0', fontSize: '1.4rem', color: '#431407', fontWeight: 900, fontFamily: 'Baloo 2' }}>
+                  माझा वैयक्तिक रेफरल कोड: <span style={{ color: '#EA580C', background: '#FFF7ED', padding: '2px 10px', borderRadius: '8px', border: '1.5px solid #FED7AA', letterSpacing: '1px' }}>{myReferralCode}</span>
+                </h3>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (navigator.clipboard) {
+                      navigator.clipboard.writeText(myReferralCode);
+                      setCopiedCodeOnly(true);
+                      setTimeout(() => setCopiedCodeOnly(false), 2500);
+                    }
+                  }}
+                  style={{
+                    background: copiedCodeOnly ? '#15803D' : '#FFF7ED',
+                    color: copiedCodeOnly ? '#FFFFFF' : '#C2410C',
+                    border: '1.5px solid #FED7AA',
+                    padding: '10px 18px',
+                    borderRadius: '10px',
+                    fontWeight: 800,
+                    fontSize: '0.88rem',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  {copiedCodeOnly ? '✓ कोड कॉपी झाला!' : '📋 कोड कॉपी करा'}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  style={{
+                    background: copiedReferral ? '#15803D' : 'linear-gradient(135deg, #FF6A00, #EA580C)',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '10px 18px',
+                    borderRadius: '10px',
+                    fontWeight: 800,
+                    fontSize: '0.88rem',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)'
+                  }}
+                >
+                  {copiedReferral ? '✓ लिंक कॉपी झाली!' : '🔗 संपूर्ण लिंक कॉपी करा'}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleShareWhatsApp}
+                  style={{
+                    background: '#25D366',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '10px 18px',
+                    borderRadius: '10px',
+                    fontWeight: 800,
+                    fontSize: '0.88rem',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: '0 4px 12px rgba(37, 211, 102, 0.3)'
+                  }}
+                >
+                  💬 WhatsApp वर शेअर करा
+                </button>
+              </div>
+            </div>
+
+            {/* Display Link Container */}
+            <div style={{
+              background: '#F8FAFC',
+              borderRadius: '12px',
+              padding: '12px 18px',
+              border: '1px solid #E2E8F0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '12px',
+              flexWrap: 'wrap'
+            }}>
+              <div style={{ fontFamily: 'monospace', fontSize: '0.92rem', color: '#334155', wordBreak: 'break-all' }}>
+                {shareUrl}
+              </div>
+              <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 600 }}>
+                (या लिंकवरून येणाऱ्या व्यक्तीचा रेफरल कोड आपोआप भरला जाईल)
+              </span>
+            </div>
+          </div>
+
+          {/* 3. Stat Cards Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px', marginBottom: '28px' }}>
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', padding: '22px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '1.8rem' }}>👥</span>
+                <span style={{ fontSize: '0.76rem', background: '#DCFCE7', color: '#166534', padding: '2px 8px', borderRadius: '6px', fontWeight: 800 }}>थेट शिफारस</span>
+              </div>
+              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#C2410C', marginBottom: '4px' }}>
+                {totalUserReferrals}
+              </div>
+              <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#431407' }}>एकूण थेट रेफरल्स (Total Referrals)</div>
+              <div style={{ fontSize: '0.78rem', color: '#64748B', marginTop: '4px' }}>माझ्या लिंकद्वारे नोंदणी केलेले सदस्य</div>
+            </div>
+
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', padding: '22px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '1.8rem' }}>🚩</span>
+                <span style={{ fontSize: '0.76rem', background: '#FEF3C7', color: '#92400E', padding: '2px 8px', borderRadius: '6px', fontWeight: 800 }}>सत्यापित</span>
+              </div>
+              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#15803D', marginBottom: '4px' }}>
+                {referredMembersList.length}
+              </div>
+              <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#166534' }}>सक्रिय सभासद यादी (Active Members)</div>
+              <div style={{ fontSize: '0.78rem', color: '#64748B', marginTop: '4px' }}>डेटाबेसमध्ये जोडलेले बंधू-भगिनी</div>
+            </div>
+
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', padding: '22px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '1.8rem' }}>💰</span>
+                <span style={{ fontSize: '0.76rem', background: '#FEF3C7', color: '#92400E', padding: '2px 8px', borderRadius: '6px', fontWeight: 800 }}>मानधन शिल्लक</span>
+              </div>
+              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#EA580C', marginBottom: '4px' }}>
+                ₹{referralData.withdrawableBalance}
+              </div>
+              <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#78350F' }}>काढता येण्याजोगे मानधन (Honorarium)</div>
+              <div style={{ fontSize: '0.78rem', color: '#64748B', marginTop: '4px' }}>UPI द्वारे त्वरित खात्यात वर्ग करा</div>
+            </div>
+          </div>
+
+          {/* 4. Referred Members Table */}
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '18px',
+            border: '1.5px solid #FED7AA',
+            padding: '26px',
+            marginBottom: '28px',
+            boxShadow: '0 4px 14px rgba(0,0,0,0.03)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
+              <div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#431407', margin: '0 0 4px', fontFamily: 'Baloo 2' }}>
+                  👥 माझ्या रेफरलद्वारे जोडलेले सभासद (Referred Members — {referredMembersList.length})
+                </h3>
+                <span style={{ fontSize: '0.84rem', color: '#64748B' }}>
+                  आपल्या रेफरल आयडी ({myReferralCode}) चा वापर करून नोंदणीकृत झालेल्या सदस्यांची प्रत्यक्ष माहिती
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={handleShareWhatsApp}
+                style={{
+                  background: '#FFF7ED',
+                  color: '#EA580C',
+                  border: '1px solid #EA580C',
+                  padding: '7px 14px',
+                  borderRadius: '8px',
+                  fontSize: '0.82rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                + आणखी बांधवांना जोडा
+              </button>
+            </div>
+
+            {referredMembersList && referredMembersList.length > 0 ? (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
+                  <thead>
+                    <tr style={{ background: '#FFF7ED', borderBottom: '2px solid #FED7AA', color: '#78350F' }}>
+                      <th style={{ padding: '12px 14px', fontWeight: 800 }}>अनु. क्र.</th>
+                      <th style={{ padding: '12px 14px', fontWeight: 800 }}>सभासदाचे नाव</th>
+                      <th style={{ padding: '12px 14px', fontWeight: 800 }}>सभासद आयडी</th>
+                      <th style={{ padding: '12px 14px', fontWeight: 800 }}>जिल्हा / शहर</th>
+                      <th style={{ padding: '12px 14px', fontWeight: 800 }}>नोंदणी तारीख</th>
+                      <th style={{ padding: '12px 14px', fontWeight: 800 }}>स्थिती (Status)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {referredMembersList.map((ref, idx) => (
+                      <tr key={ref.id || idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                        <td style={{ padding: '12px 14px', color: '#64748B' }}>{idx + 1}</td>
+                        <td style={{ padding: '12px 14px', fontWeight: 800, color: '#1E293B' }}>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <span>👤</span>
+                            <span>{ref.refereeName || ref.name || 'Connect Maratha सदस्य'}</span>
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px 14px', fontFamily: 'monospace', color: '#EA580C', fontWeight: 700 }}>
+                          {ref.refereeId || ref.id || `CM-MH-${(idx + 100).toString()}`}
+                        </td>
+                        <td style={{ padding: '12px 14px', color: '#475569' }}>
+                          📍 {ref.district || ref.city || 'महाराष्ट्र'}
+                        </td>
+                        <td style={{ padding: '12px 14px', color: '#64748B' }}>
+                          {ref.registeredAt ? ref.registeredAt.split('T')[0] : (ref.joined || '2026-03-01')}
+                        </td>
+                        <td style={{ padding: '12px 14px' }}>
+                          <span style={{
+                            background: '#DCFCE7',
+                            color: '#166534',
+                            padding: '3px 10px',
+                            borderRadius: '12px',
+                            fontSize: '0.78rem',
+                            fontWeight: 800,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}>
+                            ✓ सक्रिय (Active)
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div style={{
+                background: '#FFFDF9',
+                borderRadius: '14px',
+                border: '1.5px dashed #FED7AA',
+                padding: '40px 20px',
+                textAlign: 'center',
+                color: '#64748B'
+              }}>
+                <div style={{ fontSize: '3rem', marginBottom: '10px' }}>🤝</div>
+                <h4 style={{ margin: '0 0 6px', fontSize: '1.15rem', color: '#431407', fontWeight: 800 }}>
+                  अद्याप कोणत्याही सभासदाने आपल्या लिंकवरून नोंदणी केलेली नाही
+                </h4>
+                <p style={{ margin: '0 0 20px', fontSize: '0.90rem', color: '#64748B', maxWidth: '520px', marginInline: 'auto' }}>
+                  आपली वैयक्तिक रेफरल लिंक <strong>{shareUrl}</strong> कॉपी करा किंवा खालील बटणावर क्लिक करून थेट WhatsApp वर शेअर करा.
+                </p>
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={handleShareWhatsApp}
+                    style={{
+                      background: '#25D366',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      padding: '10px 20px',
+                      borderRadius: '10px',
+                      fontWeight: 800,
+                      fontSize: '0.90rem',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    💬 WhatsApp वर आताच शेअर करा
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCopyLink}
+                    style={{
+                      background: '#FFFFFF',
+                      color: '#EA580C',
+                      border: '1.5px solid #EA580C',
+                      padding: '10px 20px',
+                      borderRadius: '10px',
+                      fontWeight: 800,
+                      fontSize: '0.90rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {copiedReferral ? '✓ लिंक कॉपी झाली' : '📋 लिंक कॉपी करा'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 5. UPI Honorarium Payout Box */}
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '18px',
+            border: '1.5px solid #FED7AA',
+            padding: '26px',
+            boxShadow: '0 4px 14px rgba(0,0,0,0.03)'
+          }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#431407', margin: '0 0 6px', fontFamily: 'Baloo 2' }}>
+              💳 मानधन बँक / UPI ट्रान्सफर (Honorarium Payout)
+            </h3>
+            <p style={{ margin: '0 0 18px', fontSize: '0.86rem', color: '#64748B' }}>
+              आपल्या जमा झालेल्या रेफरल मानधनाची रक्कम थेट आपल्या UPI खात्यावर मागवा (उपलब्ध शिल्लक: <strong>₹{referralData.withdrawableBalance}</strong>).
+            </p>
+
+            {payoutMsg.text && (
+              <div style={{
+                padding: '10px 14px',
+                borderRadius: '8px',
+                marginBottom: '16px',
+                fontSize: '0.86rem',
+                fontWeight: 700,
+                background: payoutMsg.type === 'success' ? '#DCFCE7' : '#FEE2E2',
+                color: payoutMsg.type === 'success' ? '#166534' : '#991B1B',
+                border: `1px solid ${payoutMsg.type === 'success' ? '#86EFAC' : '#FCA5A5'}`
+              }}>
+                {payoutMsg.text}
+              </div>
+            )}
+
+            <form onSubmit={handlePayoutSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', alignItems: 'end' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#374151', marginBottom: '6px' }}>
+                  UPI आयडी (उदा. 9822011924@upi)
+                </label>
+                <input
+                  type="text"
+                  value={payoutUpi}
+                  onChange={(e) => setPayoutUpi(e.target.value)}
+                  placeholder="yourname@okhdfcbank"
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    borderRadius: '8px',
+                    border: '1.5px solid #CBD5E1',
+                    fontSize: '0.90rem',
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#374151', marginBottom: '6px' }}>
+                  काढायची रक्कम (₹)
+                </label>
+                <input
+                  type="number"
+                  min="50"
+                  max={referralData.withdrawableBalance || 5000}
+                  value={payoutAmount}
+                  onChange={(e) => setPayoutAmount(e.target.value)}
+                  placeholder="100"
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    borderRadius: '8px',
+                    border: '1.5px solid #CBD5E1',
+                    fontSize: '0.90rem',
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={isRequestingPayout || referralData.withdrawableBalance <= 0}
+                  style={{
+                    width: '100%',
+                    padding: '11px 18px',
+                    background: referralData.withdrawableBalance > 0 ? 'linear-gradient(135deg, #16A34A, #15803D)' : '#E2E8F0',
+                    color: referralData.withdrawableBalance > 0 ? '#FFFFFF' : '#94A3B8',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontWeight: 800,
+                    fontSize: '0.90rem',
+                    cursor: referralData.withdrawableBalance > 0 ? 'pointer' : 'not-allowed',
+                    boxShadow: referralData.withdrawableBalance > 0 ? '0 4px 12px rgba(22, 163, 74, 0.25)' : 'none'
+                  }}
+                >
+                  {isRequestingPayout ? 'प्रक्रिया सुरू आहे...' : '✓ UPI द्वारे मानधन वर्ग करा ➔'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
 
       {/* TAB 2: SAVED PLACES & FORTS (FEATURE 28) */}

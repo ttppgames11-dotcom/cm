@@ -21,10 +21,29 @@ CREATE TABLE IF NOT EXISTS members (
   about TEXT,
   tier TEXT DEFAULT 'Gold',
   role TEXT DEFAULT 'member',
+  referral_id TEXT,
+  reference_id TEXT,
+  referred_by TEXT,
+  total_referrals INTEGER DEFAULT 0,
   verified_mobile INTEGER DEFAULT 1,
   verified_email INTEGER DEFAULT 1,
   verified_profile INTEGER DEFAULT 1,
   joined TEXT,
+  created_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS member_referrals (
+  id TEXT PRIMARY KEY,
+  referral_id TEXT,
+  reference_id TEXT,
+  referrer_id TEXT,
+  referrer_referral_id TEXT,
+  referrer_name TEXT,
+  referee_id TEXT,
+  referee_name TEXT,
+  referee_phone TEXT,
+  referee_district TEXT,
+  status TEXT DEFAULT 'active',
   created_at TEXT
 );
 

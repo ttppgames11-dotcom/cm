@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { checkRepetitiveInput } from '../../utils/memberValidation';
-import { verifyReferrerId, recordNewReferral } from '../../services/referralService';
+import { verifyReferrerId, verifyReferrerIdApi, recordNewReferral } from '../../services/referralService';
 
 const PERSONAS = [
   { id: 'Professional', title: 'व्यावसायिक (Professional)', icon: '💼' },
@@ -46,11 +46,34 @@ export default function RegisterWizardPage() {
   const [searchParams] = useSearchParams();
   const urlRef = searchParams.get('ref') || searchParams.get('referral') || '';
 
-  const [referralCode, setReferralCode] = useState(urlRef || '');
+  const [referralCode, setReferralCode] = useState(() => {
+    return urlRef || 
+      (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('cm_referral_code') : '') || 
+      (typeof localStorage !== 'undefined' ? localStorage.getItem('cm_referral_code') : '') || 
+      '';
+  });
   const [referrerInfo, setReferrerInfo] = useState(null);
   const [referralStatus, setReferralStatus] = useState({ checking: false, valid: true, message: '' });
 
-  // Live real-time verification
+  // Sync with searchParams or persisted referral
+  useEffect(() => {
+    if (urlRef && urlRef.trim()) {
+      const clean = urlRef.trim().toUpperCase();
+      setReferralCode(clean);
+      try {
+        sessionStorage.setItem('cm_referral_code', clean);
+        localStorage.setItem('cm_referral_code', clean);
+      } catch {}
+    } else {
+      const saved = (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('cm_referral_code') : '') || 
+                    (typeof localStorage !== 'undefined' ? localStorage.getItem('cm_referral_code') : '');
+      if (saved && !referralCode) {
+        setReferralCode(saved.toUpperCase());
+      }
+    }
+  }, [urlRef]);
+
+  // Live real-time verification (asynchronous API with local fallback)
   useEffect(() => {
     if (!referralCode || !referralCode.trim()) {
       setReferrerInfo(null);
@@ -58,18 +81,37 @@ export default function RegisterWizardPage() {
       return;
     }
 
-    const timer = setTimeout(() => {
-      const res = verifyReferrerId(referralCode.trim());
-      if (res.isValid) {
-        setReferrerInfo(res);
-        setReferralStatus({ checking: false, valid: true, message: `सत्यापित शिफारसकर्ता: ${res.name} (${res.chapter || res.district})` });
-      } else {
-        setReferrerInfo(null);
-        setReferralStatus({ checking: false, valid: false, message: res.message });
+    let isMounted = true;
+    setReferralStatus(prev => ({ ...prev, checking: true }));
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await verifyReferrerIdApi(referralCode.trim());
+        if (!isMounted) return;
+        if (res.isValid) {
+          setReferrerInfo(res);
+          setReferralStatus({ checking: false, valid: true, message: `सत्यापित शिफारसकर्ता: ${res.name} (${res.chapter || res.district})` });
+        } else {
+          setReferrerInfo(null);
+          setReferralStatus({ checking: false, valid: false, message: res.message || 'हा रेफरल आयडी आढळला नाही.' });
+        }
+      } catch {
+        if (!isMounted) return;
+        const fallback = verifyReferrerId(referralCode.trim());
+        if (fallback.isValid) {
+          setReferrerInfo(fallback);
+          setReferralStatus({ checking: false, valid: true, message: `सत्यापित शिफारसकर्ता: ${fallback.name} (${fallback.chapter || fallback.district})` });
+        } else {
+          setReferrerInfo(null);
+          setReferralStatus({ checking: false, valid: false, message: fallback.message });
+        }
       }
     }, 200);
 
-    return () => clearTimeout(timer);
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
   }, [referralCode]);
 
   const [formData, setFormData] = useState({
@@ -206,6 +248,8 @@ export default function RegisterWizardPage() {
       skills: formData.skills ? (Array.isArray(formData.skills) ? formData.skills : [formData.skills]) : [],
       about: formData.about || '',
       referredBy: referralCode ? referralCode.trim() : '',
+      referralCode: referralCode ? referralCode.trim() : '',
+      reference_id: referralCode ? referralCode.trim() : '',
       legalCompliance: {
         termsAccepted: true,
         privacyAccepted: true,
@@ -237,6 +281,10 @@ export default function RegisterWizardPage() {
         referrerCode: referralCode.trim(),
         isSubscribed: true
       });
+      try {
+        sessionStorage.removeItem('cm_referral_code');
+        localStorage.removeItem('cm_referral_code');
+      } catch {}
     }
 
     setActiveScreen('welcome');
