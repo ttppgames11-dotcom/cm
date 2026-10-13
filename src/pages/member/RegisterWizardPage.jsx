@@ -48,7 +48,7 @@ export default function RegisterWizardPage() {
 
   const [referralCode, setReferralCode] = useState(urlRef || '');
   const [referrerInfo, setReferrerInfo] = useState(null);
-  const [referralStatus, setReferralStatus] = useState({ checking: false, valid: false, message: '' });
+  const [referralStatus, setReferralStatus] = useState({ checking: false, valid: true, message: '' });
 
   // Live real-time verification
   useEffect(() => {
@@ -205,7 +205,7 @@ export default function RegisterWizardPage() {
       education: formData.education || '',
       skills: formData.skills ? (Array.isArray(formData.skills) ? formData.skills : [formData.skills]) : [],
       about: formData.about || '',
-      referredBy: referralCode.trim(),
+      referredBy: referralCode ? referralCode.trim() : '',
       legalCompliance: {
         termsAccepted: true,
         privacyAccepted: true,
@@ -466,7 +466,7 @@ export default function RegisterWizardPage() {
                     </button>
                   </div>
 
-                  <div className="input-box" style={{ borderColor: referralStatus.valid ? (referralCode ? '#10B981' : '#CBD5E1') : '#EA580C' }}>
+                  <div className="input-box" style={{ borderColor: referralCode ? (referralStatus.valid ? '#10B981' : '#EA580C') : '#CBD5E1' }}>
                     <span className="prefix" style={{ background: '#FFF7ED', color: '#EA580C', fontWeight: 800 }}>REF</span>
                     <input
                       type="text"
