@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import fs from 'fs';
 import path from 'path';
 import { db } from '../db/realtimeDb.js';
-import { generateToken, authenticateToken, optionalToken } from '../middleware/auth.js';
+import { generateToken, authenticateToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
 import { 
   validateRegister, 
@@ -301,9 +301,24 @@ const handleDeleteAccount = async (req, res) => {
     const members = db.getCollection('members');
     let member = null;
 
-    // 1. If authenticated via token
-    if (req.user && req.user.id) {
-      member = members.find(m => String(m.id).toLowerCase() === String(req.user.id).toLowerCase());
+    // 1. If authenticated via token (either from req.user or directly from Authorization header)
+    let authUser = req.user;
+    if (!authUser && req.headers['authorization']) {
+      try {
+        const token = req.headers['authorization'].split(' ')[1];
+        if (token) {
+          const jwtModule = await import('jsonwebtoken').catch(() => null);
+          const jwt = jwtModule?.default || jwtModule;
+          const secret = process.env.JWT_SECRET || 'connect_maratha_secret_key_2026';
+          authUser = jwt.verify(token, secret);
+        }
+      } catch (e) {
+        // Continue if token invalid or expired
+      }
+    }
+
+    if (authUser && authUser.id) {
+      member = members.find(m => String(m.id).toLowerCase() === String(authUser.id).toLowerCase());
     }
 
     // 2. Lookup by id, phone, email, or identifier
@@ -502,9 +517,9 @@ const handleDeleteAccount = async (req, res) => {
 };
 
 // 1. Mobile App (Flutter) endpoint: DELETE /api/auth/account (with confirm: 'DELETE')
-router.delete('/account', optionalToken, handleDeleteAccount);
+router.delete('/account', handleDeleteAccount);
 // 2. Web Portal endpoints: POST & DELETE /api/auth/delete-account
-router.post('/delete-account', optionalToken, handleDeleteAccount);
-router.delete('/delete-account', optionalToken, handleDeleteAccount);
+router.post('/delete-account', handleDeleteAccount);
+router.delete('/delete-account', handleDeleteAccount);
 
 export default router;
