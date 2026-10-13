@@ -50,11 +50,11 @@ export const defaultSiteContent = {
     manufacturersHero: "/assets/images/generated/maratha_manufacturers_hero.jpg"
   },
   texts: {
-    tagline: "अखिल भारतीय मराठा समाजाचे अधिकृत डिजिटल व्यासपीठ",
+    tagline: "Connect Maratha — जागतिक मराठा समाजाचे अधिकृत डिजिटल व्यासपीठ",
     missionStatement: "मराठा समाजातील प्रत्येक घटकाचा सर्वांगीण आर्थिक, शैक्षणिक, सांस्कृतिक व सामाजिक विकास साधणे.",
     visionStatement: "जागतिक पातळीवर संघटित, स्वाभिमानी व आत्मनिर्भर मराठा समाज आणि उद्योजक पिढीची निर्मिती करणे.",
     emergencyNotice: "२४x७ मराठा समाज साहाय्य व आपत्कालीन रक्तदाता समन्वय कक्ष सदैव तत्पर.",
-    footerAbout: "Connect Maratha हे जागतिक मराठा बांधवांना व्यापार, समाजकार्य, संस्कृती आणि रोजगार क्षेत्रात एकत्र आणणारे सर्वोच्च व्यासपीठ आहे."
+    footerAbout: "Connect Maratha (कनेक्ट मराठा) हे जागतिक मराठा समाजाचे अधिकृत डिजिटल व्यासपीठ आहे — रोजगार संधी, बिझनेस संगम, ऐतिहासिक वारसा आणि समाज सक्षमीकरण."
   },
   links: {
     navigation: [
@@ -87,7 +87,7 @@ export const defaultSiteContent = {
   },
   forms: {
     memberRegistration: {
-      title: "महासंघ अधिकृत डिजिटल सदस्यता नोंदणी",
+      title: "Connect Maratha अधिकृत डिजिटल सदस्यता नोंदणी",
       enabled: true,
       instructions: "कृपया आधार/ओळखपत्रावरील नाव आणि अचूक तपशील प्रविष्ट करा.",
       welcomeNotice: "नोंदणीनंतर लगेच डिजिटल ओळखपत्र सक्रिय होईल."
@@ -102,18 +102,17 @@ export const defaultSiteContent = {
       title: "मराठा व्यवसाय / फर्म नोंदणी",
       enabled: true,
       approvalRequired: true,
-      discountNotice: "मराठा महासंघ सदस्यांसाठी विशेष व्यावसायिक सवलत."
+      discountNotice: "Connect Maratha सदस्यांसाठी विशेष व्यावसायिक सवलत."
     },
     contactSupport: {
-      email: "support@connectmaratha.org",
+      email: "support@connectmaratha.com",
       phone: "+91 98220 11223",
-      emergencyHelpline: "1800-209-1674",
-      address: "छत्रपती संभाजी महाराज भवन, एफसी रोड, शिवाजीनगर, पुणे, महाराष्ट्र - ४११००४"
+      emergencyHelpline: "1800-123-1674"
     }
   },
   footer: {
     copyright: "© २०२६ Connect Maratha (कनेक्ट मराठा) • सर्व हक्क राखीव",
-    poweredBy: "अखिल भारतीय मराठा महासंघ डिजिटल मिशन"
+    poweredBy: "Connect Maratha डिजिटल मिशन"
   }
 };
 
@@ -129,28 +128,9 @@ export function SiteContentProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Load latest content from API on mount
+  // Site content is driven directly by defaultSiteContent (no unmapped CMS backend calls)
   useEffect(() => {
-    let isMounted = true;
-    setIsLoading(true);
-    apiClient.getSiteContent()
-      .then((data) => {
-        if (isMounted && data && typeof data === 'object') {
-          setContent((prev) => {
-            const merged = { ...defaultSiteContent, ...prev, ...data };
-            localStorage.setItem('cm_site_content', JSON.stringify(merged));
-            return merged;
-          });
-        }
-      })
-      .catch((err) => {
-        console.warn('[SiteContent] Could not fetch live content, using cached/defaults:', err.message);
-      })
-      .finally(() => {
-        if (isMounted) setIsLoading(false);
-      });
-
-    return () => { isMounted = false; };
+    setIsLoading(false);
   }, []);
 
   // Helper to extract nested values with fallback: getContent('hero.title', 'fallback')

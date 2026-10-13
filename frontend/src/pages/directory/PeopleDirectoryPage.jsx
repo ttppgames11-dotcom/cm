@@ -96,7 +96,7 @@ export default function PeopleDirectoryPage() {
         
         {/* Banner */}
         <div style={{
-          background: "linear-gradient(rgba(199, 56, 0, 0.88), rgba(230, 81, 0, 0.92)), url('/assets/images/handshake.jpg') center/cover no-repeat",
+          background: 'linear-gradient(135deg, #C73800, #E65100)',
           borderRadius: '16px',
           color: '#fff',
           padding: '32px',
@@ -241,18 +241,9 @@ export default function PeopleDirectoryPage() {
                   <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
                       <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                        m.avatar && (m.avatar.startsWith('http') || m.avatar.startsWith('/assets/')) ? (
-                          <img
-                            src={m.avatar}
-                            alt={m.name}
-                            style={{ width: '56px', height: '56px', borderRadius: '14px', objectFit: 'cover', border: '2px solid #FED7AA' }}
-                            onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/officers/officer_mahesh.jpg'; }}
-                          />
-                        ) : (
-                          <span style={{ fontSize: '2.4rem', background: '#FFF8F2', padding: '8px', borderRadius: '12px' }}>
-                            {m.avatar || '👤'}
-                          </span>
-                        )
+                        <span style={{ fontSize: '2.4rem', background: '#FFF8F2', padding: '8px', borderRadius: '12px' }}>
+                          {m.avatar || '👤'}
+                        </span>
                         <div>
                           <h3 style={{ fontSize: '1.25rem', margin: '0 0 2px', color: '#1F2937' }}>
                             {m.name}

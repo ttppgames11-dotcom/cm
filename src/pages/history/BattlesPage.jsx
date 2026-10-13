@@ -3,50 +3,25 @@ import { Link } from 'react-router-dom';
 
 const BATTLES_LIST = [
   {
-    id: "kanchan-bari",
-    name: "कांचन बारी ची लढाई (Battle of Kanchan Bari)",
-    year: "१६७०",
-    location: "कांचन बारी, नाशिक-दिंडोरी परिसर",
-    opponent: "दाऊद खान कुरेशी व इखलास खान (मोघल साम्राज्य)",
-    result: "मराठ्यांचा ऐतिहासिक विजय (वृक युद्धनीती)",
-    significance: "सुरतेहून आणलेला खजिना सुरक्षित ठेवून प्रत्यक्ष उघड्या मैदानात मोघलांच्या सेनेला चारही बाजूंनी घेरून दिलेला जबरदस्त तडाखा.",
-    image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&q=80&w=600",
-    link: "/history/kanchan-bari"
-  },
-  {
-    id: 'pratapgad-afzalkhan',
-    era: 'shivaji',
-    date: '१० नोव्हेंबर १६५९ (मार्गशीर्ष शुद्ध सप्तमी)',
-    location: 'प्रतापगड पायथा व जावळीचे खोरे, सातारा',
-    image: '/assets/images/battles/pratapgad.jpg',
-    title: 'प्रतापगड रणसंग्राम व अफजलखान वध',
-    desc: 'विजापूरचा बलाढ्य सेनापती अफजलखानाचा कोथळा बाहेर काढून विजापूरच्या ३५,००० फौजेचा जावळीच्या जंगलात केलेला संपूर्ण पराभव. "होता जीवा म्हणून वाचला शिवा" ही अजरामर घटना आणि १८ दिवसांत वाई ते पन्हाळगड विजय.',
-    commander: 'छत्रपती शिवाजी महाराज, कान्होजी जेधे, मोरोपंत पिंगळे, नेताजी पालकर, जीवा महाला विरुद्ध अफजलखान, सय्यद बंडा, फाजलखान',
-    importance: 'हिंदू समाजातील शतकांची भीती नष्ट करणारा आणि हिंदवी स्वराज्याला जागतिक ओळख मिळवून देणारा निर्णायक विजय',
-    reference: 'सभासद बखर, जेधे शकावली, शिवभारत, इंग्रज-डच पत्रव्यवहार',
-    link: '/history/afzal-khan',
-    linkText: 'अफजलखान वध संपूर्ण गाथा वाचा →'
-  },
-  {
     id: 'pavankhind',
     era: 'shivaji',
+    image: '/assets/images/battle-action-pavankhind.jpg',
     date: '१३ जुलै १६६०',
     location: 'पावनखिंड / विशाळगड',
-    image: '/assets/images/battles/pavankhind.jpg',
     title: 'पावनखिंडीची ऐतिहासिक लढाई',
     desc: 'पन्हाळगडाच्या वेढ्यातून छत्रपती शिवाजी महाराजांची विशाळगडाकडे कूच. बाजीप्रभू देशपांडे, फुलाजी प्रभू व ३०० बांदल मावळ्यांनी सिद्धी मसूदच्या ४,००० फौजेला खिंडीत तोफांचे आवाज येईपर्यंत थोपवून धरले.',
     commander: 'बाजीप्रभू देशपांडे, फुलाजी प्रभू विरुद्ध सिद्धी मसूद',
     importance: 'महाराजांचे प्राणरक्षण व स्वराज्याची अखंडता',
     reference: 'सभासद बखर, जेधे शकावली',
-    link: '/article/shiva-kashid-baji-prabhu',
-    linkText: 'पावनखिंड रणसंग्राम सविस्तर वाचा →'
+    link: '/forts/panhala-pavankhind',
+    linkText: 'सविस्तर माहिती पहा →'
   },
   {
     id: 'purandar',
     era: 'shivaji',
+    image: '/assets/images/battle-action-purandar.jpg',
     date: 'एप्रिल - जून १६६५',
     location: 'पुरंदर किल्ला',
-    image: '/assets/images/battles/purandar.jpg',
     title: 'पुरंदरचा संग्राम व वेढा',
     desc: 'मिर्झाराजे जयसिंह व दिलेरखानाने पुरंदरला प्रचंड वेढा घातला. किल्लेदार मुरारबाजी देशपांडे यांनी मूठभर मावळ्यांसह वज्रगडावरून दिलेरखानाच्या फौजेवर केलेला अद्वितीय प्रतिहल्ला.',
     commander: 'मुरारबाजी देशपांडे विरुद्ध दिलेरखान',
@@ -58,93 +33,37 @@ const BATTLES_LIST = [
   {
     id: 'sinhagad',
     era: 'shivaji',
+    image: '/assets/images/battle-action-sinhagad.jpg',
     date: '४ फेब्रुवारी १६७०',
     location: 'सिंहगड (कोंढाणा)',
-    image: '/assets/images/battles/sinhagad.jpg',
     title: 'सिंहगडची रात्रीची चढाई',
     desc: "सुभेदार तानाजी मालुसरे यांनी घोरपडीच्या साहाय्याने द्रोणागिरी कडा चढून कोंढाण्यावर केलेला हल्ला. उदयभानू राठोडशी तुंबळ युद्ध; 'गड आला पण सिंह गेला' हा अमर उद्गार.",
     commander: 'तानाजी मालुसरे, सूर्याजी मालुसरे विरुद्ध उदयभानू',
     importance: 'मुघलांकडून किल्ले परत मिळवण्याची मोहीम',
     reference: 'सभासद बखर, पोवाडे',
-    link: '/article/tanaji-malusare',
-    linkText: 'सुभेदार तानाजी मालुसरे चरित्र वाचा →'
-  },
-  {
-    id: 'surat-kanchanbari',
-    era: 'shivaji',
-    date: '३–५ ऑक्टोबर १६७०',
-    location: 'सुरत व कांचनबारी खिंड (नाशिक)',
-    image: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=80',
-    title: 'सुरतेची दुसरी स्वारी व कांचनबारी संग्राम — शिवकालीन दिवाळी',
-    desc: 'लक्ष्मीपूजनाच्या दिवशी शिवरायांनी सुरतेवर आक्रमण करून ६६ लाखांहून अधिक संपत्ती स्वराज्यात आणली. परतीच्या वाटेवर कांचनबारीच्या खिंडीत मुघल सरदार दाऊदखानाचा दारुण पराभव केला.',
-    commander: 'छत्रपती शिवाजी महाराज, मोरोपंत पिंगळे विरुद्ध दाऊदखान',
-    importance: 'स्वराज्याच्या तिजोरीत विपुल धनसंचय व मुघल सत्तेला जबर तडाखा',
-    reference: 'सभासद बखर, डच व इंग्रज फॅक्टरी रेकॉर्ड्स',
-    link: '/history/shivaji-diwali',
-    linkText: 'शिवकालीन दिवाळी गाथा वाचा →'
-  },
-  {
-    id: 'shivaji-yudhniti',
-    era: 'shivaji',
-    date: '१६४५ – १६८० (अखंड रणसंग्राम)',
-    location: 'पुरंदर, प्रतापगड, बहादूरगड, सिंधुदुर्ग, कनेरगड',
-    image: '/assets/images/battles/pratapgad.jpg',
-    title: 'छत्रपती शिवाजी महाराजांची युद्धनीती व गनिमी कावा',
-    desc: 'गनिमी कावा, धक्कातंत्र, मानसशास्त्रीय युद्ध (Psychological Warfare), बहादूरगडावरील रक्तहीन खजिना मोहीम, आरमार निर्मिती आणि कनेरगडचे रामजी पांगरे यांचे बलिदान — संपूर्ण ऐतिहासिक विवरण.',
-    commander: 'छत्रपती शिवाजी महाराज, तानाजी मालुसरे, गोदाजी जगताप, रामजी पांगरे विरुद्ध आदिलशाही व मुघल साम्राज्य',
-    importance: 'अल्प सैन्यासह महाप्रचंड साम्राज्ये नमवणारी जागतिक दर्जाची युद्धनीती',
-    reference: 'सभासद बखर, जेधे शकावली, ऐतिहासिक व्याख्यान संदर्भ',
-    link: '/history/shivaji-yudhniti',
-    linkText: 'संपूर्ण युद्धनीती गाथा वाचा →'
-  },
-  {
-    id: 'panhala-kondaji',
-    era: 'shivaji',
-    date: '६ मार्च १६७३',
-    location: 'किल्ले पन्हाळगड, कोल्हापूर',
-    image: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=800&q=80',
-    title: '६० मावळ्यांची पन्हाळगड मोहीम — सवाद्य विजय',
-    desc: 'वीर कोंडाजी फर्जंद, अण्णाजी दत्तो व अवघ्या ६० मर्द मावळ्यांनी मध्यरात्री अभेद्य कडा चढून ३,००० विजापुरी सैन्यावर रणवाद्ये वाजवून केलेला अद्वितीय हल्ला. किल्लेदाराचा वध करून १२ वर्षांनंतर पन्हाळा स्वराज्यात आणला.',
-    commander: 'वीर कोंडाजी फर्जंद, अण्णाजी दत्तो विरुद्ध विजापूर किल्लेदार',
-    importance: 'शिवरायांचे कौतुक: "शाबास कोंडाजी! गडही जिंकला आणि सिंह वाचला!"',
-    reference: 'सभासद बखर, जेधे शकावली, शाहिरी पोवाडे',
-    link: '/forts/panhala',
-    linkText: 'पन्हाळगड विजय गाथा वाचा →'
-  },
-  {
-    id: 'wadgaon',
-    era: 'peshwa',
-    date: '१२–१४ जानेवारी १७७९',
-    location: 'वडगाव मावळ व तळेगाव, पुणे',
-    image: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=800&q=80',
-    title: 'वडगावची ऐतिहासिक लढाई (पहिले इंग्रज-मराठा युद्ध)',
-    desc: 'महादजी शिंदे व नाना फडणवीस यांच्या नेतृत्वाखाली मराठ्यांनी दग्धभू धोरण वापरून इंग्रज सेनेला तळेगाव-वडगाव मावळात घेरले. तोफखाना प्रमुख सरदार पानसे यांच्या तोफांनी इंग्रजांचा दारुण पराभव केला आणि इंग्रज सेनापतीला महादजींच्या तलवारीपुढे नतमस्तक व्हावे लागले.',
-    commander: 'महादजी शिंदे, हरिपंत फडके, सरदार पानसे विरुद्ध कर्नल कॉकबर्न, जॉन स्टुअर्ट (इष्टूर फाकडा)',
-    importance: 'एका भारतीय देशी सत्तेने आधुनिक युरोपियन ब्रिटिश सैन्याला बिनशर्त शरण येण्यास भाग पाडणारा जागतिक विजय',
-    reference: 'पेशवे दप्तर, मॉस्टिन डायरी, ग्रांट डफ, विजयस्तंभ वडगाव',
-    link: '/history/mahadji-shinde',
-    linkText: 'वडगाव विजय व महादजी गाथा वाचा →'
+    link: '/history/warriors',
+    linkText: 'तानाजी मालुसरे चरित्र →'
   },
   {
     id: 'palkhed',
     era: 'peshwa',
+    image: '/assets/images/maratha-battles-palkhed.jpg',
     date: '२८ फेब्रुवारी १७२८',
     location: 'पालखेड, नाशिक',
-    image: '/assets/images/battles/palkhed.jpg',
     title: 'पालखेडची ऐतिहासिक लढाई',
     desc: 'थोरले बाजीराव पेशव्यांची लष्करी रणनीतीची सर्वोत्तम किमया. तोफांचा वापर न करता केवळ वेगवान हालचालींनी निजामाला पाणी नसलेल्या पालखेडच्या मैदानात कोंडले व मुंगी-पैठणचा तह करण्यास भाग पाडले.',
     commander: 'बाजीराव पेशवे I विरुद्ध निजाम-उल-मुल्क',
     importance: 'छत्रपती शाहू महाराजांचे मराठा साम्राज्यावरील अधिपत्य सिद्ध',
     reference: 'पेशवे दप्तर खंड २२, फील्ड मार्शल मॉन्टगोमरी विश्लेषण',
-    link: '/history/warriors',
+    link: '/history/bajirao-peshwa',
     linkText: 'बाजीराव पेशवे चरित्र →'
   },
   {
     id: 'vasai',
     era: 'peshwa',
+    image: '/assets/images/battle-action-vasai.jpg',
     date: '१२ मे १७३९',
     location: 'वसई किल्ला',
-    image: '/assets/images/battles/vasai.jpg',
     title: 'वसईची प्रसिद्ध मोहीम',
     desc: 'पोर्तुगीजांच्या अत्याचारांविरुद्ध चिमाजी अप्पांच्या नेतृत्वाखालील दोन वर्षांचा प्रदीर्घ वेढा. खाणी उडवून आणि अद्वितीय तोफखान्याचा वापर करून युरोपीय सत्तेवर मराठ्यांनी मिळवलेला भव्य विजय.',
     commander: 'चिमाजी अप्पा, मानाजी आंग्रे विरुद्ध सिल्वा आल्बुकेर्क',
@@ -156,23 +75,23 @@ const BATTLES_LIST = [
   {
     id: 'panipat',
     era: 'peshwa',
+    image: '/assets/images/battle-action-panipat.jpg',
     date: '१४ जानेवारी १७६१',
     location: 'पानिपत, हरियाणा',
-    image: '/assets/images/battles/panipat.jpg',
     title: 'पानिपतची तिसरी लढाई',
     desc: 'भारताच्या सार्वभौमत्वासाठी उत्तरेत लढलेली महाभीषण लढाई. सदाशिवराव भाऊ, विश्वासराव पेशवे, मल्हारराव होळकर व इब्राहिम खान गारदी यांनी अब्दालीच्या सैन्याविरुद्ध दिलेला असीम शौर्याचा लढा.',
     commander: 'सदाशिवराव भाऊ विरुद्ध अहमद शाह अब्दाली',
     importance: 'मराठ्यांचा राष्ट्रीय बलिदानाचा इतिहास',
     reference: 'भाऊसाहेबांची बखर, काशीराज अहवाल, सर जदुनाथ सरकार',
-    link: '/history',
+    link: '/granthalaya',
     linkText: 'भाऊसाहेबांची बखर वाचा →'
   },
   {
     id: 'wadgaon',
     era: 'anglo',
+    image: '/assets/images/battle-action-wadgaon.jpg',
     date: '१२-१३ जानेवारी १७७९',
     location: 'तळेगाव - वडगाव मावळ',
-    image: '/assets/images/battles/salher.jpg',
     title: 'वडगावची लढाई (पहिले इंग्रज-मराठा युद्ध)',
     desc: 'महादजी शिंदे व तुकोजी होळकर यांच्या संयुक्त फौजांनी ब्रिटिश ईस्ट इंडिया कंपनीच्या मुंबई सैन्याला तळेगाव-वडगावमध्ये कोंडीत पकडून शरणागती पत्करायला लावली. वडगावचा प्रसिद्ध तह.',
     commander: 'महादजी शिंदे, हरिपंत फडके विरुद्ध कर्नल कॉकबर्न',
@@ -185,6 +104,80 @@ const BATTLES_LIST = [
 
 export default function BattlesPage() {
   const [activeEra, setActiveEra] = useState('all');
+  const [activePillar, setActivePillar] = useState(0);
+
+  const STRATEGY_PILLARS = [
+    {
+      id: 'ganimi-kawa',
+      icon: '⚡',
+      title: 'गनिमी कावा (Guerrilla Warfare)',
+      subtitle: 'आकस्मिक हल्ले व अचूक नियोजन',
+      accent: '#F4511E',
+      quote: '"शत्रूवर संकट कोसळण्याआधी मराठ्यांचे अस्त्र पोहोचले पाहिजे."',
+      keyPoints: [
+        'भौगोलिक परिस्थितीचा आणि दुर्गम डोंगराळ भागाचा रणनीतिक वापर',
+        'शत्रूचा रसद व दारुगोळा पुरवठा मध्यभागीच रोखणे आणि तोडणे',
+        'आकस्मिक झंझावाती हल्ला करून लगेच सुरक्षित आश्रयस्थानांत झटपट परतणे',
+        'कमी सैन्यात अफाट शत्रू सैन्याला थकवून नामोहरम करण्याची अद्वितीय पद्धत'
+      ]
+    },
+    {
+      id: 'cavalry',
+      icon: '🐎',
+      title: 'वेगवान अश्वदल (Light Cavalry)',
+      subtitle: 'झंझावाती वेग व हालचाल',
+      accent: '#D84315',
+      quote: '"दिवसभरात ५०-६० मैल मजल मारणारे जगातील सर्वांत चपळ घोडदळ."',
+      keyPoints: [
+        'थोरले बाजीराव पेशवे व धनाजी-संताजी यांच्या काळात जागतिक ख्याती',
+        'किमान ओझे, हलकी शस्त्रे (भाला व तलवार) आणि सतत गतिमानता',
+        'शत्रूला सावरण्याची किंवा तोफा रोखण्याची संधी न देता चहूबाजूंनी घेरण्याची पद्धत',
+        'भीमथडी तट्टांचा चपळ व खडकाळ डोंगरवाटांवर धावणारा नैसर्गिक वापर'
+      ]
+    },
+    {
+      id: 'artillery',
+      icon: '💣',
+      title: 'तोफखाना व दारुगोळा',
+      subtitle: 'सुरूंग, बंदुका व तोफांचे तंत्रज्ञान',
+      accent: '#C73800',
+      quote: '"पुरंदर व वसईच्या वेढ्यात मराठा तंत्रज्ञानाने युरोपीय सत्तांना अचंबित केले."',
+      keyPoints: [
+        'स्वदेशी कारागिरांनी ओतलेल्या ' + 'तोफा व फिरते हलके तोफखाने (सुतरनाळ/जंबुरा)',
+        'इब्राहिम खान गारदी यांच्या फ्रेंच धर्तीवरील प्रशिक्षित तोफखाना ब्रिगेड',
+        'वसईच्या किल्ल्यात पोर्तुगीज तटबंदी भुईसपाट करणारे अचूक भुयारी सुरूंग तंत्र',
+        'किल्ले व घाटांच्या संरक्षणासाठी तोफांची सामरिक मोर्चेबांधणी'
+      ]
+    },
+    {
+      id: 'navy',
+      icon: '⚓',
+      title: 'मराठा आरमार व सागरी वेढा',
+      subtitle: 'भारतीय नौदलाचे जनकत्व',
+      accent: '#1565C0',
+      quote: '"ज्यांचे आरमार त्यांचा समुद्र — छत्रपती शिवाजी महाराज."',
+      keyPoints: [
+        'छत्रपती शिवाजी महाराजांनी सिंधुदुर्ग, विजयदुर्ग, पद्मदुर्ग उभारून रचलेला पाया',
+        'सरखेल कान्होजी आंग्रे यांच्या नेतृत्वाखाली ब्रिटिश, डच, पोर्तुगीज आरमारावर दरारा',
+        'गुराब, गलबत व पाल या चपळ जहाजांचा उथळ सागरी पाण्यात प्रभावी वापर',
+        'अरबी समुद्रातील व्यापारी मार्गांवर मराठा स्वराज्याचा ५० वर्षे अखंड पहारा'
+      ]
+    },
+    {
+      id: 'forts-logistics',
+      icon: '🏰',
+      title: 'दुर्ग संरक्षण व रसद साखळी',
+      subtitle: '३५०+ किल्ल्यांचे अभेद्य जाळे',
+      accent: '#6A1B9A',
+      quote: '"किल्ला म्हणजे केवळ दगड-धोंडे नव्हे, तर स्वराज्याचे अभेद्य कवच."',
+      keyPoints: [
+        'डोंगरी, भुईकोट व जलदुर्गांचे परस्परपूरक संरक्षण जाळे',
+        'प्रत्येक गडावर किमान वर्षभराचा अन्नधान्य, पाणी व दारुगोळा साठा',
+        'हवालदार, सबनीस व कारखानीस अशी त्रिस्तरीय कार्यक्षम प्रशासन व्यवस्था',
+        'एका गडावर संकट आले तरी शेजारील गडांवरून तत्काळ प्रतिहल्ल्याची रणनीती'
+      ]
+    }
+  ];
 
   const filteredBattles = activeEra === 'all'
     ? BATTLES_LIST
@@ -193,139 +186,221 @@ export default function BattlesPage() {
   return (
     <>
       {/* HERO SECTION */}
-      <div className="hero" style={{ position: 'relative', minHeight: '480px', overflow: 'hidden' }}>
+      <div className="hero" style={{ position: 'relative', minHeight: '440px', overflow: 'hidden' }}>
         <img
           src="/assets/images/maratha-battles-palkhed.jpg"
           alt="मराठा युद्धे व रणव्यूह"
           className="hero-bg-img"
-          style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.38)' }}
+          style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.35)' }}
         />
         <div
           className="hero-overlay"
           style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 70% 30%, rgba(20,4,6,0.6), rgba(12,2,4,0.95) 85%)' }}
         />
-        <div className="wrap hero-content" style={{ position: 'relative', zIndex: 2, maxWidth: '1300px', padding: '64px 24px', color: '#fff' }}>
-          <div className="eyebrow" style={{ color: 'var(--gold-400)', textTransform: 'uppercase', fontSize: '0.85rem', letterSpacing: '1.5px', fontWeight: 700 }}>
-            Spec Page 13 & 14 • Blueprint Section 4
+        <div className="wrap hero-content" style={{ position: 'relative', zIndex: 2, maxWidth: '1200px', padding: '56px 20px', color: '#fff' }}>
+          <div className="eyebrow" style={{ color: '#FFD54F', textTransform: 'uppercase', fontSize: '0.82rem', letterSpacing: '1.5px', fontWeight: 700 }}>
+            लष्करी रणनीती व युद्ध इतिहास
           </div>
-          <h1 style={{ fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', lineHeight: 1.15, color: '#fff', margin: '8px 0 16px', fontFamily: 'Baloo 2' }}>
+          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3.4rem)', lineHeight: 1.15, color: '#fff', margin: '8px 0 14px', fontFamily: 'Baloo 2' }}>
             मराठा युद्धे, लढाया व{' '}
-            <span style={{ background: 'linear-gradient(90deg,var(--gold-400),var(--saffron-500))', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <span style={{ color: '#FF8A65' }}>
               रणव्यूह दालन
             </span>
           </h1>
-          <div style={{ background: 'var(--gold-500)', width: '80px', height: '4px', marginBottom: '18px' }} />
-          <p style={{ color: 'var(--text-sec)', fontSize: '1.12rem', maxWidth: '68ch', lineHeight: 1.6 }}>
+          <div style={{ background: '#FF8A65', width: '70px', height: '3px', marginBottom: '14px' }} />
+          <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.05rem', maxWidth: '64ch', lineHeight: 1.55 }}>
             गनिमी कावा, वेगवान अश्वदल, जलदुर्ग वेढा व डोंगररांगांमधील अजोड रणनीती • पावनखिंड ते पालखेड, वसई ते पानिपत — मराठा लष्करी इतिहासाची सत्य व संदर्भयुक्त शौर्यगाथा.
           </p>
 
-          <div style={{ display: 'flex', gap: '16px', marginTop: '28px', flexWrap: 'wrap' }}>
-            <a href="#battlesList" className="btn btn-primary" style={{ padding: '12px 24px', fontWeight: 700 }}>
+          <div style={{ display: 'flex', gap: '14px', marginTop: '24px', flexWrap: 'wrap' }}>
+            <a href="#battlesList" className="btn btn-primary" style={{ padding: '10px 22px', fontWeight: 700, background: '#F4511E', color: '#fff', borderRadius: '8px', border: 'none' }}>
               ⚔️ प्रमुख लढाया पहा
             </a>
-            <Link to="/forts" className="btn btn-outline" style={{ padding: '12px 24px', color: '#fff', borderColor: 'var(--gold-400)' }}>
+            <Link to="/forts" className="btn btn-outline" style={{ padding: '10px 22px', color: '#fff', borderColor: '#FFD54F', borderRadius: '8px' }}>
               🗺️ युद्धस्थळांचा नकाशा
             </Link>
           </div>
         </div>
       </div>
 
-      {/* TACTICAL STRATEGY OVERVIEW PILLARS */}
-      <section className="section" style={{ padding: '56px 24px', background: 'var(--paper-2)' }}>
-        <div className="wrap" style={{ maxWidth: '1300px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 40px' }}>
-            <span className="tag" style={{ background: 'var(--saffron-500)', color: '#fff' }}>
+      {/* MODERN INTERACTIVE TACTICAL STRATEGY OVERVIEW */}
+      <section className="section" style={{ padding: '50px 20px', background: '#F8F4EC', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+        <div className="wrap" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 32px' }}>
+            <span style={{ background: '#F4511E', color: '#fff', padding: '4px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.5px' }}>
               रणनीती व लष्करी व्यवस्था
             </span>
-            <h2 style={{ fontSize: '2.2rem', margin: '10px 0', fontFamily: 'Baloo 2' }}>
+            <h2 style={{ fontSize: '2rem', margin: '10px 0 6px', fontFamily: 'Baloo 2', color: '#2B1810' }}>
               मराठा लष्करी डावपेच — पाच मुख्य आधारस्तंभ
             </h2>
-            <p style={{ color: 'var(--text-sec)' }}>
-              ऐतिहासिक साधनांवर आधारित मराठा सैन्याची युद्धपद्धती, ज्याने समकालीन सत्तांना चकित केले.
+            <p style={{ color: '#665C54', fontSize: '0.95rem' }}>
+              ऐतिहासिक साधनांवर आधारित मराठा सैन्याची अद्वितीय युद्धनीती. सविस्तर जाणून घेण्यासाठी खालील स्तंभांवर क्लिक करा:
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
-            <div className="card" style={{ padding: '24px', borderRadius: '14px', borderTop: '3px solid var(--saffron-600)' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '10px' }}>⚡</div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>गनिमी कावा (Guerrilla Warfare)</h3>
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-sec)', lineHeight: 1.5 }}>
-                भौगोलिक परिस्थितीचा परिपूर्ण अभ्यास, आकस्मिक हल्ले, शत्रूचा रसद पुरवठा तोडणे आणि सुरक्षित आश्रयस्थानांत झटपट परतणे.
+          {/* 5 PILLAR TABS */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '12px', marginBottom: '24px' }}>
+            {STRATEGY_PILLARS.map((p, idx) => {
+              const isActive = activePillar === idx;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setActivePillar(idx)}
+                  style={{
+                    background: isActive ? '#FFFFFF' : 'rgba(255, 255, 255, 0.75)',
+                    border: isActive ? `2px solid ${p.accent}` : '1px solid rgba(0, 0, 0, 0.08)',
+                    borderTop: `4px solid ${p.accent}`,
+                    borderRadius: '12px',
+                    padding: '14px 12px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    boxShadow: isActive ? '0 8px 20px rgba(0,0,0,0.1)' : '0 2px 6px rgba(0,0,0,0.03)',
+                    transform: isActive ? 'translateY(-2px)' : 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <div style={{ fontSize: '1.6rem', marginBottom: '4px' }}>{p.icon}</div>
+                  <div style={{ fontWeight: 800, fontSize: '0.92rem', color: isActive ? p.accent : '#2B1810', lineHeight: 1.3 }}>
+                    {p.title.split(' ')[0]} {p.title.split(' ')[1] || ''}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: '#776E65', marginTop: '3px' }}>
+                    {p.subtitle}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* ACTIVE PILLAR HERO SHOWCASE */}
+          <div
+            style={{
+              background: '#FFFFFF',
+              borderRadius: '16px',
+              border: `1.5px solid ${STRATEGY_PILLARS[activePillar].accent}33`,
+              boxShadow: '0 10px 30px rgba(43, 24, 16, 0.08)',
+              padding: '28px 32px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '28px',
+              alignItems: 'center'
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                <span style={{ fontSize: '2.2rem', background: '#FFF3E0', padding: '8px 12px', borderRadius: '12px' }}>
+                  {STRATEGY_PILLARS[activePillar].icon}
+                </span>
+                <div>
+                  <h3 style={{ fontSize: '1.45rem', margin: 0, color: '#2B1810', fontFamily: 'Baloo 2' }}>
+                    {STRATEGY_PILLARS[activePillar].title}
+                  </h3>
+                  <span style={{ color: STRATEGY_PILLARS[activePillar].accent, fontWeight: 700, fontSize: '0.85rem' }}>
+                    {STRATEGY_PILLARS[activePillar].subtitle}
+                  </span>
+                </div>
+              </div>
+              <p
+                style={{
+                  fontStyle: 'italic',
+                  color: '#665C54',
+                  borderLeft: `3px solid ${STRATEGY_PILLARS[activePillar].accent}`,
+                  paddingLeft: '14px',
+                  margin: '16px 0',
+                  fontSize: '0.94rem'
+                }}
+              >
+                {STRATEGY_PILLARS[activePillar].quote}
               </p>
             </div>
-            <div className="card" style={{ padding: '24px', borderRadius: '14px', borderTop: '3px solid var(--gold-500)' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '10px' }}>🐎</div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>वेगवान अश्वदल (Light Cavalry)</h3>
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-sec)', lineHeight: 1.5 }}>
-                थोरले बाजीराव पेशव्यांच्या काळात विकसित झालेली दिवसभरात ५०-६० मैल धाव घेण्याची क्षमता, हलकी शस्त्रे व वेगवान हालचाली.
-              </p>
-            </div>
-            <div className="card" style={{ padding: '24px', borderRadius: '14px', borderTop: '3px solid #C73800' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '10px' }}>💣</div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>तोफखाना व दारुगोळा</h3>
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-sec)', lineHeight: 1.5 }}>
-                पुरंदर, रायगड, आणि वसईच्या वेढ्यात मराठा कारागिरांनी निर्माण केलेल्या तोफा व सुरूंग तंत्रज्ञानाचा प्रभावी रणवापर.
-              </p>
-            </div>
-            <div className="card" style={{ padding: '24px', borderRadius: '14px', borderTop: '3px solid #1E88E5' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '10px' }}>⚓</div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>मराठा आरमार व सागरी वेढा</h3>
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-sec)', lineHeight: 1.5 }}>
-                छत्रपती शिवाजी महाराजांनी स्थापलेले स्वतंत्र आरमार व कान्होजी आंग्रे यांनी राखलेले अरबी समुद्रावरील मराठा वर्चस्व.
-              </p>
-            </div>
-            <div className="card" style={{ padding: '24px', borderRadius: '14px', borderTop: '3px solid var(--maroon-900)' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '10px' }}>🏰</div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>दुर्ग संरक्षण व रसद साखळी</h3>
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-sec)', lineHeight: 1.5 }}>
-                ३५० हून अधिक डोंगरी व जलदुर्गांचे अभेद्य जाळे, नैसर्गिक जलसाठे आणि आणीबाणीच्या वेळी स्वतंत्र प्रतिकार क्षमता.
-              </p>
+
+            <div style={{ background: '#FAF7F2', padding: '20px', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.06)' }}>
+              <h4 style={{ margin: '0 0 12px', fontSize: '0.95rem', color: '#2B1810', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                लष्करी वैशिष्ट्ये व सामर्थ्य:
+              </h4>
+              <ul style={{ margin: 0, paddingLeft: '18px', color: '#4A3B32', fontSize: '0.88rem', lineHeight: 1.6 }}>
+                {STRATEGY_PILLARS[activePillar].keyPoints.map((pt, i) => (
+                  <li key={i} style={{ marginBottom: '6px' }}>{pt}</li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
       </section>
 
       {/* BATTLES LIST SECTION */}
-      <section className="section" id="battlesList" style={{ padding: '64px 24px' }}>
-        <div className="wrap" style={{ maxWidth: '1300px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
+      <section className="section" id="battlesList" style={{ padding: '48px 20px', background: '#FAF7F2' }}>
+        <div className="wrap" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', flexWrap: 'wrap', gap: '14px' }}>
             <div>
-              <span className="tag" style={{ background: 'var(--maroon-900)', color: 'var(--gold-400)' }}>
+              <span style={{ background: '#C73800', color: '#fff', padding: '3px 12px', borderRadius: '16px', fontSize: '0.78rem', fontWeight: 700 }}>
                 ऐतिहासिक लढायांचा विस्तृत संग्रह
               </span>
-              <h2 style={{ fontSize: '2.2rem', margin: '8px 0 0', fontFamily: 'Baloo 2' }}>
+              <h2 style={{ fontSize: '1.9rem', margin: '6px 0 0', fontFamily: 'Baloo 2', color: '#2B1810' }}>
                 ७ ऐतिहासिक निर्णायक लढाया
               </h2>
             </div>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <button
                 type="button"
-                className={`btn btn-outline ${activeEra === 'all' ? 'active' : ''}`}
-                style={{ padding: '6px 14px', fontSize: '0.82rem' }}
+                style={{
+                  padding: '6px 14px',
+                  fontSize: '0.82rem',
+                  borderRadius: '20px',
+                  border: activeEra === 'all' ? '1.5px solid #C73800' : '1px solid #D7CCC8',
+                  background: activeEra === 'all' ? '#C73800' : '#FFFFFF',
+                  color: activeEra === 'all' ? '#FFFFFF' : '#4E342E',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
                 onClick={() => setActiveEra('all')}
               >
                 सर्व लढाया
               </button>
               <button
                 type="button"
-                className={`btn btn-outline ${activeEra === 'shivaji' ? 'active' : ''}`}
-                style={{ padding: '6px 14px', fontSize: '0.82rem' }}
+                style={{
+                  padding: '6px 14px',
+                  fontSize: '0.82rem',
+                  borderRadius: '20px',
+                  border: activeEra === 'shivaji' ? '1.5px solid #C73800' : '1px solid #D7CCC8',
+                  background: activeEra === 'shivaji' ? '#C73800' : '#FFFFFF',
+                  color: activeEra === 'shivaji' ? '#FFFFFF' : '#4E342E',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
                 onClick={() => setActiveEra('shivaji')}
               >
                 शिवकाल (१६४५-१६८०)
               </button>
               <button
                 type="button"
-                className={`btn btn-outline ${activeEra === 'peshwa' ? 'active' : ''}`}
-                style={{ padding: '6px 14px', fontSize: '0.82rem' }}
+                style={{
+                  padding: '6px 14px',
+                  fontSize: '0.82rem',
+                  borderRadius: '20px',
+                  border: activeEra === 'peshwa' ? '1.5px solid #C73800' : '1px solid #D7CCC8',
+                  background: activeEra === 'peshwa' ? '#C73800' : '#FFFFFF',
+                  color: activeEra === 'peshwa' ? '#FFFFFF' : '#4E342E',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
                 onClick={() => setActiveEra('peshwa')}
               >
                 पेशवे काल (१७०७-१७६१)
               </button>
               <button
                 type="button"
-                className={`btn btn-outline ${activeEra === 'anglo' ? 'active' : ''}`}
-                style={{ padding: '6px 14px', fontSize: '0.82rem' }}
+                style={{
+                  padding: '6px 14px',
+                  fontSize: '0.82rem',
+                  borderRadius: '20px',
+                  border: activeEra === 'anglo' ? '1.5px solid #C73800' : '1px solid #D7CCC8',
+                  background: activeEra === 'anglo' ? '#C73800' : '#FFFFFF',
+                  color: activeEra === 'anglo' ? '#FFFFFF' : '#4E342E',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
                 onClick={() => setActiveEra('anglo')}
               >
                 ब्रिटिश संघर्ष (१७७५-१८१८)
@@ -333,50 +408,125 @@ export default function BattlesPage() {
             </div>
           </div>
 
-          <div className="grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px' }}>
+          {/* COMPACT BATTLE CARDS GRID */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '22px' }}>
             {filteredBattles.map((b) => (
               <div
                 key={b.id}
-                className="card battle-card"
                 data-era={b.era}
-                style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--line)', display: 'flex', flexDirection: 'column' }}
+                style={{
+                  borderRadius: '14px',
+                  overflow: 'hidden',
+                  border: '1px solid rgba(43, 24, 16, 0.12)',
+                  boxShadow: '0 4px 14px rgba(43, 24, 16, 0.06)',
+                  background: '#FFFFFF',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                }}
               >
-                {/* Relatable Battle Artwork Banner */}
-                <div style={{ height: '190px', width: '100%', position: 'relative', overflow: 'hidden', background: '#1c1917' }}>
+                {/* COMPACT 16:9 BATTLE ACTION IMAGE */}
+                <div style={{ position: 'relative', width: '100%', height: '175px', overflow: 'hidden', background: '#1c0d12' }}>
                   <img
                     src={b.image}
                     alt={b.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    onError={(e) => { e.target.onerror = null; e.target.src = '/assets/images/battles/pratapgad.jpg'; }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: 'block'
+                    }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
                   />
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(20,4,6,0.9) 0%, rgba(20,4,6,0.3) 60%, transparent 100%)' }} />
-                  <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.6)', color: 'var(--gold-400)', fontSize: '0.75rem', fontWeight: 800, padding: '3px 8px', borderRadius: '4px' }}>
-                    {b.date}
-                  </div>
-                  <div style={{ position: 'absolute', bottom: '12px', left: '16px', right: '16px' }}>
-                    <span className="tag" style={{ background: 'rgba(255,255,255,0.2)', fontSize: '0.72rem', color: '#fff', backdropFilter: 'blur(4px)' }}>
-                      📍 {b.location}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '10px',
+                      left: '10px',
+                      right: '10px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      zIndex: 2
+                    }}
+                  >
+                    <span
+                      style={{
+                        background: 'rgba(20, 4, 6, 0.85)',
+                        color: '#FFE082',
+                        padding: '3px 8px',
+                        borderRadius: '5px',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                        border: '1px solid rgba(255, 213, 79, 0.4)',
+                        backdropFilter: 'blur(4px)'
+                      }}
+                    >
+                      {b.date}
                     </span>
-                    <h3 style={{ fontSize: '1.3rem', margin: '6px 0 0', color: '#fff', fontFamily: 'Baloo 2', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-                      {b.title}
-                    </h3>
+                    <span
+                      style={{
+                        background: 'rgba(20, 4, 6, 0.85)',
+                        color: '#FFFFFF',
+                        fontSize: '0.72rem',
+                        margin: 0,
+                        padding: '3px 8px',
+                        borderRadius: '5px',
+                        border: '1px solid rgba(255,255,255,0.25)',
+                        backdropFilter: 'blur(4px)'
+                      }}
+                    >
+                      {b.location}
+                    </span>
                   </div>
                 </div>
-                <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+
+                {/* COMPACT BATTLE TITLE */}
+                <div style={{ background: '#C73800', color: '#FFFFFF', padding: '10px 14px', borderBottom: '2px solid #E65100' }}>
+                  <h3 style={{ fontSize: '1.12rem', margin: 0, color: '#FFFFFF', fontFamily: 'Baloo 2', lineHeight: 1.25, fontWeight: 700 }}>
+                    {b.title}
+                  </h3>
+                </div>
+
+                {/* COMPACT TIGHT BATTLE CONTENT */}
+                <div style={{ padding: '14px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--text-sec)', marginBottom: '14px', lineHeight: 1.6 }}>
+                    <p style={{ fontSize: '0.84rem', color: '#3E2723', margin: '0 0 10px 0', lineHeight: 1.48 }}>
                       {b.desc}
                     </p>
-                    <div style={{ fontSize: '0.82rem', background: 'var(--paper-3)', padding: '12px', borderRadius: '8px', marginBottom: '14px', lineHeight: 1.5 }}>
-                      <div><strong>सेनापती:</strong> {b.commander}</div>
-                      <div style={{ marginTop: '4px' }}><strong>महत्त्व:</strong> {b.importance}</div>
-                      <div style={{ marginTop: '4px' }}><strong>संदर्भ:</strong> {b.reference}</div>
+                    <div style={{ fontSize: '0.78rem', background: '#F5EBE1', padding: '9px 11px', borderRadius: '8px', margin: '0 0 12px 0', lineHeight: 1.45, border: '1px solid rgba(199, 56, 0, 0.12)' }}>
+                      <div style={{ color: '#2B1810' }}><strong>सेनापती:</strong> {b.commander}</div>
+                      <div style={{ marginTop: '3px', color: '#2B1810' }}><strong>महत्त्व:</strong> {b.importance}</div>
+                      <div style={{ marginTop: '3px', color: '#5D4037' }}><strong>संदर्भ:</strong> {b.reference}</div>
                     </div>
                   </div>
                   <Link
                     to={b.link}
-                    className="btn btn-outline"
-                    style={{ width: '100%', textAlign: 'center', justifyContent: 'center', boxSizing: 'border-box' }}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      textAlign: 'center',
+                      boxSizing: 'border-box',
+                      fontWeight: 700,
+                      fontSize: '0.82rem',
+                      padding: '7px 12px',
+                      borderRadius: '8px',
+                      color: '#C73800',
+                      border: '1.5px solid #C73800',
+                      background: '#FFFFFF',
+                      textDecoration: 'none',
+                      transition: 'background 0.2s ease, color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#C73800';
+                      e.currentTarget.style.color = '#FFFFFF';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = '#FFFFFF';
+                      e.currentTarget.style.color = '#C73800';
+                    }}
                   >
                     {b.linkText}
                   </Link>
@@ -389,3 +539,4 @@ export default function BattlesPage() {
     </>
   );
 }
+

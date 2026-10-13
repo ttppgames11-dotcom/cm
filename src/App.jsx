@@ -3,6 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ScopeProvider } from './context/ScopeContext';
 import { SiteContentProvider } from './context/SiteContentContext';
+import { ToastProvider } from './context/ToastContext';
+import { LanguageProvider } from './context/LanguageContext';
 import AppLayout from './components/layout/AppLayout';
 
 // Core React Pages
@@ -30,6 +32,8 @@ import MarathaCalendarPage from './pages/calendar/MarathaCalendarPage';
 import DonationsPage from './pages/donation/DonationsPage';
 import PeopleDirectoryPage from './pages/directory/PeopleDirectoryPage';
 import JobsPortalPage from './pages/jobs/JobsPortalPage';
+import BusinessLeadsPortalPage from './pages/business/BusinessLeadsPortalPage';
+import ReferralPortalPage from './pages/member/ReferralPortalPage';
 
 // Culture, Governance, Admin
 import PhotoGalleryPage from './pages/culture/PhotoGalleryPage';
@@ -37,10 +41,16 @@ import GovernancePage from './pages/governance/GovernancePage';
 import AdminERPPage from './pages/admin/AdminERPPage';
 import CEODashboardPage from './pages/admin/CEODashboardPage';
 import CEOPage from './pages/admin/CEOPage';
+import PradeshAdminCRM from './pages/admin/PradeshAdminCRM';
+import DivisionAdminCRM from './pages/admin/DivisionAdminCRM';
 import DistrictAdminCRM from './pages/admin/DistrictAdminCRM';
+import TalukaAdminCRM from './pages/admin/TalukaAdminCRM';
+import BranchAdminCRM from './pages/admin/BranchAdminCRM';
+import CommunityCenterCRM from './pages/admin/CommunityCenterCRM';
 import ChapterPresidentCRM from './pages/admin/ChapterPresidentCRM';
 import SevaHelpdeskCRM from './pages/admin/SevaHelpdeskCRM';
 import FinanceLedgerCRM from './pages/admin/FinanceLedgerCRM';
+import UnifiedOperationsDashboard from './pages/admin/UnifiedOperationsDashboard';
 import CRMRoleHubPage from './pages/admin/CRMRoleHubPage';
 import CRMLoginPage from './pages/admin/CRMLoginPage';
 import CRMProtectedRoute from './components/auth/CRMProtectedRoute';
@@ -51,6 +61,8 @@ import SuperAdminPage from './pages/admin/SuperAdminPage';
 import AdminShell from './pages/admin/AdminShell';
 import ConnectMarathaAIAgentPage from './pages/ai/ConnectMarathaAIAgentPage';
 import GenericArticlePage from './pages/common/GenericArticlePage';
+import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
+import TermsAndConditionsPage from './pages/legal/TermsAndConditionsPage';
 
 // Specialized Converted Feature Pages
 import SearchPage from './pages/common/SearchPage';
@@ -71,9 +83,11 @@ import NewsAnnouncementsPage from './pages/community/NewsAnnouncementsPage';
 import NotificationsPage from './pages/member/NotificationsPage';
 import MessagesPage from './pages/member/MessagesPage';
 import ServiceBookingPage from './pages/jobs/ServiceBookingPage';
-import BlueprintVisionPage from './pages/governance/BlueprintVisionPage';
+import ObjectivesPage from './pages/governance/ObjectivesPage';
 import AboutPage from './pages/governance/AboutPage';
 import AchieversPage from './pages/governance/AchieversPage';
+import WhyJoinPage from './pages/governance/WhyJoinPage';
+import VisionMissionPage from './pages/governance/VisionMissionPage';
 import MorePortalsPage from './pages/common/MorePortalsPage';
 import SymbolsPage from './pages/culture/SymbolsPage';
 import TemplesPage from './pages/culture/TemplesPage';
@@ -97,6 +111,9 @@ import PoliticalLeadersPartiesPage from './pages/governance/PoliticalLeadersPart
 import SocialWorkersPage from './pages/community/SocialWorkersPage';
 import BloodHelpPortalPage from './pages/community/BloodHelpPortalPage';
 import MatrimonyPortalPage from './pages/community/MatrimonyPortalPage';
+
+import ContactPage from './pages/common/ContactPage';
+import HigherEducationPortalPage from './pages/education/HigherEducationPortalPage';
 
 // Maharashtra Culture & Heritage Knowledge Graph (8 Major Pillars)
 import MaharashtraCultureHubPage from './pages/culture/MaharashtraCultureHubPage';
@@ -216,15 +233,14 @@ const legacyRedirects = [
   { from: '/cm-quiz.html', to: '/quiz' }
 ];
 
-import { ToastProvider } from './context/ToastContext';
-
 export default function App() {
   return (
     <ToastProvider>
-      <AuthProvider>
-        <ScopeProvider>
-          <SiteContentProvider>
-            <Routes>
+      <LanguageProvider>
+        <AuthProvider>
+          <ScopeProvider>
+            <SiteContentProvider>
+              <Routes>
           {/* Automatic Clean Redirects from legacy .html to clean React routes */}
           {legacyRedirects.map((r, i) => (
             <Route key={i} path={r.from} element={<Navigate to={r.to} replace />} />
@@ -325,19 +341,27 @@ export default function App() {
             <Route path="/meetings" element={<MemberProtectedRoute><MeetingsPortalPage /></MemberProtectedRoute>} />
             <Route path="/business/meetings" element={<MemberProtectedRoute><MeetingsPortalPage /></MemberProtectedRoute>} />
             <Route path="/business-meetings" element={<MemberProtectedRoute><MeetingsPortalPage /></MemberProtectedRoute>} />
-            <Route path="/referrals" element={<MemberProtectedRoute><ReferralsTrackerPage /></MemberProtectedRoute>} />
+            <Route path="/referrals" element={<ReferralPortalPage />} />
+            <Route path="/member/referrals" element={<ReferralPortalPage />} />
+            <Route path="/referrals/tracker" element={<MemberProtectedRoute><ReferralsTrackerPage /></MemberProtectedRoute>} />
             <Route path="/create-referral" element={<MemberProtectedRoute><CreateReferralPage /></MemberProtectedRoute>} />
             <Route path="/referrals/create" element={<MemberProtectedRoute><CreateReferralPage /></MemberProtectedRoute>} />
+            <Route path="/leads" element={<BusinessLeadsPortalPage />} />
+            <Route path="/business/leads" element={<BusinessLeadsPortalPage />} />
+            <Route path="/business-leads" element={<BusinessLeadsPortalPage />} />
             <Route path="/business" element={<BusinessDirectoryPage />} />
             <Route path="/business/directory" element={<BusinessDirectoryPage />} />
             <Route path="/business/list" element={<BusinessDirectoryPage />} />
-            <Route path="/business/opportunities" element={<BusinessDirectoryPage />} />
+            <Route path="/business/opportunities" element={<BusinessLeadsPortalPage />} />
             <Route path="/business/mandal" element={<BusinessSangamPage />} />
             <Route path="/business/membership-application" element={<BusinessSangamPage />} />
 
             {/* Jobs, Education & Services */}
             <Route path="/jobs" element={<JobsPortalPage />} />
-            <Route path="/education" element={<JobsPortalPage />} />
+            <Route path="/education" element={<HigherEducationPortalPage />} />
+            <Route path="/higher-education" element={<HigherEducationPortalPage />} />
+            <Route path="/colleges" element={<HigherEducationPortalPage />} />
+            <Route path="/scholarships" element={<HigherEducationPortalPage />} />
             <Route path="/services" element={<JobsPortalPage />} />
             <Route path="/services/booking" element={<MemberProtectedRoute><ServiceBookingPage /></MemberProtectedRoute>} />
             <Route path="/service-booking" element={<MemberProtectedRoute><ServiceBookingPage /></MemberProtectedRoute>} />
@@ -413,10 +437,22 @@ export default function App() {
             <Route path="/referral-eligibility" element={<RoleEligibilityMatrixPage />} />
             <Route path="/governance/roles" element={<RoleEligibilityMatrixPage />} />
             <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<GovernancePage />} />
+            <Route path="/vision" element={<VisionMissionPage />} />
+            <Route path="/vision-mission" element={<VisionMissionPage />} />
+            <Route path="/mission" element={<VisionMissionPage />} />
+            <Route path="/goals" element={<ObjectivesPage />} />
+            <Route path="/objectives" element={<ObjectivesPage />} />
+            <Route path="/uddishta" element={<ObjectivesPage />} />
+            <Route path="/sankalp" element={<ObjectivesPage />} />
+            <Route path="/blueprint" element={<ObjectivesPage />} />
+            <Route path="/why-join" element={<WhyJoinPage />} />
+            <Route path="/whytojoin" element={<WhyJoinPage />} />
+            <Route path="/benefits" element={<WhyJoinPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/contact-us" element={<ContactPage />} />
+            <Route path="/helpdesk-contact" element={<ContactPage />} />
             <Route path="/leaders" element={<AboutPage />} />
             <Route path="/achievers" element={<AchieversPage />} />
-            <Route path="/blueprint" element={<BlueprintVisionPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/more" element={<MorePortalsPage />} />
             <Route path="/portals" element={<MorePortalsPage />} />
@@ -424,17 +460,41 @@ export default function App() {
             {/* Dedicated Secure CRM Login Gateways */}
             <Route path="/crm/login" element={<CRMLoginPage />} />
             <Route path="/admin/login" element={<CRMLoginPage />} />
+            <Route path="/admin/crm-login" element={<CRMLoginPage />} />
 
             {/* Role-Specific Live Enterprise CRM Suite — Protected for Authenticated Staff/Admins */}
             <Route path="/crm" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
             <Route path="/crm/roles" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
-            <Route path="/crm/admin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/crm/admin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/admin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/admin/dashboard" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/admin/users" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
+            <Route path="/admin/members" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
 
             <Route path="/crm/ceo" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEOPage /></CRMProtectedRoute>} />
             <Route path="/ceo" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEOPage /></CRMProtectedRoute>} />
             <Route path="/ceo-dashboard" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><CEOPage /></CRMProtectedRoute>} />
+            <Route path="/crm/pradesh" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo', 'pradesh_admin', 'state_admin', 'pradesh']}><PradeshAdminCRM /></CRMProtectedRoute>} />
+            <Route path="/crm/state" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo', 'pradesh_admin', 'state_admin', 'pradesh']}><PradeshAdminCRM /></CRMProtectedRoute>} />
 
+            {/* Region / Division CRM */}
+            <Route path="/crm/division" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo', 'division_admin', 'division_head', 'division']}><DivisionAdminCRM /></CRMProtectedRoute>} />
+
+            {/* District CRM */}
             <Route path="/crm/district" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'district_admin', 'district']}><DistrictAdminCRM /></CRMProtectedRoute>} />
+
+            {/* Taluka CRM */}
+            <Route path="/crm/taluka" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'district_admin', 'taluka_admin', 'taluka_head', 'taluka']}><TalukaAdminCRM /></CRMProtectedRoute>} />
+
+            {/* Grassroots Branch / Shakha CRM */}
+            <Route path="/crm/branch" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'branch_head', 'branch_admin', 'branch', 'taluka_admin', 'district_admin']}><BranchAdminCRM /></CRMProtectedRoute>} />
+
+            {/* Physical Community Center Operational CRM */}
+            <Route path="/crm/center" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'center_manager', 'center_admin', 'center', 'center_partner', 'taluka_admin', 'district_admin']}><CommunityCenterCRM /></CRMProtectedRoute>} />
+
+            {/* Unified Operations & Governance Dashboard (12 Golden Rules) */}
+            <Route path="/crm/operations" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo', 'division_admin', 'district_admin', 'taluka_admin', 'branch_admin', 'center_manager', 'center_admin']}><UnifiedOperationsDashboard /></CRMProtectedRoute>} />
+            <Route path="/crm/unified" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo', 'division_admin', 'district_admin', 'taluka_admin', 'branch_admin', 'center_manager', 'center_admin']}><UnifiedOperationsDashboard /></CRMProtectedRoute>} />
 
             <Route path="/crm/chapter" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'chapter_president', 'chapter']}><ChapterPresidentCRM /></CRMProtectedRoute>} />
 
@@ -545,6 +605,15 @@ export default function App() {
             <Route path="/roles-matrix" element={<RoleEligibilityMatrixPage />} />
             <Route path="/eligibility-matrix" element={<RoleEligibilityMatrixPage />} />
 
+            {/* Official Dedicated Legal & Compliance Routes (Google Play Console Compliant) */}
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/legal/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsAndConditionsPage />} />
+            <Route path="/terms-and-conditions" element={<TermsAndConditionsPage />} />
+            <Route path="/terms-of-service" element={<TermsAndConditionsPage />} />
+            <Route path="/legal/terms" element={<TermsAndConditionsPage />} />
+
             {/* Generic Article Route & Fallback */}
             <Route path="/article" element={<GenericArticlePage />} />
             <Route path="/articles" element={<GenericArticlePage />} />
@@ -556,6 +625,7 @@ export default function App() {
           </SiteContentProvider>
         </ScopeProvider>
       </AuthProvider>
+      </LanguageProvider>
     </ToastProvider>
   );
 }

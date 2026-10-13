@@ -3,97 +3,70 @@ import apiClient from '../../services/apiClient';
 
 const speakersData = [
   {
-    id: 1,
+    id: 'SPK-301',
+    name: 'प्रा. नितीन बानगुडे-पाटील',
+    title: 'छत्रपती शिवराय व मराठा साम्राज्य इतिहास',
+    topics: 'शिवकालीन व्यवस्थापन, गनिमी कावा व आजचा युवक, स्वराज्य प्रेरणा',
+    city: 'सातारा / महाराष्ट्र दौरा',
+    category: 'प्रेरणादायी वक्ते',
+    photo: '/assets/images/speakers/spk_nitin_banugude.jpg',
+    sessions: '५००+ व्याख्याने',
+    desc: 'छत्रपती शिवरायांचे व्यवस्थापन कौशल्य, गनिमी कावा आणि स्वराज्य विचारांनी महाराष्ट्रातील लाखो युवकांना प्रेरित करणारे प्रख्यात व्याख्याते.'
+  },
+  {
+    id: 'SPK-302',
+    name: 'डॉ. सुधीर निरगुडकर',
+    title: 'मराठा आरमार व सागरी युद्धशास्त्र',
+    topics: 'कान्होजी आंग्रे, सिंधुदुर्ग व छत्रपती शिवरायांचे नौदल व्हिजन',
+    city: 'पुणे, महाराष्ट्र',
+    category: 'प्रेरणादायी वक्ते',
+    photo: '/assets/images/speakers/spk_sudhir_nirgudkar.jpg',
+    sessions: '३५०+ व्याख्याने',
+    desc: 'सरखेल कान्होजी आंग्रे, सिंधुदुर्ग व मराठ्यांच्या अजेय सागरी आरमारावर सखोल आंतरराष्ट्रीय संशोधन मांडणारे इतिहास अभ्यासक.'
+  },
+  {
+    id: 'SPK-303',
+    name: 'श्री. विजय मोरे',
+    title: 'मराठा उद्योजकता व बिझनेस लीडरशिप',
+    topics: 'सहकार ते कॉर्पोरेट: मराठा तरुणांसाठी उद्योग संधी आणि स्टार्ट-अप',
+    city: 'मुंबई, महाराष्ट्र',
+    category: 'व्यवसाय मार्गदर्शन',
+    photo: '/assets/images/speakers/spk_vijay_more.jpg',
+    sessions: '४००+ उद्योग सेशन्स',
+    desc: 'शून्यातून भव्य उद्योग कसा उभारावा आणि जागतिक बाजारपेठेत मराठा उद्योजकांनी स्वतःचा ब्रँड कसा बनवावा याचे प्रत्यक्ष मार्गदर्शन.'
+  },
+  {
+    id: 'SPK-304',
     name: 'डॉ. अतुल जगदाळे',
-    image: '/assets/images/speakers/speaker_shivaji.jpg',
-    title: 'ज्येष्ठ प्रेरणादायी वक्ते',
+    title: 'ज्येष्ठ प्रेरणादायी वक्ते & जीवन प्रशिक्षक',
     topics: 'यश, आत्मविश्वास, नेतृत्व & व्यक्तिमत्व विकास',
     city: 'पुणे, महाराष्ट्र',
     category: 'प्रेरणादायी वक्ते',
-    avatar: '🎙️',
-    sessions: '५००+ व्याख्याने',
+    photo: '/assets/images/speakers/spk_nitin_banugude.jpg',
+    sessions: '४५०+ व्याख्याने',
     desc: 'तरुणांमध्ये सकारात्मक ऊर्जेचा संचार करणारे आणि शिवरायांच्या व्यवस्थापन कौशल्यावर मार्गदर्शन करणारे प्रभावी वक्ते.'
   },
   {
-    id: 2,
-    name: 'सौ. मृणालिनी काठे',
-    image: '/assets/images/people/anandibai.jpg',
-    title: 'युवा प्रेरक वक्त्या & समुपदेशक',
-    topics: 'विद्यार्थी प्रेरणा, करिअर नियोजन, ध्येय निश्चिती',
-    city: 'मुंबई, महाराष्ट्र',
-    category: 'युवा प्रेरणा',
-    avatar: '👩‍🏫',
-    sessions: '३५०+ कार्यशाळा',
-    desc: 'स्पर्धा परीक्षा देणाऱ्या विद्यार्थ्यांसाठी व महिलांसाठी प्रेरणादायी सत्रे घेणाऱ्या प्रख्यात वक्त्या.'
-  },
-  {
-    id: 3,
+    id: 'SPK-305',
     name: 'श्री. संदीप वाघ',
-    image: '/assets/images/speakers/speaker_sandip.jpg',
-    title: 'बिझनेस मोटिवेशन & ग्रोथ कोच',
+    title: 'बिझनेस मोटिवेशन & कॉर्पोरेट कोच',
     topics: 'व्यवसाय वाढ, विक्री कौशल्य, उद्योजकीय मानसिकता',
     city: 'नाशिक, महाराष्ट्र',
     category: 'व्यवसाय मार्गदर्शन',
-    avatar: '💼',
-    sessions: '४००+ कॉर्पोरेट सेशन्स',
+    photo: '/assets/images/speakers/spk_vijay_more.jpg',
+    sessions: '३००+ कॉर्पोरेट सेशन्स',
     desc: 'मराठी तरुणांना नोकरी शोधण्यापेक्षा उद्योग सुरू करण्याची प्रेरणा देणारे बिझनेस मार्गदर्शक.'
   },
   {
-    id: 4,
-    name: 'स्वामी समर्थानंद',
-    image: '/assets/images/speakers/speaker_indurikar.jpg',
-    title: 'आध्यात्मिक मार्गदर्शक व विचारवंत',
-    topics: 'जीवन परिवर्तन, मनःशांती, सकारात्मक विचारसरणी',
-    city: 'कोल्हापूर, महाराष्ट्र',
-    category: 'आध्यात्मिक',
-    avatar: '🧘‍♂️',
-    sessions: '६००+ प्रवचने',
-    desc: 'वारकरी संप्रदाय व शिवसंस्कारांची सांगड घालून तणावमुक्त जीवनाचे तत्त्वज्ञान मांडणारे संत विचारवंत.'
-  },
-  {
-    id: 5,
+    id: 'SPK-306',
     name: 'प्रा. विजय भोसले',
-    image: '/assets/images/speakers/speaker_vishwas.jpg',
     title: 'शिक्षण तज्ञ व स्पर्धा परीक्षा मार्गदर्शक',
     topics: 'UPSC/MPSC तयारी, गुणवत्तापूर्ण शिक्षण, प्रशासन',
     city: 'छत्रपती संभाजीनगर, महाराष्ट्र',
     category: 'शिक्षण तज्ञ',
-    avatar: '📚',
+    photo: '/assets/images/speakers/spk_sudhir_nirgudkar.jpg',
     sessions: '२८०+ मार्गदर्शन शिबिरे',
     desc: 'ग्रामीण भागातील शेकडो विद्यार्थ्यांना प्रशासकीय सेवेत पाठवणारे समर्पित शिक्षणतज्ज्ञ.'
-  },
-  {
-    id: 6,
-    name: 'श्री. सचिन पाटील',
-    title: 'यशस्वी उद्योजक & स्टार्टअप मेंटॉर',
-    topics: 'उद्योजकता, एमएसएमई फंड, तंत्रज्ञान व नवकल्पना',
-    city: 'सांगली, महाराष्ट्र',
-    category: 'यशस्वी उद्योजक',
-    avatar: '🚀',
-    sessions: '२००+ स्टार्टअप मार्गदर्शन',
-    desc: 'शून्यातून जागतिक पातळीवर उद्योग उभारणीचा अनुभव तरुणांपर्यंत पोहोचवणारे उद्योजक.'
-  },
-  {
-    id: 7,
-    name: 'सौ. स्वाती देशमुख',
-    title: 'महिला सक्षमीकरण वक्त्या',
-    topics: 'महिला नेतृत्व, आर्थिक आत्मनिर्भरता, कुटुंब स्वाभिमान',
-    city: 'पुणे, महाराष्ट्र',
-    category: 'प्रेरणादायी वक्ते',
-    avatar: '👑',
-    sessions: '३००+ महिला मेळावे',
-    desc: 'महिलांना स्वयंरोजगार आणि स्वाभिमानाने जगण्यासाठी प्रेरित करणाऱ्या विचारवंत वक्त्या.'
-  },
-  {
-    id: 8,
-    name: 'श्री. रोहित शिंदे',
-    title: 'करिअर मार्गदर्शक व कॉर्पोरेट ट्रेनर',
-    topics: 'भविष्यातील नोकऱ्या, एआय युग, सॉफ्ट स्किल्स',
-    city: 'मुंबई, महाराष्ट्र',
-    category: 'युवा प्रेरणा',
-    avatar: '🎯',
-    sessions: '२५०+ कॉलेज परिसंवाद',
-    desc: 'आधुनिक कॉर्पोरेट जगात मराठा तरुणांनी ग्लोबल लीडर कसे बनावे याचे सखोल मार्गदर्शन.'
   }
 ];
 
@@ -104,7 +77,6 @@ const categories = [
   'यशस्वी उद्योजक',
   'युवा प्रेरणा',
   'शिक्षण तज्ञ',
-  'आध्यात्मिक',
   'इतर'
 ];
 
@@ -121,14 +93,21 @@ export default function MotivationalSpeakersPage() {
   useEffect(() => {
     apiClient.getSpeakers().then((liveData) => {
       if (liveData && liveData.length > 0) {
-        const mapped = liveData.map((s) => ({
+        const photoMap = {
+          'SPK-301': '/assets/images/speakers/spk_nitin_banugude.jpg',
+          'SPK-302': '/assets/images/speakers/spk_sudhir_nirgudkar.jpg',
+          'SPK-303': '/assets/images/speakers/spk_vijay_more.jpg'
+        };
+        const mapped = liveData.map((s, idx) => ({
           id: s.id,
           name: s.name,
           title: s.expertise || s.title || 'ज्येष्ठ प्रेरणादायी वक्ते',
           topics: s.topics || 'शिवचरित्र, व्यवस्थापन व सामाजिक प्रबोधन',
           city: s.city || 'महाराष्ट्र',
           category: s.category || 'प्रेरणादायी वक्ते',
-          avatar: s.avatar || s.photo || '🎙️',
+          photo: (s.photo && s.photo.startsWith('/assets/')) 
+            ? s.photo 
+            : (photoMap[s.id] || (idx % 3 === 0 ? '/assets/images/speakers/spk_nitin_banugude.jpg' : idx % 3 === 1 ? '/assets/images/speakers/spk_sudhir_nirgudkar.jpg' : '/assets/images/speakers/spk_vijay_more.jpg')),
           sessions: s.sessions || '२५०+ व्याख्याने',
           desc: s.desc || `${s.name} - प्रबोधनकार व समाज प्रबोधन मार्गदर्शक.`,
           contact: s.contact || ''
@@ -208,46 +187,77 @@ export default function MotivationalSpeakersPage() {
     <div className="speakers-page" style={{ background: '#FAF7F2', minHeight: '100vh', paddingBottom: '60px' }}>
       {/* Hero Banner */}
       <section style={{
-        background: 'linear-gradient(135deg, rgba(230, 81, 0, 0.90) 0%, rgba(216, 67, 21, 0.88) 100%), url("/assets/images/generated/maratha_speakers_hero.jpg") center/cover no-repeat',
+        backgroundImage: 'linear-gradient(rgba(18, 12, 8, 0.40), rgba(18, 12, 8, 0.58)), url("/assets/images/generated/maratha_speakers_hero.jpg")',
+        backgroundPosition: 'center 30%',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
         color: '#FFFFFF',
-        padding: '50px 20px',
+        padding: '54px 20px 48px',
         textAlign: 'center',
-        position: 'relative'
+        position: 'relative',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+        borderBottom: '4px solid #E65100'
       }}>
-        <div style={{ maxWidth: '980px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '980px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div style={{
             display: 'inline-block',
-            background: 'rgba(255,255,255,0.18)',
-            padding: '5px 16px',
+            background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
+            border: '1px solid rgba(255,255,255,0.4)',
+            padding: '6px 20px',
             borderRadius: '20px',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            marginBottom: '12px',
-            color: '#FFD54F'
+            fontSize: '0.88rem',
+            fontWeight: 800,
+            marginBottom: '14px',
+            color: '#FFFFFF',
+            boxShadow: '0 4px 12px rgba(230,81,0,0.4)'
           }}>
-            🚩 CONNECT मराठा — एक लढा भाग्यासाठी | सर्वधर्म समभाव
+            🚩 CONNECT मराठा — एक लढा भगव्यासाठी | सर्वधर्म समभाव
           </div>
-          <p style={{ fontSize: '1.2rem', color: '#FFE082', fontWeight: 600, margin: '0 0 6px' }}>
+          <p style={{
+            fontSize: '1.25rem',
+            color: '#FFD54F',
+            fontWeight: 800,
+            margin: '0 0 8px',
+            letterSpacing: '0.5px',
+            textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.85)'
+          }}>
             प्रेरणा जी घडवते यशस्वी भविष्य !
           </p>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, margin: '0 0 10px' }}>
+          <h1 style={{
+            fontSize: 'clamp(2.2rem, 5vw, 3.2rem)',
+            fontWeight: 900,
+            margin: '0 0 14px',
+            lineHeight: 1.25,
+            color: '#FFFFFF',
+            textShadow: '0 4px 18px rgba(0,0,0,0.98), 0 2px 6px rgba(0,0,0,0.95), 0 0 30px rgba(0,0,0,0.9)'
+          }}>
             मराठा वक्ते – प्रेरणा, मार्गदर्शन आणि नेतृत्व
           </h1>
-          <p style={{ fontSize: '1.1rem', opacity: 0.95, margin: '0 auto 20px', maxWidth: '680px' }}>
+          <p style={{
+            fontSize: '1.15rem',
+            color: '#FFF8E1',
+            margin: '0 auto 24px',
+            maxWidth: '720px',
+            lineHeight: 1.6,
+            fontWeight: 700,
+            textShadow: '0 3px 12px rgba(0,0,0,0.98), 0 1px 4px rgba(0,0,0,0.95)'
+          }}>
             मराठा विचार, मराठा प्रेरणा, मराठा अभिमान ! व्याख्यान, सेमिनार, कार्यशाळा आणि मोटिवेशनसाठी संपर्क करा.
           </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
             <button
               onClick={() => setShowAddModal(true)}
               style={{
-                background: '#FFD54F',
-                color: '#E65100',
+                background: 'linear-gradient(135deg, #FFD54F 0%, #FFCA28 100%)',
+                color: '#3E2723',
                 border: 'none',
-                padding: '12px 26px',
+                padding: '12px 28px',
                 borderRadius: '8px',
                 fontWeight: 800,
                 fontSize: '1rem',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
+                transition: 'all 0.2s'
               }}
             >
               ＋ आपला प्रोफाइल जोडा
@@ -255,13 +265,15 @@ export default function MotivationalSpeakersPage() {
             <a
               href="#speakers-list"
               style={{
-                background: 'rgba(255,255,255,0.15)',
+                background: 'rgba(255,255,255,0.22)',
+                backdropFilter: 'blur(6px)',
                 color: '#fff',
-                border: '1px solid rgba(255,255,255,0.4)',
+                border: '1.5px solid rgba(255,255,255,0.6)',
                 padding: '12px 24px',
                 borderRadius: '8px',
                 fontWeight: 700,
-                textDecoration: 'none'
+                textDecoration: 'none',
+                transition: 'all 0.2s'
               }}
             >
               सर्व वक्ते पहा ({speakersData.length}+)
@@ -270,8 +282,8 @@ export default function MotivationalSpeakersPage() {
         </div>
       </section>
 
-      {/* Search & Filter */}
-      <div id="speakers-list" style={{ maxWidth: '1180px', margin: '-22px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
+      {/* Search & Filter - Clean spacing below hero with no overlapping */}
+      <div id="speakers-list" style={{ maxWidth: '1180px', margin: '32px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
         <div style={{
           background: '#FFFFFF',
           borderRadius: '14px',
@@ -337,15 +349,45 @@ export default function MotivationalSpeakersPage() {
             >
               <div style={{
                 background: 'linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%)',
-                padding: '30px 20px',
+                padding: '24px 20px 18px',
                 textAlign: 'center',
                 borderBottom: '1px solid #FFCC80'
               }}>
-                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '8px' }}>{s.avatar}</span>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#E65100', margin: '0 0 4px' }}>
+                <div style={{
+                  width: '105px',
+                  height: '105px',
+                  margin: '0 auto 12px',
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  border: '3.5px solid #E65100',
+                  boxShadow: '0 6px 16px rgba(230,81,0,0.28)',
+                  background: '#FFFFFF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {s.photo && s.photo.startsWith('/assets/') ? (
+                    <img
+                      src={s.photo}
+                      alt={s.name}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/assets/images/speakers/spk_nitin_banugude.jpg';
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src="/assets/images/speakers/spk_nitin_banugude.jpg"
+                      alt={s.name}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  )}
+                </div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#E65100', margin: '0 0 6px' }}>
                   {s.name}
                 </h3>
-                <span style={{ fontSize: '0.82rem', background: '#E65100', color: '#fff', padding: '2px 10px', borderRadius: '10px', fontWeight: 700 }}>
+                <span style={{ fontSize: '0.82rem', background: '#E65100', color: '#fff', padding: '3px 12px', borderRadius: '12px', fontWeight: 700, display: 'inline-block' }}>
                   {s.title}
                 </span>
               </div>
@@ -370,14 +412,16 @@ export default function MotivationalSpeakersPage() {
                   onClick={() => setSelectedSpeaker(s)}
                   style={{
                     width: '100%',
-                    background: '#E65100',
+                    background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
                     color: '#FFFFFF',
                     border: 'none',
-                    padding: '10px',
+                    padding: '11px',
                     borderRadius: '8px',
-                    fontWeight: 700,
+                    fontWeight: 800,
                     cursor: 'pointer',
-                    fontSize: '0.9rem'
+                    fontSize: '0.92rem',
+                    boxShadow: '0 3px 10px rgba(230,81,0,0.25)',
+                    transition: 'all 0.2s'
                   }}
                 >
                   व्याख्यानासाठी संपर्क / प्रोफाइल
@@ -449,8 +493,27 @@ export default function MotivationalSpeakersPage() {
               ✕
             </button>
             <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-              <span style={{ fontSize: '3rem' }}>{selectedSpeaker.avatar}</span>
-              <h2 style={{ color: '#E65100', margin: '6px 0 2px', fontSize: '1.5rem' }}>{selectedSpeaker.name}</h2>
+              <div style={{
+                width: '100px',
+                height: '100px',
+                margin: '0 auto 10px',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                border: '3px solid #E65100',
+                boxShadow: '0 4px 14px rgba(230,81,0,0.3)',
+                background: '#FFFFFF'
+              }}>
+                <img
+                  src={selectedSpeaker.photo || '/assets/images/speakers/spk_nitin_banugude.jpg'}
+                  alt={selectedSpeaker.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/assets/images/speakers/spk_nitin_banugude.jpg';
+                  }}
+                />
+              </div>
+              <h2 style={{ color: '#E65100', margin: '6px 0 2px', fontSize: '1.5rem', fontWeight: 800 }}>{selectedSpeaker.name}</h2>
               <span style={{ color: '#666', fontSize: '0.88rem' }}>{selectedSpeaker.title} • {selectedSpeaker.city}</span>
             </div>
             <div style={{ fontSize: '0.92rem', color: '#444', display: 'flex', flexDirection: 'column', gap: '8px' }}>

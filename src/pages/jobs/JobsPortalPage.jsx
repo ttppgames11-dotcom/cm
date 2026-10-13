@@ -87,10 +87,10 @@ export default function JobsPortalPage() {
         
         {/* Banner */}
         <div style={{
-          background: "linear-gradient(rgba(199, 56, 0, 0.88), rgba(230, 81, 0, 0.92)), url('/assets/images/meeting.jpg') center/cover no-repeat",
+          background: "url('/assets/images/hero-cinematic-bg.jpg') center/cover no-repeat",
           borderRadius: '16px',
           color: '#fff',
-          padding: '32px',
+          padding: 'clamp(18px, 4vw, 32px)',
           marginBottom: '28px',
           display: 'flex',
           justifyContent: 'space-between',
@@ -100,13 +100,13 @@ export default function JobsPortalPage() {
           boxShadow: '0 10px 25px rgba(199,56,0,0.2)'
         }}>
           <div>
-            <span style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 700 }}>
+            <span style={{ background: 'rgba(0,0,0,0.4)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 700 }}>
               💼 रोजगार, करिअर व युवा सक्षमीकरण
             </span>
-            <h1 style={{ fontSize: '2.2rem', margin: '10px 0 6px', fontFamily: 'Baloo 2' }}>
+            <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2.2rem)', margin: '10px 0 6px', fontFamily: 'Baloo 2', textShadow: '0 2px 10px rgba(0,0,0,0.7)', wordBreak: 'break-word' }}>
               मराठा करिअर व नोकरी संधी केंद्र (Jobs Portal)
             </h1>
-            <p style={{ margin: 0, opacity: 0.92, fontSize: '1.05rem', maxWidth: '65ch' }}>
+            <p style={{ margin: 0, opacity: 0.95, fontSize: 'clamp(0.9rem, 2.5vw, 1.05rem)', maxWidth: '65ch', textShadow: '0 1px 6px rgba(0,0,0,0.7)' }}>
               मराठा उद्योजक आणि कंपन्यांमधील थेट नोकरी संधी, स्पर्धा परीक्षा मार्गदर्शन आणि इंटर्नशिप दालन.
             </p>
           </div>
@@ -117,6 +117,65 @@ export default function JobsPortalPage() {
             style={{ background: '#fff', color: '#C73800', border: 'none', padding: '12px 24px', fontWeight: 800, borderRadius: '8px', fontSize: '1rem', cursor: 'pointer' }}>
             + नोकरी जाहिरात द्या
           </button>
+        </div>
+
+        {/* 4 Category Quick Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '16px', marginBottom: '28px' }}>
+          <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', overflow: 'hidden', boxShadow: '0 4px 12px rgba(67, 20, 7, 0.05)' }}>
+            <div style={{ height: '110px', position: 'relative', overflow: 'hidden' }}>
+              <img src="/assets/images/radar-jobs-card.jpg" alt="IT & Corporate Jobs" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 30%, rgba(67, 20, 7, 0.75) 100%)' }} />
+              <span style={{ position: 'absolute', bottom: '8px', left: '10px', background: '#EA580C', color: '#FFF', padding: '2px 8px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 900 }}>
+                💻 IT & सॉफ्टवेअर
+              </span>
+            </div>
+            <div style={{ padding: '12px 14px' }}>
+              <h4 style={{ margin: '0 0 2px', fontSize: '1rem', color: '#431407', fontWeight: 800 }}>आयटी व कॉर्पोरेट नोकऱ्या</h4>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748B' }}>पुणे, मुंबई व हायब्रिड कंपन्या</p>
+            </div>
+          </div>
+
+          <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', overflow: 'hidden', boxShadow: '0 4px 12px rgba(67, 20, 7, 0.05)' }}>
+            <div style={{ height: '110px', position: 'relative', overflow: 'hidden' }}>
+              <img src="/assets/images/radar-customers-card.jpg" alt="Retail & Sales" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 30%, rgba(67, 20, 7, 0.75) 100%)' }} />
+              <span style={{ position: 'absolute', bottom: '8px', left: '10px', background: '#15803D', color: '#FFF', padding: '2px 8px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 900 }}>
+                🏢 सेल्स व ग्राहक सेवा
+              </span>
+            </div>
+            <div style={{ padding: '12px 14px' }}>
+              <h4 style={{ margin: '0 0 2px', fontSize: '1rem', color: '#431407', fontWeight: 800 }}>मार्केटिंग व रिटेल शोरूम</h4>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748B' }}>थेट ग्राहक समन्वय व इन्सेंटिव्ह</p>
+            </div>
+          </div>
+
+          <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', overflow: 'hidden', boxShadow: '0 4px 12px rgba(67, 20, 7, 0.05)' }}>
+            <div style={{ height: '110px', position: 'relative', overflow: 'hidden' }}>
+              <img src="/assets/images/radar-b2b-card.jpg" alt="Manufacturing & Core Engg" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 30%, rgba(67, 20, 7, 0.75) 100%)' }} />
+              <span style={{ position: 'absolute', bottom: '8px', left: '10px', background: '#C2410C', color: '#FFF', padding: '2px 8px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 900 }}>
+                ⚙️ MIDC मॅन्युफॅक्चरिंग
+              </span>
+            </div>
+            <div style={{ padding: '12px 14px' }}>
+              <h4 style={{ margin: '0 0 2px', fontSize: '1rem', color: '#431407', fontWeight: 800 }}>इंजिनिअरिंग व उत्पादन</h4>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748B' }}>चाकण, भोसरी, तळोजा कारखाने</p>
+            </div>
+          </div>
+
+          <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', overflow: 'hidden', boxShadow: '0 4px 12px rgba(67, 20, 7, 0.05)' }}>
+            <div style={{ height: '110px', position: 'relative', overflow: 'hidden' }}>
+              <img src="/assets/images/radar-education-card.jpg" alt="Scholarships & Freshers" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 30%, rgba(67, 20, 7, 0.75) 100%)' }} />
+              <span style={{ position: 'absolute', bottom: '8px', left: '10px', background: '#7C2D12', color: '#FFF', padding: '2px 8px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 900 }}>
+                🎓 शिक्षण व Internships
+              </span>
+            </div>
+            <div style={{ padding: '12px 14px' }}>
+              <h4 style={{ margin: '0 0 2px', fontSize: '1rem', color: '#431407', fontWeight: 800 }}>फ्रेशर्स व शिष्यवृत्ती</h4>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748B' }}>कॉलेज विद्यार्थी व करिअर मार्गदर्शन</p>
+            </div>
+          </div>
         </div>
 
         {/* Filters */}

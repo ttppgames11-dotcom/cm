@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 const ASHTAPRADHAN_DATA = [
   {
     id: 'peshwa',
-    image: '/assets/images/history/coronation.jpg',
     postMr: 'पंतप्रधान (पेशवे)',
     postEn: 'Prime Minister (Peshwa)',
     persianTitle: 'पेशवा (Peshwa)',
@@ -28,7 +27,6 @@ const ASHTAPRADHAN_DATA = [
   },
   {
     id: 'amatya',
-    image: '/assets/images/maratha-granthalaya.jpg',
     postMr: 'पंत अमात्य (मुजुमदार)',
     postEn: 'Finance Minister (Amatya)',
     persianTitle: 'मुजुमदार (Majumdar)',
@@ -51,7 +49,6 @@ const ASHTAPRADHAN_DATA = [
   },
   {
     id: 'sachiv',
-    image: '/assets/images/real-shivrai-coin.jpg',
     postMr: 'पंत सचिव (सुरनीस)',
     postEn: 'Royal Secretary & Imperial Edicts',
     persianTitle: 'सुरनीस (Surnis)',
@@ -74,7 +71,6 @@ const ASHTAPRADHAN_DATA = [
   },
   {
     id: 'mantri',
-    image: '/assets/images/real-raigad-bastions.jpg',
     postMr: 'मंत्री (वाकनीस)',
     postEn: 'Home Minister & Chronicler',
     persianTitle: 'वाकियानवीस (Waqianavis)',
@@ -97,7 +93,6 @@ const ASHTAPRADHAN_DATA = [
   },
   {
     id: 'senapati',
-    image: '/assets/images/warriors/hambirrao.jpg',
     postMr: 'सरसेनापती (सरनोबत)',
     postEn: 'Commander-in-Chief (Senapati)',
     persianTitle: 'सरनोबत (Sarnobat)',
@@ -120,7 +115,6 @@ const ASHTAPRADHAN_DATA = [
   },
   {
     id: 'sumant',
-    image: '/assets/images/real-maratha-sowar.jpg',
     postMr: 'सुमंत (डबीर)',
     postEn: 'Foreign Minister (Sumant)',
     persianTitle: 'डबीर (Dabir)',
@@ -143,7 +137,6 @@ const ASHTAPRADHAN_DATA = [
   },
   {
     id: 'nyayadhish',
-    image: '/assets/images/real-shivaji-portrait.jpg',
     postMr: 'न्यायाधीश (धर्मशास्त्री)',
     postEn: 'Chief Justice (Nyayadhish)',
     persianTitle: 'काझी/अदालत प्रमुख',
@@ -166,7 +159,6 @@ const ASHTAPRADHAN_DATA = [
   },
   {
     id: 'panditrao',
-    image: '/assets/images/history/rajyabhishek.jpg',
     postMr: 'पंडितराव (दानाध्यक्ष)',
     postEn: 'Ecclesiastical Affairs & Public Charities',
     persianTitle: 'सद्र (Sadr)',
@@ -216,7 +208,7 @@ export default function SwarajyaAdminPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.86rem', color: '#7D6E63', marginBottom: '20px' }}>
           <Link to="/" style={{ color: '#8F2800', textDecoration: 'none', fontWeight: 600 }}>होम</Link>
           <span>›</span>
-          <Link to="/history" style={{ color: '#8F2800', textDecoration: 'none', fontWeight: 600 }}>इतिहास</Link>
+          <Link to="/history/maratha-navy" style={{ color: '#8F2800', textDecoration: 'none', fontWeight: 600 }}>इतिहास</Link>
           <span>›</span>
           <span style={{ fontWeight: 700, color: '#2B2118' }}>स्वराज्य आणि प्रशासन</span>
         </div>
@@ -462,14 +454,6 @@ export default function SwarajyaAdminPage() {
                 </div>
 
                 {/* Primary Holder Info */}
-                {selectedPradhan.image && (
-                  <div style={{ height: '170px', borderRadius: '12px', overflow: 'hidden', marginBottom: '16px', position: 'relative', background: '#1c1917' }}>
-                    <img src={selectedPradhan.image} alt={selectedPradhan.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)', padding: '6px 14px' }}>
-                      <span style={{ color: '#FDE047', fontSize: '0.78rem', fontWeight: 800 }}>👑 {selectedPradhan.sanskritTitle} — {selectedPradhan.name}</span>
-                    </div>
-                  </div>
-                )}
                 <div style={{ background: '#FBF5EE', borderRadius: '12px', padding: '14px 16px', marginBottom: '18px', borderLeft: '4px solid #8F2800' }}>
                   <div style={{ fontSize: '0.8rem', color: '#7D6A5D', textTransform: 'uppercase', fontWeight: 700 }}>१६७४ शिवराज्याभिषेक कालीन नियुक्ती</div>
                   <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#3D0D0D', marginTop: '2px' }}>

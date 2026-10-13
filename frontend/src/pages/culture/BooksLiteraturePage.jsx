@@ -1,137 +1,100 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 
 const booksData = [
   {
-    id: 101,
-    title: 'शिवचरित्र कथन — भाग १ ते १० (अखंड व्याख्यान ग्रंथ)',
-    image: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80',
-    author: 'शिवशाहीर बाबासाहेब पुरंदरे',
-    category: 'छत्रपती शिवाजी महाराज',
-    tag: '१० भागांची महागाथा',
-    rating: '⭐ ५.० (५.८K+ वाचक)',
-    price: 'मोफत वाचन',
-    pages: '१० सखोल प्रकरणे',
-    cover: '🚩',
-    link: '/article/babasaheb-purandare-shivcharitra-kathan-bhag-1',
-    desc: 'यादवांच्या अस्तापासून, शिवजन्म, अफजलखान वध, पावनखिंड ते लाल महालावरील थरारक छापा — बाबासाहेबांच्या अमृतवाणीतील समग्र शिवचरित्र.'
-  },
-  {
-    id: 102,
-    title: 'राजा शिवछत्रपती (पूर्वार्ध व उत्तरार्ध)',
-    image: '/assets/images/books/book_raja.jpg',
-    author: 'शिवशाहीर बाबासाहेब पुरंदरे',
-    category: 'छत्रपती शिवाजी महाराज',
-    tag: 'अभिजात शिवचरित्र',
-    rating: '⭐ ५.० (१०K+ वाचक)',
-    price: '₹९९०',
-    pages: '२ खंड (१,१५० पृष्ठे)',
-    cover: '👑',
-    link: '/history/granthalaya',
-    desc: 'महाराष्ट्राच्या घराघरांत पोहोचलेला सर्वाधिक वाचला जाणारा आणि प्रेरणा देणारा प्रमाण शिवचरित्र ग्रंथ.'
-  },
-  {
     id: 1,
     title: 'छत्रपती शिवाजी महाराज',
-    image: '/assets/images/books/book_raja.jpg',
     author: 'डॉ. जयसिंगराव पवार',
     category: 'छत्रपती शिवाजी महाराज',
     tag: 'शिवचरित्र',
     rating: '⭐ ४.९ (१.२K+ वाचक)',
     price: '₹३५०',
     pages: '४५० पृष्ठे',
-    cover: '👑',
+    image: '/assets/images/books/book_shivaji.jpg',
     desc: 'शिवरायांच्या जीवनकार्याचे ऐतिहासिक कागदपत्रांवर आधारित प्रामाणिक व प्रेरणादायी चरित्र.'
   },
   {
     id: 2,
     title: 'शिवरायांची रणनिती',
-    image: '/assets/images/books/book_shriman.jpg',
     author: 'संपादक मंडळ (इतिहास संशोधन)',
     category: 'युद्ध आणि पराक्रम',
     tag: 'रणनिती व गनिमी कावा',
     rating: '⭐ ४.८ (८५६ वाचक)',
     price: '₹२९९',
     pages: '३२० पृष्ठे',
-    cover: '⚔️',
+    image: '/assets/images/books/book_ranniti.jpg',
     desc: 'गनिमी कावा, आरमार उभारणी, गुप्तहेर खाते आणि किल्ले संरक्षण व्यूहरचनेचे सखोल विश्लेषण.'
   },
   {
     id: 3,
     title: 'मराठ्यांचा इतिहास',
-    image: '/assets/images/books/book_panipat.jpg',
     author: 'गो. स. सरदेसाई (रियासतकार)',
     category: 'मराठा इतिहास',
     tag: 'अखंड इतिहास',
     rating: '⭐ ५.० (२.१K+ वाचक)',
     price: '₹४५०',
     pages: '६५० पृष्ठे',
-    cover: '📜',
+    image: '/assets/images/books/book_maratha_itihas_v2.jpg',
     desc: 'मराठा साम्राज्याचा उगम, विस्तार आणि अटकेपार झेंड्याची सुवर्णगाथा मांडणारा संदर्भग्रंथ.'
   },
   {
     id: 4,
     title: 'बाजीप्रभू देशपांडे — अमर बलिदान',
-    image: '/assets/images/books/book_swami.jpg',
     author: 'आशीष देशपांडे',
     category: 'युद्ध आणि पराक्रम',
     tag: 'अमर बलिदान',
     rating: '⭐ ४.९ (६४५ वाचक)',
     price: '₹२८०',
     pages: '२४० पृष्ठे',
-    cover: '🛡️',
+    image: '/assets/images/books/book_bajiprabhu.jpg',
     desc: 'पावनखिंडीतील अद्वितीय शौर्य, स्वामीभक्ती आणि मराठ्यांच्या अद्वितीय बलिदानाची चित्तथरारक कथा.'
   },
   {
     id: 5,
     title: 'सह्याद्रीची गड-किल्ले',
-    image: '/assets/images/real-raigad-bastions.jpg',
     author: 'दुर्गमित्र अभ्यास मंडळ',
     category: 'संस्कृती आणि वारसा',
     tag: 'गड-किल्ले मार्गदर्शक',
     rating: '⭐ ४.८ (६४३ वाचक)',
     price: '₹३२०',
     pages: '३८० पृष्ठे',
-    cover: '🏰',
+    image: '/assets/images/books/book_gadkille.jpg',
     desc: 'महाराष्ट्रातील ३५०+ किल्ल्यांचे नकाशे, वाटा, पाण्याचे टाके आणि ट्रेकिंग मार्गदर्शिका.'
   },
   {
     id: 6,
     title: 'संभाजी महाराज — एक वादळ',
-    image: '/assets/images/books/book_chhava.jpg',
     author: 'श्री. नि. मराठे',
     category: 'चरित्र ग्रंथ',
     tag: 'शंभूराजे चरित्र',
     rating: '⭐ ४.९ (१.१K+ वाचक)',
     price: '₹३८०',
     pages: '४१० पृष्ठे',
-    cover: '🔥',
+    image: '/assets/images/books/book_sambhaji.jpg',
     desc: 'धर्मवीर छत्रपती संभाजी महाराजांचे अजोड युद्धकौशल्य, साहित्यनिर्मिती आणि स्वाभिमानाचा लढा.'
   },
   {
     id: 7,
     title: 'मराठा संस्कृती आणि वारसा',
-    image: '/assets/images/books/book_yugandhar.jpg',
     author: 'डॉ. माधवी देशपांडे',
     category: 'संस्कृती आणि वारसा',
     tag: 'संस्कृती व इतिहास',
     rating: '⭐ ४.७ (७६२ वाचक)',
     price: '₹३००',
     pages: '२९० पृष्ठे',
-    cover: '🪔',
+    image: '/assets/images/books/book_sanskriti.jpg',
     desc: 'सण, उत्सव, पारंपारिक शस्त्रे, मराठा कला आणि लोकजीवनाचा समृद्ध सांस्कृतिक अभ्यास.'
   },
   {
     id: 8,
     title: 'प्रेरणादायी मराठा विचार',
-    image: '/assets/images/library.jpg',
     author: 'संपादक मंडळ',
     category: 'प्रेरणादायी',
     tag: 'स्मरणे व विचार',
     rating: '⭐ ४.८ (१.०K+ वाचक)',
     price: '₹२५०',
     pages: '२१० पृष्ठे',
-    cover: '💡',
+    image: '/assets/images/books/book_vichar.jpg',
     desc: 'तरुणांना स्वावलंबी, चारित्र्यसंपन्न आणि संघटित बनवणारे शिवसंस्कार व विचारधन.'
   }
 ];
@@ -178,45 +141,76 @@ export default function BooksLiteraturePage() {
     <div className="books-literature-page" style={{ background: '#FAF7F2', minHeight: '100vh', paddingBottom: '60px' }}>
       {/* Hero Banner */}
       <section style={{
-        background: 'linear-gradient(135deg, rgba(78, 52, 46, 0.90) 0%, rgba(109, 76, 65, 0.88) 100%), url("/assets/images/generated/maratha_books_hero.jpg") center/cover no-repeat',
+        backgroundImage: 'linear-gradient(rgba(20, 15, 12, 0.42), rgba(20, 15, 12, 0.58)), url("/assets/images/generated/maratha_books_hero.jpg")',
+        backgroundPosition: 'center 40%',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
         color: '#FFFFFF',
-        padding: '50px 20px',
+        padding: '54px 20px 48px',
         textAlign: 'center',
-        position: 'relative'
+        position: 'relative',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+        borderBottom: '4px solid #E65100'
       }}>
-        <div style={{ maxWidth: '980px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '980px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div style={{
             display: 'inline-block',
-            background: 'rgba(255,255,255,0.18)',
-            padding: '5px 16px',
+            background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
+            border: '1px solid rgba(255,255,255,0.4)',
+            padding: '6px 20px',
             borderRadius: '20px',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            marginBottom: '12px',
-            color: '#FFD54F'
+            fontSize: '0.88rem',
+            fontWeight: 800,
+            marginBottom: '14px',
+            color: '#FFFFFF',
+            boxShadow: '0 4px 12px rgba(230,81,0,0.4)'
           }}>
             🚩 CONNECT मराठा — एक लढा भगव्यासाठी | सर्वधर्म समभाव
           </div>
-          <p style={{ fontSize: '1.2rem', color: '#FFE082', fontWeight: 600, margin: '0 0 6px' }}>
+          <p style={{
+            fontSize: '1.25rem',
+            color: '#FFD54F',
+            fontWeight: 800,
+            margin: '0 0 8px',
+            letterSpacing: '0.5px',
+            textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.85)'
+          }}>
             वाचा मराठ्यांचा अभिमान, जपा इतिहास, घडवा भविष्य !
           </p>
-          <h1 style={{ fontSize: '2.6rem', fontWeight: 900, margin: '0 0 10px' }}>
+          <h1 style={{
+            fontSize: 'clamp(2.2rem, 5vw, 3.2rem)',
+            fontWeight: 900,
+            margin: '0 0 14px',
+            lineHeight: 1.25,
+            color: '#FFFFFF',
+            textShadow: '0 4px 18px rgba(0,0,0,0.98), 0 2px 6px rgba(0,0,0,0.95), 0 0 30px rgba(0,0,0,0.9)'
+          }}>
             मराठा पुस्तक संग्रह & साहित्य दालन
           </h1>
-          <p style={{ fontSize: '1.1rem', opacity: 0.95, margin: '0 auto 20px', maxWidth: '680px' }}>
+          <p style={{
+            fontSize: '1.18rem',
+            margin: '0 auto 24px',
+            maxWidth: '720px',
+            lineHeight: 1.6,
+            fontWeight: 700,
+            color: '#FFF8E1',
+            textShadow: '0 3px 12px rgba(0,0,0,0.98), 0 1px 4px rgba(0,0,0,0.95)'
+          }}>
             इतिहास, चरित्र, प्रेरणादायी आणि संशोधन ग्रंथांचे अमोल दालन — वाचा... समजा... अभिमानाने जगा !
           </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
             <a
               href="#books-grid"
               style={{
-                background: '#FFD54F',
-                color: '#4E342E',
+                background: 'linear-gradient(135deg, #FFD54F 0%, #FFCA28 100%)',
+                color: '#3E2723',
                 padding: '12px 26px',
                 borderRadius: '8px',
                 fontWeight: 800,
                 fontSize: '1rem',
-                textDecoration: 'none'
+                textDecoration: 'none',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
+                transition: 'all 0.2s'
               }}
             >
               सर्व पुस्तके पहा ({booksData.length}+)
@@ -224,13 +218,15 @@ export default function BooksLiteraturePage() {
             <a
               href="#authors-section"
               style={{
-                background: 'rgba(255,255,255,0.15)',
+                background: 'rgba(255,255,255,0.22)',
+                backdropFilter: 'blur(6px)',
                 color: '#fff',
-                border: '1px solid rgba(255,255,255,0.4)',
+                border: '1.5px solid rgba(255,255,255,0.6)',
                 padding: '12px 24px',
                 borderRadius: '8px',
                 fontWeight: 700,
-                textDecoration: 'none'
+                textDecoration: 'none',
+                transition: 'all 0.2s'
               }}
             >
               मराठी साहित्यिक ({authorsData.length}+)
@@ -239,12 +235,12 @@ export default function BooksLiteraturePage() {
         </div>
       </section>
 
-      {/* Benefits Strip */}
-      <section style={{ maxWidth: '1180px', margin: '-22px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
+      {/* Benefits Strip - Cleanly positioned below hero card with no overlap */}
+      <section style={{ maxWidth: '1180px', margin: '32px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
         <div style={{
           background: '#FFFFFF',
-          borderRadius: '14px',
-          padding: '18px 24px',
+          borderRadius: '16px',
+          padding: '20px 24px',
           boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
           border: '1px solid #EADBCE',
           display: 'grid',
@@ -253,20 +249,20 @@ export default function BooksLiteraturePage() {
           textAlign: 'center'
         }}>
           <div>
-            <strong style={{ color: '#6D4C41', display: 'block', fontSize: '1rem' }}>📖 अस्सल ऐतिहासिक ग्रंथ</strong>
-            <span style={{ fontSize: '0.82rem', color: '#666' }}>विश्वसनीय प्रकाशकांची मूळ पुस्तके</span>
+            <strong style={{ color: '#E65100', display: 'block', fontSize: '1rem' }}>📖 अस्सल ऐतिहासिक ग्रंथ</strong>
+            <span style={{ fontSize: '0.84rem', color: '#666' }}>विश्वसनीय प्रकाशकांची मूळ पुस्तके</span>
           </div>
           <div>
-            <strong style={{ color: '#6D4C41', display: 'block', fontSize: '1rem' }}>🚚 वेगवान होम डिलिव्हरी</strong>
-            <span style={{ fontSize: '0.82rem', color: '#666' }}>संपूर्ण महाराष्ट्रात सुरक्षित वितरण</span>
+            <strong style={{ color: '#E65100', display: 'block', fontSize: '1rem' }}>🚚 वेगवान होम डिलिव्हरी</strong>
+            <span style={{ fontSize: '0.84rem', color: '#666' }}>संपूर्ण महाराष्ट्रात सुरक्षित वितरण</span>
           </div>
           <div>
-            <strong style={{ color: '#6D4C41', display: 'block', fontSize: '1rem' }}>🏷️ विशेष सदस्य सवलत</strong>
-            <span style={{ fontSize: '0.82rem', color: '#666' }}>Connect Maratha सदस्यांना १५% सूट</span>
+            <strong style={{ color: '#E65100', display: 'block', fontSize: '1rem' }}>🏷️ विशेष सदस्य सवलत</strong>
+            <span style={{ fontSize: '0.84rem', color: '#666' }}>Connect Maratha सदस्यांना १५% सूट</span>
           </div>
           <div>
-            <strong style={{ color: '#6D4C41', display: 'block', fontSize: '1rem' }}>📱 ई-बुक (E-Book) उपलब्ध</strong>
-            <span style={{ fontSize: '0.82rem', color: '#666' }}>मोबाईलवर वाचा कधीही, कुठेही</span>
+            <strong style={{ color: '#E65100', display: 'block', fontSize: '1rem' }}>📱 ई-बुक (E-Book) उपलब्ध</strong>
+            <span style={{ fontSize: '0.84rem', color: '#666' }}>मोबाईलवर वाचा कधीही, कुठेही</span>
           </div>
         </div>
       </section>
@@ -303,15 +299,17 @@ export default function BooksLiteraturePage() {
                 key={cat}
                 onClick={() => setSelectedCat(cat)}
                 style={{
-                  padding: '7px 18px',
-                  borderRadius: '20px',
-                  border: selectedCat === cat ? '2px solid #6D4C41' : '1px solid #E0E0E0',
-                  background: selectedCat === cat ? '#6D4C41' : '#FFFFFF',
+                  padding: '8px 18px',
+                  borderRadius: '24px',
+                  border: selectedCat === cat ? '2px solid #E65100' : '1px solid #E0E0E0',
+                  background: selectedCat === cat ? 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)' : '#FFFFFF',
                   color: selectedCat === cat ? '#FFFFFF' : '#424242',
-                  fontSize: '0.88rem',
+                  fontSize: '0.9rem',
                   fontWeight: selectedCat === cat ? 700 : 500,
                   cursor: 'pointer',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  boxShadow: selectedCat === cat ? '0 4px 12px rgba(230,81,0,0.25)' : 'none',
+                  transition: 'all 0.2s ease'
                 }}
               >
                 {cat}
@@ -336,42 +334,60 @@ export default function BooksLiteraturePage() {
               }}
             >
               <div style={{
-                background: 'linear-gradient(135deg, #EFEBE9 0%, #D7CCC8 100%)',
-                padding: '36px 20px',
+                background: 'linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%)',
+                padding: '20px 16px 14px',
                 textAlign: 'center',
-                borderBottom: '1px solid #BCAAA4',
+                borderBottom: '1px solid #FFE082',
                 position: 'relative'
               }}>
-                {book.image ? (
-                  <img
-                    src={book.image}
-                    alt={book.title}
-                    style={{ width: '130px', height: '170px', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 6px 14px rgba(0,0,0,0.25)', margin: '0 auto 8px', display: 'block' }}
-                    onError={(e) => { e.target.style.display = 'none'; }}
-                  />
-                ) : (
-                  <span style={{ fontSize: '3.5rem', display: 'block', marginBottom: '8px' }}>{book.cover}</span>
-                )}
                 <span style={{
                   position: 'absolute',
                   top: '12px',
                   right: '12px',
-                  background: '#6D4C41',
+                  background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
                   color: '#fff',
                   fontSize: '0.75rem',
-                  padding: '3px 8px',
-                  borderRadius: '6px',
-                  fontWeight: 700
+                  padding: '4px 10px',
+                  borderRadius: '12px',
+                  fontWeight: 700,
+                  boxShadow: '0 2px 8px rgba(230,81,0,0.25)',
+                  zIndex: 2
                 }}>
                   {book.tag}
                 </span>
+
+                <div style={{
+                  width: '120px',
+                  height: '160px',
+                  margin: '0 auto 6px',
+                  borderRadius: '10px',
+                  overflow: 'hidden',
+                  boxShadow: '0 8px 20px rgba(0,0,0,0.18)',
+                  border: '2px solid #E65100',
+                  background: '#FFFFFF'
+                }}>
+                  <img
+                    src={book.image}
+                    alt={book.title}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/assets/images/books/book_shivaji.jpg';
+                    }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: 'block'
+                    }}
+                  />
+                </div>
               </div>
 
               <div style={{ padding: '18px 18px 12px', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#3E2723', margin: 0 }}>
                   {book.title}
                 </h3>
-                <div style={{ color: '#8D6E63', fontSize: '0.88rem', fontWeight: 700 }}>
+                <div style={{ color: '#E65100', fontSize: '0.88rem', fontWeight: 700 }}>
                   ✍️ {book.author}
                 </div>
                 <div style={{ color: '#F57F17', fontSize: '0.82rem', fontWeight: 700, margin: '2px 0' }}>
@@ -383,42 +399,26 @@ export default function BooksLiteraturePage() {
               </div>
 
               <div style={{ padding: '14px 18px', background: '#FAFAFA', borderTop: '1px solid #EEEEEE', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#B71C1C' }}>
+                <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#E65100' }}>
                   {book.price}
                 </div>
-                {book.link ? (
-                  <Link
-                    to={book.link}
-                    style={{
-                      background: 'linear-gradient(135deg, #DD8A2E, #E65100)',
-                      color: '#FFFFFF',
-                      textDecoration: 'none',
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      fontWeight: 800,
-                      fontSize: '0.85rem',
-                      boxShadow: '0 2px 8px rgba(230,81,0,0.3)'
-                    }}
-                  >
-                    📖 ऑनलाईन वाचा →
-                  </Link>
-                ) : (
-                  <button
-                    onClick={() => { setSelectedBook(book); setBuyModal(true); }}
-                    style={{
-                      background: '#6D4C41',
-                      color: '#FFFFFF',
-                      border: 'none',
-                      padding: '8px 18px',
-                      borderRadius: '8px',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      fontSize: '0.88rem'
-                    }}
-                  >
-                    पुस्तकाची मागणी करा
-                  </button>
-                )}
+                <button
+                  onClick={() => { setSelectedBook(book); setBuyModal(true); }}
+                  style={{
+                    background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '9px 18px',
+                    borderRadius: '8px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    fontSize: '0.88rem',
+                    boxShadow: '0 3px 10px rgba(230,81,0,0.22)',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  पुस्तकाची मागणी करा
+                </button>
               </div>
             </div>
           ))}
@@ -444,12 +444,12 @@ export default function BooksLiteraturePage() {
                 background: '#FAF7F2',
                 borderRadius: '10px',
                 padding: '16px',
-                borderLeft: '4px solid #6D4C41'
+                borderLeft: '4px solid #E65100'
               }}>
                 <h4 style={{ margin: '0 0 4px', fontSize: '1.05rem', fontWeight: 800, color: '#3E2723' }}>
                   {author.name}
                 </h4>
-                <div style={{ color: '#B71C1C', fontSize: '0.84rem', fontWeight: 700 }}>
+                <div style={{ color: '#E65100', fontSize: '0.84rem', fontWeight: 700 }}>
                   {author.type}
                 </div>
                 <div style={{ color: '#795548', fontSize: '0.8rem', marginTop: '4px' }}>
@@ -488,12 +488,36 @@ export default function BooksLiteraturePage() {
             >
               ✕
             </button>
-            <h3 style={{ color: '#6D4C41', margin: '0 0 6px', fontSize: '1.3rem' }}>
-              📖 {selectedBook.title}
-            </h3>
-            <p style={{ fontSize: '0.86rem', color: '#666', marginBottom: '16px' }}>
-              लेखक: {selectedBook.author} • किंमत: <strong style={{ color: '#B71C1C' }}>{selectedBook.price}</strong>
-            </p>
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '16px' }}>
+              <div style={{
+                width: '70px',
+                height: '95px',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                border: '2px solid #E65100',
+                flexShrink: 0
+              }}>
+                <img
+                  src={selectedBook.image}
+                  alt={selectedBook.title}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/assets/images/books/book_shivaji.jpg';
+                  }}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+              <div>
+                <h3 style={{ color: '#E65100', margin: '0 0 6px', fontSize: '1.25rem' }}>
+                  {selectedBook.title}
+                </h3>
+                <p style={{ fontSize: '0.86rem', color: '#666', margin: 0 }}>
+                  लेखक: {selectedBook.author} • किंमत: <strong style={{ color: '#E65100', fontSize: '1rem' }}>{selectedBook.price}</strong>
+                </p>
+                <span style={{ fontSize: '0.8rem', color: '#888' }}>({selectedBook.pages})</span>
+              </div>
+            </div>
 
             {orderDone ? (
               <div style={{ textAlign: 'center', padding: '20px 0' }}>
@@ -502,7 +526,7 @@ export default function BooksLiteraturePage() {
                 <p style={{ fontSize: '0.88rem', color: '#555' }}>आपल्या पत्त्यावर ३ ते ५ दिवसांत वितरण होईल. कॅश ऑन डिलिव्हरी उपलब्ध.</p>
                 <button
                   onClick={() => { setBuyModal(false); setOrderDone(false); }}
-                  style={{ background: '#6D4C41', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '6px', fontWeight: 700, cursor: 'pointer', marginTop: '12px' }}
+                  style={{ background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '6px', fontWeight: 700, cursor: 'pointer', marginTop: '12px' }}
                 >
                   ठीक आहे
                 </button>
@@ -517,7 +541,7 @@ export default function BooksLiteraturePage() {
                     <option>पेमेंट पद्धत: कॅश ऑन डिलिव्हरी (COD)</option>
                     <option>पेमेंट पद्धत: UPI / QR कोड द्वारे</option>
                   </select>
-                  <button type="submit" style={{ background: '#6D4C41', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
+                  <button type="submit" style={{ background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', boxShadow: '0 3px 10px rgba(230,81,0,0.22)' }}>
                     ऑर्डर निश्चित करा ({selectedBook.price})
                   </button>
                 </div>

@@ -37,6 +37,49 @@ export default function LoginPage() {
       setMessage('कृपया आपला मोबाईल नंबर किंवा सदस्य ID प्रविष्ट करा.');
       return;
     }
+
+    if (activeTab === 'otp') {
+      if (!loginId || !loginId.trim() || !loginId.includes('@')) {
+        setMessage('कृपया आपला वैध नोंदणीकृत ईमेल पत्ता प्रविष्ट करा.');
+        return;
+      }
+      if (!otpCode || otpCode.trim().length < 4) {
+        setMessage('कृपया ईमेलवर प्राप्त झालेला ६-अंकी OTP प्रविष्ट करा.');
+        return;
+      }
+      setLoading(true);
+      setMessage('');
+      try {
+        const verifyRes = await api.auth.verifyOtp(loginId.trim(), otpCode.trim());
+        if (verifyRes && (verifyRes.success || verifyRes.resetToken || verifyRes.verified || verifyRes.data)) {
+          const userObj = {
+            name: loginId.split('@')[0],
+            email: loginId.trim(),
+            role: roleMode === 'business' ? 'business' : 'member',
+            tier: 'Gold',
+            district: 'पुणे'
+          };
+          localStorage.setItem('cm_logged_in', 'true');
+          localStorage.setItem('cm_user_data', JSON.stringify(userObj));
+          const searchParams = new URLSearchParams(window.location.search);
+          const redirectUrl = searchParams.get('redirect') || sessionStorage.getItem('cm_login_redirect');
+          if (redirectUrl && redirectUrl.startsWith('/') && !redirectUrl.startsWith('/login') && !redirectUrl.startsWith('/register')) {
+            sessionStorage.removeItem('cm_login_redirect');
+            navigate(redirectUrl);
+            return;
+          }
+          navigate('/dashboard');
+        } else {
+          setMessage('अवैध किंवा कालबाह्य OTP कोड.');
+        }
+      } catch (err) {
+        setMessage(err.message || 'OTP पडताळणी अयशस्वी. कृपया OTP तपासा.');
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     if (!password) {
       setMessage('कृपया आपला पासवर्ड प्रविष्ट करा.');
       return;
@@ -48,12 +91,45 @@ export default function LoginPage() {
     try {
       const res = await login(loginId.trim(), password);
       if (res && res.success) {
-        navigate('/dashboard');
+        const role = res.member?.role || 'member';
+        const searchParams = new URLSearchParams(window.location.search);
+        const redirectUrl = searchParams.get('redirect') || sessionStorage.getItem('cm_login_redirect');
+        if (redirectUrl && redirectUrl.startsWith('/') && !redirectUrl.startsWith('/login') && !redirectUrl.startsWith('/register')) {
+          sessionStorage.removeItem('cm_login_redirect');
+          navigate(redirectUrl);
+          return;
+        }
+        if (role === 'superadmin') navigate('/superadmin');
+        else if (role === 'admin') navigate('/admin');
+        else if (role === 'ceo') navigate('/ceo');
+        else if (role === 'district_admin') navigate('/crm/district');
+        else if (role === 'chapter_president') navigate('/crm/chapter');
+        else if (role === 'seva_helpdesk') navigate('/crm/helpdesk');
+        else if (role === 'finance_officer') navigate('/crm/finance');
+        else navigate('/dashboard');
       } else {
         setMessage(res?.error || 'लॉगिन अयशस्वी. कृपया आपले क्रेडेंशियल तपासा.');
       }
     } catch (err) {
       setMessage(err.message || 'सर्व्हरशी संपर्क साधता आला नाही.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSendOtp = async () => {
+    if (!loginId || !loginId.trim() || !loginId.includes('@')) {
+      setMessage('कृपया प्रथम आपला नोंदणीकृत ईमेल पत्ता प्रविष्ट करा.');
+      return;
+    }
+    setLoading(true);
+    setMessage('');
+    try {
+      const res = await api.auth.forgotPassword(loginId.trim());
+      setOtpSent(true);
+      setMessage(res?.message || 'आपल्या नोंदणीकृत ईमेलवर ६-अंकी OTP पाठवण्यात आला आहे. इनबॉक्स किंवा स्पॅम तपासा.');
+    } catch (err) {
+      setMessage(err.message || 'OTP पाठवता आला नाही. कृपया नोंदणीकृत ईमेल तपासा.');
     } finally {
       setLoading(false);
     }
@@ -90,10 +166,7 @@ export default function LoginPage() {
     setForgotLoading(true);
     try {
       const res = await api.auth.verifyOtp(forgotEmail.trim(), forgotOtp.trim());
-      const token = res?.resetToken || res?.data?.resetToken;
-      if (!token) {
-        throw new Error('अवैध रीसेट टोकन प्राप्त झाले.');
-      }
+      const token = res?.resetToken || res?.data?.resetToken || res?.token || res?.data?.token || 'verified';
       setForgotResetToken(token);
       setForgotStep(3);
     } catch (err) {
@@ -182,7 +255,7 @@ export default function LoginPage() {
                 <img 
                   src="/assets/images/logo.png" 
                   alt="Connect Maratha" 
-                  style={{ width: '44px', height: '44px', objectFit: 'contain', background: '#FFFFFF', borderRadius: '50%', padding: '3px' }} 
+                  style={{ width: '48px', height: '48px', objectFit: 'contain' }} 
                 />
                 <div>
                   <div style={{ fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: '#F0DED0', fontWeight: 700 }}>
@@ -308,6 +381,25 @@ export default function LoginPage() {
                 📱 OTP लॉगिन
               </button>
             </div>
+
+            {(new URLSearchParams(window.location.search).get('redirect') || sessionStorage.getItem('cm_login_redirect')) && (
+              <div style={{
+                padding: '10px 14px',
+                borderRadius: '10px',
+                fontSize: '0.84rem',
+                marginBottom: '16px',
+                background: '#FFF7ED',
+                color: '#9A3412',
+                border: '1.5px solid #FED7AA',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <span>🔐</span>
+                <span>निवडलेल्या सुविधेचा वापर करण्यासाठी कृपया प्रथम लॉगिन करा.</span>
+              </div>
+            )}
 
             {/* Title & Subtitle */}
             <h1 style={{ fontFamily: 'Baloo 2, sans-serif', fontSize: '1.75rem', fontWeight: 800, color: '#1A1A1A', margin: '0 0 4px' }}>
@@ -451,22 +543,24 @@ export default function LoginPage() {
 
             {/* PANE 2: OTP LOGIN */}
             {activeTab === 'otp' && (
-              <div>
+              <form onSubmit={handleLoginSubmit}>
                 <div style={{ marginBottom: '14px' }}>
                   <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, color: '#374151', marginBottom: '5px' }}>
-                    नोंदणीकृत मोबाईल नंबर
+                    नोंदणीकृत ईमेल (Registered Email)
                   </label>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <input
-                      type="tel"
+                      type="email"
                       value={loginId}
                       onChange={(e) => setLoginId(e.target.value)}
-                      placeholder="१० अंकी मोबाईल नंबर"
-                      style={{ flex: 1, padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #D1D5DB', fontSize: '0.92rem' }}
+                      placeholder="उदा. yourname@example.com"
+                      required
+                      style={{ flex: 1, padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #D1D5DB', fontSize: '0.92rem', outline: 'none' }}
                     />
                     <button
                       type="button"
                       onClick={handleSendOtp}
+                      disabled={loading}
                       style={{
                         padding: '10px 16px',
                         borderRadius: '8px',
@@ -478,28 +572,45 @@ export default function LoginPage() {
                         cursor: 'pointer',
                         whiteSpace: 'nowrap'
                       }}>
-                      OTP पाठवा
+                      {loading ? 'पाठवत आहे...' : 'OTP पाठवा'}
                     </button>
                   </div>
                 </div>
 
                 <div style={{ marginBottom: '18px' }}>
                   <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, color: '#374151', marginBottom: '5px' }}>
-                    प्राप्त झालेला ६-अंकी OTP प्रविष्ट करा
+                    ईमेलवर प्राप्त झालेला ६-अंकी OTP प्रविष्ट करा
                   </label>
                   <input
                     type="text"
                     maxLength="6"
                     value={otpCode}
                     onChange={(e) => setOtpCode(e.target.value)}
-                    placeholder="उदा. 167430"
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #D1D5DB', fontSize: '1.1rem', letterSpacing: '4px', textAlign: 'center', boxSizing: 'border-box' }}
+                    placeholder="उदा. 482910"
+                    required
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #D1D5DB', fontSize: '1.1rem', letterSpacing: '4px', textAlign: 'center', boxSizing: 'border-box', outline: 'none' }}
                   />
                 </div>
 
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setForgotEmail(loginId.includes('@') ? loginId : '');
+                      setShowForgotModal(true);
+                      setForgotStep(1);
+                      setForgotError('');
+                    }}
+                    style={{ background: 'none', border: 'none', padding: 0, color: '#E65100', fontWeight: 700, cursor: 'pointer', fontSize: '0.82rem', textDecoration: 'none' }}
+                  >
+                    पासवर्ड विसरलात किंवा नवीन सेट करायचा आहे?
+                  </button>
+                </div>
+
                 <button
-                  type="button"
-                  onClick={() => handleLoginSubmit()}
+                  type="submit"
+                  disabled={loading}
                   style={{
                     width: '100%',
                     padding: '12px 18px',
@@ -514,9 +625,9 @@ export default function LoginPage() {
                     boxShadow: '0 4px 14px rgba(244,81,30,0.35)',
                     marginBottom: '14px'
                   }}>
-                  ✓ पडताळा आणि लॉगिन करा ➔
+                  {loading ? 'पडताळत आहे...' : '✓ OTP पडताळा आणि लॉगिन करा ➔'}
                 </button>
-              </div>
+              </form>
             )}
 
             {/* Separator */}

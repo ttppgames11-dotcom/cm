@@ -31,12 +31,12 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3000,
     open: false,
-    // Proxy forwards /api requests to Hostinger live backend API server
+    // Proxy forwards /api requests to local backend (port 5000) or configured VITE_API_TARGET
     proxy: {
       '/api': {
-        target: process.env.VITE_API_TARGET || 'https://api.connectmaratha.com',
+        target: process.env.VITE_API_TARGET || 'http://localhost:5000',
         changeOrigin: true,
-        secure: true
+        secure: false
       }
     },
     watch: {

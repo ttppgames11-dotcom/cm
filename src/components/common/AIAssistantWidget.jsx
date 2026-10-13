@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import apiClient from '../../services/apiClient';
 
 // Resilient Client Knowledge Fallback for Offline / Latency Resilience
@@ -48,6 +49,7 @@ function getClientFallback(query = '', lang = 'mr') {
 }
 
 export default function AIAssistantWidget() {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [language, setLanguage] = useState('mr');
   const [inputMsg, setInputMsg] = useState('');
@@ -217,7 +219,16 @@ export default function AIAssistantWidget() {
       {/* Floating Widget Trigger Button (Pure Royal Bhagwa & White) */}
       {!isOpen && (
         <button
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            const isLoggedIn = !!(user && (user.id || user._id || user.phone) && (typeof window === 'undefined' || localStorage.getItem('cm_logged_in') === 'true'));
+            if (!isLoggedIn) {
+              if (typeof window !== 'undefined' && typeof window.__cmOpenLoginPrompt === 'function') {
+                window.__cmOpenLoginPrompt('/ai', 'Connect Maratha AI सहाय्यक');
+                return;
+              }
+            }
+            setIsOpen(true);
+          }}
           title="Connect Maratha AI Agent"
           className="cm-ai-assistant-fab"
           style={{

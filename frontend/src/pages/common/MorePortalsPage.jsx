@@ -47,7 +47,6 @@ const PORTALS_GROUPS = [
       { label: 'बातम्या व अधिकृत घडामोडी', to: '/news' },
       { label: 'कार्यक्रम व दिनविशेष कॅलेंडर', to: '/events' },
       { label: 'दुर्ग संवर्धन व देणगी कोष', to: '/donation' },
-      { label: '१०-वर्षीय महाब्लूप्रिंट', to: '/blueprint' },
       { label: 'संस्था परिचय व सनद', to: '/about' },
       { label: '🚩 भूमिका आधारित CRM पोर्टल (Role Hub)', to: '/crm' },
       { label: '👑 केंद्रीय सुपर ॲडमिन कन्सोल (Super Admin)', to: '/admin' },

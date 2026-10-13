@@ -3,124 +3,276 @@ import { Link } from 'react-router-dom';
 
 const doctorsData = [
   {
-    id: 1,
-    name: 'डॉ. सचिन देशमुख',
-    specialty: 'हृदय रोग तज्ज्ञ',
-    category: 'हृदय रोग',
-    icon: '❤️',
-    photo: '/assets/images/doctors/dr_patil.jpg',
-    degree: 'MD, DM (Cardiology)',
-    city: 'पुणे, महाराष्ट्र',
-    experience: '१६+ वर्षे अनुभव',
-    hospital: 'दीनानाथ मंगेशकर रुग्णालय, पुणे',
-    phone: '+91 98220 12345',
-    timing: 'सकाळी १० ते सायं ५',
-    rating: '४.९ (२४०+ पुनरावलोकने)'
-  },
-  {
-    id: 2,
-    name: 'डॉ. अमोल पाटील',
-    specialty: 'मेंदू व मज्जारोग तज्ज्ञ',
-    category: 'मेंदू व मज्जारोग',
-    icon: '🧠',
-    photo: '/assets/images/doctors/dr_jadhav.jpg',
-    degree: 'MCh (Neurosurgery)',
-    city: 'मुंबई, महाराष्ट्र',
-    experience: '१४+ वर्षे अनुभव',
-    hospital: 'केईएम व हिंदुजा रुग्णालय, मुंबई',
-    phone: '+91 98200 54321',
-    timing: 'सकाळी ११ ते सायं ६',
-    rating: '४.८ (१९५+ पुनरावलोकने)'
-  },
-  {
-    id: 3,
-    name: 'डॉ. वैशाली कदम',
-    specialty: 'कॅन्सर तज्ज्ञ (ऑन्कोलॉजिस्ट)',
-    category: 'कॅन्सर तज्ज्ञ',
-    icon: '🎗️',
-    photo: '/assets/images/doctors/dr_deshmukh.jpg',
-    degree: 'MD, DM (Medical Oncology)',
-    city: 'नाशिक, महाराष्ट्र',
-    experience: '१२+ वर्षे अनुभव',
-    hospital: 'अपोलो कॅन्सर सेंटर, नाशिक',
-    phone: '+91 98500 87654',
-    timing: 'सकाळी ९ ते दु. २',
-    rating: '४.९ (३१०+ पुनरावलोकने)'
-  },
-  {
-    id: 4,
-    name: 'डॉ. नितीन शिंदे',
-    specialty: 'हाडे व सांधे तज्ज्ञ (ऑर्थोपेडिक)',
-    category: 'हाडे व सांधे',
-    icon: '🦴',
-    photo: '/assets/images/doctors/dr_shinde.jpg',
-    degree: 'MS (Orthopaedics), Fellowship Joint Replacement',
-    city: 'सांगली, महाराष्ट्र',
-    experience: '१८+ वर्षे अनुभव',
-    hospital: 'सह्याद्री ऑर्थो केअर, सांगली',
-    phone: '+91 94220 33445',
-    timing: 'सकाळी १० ते सायं ७',
-    rating: '४.७ (१६०+ पुनरावलोकने)'
-  },
-  {
-    id: 5,
-    name: 'डॉ. श्रद्धा मोरे',
-    specialty: 'बालरोग तज्ज्ञ (पीडियाट्रिशियन)',
-    category: 'बालरोग',
-    icon: '👶',
-    photo: '/assets/images/doctors/dr_bhosale.jpg',
-    degree: 'MD (Pediatrics), DNB',
-    city: 'कोल्हापूर, महाराष्ट्र',
-    experience: '१०+ वर्षे अनुभव',
-    hospital: 'बालगोपाल चिल्ड्रन्स हॉस्पिटल, कोल्हापूर',
-    phone: '+91 91580 99887',
-    timing: 'सकाळी ९:३० ते दु. १:३०, सायं ५ ते ८',
-    rating: '४.९ (२८५+ पुनरावलोकने)'
-  },
-  {
-    id: 6,
-    name: 'डॉ. प्राजक्ता देशमुख',
-    specialty: 'स्त्रीरोग व प्रसूती तज्ज्ञ',
-    category: 'स्त्रीरोग',
-    icon: '♀️',
-    photo: '/assets/images/doctors/dr_kadam.jpg',
-    degree: 'MS (Obst. & Gynae), DGO',
-    city: 'पुणे, महाराष्ट्र',
-    experience: '१५+ वर्षे अनुभव',
-    hospital: 'मातृसेवा हॉस्पिटल, कोथरूड, पुणे',
-    phone: '+91 98224 45566',
-    timing: 'सकाळी १० ते दु. २, सायं ६ ते ९',
-    rating: '४.८ (३४०+ पुनरावलोकने)'
-  },
-  {
-    id: 7,
-    name: 'डॉ. राजेंद्र पवार',
-    specialty: 'डोळे तज्ज्ञ (नेत्ररोग विशेषज्ञ)',
-    category: 'डोळे',
-    icon: '👁️',
-    photo: '/assets/images/doctors/dr_patil.jpg',
-    degree: 'MS (Ophthalmology), Phaco Specialist',
-    city: 'छत्रपती संभाजीनगर, महाराष्ट्र',
-    experience: '२०+ वर्षे अनुभव',
-    hospital: 'दृष्टी आय इन्स्टिट्यूट, औरंगाबाद',
-    phone: '+91 94230 77889',
-    timing: 'सकाळी १० ते सायं ५:३०',
-    rating: '४.९ (४२०+ पुनरावलोकने)'
-  },
-  {
-    id: 8,
-    name: 'डॉ. रोहित जाधव',
-    specialty: 'त्वचारोग तज्ज्ञ (डर्मेटोलॉजिस्ट)',
+    id: 'DOC-1001',
+    name: 'डॉ. तेहेम्टन उडवाडिया',
+    specialty: 'लॅपरोस्कोपिक व जनरल सर्जन',
+    degree: 'MS, FRCS, FCPS (पद्मविभूषण)',
     category: 'इतर',
+    hospital: 'ब्रीच कँडी व हिंदुजा रुग्णालय',
+    city: 'मुंबई, महाराष्ट्र',
+    phone: '+91 22 2366 7788',
+    consultationFee: '₹१२००',
+    timing: 'सकाळी १० ते दु. २',
+    experience: '४५+ वर्षे अनुभव (भारतातील लॅपरोस्कोपीचे जनक)',
+    rating: '४.९ ★ (५००+ शस्त्रक्रिया)',
+    photo: '/assets/images/doctors/dr_tehemton_udwadia.jpg',
     icon: '🩺',
-    photo: '/assets/images/doctors/dr_jadhav.jpg',
-    degree: 'MD (Dermatology), Cosmetologist',
+    verified: true
+  },
+  {
+    id: 'DOC-1002',
+    name: 'डॉ. रमाकांत पांडा',
+    specialty: 'हृदयरोग व कार्डिॲक सर्जन',
+    degree: 'MS, MCh (Cardiothoracic Surgery), पद्मभूषण',
+    category: 'हृदय रोग',
+    hospital: 'एशियन हार्ट इन्स्टिट्यूट (BKC)',
+    city: 'मुंबई, महाराष्ट्र',
+    phone: '+91 22 6698 6666',
+    consultationFee: '₹१५००',
+    timing: 'सकाळी ९ ते सायं ४',
+    experience: '३०+ वर्षे अनुभव (२८,०००+ यशस्वी हार्ट सर्जरी)',
+    rating: '५.० ★ (९९.६% यश दर)',
+    photo: '/assets/images/doctors/dr_ramakanta_panda.jpg',
+    icon: '❤️',
+    verified: true
+  },
+  {
+    id: 'DOC-1003',
+    name: 'डॉ. अरविंदर सिंह सोईन',
+    specialty: 'लिव्हर ट्रान्सप्लांट व गॅस्ट्रो सर्जन',
+    degree: 'MS, FRCS, पद्मश्री',
+    category: 'इतर',
+    hospital: 'मेदांता द मेडिसिटी व सह्याद्री हॉस्पिटल सहकार्य',
+    city: 'पुणे, महाराष्ट्र',
+    phone: '+91 20 6721 5000',
+    consultationFee: '₹१०००',
+    timing: 'सकाळी १० ते सायं ५',
+    experience: '२८+ वर्षे अनुभव (३,५००+ लिव्हर ट्रान्सप्लांट)',
+    rating: '४.९ ★ (आंतरराष्ट्रीय ख्याती)',
+    photo: '/assets/images/doctors/dr_as_soin.jpg',
+    icon: '🩺',
+    verified: true
+  },
+  {
+    id: 'DOC-1004',
+    name: 'डॉ. नरेश त्रेहान',
+    specialty: 'हृदयरोग व कार्डिओव्हॅस्क्युलर सर्जन',
+    degree: 'MBBS, Diplomat American Board Surgery, पद्मभूषण',
+    category: 'हृदय रोग',
+    hospital: 'हार्ट केअर सेंटर व अपोलो क्लिनिक',
+    city: 'मुंबई, महाराष्ट्र',
+    phone: '+91 22 4111 8899',
+    consultationFee: '₹१२००',
+    timing: 'सकाळी १० ते दु. ३',
+    experience: '३५+ वर्षे अनुभव (५०,०००+ ओपन हार्ट सर्जरी)',
+    rating: '४.९ ★ (अग्रगण्य तज्ज्ञ)',
+    photo: '/assets/images/doctors/dr_naresh_trehan.jpg',
+    icon: '❤️',
+    verified: true
+  },
+  {
+    id: 'DOC-1005',
+    name: 'डॉ. देवी प्रसाद शेट्टी',
+    specialty: 'बालहृदयरोग व कार्डिॲक सर्जन',
+    degree: 'MS, FRCS (पद्मभूषण व पद्मश्री)',
+    category: 'बालरोग',
+    hospital: 'नारायणा हेल्थ व एसआरसीसी चिल्ड्रन्स हॉस्पिटल',
+    city: 'मुंबई, महाराष्ट्र',
+    phone: '+91 22 7122 2222',
+    consultationFee: '₹८००',
+    timing: 'सकाळी ९ ते सायं ६',
+    experience: '३४+ वर्षे अनुभव (लहान मुलांच्या हृदय शस्त्रक्रिया)',
+    rating: '५.० ★ (परवडणारी दर्जेदार आरोग्यसेवा)',
+    photo: '/assets/images/doctors/dr_devi_shetty.jpg',
+    icon: '👶',
+    verified: true
+  },
+  {
+    id: 'DOC-1006',
+    name: 'डॉ. अभय बंग व डॉ. राणी बंग',
+    specialty: 'कम्युनिटी हेल्थ व बालरोग तज्ज्ञ',
+    degree: 'MD, MPH (Johns Hopkins), पद्मश्री सन्मानित',
+    category: 'बालरोग',
+    hospital: 'शोधग्राम रुग्णालय (SEARCH)',
+    city: 'गडचिरोली / नागपूर, महाराष्ट्र',
+    phone: '+91 7138 255433',
+    consultationFee: '₹२००',
+    timing: 'सकाळी ८ ते सायं ५',
+    experience: '३६+ वर्षे ग्रामीण व आदिवासी आरोग्यसेवा',
+    rating: '५.० ★ (जागतिक आरोग्य संघटनेकडून गौरव)',
+    photo: '/assets/images/doctors/dr_abhay_bang.jpg',
+    icon: '👶',
+    verified: true
+  },
+  {
+    id: 'DOC-1007',
+    name: 'डॉ. प्रकाश आमटे',
+    specialty: 'ग्रामीण शल्यचिकित्सक व समाजसेवक',
+    degree: 'MBBS (रेमन मॅगसेसे पुरस्कार व पद्मश्री)',
+    category: 'इतर',
+    hospital: 'लोक बिरादरी प्रकल्प रुग्णालय, हेमलकसा',
+    city: 'गडचिरोली / चंद्रपूर, महाराष्ट्र',
+    phone: '+91 7139 274100',
+    consultationFee: 'विनामूल्य / नाममात्र',
+    timing: 'सकाळी ८ ते सायं ७',
+    experience: '४०+ वर्षे अविरत आदिवासी व आपत्कालीन वैद्यकीय सेवा',
+    rating: '५.० ★ (लोकसेवक डॉक्टर)',
+    photo: '/assets/images/doctors/dr_prakash_amte.jpg',
+    icon: '🩺',
+    verified: true
+  },
+  {
+    id: 'DOC-1008',
+    name: 'डॉ. अशोक सेठ',
+    specialty: 'अँजिओप्लास्टी व इंटरव्हेन्शनल कार्डिओलॉजिस्ट',
+    degree: 'MD, FRCP, FACC (पद्मभूषण)',
+    category: 'हृदय रोग',
+    hospital: 'फोर्टिस एस्कॉर्ट्स व सह्याद्री सुपर स्पेशालिटी',
+    city: 'पुणे, महाराष्ट्र',
+    phone: '+91 20 6721 3333',
+    consultationFee: '₹१०००',
+    timing: 'सकाळी १० ते सायं ५',
+    experience: '३२+ वर्षे अनुभव (२०,०००+ अँजिओप्लास्टी)',
+    rating: '४.९ ★ (उच्चतम यश दर)',
+    photo: '/assets/images/doctors/dr_ashok_seth.jpg',
+    icon: '❤️',
+    verified: true
+  },
+  {
+    id: 'DOC-1009',
+    name: 'डॉ. रणदीप गुलेरिया',
+    specialty: 'फुफ्फुसरोग व क्रिटिकल केअर (पल्मोनोलॉजिस्ट)',
+    degree: 'MD, DM (Pulmonary Medicine), पद्मश्री',
+    category: 'इतर',
+    hospital: 'मेदांता व केईएम हॉस्पिटल सल्लागार',
+    city: 'मुंबई, महाराष्ट्र',
+    phone: '+91 22 2410 7000',
+    consultationFee: '₹१०००',
+    timing: 'सकाळी ९:३० ते दु. २',
+    experience: '३०+ वर्षे अनुभव (श्वसनरोग व संसर्ग तज्ज्ञ)',
+    rating: '४.९ ★ (राष्ट्रीय वैद्यकीय सल्लागार)',
+    photo: '/assets/images/doctors/dr_randeep_guleria.jpg',
+    icon: '🩺',
+    verified: true
+  },
+  {
+    id: 'DOC-1010',
+    name: 'डॉ. मोहन आगाशे',
+    specialty: 'मानसोपचार व न्यूरो-सायकियाट्रिस्ट',
+    degree: 'MBBS, MD (Psychiatry), संगीत नाटक अकादमी',
+    category: 'मेंदू व मज्जारोग',
+    hospital: 'बी. जे. मेडिकल कॉलेज व ससून रुग्णालय',
+    city: 'पुणे, महाराष्ट्र',
+    phone: '+91 20 2612 8000',
+    consultationFee: '₹८००',
+    timing: 'सकाळी १० ते दु. २, सायं ५ ते ७',
+    experience: '३८+ वर्षे अनुभव (मानसोपचार प्राध्यापक व तज्ज्ञ)',
+    rating: '४.८ ★ (मानसोपचार विशेष योगदान)',
+    photo: '/assets/images/doctors/dr_mohan_agashe.jpg',
+    icon: '🧠',
+    verified: true
+  },
+  {
+    id: 'DOC-1011',
+    name: 'डॉ. सविता आंबेडकर',
+    specialty: 'स्त्रीरोग व प्रसूती तज्ज्ञ (गायनेकोलॉजिस्ट)',
+    degree: 'MBBS, ऐतिहासिक वैद्यकीय सेवा',
+    category: 'स्त्रीरोग',
+    hospital: 'म्युनिसिपल हॉस्पिटल व मातृत्व सेवा केंद्र',
+    city: 'मुंबई, महाराष्ट्र',
+    phone: '+91 22 2430 1122',
+    consultationFee: '₹३००',
+    timing: 'सकाळी ९ ते दु. १',
+    experience: '२५+ वर्षे महिला व बालआरोग्य सेवा',
+    rating: '५.० ★ (ऐतिहासिक सेवा)',
+    photo: '/assets/images/doctors/dr_savita_ambedkar.jpg',
+    icon: '♀️',
+    verified: true
+  },
+  {
+    id: 'DOC-1012',
+    name: 'डॉ. श्रीकांत जिचकार',
+    specialty: 'एमबीबीएस, एम.डी. व सार्वजनिक आरोग्य',
+    degree: 'MBBS, MD, DBM, IAS/IPS पात्र',
+    category: 'इतर',
+    hospital: 'विदर्भ आरोग्य संस्था व सार्वजनिक सेवा केंद्र',
     city: 'नागपूर, महाराष्ट्र',
-    experience: '११+ वर्षे अनुभव',
-    hospital: 'ग्लो स्किन अँड लेसर क्लिनिक, नागपूर',
-    phone: '+91 97650 11223',
-    timing: 'सकाळी ११ ते सायं ७',
-    rating: '४.७ (१७५+ पुनरावलोकने)'
+    phone: '+91 712 256 1200',
+    consultationFee: '₹३००',
+    timing: 'सकाळी १० ते सायं ५',
+    experience: '२२+ वर्षे वैद्यकीय व सामाजिक कार्य',
+    rating: '४.९ ★ (महाराष्ट्रातील अद्वितीय व्यक्तिमत्त्व)',
+    photo: '/assets/images/doctors/dr_shrikant_jichkar.jpg',
+    icon: '🩺',
+    verified: true
+  },
+  {
+    id: 'DOC-1013',
+    name: 'डॉ. तात्याराव लहाने',
+    specialty: 'डोळे तज्ज्ञ व नेत्र शल्यचिकित्सक',
+    degree: 'MS (Ophthalmology), पद्मश्री सन्मानित',
+    category: 'डोळे',
+    hospital: 'सर जे. जे. रुग्णालय व ग्रँट मेडिकल कॉलेज',
+    city: 'मुंबई, महाराष्ट्र',
+    phone: '+91 22 2373 5555',
+    consultationFee: '₹५००',
+    timing: 'सकाळी ९ ते दु. ३',
+    experience: '३५+ वर्षे अनुभव (१ लाखाहून अधिक मोफत मोतीबिंदू शस्त्रक्रिया)',
+    rating: '५.० ★ (जागतिक विक्रम - दृष्टीदाता)',
+    photo: '/assets/images/doctors/dr_patil.jpg',
+    icon: '👁️',
+    verified: true
+  },
+  {
+    id: 'DOC-1014',
+    name: 'डॉ. राजेंद्र पवार',
+    specialty: 'डोळे व रेटिना स्पेशालिस्ट (फेको सर्जन)',
+    degree: 'MS (Ophthalmology), Phaco Specialist',
+    category: 'डोळे',
+    hospital: 'दृष्टी आय इन्स्टिट्यूट व रिसर्च सेंटर',
+    city: 'छत्रपती संभाजीनगर, महाराष्ट्र',
+    phone: '+91 94230 77889',
+    consultationFee: '₹४००',
+    timing: 'सकाळी १० ते सायं ५:३०',
+    experience: '२२+ वर्षे नेत्रसेवा व लेसर उपचार',
+    rating: '४.९ ★ (सत्यापित नेत्रतज्ज्ञ)',
+    photo: '/assets/images/doctors/dr_shinde.jpg',
+    icon: '👁️',
+    verified: true
+  },
+  {
+    id: 'DOC-1015',
+    name: 'डॉ. नितीन शिंदे',
+    specialty: 'हाडे व सांधे तज्ज्ञ (ऑर्थोपेडिक व जॉइंट रिप्लेसमेंट)',
+    degree: 'MS (Orthopaedics), MCh Ortho',
+    category: 'हाडे व सांधे',
+    hospital: 'सह्याद्री ऑर्थो केअर हॉस्पिटल',
+    city: 'सांगली, महाराष्ट्र',
+    phone: '+91 94220 33445',
+    consultationFee: '₹५००',
+    timing: 'सकाळी १० ते सायं ७',
+    experience: '२०+ वर्षे अनुभव (गुडघे व खुबा प्रत्यारोपण)',
+    rating: '४.८ ★ (यशस्वी सांधे शस्त्रक्रिया)',
+    photo: '/assets/images/doctors/dr_shinde.jpg',
+    icon: '🦴',
+    verified: true
+  },
+  {
+    id: 'DOC-1016',
+    name: 'डॉ. वैशाली कदम',
+    specialty: 'कॅन्सर तज्ज्ञ (मेडिकल ऑन्कोलॉजिस्ट)',
+    degree: 'MD, DM (Medical Oncology), DNB',
+    category: 'कॅन्सर तज्ज्ञ',
+    hospital: 'अपोलो कॅन्सर सेंटर व रिसर्च इन्स्टिट्यूट',
+    city: 'नाशिक, महाराष्ट्र',
+    phone: '+91 98500 87654',
+    consultationFee: '₹८००',
+    timing: 'सकाळी ९ ते दु. २',
+    experience: '१४+ वर्षे अनुभव (कर्करोग निदान व केमोथेरपी)',
+    rating: '४.९ ★ (कर्करोग निवारण तज्ज्ञ)',
+    photo: '/assets/images/doctors/dr_kadam.jpg',
+    icon: '🎗️',
+    verified: true
   }
 ];
 
@@ -158,13 +310,18 @@ export default function DoctorsDirectoryPage() {
   useEffect(() => {
     apiClient.getDoctors()
       .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
-          setDoctorsList(data);
-        } else if (Array.isArray(data)) {
-          setDoctorsList(data);
-        } else {
-          setDoctorsList(doctorsData);
+        const list = Array.isArray(data) && data.length > 0 ? data : doctorsData;
+        // Deduplicate doctors by normalized name to avoid duplicate cards
+        const seen = new Set();
+        const unique = [];
+        for (const item of list) {
+          const norm = (item.name || '').trim().toLowerCase();
+          if (norm && !seen.has(norm)) {
+            seen.add(norm);
+            unique.push(item);
+          }
         }
+        setDoctorsList(unique.length > 0 ? unique : doctorsData);
       })
       .catch(() => setDoctorsList(doctorsData));
   }, []);
@@ -206,12 +363,30 @@ export default function DoctorsDirectoryPage() {
 
   // Filter logic
   const filtered = doctorsList.filter((doc) => {
-    const matchCat = selectedCat === 'सर्व डॉक्टर' || doc.category === selectedCat;
+    let matchCat = false;
+    if (selectedCat === 'सर्व डॉक्टर') {
+      matchCat = true;
+    } else if (selectedCat === 'डोळे') {
+      matchCat = doc.category === 'डोळे' || 
+                 (doc.specialty && (doc.specialty.includes('डोळे') || doc.specialty.includes('नेत्र') || doc.specialty.includes('Ophthal')));
+    } else if (selectedCat === 'इतर') {
+      matchCat = doc.category === 'इतर' || 
+                 ['जनरल', 'सर्जन', 'पल्मोनो', 'आयुर्वेद', 'त्वचा', 'इतर'].some(k => (doc.specialty || '').includes(k));
+    } else if (selectedCat === 'हाडे व सांधे') {
+      matchCat = doc.category === 'हाडे व सांधे' || 
+                 (doc.specialty && (doc.specialty.includes('हाडे') || doc.specialty.includes('सांधे') || doc.specialty.includes('ऑर्थो')));
+    } else {
+      matchCat = doc.category === selectedCat || (doc.specialty && doc.specialty.includes(selectedCat));
+    }
+
+    const q = searchQuery.toLowerCase().trim();
     const matchSearch =
-      doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doc.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doc.city.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchCity = !selectedCity || doc.city.includes(selectedCity);
+      !q ||
+      (doc.name || '').toLowerCase().includes(q) ||
+      (doc.specialty || '').toLowerCase().includes(q) ||
+      (doc.city || '').toLowerCase().includes(q) ||
+      (doc.hospital || '').toLowerCase().includes(q);
+    const matchCity = !selectedCity || (doc.city || '').includes(selectedCity);
     return matchCat && matchSearch && matchCity;
   });
 
@@ -219,35 +394,61 @@ export default function DoctorsDirectoryPage() {
     <div className="doctors-directory-page" style={{ background: '#FBF8F3', minHeight: '100vh', paddingBottom: '60px' }}>
       {/* Hero Banner */}
       <section style={{
-        background: 'linear-gradient(135deg, #7A1C1C 0%, #B71C1C 50%, #E65100 100%)',
+        backgroundImage: 'linear-gradient(rgba(15, 23, 42, 0.48), rgba(15, 23, 42, 0.62)), url("/assets/images/maratha-doctors-hero.jpg")',
+        backgroundPosition: 'center 35%',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
         color: '#FFFFFF',
-        padding: '48px 20px',
+        padding: '54px 20px 48px',
         textAlign: 'center',
         position: 'relative',
-        boxShadow: '0 8px 24px rgba(122,28,28,0.25)'
+        boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+        borderBottom: '4px solid #E65100'
       }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div style={{
             display: 'inline-block',
-            background: 'rgba(255,255,255,0.18)',
-            backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255,255,255,0.3)',
-            padding: '6px 18px',
+            background: '#E65100',
+            border: '1px solid rgba(255,255,255,0.4)',
+            padding: '6px 20px',
             borderRadius: '20px',
             fontSize: '0.88rem',
-            fontWeight: 700,
+            fontWeight: 800,
             marginBottom: '14px',
-            color: '#FFD54F'
+            color: '#FFFFFF',
+            boxShadow: '0 4px 12px rgba(230,81,0,0.4)'
           }}>
             🚩 CONNECT मराठा — एक लढा भगव्यासाठी | सर्वधर्म समभाव
           </div>
-          <p style={{ fontSize: '1.25rem', fontWeight: 600, color: '#FFE082', marginBottom: '8px' }}>
+          <p style={{
+            fontSize: '1.3rem',
+            fontWeight: 800,
+            color: '#FFD54F',
+            marginBottom: '8px',
+            letterSpacing: '0.5px',
+            textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.85)'
+          }}>
             आरोग्य हीच खरी सेवा,
           </p>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 10px', textShadow: '0 3px 8px rgba(0,0,0,0.3)' }}>
+          <h1 style={{
+            fontSize: 'clamp(2.2rem, 5vw, 3.2rem)',
+            fontWeight: 900,
+            color: '#FFFFFF',
+            margin: '0 0 14px',
+            lineHeight: 1.25,
+            textShadow: '0 3px 14px rgba(0,0,0,0.95), 0 1px 3px rgba(0,0,0,0.95)'
+          }}>
             मराठा डॉक्टर — समाजाचा अभिमान !
           </h1>
-          <p style={{ fontSize: '1.1rem', opacity: 0.95, maxWidth: '720px', margin: '0 auto 20px', lineHeight: 1.6 }}>
+          <p style={{
+            fontSize: '1.2rem',
+            color: '#FFFFFF',
+            maxWidth: '780px',
+            margin: '0 auto 26px',
+            lineHeight: 1.6,
+            fontWeight: 600,
+            textShadow: '0 2px 10px rgba(0,0,0,0.95), 0 1px 3px rgba(0,0,0,0.95)'
+          }}>
             तज्ज्ञ उपचार, संवेदनशील सेवा, समाजासाठी समर्पण || जय भवानी ! जय शिवाजी !
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
@@ -257,12 +458,13 @@ export default function DoctorsDirectoryPage() {
                 background: '#FFD54F',
                 color: '#7A1C1C',
                 border: 'none',
-                padding: '12px 24px',
-                borderRadius: '8px',
+                padding: '12px 26px',
+                borderRadius: '10px',
                 fontSize: '1rem',
                 fontWeight: 800,
                 cursor: 'pointer',
-                boxShadow: '0 4px 14px rgba(0,0,0,0.2)'
+                boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+                transition: 'all 0.2s'
               }}
             >
               ＋ आपला प्रोफाइल जोडा
@@ -270,14 +472,16 @@ export default function DoctorsDirectoryPage() {
             <a
               href="#search-section"
               style={{
-                background: 'rgba(255,255,255,0.15)',
+                background: 'rgba(255,255,255,0.2)',
+                backdropFilter: 'blur(6px)',
                 color: '#FFFFFF',
-                border: '1px solid rgba(255,255,255,0.4)',
-                padding: '12px 24px',
-                borderRadius: '8px',
+                border: '1.5px solid rgba(255,255,255,0.5)',
+                padding: '12px 26px',
+                borderRadius: '10px',
                 fontSize: '1rem',
                 fontWeight: 700,
-                textDecoration: 'none'
+                textDecoration: 'none',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
               }}
             >
               🔍 डॉक्टर शोधा ({doctorsData.length}+)
@@ -286,8 +490,8 @@ export default function DoctorsDirectoryPage() {
         </div>
       </section>
 
-      {/* Main Search & Filter Section */}
-      <div id="search-section" style={{ maxWidth: '1180px', margin: '-24px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
+      {/* Main Search & Filter Section (Cleanly positioned below hero card) */}
+      <div id="search-section" style={{ maxWidth: '1180px', margin: '32px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
         <div style={{
           background: '#FFFFFF',
           borderRadius: '16px',
@@ -350,13 +554,14 @@ export default function DoctorsDirectoryPage() {
                 style={{
                   padding: '8px 18px',
                   borderRadius: '24px',
-                  border: selectedCat === cat ? '2px solid #B71C1C' : '1px solid #E0E0E0',
-                  background: selectedCat === cat ? '#B71C1C' : '#FFFFFF',
+                  border: selectedCat === cat ? '2px solid #E65100' : '1px solid #E0E0E0',
+                  background: selectedCat === cat ? 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)' : '#FFFFFF',
                   color: selectedCat === cat ? '#FFFFFF' : '#424242',
                   fontSize: '0.9rem',
                   fontWeight: selectedCat === cat ? 700 : 500,
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
+                  boxShadow: selectedCat === cat ? '0 4px 12px rgba(230,81,0,0.25)' : 'none',
                   transition: 'all 0.2s ease'
                 }}
               >
@@ -402,7 +607,7 @@ export default function DoctorsDirectoryPage() {
             <p style={{ color: '#8D6E63', marginBottom: '16px' }}>कृपया इतर स्पेशालिटी किंवा शहर निवडून शोधा.</p>
             <button
               onClick={() => { setSelectedCat('सर्व डॉक्टर'); setSearchQuery(''); setSelectedCity(''); }}
-              style={{ background: '#B71C1C', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '6px', fontWeight: 700, cursor: 'pointer' }}
+              style={{ background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)', color: '#fff', border: 'none', padding: '10px 22px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(230,81,0,0.25)' }}
             >
               सर्व डॉक्टर पहा
             </button>
@@ -431,12 +636,16 @@ export default function DoctorsDirectoryPage() {
                   <img
                     src={doc.photo || '/assets/images/doctors/dr_patil.jpg'}
                     alt={doc.name}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/assets/images/doctors/dr_patil.jpg';
+                    }}
                     style={{
                       width: '64px',
                       height: '64px',
                       borderRadius: '14px',
                       objectFit: 'cover',
-                      border: '2px solid #FFCC80',
+                      border: '2px solid #FFB74D',
                       boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
                       flexShrink: 0
                     }}
@@ -450,7 +659,7 @@ export default function DoctorsDirectoryPage() {
                         ✓ सत्यापित
                       </span>
                     </div>
-                    <div style={{ color: '#C62828', fontWeight: 700, fontSize: '0.92rem', marginBottom: '2px' }}>
+                    <div style={{ color: '#E65100', fontWeight: 700, fontSize: '0.92rem', marginBottom: '2px' }}>
                       {doc.specialty}
                     </div>
                     <div style={{ color: '#6D4C41', fontSize: '0.82rem', fontWeight: 600 }}>
@@ -483,14 +692,15 @@ export default function DoctorsDirectoryPage() {
                     onClick={() => { setSelectedDoctor(doc); setAppointmentModal(true); }}
                     style={{
                       flex: 1,
-                      background: '#B71C1C',
+                      background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
                       color: '#FFFFFF',
                       border: 'none',
-                      padding: '10px',
+                      padding: '11px',
                       borderRadius: '8px',
                       fontSize: '0.9rem',
                       fontWeight: 700,
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      boxShadow: '0 3px 10px rgba(230,81,0,0.22)'
                     }}
                   >
                     अपॉइंटमेंट बुक करा
@@ -498,11 +708,11 @@ export default function DoctorsDirectoryPage() {
                   <button
                     onClick={() => alert(`${doc.name} यांचा संपर्क क्रमांक: ${doc.phone}`)}
                     style={{
-                      padding: '10px 16px',
+                      padding: '11px 16px',
                       borderRadius: '8px',
-                      border: '1.5px solid #B71C1C',
-                      background: '#FFFFFF',
-                      color: '#B71C1C',
+                      border: '1.5px solid #E65100',
+                      background: '#FFF8E1',
+                      color: '#E65100',
                       fontWeight: 700,
                       cursor: 'pointer',
                       fontSize: '0.9rem'
@@ -692,7 +902,7 @@ export default function DoctorsDirectoryPage() {
                   <button
                     type="submit"
                     style={{
-                      background: '#B71C1C',
+                      background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
                       color: '#FFFFFF',
                       border: 'none',
                       padding: '12px',
@@ -700,7 +910,8 @@ export default function DoctorsDirectoryPage() {
                       fontSize: '1rem',
                       fontWeight: 800,
                       cursor: 'pointer',
-                      marginTop: '8px'
+                      marginTop: '8px',
+                      boxShadow: '0 4px 14px rgba(230,81,0,0.3)'
                     }}
                   >
                     प्रोफाइल सबमिट करा
@@ -740,7 +951,7 @@ export default function DoctorsDirectoryPage() {
             >
               ✕
             </button>
-            <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#7A1C1C', margin: '0 0 6px' }}>
+            <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#E65100', margin: '0 0 6px' }}>
               {selectedDoctor.name} यांच्याकडे अपॉइंटमेंट
             </h3>
             <p style={{ fontSize: '0.86rem', color: '#666', marginBottom: '18px' }}>
@@ -753,7 +964,7 @@ export default function DoctorsDirectoryPage() {
                 <p style={{ fontSize: '0.88rem', color: '#555' }}>क्लिनिकमधून वेळेची पुष्टी करण्यासाठी आपल्याला SMS/कॉल येईल.</p>
                 <button
                   onClick={() => { setAppointmentModal(false); setFormSubmitted(false); }}
-                  style={{ background: '#7A1C1C', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '6px', fontWeight: 700, cursor: 'pointer', marginTop: '12px' }}
+                  style={{ background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)', color: '#fff', border: 'none', padding: '10px 24px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', marginTop: '12px' }}
                 >
                   ठीक आहे
                 </button>
@@ -765,7 +976,7 @@ export default function DoctorsDirectoryPage() {
                   <input required type="tel" placeholder="मोबाईल नंबर" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #CCC' }} />
                   <input required type="date" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #CCC' }} />
                   <textarea placeholder="लक्षणे किंवा आजार (पर्यायी)" rows="3" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #CCC' }}></textarea>
-                  <button type="submit" style={{ background: '#B71C1C', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>
+                  <button type="submit" style={{ background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 14px rgba(230,81,0,0.3)' }}>
                     अपॉइंटमेंट निश्चित करा
                   </button>
                 </div>

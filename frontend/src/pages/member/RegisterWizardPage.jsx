@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { checkRepetitiveInput } from '../../utils/memberValidation';
+import { verifyReferrerId, recordNewReferral } from '../../services/referralService';
 
 const PERSONAS = [
   { id: 'Professional', title: 'व्यावसायिक (Professional)', icon: '💼' },
@@ -42,6 +43,35 @@ const CONNECT_GOALS = [
 export default function RegisterWizardPage() {
   const [activeScreen, setActiveScreen] = useState('signup');
   const [validationError, setValidationError] = useState('');
+  const [searchParams] = useSearchParams();
+  const urlRef = searchParams.get('ref') || searchParams.get('referral') || '';
+
+  const [referralCode, setReferralCode] = useState(urlRef || '');
+  const [referrerInfo, setReferrerInfo] = useState(null);
+  const [referralStatus, setReferralStatus] = useState({ checking: false, valid: false, message: '' });
+
+  // Live real-time verification
+  useEffect(() => {
+    if (!referralCode || !referralCode.trim()) {
+      setReferrerInfo(null);
+      setReferralStatus({ checking: false, valid: false, message: 'कृपया शिफारसकर्ता सभासद आयडी प्रविष्ट करा.' });
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      const res = verifyReferrerId(referralCode.trim());
+      if (res.isValid) {
+        setReferrerInfo(res);
+        setReferralStatus({ checking: false, valid: true, message: `सत्यापित शिफारसकर्ता: ${res.name} (${res.chapter || res.district})` });
+      } else {
+        setReferrerInfo(null);
+        setReferralStatus({ checking: false, valid: false, message: res.message });
+      }
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [referralCode]);
+
   const [formData, setFormData] = useState({
     name: '',
     displayName: '',
@@ -67,6 +97,13 @@ export default function RegisterWizardPage() {
       'ऐतिहासिक संशोधन, गड-किल्ले संवर्धन अभ्यासणे'
     ],
     language: 'mr'
+  });
+
+  const [complianceConsent, setComplianceConsent] = useState({
+    termsAndPrivacy: false,
+    ageConfirmation: false,
+    dpdpDataProcessing: false,
+    bloodDonorOptIn: false
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -114,8 +151,40 @@ export default function RegisterWizardPage() {
       return;
     }
 
+    // Compulsory Referral Validation
+    if (!referralCode || !referralCode.trim()) {
+      setValidationError('शिफारसकर्ता सभासद आयडी (Referral Member ID) अनिवार्य आहे. कृपया आयडी प्रविष्ट करा किंवा अधिकृत कोड वापरा.');
+      return;
+    }
+
+    const refCheck = verifyReferrerId(referralCode.trim());
+    if (!refCheck.isValid) {
+      setValidationError('प्रविष्ट केलेला शिफारसकर्ता सभासद आयडी अवैध आहे. कृपया अचूक आयडी टाका.');
+      return;
+    }
+
+    if (referralCode.trim() === formData.mobile.trim()) {
+      setValidationError('आपण स्वतःचा नंबर रेफरल म्हणून वापरू शकत नाही.');
+      return;
+    }
+
     if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
       setValidationError('दोन्ही पासवर्ड जुळत नाहीत (Passwords do not match).');
+      return;
+    }
+
+    if (!complianceConsent.termsAndPrivacy) {
+      setValidationError('कृपया नोंदणीसाठी Connect Maratha चे "नियम व अटी" आणि "गोपनीयता धोरण" मान्य करा.');
+      return;
+    }
+
+    if (!complianceConsent.ageConfirmation) {
+      setValidationError('Google Play Console आणि DPDP नियमांनुसार नोंदणीसाठी आपले वय १८ वर्षे किंवा त्याहून अधिक असणे अनिवार्य आहे.');
+      return;
+    }
+
+    if (!complianceConsent.dpdpDataProcessing) {
+      setValidationError('कृपया डिजिटल वैयक्तिक डेटा संरक्षण (DPDP Act 2023) अंतर्गत माहिती प्रक्रियेस संमती द्या.');
       return;
     }
 
@@ -138,16 +207,38 @@ export default function RegisterWizardPage() {
       business: formData.organization ? formData.organization.trim() : '',
       education: formData.education || '',
       skills: formData.skills ? (Array.isArray(formData.skills) ? formData.skills : [formData.skills]) : [],
-      about: formData.about || ''
+      about: formData.about || '',
+      referredBy: referralCode.trim(),
+      legalCompliance: {
+        termsAccepted: true,
+        privacyAccepted: true,
+        ageConfirmed: true,
+        dpdpConsent: true,
+        bloodDonorOptIn: !!complianceConsent.bloodDonorOptIn,
+        acceptedAt: new Date().toISOString(),
+        policyVersion: '2026.1'
+      }
     };
 
+    let resUser = null;
     if (register) {
       const res = await register(memberPayload);
       if (!res || !res.success) {
         setValidationError(res?.error || 'नोंदणी अयशस्वी झाली. कृपया माहिती तपासा.');
         return;
       }
+      resUser = res.member || res.user;
     }
+
+    // Record Real-time referral
+    recordNewReferral({
+      newMemberId: resUser?.id || `CM-MH-${formData.mobile.slice(-4)}`,
+      newMemberName: formData.name.trim(),
+      newMemberPhone: formData.mobile.trim(),
+      newMemberDistrict: formData.city || 'पुणे',
+      referrerCode: referralCode.trim(),
+      isSubscribed: true
+    });
 
     setActiveScreen('welcome');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -350,6 +441,68 @@ export default function RegisterWizardPage() {
                   </div>
                 </div>
 
+                {/* COMPULSORY REFERRAL MEMBER ID WITH REAL-TIME VERIFICATION */}
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px', flexWrap: 'wrap', gap: '4px' }}>
+                    <label style={{ fontSize: '12.5px', fontWeight: 800, color: '#431407', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <span>🚩 शिफारसकर्ता सभासद आयडी (Referral ID)</span>
+                      <span style={{ color: '#EA580C' }}>* (अनिवार्य)</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setReferralCode('CM-OFFICIAL-2026')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#EA580C',
+                        fontSize: '11.5px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        textDecoration: 'underline',
+                        padding: 0
+                      }}
+                      title="अधिकृत केंद्रीय महामंडळ कोड वापरा"
+                    >
+                      अधिकृत कोड वापरा (Use Official ID)
+                    </button>
+                  </div>
+
+                  <div className="input-box" style={{ borderColor: referralStatus.valid ? '#10B981' : (referralCode ? '#EA580C' : '#CBD5E1') }}>
+                    <span className="prefix" style={{ background: '#FFF7ED', color: '#EA580C', fontWeight: 800 }}>REF</span>
+                    <input
+                      type="text"
+                      required
+                      value={referralCode}
+                      onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                      placeholder="उदा. CM-PUN-0842 किंवा मित्राचा सभासद आयडी"
+                      style={{ textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 700 }}
+                    />
+                  </div>
+
+                  {referralCode ? (
+                    <div style={{
+                      marginTop: '8px',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      background: referralStatus.valid ? '#ECFDF5' : '#FEF2F2',
+                      border: `1.5px solid ${referralStatus.valid ? '#10B981' : '#FCA5A5'}`,
+                      color: referralStatus.valid ? '#065F46' : '#991B1B'
+                    }}>
+                      <span>{referralStatus.valid ? '✅' : '❌'}</span>
+                      <span>{referralStatus.message}</span>
+                    </div>
+                  ) : (
+                    <p style={{ margin: '4px 0 0', fontSize: '11.5px', color: '#64748B' }}>
+                      * आपणास ज्या सदस्याने शिफारस केली आहे त्यांचा अधिकृत आयडी टाका किंवा वरील अधिकृत कोड वापरा.
+                    </p>
+                  )}
+                </div>
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, marginBottom: '6px' }}>पासवर्ड</label>
@@ -377,11 +530,107 @@ export default function RegisterWizardPage() {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#5c534b', margin: '10px 0 20px' }}>
-                  <input type="checkbox" defaultChecked required style={{ marginTop: '3px', accentColor: '#7a1c1c' }} />
-                  <span>
-                    मी Connect Maratha चे नियम व अटी आणि गोपनीयता धोरण (DPDP 2023) मान्य करतो.
-                  </span>
+                {/* Google Play Console & DPDP Act 2023 Compliance Agreement Card */}
+                <div style={{
+                  background: '#fcfaf6',
+                  border: '1px solid #e7ded2',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  margin: '16px 0 20px',
+                  fontSize: '12.5px',
+                  color: '#3d342d',
+                  boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.02)'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '10px',
+                    paddingBottom: '8px',
+                    borderBottom: '1px solid #ebd9c8'
+                  }}>
+                    <span style={{ fontWeight: 800, color: '#681313', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      🛡️ कायदेशीर संमती व डेटा सुरक्षा (Data Safety & Compliance)
+                    </span>
+                    <span style={{
+                      fontSize: '10.5px',
+                      background: '#e8f0fe',
+                      color: '#1a73e8',
+                      padding: '2px 8px',
+                      borderRadius: '10px',
+                      fontWeight: 700
+                    }}>
+                      Google Play & DPDP 2023
+                    </span>
+                  </div>
+
+                  {/* 1. Mandatory Terms & Privacy */}
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '10px', cursor: 'pointer', lineHeight: 1.45 }}>
+                    <input
+                      type="checkbox"
+                      checked={complianceConsent.termsAndPrivacy}
+                      onChange={(e) => setComplianceConsent({ ...complianceConsent, termsAndPrivacy: e.target.checked })}
+                      style={{ marginTop: '2px', accentColor: '#7a1c1c', width: '16px', height: '16px', flexShrink: 0 }}
+                    />
+                    <span>
+                      <strong style={{ color: '#8b1e1e' }}>* अनिवार्य:</strong> मी Connect Maratha चे{' '}
+                      <Link to="/terms" target="_blank" rel="noopener noreferrer" style={{ color: '#7a1c1c', fontWeight: 700, textDecoration: 'underline' }}>
+                        नियम व अटी (Terms & Conditions)
+                      </Link>{' '}
+                      आणि{' '}
+                      <Link to="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: '#7a1c1c', fontWeight: 700, textDecoration: 'underline' }}>
+                        गोपनीयता धोरण (Privacy Policy)
+                      </Link>{' '}
+                      वाचले असून मला पूर्णपणे मान्य आहेत.
+                    </span>
+                  </label>
+
+                  {/* 2. Age Assurance (18+) */}
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '10px', cursor: 'pointer', lineHeight: 1.45 }}>
+                    <input
+                      type="checkbox"
+                      checked={complianceConsent.ageConfirmation}
+                      onChange={(e) => setComplianceConsent({ ...complianceConsent, ageConfirmation: e.target.checked })}
+                      style={{ marginTop: '2px', accentColor: '#7a1c1c', width: '16px', height: '16px', flexShrink: 0 }}
+                    />
+                    <span>
+                      <strong style={{ color: '#8b1e1e' }}>* अनिवार्य:</strong> माझे वय १८ वर्षे पूर्ण किंवा त्याहून अधिक आहे (Age 18+ Assurance).
+                    </span>
+                  </label>
+
+                  {/* 3. DPDP Act 2023 Data Processing Consent */}
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '10px', cursor: 'pointer', lineHeight: 1.45 }}>
+                    <input
+                      type="checkbox"
+                      checked={complianceConsent.dpdpDataProcessing}
+                      onChange={(e) => setComplianceConsent({ ...complianceConsent, dpdpDataProcessing: e.target.checked })}
+                      style={{ marginTop: '2px', accentColor: '#7a1c1c', width: '16px', height: '16px', flexShrink: 0 }}
+                    />
+                    <span>
+                      <strong style={{ color: '#8b1e1e' }}>* अनिवार्य:</strong> डिजिटल वैयक्तिक डेटा संरक्षण कायदा (DPDP Act 2023) अंतर्गत माझे नाव, मोबाइल क्रमांक आणि व्यावसायिक माहिती सभासद ओळखपत्र व कम्युनिटी सेंटर समन्वयासाठी वापरण्यास माझी संमती आहे.
+                    </span>
+                  </label>
+
+                  {/* 4. Optional Blood Donor / Volunteer Opt-in */}
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer', lineHeight: 1.45, paddingTop: '6px', borderTop: '1px dashed #ebd9c8' }}>
+                    <input
+                      type="checkbox"
+                      checked={complianceConsent.bloodDonorOptIn}
+                      onChange={(e) => setComplianceConsent({ ...complianceConsent, bloodDonorOptIn: e.target.checked })}
+                      style={{ marginTop: '2px', accentColor: '#166534', width: '16px', height: '16px', flexShrink: 0 }}
+                    />
+                    <span style={{ color: '#4a4036' }}>
+                      <strong style={{ color: '#166534' }}>[ऐच्छिक Opt-in]:</strong> सामाजिक आपत्कालीन सेवा व रक्तदान मोहिमेसाठी माझा संपर्क क्रमांक अधिकृत मदतनीसांना दर्शविण्यास माझी संमती आहे.
+                    </span>
+                  </label>
+
+                  <div style={{ marginTop: '10px', fontSize: '11px', color: '#796f64', textAlign: 'right' }}>
+                    खाते व डेटा हटवण्यासाठी आमचे{' '}
+                    <Link to="/privacy#deletion" target="_blank" rel="noopener noreferrer" style={{ color: '#8b1e1e', textDecoration: 'underline' }}>
+                      Account Deletion Policy
+                    </Link>{' '}
+                    पहा.
+                  </div>
                 </div>
 
                 {validationError && (

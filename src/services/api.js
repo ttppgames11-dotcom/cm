@@ -35,9 +35,17 @@ export const api = {
   // 1. Authentication & Member Identity
   auth: {
     login: async (identifier, password) => {
+      const cleanId = String(identifier || '').trim();
+      const digitsOnly = cleanId.replace(/\D/g, '');
       const res = await request('/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ identifier, password })
+        body: JSON.stringify({
+          identifier: cleanId,
+          phone: digitsOnly.length >= 10 ? digitsOnly : cleanId,
+          mobile: digitsOnly.length >= 10 ? digitsOnly : cleanId,
+          email: cleanId,
+          password
+        })
       });
       const token = res.data?.token || res.token;
       if (token) {
@@ -46,9 +54,15 @@ export const api = {
       return res;
     },
     register: async (formData) => {
+      const cleanPhone = String(formData.phone || formData.mobile || '').trim();
+      const digitsOnly = cleanPhone.replace(/\D/g, '');
       const res = await request('/auth/register', {
         method: 'POST',
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          phone: digitsOnly.length >= 10 ? digitsOnly : cleanPhone,
+          mobile: digitsOnly.length >= 10 ? digitsOnly : cleanPhone
+        })
       });
       const token = res.data?.token || res.token;
       if (token) {
@@ -57,24 +71,20 @@ export const api = {
       return res;
     },
     getMe: () => request('/auth/me'),
-    logout: async () => {
-      try {
-        await request('/auth/logout', { method: 'POST' });
-      } finally {
-        localStorage.removeItem('cm_jwt_token');
-      }
+    logout: () => {
+      localStorage.removeItem('cm_jwt_token');
     },
-    forgotPassword: (identifier) => request('/auth/forgot-password', {
+    forgotPassword: (email) => request('/auth/forgot-password', {
       method: 'POST',
-      body: JSON.stringify({ identifier })
+      body: JSON.stringify({ identifier: email, email })
     }),
-    verifyOtp: (identifier, otp) => request('/auth/verify-otp', {
+    verifyOtp: (email, otp) => request('/auth/verify-reset-otp', {
       method: 'POST',
-      body: JSON.stringify({ identifier, otp })
+      body: JSON.stringify({ identifier: email, email, otp })
     }),
-    resetPassword: (identifier, newPassword, otp) => request('/auth/reset-password', {
-      method: 'PUT',
-      body: JSON.stringify({ identifier, newPassword, otp })
+    resetPassword: (email, resetToken, newPassword) => request('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ identifier: email, email, resetToken, newPassword })
     })
   },
 
@@ -245,6 +255,22 @@ export const api = {
     })
   },
 
+  // 10b. Business Enquiries & Leads
+  enquiries: {
+    getAll: (params = {}) => {
+      const qs = new URLSearchParams(params).toString();
+      return request(`/enquiries${qs ? '?' + qs : ''}`);
+    },
+    create: (data) => request('/enquiries', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }),
+    submitQuote: (id, quoteData) => request(`/enquiries/${id}/quote`, {
+      method: 'POST',
+      body: JSON.stringify(quoteData)
+    })
+  },
+
   // 11. Culture, History & Quiz
   culture: {
     getOralHistory: () => request('/culture/oral-history'),
@@ -270,6 +296,8 @@ export const api = {
     getMetrics: () => request('/admin/metrics'),
     getAuditLogs: () => request('/admin/audit-logs'),
     getRolesMatrix: () => request('/admin/roles-matrix'),
+    getJobApplications: () => request('/admin/job-applications'),
+    getEnquiriesSummary: () => request('/admin/enquiries-summary'),
     verifyMember: (id, status, remarks) => request(`/admin/verify-member/${id}`, {
       method: 'POST',
       body: JSON.stringify({ status, remarks })

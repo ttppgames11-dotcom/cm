@@ -162,70 +162,119 @@ export default function MatrimonyPortalPage() {
 
   return (
     <div style={{ background: '#fdf8f6', minHeight: '100vh', paddingBottom: '5rem' }}>
-      {/* Hero Header */}
+      {/* Premium Hero Banner - Clean & Unobstructed Visual of the Maratha Wedding Ceremony */}
       <div style={{
-        background: 'linear-gradient(135deg, rgba(124, 45, 18, 0.90) 0%, rgba(154, 52, 18, 0.88) 100%), url("/assets/images/generated/maratha_matrimony_hero.jpg") center/cover no-repeat',
-        color: '#fff',
-        padding: '3.5rem 1.5rem',
-        textAlign: 'center'
+        position: 'relative',
+        width: '100%',
+        maxWidth: '1240px',
+        margin: '1.25rem auto 0',
+        padding: '0 1rem'
       }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <div style={{
-            display: 'inline-block',
-            background: 'rgba(255,255,255,0.2)',
-            padding: '0.4rem 1.2rem',
-            borderRadius: '999px',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            marginBottom: '1rem'
-          }}>
-            💍 १००% सत्यापित मराठा वधू-वर सूचक केंद्र | Maratha Matrimony
-          </div>
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 900, margin: '0.5rem 0 1rem' }}>
-            कुलीन घराणी, उच्चशिक्षित स्थळे — अखंड मराठा रेशीमगाठ
-          </h1>
-          <p style={{ fontSize: '1.15rem', opacity: 0.95, maxWidth: '750px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
-            मराठा समाजातील उच्चशिक्षित, शासकीय सेवेतील, व्यावसायिक आणि कृषी उद्योजक वधू-वरांसाठी विश्वासाचे आणि सन्मानाचे व्यासपीठ.
-          </p>
+        <div style={{
+          width: '100%',
+          height: 'clamp(280px, 38vw, 440px)',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          boxShadow: '0 16px 36px -10px rgba(0,0,0,0.18)',
+          border: '2px solid rgba(254, 215, 170, 0.8)',
+          position: 'relative'
+        }}>
+          <img
+            src="/assets/images/generated/maratha_matrimony_hero.jpg"
+            alt="अखंड मराठा रेशीमगाठ विवाह सोहळा"
+            style={{
+              width: '100%',
+              height: '100%',
+              display: 'block',
+              objectFit: 'cover',
+              objectPosition: 'center 22%'
+            }}
+          />
+        </div>
+      </div>
 
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => setIsRegisterModalOpen(true)}
-              style={{
-                background: '#fbbf24',
-                color: '#1e293b',
-                border: 'none',
-                padding: '0.85rem 2rem',
-                borderRadius: '12px',
-                fontWeight: 800,
-                fontSize: '1rem',
-                cursor: 'pointer',
-                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.2)'
-              }}
-            >
-              + आपला विवाह प्रोफाइल नोंदवा (Register Profile)
-            </button>
-            <a
-              href="#profiles-grid"
-              style={{
-                background: 'rgba(255,255,255,0.2)',
-                color: '#fff',
-                textDecoration: 'none',
-                padding: '0.85rem 2rem',
-                borderRadius: '12px',
-                fontWeight: 700,
-                fontSize: '1rem',
-                display: 'inline-block'
-              }}
-            >
-              स्थळे शोधा (Browse Matches) ➔
-            </a>
-          </div>
+      {/* Matrimony Header Info & Action Controls - Placed Cleanly Below the Banner */}
+      <div style={{ maxWidth: '1050px', margin: '2rem auto 1.5rem', padding: '0 1.25rem', textAlign: 'center' }}>
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          background: '#FFF7ED',
+          border: '1.5px solid #FFEDD5',
+          color: '#C2410C',
+          padding: '0.45rem 1.4rem',
+          borderRadius: '999px',
+          fontSize: '0.92rem',
+          fontWeight: 800,
+          marginBottom: '1rem',
+          boxShadow: '0 2px 8px rgba(194, 65, 12, 0.08)'
+        }}>
+          <span>💍</span>
+          <span>१००% सत्यापित मराठा वधू-वर सूचक केंद्र | Maratha Matrimony</span>
+        </div>
+
+        <h1 style={{
+          fontSize: 'clamp(2rem, 5vw, 3rem)',
+          fontWeight: 900,
+          margin: '0.3rem 0 1rem',
+          fontFamily: 'Baloo 2, sans-serif',
+          color: '#7C2D12',
+          lineHeight: 1.25
+        }}>
+          कुलीन घराणी, उच्चशिक्षित स्थळे — अखंड मराठा रेशीमगाठ
+        </h1>
+
+        <p style={{
+          fontSize: '1.2rem',
+          fontWeight: 500,
+          color: '#4B5563',
+          maxWidth: '820px',
+          margin: '0 auto 2rem',
+          lineHeight: 1.65
+        }}>
+          मराठा समाजातील उच्चशिक्षित, शासकीय सेवेतील, व्यावसायिक आणि कृषी उद्योजक वधू-वरांसाठी विश्वासाचे आणि सन्मानाचे व्यासपीठ.
+        </p>
+
+        <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setIsRegisterModalOpen(true)}
+            style={{
+              background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+              color: '#ffffff',
+              border: 'none',
+              padding: '0.95rem 2.2rem',
+              borderRadius: '14px',
+              fontWeight: 800,
+              fontSize: '1.05rem',
+              cursor: 'pointer',
+              boxShadow: '0 10px 20px -3px rgba(217, 119, 6, 0.35)',
+              transition: 'transform 0.2s'
+            }}
+          >
+            + आपला विवाह प्रोफाइल नोंदवा (Register Profile)
+          </button>
+          <a
+            href="#profiles-grid"
+            style={{
+              background: '#FFF7ED',
+              border: '1.5px solid #F97316',
+              color: '#C2410C',
+              textDecoration: 'none',
+              padding: '0.95rem 2.2rem',
+              borderRadius: '14px',
+              fontWeight: 800,
+              fontSize: '1.05rem',
+              display: 'inline-block',
+              transition: 'all 0.2s'
+            }}
+          >
+            स्थळे शोधा (Browse Matches) ➔
+          </a>
         </div>
       </div>
 
       {/* Trust Highlights */}
-      <div style={{ maxWidth: '1200px', margin: '-1.5rem auto 2.5rem', padding: '0 1rem', position: 'relative', zIndex: 10 }}>
+      <div style={{ maxWidth: '1200px', margin: '2rem auto 2.5rem', padding: '0 1rem', position: 'relative', zIndex: 10 }}>
         <div style={{
           background: '#fff',
           borderRadius: '16px',

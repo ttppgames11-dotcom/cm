@@ -22,7 +22,7 @@ export default function CommunitySafetyPage() {
         
         {/* Hero */}
         <div style={{
-          background: "linear-gradient(rgba(26, 54, 93, 0.88), rgba(43, 108, 176, 0.92)), url('/assets/images/seva.jpg') center/cover no-repeat",
+          background: 'linear-gradient(135deg, #1A365D 0%, #2B6CB0 100%)',
           borderRadius: '20px',
           padding: '40px 32px',
           color: '#FFF',

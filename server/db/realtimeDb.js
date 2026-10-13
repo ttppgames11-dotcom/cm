@@ -101,7 +101,12 @@ class RealtimeDatabase {
       'otpCodes',
       'tokenBlacklist',
       'hotels',
-      'information'
+      'information',
+      'communityCenters',
+      'centerActivities',
+      'territoryOfficers',
+      'branches',
+      'branchActivities'
     ];
 
     for (const col of collections) {

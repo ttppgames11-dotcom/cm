@@ -532,4 +532,171 @@ router.post('/information', optionalToken, (req, res) => {
   return sendSuccess(res, 'नवीन माहिती लेख यशस्वीरीत्या जोडण्यात आला!', { article: newArticle }, 201);
 });
 
+// ==========================================
+// 12. CLIENT ENQUIRIES & B2B LEADS (/api/enquiries)
+// ==========================================
+router.get('/enquiries', (req, res) => {
+  const { category, district, search } = req.query;
+  let list = db.getCollection('clientEnquiries');
+
+  if (list.length === 0) {
+    const seedEnquiries = [
+      {
+        id: 'ENQ-001',
+        title: 'Interior Designer हवा (३ BHK फ्लॅट)',
+        category: 'Interior Design',
+        district: 'पुणे',
+        budget: '₹१५ - २० लाख',
+        description: 'बाणेर येथील ३ BHK फ्लॅटचे संपूर्ण मॉड्युलर किचन, वॉर्डरोब व फॉल सिलिंग काम.',
+        postedBy: 'राहुल जाधव',
+        phone: '9822011223',
+        status: 'सक्रिय (Active)',
+        quotesCount: 3,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'ENQ-002',
+        title: 'E-commerce Website & App Developer',
+        category: 'IT & Software',
+        district: 'मुंबई',
+        budget: '₹७५,००० - १.५ लाख',
+        description: 'पारंपरिक पैठणी व साड्यांच्या ब्रँडसाठी पेमेंट गेटवे सज्ज ई-कॉमर्स पोर्टल हवे.',
+        postedBy: 'स्नेहल पाटील',
+        phone: '9822033445',
+        status: 'सक्रिय (Active)',
+        quotesCount: 5,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'ENQ-003',
+        title: 'Wedding Photographer & Drone Team',
+        category: 'Photography',
+        district: 'नाशिक',
+        budget: '₹८०,००० - १.२ लाख',
+        description: 'दोन दिवसीय मराठा विवाह सोहळ्याचे सिनेमॅटिक व ड्रोन शूटिंग.',
+        postedBy: 'अमोल शिंदे',
+        phone: '9822055667',
+        status: 'सक्रिय (Active)',
+        quotesCount: 2,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'ENQ-004',
+        title: 'GST & Legal Consultant हवा',
+        category: 'CA & Legal',
+        district: 'कोल्हापूर',
+        budget: 'वार्षिक रिटेनरशिप',
+        description: 'ऑटो पार्ट्स फाउंड्री मॅन्युफॅक्चरिंग युनिटचे ऑडिट व जीएसटी अनुपालन.',
+        postedBy: 'सचिन मोरे',
+        phone: '9822077889',
+        status: 'सक्रिय (Active)',
+        quotesCount: 4,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'ENQ-005',
+        title: 'कृषी मालासाठी Transport Partner',
+        category: 'Logistics',
+        district: 'सातारा',
+        budget: 'प्रति टन दर',
+        description: 'साताऱ्यातून वाशी व पुणे मार्केटसाठी भाजीपाला व स्ट्रॉबेरी वाहतूक.',
+        postedBy: 'प्रवीण भोसले',
+        phone: '9822099001',
+        status: 'सक्रिय (Active)',
+        quotesCount: 2,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'ENQ-006',
+        title: 'Civil Contractor हवा (गोडाऊन बांधकाम)',
+        category: 'Construction',
+        district: 'पुणे',
+        budget: '₹२५ - ३५ लाख',
+        description: 'चाकण एमआयडीसीत ५००० चौ.फूट इंडस्ट्रियल शेड व फ्लोअरिंग काम.',
+        postedBy: 'विक्रम सावंत',
+        phone: '9822022334',
+        status: 'सक्रिय (Active)',
+        quotesCount: 6,
+        createdAt: new Date().toISOString()
+      }
+    ];
+    seedEnquiries.forEach(e => db.insert('clientEnquiries', e));
+    list = seedEnquiries;
+  }
+
+  if (category && category !== 'सर्व') {
+    list = list.filter(e => (e.category || '').toLowerCase().includes(category.toLowerCase()));
+  }
+  if (district && district !== 'सर्व') {
+    list = list.filter(e => (e.district || '').toLowerCase().includes(district.toLowerCase()));
+  }
+  if (search) {
+    const q = search.toLowerCase();
+    list = list.filter(e => 
+      (e.title || '').toLowerCase().includes(q) ||
+      (e.description || '').toLowerCase().includes(q) ||
+      (e.district || '').toLowerCase().includes(q)
+    );
+  }
+
+  return sendSuccess(res, 'ग्राहक Enquiries व Leads यादी', { enquiries: list, totalCount: list.length });
+});
+
+router.post('/enquiries', optionalToken, (req, res) => {
+  const { title, category, district, budget, description, phone, contactName } = req.body;
+  const cleanTitle = sanitize(title);
+  const cleanP = cleanPhone(phone || req.user?.phone || '');
+
+  if (!cleanTitle) {
+    return sendError(res, 'कृपया इन्क्वायरीचे शीर्षक प्रविष्ट करा.', 'MISSING_TITLE', 400);
+  }
+
+  const newEnq = {
+    id: `ENQ-${Date.now().toString().slice(-4)}`,
+    title: cleanTitle,
+    category: sanitize(category) || 'सामान्य व्यवसाय',
+    district: sanitize(district) || 'पुणे',
+    budget: sanitize(budget) || 'चर्चेनुसार',
+    description: sanitize(description) || '',
+    postedBy: sanitize(contactName) || req.user?.name || 'संबंधित ग्राहक',
+    phone: cleanP || '9800000000',
+    status: 'सक्रिय (Active)',
+    quotesCount: 0,
+    createdAt: new Date().toISOString()
+  };
+
+  db.insert('clientEnquiries', newEnq);
+  db.addAuditLog('POST_ENQUIRY', req.user?.id || 'GUEST', { enquiryId: newEnq.id, title: cleanTitle });
+
+  return sendSuccess(res, 'नवीन व्यवसाय इन्क्वायरी यशस्वीरीत्या नोंदवली गेली!', { enquiry: newEnq }, 201);
+});
+
+router.post('/enquiries/:id/quote', authenticateToken, (req, res) => {
+  const enquiry = db.findById('clientEnquiries', req.params.id);
+  if (!enquiry) {
+    return sendError(res, 'इन्क्वायरी सापडली नाही.', 'ENQUIRY_NOT_FOUND', 404);
+  }
+
+  const { quotedPrice, proposalNote, businessName, phone } = req.body;
+  const quote = {
+    id: `QTE-${Date.now().toString().slice(-4)}`,
+    enquiryId: req.params.id,
+    userId: req.user.id,
+    businessName: sanitize(businessName) || req.user.name,
+    phone: cleanPhone(phone || req.user.phone),
+    quotedPrice: sanitize(quotedPrice) || 'चर्चेनुसार',
+    proposalNote: sanitize(proposalNote) || '',
+    status: 'सादर केले (Submitted)',
+    submittedAt: new Date().toISOString()
+  };
+
+  db.insert('businessQuotes', quote);
+  db.update('clientEnquiries', req.params.id, {
+    quotesCount: (enquiry.quotesCount || 0) + 1
+  });
+
+  return sendSuccess(res, 'आपले कोटेशन संबंधित ग्राहकास यशस्वीरीत्या पाठवले गेले!', { quote }, 201);
+});
+
 export default router;
+

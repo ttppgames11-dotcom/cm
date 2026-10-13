@@ -21,7 +21,7 @@ export default function GovernancePage() {
         
         {/* Banner */}
         <div style={{
-          background: "linear-gradient(rgba(199, 56, 0, 0.88), rgba(230, 81, 0, 0.92)), url('/assets/images/connect-maratha-council.jpg') center/cover no-repeat",
+          background: 'linear-gradient(135deg, #C73800, #E65100)',
           borderRadius: '16px',
           color: '#fff',
           padding: '32px',
@@ -38,10 +38,10 @@ export default function GovernancePage() {
               🏛️ Connect Maratha
             </span>
             <h1 style={{ fontSize: '2.2rem', margin: '10px 0 6px', fontFamily: 'Baloo 2' }}>
-              प्रशासन, ध्येयधोरणे व संपर्क केंद्र (Governance)
+              संस्थात्मक संविधान, ध्येयधोरणे व नियम (Governance & Charter)
             </h1>
             <p style={{ margin: 0, opacity: 0.92, fontSize: '1.05rem', maxWidth: '65ch' }}>
-              पारदर्शक कारभार, लोकशाही मूल्ये, युवा नेतृत्व आणि ३६ जिल्ह्यांमधील समन्वय यंत्रणेची संपूर्ण माहिती.
+              पारदर्शक कारभार, लोकशाही मूल्ये, कलम ८ नफाविरहित चौकट आणि DPDP कायदा २०२३ ची संपूर्ण मार्गदर्शक तत्त्वे.
             </p>
           </div>
         </div>

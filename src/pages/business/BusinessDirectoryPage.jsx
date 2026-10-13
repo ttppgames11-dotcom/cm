@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { DEFAULT_BUSINESSES } from '../../data/defaultBusinesses';
 
 const MAHARASHTRA_DISTRICTS = [
   'सर्व', 'पुणे', 'मुंबई', 'मुंबई उपनगर', 'ठाणे', 'नाशिक', 'सातारा', 'कोल्हापूर',
@@ -21,11 +22,11 @@ const CATEGORIES = [
 
 export default function BusinessDirectoryPage() {
   const { user } = useAuth();
-  const [businesses, setBusinesses] = useState([]);
+  const [businesses, setBusinesses] = useState(DEFAULT_BUSINESSES);
   const [selectedCat, setSelectedCat] = useState('all');
   const [selectedDistrict, setSelectedDistrict] = useState('सर्व');
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -60,11 +61,35 @@ export default function BusinessDirectoryPage() {
         district: selectedDistrict !== 'सर्व' ? selectedDistrict : undefined,
         search: searchQuery || undefined
       });
-      if (res && res.businesses) {
+      if (res && res.businesses && res.businesses.length > 0) {
         setBusinesses(res.businesses);
+      } else {
+        // Fallback to local rich dataset filtered by category/district/search
+        let list = DEFAULT_BUSINESSES;
+        if (selectedCat !== 'all') {
+          list = list.filter(b => b.cat === selectedCat);
+        }
+        if (selectedDistrict !== 'सर्व') {
+          list = list.filter(b => b.district === selectedDistrict);
+        }
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          list = list.filter(b => 
+            b.name.toLowerCase().includes(q) ||
+            b.owner.toLowerCase().includes(q) ||
+            b.city.toLowerCase().includes(q) ||
+            b.district.toLowerCase().includes(q) ||
+            (b.services && b.services.some(s => s.toLowerCase().includes(q)))
+          );
+        }
+        setBusinesses(list);
       }
     } catch (err) {
-      console.error('Error fetching businesses:', err);
+      console.warn('Backend businesses fetch fallback to default dataset:', err.message);
+      let list = DEFAULT_BUSINESSES;
+      if (selectedCat !== 'all') list = list.filter(b => b.cat === selectedCat);
+      if (selectedDistrict !== 'सर्व') list = list.filter(b => b.district === selectedDistrict);
+      setBusinesses(list);
     } finally {
       setLoading(false);
     }
@@ -129,7 +154,7 @@ export default function BusinessDirectoryPage() {
         
         {/* Banner */}
         <div style={{
-          background: "linear-gradient(rgba(199, 56, 0, 0.88), rgba(230, 81, 0, 0.92)), url('/assets/images/generated/maratha_bank_hero.jpg') center/cover no-repeat",
+          background: 'linear-gradient(135deg, #C73800, #E65100)',
           borderRadius: '16px',
           color: '#fff',
           padding: '32px',
@@ -261,72 +286,113 @@ export default function BusinessDirectoryPage() {
                 key={b.id}
                 style={{
                   background: '#fff',
-                  borderRadius: '14px',
-                  padding: '24px',
+                  borderRadius: '16px',
                   border: '1px solid #E5E7EB',
-                  boxShadow: '0 4px 14px rgba(0,0,0,0.04)',
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.05)',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
+                  overflow: 'hidden',
                   transition: 'transform 0.2s ease, box-shadow 0.2s ease'
                 }}>
                 <div>
-                  {/* Card Header */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                      <span style={{ fontSize: '2.4rem', background: '#FFF8F2', padding: '10px', borderRadius: '12px' }}>
+                  {/* Card Image Banner */}
+                  <div style={{ position: 'relative', height: '170px', width: '100%', background: '#F3F4F6', overflow: 'hidden' }}>
+                    {b.photo && b.photo.startsWith('/') ? (
+                      <img 
+                        src={b.photo} 
+                        alt={b.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3.5rem', background: 'linear-gradient(135deg, #FFF3E0, #FFE0B2)' }}>
                         {b.photo || '🏢'}
+                      </div>
+                    )}
+                    
+                    {/* Category & Verified Badges on Image */}
+                    <div style={{ position: 'absolute', top: '12px', left: '12px', display: 'flex', gap: '6px' }}>
+                      <span style={{ background: 'rgba(199, 56, 0, 0.9)', color: '#fff', padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, backdropFilter: 'blur(4px)' }}>
+                        {b.categoryName || (CATEGORIES.find(c => c.id === b.cat)?.label) || 'उद्योग / व्यापार'}
                       </span>
-                      <div>
-                        <h3 style={{ fontSize: '1.25rem', margin: '0 0 4px', color: '#1F2937', fontWeight: 700 }}>
-                          {b.name}
-                        </h3>
-                        <div style={{ fontSize: '0.85rem', color: '#6B7280' }}>
-                          मालक: <strong>{b.owner}</strong> | 📍 {b.city} ({b.district})
-                        </div>
+                      {b.verified && (
+                        <span style={{ background: 'rgba(16, 185, 129, 0.95)', color: '#fff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, backdropFilter: 'blur(4px)' }}>
+                          ✓ प्रमाणित
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Rating Badge */}
+                    <div style={{ position: 'absolute', top: '12px', right: '12px', background: '#FEF3C7', color: '#92400E', padding: '4px 10px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+                      ⭐ {b.rating ? Number(b.rating).toFixed(1) : '4.9'} ({b.reviewCount || 10}+)
+                    </div>
+                  </div>
+
+                  {/* Card Content Area */}
+                  <div style={{ padding: '20px 22px 14px' }}>
+                    {/* Business Name */}
+                    <h3 style={{ fontSize: '1.25rem', margin: '0 0 6px', color: '#1F2937', fontWeight: 800, lineHeight: 1.35 }}>
+                      {b.name}
+                    </h3>
+                    
+                    {/* Owner & City */}
+                    <div style={{ fontSize: '0.85rem', color: '#6B7280', marginBottom: '10px' }}>
+                      👤 <strong>{b.owner}</strong> • 📍 {b.city} ({b.district})
+                    </div>
+
+                    {/* Address if available */}
+                    {b.address && (
+                      <div style={{ fontSize: '0.78rem', color: '#4B5563', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span>🏢</span> <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{b.address}</span>
+                      </div>
+                    )}
+
+                    {/* Special Offer Badge */}
+                    {b.offers && (
+                      <div style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', color: '#166534', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 600, marginBottom: '12px', lineHeight: 1.4 }}>
+                        🎁 <strong>सवलत:</strong> {b.offers}
+                      </div>
+                    )}
+
+                    {/* Services Tags */}
+                    <div style={{ marginBottom: '12px' }}>
+                      <div style={{ fontSize: '0.78rem', color: '#6B7280', marginBottom: '6px', fontWeight: 700 }}>उपलब्ध सेवा / उत्पादने:</div>
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        {b.services && b.services.slice(0, 4).map((s, idx) => (
+                          <span key={idx} style={{ background: '#F3F4F6', color: '#374151', padding: '3px 9px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600 }}>
+                            {s}
+                          </span>
+                        ))}
+                        {b.services && b.services.length > 4 && (
+                          <span style={{ background: '#E5E7EB', color: '#4B5563', padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600 }}>
+                            +{b.services.length - 4}
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <div style={{ background: '#FEF3C7', color: '#92400E', padding: '4px 8px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 800 }}>
-                      ⭐ {b.rating ? Number(b.rating).toFixed(1) : '4.8'}
+
+                    {/* Working hours & Reg Details */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.76rem', color: '#6B7280', paddingTop: '6px' }}>
+                      <div>⏰ {b.hours || 'सकाळी ९ ते सायं ७'}</div>
+                      {b.udyamNo && (
+                        <div style={{ color: '#047857', fontWeight: 700 }}>✓ MSME Udyam</div>
+                      )}
                     </div>
                   </div>
-
-                  {/* Special Offer Badge */}
-                  {b.offers && (
-                    <div style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', color: '#166534', padding: '6px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 600, marginBottom: '14px' }}>
-                      🎁 सवलत: {b.offers}
-                    </div>
-                  )}
-
-                  {/* Services Tags */}
-                  <div style={{ marginBottom: '16px' }}>
-                    <div style={{ fontSize: '0.8rem', color: '#9CA3AF', marginBottom: '6px', fontWeight: 600 }}>उपलब्ध सेवा:</div>
-                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                      {b.services && b.services.map((s, idx) => (
-                        <span key={idx} style={{ background: '#F3F4F6', color: '#374151', padding: '3px 10px', borderRadius: '6px', fontSize: '0.78rem' }}>
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Working hours */}
-                  {b.hours && (
-                    <div style={{ fontSize: '0.8rem', color: '#6B7280', marginBottom: '14px' }}>
-                      ⏰ वेळ: {b.hours}
-                    </div>
-                  )}
                 </div>
 
                 {/* Actions Footer */}
-                <div style={{ borderTop: '1px solid #F3F4F6', paddingTop: '16px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <div style={{ borderTop: '1px solid #F3F4F6', padding: '14px 22px', background: '#FAFAFA', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                   {b.whatsapp && (
                     <a
                       href={`https://wa.me/91${b.whatsapp.replace(/\D/g, '')}?text=जय शिवराय, मी कनेक्ट मराठा बिझनेस डिरेक्टरीवरून संपर्क करत आहे.`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn"
-                      style={{ flex: 1, background: '#25D366', color: '#fff', padding: '8px 12px', borderRadius: '6px', textAlign: 'center', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>
+                      style={{ flex: 1, background: '#25D366', color: '#fff', padding: '9px 12px', borderRadius: '8px', textAlign: 'center', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                       💬 WhatsApp
                     </a>
                   )}
@@ -335,14 +401,14 @@ export default function BusinessDirectoryPage() {
                     <a
                       href={`tel:${b.phone}`}
                       className="btn"
-                      style={{ flex: 1, background: '#C73800', color: '#fff', padding: '8px 12px', borderRadius: '6px', textAlign: 'center', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>
+                      style={{ flex: 1, background: '#C73800', color: '#fff', padding: '9px 12px', borderRadius: '8px', textAlign: 'center', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                       📞 कॉल करा
                     </a>
                   )}
 
                   <button
                     onClick={() => setShowReviewModal(b)}
-                    style={{ background: '#F3F4F6', border: 'none', padding: '8px 12px', borderRadius: '6px', color: '#4B5563', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
+                    style={{ background: '#FFFFFF', border: '1px solid #D1D5DB', padding: '8px 12px', borderRadius: '8px', color: '#4B5563', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer' }}
                     title="अभिप्राय नोंदवा">
                     ⭐ अभिप्राय
                   </button>

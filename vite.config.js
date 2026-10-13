@@ -33,9 +33,9 @@ export default defineConfig({
     open: false,
     proxy: {
       '/api': {
-        target: process.env.VITE_API_TARGET || 'https://api.connectmaratha.com',
+        target: process.env.VITE_API_TARGET || 'http://localhost:5000',
         changeOrigin: true,
-        secure: true
+        secure: false
       }
     },
     watch: {

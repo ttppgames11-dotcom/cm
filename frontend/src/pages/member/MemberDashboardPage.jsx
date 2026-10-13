@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import CMDB from '../../services/cmdb';
+import {
+  getMemberReferralData,
+  requestReferralPayout,
+  formatMemberReferralCode
+} from '../../services/referralService';
 import { CONTRIBUTOR_ROLES } from '../../data/maharashtraCoreUniverse';
 import {
   REFERRAL_BANDS,
@@ -10,6 +15,7 @@ import {
   MASTER_ROLES,
   evaluateCandidateEligibility
 } from '../../data/rolesMatrixData';
+import { downloadCardPDF, printOrSaveCardPDF } from '../../utils/cardPdfGenerator';
 
 export default function MemberDashboardPage() {
   const { user, logout } = useAuth();
@@ -131,51 +137,138 @@ export default function MemberDashboardPage() {
     { id: 'r3', title: 'धर्मवीर बलिदान मास स्मरण', date: 'फाल्गुन मास', active: true }
   ]);
 
+  // Real-time Referral & Incentive System State
+  const [referralData, setReferralData] = useState(() => getMemberReferralData(member));
+  const [copiedReferral, setCopiedReferral] = useState(false);
+  const [payoutUpi, setPayoutUpi] = useState('');
+  const [payoutAmount, setPayoutAmount] = useState('100');
+  const [payoutMsg, setPayoutMsg] = useState({ text: '', type: '' });
+  const [isRequestingPayout, setIsRequestingPayout] = useState(false);
+
+  useEffect(() => {
+    const handleSync = () => {
+      setReferralData(getMemberReferralData(member));
+    };
+    handleSync();
+    window.addEventListener('cm_referral_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('cm_referral_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
+  }, [member]);
+
+  const myReferralCode = formatMemberReferralCode(member);
+  const shareUrl = `https://www.connectmaratha.com/register?ref=${myReferralCode}`;
+
+  const handleCopyLink = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareUrl);
+      setCopiedReferral(true);
+      setTimeout(() => setCopiedReferral(false), 2500);
+    }
+  };
+
+  const handleShareWhatsApp = () => {
+    const waText = encodeURIComponent(
+      `🚩 जय शिवराय! मी Connect Maratha डिजिटल व्यासपीठाचा अधिकृत सदस्य आहे. मराठा उद्योजक, व्यवसाय संगम व समाजकार्याशी जोडले जाण्यासाठी खालील लिंकवरून आजच सभासद व्हा.\n\nमाझा अधिकृत रेफरल कोड: ${myReferralCode}\nनोंदणी लिंक: ${shareUrl}`
+    );
+    window.open(`https://api.whatsapp.com/send?text=${waText}`, '_blank');
+  };
+
+  const handlePayoutSubmit = (e) => {
+    e.preventDefault();
+    setPayoutMsg({ text: '', type: '' });
+    setIsRequestingPayout(true);
+
+    const amt = Number(payoutAmount);
+    if (!amt || amt <= 0) {
+      setPayoutMsg({ text: 'कृपया वैध रक्कम टाका.', type: 'error' });
+      setIsRequestingPayout(false);
+      return;
+    }
+    if (amt > referralData.withdrawableBalance) {
+      setPayoutMsg({ text: `आपल्याकडे केवळ ₹${referralData.withdrawableBalance} शिल्लक आहेत.`, type: 'error' });
+      setIsRequestingPayout(false);
+      return;
+    }
+
+    const res = requestReferralPayout(member, payoutUpi, amt);
+    setIsRequestingPayout(false);
+    if (res.success) {
+      setPayoutMsg({ text: `₹${amt} काढण्याची विनंती नोंदवली गेली आहे! २४ तासांत UPI द्वारे वर्ग होईल.`, type: 'success' });
+      setPayoutUpi('');
+      setReferralData(getMemberReferralData(member));
+    } else {
+      setPayoutMsg({ text: res.message || 'त्रुटी आली.', type: 'error' });
+    }
+  };
+
   const scoreInfo = CMDB.calculateMemberContributionScore ? CMDB.calculateMemberContributionScore(memberId) : { totalScore: 95, badge: 'रौप्य शिलेदार' };
   const referrals = CMDB.listReferrals ? CMDB.listReferrals().filter(r => r.creator === memberId || r.giverId === memberId || r.recipient === memberId) : [];
   const meetings = CMDB.getOneToOneMeetings ? CMDB.getOneToOneMeetings().filter(m => m.requesterId === memberId || m.recipientId === memberId) : [];
 
   return (
     <div className="container py-5" style={{ padding: '36px 16px', maxWidth: '1240px', margin: '0 auto' }}>
-      {/* Welcome Banner */}
-      <div style={{ background: 'linear-gradient(135deg, #7C1D05, #C2410C)', borderRadius: '20px', color: '#fff', padding: '30px 28px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', boxShadow: '0 8px 24px rgba(124, 29, 5, 0.15)' }}>
+      {/* Welcome Banner - Pure Bhagwa Orange */}
+      <div style={{ background: 'linear-gradient(135deg, #FF6A00 0%, #EA580C 100%)', borderRadius: '20px', color: '#FFFFFF', padding: '30px 28px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', boxShadow: '0 8px 24px rgba(234, 88, 12, 0.25)' }}>
         <div>
-          <div style={{ background: 'rgba(255,255,255,0.2)', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800, marginBottom: '10px' }}>
+          <div style={{ background: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.4)', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 800, marginBottom: '10px', color: '#FFFFFF' }}>
             <span>🚩</span>
             <span>{member.tier || 'Gold'} सदस्य</span>
             <span>•</span>
-            <span>Connect Maratha डॅशबोर्ड (Feature 28)</span>
+            <span>Connect Maratha डॅशबोर्ड</span>
           </div>
-          <h1 style={{ fontSize: '2rem', margin: '0 0 6px', fontWeight: 900 }}>सस्नेह जय शिवराय, {member.name}!</h1>
-          <p style={{ margin: 0, opacity: 0.92, fontSize: '0.96rem' }}>
-            सदस्य आयडी: <strong>{memberId}</strong> | 📍 {member.district || 'पुणे'} | 🏆 योगदान गुण: <strong>{scoreInfo.totalScore} ({scoreInfo.badge})</strong>
+          <h1 style={{ fontSize: '2rem', margin: '0 0 6px', fontWeight: 900, color: '#FFFFFF' }}>सस्नेह जय शिवराय, {member.name}!</h1>
+          <p style={{ margin: 0, opacity: 0.95, fontSize: '0.96rem', color: '#FFFFFF' }}>
+            सदस्य आयडी: <strong>{myReferralCode}</strong> | 📍 {member.district || 'पुणे'} | 🏆 रेफरल मानधन: <strong>₹{referralData.withdrawableBalance}</strong>
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <Link to="/card" className="btn" style={{ background: '#FFFFFF', color: '#7C1D05', border: 'none', fontWeight: 800, padding: '10px 18px', borderRadius: '10px', textDecoration: 'none' }}>
-            🪪 संपूर्ण ओळखपत्र
-          </Link>
-          <Link to="/referrals/create" className="btn" style={{ background: 'rgba(255,255,255,0.18)', border: '1.5px solid #FFFFFF', color: '#FFFFFF', fontWeight: 700, padding: '10px 18px', borderRadius: '10px', textDecoration: 'none' }}>
-            🤝 व्यवसाय संदर्भ द्या
-          </Link>
-          <Link to="/calendar" className="btn" style={{ background: '#FEF3C7', color: '#92400E', border: 'none', fontWeight: 800, padding: '10px 18px', borderRadius: '10px', textDecoration: 'none' }}>
-            📅 दिनदर्शिका २.०
-          </Link>
           <button
-            onClick={() => { logout(); navigate('/'); }}
+            onClick={() => setActiveDashTab('referral_hub')}
             className="btn"
             style={{
-              background: 'rgba(254, 226, 226, 0.95)',
-              border: '1.5px solid #FCA5A5',
-              color: '#991B1B',
+              background: '#FFFFFF',
+              color: '#EA580C',
+              border: 'none',
               fontWeight: 800,
               padding: '10px 18px',
               borderRadius: '10px',
               cursor: 'pointer',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}
+          >
+            🤝 रेफरल मानधन (₹{referralData.withdrawableBalance})
+          </button>
+          <Link to="/card" className="btn" style={{ background: '#FFFFFF', color: '#EA580C', border: 'none', fontWeight: 800, padding: '10px 18px', borderRadius: '10px', textDecoration: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+            🪪 संपूर्ण ओळखपत्र
+          </Link>
+          <Link to="/referrals/create" className="btn" style={{ background: 'rgba(255,255,255,0.2)', border: '1.5px solid #FFFFFF', color: '#FFFFFF', fontWeight: 800, padding: '10px 18px', borderRadius: '10px', textDecoration: 'none' }}>
+            🤝 व्यवसाय संदर्भ द्या
+          </Link>
+          <Link to="/calendar" className="btn" style={{ background: '#FFFFFF', color: '#EA580C', border: 'none', fontWeight: 800, padding: '10px 18px', borderRadius: '10px', textDecoration: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+            📅 दिनदर्शिका २.०
+          </Link>
+          <button
+            onClick={() => { logout(); navigate('/'); }}
+            className="btn"
+            style={{
+              background: '#FFFFFF',
+              border: '1.5px solid #FED7AA',
+              color: '#EA580C',
+              fontWeight: 800,
+              padding: '10px 18px',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
             }}
             title="आपल्या खात्यातून सुरक्षित बाहेर पडा">
             🚪 बाहेर पडा (Logout)
@@ -183,7 +276,7 @@ export default function MemberDashboardPage() {
         </div>
       </div>
 
-      {/* DASHBOARD 6-TAB CONTROLLER (FEATURE 28) */}
+      {/* DASHBOARD TAB CONTROLLER - Pure White & Bhagwa Orange */}
       <div style={{
         background: '#FFFFFF',
         border: '1.5px solid #FED7AA',
@@ -198,11 +291,12 @@ export default function MemberDashboardPage() {
       }}>
         {[
           { id: 'overview', label: '🏠 मुख्य डॅशबोर्ड व ओळखपत्र' },
-          { id: 'saved_places', label: '🏰 जतन केलेली ठिकाणे व किल्ले (' + savedPlaces.length + ')' },
+          { id: 'referral_hub', label: `🤝 शिफारस व मानधन (Referral Hub) [₹${referralData.withdrawableBalance}]` },
+          { id: 'saved_places', label: '🏰 जतन केलेली ठिकाणे (' + savedPlaces.length + ')' },
           { id: 'saved_people', label: '👑 ऐतिहासिक व्यक्ती (' + savedPeople.length + ')' },
           { id: 'calendar_events', label: '📅 दिनदर्शिका व स्मरणपत्रे (' + reminders.length + ')' },
-          { id: 'contributor_hub', label: '🏆 कॉन्ट्रिब्युटर बॅजेस (Feature 27)' },
-          { id: 'bookmarks', label: '🔖 ग्रंथ व वाचन यादी (Bookmarks)' }
+          { id: 'contributor_hub', label: '🏆 कॉन्ट्रिब्युटर बॅजेस' },
+          { id: 'bookmarks', label: '🔖 ग्रंथ व वाचन यादी' }
         ].map((tab) => {
           const isSel = activeDashTab === tab.id;
           return (
@@ -210,15 +304,18 @@ export default function MemberDashboardPage() {
               key={tab.id}
               onClick={() => setActiveDashTab(tab.id)}
               style={{
-                background: isSel ? 'linear-gradient(135deg, #7C1D05, #C2410C)' : '#FFFDF9',
+                background: isSel ? 'linear-gradient(135deg, #FF6A00, #EA580C)' : '#FFFDF9',
                 color: isSel ? '#FFFFFF' : '#431407',
-                border: isSel ? '1.5px solid #7C1D05' : '1px solid #FED7AA',
+                border: isSel ? '1.5px solid #EA580C' : '1px solid #FED7AA',
                 padding: '9px 16px',
                 borderRadius: '10px',
                 fontWeight: 800,
                 fontSize: '0.86rem',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
               }}
             >
               {tab.label}
@@ -253,7 +350,7 @@ export default function MemberDashboardPage() {
                 transform-style: preserve-3d;
                 transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                 cursor: pointer;
-                box-shadow: 0 24px 60px rgba(0,0,0,0.38);
+                box-shadow: 0 16px 40px rgba(124, 29, 5, 0.12), 0 2px 10px rgba(0,0,0,0.06);
               }
               .dash-smart-card.flipped {
                 transform: rotateY(180deg);
@@ -270,24 +367,25 @@ export default function MemberDashboardPage() {
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                color: #fff;
+                color: #1E293B;
                 box-sizing: border-box;
-                border: 1.5px solid rgba(212, 175, 55, 0.5);
+                border: 2px solid #FED7AA;
+                background: #FFFFFF;
               }
               .dash-card-front {
-                background: linear-gradient(135deg, #1C0F0F 0%, #2D1414 45%, #180909 100%);
+                background: #FFFFFF;
                 position: relative;
               }
               .dash-card-front::before {
                 content: '';
                 position: absolute;
                 inset: 0;
-                background-image: radial-gradient(rgba(212, 175, 55, 0.14) 1.2px, transparent 1.2px);
+                background-image: radial-gradient(rgba(234, 88, 12, 0.10) 1.2px, transparent 1.2px);
                 background-size: 16px 16px;
                 pointer-events: none;
               }
               .dash-card-back {
-                background: linear-gradient(135deg, #150A0A 0%, #220E0E 70%, #150A0A 100%);
+                background: #FFFFFF;
                 transform: rotateY(180deg);
               }
               .dash-emv-chip {
@@ -295,8 +393,8 @@ export default function MemberDashboardPage() {
                 height: 32px;
                 background: linear-gradient(135deg, #ECC86A 0%, #FFF3B3 50%, #C69830 100%);
                 border-radius: 6px;
-                border: 1px solid #7C5C00;
-                box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+                border: 1px solid #B45309;
+                box-shadow: inset 0 1px 3px rgba(0,0,0,0.25);
                 position: relative;
                 flex-shrink: 0;
               }
@@ -307,7 +405,7 @@ export default function MemberDashboardPage() {
                 left: 0;
                 right: 0;
                 height: 1px;
-                background: rgba(124, 92, 0, 0.6);
+                background: rgba(180, 83, 9, 0.6);
               }
             `}</style>
 
@@ -320,7 +418,7 @@ export default function MemberDashboardPage() {
                     आपले अधिकृत डिजिटल सभासद ओळखपत्र (Smart ID Card)
                   </h2>
                   <span style={{ fontSize: '0.8rem', color: '#6B7280' }}>
-                    अखिल भारतीय कनेक्ट मराठा महासंघ • प्रमाणित डिजिटल ओळख
+                    Connect Maratha • प्रमाणित डिजिटल ओळख
                   </span>
                 </div>
               </div>
@@ -399,23 +497,23 @@ export default function MemberDashboardPage() {
                           <img
                             src="/assets/images/logo.png"
                             alt="Connect Maratha Seal"
-                            style={{ width: '38px', height: '38px', borderRadius: '50%', border: '1.5px solid #F59E0B', background: '#FFFFFF', padding: '1px', objectFit: 'contain' }}
+                            style={{ width: '42px', height: '42px', objectFit: 'contain' }}
                           />
                           <div>
-                            <div style={{ fontSize: '1.05rem', fontWeight: 900, letterSpacing: '0.6px', color: '#F8FAFC' }}>
+                            <div style={{ fontSize: '1.05rem', fontWeight: 900, letterSpacing: '0.6px', color: '#EA580C' }}>
                               CONNECT MARATHA
                             </div>
-                            <div style={{ fontSize: '0.64rem', color: '#CBD5E1', letterSpacing: '0.5px' }}>
-                              अखिल भारतीय अधिकृत सभासद ओळखपत्र
+                            <div style={{ fontSize: '0.64rem', color: '#64748B', letterSpacing: '0.5px', fontWeight: 600 }}>
+                              Connect Maratha अधिकृत सभासद ओळखपत्र
                             </div>
                           </div>
                         </div>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <span style={{
-                            background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.35), rgba(245, 158, 11, 0.2))',
-                            border: '1px solid #F59E0B',
-                            color: '#FDE68A',
+                            background: '#FFF7ED',
+                            border: '1px solid #FED7AA',
+                            color: '#C2410C',
                             fontSize: '0.72rem',
                             padding: '4px 10px',
                             borderRadius: '12px',
@@ -424,7 +522,7 @@ export default function MemberDashboardPage() {
                           }}>
                             ⭐ {memberTier} सदस्य
                           </span>
-                          <span style={{ fontSize: '1rem', color: '#F59E0B', opacity: 0.9, transform: 'rotate(90deg)', display: 'inline-block' }} title="Contactless NFC">
+                          <span style={{ fontSize: '1rem', color: '#EA580C', opacity: 0.9, transform: 'rotate(90deg)', display: 'inline-block' }} title="Contactless NFC">
                             📶
                           </span>
                         </div>
@@ -440,8 +538,8 @@ export default function MemberDashboardPage() {
                           border: '2px solid #F59E0B',
                           overflow: 'hidden',
                           flexShrink: 0,
-                          boxShadow: '0 6px 16px rgba(0,0,0,0.55)',
-                          background: '#2D1414',
+                          boxShadow: '0 4px 12px rgba(124,29,5,0.15)',
+                          background: '#FFF7ED',
                           position: 'relative'
                         }}>
                           <img
@@ -455,17 +553,17 @@ export default function MemberDashboardPage() {
                         <div style={{ flex: 1 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                             <div className="dash-emv-chip" title="EMV Smart Security Chip" />
-                            <span style={{ fontSize: '0.62rem', color: '#94A3B8', letterSpacing: '1px', fontWeight: 700 }}>SECURE ID CHIP</span>
-                            <span style={{ fontSize: '0.72rem', color: '#F59E0B', fontWeight: 700 }}>• NFC 2.0</span>
+                            <span style={{ fontSize: '0.62rem', color: '#64748B', letterSpacing: '1px', fontWeight: 700 }}>SECURE ID CHIP</span>
+                            <span style={{ fontSize: '0.72rem', color: '#EA580C', fontWeight: 700 }}>• NFC 2.0</span>
                           </div>
 
-                          <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#FFFFFF', lineHeight: 1.2, fontFamily: 'Baloo 2' }}>
+                          <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0F172A', lineHeight: 1.2, fontFamily: 'Baloo 2' }}>
                             {memberName}
                           </div>
-                          <div style={{ fontSize: '0.84rem', color: '#FCD34D', fontWeight: 700, marginTop: '2px' }}>
+                          <div style={{ fontSize: '0.84rem', color: '#C2410C', fontWeight: 800, marginTop: '2px' }}>
                             {memberRole}
                           </div>
-                          <div style={{ fontSize: '0.76rem', color: '#CBD5E1', marginTop: '2px' }}>
+                          <div style={{ fontSize: '0.76rem', color: '#475569', marginTop: '2px', fontWeight: 600 }}>
                             📍 {memberCity}
                           </div>
                         </div>
@@ -474,13 +572,13 @@ export default function MemberDashboardPage() {
                       {/* Bottom Bar: Member ID & Crisp Laser QR */}
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', position: 'relative', zIndex: 1 }}>
                         <div>
-                          <div style={{ fontSize: '0.62rem', color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 700 }}>
+                          <div style={{ fontSize: '0.62rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 700 }}>
                             MEMBER ID
                           </div>
-                          <div style={{ fontSize: '1.1rem', fontWeight: 900, letterSpacing: '1.5px', color: '#FDE68A', fontFamily: 'monospace' }}>
+                          <div style={{ fontSize: '1.1rem', fontWeight: 900, letterSpacing: '1.5px', color: '#7C1D05', fontFamily: 'monospace' }}>
                             {memberIdFormatted}
                           </div>
-                          <div style={{ fontSize: '0.68rem', color: '#34D399', marginTop: '2px', fontWeight: 700 }}>
+                          <div style={{ fontSize: '0.68rem', color: '#15803D', marginTop: '2px', fontWeight: 800 }}>
                             ✓ DPDP २०२३ व ISO २७००१ प्रमाणित • ✔ अधिकृत सक्रिय
                           </div>
                         </div>
@@ -488,12 +586,13 @@ export default function MemberDashboardPage() {
                         <div style={{ textAlign: 'right' }}>
                           <div style={{
                             background: '#FFFFFF',
+                            border: '1.5px solid #FED7AA',
                             padding: '4px',
                             borderRadius: '6px',
                             display: 'inline-block',
-                            boxShadow: '0 3px 10px rgba(0,0,0,0.35)'
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
                           }}>
-                            <svg width="54" height="54" viewBox="0 0 25 25" fill="#111">
+                            <svg width="54" height="54" viewBox="0 0 25 25" fill="#7C1D05">
                               <rect x="0" y="0" width="7" height="7"/>
                               <rect x="1" y="1" width="5" height="5" fill="#fff"/>
                               <rect x="2" y="2" width="3" height="3"/>
@@ -515,7 +614,7 @@ export default function MemberDashboardPage() {
                               <rect x="20" y="20" width="4" height="4"/>
                             </svg>
                           </div>
-                          <div style={{ fontSize: '0.6rem', color: '#94A3B8', marginTop: '2px' }}>Scan to Verify</div>
+                          <div style={{ fontSize: '0.6rem', color: '#64748B', marginTop: '2px', fontWeight: 700 }}>Scan to Verify</div>
                         </div>
                       </div>
                     </div>
@@ -525,47 +624,47 @@ export default function MemberDashboardPage() {
                       {/* Magnetic Stripe */}
                       <div style={{
                         width: 'calc(100% + 48px)',
-                        height: '40px',
-                        background: '#0B0B0E',
+                        height: '38px',
+                        background: 'linear-gradient(90deg, #7C1D05 0%, #991B1B 50%, #7C1D05 100%)',
                         margin: '-24px -24px 14px -24px',
-                        borderBottom: '1px solid rgba(255,255,255,0.12)',
-                        boxShadow: 'inset 0 -2px 6px rgba(0,0,0,0.5)'
+                        borderBottom: '1.5px solid #F59E0B',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                       }} />
 
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.15)', paddingBottom: '8px' }}>
-                        <span style={{ fontSize: '0.84rem', fontWeight: 800, color: '#FCD34D' }}>CONNECT MARATHA COUNCIL</span>
-                        <span style={{ fontSize: '0.72rem', color: '#CBD5E1' }}>हेल्पलाईन: १८००-२३३-१९२४</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #FED7AA', paddingBottom: '8px' }}>
+                        <span style={{ fontSize: '0.84rem', fontWeight: 900, color: '#7C1D05' }}>CONNECT MARATHA COUNCIL</span>
+                        <span style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700 }}>हेल्पलाईन: १८००-२३३-१९२४</span>
                       </div>
 
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.82rem', margin: '10px 0' }}>
                         <div>
-                          <span style={{ color: '#94A3B8', fontSize: '0.68rem' }}>रक्तगट (Blood Group):</span>
-                          <div style={{ fontWeight: 800, color: '#F87171' }}>{bloodGroup}</div>
+                          <span style={{ color: '#64748B', fontSize: '0.68rem', fontWeight: 600 }}>रक्तगट (Blood Group):</span>
+                          <div style={{ fontWeight: 800, color: '#DC2626' }}>{bloodGroup}</div>
                         </div>
                         <div>
-                          <span style={{ color: '#94A3B8', fontSize: '0.68rem' }}>संबद्ध चॅप्टर (Chapter):</span>
-                          <div style={{ fontWeight: 700, color: '#FFFFFF' }}>{memberChapter}</div>
+                          <span style={{ color: '#64748B', fontSize: '0.68rem', fontWeight: 600 }}>संबद्ध चॅप्टर (Chapter):</span>
+                          <div style={{ fontWeight: 800, color: '#0F172A' }}>{memberChapter}</div>
                         </div>
                         <div>
-                          <span style={{ color: '#94A3B8', fontSize: '0.68rem' }}>वैधता (Valid Thru):</span>
-                          <div style={{ fontWeight: 700, color: '#34D399' }}>आजीवन (Lifetime)</div>
+                          <span style={{ color: '#64748B', fontSize: '0.68rem', fontWeight: 600 }}>वैधता (Valid Thru):</span>
+                          <div style={{ fontWeight: 800, color: '#15803D' }}>आजीवन (Lifetime)</div>
                         </div>
                         <div>
-                          <span style={{ color: '#94A3B8', fontSize: '0.68rem' }}>आपत्कालीन संपर्क:</span>
-                          <div style={{ fontWeight: 700, color: '#FFFFFF' }}>{emergencyPhone}</div>
+                          <span style={{ color: '#64748B', fontSize: '0.68rem', fontWeight: 600 }}>आपत्कालीन संपर्क:</span>
+                          <div style={{ fontWeight: 800, color: '#0F172A' }}>{emergencyPhone}</div>
                         </div>
                       </div>
 
                       {/* Signature strip & Disclaimer */}
-                      <div style={{ borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ fontSize: '0.64rem', color: '#94A3B8', maxWidth: '300px', lineHeight: 1.4 }}>
+                      <div style={{ borderTop: '1px solid #FED7AA', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ fontSize: '0.64rem', color: '#64748B', maxWidth: '300px', lineHeight: 1.4 }}>
                           हे ओळखपत्र केवळ अधिकृत CONNECT MARATHA सदस्यासाठी वैध आहे. गैरवापर कायद्याने दंडनीय आहे.
                         </div>
                         <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.2rem', color: '#FCD34D', fontWeight: 700 }}>
+                          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.2rem', color: '#7C1D05', fontWeight: 800 }}>
                             Dr. J. Pawar
                           </div>
-                          <div style={{ fontSize: '0.6rem', color: '#94A3B8' }}>मुख्य सचिव अधिकृत स्वाक्षरी</div>
+                          <div style={{ fontSize: '0.6rem', color: '#64748B', fontWeight: 700 }}>मुख्य सचिव अधिकृत स्वाक्षरी</div>
                         </div>
                       </div>
                     </div>
@@ -606,8 +705,8 @@ export default function MemberDashboardPage() {
                   alt="Connect Maratha Seal"
                   style={{ height: '62px', objectFit: 'contain', marginBottom: '6px' }}
                 />
-                <div style={{ fontFamily: 'Baloo 2', fontSize: '1.28rem', fontWeight: 800, color: '#7C1D05' }}>
-                  अखिल भारतीय मराठा महासंघ • कनेक्ट मराठा परिषद
+                <div style={{ fontFamily: 'Baloo 2', fontSize: '1.28rem', fontWeight: 800, color: '#EA580C' }}>
+                  Connect Maratha • कनेक्ट मराठा परिषद
                 </div>
                 <div style={{ fontSize: '0.78rem', color: '#B45309', fontWeight: 800, letterSpacing: '1px' }}>
                   || स्वराज्य समाज संघटन व अधिकृत सभासदत्व गौरव पत्र ||
@@ -716,7 +815,52 @@ export default function MemberDashboardPage() {
 
               <button
                 type="button"
-                onClick={() => window.print()}
+                onClick={async () => {
+                  await downloadCardPDF({
+                    name: memberName,
+                    memberId: memberIdFormatted,
+                    tier: memberTier,
+                    role: memberRole,
+                    chapter: memberChapter,
+                    city: memberCity,
+                    bloodGroup,
+                    emergencyPhone,
+                    photo: memberPhoto
+                  }, cardMode);
+                }}
+                style={{
+                  padding: '9px 20px',
+                  background: 'linear-gradient(135deg, #C73800 0%, #991B1B 100%)',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontWeight: 800,
+                  fontSize: '0.86rem',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  boxShadow: '0 2px 10px rgba(199,56,0,0.25)'
+                }}
+              >
+                <span>📥</span> ओळखपत्र PDF डाऊनलोड (.pdf)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  printOrSaveCardPDF({
+                    name: memberName,
+                    memberId: memberIdFormatted,
+                    tier: memberTier,
+                    role: memberRole,
+                    chapter: memberChapter,
+                    city: memberCity,
+                    bloodGroup,
+                    emergencyPhone,
+                    photo: memberPhoto
+                  }, cardMode);
+                }}
                 style={{
                   padding: '9px 18px',
                   background: '#1F2937',
@@ -732,7 +876,7 @@ export default function MemberDashboardPage() {
                   boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                 }}
               >
-                <span>🖨️</span> प्रिंट / PDF सेव्ह करा
+                <span>🖨️</span> प्रिंट करा (Print)
               </button>
 
               <button
@@ -1160,6 +1304,385 @@ export default function MemberDashboardPage() {
                 वाचा 📖
               </Link>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 7: REAL-TIME REFERRAL & INCENTIVES HUB */}
+      {activeDashTab === 'referral_hub' && (
+        <div style={{ marginBottom: '32px' }}>
+          {/* Hero Share Card */}
+          <div style={{
+            background: 'linear-gradient(135deg, #FFF7ED 0%, #FFFFFF 100%)',
+            border: '2px solid #FED7AA',
+            borderRadius: '20px',
+            padding: '28px',
+            marginBottom: '24px',
+            boxShadow: '0 8px 24px rgba(234, 88, 12, 0.08)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '20px' }}>
+              <div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#EA580C', color: '#FFFFFF', padding: '5px 14px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800, marginBottom: '10px' }}>
+                  <span>🚩</span>
+                  <span>अधिकृत सभासद रेफरल व मानधन मंच</span>
+                  <span>•</span>
+                  <span>१०% थेट मानधन</span>
+                </div>
+                <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#431407', margin: '0 0 6px', fontFamily: 'Baloo 2' }}>
+                  🤝 माझी शिफारस व सन्मान निधी केंद्र
+                </h2>
+                <p style={{ margin: 0, color: '#64748B', fontSize: '0.95rem', lineHeight: 1.5 }}>
+                  आपल्या अधिकृत रेफरल आयडीने नवीन मराठा बांधवांना जोडा. प्रत्येक सक्रिय वर्गणीदार सभासदावर (Paid Member) <strong>₹१०० थेट मानधन</strong> आपल्या वॉलेटमध्ये जमा होते.
+                </p>
+              </div>
+
+              {/* Real-time pulse indicator */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#ECFDF5', border: '1.5px solid #10B981', color: '#065F46', padding: '6px 14px', borderRadius: '30px', fontWeight: 800, fontSize: '0.82rem' }}>
+                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981', display: 'inline-block', boxShadow: '0 0 8px #10B981' }}></span>
+                <span>रीअल-टाइम लाईव्ह सिंक सक्रिय (Live Sync)</span>
+              </div>
+            </div>
+
+            {/* Referral Code & Share Link Row */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', alignItems: 'center', background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
+              <div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#9A3412', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>
+                  आपला युनिक रेफरल सभासद आयडी (Referral Code)
+                </div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#FFF7ED', border: '2px dashed #EA580C', padding: '10px 20px', borderRadius: '12px' }}>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 900, color: '#EA580C', letterSpacing: '1px' }}>
+                    {myReferralCode}
+                  </span>
+                  <button
+                    onClick={() => {
+                      if (navigator.clipboard) {
+                        navigator.clipboard.writeText(myReferralCode);
+                        setCopiedReferral(true);
+                        setTimeout(() => setCopiedReferral(false), 2000);
+                      }
+                    }}
+                    style={{ background: '#EA580C', color: '#FFFFFF', border: 'none', padding: '6px 12px', borderRadius: '8px', fontWeight: 800, fontSize: '0.78rem', cursor: 'pointer' }}
+                  >
+                    {copiedReferral ? '✓ आयडी कॉपी केला' : 'आयडी कॉपी करा'}
+                  </button>
+                </div>
+
+                <div style={{ marginTop: '16px' }}>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#64748B', marginBottom: '6px' }}>
+                    वैयक्तिक थेट नोंदणी लिंक (Direct Invite Link)
+                  </label>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    <input
+                      type="text"
+                      readOnly
+                      value={shareUrl}
+                      style={{ flex: 1, minWidth: '220px', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #CBD5E1', background: '#F8FAFC', fontSize: '0.88rem', fontWeight: 700, color: '#334155' }}
+                    />
+                    <button
+                      onClick={handleCopyLink}
+                      style={{ background: '#EA580C', color: '#FFFFFF', border: 'none', padding: '10px 16px', borderRadius: '10px', fontWeight: 800, fontSize: '0.88rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    >
+                      {copiedReferral ? '✓ कॉपी झाले!' : '📋 लिंक कॉपी करा'}
+                    </button>
+                    <button
+                      onClick={handleShareWhatsApp}
+                      style={{ background: '#25D366', color: '#FFFFFF', border: 'none', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, fontSize: '0.88rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    >
+                      <span>💬</span>
+                      <span>WhatsApp वर पाठवा</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* QR Code and Quick Instructions */}
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center', background: '#FFFDF9', border: '1px solid #FED7AA', padding: '14px', borderRadius: '12px' }}>
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(shareUrl)}`}
+                  alt="Referral QR Code"
+                  style={{ width: '100px', height: '100px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#FFFFFF', padding: '4px' }}
+                />
+                <div style={{ fontSize: '0.82rem', color: '#475569', lineHeight: 1.5 }}>
+                  <div style={{ fontWeight: 800, color: '#431407', marginBottom: '4px', fontSize: '0.88rem' }}>
+                    📱 डिजिटल रेफरल QR कोड
+                  </div>
+                  <div>१. कॅमेऱ्याने QR कोड स्कॅन करा</div>
+                  <div>२. फॉर्ममध्ये आपला आयडी आपोआप भरेल</div>
+                  <div>३. वर्गणी सक्रिय होताच ₹१०० मानधन थेट जमा!</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 4 Metric KPI Cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+            <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#64748B' }}>एकूण जोडलेले सदस्य</span>
+                <span style={{ fontSize: '1.6rem' }}>👥</span>
+              </div>
+              <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#431407', lineHeight: 1 }}>
+                {referralData.totalReferred}
+              </div>
+              <div style={{ fontSize: '0.78rem', color: '#9A3412', marginTop: '6px', fontWeight: 700 }}>
+                आपल्या रेफरल लिंकवरून नोंदणी
+              </div>
+            </div>
+
+            <div style={{ background: '#FFFFFF', border: '1.5px solid #BBF7D0', borderRadius: '16px', padding: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#166534' }}>सक्रिय वर्गणीदार सभासद</span>
+                <span style={{ fontSize: '1.6rem' }}>🟢</span>
+              </div>
+              <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#15803D', lineHeight: 1 }}>
+                {referralData.activeSubscribed}
+              </div>
+              <div style={{ fontSize: '0.78rem', color: '#166534', marginTop: '6px', fontWeight: 700 }}>
+                प्रमाणित वार्षिक/आजीवन वर्गणीदार
+              </div>
+            </div>
+
+            <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#B45309' }}>वर्गणी प्रलंबित</span>
+                <span style={{ fontSize: '1.6rem' }}>⏳</span>
+              </div>
+              <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#D97706', lineHeight: 1 }}>
+                {referralData.pendingSubscription}
+              </div>
+              <div style={{ fontSize: '0.78rem', color: '#B45309', marginTop: '6px', fontWeight: 700 }}>
+                नोंदणी पूर्ण, वर्गणी प्रतीक्षेत
+              </div>
+            </div>
+
+            <div style={{ background: 'linear-gradient(135deg, #FFF7ED, #FFFFFF)', border: '2px solid #EA580C', borderRadius: '16px', padding: '20px', boxShadow: '0 4px 14px rgba(234, 88, 12, 0.1)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#EA580C' }}>एकूण जमा मानधन</span>
+                <span style={{ fontSize: '1.6rem' }}>💰</span>
+              </div>
+              <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#EA580C', lineHeight: 1 }}>
+                ₹{referralData.totalEarnings.toLocaleString('en-IN')}
+              </div>
+              <div style={{ fontSize: '0.78rem', color: '#059669', marginTop: '6px', fontWeight: 800 }}>
+                (प्रति सदस्य ₹१०० थेट मानधन)
+              </div>
+            </div>
+          </div>
+
+          {/* Wallet Balance & Instant UPI Payout Card */}
+          <div style={{
+            background: '#FFFFFF',
+            border: '1.5px solid #FED7AA',
+            borderRadius: '20px',
+            padding: '24px',
+            marginBottom: '28px',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.03)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', borderBottom: '1.5px solid #FED7AA', paddingBottom: '16px', marginBottom: '20px' }}>
+              <div>
+                <h3 style={{ margin: '0 0 4px', fontSize: '1.3rem', fontWeight: 800, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>💳</span>
+                  <span>मानधन वॉलेट व पैसे काढणे (UPI Withdrawal)</span>
+                </h3>
+                <p style={{ margin: 0, color: '#64748B', fontSize: '0.88rem' }}>
+                  आपले जमा मानधन थेट आपल्या बँक खात्यावर अथवा Google Pay, PhonePe, Paytm (UPI) वर वर्ग करा.
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 700 }}>शिल्लक मानधन (Available Balance)</div>
+                  <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#059669' }}>
+                    ₹{referralData.withdrawableBalance.toLocaleString('en-IN')}
+                  </div>
+                </div>
+                {referralData.totalPaidOut > 0 && (
+                  <div style={{ textAlign: 'right', borderLeft: '1px solid #E2E8F0', paddingLeft: '16px' }}>
+                    <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 700 }}>काढलेले मानधन (Paid Out)</div>
+                    <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#64748B' }}>
+                      ₹{referralData.totalPaidOut.toLocaleString('en-IN')}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Payout Request Form */}
+            <form onSubmit={handlePayoutSubmit} style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end', background: '#FFFDF9', border: '1px solid #FED7AA', borderRadius: '14px', padding: '16px' }}>
+              <div style={{ flex: '2', minWidth: '220px' }}>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#431407', marginBottom: '6px' }}>
+                  UPI ID (Google Pay / PhonePe / BHIM) *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={payoutUpi}
+                  onChange={(e) => setPayoutUpi(e.target.value)}
+                  placeholder="उदा. 9822011924@okaxis किंवा name@upi"
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E1', fontSize: '0.88rem', fontWeight: 600, background: '#FFFFFF' }}
+                />
+              </div>
+
+              <div style={{ flex: '1', minWidth: '140px' }}>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#431407', marginBottom: '6px' }}>
+                  काढावयाची रक्कम (₹) *
+                </label>
+                <input
+                  type="number"
+                  min="100"
+                  max={referralData.withdrawableBalance}
+                  required
+                  value={payoutAmount}
+                  onChange={(e) => setPayoutAmount(e.target.value)}
+                  placeholder="रक्कम (₹)"
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E1', fontSize: '0.88rem', fontWeight: 700, background: '#FFFFFF' }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isRequestingPayout || referralData.withdrawableBalance < 100}
+                style={{
+                  background: referralData.withdrawableBalance >= 100 ? '#EA580C' : '#CBD5E1',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  padding: '11px 22px',
+                  borderRadius: '8px',
+                  fontWeight: 800,
+                  fontSize: '0.9rem',
+                  cursor: referralData.withdrawableBalance >= 100 ? 'pointer' : 'not-allowed',
+                  boxShadow: referralData.withdrawableBalance >= 100 ? '0 4px 12px rgba(234, 88, 12, 0.25)' : 'none',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {isRequestingPayout ? 'नोंदवत आहे...' : '💸 मानधन वर्ग करा (Withdraw)'}
+              </button>
+            </form>
+
+            {payoutMsg.text && (
+              <div style={{
+                marginTop: '12px',
+                padding: '10px 14px',
+                borderRadius: '8px',
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: payoutMsg.type === 'success' ? '#ECFDF5' : '#FEF2F2',
+                border: `1.5px solid ${payoutMsg.type === 'success' ? '#10B981' : '#F87171'}`,
+                color: payoutMsg.type === 'success' ? '#065F46' : '#991B1B'
+              }}>
+                <span>{payoutMsg.type === 'success' ? '✅' : '⚠️'}</span>
+                <span>{payoutMsg.text}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Live Referrals Table */}
+          <div style={{
+            background: '#FFFFFF',
+            border: '1.5px solid #FED7AA',
+            borderRadius: '20px',
+            padding: '24px',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.03)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '18px' }}>
+              <div>
+                <h3 style={{ margin: '0 0 4px', fontSize: '1.25rem', fontWeight: 800, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>📋</span>
+                  <span>आपल्या शिफारसीने जोडलेले सभासद (Referred Members Tracker)</span>
+                </h3>
+                <p style={{ margin: 0, color: '#64748B', fontSize: '0.86rem' }}>
+                  प्रत्येक सभासदाची रिअल-टाइम नोंदणी व वर्गणी स्थिती.
+                </p>
+              </div>
+
+              <span style={{ fontSize: '0.82rem', background: '#FFF7ED', border: '1px solid #FED7AA', color: '#EA580C', padding: '4px 12px', borderRadius: '20px', fontWeight: 800 }}>
+                एकूण {referralData.referrals.length} सभासद
+              </span>
+            </div>
+
+            {referralData.referrals.length > 0 ? (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
+                  <thead>
+                    <tr style={{ background: '#FFF7ED', borderBottom: '2px solid #FED7AA' }}>
+                      <th style={{ padding: '12px 14px', color: '#431407', fontWeight: 800 }}>अ.क्र.</th>
+                      <th style={{ padding: '12px 14px', color: '#431407', fontWeight: 800 }}>सभासदाचे नाव</th>
+                      <th style={{ padding: '12px 14px', color: '#431407', fontWeight: 800 }}>जिल्हा</th>
+                      <th style={{ padding: '12px 14px', color: '#431407', fontWeight: 800 }}>नोंदणी दिनांक</th>
+                      <th style={{ padding: '12px 14px', color: '#431407', fontWeight: 800 }}>वर्गणी स्थिती (Status)</th>
+                      <th style={{ padding: '12px 14px', color: '#431407', fontWeight: 800, textAlign: 'right' }}>मिळालेले मानधन</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {referralData.referrals.map((r, idx) => (
+                      <tr key={r.id || idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                        <td style={{ padding: '12px 14px', color: '#64748B', fontWeight: 700 }}>
+                          {idx + 1}
+                        </td>
+                        <td style={{ padding: '12px 14px', fontWeight: 800, color: '#0F172A' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#FFF7ED', border: '1px solid #FED7AA', color: '#EA580C', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.78rem', fontWeight: 900 }}>
+                              {r.refereeName ? r.refereeName.charAt(0) : 'म'}
+                            </span>
+                            <div>
+                              <div>{r.refereeName}</div>
+                              <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 600 }}>{r.refereePhone}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ padding: '12px 14px', color: '#334155', fontWeight: 600 }}>
+                          📍 {r.district || 'महाराष्ट्र'}
+                        </td>
+                        <td style={{ padding: '12px 14px', color: '#64748B', fontSize: '0.82rem' }}>
+                          {r.registeredAt ? new Date(r.registeredAt).toLocaleDateString('mr-IN') : 'आत्ताच'}
+                        </td>
+                        <td style={{ padding: '12px 14px' }}>
+                          {r.status === 'active' ? (
+                            <span style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #10B981', padding: '4px 10px', borderRadius: '12px', fontWeight: 800, fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <span>🟢</span>
+                              <span>सक्रिय वर्गणीदार (Paid)</span>
+                            </span>
+                          ) : (
+                            <span style={{ background: '#FFFBEB', color: '#B45309', border: '1px solid #F59E0B', padding: '4px 10px', borderRadius: '12px', fontWeight: 800, fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <span>🟡</span>
+                              <span>वर्गणी प्रलंबित (Pending)</span>
+                            </span>
+                          )}
+                        </td>
+                        <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                          {r.status === 'active' ? (
+                            <strong style={{ color: '#059669', fontSize: '0.98rem' }}>
+                              + ₹१०० जमा ✅
+                            </strong>
+                          ) : (
+                            <span style={{ color: '#94A3B8', fontSize: '0.82rem', fontWeight: 700 }}>
+                              ₹० प्रतीक्षेत
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '36px 16px', background: '#FFFDF9', borderRadius: '12px', border: '1px dashed #FED7AA' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🤝</div>
+                <h4 style={{ margin: '0 0 6px', color: '#431407', fontWeight: 800 }}>अजून कोणीही आपल्या रेफरलने जोडलेले नाही</h4>
+                <p style={{ color: '#64748B', fontSize: '0.88rem', margin: '0 0 16px' }}>
+                  वरील आपली रेफरल लिंक कॉपी करून आपल्या कुटुंबातील व परिचयातील मराठा बांधवांना WhatsApp वर पाठवा.
+                </p>
+                <button
+                  onClick={handleShareWhatsApp}
+                  style={{ background: '#25D366', color: '#FFFFFF', border: 'none', padding: '9px 18px', borderRadius: '8px', fontWeight: 800, fontSize: '0.85rem', cursor: 'pointer' }}
+                >
+                  💬 आताच WhatsApp वर शेअर करा
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
