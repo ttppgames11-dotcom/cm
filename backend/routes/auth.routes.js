@@ -339,6 +339,32 @@ const handleDeleteAccount = async (req, res) => {
       }
     }
 
+    // 3. If not found in JSON and PostgreSQL is configured, look up in PostgreSQL
+    if (!member && process.env.DATABASE_URL && searchTargets.length > 0) {
+      try {
+        const pgModule = await import('pg').catch(() => null);
+        const PgClient = pgModule?.default?.Client || pgModule?.Client;
+        if (PgClient) {
+          const client = new PgClient({ connectionString: process.env.DATABASE_URL });
+          await client.connect();
+          for (const target of searchTargets) {
+            const digits = target.replace(/\D/g, '').slice(-10);
+            const q = await client.query(
+              'SELECT id, name, email, phone, password_hash FROM members WHERE id = $1 OR LOWER(email) = $2 OR phone ILIKE $3 LIMIT 1',
+              [target, target.toLowerCase(), digits.length >= 8 ? `%${digits}%` : `%${target}%`]
+            ).catch(() => null);
+            if (q && q.rows && q.rows.length > 0) {
+              member = q.rows[0];
+              break;
+            }
+          }
+          await client.end().catch(() => {});
+        }
+      } catch (e) {
+        // Continue silently
+      }
+    }
+
     const requestId = `DEL-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
     let deletedFromAnyDb = false;
     let deletedId = member ? member.id : (id || identifier);
@@ -403,7 +429,38 @@ const handleDeleteAccount = async (req, res) => {
       // Continue silently
     }
 
-    // C. Also delete from SQLite connect_maratha.db if it exists
+    // C. Also delete from PostgreSQL if DATABASE_URL is set
+    if (process.env.DATABASE_URL) {
+      try {
+        const pgModule = await import('pg').catch(() => null);
+        const PgClient = pgModule?.default?.Client || pgModule?.Client;
+        if (PgClient) {
+          const client = new PgClient({ connectionString: process.env.DATABASE_URL });
+          await client.connect();
+          const delTargets = [deletedId, ...searchTargets].filter(Boolean);
+          for (const t of delTargets) {
+            const digits = String(t).replace(/\D/g, '').slice(-10);
+            const res = await client.query(
+              'DELETE FROM members WHERE id = $1 OR LOWER(email) = $2 OR phone ILIKE $3',
+              [String(t), String(t).toLowerCase(), digits.length >= 8 ? `%${digits}%` : `%${t}%`]
+            ).catch(() => null);
+            if (res && res.rowCount > 0) {
+              deletedFromAnyDb = true;
+            }
+          }
+          if (deletedId) {
+            await client.query('DELETE FROM notifications WHERE member_id = $1', [deletedId]).catch(() => {});
+            await client.query('DELETE FROM event_rsvps WHERE member_id = $1', [deletedId]).catch(() => {});
+            await client.query('DELETE FROM group_members WHERE member_id = $1', [deletedId]).catch(() => {});
+          }
+          await client.end().catch(() => {});
+        }
+      } catch (e) {
+        // Continue silently
+      }
+    }
+
+    // D. Also delete from SQLite connect_maratha.db if it exists
     try {
       const { runQuery } = await import('../../database/database.js').catch(() => ({}));
       if (runQuery) {
@@ -419,7 +476,7 @@ const handleDeleteAccount = async (req, res) => {
       // Continue silently
     }
 
-    // D. Log audit log
+    // E. Log audit log
     db.addAuditLog(deletedFromAnyDb ? 'ACCOUNT_DELETED' : 'ACCOUNT_DELETION_REQUESTED', deletedId || 'unmatched', {
       reason: sanitize(reason) || 'Self requested deletion',
       requestId,
