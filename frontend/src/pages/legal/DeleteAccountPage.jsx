@@ -29,6 +29,7 @@ export default function DeleteAccountPage() {
   const [requestError, setRequestError] = useState('');
   const [requestSuccess, setRequestSuccess] = useState(false);
   const [requestResult, setRequestResult] = useState(null);
+  const [deletedUser, setDeletedUser] = useState(null);
 
   // Handle direct deletion for logged-in user
   const handleDirectDelete = async (e) => {
@@ -56,18 +57,26 @@ export default function DeleteAccountPage() {
         throw new Error(res?.error || 'हा सदस्य डेटाबेसमध्ये सापडला नाही किंवा आधीच हटवला गेला आहे.');
       }
 
+      const deletedMemberSnapshot = user;
+      setDeletedUser(deletedMemberSnapshot);
       setDirectSuccess(true);
       setDirectResult(res.data || res);
       
-      // Clear localStorage and session
+      // Immediately log out and purge all authentication and session storage
+      logout();
       localStorage.removeItem('cm_logged_in');
       localStorage.removeItem('cm_user_data');
       localStorage.removeItem('cm_jwt_token');
+      localStorage.removeItem('cm_user_mobile');
+      localStorage.removeItem('token');
+      try {
+        sessionStorage.clear();
+      } catch {}
 
-      // Auto logout after 3 seconds
+      // Auto redirect to login after 3 seconds
       setTimeout(() => {
-        logout();
-      }, 3500);
+        window.location.href = '/login';
+      }, 3000);
     } catch (err) {
       setDirectError(err.message || 'खाते हटवताना त्रुटी आली. कृपया पासवर्ड तपासा.');
     } finally {
@@ -103,6 +112,19 @@ export default function DeleteAccountPage() {
 
       setRequestSuccess(true);
       setRequestResult(res.data || res);
+
+      // If user is currently logged in, immediately log them out
+      if (user) {
+        logout();
+        localStorage.removeItem('cm_logged_in');
+        localStorage.removeItem('cm_user_data');
+        localStorage.removeItem('cm_jwt_token');
+        localStorage.removeItem('cm_user_mobile');
+        localStorage.removeItem('token');
+        try {
+          sessionStorage.clear();
+        } catch {}
+      }
     } catch (err) {
       setRequestError(err.message || 'हा सदस्य किंवा मोबाईल नंबर डेटाबेसमध्ये आढळला नाही. कृपया नोंदणीकृत मोबाईल तपासा.');
     } finally {
@@ -244,7 +266,7 @@ export default function DeleteAccountPage() {
 
         {/* Tab Selection */}
         <div style={{ display: 'flex', gap: '10px', marginBottom: '24px' }}>
-          {user && (
+          {(user || deletedUser) && (
             <button
               onClick={() => setActiveTab('direct')}
               style={{
@@ -283,7 +305,7 @@ export default function DeleteAccountPage() {
         </div>
 
         {/* TAB 1: Direct Deletion for Authenticated Member */}
-        {activeTab === 'direct' && user && (
+        {activeTab === 'direct' && (user || deletedUser) && (
           <div style={{
             background: '#FFFFFF',
             borderRadius: '20px',
@@ -292,10 +314,10 @@ export default function DeleteAccountPage() {
             boxShadow: '0 8px 30px rgba(239, 68, 68, 0.08)'
           }}>
             <h3 style={{ margin: '0 0 8px', fontSize: '1.4rem', color: '#991b1b', fontFamily: 'Baloo 2, sans-serif' }}>
-              सध्या लॉग-इन असलेले सदस्य खाते: {user.name}
+              सध्या लॉग-इन असलेले सदस्य खाते: {(user || deletedUser)?.name}
             </h3>
             <p style={{ margin: '0 0 20px', fontSize: '0.92rem', color: '#64748b' }}>
-              सदस्य आयडी: <strong>{user.id || 'N/A'}</strong> | मोबाइल: <strong>{user.phone || user.mobile || 'N/A'}</strong> | ईमेल: <strong>{user.email || 'N/A'}</strong>
+              सदस्य आयडी: <strong>{(user || deletedUser)?.id || 'N/A'}</strong> | मोबाइल: <strong>{(user || deletedUser)?.phone || (user || deletedUser)?.mobile || 'N/A'}</strong> | ईमेल: <strong>{(user || deletedUser)?.email || 'N/A'}</strong>
             </p>
 
             {directSuccess ? (
@@ -318,8 +340,25 @@ export default function DeleteAccountPage() {
                     </div>
                   )}
                 </p>
-                <div style={{ fontSize: '0.85rem', color: '#065f46', opacity: 0.85 }}>
-                  आपण आपोआप लॉग-आउट होत आहात...
+                <div style={{ fontSize: '0.92rem', color: '#065f46', fontWeight: 700, marginTop: '8px' }}>
+                  🔒 आपण तात्काळ सुरक्षितपणे लॉग-आउट झाला आहात (You have been logged out immediately).
+                </div>
+                <div style={{ marginTop: '16px' }}>
+                  <Link
+                    to="/login"
+                    style={{
+                      display: 'inline-block',
+                      background: '#059669',
+                      color: '#ffffff',
+                      padding: '10px 24px',
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    लॉगिन पृष्ठावर जा (Go to Login)
+                  </Link>
                 </div>
               </div>
             ) : (

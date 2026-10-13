@@ -41,10 +41,26 @@ export function AuthProvider({ children }) {
           if (res && res.member) {
             setUser(res.member);
             localStorage.setItem('cm_user_data', JSON.stringify(res.member));
+          } else {
+            // User was not found or deleted from database
+            setUser(null);
+            localStorage.removeItem('cm_logged_in');
+            localStorage.removeItem('cm_user_data');
+            localStorage.removeItem('cm_jwt_token');
           }
         })
         .catch(err => {
-          console.log('Session token expired or backend offline, continuing with local session.');
+          // If user deleted from DB (404) or token invalid (401/403), immediately log them out
+          const msg = (err?.message || '').toLowerCase();
+          if (msg.includes('404') || msg.includes('401') || msg.includes('403') || msg.includes('not found') || msg.includes('invalid') || msg.includes('expired')) {
+            setUser(null);
+            localStorage.removeItem('cm_logged_in');
+            localStorage.removeItem('cm_user_data');
+            localStorage.removeItem('cm_jwt_token');
+            localStorage.removeItem('cm_user_mobile');
+          } else {
+            console.log('Session token check error:', err.message);
+          }
         })
         .finally(() => setLoading(false));
     } else {
@@ -159,10 +175,17 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    api.auth.logout();
+    try {
+      api.auth.logout();
+    } catch {}
     localStorage.removeItem('cm_logged_in');
     localStorage.removeItem('cm_user_mobile');
     localStorage.removeItem('cm_user_data');
+    localStorage.removeItem('cm_jwt_token');
+    localStorage.removeItem('token');
+    try {
+      sessionStorage.clear();
+    } catch {}
     setUser(null);
   };
 
