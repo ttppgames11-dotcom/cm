@@ -43,15 +43,27 @@ export default function DeleteAccountPage() {
     setDirectLoading(true);
     try {
       const res = await api.auth.deleteAccount({
-        identifier: user.id || user.phone || user.email,
+        id: user.id,
+        identifier: user.phone || user.email || user.id,
+        phone: user.phone || user.mobile,
+        email: user.email,
         password,
         confirmation: true,
         reason: 'Direct deletion from Delete Account Page'
       });
 
+      if (!res?.data?.deleted && !res?.deleted) {
+        throw new Error(res?.error || 'हा सदस्य डेटाबेसमध्ये सापडला नाही किंवा आधीच हटवला गेला आहे.');
+      }
+
       setDirectSuccess(true);
       setDirectResult(res.data || res);
       
+      // Clear localStorage and session
+      localStorage.removeItem('cm_logged_in');
+      localStorage.removeItem('cm_user_data');
+      localStorage.removeItem('cm_jwt_token');
+
       // Auto logout after 3 seconds
       setTimeout(() => {
         logout();
@@ -75,16 +87,24 @@ export default function DeleteAccountPage() {
 
     setRequestLoading(true);
     try {
+      const cleanInput = requestForm.identifier.trim();
       const res = await api.auth.deleteAccount({
-        identifier: requestForm.identifier,
+        identifier: cleanInput,
+        phone: cleanInput,
+        email: cleanInput,
+        id: cleanInput,
         reason: requestForm.reason,
         confirmation: true
       });
 
+      if (!res?.data?.deleted && !res?.deleted) {
+        throw new Error(res?.error || 'हा सदस्य डेटाबेसमध्ये सापडला नाही. कृपया नोंदणीकृत मोबाईल नंबर किंवा ईमेल तपासा.');
+      }
+
       setRequestSuccess(true);
       setRequestResult(res.data || res);
     } catch (err) {
-      setRequestError(err.message || 'विनंती सबमिट करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.');
+      setRequestError(err.message || 'हा सदस्य किंवा मोबाईल नंबर डेटाबेसमध्ये आढळला नाही. कृपया नोंदणीकृत मोबाईल तपासा.');
     } finally {
       setRequestLoading(false);
     }

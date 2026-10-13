@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
+import fs from 'fs';
+import path from 'path';
 import { db } from '../db/realtimeDb.js';
 import { generateToken, authenticateToken, optionalToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
@@ -26,10 +28,13 @@ router.post('/register', async (req, res) => {
     const { name, phone, email, district, taluka, password, kul, gotra, profession, city, about } = sanitized;
 
     const members = db.getCollection('members');
-    const existing = members.find(m => 
-      (email && m.email && m.email.toLowerCase() === email.toLowerCase()) || 
-      (phone && m.phone && m.phone === phone)
-    );
+    const cleanReqPhone = String(phone || '').replace(/\D/g, '').slice(-10);
+    const existing = members.find(m => {
+      const mEmail = m.email && m.email.toLowerCase();
+      const mPhone = m.phone && String(m.phone).replace(/\D/g, '').slice(-10);
+      return (email && mEmail === email.toLowerCase()) || 
+             (cleanReqPhone.length >= 10 && mPhone === cleanReqPhone);
+    });
 
     if (existing) {
       return sendError(res, 'हा फोन क्रमांक किंवा ईमेल आधीच नोंदणीकृत आहे.', 'USER_ALREADY_EXISTS', 400);
@@ -285,9 +290,9 @@ router.put('/reset-password', (req, res) => {
 
 // POST /api/auth/delete-account
 // Supports both authenticated user self-deletion and unauthenticated request submission (Google Play Policy)
-router.post('/delete-account', optionalToken, (req, res) => {
+router.post('/delete-account', optionalToken, async (req, res) => {
   try {
-    const { identifier, reason, password, confirmation } = req.body;
+    const { identifier, phone, email, id, reason, password, confirmation } = req.body;
     
     if (!confirmation) {
       return sendError(res, 'कृपया खाते हटवण्याची पुष्टी करा (Please check confirmation).', 'CONFIRMATION_REQUIRED', 400);
@@ -296,24 +301,49 @@ router.post('/delete-account', optionalToken, (req, res) => {
     const members = db.getCollection('members');
     let member = null;
 
-    // 1. If authenticated
+    // 1. If authenticated via token
     if (req.user && req.user.id) {
       member = members.find(m => String(m.id).toLowerCase() === String(req.user.id).toLowerCase());
     }
 
-    // 2. Lookup by identifier if not found by token
-    if (!member && identifier) {
-      const clean = String(identifier).trim().toLowerCase();
-      const digits = clean.replace(/\D/g, '');
-      member = members.find(m => 
-        String(m.id).toLowerCase() === clean ||
-        (m.email && m.email.toLowerCase() === clean) ||
-        (digits.length >= 8 && m.phone && m.phone.replace(/\D/g, '') === digits)
-      );
+    // 2. Lookup by id, phone, email, or identifier
+    const searchTargets = [id, identifier, phone, email].filter(Boolean).map(x => String(x).trim());
+
+    if (!member && searchTargets.length > 0) {
+      for (const target of searchTargets) {
+        const cleanTarget = target.toLowerCase();
+        const targetDigits = cleanTarget.replace(/\D/g, '');
+        const target10 = targetDigits.slice(-10);
+
+        member = members.find(m => {
+          if (!m) return false;
+          // ID match
+          if (m.id && (String(m.id).toLowerCase() === cleanTarget || (cleanTarget.length >= 4 && String(m.id).toLowerCase().includes(cleanTarget)))) {
+            return true;
+          }
+          // Email match
+          if (m.email && m.email.toLowerCase() === cleanTarget) {
+            return true;
+          }
+          // Phone match (checks full digits, last 10 digits)
+          if (m.phone) {
+            const mDigits = String(m.phone).replace(/\D/g, '');
+            const m10 = mDigits.slice(-10);
+            if (targetDigits && mDigits === targetDigits) return true;
+            if (target10.length === 10 && m10.length === 10 && m10 === target10) return true;
+          }
+          return false;
+        });
+
+        if (member) break;
+      }
     }
 
     const requestId = `DEL-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+    let deletedFromAnyDb = false;
+    let deletedId = member ? member.id : (id || identifier);
 
+    // A. Delete from primary backend/db.json
     if (member) {
       // If user provided password, verify it
       if (password && member.password_hash) {
@@ -323,17 +353,14 @@ router.post('/delete-account', optionalToken, (req, res) => {
         }
       }
 
-      const deletedId = member.id;
-      
-      // 1. Delete from members collection
+      deletedId = member.id;
       db.delete('members', member.id);
 
-      // 2. Delete from associated user collections (matrimony, bloodDonors, businesses, posts, messages, notifications)
+      // Clean related collections in backend/db.json
       const cleanSubCollection = (colName, filterFn) => {
         const col = db.getCollection(colName);
         if (Array.isArray(col)) {
-          const remaining = col.filter(item => !filterFn(item));
-          db.data[colName] = remaining;
+          db.data[colName] = col.filter(item => !filterFn(item));
         }
       };
 
@@ -342,32 +369,74 @@ router.post('/delete-account', optionalToken, (req, res) => {
       cleanSubCollection('notifications', item => String(item.recipientId) === String(deletedId));
       cleanSubCollection('messages', item => String(item.senderId) === String(deletedId) || String(item.recipientId) === String(deletedId));
       cleanSubCollection('posts', item => String(item.authorId) === String(deletedId));
+      cleanSubCollection('businesses', item => String(item.ownerId) === String(deletedId));
 
       db.save();
+      deletedFromAnyDb = true;
+    }
 
-      db.addAuditLog('ACCOUNT_DELETED', deletedId, {
-        reason: sanitize(reason) || 'Self requested deletion',
-        requestId,
-        deletedAt: new Date().toISOString()
-      });
+    // B. Also delete from server/db.json if it exists
+    try {
+      const serverDbPath = path.resolve('server/db.json');
+      if (fs.existsSync(serverDbPath)) {
+        const raw = fs.readFileSync(serverDbPath, 'utf8');
+        const sDb = JSON.parse(raw);
+        if (Array.isArray(sDb.members)) {
+          const initLen = sDb.members.length;
+          sDb.members = sDb.members.filter(m => {
+            if (deletedId && String(m.id).toLowerCase() === String(deletedId).toLowerCase()) return false;
+            for (const t of searchTargets) {
+              const ct = t.toLowerCase();
+              const td = ct.replace(/\D/g, '').slice(-10);
+              if (m.email && m.email.toLowerCase() === ct) return false;
+              if (m.phone && td.length === 10 && String(m.phone).replace(/\D/g, '').slice(-10) === td) return false;
+            }
+            return true;
+          });
+          if (sDb.members.length < initLen) {
+            fs.writeFileSync(serverDbPath, JSON.stringify(sDb, null, 2));
+            deletedFromAnyDb = true;
+          }
+        }
+      }
+    } catch (e) {
+      // Continue silently
+    }
 
-      return sendSuccess(res, 'आपले खाते आणि सर्व संबंधित डेटा यशस्वीरित्या कायमस्वरूपी हटवण्यात आला आहे.', {
+    // C. Also delete from SQLite connect_maratha.db if it exists
+    try {
+      const { runQuery } = await import('../../database/database.js').catch(() => ({}));
+      if (runQuery) {
+        for (const t of searchTargets) {
+          const digits = t.replace(/\D/g, '').slice(-10);
+          await runQuery('DELETE FROM members WHERE id = ? OR LOWER(email) = ? OR phone LIKE ?', [
+            t, t.toLowerCase(), digits.length >= 8 ? `%${digits}%` : t
+          ]).catch(() => {});
+        }
+        deletedFromAnyDb = true;
+      }
+    } catch (e) {
+      // Continue silently
+    }
+
+    // D. Log audit log
+    db.addAuditLog(deletedFromAnyDb ? 'ACCOUNT_DELETED' : 'ACCOUNT_DELETION_REQUESTED', deletedId || 'unmatched', {
+      reason: sanitize(reason) || 'Self requested deletion',
+      requestId,
+      deletedFromDb: deletedFromAnyDb,
+      deletedAt: new Date().toISOString()
+    });
+
+    if (deletedFromAnyDb) {
+      return sendSuccess(res, 'आपले खाते आणि सर्व संबंधित डेटा डेटाबेसमधून यशस्वीरित्या कायमस्वरूपी हटवण्यात आला आहे.', {
         deleted: true,
         requestId,
         memberId: deletedId
       });
     }
 
-    // If identifier provided but member not currently found (e.g. archived or uninstalled app), schedule request
-    db.addAuditLog('ACCOUNT_DELETION_REQUESTED', sanitize(identifier) || 'web-form', {
-      reason: sanitize(reason) || 'Not specified',
-      requestId,
-      receivedAt: new Date().toISOString()
-    });
-
-    return sendSuccess(res, 'आपली खाते हटवण्याची अधिकृत विनंती नोंदवली गेली आहे. २४ ते ४८ तासांत संपूर्ण डेटा नष्ट केला जाईल.', {
-      deleted: false,
-      scheduled: true,
+    // If not found in any database at all, inform user clearly
+    return sendError(res, 'हा सदस्य किंवा मोबाईल नंबर कोणत्याही डेटाबेसमध्ये आढळला नाही. कृपया अचूक माहिती तपासा.', 'MEMBER_NOT_FOUND', 404, {
       requestId
     });
   } catch (err) {
