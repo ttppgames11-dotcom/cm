@@ -288,14 +288,14 @@ router.put('/reset-password', (req, res) => {
   return sendSuccess(res, 'पासवर्ड यशस्वीरीत्या बदलण्यात आला!', { updated: true });
 });
 
-// POST /api/auth/delete-account
-// Supports both authenticated user self-deletion and unauthenticated request submission (Google Play Policy)
-router.post('/delete-account', optionalToken, async (req, res) => {
+// Unified Account Deletion Handler supporting both Mobile App and Web Portal
+const handleDeleteAccount = async (req, res) => {
   try {
-    const { identifier, phone, email, id, reason, password, confirmation } = req.body;
+    const { identifier, phone, email, id, reason, password, confirmation, confirm } = req.body || {};
     
-    if (!confirmation) {
-      return sendError(res, 'कृपया खाते हटवण्याची पुष्टी करा (Please check confirmation).', 'CONFIRMATION_REQUIRED', 400);
+    const isConfirmed = confirmation === true || confirm === 'DELETE' || String(confirm || '').toUpperCase() === 'DELETE';
+    if (!isConfirmed) {
+      return sendError(res, 'कृपया खाते हटवण्याची पुष्टी करा (Please confirm account deletion with confirm: DELETE).', 'CONFIRMATION_REQUIRED', 400);
     }
 
     const members = db.getCollection('members');
@@ -442,6 +442,12 @@ router.post('/delete-account', optionalToken, async (req, res) => {
   } catch (err) {
     return sendError(res, err.message || 'खाते हटवताना त्रुटी आली.', 'DELETE_FAILED', 500);
   }
-});
+};
+
+// 1. Mobile App (Flutter) endpoint: DELETE /api/auth/account (with confirm: 'DELETE')
+router.delete('/account', optionalToken, handleDeleteAccount);
+// 2. Web Portal endpoints: POST & DELETE /api/auth/delete-account
+router.post('/delete-account', optionalToken, handleDeleteAccount);
+router.delete('/delete-account', optionalToken, handleDeleteAccount);
 
 export default router;
