@@ -54,7 +54,7 @@ export default function RegisterWizardPage() {
   useEffect(() => {
     if (!referralCode || !referralCode.trim()) {
       setReferrerInfo(null);
-      setReferralStatus({ checking: false, valid: false, message: 'कृपया शिफारसकर्ता सभासद आयडी प्रविष्ट करा.' });
+      setReferralStatus({ checking: false, valid: true, message: '' });
       return;
     }
 
@@ -151,21 +151,18 @@ export default function RegisterWizardPage() {
       return;
     }
 
-    // Compulsory Referral Validation
-    if (!referralCode || !referralCode.trim()) {
-      setValidationError('शिफारसकर्ता सभासद आयडी (Referral Member ID) अनिवार्य आहे. कृपया आयडी प्रविष्ट करा किंवा अधिकृत कोड वापरा.');
-      return;
-    }
+    // Optional Referral Validation (only validate if entered)
+    if (referralCode && referralCode.trim()) {
+      if (referralCode.trim() === formData.mobile.trim()) {
+        setValidationError('आपण स्वतःचा नंबर रेफरल म्हणून वापरू शकत नाही.');
+        return;
+      }
 
-    const refCheck = verifyReferrerId(referralCode.trim());
-    if (!refCheck.isValid) {
-      setValidationError('प्रविष्ट केलेला शिफारसकर्ता सभासद आयडी अवैध आहे. कृपया अचूक आयडी टाका.');
-      return;
-    }
-
-    if (referralCode.trim() === formData.mobile.trim()) {
-      setValidationError('आपण स्वतःचा नंबर रेफरल म्हणून वापरू शकत नाही.');
-      return;
+      const refCheck = verifyReferrerId(referralCode.trim());
+      if (!refCheck.isValid) {
+        setValidationError('प्रविष्ट केलेला शिफारसकर्ता सभासद आयडी अवैध आहे. कृपया अचूक आयडी टाका किंवा ही जागा रिकामी ठेवा.');
+        return;
+      }
     }
 
     if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
@@ -230,15 +227,17 @@ export default function RegisterWizardPage() {
       resUser = res.member || res.user;
     }
 
-    // Record Real-time referral
-    recordNewReferral({
-      newMemberId: resUser?.id || `CM-MH-${formData.mobile.slice(-4)}`,
-      newMemberName: formData.name.trim(),
-      newMemberPhone: formData.mobile.trim(),
-      newMemberDistrict: formData.city || 'पुणे',
-      referrerCode: referralCode.trim(),
-      isSubscribed: true
-    });
+    // Record Real-time referral if provided
+    if (referralCode && referralCode.trim()) {
+      recordNewReferral({
+        newMemberId: resUser?.id || `CM-MH-${formData.mobile.slice(-4)}`,
+        newMemberName: formData.name.trim(),
+        newMemberPhone: formData.mobile.trim(),
+        newMemberDistrict: formData.city || 'पुणे',
+        referrerCode: referralCode.trim(),
+        isSubscribed: true
+      });
+    }
 
     setActiveScreen('welcome');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -441,12 +440,12 @@ export default function RegisterWizardPage() {
                   </div>
                 </div>
 
-                {/* COMPULSORY REFERRAL MEMBER ID WITH REAL-TIME VERIFICATION */}
+                {/* OPTIONAL REFERRAL MEMBER ID WITH REAL-TIME VERIFICATION */}
                 <div style={{ marginBottom: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px', flexWrap: 'wrap', gap: '4px' }}>
                     <label style={{ fontSize: '12.5px', fontWeight: 800, color: '#431407', display: 'flex', alignItems: 'center', gap: '5px' }}>
                       <span>🚩 शिफारसकर्ता सभासद आयडी (Referral ID)</span>
-                      <span style={{ color: '#EA580C' }}>* (अनिवार्य)</span>
+                      <span style={{ color: '#64748B', fontWeight: 600 }}>(ऐच्छिक - Optional)</span>
                     </label>
                     <button
                       type="button"
@@ -467,14 +466,13 @@ export default function RegisterWizardPage() {
                     </button>
                   </div>
 
-                  <div className="input-box" style={{ borderColor: referralStatus.valid ? '#10B981' : (referralCode ? '#EA580C' : '#CBD5E1') }}>
+                  <div className="input-box" style={{ borderColor: referralStatus.valid ? (referralCode ? '#10B981' : '#CBD5E1') : '#EA580C' }}>
                     <span className="prefix" style={{ background: '#FFF7ED', color: '#EA580C', fontWeight: 800 }}>REF</span>
                     <input
                       type="text"
-                      required
                       value={referralCode}
                       onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
-                      placeholder="उदा. CM-PUN-0842 किंवा मित्राचा सभासद आयडी"
+                      placeholder="उदा. CM-PUN-0842 (ऐच्छिक - नसल्यास रिकामे ठेवा)"
                       style={{ textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 700 }}
                     />
                   </div>
@@ -498,7 +496,7 @@ export default function RegisterWizardPage() {
                     </div>
                   ) : (
                     <p style={{ margin: '4px 0 0', fontSize: '11.5px', color: '#64748B' }}>
-                      * आपणास ज्या सदस्याने शिफारस केली आहे त्यांचा अधिकृत आयडी टाका किंवा वरील अधिकृत कोड वापरा.
+                      * जर आपल्याकडे इतर सभासदाचा रेफरल आयडी असेल तर टाका, नसल्यास ही जागा रिकामी ठेवू शकता (Optional).
                     </p>
                   )}
                 </div>
