@@ -52,7 +52,16 @@ async function fetchJson(endpoint, options = {}) {
 
     const json = await res.json().catch(() => ({}));
     if (!res.ok) {
-      throw new Error(json.message || json.error || `HTTP error! status: ${res.status}`);
+      let rawMsg = json.message || json.error;
+      let safeMsg = rawMsg;
+      if (res.status >= 500 || !safeMsg || /sqlite|sql|syntax error|no such table|no such column|stack|\.(?:js|ts):\d+|node_modules|[a-zA-Z]:[\\\/]/i.test(safeMsg)) {
+        safeMsg = 'सर्व्हरवर तांत्रिक अडचण आली आहे. कृपया थोड्या वेळाने पुन्हा प्रयत्न करा (Internal server error).';
+      }
+      const err = new Error(safeMsg);
+      err.status = res.status;
+      err.code = json.code;
+      err.errorId = json.errorId;
+      throw err;
     }
     return json;
   } catch (err) {

@@ -117,7 +117,13 @@ GoRouter buildAppRouterWithAuth({
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/register',
-        builder: (context, state) => const RegisterScreen(),
+        builder: (context, state) {
+          final refCode = state.uri.queryParameters['ref'] ??
+              state.uri.queryParameters['reference_id'] ??
+              state.uri.queryParameters['code'] ??
+              state.extra as String?;
+          return RegisterScreen(initialReferralCode: refCode);
+        },
       ),
       GoRoute(
         path: '/forgot-password',

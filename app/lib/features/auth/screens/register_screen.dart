@@ -7,6 +7,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
+import '../../../core/share/copy_share.dart';
+import '../providers/auth_provider.dart' show apiClientProvider;
 
 import '../../../core/auth/auth_scope.dart';
 import '../../../core/config/legal_urls_config.dart';
@@ -26,7 +29,8 @@ const _stepLabels = ['नोंदणी', 'प्रोफाईल', 'पू�
 
 /// Registration: basic details → profile (with the member's own photo) → done.
 class RegisterScreen extends ConsumerStatefulWidget {
-  const RegisterScreen({super.key});
+  final String? initialReferralCode;
+  const RegisterScreen({super.key, this.initialReferralCode});
 
   @override
   ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
@@ -35,6 +39,13 @@ class RegisterScreen extends ConsumerStatefulWidget {
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   int _step = 0;
   final _data = RegisterFormData();
+
+  // Referral Controller & State
+  final _referralCodeController = TextEditingController();
+  bool _isVerifyingReferral = false;
+  String? _verifiedReferrerName;
+  Timer? _referralDebounce;
+  String? _generatedReferenceId;
 
   // Step 1 Controllers
   final _fullNameController = TextEditingController();
@@ -89,6 +100,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialReferralCode != null && widget.initialReferralCode!.isNotEmpty) {
+      _referralCodeController.text = widget.initialReferralCode!;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _verifyReferralCode(widget.initialReferralCode!);
+      });
+    }
     _restoreDraft();
   }
 
@@ -172,6 +189,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   void dispose() {
     registrationSuccessOnScreen = false;
+    _referralCodeController.dispose();
+    _referralDebounce?.cancel();
     _fullNameController.dispose();
     _mobileController.dispose();
     _emailController.dispose();
@@ -179,6 +198,51 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     _skillsController.dispose();
     _aboutController.dispose();
     super.dispose();
+  }
+
+  void _onReferralCodeChanged(String code) {
+    _referralDebounce?.cancel();
+    final trimmed = code.trim();
+    if (trimmed.isEmpty) {
+      setState(() {
+        _verifiedReferrerName = null;
+        _isVerifyingReferral = false;
+      });
+      return;
+    }
+    _referralDebounce = Timer(const Duration(milliseconds: 600), () {
+      _verifyReferralCode(trimmed);
+    });
+  }
+
+  Future<void> _verifyReferralCode(String code) async {
+    if (!mounted || code.isEmpty) return;
+    setState(() => _isVerifyingReferral = true);
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final res = await apiClient.get('/api/auth/referrals/verify/${Uri.encodeComponent(code)}');
+      if (!mounted) return;
+      if (res['isValid'] == true && res['referrer'] != null) {
+        final r = res['referrer'] as Map;
+        final name = (r['name'] ?? '').toString();
+        final district = (r['district'] ?? r['city'] ?? '').toString();
+        setState(() {
+          _verifiedReferrerName = district.isNotEmpty ? '$name ($district)' : name;
+          _isVerifyingReferral = false;
+        });
+      } else {
+        setState(() {
+          _verifiedReferrerName = null;
+          _isVerifyingReferral = false;
+        });
+      }
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _verifiedReferrerName = null;
+        _isVerifyingReferral = false;
+      });
+    }
   }
 
   void _goBack() => setState(() => _step = (_step - 1).clamp(0, 1));
@@ -469,6 +533,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
 
     _data
+      ..referenceId = _referralCodeController.text.trim()
+      ..referredByName = _verifiedReferrerName
       ..fullName = _fullNameController.text
       ..mobile = _mobileController.text
       ..email = _emailController.text
@@ -535,6 +601,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     setState(() {
       _generatedId = auth.state.profile?.id;
+      _generatedReferenceId = auth.state.profile?.displayReferenceId;
       _step = 2;
     });
     ScaffoldMessenger.of(context).showSnackBar(
@@ -603,6 +670,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   mobileController: _mobileController,
                   emailController: _emailController,
                   passwordController: _passwordController,
+                  referralCodeController: _referralCodeController,
+                  isVerifyingReferral: _isVerifyingReferral,
+                  verifiedReferrerName: _verifiedReferrerName,
+                  onReferralChanged: _onReferralCodeChanged,
                   termsAccepted: _termsAccepted,
                   onTermsChanged:
                       (value) => setState(() => _termsAccepted = value ?? false),
@@ -681,7 +752,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   onNext: _isSubmitting ? null : _submit,
                   isSubmitting: _isSubmitting,
                 ),
-                _ => _Step5Success(memberId: _generatedId ?? ''),
+                _ => _Step5Success(memberId: _generatedId ?? '', referenceId: _generatedReferenceId ?? ''),
               },
             ],
           ),
@@ -744,6 +815,10 @@ class _Step1Basic extends StatelessWidget {
     required this.mobileController,
     required this.emailController,
     required this.passwordController,
+    required this.referralCodeController,
+    required this.isVerifyingReferral,
+    required this.verifiedReferrerName,
+    required this.onReferralChanged,
     required this.termsAccepted,
     required this.onTermsChanged,
     required this.privacyAccepted,
@@ -757,6 +832,10 @@ class _Step1Basic extends StatelessWidget {
   final TextEditingController mobileController;
   final TextEditingController emailController;
   final TextEditingController passwordController;
+  final TextEditingController referralCodeController;
+  final bool isVerifyingReferral;
+  final String? verifiedReferrerName;
+  final ValueChanged<String> onReferralChanged;
   final bool termsAccepted;
   final ValueChanged<bool?> onTermsChanged;
   final bool privacyAccepted;
@@ -836,6 +915,59 @@ class _Step1Basic extends StatelessWidget {
             prefixIcon: Icon(Icons.lock_outline),
           ),
         ),
+        const SizedBox(height: 12),
+
+        // Referral Code / Reference ID Field (Optional)
+        TextField(
+          key: const Key('register_referral_code_field'),
+          controller: referralCodeController,
+          textCapitalization: TextCapitalization.characters,
+          onChanged: onReferralChanged,
+          decoration: InputDecoration(
+            labelText: 'रेफरल कोड / Reference ID (ऐच्छिक / Optional)',
+            hintText: 'उदा. REF-96K-2866 किंवा मित्राचा फोन',
+            prefixIcon: const Icon(Icons.card_giftcard_rounded, color: Color(0xFFE84C10)),
+            suffixIcon: isVerifyingReferral
+                ? const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFE84C10)),
+                    ),
+                  )
+                : verifiedReferrerName != null
+                    ? const Icon(Icons.check_circle_rounded, color: Color(0xFF16A34A))
+                    : null,
+          ),
+        ),
+        if (verifiedReferrerName != null) ...[
+          const SizedBox(height: 6),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF0FDF4),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFFBBF7D0)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.verified_rounded, size: 16, color: Color(0xFF16A34A)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'सत्यापित रेफरर: $verifiedReferrerName',
+                    style: GoogleFonts.mukta(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF15803D),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
         const SizedBox(height: 12),
 
         // 1. Terms of Use & Community Guidelines Checkbox
@@ -1617,11 +1749,32 @@ class _Step2Profile extends StatelessWidget {
 }
 
 class _Step5Success extends StatelessWidget {
-  const _Step5Success({required this.memberId});
+  const _Step5Success({required this.memberId, this.referenceId = ''});
   final String memberId;
+  final String referenceId;
+
+  void _copyReferralLink(BuildContext context, String code) {
+    final shareMsg = referralShareText(code);
+    Clipboard.setData(ClipboardData(text: shareMsg));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('रेफरल मेसेज आणि Play Store लिंक कॉपी केली!'),
+        backgroundColor: Color(0xFF15803D),
+      ),
+    );
+  }
+
+  void _shareReferralLink(String code) {
+    final shareMsg = referralShareText(code);
+    shareText(shareMsg, subject: 'Connect मराठा सदस्यत्व आमंत्रण');
+  }
 
   @override
   Widget build(BuildContext context) {
+    final displayRef = referenceId.isNotEmpty
+        ? referenceId
+        : (memberId.isNotEmpty ? 'REF-96K-${memberId.replaceAll(RegExp(r'\\D'), '')}' : '');
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1631,9 +1784,9 @@ class _Step5Success extends StatelessWidget {
         Text(
           'अभिनंदन! तुमची नोंदणी पूर्ण झाली\nRegistration Completed!',
           textAlign: TextAlign.center,
-          style: GoogleFonts.mukta(fontSize: 18, fontWeight: FontWeight.w800),
+          style: GoogleFonts.mukta(fontSize: 19, fontWeight: FontWeight.w900, color: const Color(0xFF2B1B12)),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Text(
           'तुमचा सदस्य ID / Member ID: $memberId',
           textAlign: TextAlign.center,
@@ -1643,6 +1796,109 @@ class _Step5Success extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        const SizedBox(height: 16),
+
+        // New Unique Reference ID & Share Card
+        if (displayRef.isNotEmpty)
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFFFF7ED), Color(0xFFFFEDD5)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFFED7AA), width: 1.2),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFEA580C).withValues(alpha: 0.08),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.card_giftcard_rounded, color: Color(0xFFEA580C), size: 22),
+                    const SizedBox(width: 8),
+                    Text(
+                      'तुमचा युनिक रेफरल आयडी / Reference ID',
+                      style: GoogleFonts.mukta(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: const Color(0xFF9A3412),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: const Color(0xFFFDBA74)),
+                  ),
+                  child: SelectableText(
+                    displayRef,
+                    style: GoogleFonts.mukta(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      color: const Color(0xFFC2410C),
+                      letterSpacing: 1.1,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'हा कोड शेअर करून आपल्या मित्रांना व नातेवाईकांना समाजात जोडा!',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.mukta(
+                    fontSize: 12,
+                    color: const Color(0xFF7C2D12),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFFC2410C),
+                          side: const BorderSide(color: Color(0xFFFB923C)),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () => _copyReferralLink(context, displayRef),
+                        icon: const Icon(Icons.copy_rounded, size: 16),
+                        label: Text('लिंक कॉपी करा', style: GoogleFonts.mukta(fontWeight: FontWeight.bold, fontSize: 13)),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF16A34A),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () => _shareReferralLink(displayRef),
+                        icon: const Icon(Icons.share_rounded, size: 16),
+                        label: Text('शेअर करा', style: GoogleFonts.mukta(fontWeight: FontWeight.bold, fontSize: 13)),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
         const SizedBox(height: 20),
         FilledButton(
           style: FilledButton.styleFrom(

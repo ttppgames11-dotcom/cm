@@ -9,19 +9,8 @@ export default function SuperAdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
 
-  const handleQuickSuperAdminLogin = async () => {
-    try {
-      showToast('SuperAdmin खात्यात लॉगिन करत आहे...', 'success');
-      const res = await login('superadmin@connectmaratha.org', 'password123');
-      if (res && (res.success || res.member)) {
-        showToast('यशस्वी! SuperAdmin अधिकार प्राप्त झाले.', 'success');
-        setTimeout(() => loadAllData(), 500);
-      } else {
-        showToast('लॉगिन अयशस्वी झाले.', 'error');
-      }
-    } catch (e) {
-      showToast('लॉगिन त्रुटी: ' + e.message, 'error');
-    }
+  const handleAdminLoginRedirect = () => {
+    window.location.href = '/login?role=admin';
   };
 
   // Data states
@@ -129,7 +118,7 @@ export default function SuperAdminDashboardPage() {
       name: '',
       email: '',
       phone: '',
-      password: 'password123',
+      password: '',
       role: 'member',
       district: 'पुणे',
       taluka: 'हवेली',
@@ -605,8 +594,8 @@ export default function SuperAdminDashboardPage() {
                 सध्या तुम्ही {user ? `"${user.name}" (${user.role || 'member'})` : 'अतिथी (Guest)'} म्हणून कन्सोल पाहत आहात. वापरकर्ते बदलणे/हटवणे, नवीन डॉक्टर्स/सेवा/हॉटेल्स जोडणे आणि डेटाबेस थेट अपडेट करण्यासाठी SuperAdmin खाते आवश्यक आहे.
               </div>
             </div>
-            <button
-              onClick={handleQuickSuperAdminLogin}
+            <Link
+              to="/login?role=admin"
               className="btn"
               style={{
                 background: 'linear-gradient(135deg, #F59E0B, #D97706)',
@@ -615,16 +604,16 @@ export default function SuperAdminDashboardPage() {
                 fontSize: '0.95rem',
                 padding: '12px 24px',
                 borderRadius: '10px',
-                border: 'none',
+                textDecoration: 'none',
                 boxShadow: '0 4px 20px rgba(245, 158, 11, 0.45)',
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px'
               }}>
-              <span>⚡</span>
-              <span>SuperAdmin म्हणून थेट १-क्लिक लॉगिन करा</span>
-            </button>
+              <span>🔐</span>
+              <span>SuperAdmin म्हणून लॉगिन करा</span>
+            </Link>
           </div>
         )}
 
@@ -1380,11 +1369,11 @@ export default function SuperAdminDashboardPage() {
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: '#94A3B8', marginBottom: '4px' }}>
-                      {modalType === 'addUser' ? 'पासवर्ड (Default: password123)' : 'नवीन पासवर्ड (बदलायचा असल्यास)'}
+                      {modalType === 'addUser' ? 'पासवर्ड (Password - किमान ६ अक्षरे)' : 'नवीन पासवर्ड (बदलायचा असल्यास)'}
                     </label>
                     <input
                       type="password"
-                      placeholder={modalType === 'addUser' ? 'password123' : 'रिकामे सोडा जर बदलायचा नसेल'}
+                      placeholder={modalType === 'addUser' ? 'पासवर्ड प्रविष्ट करा' : 'रिकामे सोडा जर बदलायचा नसेल'}
                       value={formData.password || ''}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                       style={{ width: '100%', padding: '9px 12px', background: '#0F172A', border: '1px solid #334155', borderRadius: '6px', color: '#FFF' }}

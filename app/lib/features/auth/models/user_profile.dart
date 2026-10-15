@@ -5,7 +5,7 @@ import 'user_role.dart';
 /// Field set mirrors what the existing website stores per-session
 /// (`cm_user_id`, `cm_user_name`, `cm_user_tier`, `cm_user_role`,
 /// `cm_user_phone`, `cm_user_city` in `assets/js/app.js`), plus the member's
-/// own email so the profile can show it.
+/// own email, reference_id, referred_by, and total_referrals.
 class UserProfile {
   const UserProfile({
     required this.id,
@@ -16,6 +16,9 @@ class UserProfile {
     required this.city,
     this.email = '',
     this.photo = '',
+    this.referenceId = '',
+    this.referredBy = '',
+    this.totalReferrals = 0,
   });
 
   final String id;
@@ -30,7 +33,23 @@ class UserProfile {
   /// they have none. Other members see this picture.
   final String photo;
 
+  /// Unique reference/referral code for this member (e.g. REF-96K-XXXX)
+  final String referenceId;
+
+  /// Code of the member who referred this user
+  final String referredBy;
+
+  /// Total count of members referred by this user
+  final int totalReferrals;
+
   String get shortName => name.split(' ').first;
+
+  /// Clean display reference ID (fall back to member ID if empty)
+  String get displayReferenceId {
+    if (referenceId.isNotEmpty) return referenceId;
+    final numPart = id.replaceAll(RegExp(r'\D'), '');
+    return numPart.isNotEmpty ? 'REF-96K-$numPart' : id;
+  }
 
   UserProfile copyWith({
     String? name,
@@ -38,6 +57,9 @@ class UserProfile {
     String? city,
     String? email,
     String? photo,
+    String? referenceId,
+    String? referredBy,
+    int? totalReferrals,
   }) {
     return UserProfile(
       id: id,
@@ -48,6 +70,9 @@ class UserProfile {
       city: city ?? this.city,
       email: email ?? this.email,
       photo: photo ?? this.photo,
+      referenceId: referenceId ?? this.referenceId,
+      referredBy: referredBy ?? this.referredBy,
+      totalReferrals: totalReferrals ?? this.totalReferrals,
     );
   }
 
@@ -60,6 +85,9 @@ class UserProfile {
     'city': city,
     'email': email,
     'photo': photo,
+    'reference_id': referenceId,
+    'referred_by': referredBy,
+    'total_referrals': totalReferrals.toString(),
   };
 
   factory UserProfile.fromStorageMap(Map<String, String> map) {
@@ -72,6 +100,9 @@ class UserProfile {
       city: map['city'] ?? '',
       email: map['email'] ?? '',
       photo: map['photo'] ?? '',
+      referenceId: map['reference_id'] ?? '',
+      referredBy: map['referred_by'] ?? '',
+      totalReferrals: int.tryParse(map['total_referrals'] ?? '0') ?? 0,
     );
   }
 }

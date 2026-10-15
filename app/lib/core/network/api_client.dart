@@ -215,15 +215,34 @@ class ApiClient {
     }
   }
 
+  static bool _isCleanUserMessage(String? msg) {
+    if (msg == null || msg.trim().isEmpty) return false;
+    final lower = msg.toLowerCase();
+    if (lower.contains('sqlite') ||
+        lower.contains('syntax error') ||
+        lower.contains('no such table') ||
+        lower.contains('no such column') ||
+        lower.contains('foreign key') ||
+        lower.contains('stack trace') ||
+        lower.contains('node_modules') ||
+        lower.contains('exception:') ||
+        msg.contains(':\\') ||
+        msg.contains(':/')) {
+      return false;
+    }
+    return true;
+  }
+
   Map<String, dynamic> _unwrap(_Raw r) {
     if (r.status >= 200 && r.status < 300) return r.json;
     final code = r.json['code']?.toString();
-    final serverMsg = r.json['error']?.toString();
+    final rawMsg = r.json['error']?.toString() ?? r.json['message']?.toString();
+    final cleanServerMsg = _isCleanUserMessage(rawMsg) ? rawMsg : null;
     final message = switch (r.status) {
-      // The backend's own message is user-safe for these client errors.
-      400 || 401 || 403 || 404 || 409 || 422 => serverMsg,
+      // The backend's own message is user-safe for these client errors when sanitized.
+      400 || 401 || 403 || 404 || 409 || 422 => cleanServerMsg,
       413 => 'फोटो खूप मोठा आहे. कृपया लहान फोटो निवडा.',
-      429 => serverMsg ?? 'खूप विनंत्या. कृपया थोड्या वेळाने प्रयत्न करा.',
+      429 => cleanServerMsg ?? 'खूप विनंत्या. कृपया थोड्या वेळाने प्रयत्न करा.',
       _ => null,
     };
     throw ApiException(

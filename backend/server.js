@@ -24,13 +24,23 @@ import cultureRoutes from './routes/culture.routes.js';
 import locationsRoutes from './routes/locations.routes.js';
 import mediaRoutes from './routes/media.routes.js';
 import directoriesRoutes from './routes/directories.routes.js';
+import { generalRateLimiter } from './middleware/rateLimiter.js';
+import { optionalToken } from './middleware/auth.js';
+import { validateBody } from './middleware/validator.js';
+import { doctorSchema, bloodRequestSchema } from './schemas/general.schemas.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 5000;
 const DB_FILE = path.join(__dirname, 'db.json');
 
 app.use(cors());
 app.use(express.json());
+
+// Optional JWT inspection to classify requests for Tier 2 (Public) vs Tier 3 (Authenticated User) rate limits
+app.use(optionalToken);
+app.use(generalRateLimiter);
 
 // ==========================================
 // MOUNT ALL CONNECT MARATHA REST API ROUTERS
@@ -89,7 +99,7 @@ app.get('/api/doctors', (req, res) => {
   res.json(db.doctors || []);
 });
 
-app.post('/api/doctors', (req, res) => {
+app.post('/api/doctors', validateBody(doctorSchema), (req, res) => {
   const db = readData();
   db.doctors = db.doctors || [];
   const newDoctor = {
@@ -109,7 +119,7 @@ app.get('/api/blood/requests', (req, res) => {
   res.json(db.bloodRequests || []);
 });
 
-app.post('/api/blood/requests', (req, res) => {
+app.post('/api/blood/requests', validateBody(bloodRequestSchema), (req, res) => {
   const db = readData();
   db.bloodRequests = db.bloodRequests || [];
   const newReq = {
@@ -234,6 +244,27 @@ app.post('/api/bank/loans', (req, res) => {
   db.bankLoans.unshift(item);
   writeData(db);
   res.status(201).json({ success: true, message: '🏦 कर्ज अर्ज यशस्वीरीत्या सादर केला गेला!', loan: item });
+});
+
+// 404 Not Found Catch-All Handler for API Routes
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    code: 'ROUTE_NOT_FOUND',
+    error: 'विनंती केलेला मार्ग आढळला नाही (Requested endpoint not found).'
+  });
+});
+
+// Centralized Error Handling Middleware (Catches all sync & async errors, logs server-side, returns sanitized responses)
+app.use(errorHandler);
+
+// Global Uncaught / Unhandled Safety Guards
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('🚨 [CRITICAL] Unhandled Promise Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('🚨 [CRITICAL] Uncaught Exception:', err);
 });
 
 // Start Express Server

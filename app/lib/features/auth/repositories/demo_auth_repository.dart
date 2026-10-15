@@ -62,6 +62,9 @@ class DemoAuthRepository implements AuthRepository {
       role: d.role,
       phone: d.mobile.trim(),
       city: d.city.trim(),
+      referenceId: 'REF-96K-${(DateTime.now().millisecondsSinceEpoch % 10000).toString().padLeft(4, '0')}',
+      referredBy: d.referenceId ?? '',
+      totalReferrals: 0,
     );
     await _localDataSource.saveSession(profile);
     return profile;

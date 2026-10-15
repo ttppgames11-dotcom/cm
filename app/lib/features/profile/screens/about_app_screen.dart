@@ -182,7 +182,7 @@ class AboutAppScreen extends StatelessWidget {
   }
 
   static final _playStoreUri = Uri.parse(
-    'https://play.google.com/store/apps/details?id=com.connectmaratha.mobile',
+    'https://play.google.com/store/apps/details?id=com.connectmaratha.app',
   );
 
   Future<void> _open(BuildContext context, Uri uri) async {

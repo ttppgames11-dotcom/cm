@@ -86,9 +86,18 @@ export function sendSuccess(res, data = {}, message = '', statusCode = 200) {
 }
 
 export function sendError(res, error = 'Error', code = 'ERROR', statusCode = 400, validationErrors = null) {
+  let displayError = typeof error === 'object' && error?.message ? error.message : String(error);
+
+  // If 5xx or error contains internal details, log server-side and sanitize user-facing output
+  if (statusCode >= 500 || /sqlite|syntax error|no such|stack|\.(?:js|ts):\d+|node_modules|[a-zA-Z]:[\\\/]/i.test(displayError)) {
+    console.error(`🚨 [DIRECTORIES ERROR ${code}] Status ${statusCode}:`, error);
+    displayError = 'सर्व्हरवर तांत्रिक अडचण आली आहे. कृपया थोड्या वेळाने पुन्हा प्रयत्न करा (Internal server error).';
+    statusCode = statusCode >= 500 ? statusCode : 500;
+  }
+
   return res.status(statusCode).json({
     success: false,
-    error,
+    error: displayError,
     code,
     ...(validationErrors ? { validationErrors } : {})
   });
@@ -403,7 +412,7 @@ router.get(['/products', '/dairy/products'], (req, res, next) => {
     }
     if (search) {
       const q = search.toLowerCase();
-      products = products.filter(p => 
+      products = products.filter(p =>
         (p.name || '').toLowerCase().includes(q) ||
         (p.description || '').toLowerCase().includes(q) ||
         (p.category || '').toLowerCase().includes(q)
@@ -608,7 +617,7 @@ router.post(['/:id/registrations', '/dairy/:id/registrations'], authenticateToke
     }
 
     // Reject a second registration by the same member for the same centre
-    const alreadyRegistered = db.dairyRegistrations.find(r => 
+    const alreadyRegistered = db.dairyRegistrations.find(r =>
       String(r.dairyId) === String(dairy.id) && String(r.memberId) === String(req.user.id)
     );
     if (alreadyRegistered) {
@@ -756,7 +765,7 @@ router.get(['/', '/dairy'], (req, res, next) => {
 
     if (district && district !== 'सर्व' && district !== 'all') {
       const q = district.toLowerCase();
-      list = list.filter(d => 
+      list = list.filter(d =>
         (d.district || '').toLowerCase().includes(q) ||
         (d.headquarters || '').toLowerCase().includes(q) ||
         (d.village || '').toLowerCase().includes(q) ||
@@ -766,7 +775,7 @@ router.get(['/', '/dairy'], (req, res, next) => {
 
     if (search) {
       const q = search.toLowerCase();
-      list = list.filter(d => 
+      list = list.filter(d =>
         (d.dairyName || '').toLowerCase().includes(q) ||
         (d.brandName || '').toLowerCase().includes(q) ||
         (d.village || '').toLowerCase().includes(q) ||

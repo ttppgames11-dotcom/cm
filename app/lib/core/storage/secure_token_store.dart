@@ -4,7 +4,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 /// kept in SharedPreferences (plain-text XML) or written to logs.
 class SecureTokenStore {
   SecureTokenStore([FlutterSecureStorage? storage])
-    : _storage = storage ?? const FlutterSecureStorage();
+    : _storage = storage ??
+          const FlutterSecureStorage(
+            aOptions: AndroidOptions(resetOnError: true),
+          );
 
   static const _accessKey = 'cm_access_token';
   static const _refreshKey = 'cm_refresh_token';

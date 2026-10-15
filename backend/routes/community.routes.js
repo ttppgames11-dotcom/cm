@@ -1,23 +1,11 @@
 import { Router } from 'express';
-import jwt from 'jsonwebtoken';
 import { all, get, runQuery } from '../../database/database.js';
-import { authenticateToken } from '../middleware/auth.js';
+import { authenticateToken, optionalToken } from '../middleware/auth.js';
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'connect_maratha_secret_key_2026';
-
-function optionalAuth(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  if (!token) return next();
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (!err && user) req.user = user;
-    next();
-  });
-}
 
 // GET /api/community/posts
-router.get('/posts', optionalAuth, async (req, res, next) => {
+router.get('/posts', optionalToken, async (req, res, next) => {
   try {
     const { groupId } = req.query;
     const currentUserId = req.user?.id || null;

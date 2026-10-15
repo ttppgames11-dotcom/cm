@@ -1,8 +1,8 @@
 import http from 'http';
 import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from './middleware/auth.js';
 
 const PORT = 5000;
-const JWT_SECRET = 'connect_maratha_secret_key_2026';
 
 // Helper for tokens
 function makeToken(user) {

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../core/share/copy_share.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +13,8 @@ import '../core/profile/photo_picker_sheet.dart';
 import '../core/profile/profile_photo.dart';
 import '../features/auth/models/user_role.dart';
 import '../features/auth/providers/auth_provider.dart'
-    show authControllerProvider;
+    show authControllerProvider, apiClientProvider;
+import '../features/auth/models/user_profile.dart';
 import '../features/profile/providers/profile_provider.dart';
 import '../widgets/home/custom_bottom_nav_bar.dart';
 
@@ -212,8 +215,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   _buildTopBar(context),
                   const SizedBox(height: 14),
                   _buildMainProfileCard(context, profileData),
+                  const SizedBox(height: 14),
+                  _buildReferralCard(context, profileData.user),
                   const SizedBox(height: 16),
-                  _buildMenuListCard(context),
+                  _buildMenuListCard(context, profileData.user),
                   const SizedBox(height: 14),
                   _buildLogoutButton(context, ref),
                 ],
@@ -518,6 +523,41 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 color: const Color(0xFF6B7280),
                               ),
                             ),
+                            if (user != null && user.displayReferenceId.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 1),
+                                child: Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  spacing: 6,
+                                  runSpacing: 2,
+                                  children: [
+                                    Text(
+                                      'रेफरल ID : ${user.displayReferenceId}',
+                                      style: GoogleFonts.mukta(
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w700,
+                                        color: const Color(0xFFE84C10),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0.5),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFFF7ED),
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(color: const Color(0xFFFDBA74), width: 0.8),
+                                      ),
+                                      child: Text(
+                                        '${user.totalReferrals} रेफरल्स',
+                                        style: GoogleFonts.mukta(
+                                          fontSize: 9.5,
+                                          fontWeight: FontWeight.w800,
+                                          color: const Color(0xFFC2410C),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             const SizedBox(height: 6),
 
                             // Phone
@@ -649,9 +689,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  /// Menu Options List Card with 8 items
-  Widget _buildMenuListCard(BuildContext context) {
+  /// Menu Options List Card
+  Widget _buildMenuListCard(BuildContext context, [UserProfile? user]) {
     final menuItems = [
+      {
+        'icon': Icons.card_giftcard_rounded,
+        'title': 'माझे रेफरल्स (My Referrals)',
+        'subtitle': '${user?.totalReferrals ?? 0} सदस्य आमंत्रित • ${user?.displayReferenceId ?? ""}',
+      },
       {
         'icon': Icons.person_outline_rounded,
         'title': 'वैयक्तिक माहिती',
@@ -723,6 +768,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             return InkWell(
               onTap: () {
                 switch (item['title']) {
+                  case 'माझे रेफरल्स (My Referrals)':
+                    _showMyReferralsSheet(context, user);
+                    break;
                   case 'वैयक्तिक माहिती':
                     context.push('/profile/personal-info');
                     break;
@@ -852,4 +900,391 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
     );
   }
+
+  // ─── Referral Card & Referrals Sheet ─────────────────────────────────
+
+  Widget _buildReferralCard(BuildContext context, UserProfile? user) {
+    if (user == null || user.id.isEmpty) return const SizedBox.shrink();
+    final refCode = user.displayReferenceId;
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFFF7ED), Color(0xFFFFEDD5)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFFED7AA), width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFEA580C).withValues(alpha: 0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEA580C),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFEA580C).withValues(alpha: 0.25),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Icon(Icons.card_giftcard_rounded, color: Colors.white, size: 20),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'रेफर करा आणि परिवार वाढवा',
+                      style: GoogleFonts.mukta(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: const Color(0xFF9A3412),
+                        height: 1.15,
+                      ),
+                    ),
+                    const SizedBox(height: 1),
+                    Text(
+                      'आपला रेफरल कोड मित्रांना व नातेवाईकांना पाठवा',
+                      style: GoogleFonts.mukta(
+                        fontSize: 11.5,
+                        color: const Color(0xFF7C2D12),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFFDBA74)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.people_alt_rounded, size: 14, color: Color(0xFFEA580C)),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${user.totalReferrals} रेफरल्स',
+                      style: GoogleFonts.mukta(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w900,
+                        color: const Color(0xFFEA580C),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+
+          // Code display strip
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFFDBA74)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'तुमचा रेफरल कोड / Reference ID',
+                        style: GoogleFonts.mukta(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF9A3412),
+                        ),
+                      ),
+                      Text(
+                        refCode,
+                        style: GoogleFonts.mukta(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w900,
+                          color: const Color(0xFFC2410C),
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    final shareMsg = referralShareText(refCode);
+                    Clipboard.setData(ClipboardData(text: shareMsg));
+                    _showMessage(context, 'रेफरल मेसेज आणि Play Store लिंक कॉपी झाली!');
+                  },
+                  icon: const Icon(Icons.copy_rounded, size: 16, color: Color(0xFFEA580C)),
+                  label: Text(
+                    'कॉपी',
+                    style: GoogleFonts.mukta(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFFEA580C),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // Share & View buttons
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF16A34A),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () {
+                    final shareMsg = referralShareText(refCode);
+                    shareText(shareMsg, subject: 'Connect मराठा सदस्यत्व आमंत्रण');
+                  },
+                  icon: const Icon(Icons.share_rounded, size: 16),
+                  label: Text('शेअर करा', style: GoogleFonts.mukta(fontWeight: FontWeight.bold, fontSize: 13)),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF9A3412),
+                    side: const BorderSide(color: Color(0xFFFB923C)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () => _showMyReferralsSheet(context, user),
+                  icon: const Icon(Icons.list_alt_rounded, size: 16),
+                  label: Text('रेफरल यादी', style: GoogleFonts.mukta(fontWeight: FontWeight.bold, fontSize: 13)),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showMyReferralsSheet(BuildContext context, UserProfile? user) {
+    if (user == null) return;
+    final refCode = user.displayReferenceId;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFFFAF7F2),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(sheetContext).size.height * 0.8),
+          child: FutureBuilder<Map<String, dynamic>>(
+            future: () async {
+              try {
+                final api = ref.read(apiClientProvider);
+                final res = await api.get('/api/auth/referrals/my-referrals', auth: true);
+                return Map<String, dynamic>.from(res);
+              } catch (_) {
+                return {'referred_members': [], 'total_referrals': user.totalReferrals};
+              }
+            }(),
+            builder: (context, snapshot) {
+              final data = snapshot.data ?? {};
+              final list = (data['referred_members'] as List?) ?? [];
+              final totalCount = (data['total_referrals'] as num?)?.toInt() ?? user.totalReferrals;
+
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD1C7BD),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'माझे रेफरल्स (My Referrals)',
+                            style: GoogleFonts.mukta(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: const Color(0xFF2B1B12),
+                            ),
+                          ),
+                          Text(
+                            'एकूण जोडलेले सदस्य: $totalCount',
+                            style: GoogleFonts.mukta(
+                              fontSize: 12.5,
+                              color: const Color(0xFFEA580C),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(sheetContext),
+                        icon: const Icon(Icons.close_rounded, color: Color(0xFF6B7280)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Referral code badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFFED7AA)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'रेफरल कोड: $refCode',
+                          style: GoogleFonts.mukta(fontSize: 14, fontWeight: FontWeight.w800, color: const Color(0xFFC2410C)),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            final shareMsg = referralShareText(refCode);
+                            Clipboard.setData(ClipboardData(text: shareMsg));
+                            _showMessage(sheetContext, 'रेफरल मेसेज आणि Play Store लिंक कॉपी केली!');
+                          },
+                          child: Row(
+                            children: [
+                              const Icon(Icons.copy_rounded, size: 14, color: Color(0xFFEA580C)),
+                              const SizedBox(width: 4),
+                              Text('कॉपी', style: GoogleFonts.mukta(fontSize: 12, fontWeight: FontWeight.bold, color: const Color(0xFFEA580C))),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                    const Padding(
+                      padding: EdgeInsets.all(40),
+                      child: Center(child: CircularProgressIndicator(color: Color(0xFFEA580C))),
+                    )
+                  else if (list.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 30),
+                      child: Column(
+                        children: [
+                          const Icon(Icons.group_add_outlined, size: 48, color: Color(0xFFD1C7BD)),
+                          const SizedBox(height: 10),
+                          Text(
+                            'अद्याप कोणीही आपल्या रेफरलने जोडलेले नाही',
+                            style: GoogleFonts.mukta(fontSize: 14, fontWeight: FontWeight.w700, color: const Color(0xFF4B5563)),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'आपला रेफरल कोड मित्रांसोबत शेअर करा आणि समाजात जोडा!',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.mukta(fontSize: 12, color: const Color(0xFF9CA3AF)),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    Expanded(
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: list.length,
+                        separatorBuilder: (_, __) => const Divider(height: 1, color: Color(0xFFE5DCD0)),
+                        itemBuilder: (context, index) {
+                          final item = list[index] as Map;
+                          final name = (item['name'] ?? 'सदस्य').toString();
+                          final district = (item['district'] ?? item['city'] ?? '').toString();
+                          final joined = (item['joined'] ?? '').toString();
+
+                          return ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                            leading: CircleAvatar(
+                              backgroundColor: const Color(0xFFFFEDD5),
+                              child: Text(
+                                name.isNotEmpty ? name[0] : 'म',
+                                style: GoogleFonts.mukta(fontWeight: FontWeight.bold, color: const Color(0xFFEA580C)),
+                              ),
+                            ),
+                            title: Text(
+                              name,
+                              style: GoogleFonts.mukta(fontSize: 14.5, fontWeight: FontWeight.bold, color: const Color(0xFF1F2937)),
+                            ),
+                            subtitle: Text(
+                              district.isNotEmpty ? '$district • $joined' : joined,
+                              style: GoogleFonts.mukta(fontSize: 11.5, color: const Color(0xFF6B7280)),
+                            ),
+                            trailing: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF0FDF4),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(color: const Color(0xFFBBF7D0)),
+                              ),
+                              child: Text(
+                                'सक्रिय',
+                                style: GoogleFonts.mukta(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF16A34A)),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
 }

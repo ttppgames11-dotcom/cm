@@ -45,8 +45,8 @@ export async function getDatabase() {
     }
   }
 
-  // Ensure members table has hierarchical location columns
-  const locationColumns = ['country_id', 'state_id', 'district_id', 'taluka_id', 'village_id', 'taluka', 'village'];
+  // Ensure members table has hierarchical location columns and photo
+  const locationColumns = ['country_id', 'state_id', 'district_id', 'taluka_id', 'village_id', 'taluka', 'village', 'photo'];
   for (const col of locationColumns) {
     try {
       db.run(`ALTER TABLE members ADD COLUMN ${col} TEXT;`);
@@ -54,6 +54,51 @@ export async function getDatabase() {
       // Column already exists
     }
   }
+
+  // Ensure members table has referral columns
+  const referralColumns = [
+    { name: 'reference_id', def: 'TEXT' },
+    { name: 'referral_id', def: 'TEXT' },
+    { name: 'referred_by', def: 'TEXT' },
+    { name: 'total_referrals', def: 'INTEGER DEFAULT 0' }
+  ];
+  for (const col of referralColumns) {
+    try {
+      db.run(`ALTER TABLE members ADD COLUMN ${col.name} ${col.def};`);
+    } catch (_) {
+      // Column already exists
+    }
+  }
+
+  // Ensure every existing member has a unique reference_id & referral_id
+  try {
+    const unassigned = db.exec("SELECT id FROM members WHERE reference_id IS NULL OR reference_id = ''");
+    if (unassigned.length > 0 && unassigned[0].values) {
+      for (const row of unassigned[0].values) {
+        const id = row[0];
+        const numPart = String(id).replace(/\D/g, '') || Math.floor(1000 + Math.random() * 9000);
+        const refId = `REF-96K-${numPart}`;
+        db.run("UPDATE members SET reference_id = ?, referral_id = ?, total_referrals = COALESCE(total_referrals, 0) WHERE id = ?", [refId, refId, id]);
+      }
+    }
+  } catch (_) {}
+
+  // Ensure media table exists for secure isolated file/blob storage
+  try {
+    db.run([
+      'CREATE TABLE IF NOT EXISTS media (',
+      '  id TEXT PRIMARY KEY,',
+      '  owner_id TEXT NOT NULL,',
+      '  kind TEXT NOT NULL,',
+      '  mime TEXT NOT NULL,',
+      '  bytes BLOB NOT NULL,',
+      '  size INTEGER NOT NULL,',
+      '  created_at TEXT NOT NULL',
+      ');',
+      'CREATE INDEX IF NOT EXISTS idx_media_owner ON media (owner_id);',
+      'CREATE INDEX IF NOT EXISTS idx_media_kind ON media (kind);'
+    ].join('\n'));
+  } catch (_) {}
 
   saveDatabase();
   return db;

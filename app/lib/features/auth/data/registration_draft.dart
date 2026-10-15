@@ -15,7 +15,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// SharedPreferences, and the draft expires after 30 minutes.
 class RegistrationDraft {
   RegistrationDraft([FlutterSecureStorage? secure])
-    : _secure = secure ?? const FlutterSecureStorage();
+    : _secure = secure ??
+          const FlutterSecureStorage(
+            aOptions: AndroidOptions(resetOnError: true),
+          );
 
   static const _key = 'cm_registration_draft';
   static const _passwordKey = 'cm_registration_draft_password';

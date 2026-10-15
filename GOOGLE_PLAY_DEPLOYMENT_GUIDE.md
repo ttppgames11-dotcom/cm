@@ -1,8 +1,8 @@
 # 🚀 Connect Maratha - Google Play Console Deployment Guide
 
-**Version:** 1.0.2+3  
+**Version:** 1.0.3+5  
 **Package:** com.connectmaratha.app  
-**Date:** October 6, 2026
+**Date:** October 13, 2026
 
 ---
 

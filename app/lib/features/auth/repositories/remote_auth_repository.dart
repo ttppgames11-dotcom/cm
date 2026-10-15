@@ -37,6 +37,9 @@ class RemoteAuthRepository implements AuthRepository {
       city: city.isNotEmpty ? city : district,
       email: (m['email'] ?? '').toString(),
       photo: (m['photo'] ?? '').toString(),
+      referenceId: (m['reference_id'] ?? m['referral_id'] ?? '').toString(),
+      referredBy: (m['referred_by'] ?? '').toString(),
+      totalReferrals: int.tryParse((m['total_referrals'] ?? 0).toString()) ?? 0,
     );
   }
 
@@ -204,6 +207,11 @@ class RemoteAuthRepository implements AuthRepository {
           'skills': d.skills.trim(),
           'interests': d.interest,
           'about': d.about.trim(),
+          if (d.referenceId != null && d.referenceId!.isNotEmpty) ...{
+            'reference_id': d.referenceId!.trim(),
+            'referral_code': d.referenceId!.trim(),
+            'referred_by': d.referenceId!.trim(),
+          },
           'legalCompliance': {
             'termsAccepted': d.termsAccepted,
             'privacyAccepted': d.privacyAccepted,

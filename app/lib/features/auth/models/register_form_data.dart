@@ -32,6 +32,8 @@ class RegisterFormData {
     this.interest = 'दुर्ग संवर्धन व गडभ्रमण (Fort Conservation & Trekking)',
     this.about = '',
     this.membershipTier = 'Basic',
+    this.referenceId,
+    this.referredByName,
   });
 
   String fullName;
@@ -62,4 +64,10 @@ class RegisterFormData {
   String interest;
   String about;
   String membershipTier;
+
+  /// Referral code / Reference ID entered during registration
+  String? referenceId;
+
+  /// Name of the member who referred this user (from verify API)
+  String? referredByName;
 }

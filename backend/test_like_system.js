@@ -1,7 +1,6 @@
 import { all, get, runQuery } from '../database/database.js';
 import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'connect_maratha_secret_key_2026';
+import { JWT_SECRET } from './middleware/auth.js';
 
 async function runTests() {
   console.log('--- Starting Like/Unlike Backend Verification Tests ---');

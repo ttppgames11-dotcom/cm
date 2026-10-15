@@ -2,6 +2,11 @@ import bcrypt from 'bcryptjs';
 import { getDatabase, runQuery, all, saveDatabase } from './database.js';
 
 export async function seed() {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('⛔ [CRITICAL SECURITY] Seeding demo accounts is blocked in production environment.');
+    return;
+  }
+
   console.log('🌱 Seeding Connect Maratha SQLite database...');
   await getDatabase();
 
@@ -12,7 +17,8 @@ export async function seed() {
     return;
   }
 
-  const defaultPasswordHash = bcrypt.hashSync('password123', 8);
+  const defaultSeedPassword = process.env.SEED_DEFAULT_PASSWORD || 'password123';
+  const defaultPasswordHash = bcrypt.hashSync(defaultSeedPassword, 8);
 
   // 1. Seed Members
   const members = [

@@ -68,7 +68,7 @@ router.get('/oral-history', (req, res) => {
 });
 
 // POST /api/culture/oral-history
-router.post('/oral-history', (req, res) => {
+router.post('/oral-history', (req, res, next) => {
   try {
     const { title, village, taluka, district, region, contributor, contributorClan, story, historicalReference } = req.body;
     
@@ -102,7 +102,7 @@ router.post('/oral-history', (req, res) => {
       entry: newEntry
     });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    next(err);
   }
 });
 

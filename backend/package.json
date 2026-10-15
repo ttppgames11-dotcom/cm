@@ -7,7 +7,13 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "seed": "node ../database/seed.js"
+    "seed": "node ../database/seed.js",
+    "test:ratelimit": "node test_rate_limiter.js",
+    "test:validate": "node test_validator.js",
+    "test:secrets": "node test_secrets_env.js",
+    "test:errors": "node test_error_handling.js",
+    "test:upload": "node test_upload_security.js",
+    "test": "node test_rate_limiter.js && node test_validator.js && node test_secrets_env.js && node test_error_handling.js && node test_upload_security.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

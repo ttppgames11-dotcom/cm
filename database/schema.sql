@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS members (
   phone TEXT,
   password_hash TEXT,
   avatar TEXT DEFAULT '👤',
+  photo TEXT,
   city TEXT,
   district TEXT,
   state TEXT DEFAULT 'महाराष्ट्र',
@@ -67,6 +68,10 @@ CREATE TABLE IF NOT EXISTS members (
   about TEXT,
   tier TEXT DEFAULT 'Gold',
   role TEXT DEFAULT 'member',
+  reference_id TEXT,
+  referral_id TEXT,
+  referred_by TEXT,
+  total_referrals INTEGER DEFAULT 0,
   verified_mobile INTEGER DEFAULT 1,
   verified_email INTEGER DEFAULT 1,
   verified_profile INTEGER DEFAULT 1,
@@ -337,4 +342,17 @@ CREATE TABLE IF NOT EXISTS password_resets (
   attempts INTEGER DEFAULT 0,
   created_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS media (
+  id TEXT PRIMARY KEY,
+  owner_id TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  mime TEXT NOT NULL,
+  bytes BLOB NOT NULL,
+  size INTEGER NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_media_owner ON media (owner_id);
+CREATE INDEX IF NOT EXISTS idx_media_kind ON media (kind);
 

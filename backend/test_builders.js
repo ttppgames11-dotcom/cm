@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { get, all } from '../database/database.js';
+import { JWT_SECRET } from './middleware/auth.js';
 
 const BASE_URL = 'http://localhost:5000/api';
-const JWT_SECRET = process.env.JWT_SECRET || 'connect_maratha_secret_key_2026';
 
 async function runTests() {
   console.log('🧪 Starting Builders Feature Endpoints Test Suite...\n');

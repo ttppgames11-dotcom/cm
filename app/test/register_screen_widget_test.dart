@@ -49,8 +49,8 @@ void main() {
       expect(find.text('नोंदणी करा / Create Account'), findsOneWidget);
       expect(
         find.byType(TextField),
-        findsNWidgets(4),
-      ); // Name, Mobile, Email, Password
+        findsNWidgets(5),
+      ); // Name, Mobile, Email, Password, Referral Code
 
       // Fill Step 0 fields
       await tester.enterText(find.byType(TextField).at(0), 'छत्रपती विचार मंच');

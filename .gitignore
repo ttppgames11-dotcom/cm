@@ -3,8 +3,34 @@
 .env.*
 !.env.example
 
+# Secrets, Keys, and Keystores (CRITICAL: Never commit to Git)
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+key.properties
+google-services.json
+GoogleService-Info.plist
+service-account*.json
+*credential*.json
+
+# Deployment packages & archives
+hostinger_backend_deploy.zip
+*.zip
+*.tar.gz
+*.tgz
+
+# Database journals & SQLite temporary files
+*.db-journal
+*.db-wal
+*.db-shm
+
 # Node
 node_modules/
+dist/
+**/dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -30,9 +56,10 @@ app/build/
 *.ipr
 *.iws
 
-# OS files
+# OS files & temporary images
 .DS_Store
 Thumbs.db
+live_phone_screen.png
 
 # Logs
 *.log

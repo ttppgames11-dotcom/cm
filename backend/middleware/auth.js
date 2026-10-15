@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from '../config/jwt.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'connect_maratha_secret_key_2026';
+export { JWT_SECRET };
 
 export function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
@@ -43,4 +44,4 @@ export function optionalToken(req, res, next) {
   });
 }
 
-export default { authenticateToken, optionalToken, generateToken };
+export default { JWT_SECRET, authenticateToken, optionalToken, generateToken };

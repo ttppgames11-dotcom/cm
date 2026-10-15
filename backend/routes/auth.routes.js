@@ -2,16 +2,39 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { runQuery, get, all, transaction } from '../../database/database.js';
-import { generateToken, authenticateToken } from '../middleware/auth.js';
+import { generateToken, authenticateToken, JWT_SECRET } from '../middleware/auth.js';
 import { sendPasswordResetOtpEmail, sendWelcomeEmail } from '../utils/mailer.js';
 import { validateLocationHierarchy } from './locations.routes.js';
+import { authRateLimiter } from '../middleware/rateLimiter.js';
+import { validateBody } from '../middleware/validator.js';
+import {
+  loginSchema,
+  registerSchema,
+  googleAuthSchema,
+  forgotPasswordSchema,
+  verifyResetOtpSchema,
+  resetPasswordSchema,
+  deleteAccountSchema
+} from '../schemas/auth.schemas.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'connect_maratha_secret_key_2026';
 
 const router = Router();
 
+export function ensureMemberReferral(member) {
+  if (!member) return member;
+  if (!member.reference_id || !member.referral_id) {
+    const numPart = String(member.id || '').replace(/\D/g, '') || Math.floor(1000 + Math.random() * 9000);
+    const refCode = `REF-96K-${numPart}`;
+    member.reference_id = member.reference_id || refCode;
+    member.referral_id = member.referral_id || member.reference_id;
+  }
+  member.total_referrals = Number(member.total_referrals) || 0;
+  return member;
+}
+
+
 // POST /api/auth/register
-router.post('/register', async (req, res, next) => {
+router.post('/register', authRateLimiter, validateBody(registerSchema, { atLeastOneOf: ['email', 'phone'] }), async (req, res, next) => {
   try {
     const {
       name,
@@ -59,7 +82,7 @@ router.post('/register', async (req, res, next) => {
     }
 
     const memberId = 'M' + Math.floor(1000 + Math.random() * 9000);
-    const passwordHash = password ? bcrypt.hashSync(password, 8) : bcrypt.hashSync('password123', 8);
+    const passwordHash = password ? bcrypt.hashSync(password, 8) : null;
     const skillsJson = Array.isArray(skills) ? JSON.stringify(skills) : JSON.stringify(skills ? [skills] : []);
 
     // Resolve display names from IDs if names not provided
@@ -92,23 +115,49 @@ router.post('/register', async (req, res, next) => {
 
     const computedCity = city || (finalVillage ? `${finalVillage}, ${finalTaluka}` : (finalTaluka ? `${finalTaluka}, ${finalDistrict}` : finalDistrict));
 
+    // Process Referral / Reference ID
+    const referralInput = (req.body.reference_id || req.body.referral_code || req.body.referred_by || req.body.referenceId || '').trim();
+    let verifiedReferrer = null;
+    if (referralInput) {
+      const cleanUpper = referralInput.toUpperCase();
+      const cleanDigits = referralInput.replace(/\D/g, '');
+      verifiedReferrer = await get(`
+        SELECT id, name, reference_id, referral_id, total_referrals FROM members
+        WHERE UPPER(reference_id) = ? 
+           OR UPPER(referral_id) = ?
+           OR UPPER(id) = ?
+           OR (? != '' AND SUBSTR(phone, -10) = ?)
+      `, [cleanUpper, cleanUpper, cleanUpper, cleanDigits.length >= 10 ? cleanDigits.slice(-10) : '', cleanDigits.length >= 10 ? cleanDigits.slice(-10) : '']);
+    }
+
+    const assignedReferredBy = verifiedReferrer ? (verifiedReferrer.reference_id || verifiedReferrer.id) : (referralInput || null);
+    const numPart = String(memberId).replace(/\D/g, '') || Math.floor(1000 + Math.random() * 9000);
+    const newReferenceId = `REF-96K-${numPart}`;
+
     await runQuery(`
       INSERT INTO members (
         id, name, email, phone, password_hash, avatar, city, district, state, country,
         country_id, state_id, district_id, taluka_id, village_id, taluka, village,
-        profession, business, education, skills, about, tier, role, joined, created_at
+        profession, business, education, skills, about, tier, role, joined, created_at,
+        reference_id, referral_id, referred_by, total_referrals
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Basic', 'member', date('now'), datetime('now'))
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Basic', 'member', date('now'), datetime('now'), ?, ?, ?, 0)
     `, [
       memberId, name, email || '', phone || '', passwordHash, '👤', computedCity, finalDistrict, finalState, finalCountry,
       countryId || null, stateId || null, districtId || null, talukaId || null, villageId || null, finalTaluka, finalVillage,
-      profession || '', business || '', education || '', skillsJson, about || ''
+      profession || '', business || '', education || '', skillsJson, about || '',
+      newReferenceId, newReferenceId, assignedReferredBy
     ]);
+
+    if (verifiedReferrer && verifiedReferrer.id) {
+      await runQuery('UPDATE members SET total_referrals = COALESCE(total_referrals, 0) + 1 WHERE id = ?', [verifiedReferrer.id]);
+    }
 
     const newMember = await get(`
       SELECT id, name, email, phone, avatar, city, district, state, country,
              country_id, state_id, district_id, taluka_id, village_id, taluka, village,
-             profession, business, education, skills, about, tier, role, joined
+             profession, business, education, skills, about, tier, role, joined,
+             reference_id, referral_id, referred_by, total_referrals
       FROM members WHERE id = ?
     `, [memberId]);
     
@@ -141,7 +190,7 @@ router.post('/register', async (req, res, next) => {
 });
 
 // POST /api/auth/login
-router.post('/login', async (req, res, next) => {
+router.post('/login', authRateLimiter, validateBody(loginSchema), async (req, res, next) => {
   try {
     const { identifier, password } = req.body; // identifier can be email, phone or ID
 
@@ -162,13 +211,19 @@ router.post('/login', async (req, res, next) => {
       });
     }
 
-    // If password provided, verify hash
-    if (password && member.password_hash) {
-      const isMatch = bcrypt.compareSync(password, member.password_hash);
-      // If default demo password or exact match
-      if (!isMatch && password !== 'password123') {
-        return res.status(401).json({ success: false, error: 'अवैध संकेतशब्द (Incorrect password).' });
-      }
+    // Verify password hash
+    if (!member.password_hash) {
+      return res.status(401).json({
+        success: false,
+        error: 'या खात्यासाठी संकेतशब्द सेट केलेला नाही. कृपया Google सह लॉगिन करा किंवा संकेतशब्द रीसेट करा.'
+      });
+    }
+
+    const isMatch = bcrypt.compareSync(password || '', member.password_hash);
+    const allowDemoLogin = process.env.NODE_ENV !== 'production' && process.env.ALLOW_DEV_LOGIN_FALLBACK === 'true';
+
+    if (!isMatch && !(allowDemoLogin && password === 'password123')) {
+      return res.status(401).json({ success: false, error: 'अवैध संकेतशब्द (Incorrect password).' });
     }
 
     // Clean sensitive data
@@ -181,6 +236,7 @@ router.post('/login', async (req, res, next) => {
       member.interests = [];
     }
 
+    ensureMemberReferral(member);
     const token = generateToken(member);
 
     res.json({
@@ -195,7 +251,7 @@ router.post('/login', async (req, res, next) => {
 });
 
 // POST /api/auth/google
-router.post('/google', async (req, res, next) => {
+router.post('/google', authRateLimiter, validateBody(googleAuthSchema, { atLeastOneOf: ['email', 'googleId'] }), async (req, res, next) => {
   try {
     const { googleId, name, email, photoUrl } = req.body;
 
@@ -269,7 +325,7 @@ router.get('/me', authenticateToken, async (req, res, next) => {
 // ====================================================
 
 // POST /api/auth/forgot-password
-router.post('/forgot-password', async (req, res, next) => {
+router.post('/forgot-password', authRateLimiter, validateBody(forgotPasswordSchema), async (req, res, next) => {
   try {
     const { email } = req.body;
     if (!email || !email.trim()) {
@@ -328,7 +384,7 @@ router.post('/forgot-password', async (req, res, next) => {
 });
 
 // POST /api/auth/verify-reset-otp
-router.post('/verify-reset-otp', async (req, res, next) => {
+router.post('/verify-reset-otp', authRateLimiter, validateBody(verifyResetOtpSchema), async (req, res, next) => {
   try {
     const { email, otp } = req.body;
 
@@ -402,7 +458,7 @@ router.post('/verify-reset-otp', async (req, res, next) => {
 });
 
 // POST /api/auth/reset-password
-router.post('/reset-password', async (req, res, next) => {
+router.post('/reset-password', authRateLimiter, validateBody(resetPasswordSchema), async (req, res, next) => {
   try {
     const { email, resetToken, newPassword } = req.body;
 
@@ -465,7 +521,7 @@ router.post('/reset-password', async (req, res, next) => {
 });
 
 // DELETE /api/auth/account
-router.delete('/account', authenticateToken, async (req, res, next) => {
+router.delete('/account', authenticateToken, validateBody(deleteAccountSchema), async (req, res, next) => {
   const memberId = req.user?.id;
   if (!memberId) {
     return res.status(401).json({ success: false, error: 'प्रमाणीकरण आवश्यक आहे (Authentication required)' });
@@ -591,6 +647,123 @@ router.delete('/account', authenticateToken, async (req, res, next) => {
     return res.json({
       success: true,
       message: 'खाते आणि सर्व वैयक्तिक डेटा यशस्वीरित्या कायमस्वरूपी हटवला गेला आहे (Account and personal data deleted successfully).'
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+// GET /api/auth/referrals/verify/:code
+// Public: Verify referral code / reference_id
+router.get('/referrals/verify/:code', async (req, res) => {
+  try {
+    const rawCode = String(req.params.code || '').trim();
+    if (!rawCode) {
+      return res.status(400).json({ success: false, error: 'रेफरल कोड आवश्यक आहे.' });
+    }
+
+    const cleanUpper = rawCode.toUpperCase();
+    const cleanDigits = rawCode.replace(/\D/g, '');
+
+    const referrer = await get(`
+      SELECT id, name, reference_id, referral_id, district, city, phone FROM members
+      WHERE UPPER(reference_id) = ? 
+         OR UPPER(referral_id) = ?
+         OR UPPER(id) = ?
+         OR (? != '' AND SUBSTR(phone, -10) = ?)
+    `, [cleanUpper, cleanUpper, cleanUpper, cleanDigits.length >= 10 ? cleanDigits.slice(-10) : '', cleanDigits.length >= 10 ? cleanDigits.slice(-10) : '']);
+
+    if (referrer) {
+      return res.json({
+        success: true,
+        isValid: true,
+        message: 'सत्यापित रेफरल कोड',
+        referrer: {
+          id: referrer.id,
+          name: referrer.name,
+          reference_id: referrer.reference_id || referrer.id,
+          referral_id: referrer.referral_id || referrer.reference_id || referrer.id,
+          district: referrer.district || 'महाराष्ट्र',
+          city: referrer.city || ''
+        }
+      });
+    }
+
+    // Official fallbacks
+    const officialCodes = {
+      'CM-OFFICIAL-2026': { name: 'Connect Maratha अधिकृत केंद्रीय मंच', district: 'महाराष्ट्र' },
+      'CM-ADMIN-001': { name: 'Connect Maratha मुख्य नियामक कार्यालय', district: 'महाराष्ट्र' },
+      'CM-PUN-0842': { name: 'अमोल तुकाराम जाधव', district: 'पुणे' }
+    };
+    if (officialCodes[cleanUpper]) {
+      return res.json({
+        success: true,
+        isValid: true,
+        message: 'अधिकृत रेफरल कोड',
+        referrer: {
+          id: cleanUpper,
+          name: officialCodes[cleanUpper].name,
+          reference_id: cleanUpper,
+          referral_id: cleanUpper,
+          district: officialCodes[cleanUpper].district,
+          city: 'महाराष्ट्र'
+        }
+      });
+    }
+
+    return res.status(404).json({ success: false, isValid: false, error: 'हा रेफरल आयडी आढळला नाही.' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/auth/referrals/my-referrals
+// Authenticated: Get current user's referral stats and list of referred members
+router.get('/referrals/my-referrals', authenticateToken, async (req, res, next) => {
+  try {
+    const member = await get('SELECT * FROM members WHERE id = ?', [req.user.id]);
+    if (!member) {
+      return res.status(404).json({ success: false, error: 'सदस्य सापडला नाही.' });
+    }
+
+    const populated = ensureMemberReferral(member);
+    const myRefId = (populated.reference_id || '').toUpperCase();
+    const myCode = (populated.referral_id || '').toUpperCase();
+    const myId = String(populated.id || '').toUpperCase();
+
+    // Query members referred by this user
+    const referredList = await all(`
+      SELECT id, name, phone, district, city, joined, created_at 
+      FROM members 
+      WHERE id != ? AND (
+        UPPER(referred_by) = ? OR 
+        UPPER(referred_by) = ? OR 
+        UPPER(referred_by) = ?
+      )
+      ORDER BY created_at DESC
+    `, [member.id, myRefId, myCode, myId]);
+
+    const referredMembers = referredList.map(m => ({
+      id: m.id,
+      name: m.name,
+      phone: m.phone ? `${String(m.phone).slice(0, 4)} •••••` : '',
+      district: m.district || m.city || 'पुणे',
+      city: m.city || m.district || '',
+      joined: m.joined || (m.created_at ? String(m.created_at).split('T')[0] : '2026-03-01'),
+      status: 'सक्रिय (Active)'
+    }));
+
+    const totalCount = Math.max(Number(populated.total_referrals) || 0, referredMembers.length);
+    const shareLink = `https://connectmaratha.com/register?ref=${populated.reference_id || populated.id}`;
+
+    return res.json({
+      success: true,
+      reference_id: populated.reference_id,
+      referral_id: populated.referral_id || populated.reference_id,
+      total_referrals: totalCount,
+      share_link: shareLink,
+      referred_members: referredMembers
     });
   } catch (err) {
     next(err);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:app/core/share/copy_share.dart';
 import 'package:app/features/auth/auth_controller.dart';
 import 'package:app/features/auth/providers/auth_provider.dart';
 import 'package:app/features/business/referrals/domain/models/referral.dart';
@@ -276,5 +277,13 @@ void main() {
       submitBtn = tester.widget(submitFinder);
       expect(submitBtn.onPressed, isNotNull, reason: 'Submit must be enabled after consent');
     });
+
+    test('referralShareText generates message with Play Store link and reference ID', () {
+      final message = referralShareText('REF-96K-5578');
+      expect(message, contains('https://play.google.com/store/apps/details?id=com.connectmaratha.app'));
+      expect(message, contains('REF-96K-5578'));
+      expect(message, contains('Connect मराठा'));
+    });
   });
 }
+
