@@ -45,7 +45,7 @@ router.get('/posts', optionalToken, async (req, res, next) => {
 });
 
 // POST /api/community/posts
-router.post('/posts', optionalAuth, async (req, res, next) => {
+router.post('/posts', optionalToken, async (req, res, next) => {
   try {
     const { author_id, author_name, author_avatar, group_id, text, image, image_id } = req.body;
 

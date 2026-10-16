@@ -29,6 +29,7 @@ export function generateToken(user) {
 }
 
 export function optionalToken(req, res, next) {
+
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -45,3 +46,5 @@ export function optionalToken(req, res, next) {
 }
 
 export default { JWT_SECRET, authenticateToken, optionalToken, generateToken };
+
+export const optionalAuth = optionalToken;

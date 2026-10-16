@@ -53,14 +53,15 @@ function validateField(field, value, rule) {
 
   // 2. Type validation
   const actualType = Array.isArray(value) ? 'array' : typeof value;
-  const expectedType = rule.type || 'string';
+  const allowedTypes = Array.isArray(rule.type) ? rule.type : [rule.type || 'string'];
 
-  if (actualType !== expectedType) {
-    return `${field} चे स्वरूप अयोग्य आहे: ${expectedType} अपेक्षित, ${actualType} मिळाले (${field} must be of type ${expectedType})`;
+  if (!allowedTypes.includes(actualType)) {
+    const expectedStr = allowedTypes.join(' किंवा ');
+    return `${field} चे स्वरूप अयोग्य आहे: ${expectedStr} अपेक्षित, ${actualType} मिळाले (${field} must be of type ${allowedTypes.join(' or ')})`;
   }
 
   // 3. String validation
-  if (expectedType === 'string') {
+  if (actualType === 'string') {
     const str = value.trim();
 
     if (rule.minLength !== undefined && str.length < rule.minLength) {
@@ -94,7 +95,7 @@ function validateField(field, value, rule) {
   }
 
   // 4. Number validation
-  if (expectedType === 'number') {
+  if (actualType === 'number') {
     if (isNaN(value) || !Number.isFinite(value)) {
       return `${field} वैध संख्या असावी (${field} must be a valid number)`;
     }
@@ -119,7 +120,7 @@ function validateField(field, value, rule) {
   }
 
   // 5. Array validation
-  if (expectedType === 'array') {
+  if (actualType === 'array') {
     if (rule.minItems !== undefined && value.length < rule.minItems) {
       return `${field} मध्ये किमान ${rule.minItems} आयटम असावेत (${field} must contain at least ${rule.minItems} items)`;
     }
@@ -138,7 +139,7 @@ function validateField(field, value, rule) {
   }
 
   // 6. Boolean validation
-  if (expectedType === 'boolean') {
+  if (actualType === 'boolean') {
     if (typeof value !== 'boolean') {
       return `${field} बुलियन (true/false) असावे (${field} must be boolean)`;
     }

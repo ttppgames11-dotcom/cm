@@ -32,14 +32,41 @@ export function ensureMemberReferral(member) {
   return member;
 }
 
+export function normalizeMemberStrings(member) {
+  if (!member) return member;
+  if (typeof member.skills === 'string') {
+    try {
+      const parsed = JSON.parse(member.skills);
+      if (Array.isArray(parsed)) {
+        member.skills = parsed.join(', ');
+      }
+    } catch {}
+  } else if (Array.isArray(member.skills)) {
+    member.skills = member.skills.join(', ');
+  }
+  member.skills = member.skills || '';
+
+  if (Array.isArray(member.about)) {
+    member.about = member.about.join('\n');
+  } else if (typeof member.about === 'string') {
+    try {
+      const parsed = JSON.parse(member.about);
+      if (Array.isArray(parsed)) member.about = parsed.join('\n');
+    } catch {}
+  }
+  member.about = member.about || '';
+  return member;
+}
+
 
 // POST /api/auth/register
-router.post('/register', authRateLimiter, validateBody(registerSchema, { atLeastOneOf: ['email', 'phone'] }), async (req, res, next) => {
+router.post('/register', authRateLimiter, validateBody(registerSchema, { atLeastOneOf: ['email', 'phone', 'mobile'], allowUnknown: true }), async (req, res, next) => {
   try {
+    const phone = req.body.phone || req.body.mobile || '';
+    const business = req.body.business || req.body.organization || '';
     const {
       name,
       email,
-      phone,
       password,
       city,
       district,
@@ -53,7 +80,6 @@ router.post('/register', authRateLimiter, validateBody(registerSchema, { atLeast
       taluka,
       village,
       profession,
-      business,
       education,
       skills,
       about
@@ -83,7 +109,21 @@ router.post('/register', authRateLimiter, validateBody(registerSchema, { atLeast
 
     const memberId = 'M' + Math.floor(1000 + Math.random() * 9000);
     const passwordHash = password ? bcrypt.hashSync(password, 8) : null;
-    const skillsJson = Array.isArray(skills) ? JSON.stringify(skills) : JSON.stringify(skills ? [skills] : []);
+    
+    // Normalize skills and about as strings
+    let skillsString = '';
+    if (Array.isArray(skills)) {
+      skillsString = skills.map(s => String(s).trim()).filter(Boolean).join(', ');
+    } else if (typeof skills === 'string') {
+      skillsString = skills.trim();
+    }
+
+    let aboutString = '';
+    if (Array.isArray(about)) {
+      aboutString = about.map(a => String(a).trim()).filter(Boolean).join('\n');
+    } else if (typeof about === 'string') {
+      aboutString = about.trim();
+    }
 
     // Resolve display names from IDs if names not provided
     let finalCountry = country || 'भारत';
@@ -116,7 +156,7 @@ router.post('/register', authRateLimiter, validateBody(registerSchema, { atLeast
     const computedCity = city || (finalVillage ? `${finalVillage}, ${finalTaluka}` : (finalTaluka ? `${finalTaluka}, ${finalDistrict}` : finalDistrict));
 
     // Process Referral / Reference ID
-    const referralInput = (req.body.reference_id || req.body.referral_code || req.body.referred_by || req.body.referenceId || '').trim();
+    const referralInput = (req.body.reference_id || req.body.referral_code || req.body.referred_by || req.body.referredBy || req.body.referralCode || req.body.referenceId || '').trim();
     let verifiedReferrer = null;
     if (referralInput) {
       const cleanUpper = referralInput.toUpperCase();
@@ -145,7 +185,7 @@ router.post('/register', authRateLimiter, validateBody(registerSchema, { atLeast
     `, [
       memberId, name, email || '', phone || '', passwordHash, '👤', computedCity, finalDistrict, finalState, finalCountry,
       countryId || null, stateId || null, districtId || null, talukaId || null, villageId || null, finalTaluka, finalVillage,
-      profession || '', business || '', education || '', skillsJson, about || '',
+      profession || '', business || '', education || '', skillsString, aboutString,
       newReferenceId, newReferenceId, assignedReferredBy
     ]);
 
@@ -161,11 +201,7 @@ router.post('/register', authRateLimiter, validateBody(registerSchema, { atLeast
       FROM members WHERE id = ?
     `, [memberId]);
     
-    try {
-      newMember.skills = JSON.parse(newMember.skills || '[]');
-    } catch {
-      newMember.skills = [];
-    }
+    normalizeMemberStrings(newMember);
 
     const token = generateToken(newMember);
 
@@ -190,18 +226,26 @@ router.post('/register', authRateLimiter, validateBody(registerSchema, { atLeast
 });
 
 // POST /api/auth/login
-router.post('/login', authRateLimiter, validateBody(loginSchema), async (req, res, next) => {
+router.post('/login', authRateLimiter, validateBody(loginSchema, { allowUnknown: true }), async (req, res, next) => {
   try {
-    const { identifier, password } = req.body; // identifier can be email, phone or ID
+    const rawId = req.body.identifier || req.body.phone || req.body.mobile || req.body.email;
+    const { password } = req.body;
 
-    if (!identifier) {
+    if (!rawId) {
       return res.status(400).json({ success: false, error: 'कृपया आयडी, ईमेल किंवा फोन प्रविष्ट करा.' });
     }
 
+    const cleanId = String(rawId).trim();
+    const cleanDigits = cleanId.replace(/\D/g, '');
+    const clean10 = cleanDigits.length >= 10 ? cleanDigits.slice(-10) : '';
+
     const member = await get(`
       SELECT * FROM members 
-      WHERE id = ? OR email = ? OR phone = ?
-    `, [identifier, identifier, identifier]);
+      WHERE id = ? 
+         OR LOWER(email) = LOWER(?) 
+         OR phone = ? 
+         OR (? != '' AND (phone LIKE ? OR phone LIKE ?))
+    `, [cleanId, cleanId, cleanId, clean10, '%' + clean10, '%' + clean10 + '%']);
 
     if (!member) {
       return res.status(401).json({
@@ -228,11 +272,10 @@ router.post('/login', authRateLimiter, validateBody(loginSchema), async (req, re
 
     // Clean sensitive data
     delete member.password_hash;
+    normalizeMemberStrings(member);
     try {
-      member.skills = JSON.parse(member.skills || '[]');
       member.interests = JSON.parse(member.interests || '[]');
     } catch {
-      member.skills = [];
       member.interests = [];
     }
 
@@ -273,11 +316,10 @@ router.post('/google', authRateLimiter, validateBody(googleAuthSchema, { atLeast
 
     // Clean sensitive data
     delete member.password_hash;
+    normalizeMemberStrings(member);
     try {
-      member.skills = JSON.parse(member.skills || '[]');
       member.interests = JSON.parse(member.interests || '[]');
     } catch {
-      member.skills = [];
       member.interests = [];
     }
 
@@ -306,11 +348,10 @@ router.get('/me', authenticateToken, async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'सदस्य आढळला नाही.' });
     }
 
+    normalizeMemberStrings(member);
     try {
-      member.skills = JSON.parse(member.skills || '[]');
       member.interests = JSON.parse(member.interests || '[]');
     } catch {
-      member.skills = [];
       member.interests = [];
     }
 
@@ -656,7 +697,7 @@ router.delete('/account', authenticateToken, validateBody(deleteAccountSchema), 
 
 // GET /api/auth/referrals/verify/:code
 // Public: Verify referral code / reference_id
-router.get('/referrals/verify/:code', async (req, res) => {
+router.get('/referrals/verify/:code', async (req, res, next) => {
   try {
     const rawCode = String(req.params.code || '').trim();
     if (!rawCode) {

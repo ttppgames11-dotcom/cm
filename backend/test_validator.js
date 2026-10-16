@@ -190,6 +190,37 @@ async function runTests() {
       assert(res.statusCode === 200, `Accepts valid phone '${goodPhone}' with 200 OK`);
     }
 
+    // Test skills and about as strings
+    console.log('\n--- Test 5b: String skills and about validation ---');
+    const stringSkillsRes = await request(port, { path: '/test/register', method: 'POST' }, {
+      name: 'संभाजी राजे',
+      phone: '9822012345',
+      skills: 'प्रशासन, दुर्ग संवर्धन, इतिहास संशोधन',
+      about: 'मी एक निष्ठावंत समाज सेवक आहे.'
+    });
+    assert(stringSkillsRes.statusCode === 200, 'Accepts skills and about as strings with 200 OK');
+    assert(stringSkillsRes.body.received.skills === 'प्रशासन, दुर्ग संवर्धन, इतिहास संशोधन', 'Preserves skills string value');
+    assert(stringSkillsRes.body.received.about === 'मी एक निष्ठावंत समाज सेवक आहे.', 'Preserves about string value');
+
+    // Mirrors the Flutter registration payload: skills, about and interests all sent as strings
+    const appPayloadRes = await request(port, { path: '/test/register', method: 'POST' }, {
+      name: 'संभाजी राजे',
+      phone: '9822012345',
+      skills: 'Flutter, Node.js',
+      about: 'समाज सेवक',
+      interests: 'दुर्ग संवर्धन व गडभ्रमण (Fort Conservation & Trekking)'
+    });
+    assert(appPayloadRes.statusCode === 200, 'Accepts mobile app payload with string interests with 200 OK');
+
+    const arrayPayloadRes = await request(port, { path: '/test/register', method: 'POST' }, {
+      name: 'संभाजी राजे',
+      phone: '9822012345',
+      skills: ['Flutter', 'Node.js'],
+      about: ['समाज सेवक'],
+      interests: ['Forts', 'History']
+    });
+    assert(arrayPayloadRes.statusCode === 200, 'Accepts skills, about and interests as arrays with 200 OK');
+
     // -----------------------------------------------------------
     // TEST 6: Length limits (Min & Max length enforcement)
     // -----------------------------------------------------------

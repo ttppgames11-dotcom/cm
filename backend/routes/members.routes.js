@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { all, get, runQuery } from '../../database/database.js';
+import { normalizeMemberStrings } from './auth.routes.js';
 
 const router = Router();
 
@@ -30,14 +31,7 @@ router.get('/', async (req, res, next) => {
     sql += ' ORDER BY id ASC';
     const members = await all(sql, params);
 
-    const formatted = members.map(m => {
-      try {
-        m.skills = JSON.parse(m.skills || '[]');
-      } catch {
-        m.skills = [];
-      }
-      return m;
-    });
+    const formatted = members.map(m => normalizeMemberStrings(m));
 
     res.json({ success: true, count: formatted.length, members: formatted });
   } catch (err) {
@@ -82,11 +76,10 @@ router.get('/:id', async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'सदस्य आढळला नाही.' });
     }
 
+    normalizeMemberStrings(member);
     try {
-      member.skills = JSON.parse(member.skills || '[]');
       member.interests = JSON.parse(member.interests || '[]');
     } catch {
-      member.skills = [];
       member.interests = [];
     }
 
@@ -106,7 +99,19 @@ router.put('/:id', async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'सदस्य सापडला नाही.' });
     }
 
-    const skillsJson = Array.isArray(skills) ? JSON.stringify(skills) : undefined;
+    let skillsVal = undefined;
+    if (Array.isArray(skills)) {
+      skillsVal = skills.map(s => String(s).trim()).filter(Boolean).join(', ');
+    } else if (typeof skills === 'string') {
+      skillsVal = skills.trim();
+    }
+
+    let aboutVal = undefined;
+    if (Array.isArray(about)) {
+      aboutVal = about.map(a => String(a).trim()).filter(Boolean).join('\n');
+    } else if (typeof about === 'string') {
+      aboutVal = about.trim();
+    }
 
     await runQuery(`
       UPDATE members SET
@@ -120,14 +125,10 @@ router.put('/:id', async (req, res, next) => {
         about = COALESCE(?, about),
         phone = COALESCE(?, phone)
       WHERE id = ?
-    `, [name, city, district, profession, business, skillsJson, education, about, phone, req.params.id]);
+    `, [name, city, district, profession, business, skillsVal, education, aboutVal, phone, req.params.id]);
 
     const updated = await get('SELECT id, name, email, phone, avatar, city, district, profession, business, skills, education, about, tier, role FROM members WHERE id = ?', [req.params.id]);
-    try {
-      updated.skills = JSON.parse(updated.skills || '[]');
-    } catch {
-      updated.skills = [];
-    }
+    normalizeMemberStrings(updated);
 
     res.json({ success: true, message: 'माहिती अद्ययावत केली!', member: updated });
   } catch (err) {
