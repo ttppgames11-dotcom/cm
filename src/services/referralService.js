@@ -336,6 +336,60 @@ export function verifyReferrerId(code) {
   };
 }
 
+// Verify a referral code against the real member database on the server
+// (same check the mobile app uses). Never throws except on abort; returns one of:
+//   { isValid: true, memberId, name, district }
+//   { isValid: false, notFound: true, message }  -> code does not exist
+//   { isValid: false, offline: true, message }   -> server could not be reached
+export async function checkReferralCodeWithServer(code, { signal } = {}) {
+  const clean = String(code || '').trim();
+  if (!clean) {
+    return { isValid: false, notFound: true, message: 'कृपया वैध रेफरल आयडी प्रविष्ट करा.' };
+  }
+  try {
+    const res = await fetch(`/api/auth/referrals/verify/${encodeURIComponent(clean)}`, { signal });
+    const json = await res.json().catch(() => ({}));
+    if (res.ok && json.isValid && json.referrer) {
+      const r = json.referrer;
+      return {
+        isValid: true,
+        memberId: r.reference_id || r.referral_id || r.id || clean,
+        name: r.name || 'Connect Maratha सदस्य',
+        district: r.district || r.city || 'महाराष्ट्र'
+      };
+    }
+    if (res.status === 404 || res.status === 400 || (res.ok && json.isValid === false)) {
+      return {
+        isValid: false,
+        notFound: true,
+        message: 'हा रेफरल आयडी आढळला नाही. अचूक आयडी टाका किंवा ही जागा रिकामी ठेवा. (Referral ID not found)'
+      };
+    }
+    return {
+      isValid: false,
+      offline: true,
+      message: 'रेफरल आयडी तपासता आला नाही. कृपया थोड्या वेळाने पुन्हा प्रयत्न करा. (Could not check the referral ID)'
+    };
+  } catch (e) {
+    if (e && e.name === 'AbortError') throw e;
+    return {
+      isValid: false,
+      offline: true,
+      message: 'रेफरल आयडी तपासता आला नाही. इंटरनेट तपासा व पुन्हा प्रयत्न करा. (Could not check the referral ID)'
+    };
+  }
+}
+
+// True when the entered referral code is the member's own mobile number
+export function isOwnMobileReferral(code, mobile) {
+  const clean = String(code || '').trim();
+  if (/[A-Za-z]/.test(clean)) return false;
+  const codeDigits = clean.replace(/\D/g, '');
+  const mobileDigits = String(mobile || '').replace(/\D/g, '');
+  if (codeDigits.length < 10 || mobileDigits.length < 10) return false;
+  return codeDigits.slice(-10) === mobileDigits.slice(-10);
+}
+
 // Record a new referral when someone registers
 export function recordNewReferral({
   newMemberId,
