@@ -28,6 +28,12 @@ class RemoteAuthRepository implements AuthRepository {
   UserProfile _profileFrom(Map<String, dynamic> m, {UserRole? role}) {
     final city = (m['city'] ?? '').toString();
     final district = (m['district'] ?? '').toString();
+    final rawSkills = m['skills'];
+    final skillsStr = rawSkills is List
+        ? rawSkills.join(', ')
+        : (rawSkills ?? '').toString();
+    final aboutStr = (m['about'] ?? '').toString();
+
     return UserProfile(
       id: (m['id'] ?? '').toString(),
       name: (m['name'] ?? '').toString(),
@@ -40,6 +46,8 @@ class RemoteAuthRepository implements AuthRepository {
       referenceId: (m['reference_id'] ?? m['referral_id'] ?? '').toString(),
       referredBy: (m['referred_by'] ?? '').toString(),
       totalReferrals: int.tryParse((m['total_referrals'] ?? 0).toString()) ?? 0,
+      skills: skillsStr,
+      about: aboutStr,
     );
   }
 

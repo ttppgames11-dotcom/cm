@@ -216,7 +216,11 @@ class CommunityRepository {
       photoUrl: ApiConfig.mediaUrl(m['photo']?.toString()),
       tier: (m['tier'] ?? 'Basic').toString(),
       skills:
-          skills is List ? skills.map((s) => s.toString()).toList() : const [],
+          skills is List
+              ? skills.map((s) => s.toString().trim()).where((s) => s.isNotEmpty).toList()
+              : (skills is String && skills.trim().isNotEmpty
+                  ? skills.split(RegExp(r'[,|]')).map((s) => s.trim()).where((s) => s.isNotEmpty).toList()
+                  : const []),
       isVerified: false,
     );
   }

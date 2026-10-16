@@ -19,6 +19,8 @@ class UserProfile {
     this.referenceId = '',
     this.referredBy = '',
     this.totalReferrals = 0,
+    this.skills = '',
+    this.about = '',
   });
 
   final String id;
@@ -42,6 +44,12 @@ class UserProfile {
   /// Total count of members referred by this user
   final int totalReferrals;
 
+  /// Skills entered by the member as a string
+  final String skills;
+
+  /// About / Bio entered by the member as a string
+  final String about;
+
   String get shortName => name.split(' ').first;
 
   /// Clean display reference ID (fall back to member ID if empty)
@@ -60,6 +68,8 @@ class UserProfile {
     String? referenceId,
     String? referredBy,
     int? totalReferrals,
+    String? skills,
+    String? about,
   }) {
     return UserProfile(
       id: id,
@@ -73,6 +83,8 @@ class UserProfile {
       referenceId: referenceId ?? this.referenceId,
       referredBy: referredBy ?? this.referredBy,
       totalReferrals: totalReferrals ?? this.totalReferrals,
+      skills: skills ?? this.skills,
+      about: about ?? this.about,
     );
   }
 
@@ -88,6 +100,8 @@ class UserProfile {
     'reference_id': referenceId,
     'referred_by': referredBy,
     'total_referrals': totalReferrals.toString(),
+    'skills': skills,
+    'about': about,
   };
 
   factory UserProfile.fromStorageMap(Map<String, String> map) {
@@ -103,6 +117,8 @@ class UserProfile {
       referenceId: map['reference_id'] ?? '',
       referredBy: map['referred_by'] ?? '',
       totalReferrals: int.tryParse(map['total_referrals'] ?? '0') ?? 0,
+      skills: map['skills'] ?? '',
+      about: map['about'] ?? '',
     );
   }
 }

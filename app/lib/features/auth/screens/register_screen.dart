@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
+import '../../../core/network/api_client.dart' show ApiException;
 import '../../../core/share/copy_share.dart';
 import '../providers/auth_provider.dart' show apiClientProvider;
 
@@ -44,6 +45,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _referralCodeController = TextEditingController();
   bool _isVerifyingReferral = false;
   String? _verifiedReferrerName;
+  // Code that _verifiedReferrerName belongs to, so an edited code is re-checked.
+  String? _verifiedReferralCode;
+  // Shown under the referral field when the code is wrong or can't be checked.
+  String? _referralError;
   Timer? _referralDebounce;
   String? _generatedReferenceId;
 
@@ -200,16 +205,34 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     super.dispose();
   }
 
+  static const _referralNotFoundMsg =
+      'हा रेफरल आयडी आढळला नाही. अचूक आयडी टाका किंवा ही जागा रिकामी ठेवा. / Referral ID not found. Correct it or leave it empty.';
+  static const _referralOwnNumberMsg =
+      'आपण स्वतःचा नंबर रेफरल म्हणून वापरू शकत नाही. / You cannot use your own number as a referral.';
+  static const _referralOfflineMsg =
+      'रेफरल आयडी तपासता आला नाही. इंटरनेट तपासा व पुन्हा प्रयत्न करा. / Could not check the referral ID. Check your internet and try again.';
+
+  /// True when the referral code is the member's own mobile number.
+  bool _isOwnMobile(String code) {
+    final codeDigits = code.replaceAll(RegExp(r'\D'), '');
+    final mobileDigits = _mobileController.text.replaceAll(RegExp(r'\D'), '');
+    if (codeDigits.length < 10 || mobileDigits.length < 10) return false;
+    // Only a code that is a phone number (no letters) can be the member's own.
+    if (RegExp(r'[A-Za-z]').hasMatch(code)) return false;
+    return codeDigits.substring(codeDigits.length - 10) ==
+        mobileDigits.substring(mobileDigits.length - 10);
+  }
+
   void _onReferralCodeChanged(String code) {
     _referralDebounce?.cancel();
     final trimmed = code.trim();
-    if (trimmed.isEmpty) {
-      setState(() {
-        _verifiedReferrerName = null;
-        _isVerifyingReferral = false;
-      });
-      return;
-    }
+    setState(() {
+      _verifiedReferrerName = null;
+      _verifiedReferralCode = null;
+      _referralError = null;
+      _isVerifyingReferral = false;
+    });
+    if (trimmed.isEmpty) return;
     _referralDebounce = Timer(const Duration(milliseconds: 600), () {
       _verifyReferralCode(trimmed);
     });
@@ -217,37 +240,72 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   Future<void> _verifyReferralCode(String code) async {
     if (!mounted || code.isEmpty) return;
-    setState(() => _isVerifyingReferral = true);
+    if (_isOwnMobile(code)) {
+      setState(() {
+        _verifiedReferrerName = null;
+        _verifiedReferralCode = null;
+        _referralError = _referralOwnNumberMsg;
+        _isVerifyingReferral = false;
+      });
+      return;
+    }
+    setState(() {
+      _isVerifyingReferral = true;
+      _referralError = null;
+    });
+    String? name;
+    String? error;
     try {
       final apiClient = ref.read(apiClientProvider);
       final res = await apiClient.get('/api/auth/referrals/verify/${Uri.encodeComponent(code)}');
-      if (!mounted) return;
-      if (res['isValid'] == true && res['referrer'] != null) {
+      if (res['isValid'] == true && res['referrer'] is Map) {
         final r = res['referrer'] as Map;
-        final name = (r['name'] ?? '').toString();
+        final referrer = (r['name'] ?? '').toString();
         final district = (r['district'] ?? r['city'] ?? '').toString();
-        setState(() {
-          _verifiedReferrerName = district.isNotEmpty ? '$name ($district)' : name;
-          _isVerifyingReferral = false;
-        });
+        name = district.isNotEmpty ? '$referrer ($district)' : referrer;
       } else {
-        setState(() {
-          _verifiedReferrerName = null;
-          _isVerifyingReferral = false;
-        });
+        error = _referralNotFoundMsg;
       }
+    } on ApiException catch (e) {
+      error = (e.statusCode == 404 || e.statusCode == 400)
+          ? _referralNotFoundMsg
+          : _referralOfflineMsg;
     } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _verifiedReferrerName = null;
-        _isVerifyingReferral = false;
-      });
+      error = _referralOfflineMsg;
     }
+    // Ignore a slow answer for a code the member has since changed.
+    if (!mounted || _referralCodeController.text.trim() != code) return;
+    setState(() {
+      _verifiedReferrerName = name;
+      _verifiedReferralCode = name != null ? code : null;
+      _referralError = error;
+      _isVerifyingReferral = false;
+    });
+  }
+
+  /// The referral code is optional, but an entered code must belong to a real
+  /// member (same rule as the website). Re-checks if it hasn't been verified.
+  Future<bool> _ensureReferralValid() async {
+    final code = _referralCodeController.text.trim();
+    if (code.isEmpty) return true;
+    _referralDebounce?.cancel();
+    if (_verifiedReferrerName == null || _verifiedReferralCode != code) {
+      await _verifyReferralCode(code);
+      if (!mounted) return false;
+    }
+    if (_verifiedReferrerName != null && _verifiedReferralCode == code) {
+      return true;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(_referralError ?? _referralNotFoundMsg)),
+    );
+    return false;
   }
 
   void _goBack() => setState(() => _step = (_step - 1).clamp(0, 1));
 
-  void _handleStep0Next() {
+  Future<void> _handleStep0Next() async {
+    if (_isVerifyingReferral) return;
     if (_fullNameController.text.trim().isEmpty ||
         _mobileController.text.trim().isEmpty ||
         _passwordController.text.isEmpty) {
@@ -270,6 +328,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       );
       return;
     }
+    if (!await _ensureReferralValid()) return;
+    if (!mounted) return;
     setState(() => _step = 1);
     if (_countries.isEmpty && !_isLoadingCountries) {
       _loadCountries();
@@ -673,6 +733,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   referralCodeController: _referralCodeController,
                   isVerifyingReferral: _isVerifyingReferral,
                   verifiedReferrerName: _verifiedReferrerName,
+                  referralError: _referralError,
                   onReferralChanged: _onReferralCodeChanged,
                   termsAccepted: _termsAccepted,
                   onTermsChanged:
@@ -818,6 +879,7 @@ class _Step1Basic extends StatelessWidget {
     required this.referralCodeController,
     required this.isVerifyingReferral,
     required this.verifiedReferrerName,
+    this.referralError,
     required this.onReferralChanged,
     required this.termsAccepted,
     required this.onTermsChanged,
@@ -835,6 +897,7 @@ class _Step1Basic extends StatelessWidget {
   final TextEditingController referralCodeController;
   final bool isVerifyingReferral;
   final String? verifiedReferrerName;
+  final String? referralError;
   final ValueChanged<String> onReferralChanged;
   final bool termsAccepted;
   final ValueChanged<bool?> onTermsChanged;
@@ -938,9 +1001,39 @@ class _Step1Basic extends StatelessWidget {
                   )
                 : verifiedReferrerName != null
                     ? const Icon(Icons.check_circle_rounded, color: Color(0xFF16A34A))
-                    : null,
+                    : referralError != null
+                        ? const Icon(Icons.error_outline_rounded, color: Color(0xFFDC2626))
+                        : null,
           ),
         ),
+        if (referralError != null && verifiedReferrerName == null) ...[
+          const SizedBox(height: 6),
+          Container(
+            key: const Key('register_referral_error'),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFEF2F2),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFFFECACA)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.error_outline_rounded, size: 16, color: Color(0xFFDC2626)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    referralError!,
+                    style: GoogleFonts.mukta(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFFB91C1C),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
         if (verifiedReferrerName != null) ...[
           const SizedBox(height: 6),
           Container(
