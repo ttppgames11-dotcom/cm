@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { checkRepetitiveInput } from '../../utils/memberValidation';
-import { verifyReferrerId, recordNewReferral } from '../../services/referralService';
+import { checkReferralCodeWithServer, isOwnMobileReferral } from '../../services/referralService';
+
+const OWN_NUMBER_MESSAGE = 'आपण स्वतःचा नंबर रेफरल म्हणून वापरू शकत नाही. (You cannot use your own number as a referral)';
 
 const PERSONAS = [
   { id: 'Professional', title: 'व्यावसायिक (Professional)', icon: '💼' },
@@ -48,29 +50,18 @@ export default function RegisterWizardPage() {
 
   const [referralCode, setReferralCode] = useState(urlRef || '');
   const [referrerInfo, setReferrerInfo] = useState(null);
-  const [referralStatus, setReferralStatus] = useState({ checking: false, valid: false, message: '' });
+  // `code` is the referral code this status belongs to, so an edited code is re-checked.
+  const [referralStatus, setReferralStatus] = useState({ checking: false, valid: false, message: '', code: '' });
 
-  // Live real-time verification
-  useEffect(() => {
-    if (!referralCode || !referralCode.trim()) {
+  const applyReferralResult = (code, res) => {
+    if (res.isValid) {
+      setReferrerInfo(res);
+      setReferralStatus({ checking: false, valid: true, message: `सत्यापित शिफारसकर्ता: ${res.name} (${res.district})`, code });
+    } else {
       setReferrerInfo(null);
-      setReferralStatus({ checking: false, valid: true, message: '' });
-      return;
+      setReferralStatus({ checking: false, valid: false, message: res.message, code, offline: !!res.offline });
     }
-
-    const timer = setTimeout(() => {
-      const res = verifyReferrerId(referralCode.trim());
-      if (res.isValid) {
-        setReferrerInfo(res);
-        setReferralStatus({ checking: false, valid: true, message: `सत्यापित शिफारसकर्ता: ${res.name} (${res.chapter || res.district})` });
-      } else {
-        setReferrerInfo(null);
-        setReferralStatus({ checking: false, valid: false, message: res.message });
-      }
-    }, 200);
-
-    return () => clearTimeout(timer);
-  }, [referralCode]);
+  };
 
   const [formData, setFormData] = useState({
     name: '',
@@ -110,6 +101,59 @@ export default function RegisterWizardPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  // Live verification against the real member database on the server
+  useEffect(() => {
+    const code = referralCode.trim();
+    if (!code) {
+      setReferrerInfo(null);
+      setReferralStatus({ checking: false, valid: true, message: '', code: '' });
+      return;
+    }
+    if (isOwnMobileReferral(code, formData.mobile)) {
+      setReferrerInfo(null);
+      setReferralStatus({ checking: false, valid: false, message: OWN_NUMBER_MESSAGE, code });
+      return;
+    }
+
+    setReferralStatus({ checking: true, valid: false, message: 'रेफरल आयडी तपासत आहे... (Checking)', code: '' });
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        applyReferralResult(code, await checkReferralCodeWithServer(code, { signal: controller.signal }));
+      } catch (e) {
+        // Aborted: the code was edited, a newer check is on its way.
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [referralCode, formData.mobile]);
+
+  // Referral code is optional, but an entered code must belong to a real member.
+  // Uses the live result when it matches the current code, otherwise checks now.
+  const ensureReferralValid = async () => {
+    const code = referralCode.trim();
+    if (!code) return true;
+    if (isOwnMobileReferral(code, formData.mobile)) {
+      setValidationError(OWN_NUMBER_MESSAGE);
+      return false;
+    }
+    const haveResult = referralStatus.code === code && !referralStatus.checking && !referralStatus.offline;
+    let res = haveResult ? { isValid: referralStatus.valid, message: referralStatus.message } : null;
+    if (!res) {
+      res = await checkReferralCodeWithServer(code);
+      applyReferralResult(code, res);
+    }
+    if (!res.isValid) {
+      setValidationError(res.message);
+      return false;
+    }
+    return true;
+  };
+
   const handleInterestToggle = (id) => {
     setFormData((prev) => ({
       ...prev,
@@ -128,7 +172,7 @@ export default function RegisterWizardPage() {
     }));
   };
 
-  const handleSignupSubmit = (e) => {
+  const handleSignupSubmit = async (e) => {
     e.preventDefault();
     setValidationError('');
 
@@ -151,19 +195,8 @@ export default function RegisterWizardPage() {
       return;
     }
 
-    // Optional Referral Validation (only validate if entered)
-    if (referralCode && referralCode.trim()) {
-      if (referralCode.trim() === formData.mobile.trim()) {
-        setValidationError('आपण स्वतःचा नंबर रेफरल म्हणून वापरू शकत नाही.');
-        return;
-      }
-
-      const refCheck = verifyReferrerId(referralCode.trim());
-      if (!refCheck.isValid) {
-        setValidationError('प्रविष्ट केलेला शिफारसकर्ता सभासद आयडी अवैध आहे. कृपया अचूक आयडी टाका किंवा ही जागा रिकामी ठेवा.');
-        return;
-      }
-    }
+    // Optional Referral Validation (only validate if entered), checked on the server
+    if (!(await ensureReferralValid())) return;
 
     if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
       setValidationError('दोन्ही पासवर्ड जुळत नाहीत (Passwords do not match).');
@@ -217,27 +250,16 @@ export default function RegisterWizardPage() {
       }
     };
 
-    let resUser = null;
     if (register) {
       const res = await register(memberPayload);
       if (!res || !res.success) {
         setValidationError(res?.error || 'नोंदणी अयशस्वी झाली. कृपया माहिती तपासा.');
         return;
       }
-      resUser = res.member || res.user;
     }
 
-    // Record Real-time referral if provided
-    if (referralCode && referralCode.trim()) {
-      recordNewReferral({
-        newMemberId: resUser?.id || `CM-MH-${formData.mobile.slice(-4)}`,
-        newMemberName: formData.name.trim(),
-        newMemberPhone: formData.mobile.trim(),
-        newMemberDistrict: formData.city || 'पुणे',
-        referrerCode: referralCode.trim(),
-        isSubscribed: true
-      });
-    }
+    // The referral itself (referred_by + referrer's total_referrals) is saved by the
+    // server during /auth/register, so nothing more to record here.
 
     setActiveScreen('welcome');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -466,13 +488,13 @@ export default function RegisterWizardPage() {
                     </button>
                   </div>
 
-                  <div className="input-box" style={{ borderColor: referralStatus.valid ? (referralCode ? '#10B981' : '#CBD5E1') : '#EA580C' }}>
+                  <div className="input-box" style={{ borderColor: referralStatus.checking ? '#CBD5E1' : referralStatus.valid ? (referralCode ? '#10B981' : '#CBD5E1') : '#EA580C' }}>
                     <span className="prefix" style={{ background: '#FFF7ED', color: '#EA580C', fontWeight: 800 }}>REF</span>
                     <input
                       type="text"
                       value={referralCode}
                       onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
-                      placeholder="उदा. CM-PUN-0842 (ऐच्छिक - नसल्यास रिकामे ठेवा)"
+                      placeholder="उदा. REF-96K-1234 किंवा मित्राचा मोबाईल (ऐच्छिक)"
                       style={{ textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 700 }}
                     />
                   </div>
@@ -487,11 +509,11 @@ export default function RegisterWizardPage() {
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
-                      background: referralStatus.valid ? '#ECFDF5' : '#FEF2F2',
-                      border: `1.5px solid ${referralStatus.valid ? '#10B981' : '#FCA5A5'}`,
-                      color: referralStatus.valid ? '#065F46' : '#991B1B'
+                      background: referralStatus.checking ? '#F8FAFC' : referralStatus.valid ? '#ECFDF5' : '#FEF2F2',
+                      border: `1.5px solid ${referralStatus.checking ? '#CBD5E1' : referralStatus.valid ? '#10B981' : '#FCA5A5'}`,
+                      color: referralStatus.checking ? '#475569' : referralStatus.valid ? '#065F46' : '#991B1B'
                     }}>
-                      <span>{referralStatus.valid ? '✅' : '❌'}</span>
+                      <span>{referralStatus.checking ? '⏳' : referralStatus.valid ? '✅' : '❌'}</span>
                       <span>{referralStatus.message}</span>
                     </div>
                   ) : (
