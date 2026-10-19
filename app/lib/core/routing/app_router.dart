@@ -184,7 +184,21 @@ GoRouter buildAppRouterWithAuth({
       ),
       GoRoute(
         path: '/business/dairy',
-        builder: (context, state) => const DairyScreen(),
+        // The live directory is still empty; the screen's template cards
+        // (₹ ००, 0000000000) must not reach release builds.
+        builder:
+            (context, state) =>
+                ApiConfig.demoMode
+                    ? const DairyScreen()
+                    : const NothingListedScreen(
+                      title: 'मराठा डेअरी',
+                      icon: Icons.local_drink_rounded,
+                      message:
+                          'समाजबांधवांची डेअरी व दूध संकलन केंद्रे येथे दिसतील. '
+                          'तुमची डेअरी नोंदवण्यासाठी आम्हाला लिहा.',
+                      contactSubject: 'डेअरी नोंदणी / Dairy listing',
+                      bottomNavIndex: 2,
+                    ),
       ),
       GoRoute(
         path: '/business/builders',

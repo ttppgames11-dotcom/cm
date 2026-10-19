@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:app/core/auth/auth_scope.dart';
 import 'package:app/core/network/api_client.dart';
+import 'package:app/core/share/copy_share.dart';
+import 'package:app/core/share/install_referral.dart';
 import 'package:app/core/storage/secure_token_store.dart';
 import 'package:app/features/auth/auth_controller.dart';
 import 'package:app/features/auth/data/auth_local_data_source.dart';
@@ -39,12 +41,16 @@ class _FakeReferralApi extends ApiClient {
   }
 }
 
-Future<_FakeReferralApi> _pumpRegister(WidgetTester tester) async {
+Future<_FakeReferralApi> _pumpRegister(
+  WidgetTester tester, {
+  Map<String, Object> prefs = const {},
+  bool fillBasics = true,
+}) async {
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 2.0;
   addTearDown(() => tester.view.resetPhysicalSize());
 
-  SharedPreferences.setMockInitialValues({});
+  SharedPreferences.setMockInitialValues(prefs);
   final api = _FakeReferralApi();
   final authController = AuthController(
     LocalAuthRepository(AuthLocalDataSource()),
@@ -63,6 +69,7 @@ Future<_FakeReferralApi> _pumpRegister(WidgetTester tester) async {
     ),
   );
   await tester.pumpAndSettle();
+  if (!fillBasics) return api;
 
   await tester.enterText(find.byKey(const Key('register_name_field')), 'Test User');
   await tester.enterText(find.byKey(const Key('register_mobile_field')), '9876543210');
@@ -88,7 +95,56 @@ Future<void> _tapNext(WidgetTester tester) async {
 
 final _profileStep = find.text('प्रोफाईल माहिती / Profile Form');
 
+TextField _referralField(WidgetTester tester) =>
+    tester.widget<TextField>(find.byKey(const Key('register_referral_code_field')));
+
 void main() {
+  // No Play install referrer unless a test sets one.
+  setUp(() => installReferrerSource = () async => null);
+
+  group('Play Store invite link', () {
+    test('carries the referral code for Google Play to hand to the app', () {
+      expect(
+        playStoreReferralLink('REF-96K-1001'),
+        'https://play.google.com/store/apps/details?id=com.connectmaratha.app'
+        '&referrer=ref%3DREF-96K-1001',
+      );
+      expect(referralShareText('REF-96K-1001'), contains('&referrer=ref%3DREF-96K-1001'));
+      expect(playStoreReferralLink('  '), appStoreLink);
+    });
+
+    test('reads the code back from what Google Play returns', () {
+      expect(referralCodeFromReferrer('ref=REF-96K-1001'), 'REF-96K-1001');
+      expect(referralCodeFromReferrer('utm_source=whatsapp&ref=ref-96k-1001'), 'REF-96K-1001');
+      // Normal installs and junk are ignored.
+      expect(referralCodeFromReferrer('utm_source=google-play&utm_medium=organic'), isNull);
+      expect(referralCodeFromReferrer('ref=<script>'), isNull);
+      expect(referralCodeFromReferrer('ref=%E0%A4'), isNull);
+      expect(referralCodeFromReferrer(null), isNull);
+    });
+  });
+
+  testWidgets('installed from an invite link: the referral code fills in and is verified', (tester) async {
+    installReferrerSource = () async => 'ref=$_validCode';
+    final api = await _pumpRegister(tester, fillBasics: false);
+
+    expect(_referralField(tester).controller!.text, _validCode);
+    expect(api.checked, [_validCode]);
+    expect(find.textContaining('अमोल जाधव (पुणे)'), findsOneWidget);
+  });
+
+  testWidgets('the install code is not filled in again after it was used', (tester) async {
+    installReferrerSource = () async => 'ref=$_validCode';
+    final api = await _pumpRegister(
+      tester,
+      prefs: {'cm_install_referral_used': true},
+      fillBasics: false,
+    );
+
+    expect(_referralField(tester).controller!.text, isEmpty);
+    expect(api.checked, isEmpty);
+  });
+
   testWidgets('a real referral code shows the referrer and allows Next', (tester) async {
     await _pumpRegister(tester);
     await _enterReferral(tester, _validCode);

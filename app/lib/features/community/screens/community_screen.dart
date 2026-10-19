@@ -192,29 +192,28 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                       _deleteOwnPost(post);
                     },
                   )
-                // V1: Report/Block UI hidden (backend intact for future use)
-                // else ...[
-                //   ListTile(
-                //     leading: const Icon(Icons.flag_outlined),
-                //     title: const Text('पोस्टची तक्रार करा'),
-                //     onTap: () {
-                //       Navigator.pop(ctx);
-                //       _pickReportReason(targetType: 'post', targetId: post.id);
-                //     },
-                //   ),
-                //   if (post.authorId.isNotEmpty)
-                //     ListTile(
-                //       leading: const Icon(
-                //         Icons.block_rounded,
-                //         color: Color(0xFFB91C1C),
-                //       ),
-                //       title: Text('${post.authorName} यांना ब्लॉक करा'),
-                //       onTap: () {
-                //         Navigator.pop(ctx);
-                //         _confirmBlock(post.authorId, post.authorName);
-                //       },
-                //     ),
-                // ],
+                else ...[
+                  ListTile(
+                    leading: const Icon(Icons.flag_outlined),
+                    title: const Text('पोस्टची तक्रार करा'),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _pickReportReason(targetType: 'post', targetId: post.id);
+                    },
+                  ),
+                  if (post.authorId.isNotEmpty)
+                    ListTile(
+                      leading: const Icon(
+                        Icons.block_rounded,
+                        color: Color(0xFFB91C1C),
+                      ),
+                      title: Text('${post.authorName} यांना ब्लॉक करा'),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _confirmBlock(post.authorId, post.authorName);
+                      },
+                    ),
+                ],
               ],
             ),
           ),
@@ -237,29 +236,28 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // V1: Report/Block UI hidden (backend intact for future use)
-                // ListTile(
-                //   leading: const Icon(Icons.flag_outlined),
-                //   title: const Text('सदस्याची तक्रार करा'),
-                //   onTap: () {
-                //     Navigator.pop(ctx);
-                //     _pickReportReason(
-                //       targetType: 'member',
-                //       targetId: member.id,
-                //     );
-                //   },
-                // ),
-                // ListTile(
-                //   leading: const Icon(
-                //     Icons.block_rounded,
-                //     color: Color(0xFFB91C1C),
-                //   ),
-                //   title: Text('${member.name} यांना ब्लॉक करा'),
-                //   onTap: () {
-                //     Navigator.pop(ctx);
-                //     _confirmBlock(member.id, member.name);
-                //   },
-                // ),
+                ListTile(
+                  leading: const Icon(Icons.flag_outlined),
+                  title: const Text('सदस्याची तक्रार करा'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _pickReportReason(
+                      targetType: 'member',
+                      targetId: member.id,
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.block_rounded,
+                    color: Color(0xFFB91C1C),
+                  ),
+                  title: Text('${member.name} यांना ब्लॉक करा'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _confirmBlock(member.id, member.name);
+                  },
+                ),
               ],
             ),
           ),

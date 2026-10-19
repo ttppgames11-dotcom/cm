@@ -190,12 +190,12 @@ class CommunityData {
   static const List<CommunityMember> members = [
     CommunityMember(
       id: 'cm-1',
-      name: 'अभय गोंड',
+      name: 'अमित शिंदे',
       roleOrTitle: 'सॉफ्टवेअर आर्किटेक्ट & डेवलपर',
       profession: 'Full-Stack & Mobile Developer',
       location: 'पुणे, महाराष्ट्र',
       regionKey: 'pune',
-      avatarAsset: 'assets/avatars/abhay_gond.webp',
+      avatarAsset: 'assets/avatars/user_profile.webp',
       tier: 'Gold',
       skills: ['Flutter', 'Node.js', 'Cloud Architecture'],
     ),

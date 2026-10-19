@@ -26,6 +26,7 @@ abstract class AuthRepository {
     String? photoUrl,
     String? idToken,
     bool register = false,
+    Map<String, Object?>? legalCompliance,
   });
 
   Future<UserProfile> register(RegisterFormData data);

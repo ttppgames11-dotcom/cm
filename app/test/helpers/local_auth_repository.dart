@@ -113,6 +113,7 @@ class LocalAuthRepository implements AuthRepository {
     String? photoUrl,
     String? idToken,
     bool register = false,
+    Map<String, Object?>? legalCompliance,
   }) async {
     final memberId = 'CM${googleId.hashCode.abs() % 90000000 + 10000000}';
     final profile = UserProfile(

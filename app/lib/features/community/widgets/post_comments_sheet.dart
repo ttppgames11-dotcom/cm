@@ -291,20 +291,19 @@ class _PostCommentsSheetState extends State<PostCommentsSheet> {
             ),
           ),
         ),
-        // V1: Report UI hidden (backend intact for future use)
-        // if (c.isMine)
-        //   const SizedBox(width: 8)
-        // else
-        //   IconButton(
-        //     tooltip: 'टिप्पणीची तक्रार करा',
-        //     visualDensity: VisualDensity.compact,
-        //     icon: const Icon(
-        //       Icons.flag_outlined,
-        //       size: 18,
-        //       color: Color(0xFF9CA3AF),
-        //     ),
-        //     onPressed: () => widget.onReport(c),
-        //   ),
+        if (c.isMine)
+          const SizedBox(width: 8)
+        else
+          IconButton(
+            tooltip: 'टिप्पणीची तक्रार करा',
+            visualDensity: VisualDensity.compact,
+            icon: const Icon(
+              Icons.flag_outlined,
+              size: 18,
+              color: Color(0xFF9CA3AF),
+            ),
+            onPressed: () => widget.onReport(c),
+          ),
       ],
     );
   }

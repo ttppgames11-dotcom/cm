@@ -63,7 +63,7 @@ void main() {
     await tester.pumpWidget(createTestWidget());
     await tester.pumpAndSettle();
 
-    expect(find.text('अभय गोंड'), findsOneWidget);
+    expect(find.text('अमित शिंदे'), findsOneWidget);
     expect(find.text('राजेंद्र भोसले'), findsOneWidget);
     expect(find.text('प्रिया देशमुख'), findsOneWidget);
     expect(find.text('प्रोफाइल पहा'), findsWidgets);
@@ -78,7 +78,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('राजेंद्र भोसले'), findsOneWidget);
-    expect(find.text('अभय गोंड'), findsNothing);
+    expect(find.text('अमित शिंदे'), findsNothing);
   });
 
   testWidgets('SamajSadasyaScreen opens profile bottom sheet on tap', (tester) async {

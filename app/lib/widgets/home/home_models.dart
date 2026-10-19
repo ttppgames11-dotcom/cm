@@ -18,12 +18,13 @@ class MemberCardData {
     this.avatarAsset = 'assets/avatars/user_profile.webp',
   });
 
+  /// Shown when nobody is signed in (guest). No real person's name or ID.
   static const defaultMember = MemberCardData(
-    name: 'अभयराजे गोंड',
-    subtitle: 'Proud Member of Connect मराठा',
-    tier: 'सदस्य · Member',
+    name: 'पाहुणे / Guest',
+    subtitle: 'Connect मराठा मध्ये आपले स्वागत',
+    tier: 'पाहुणे · Guest',
     quote: '|| निश्चयाचा महामेरू, बहुत जनांसी आधारू ||',
-    memberId: 'CM-2026-9482',
+    memberId: 'CM-GUEST',
     avatarAsset: 'assets/avatars/user_profile.webp',
   );
 }

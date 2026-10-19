@@ -147,6 +147,7 @@ class AuthController extends ChangeNotifier {
     String? photoUrl,
     String? idToken,
     bool register = false,
+    Map<String, Object?>? legalCompliance,
   }) async {
     _update(_state.copyWith(isBusy: true, errorMessage: null, errorCode: null));
     try {
@@ -157,6 +158,7 @@ class AuthController extends ChangeNotifier {
         photoUrl: photoUrl,
         idToken: idToken,
         register: register,
+        legalCompliance: legalCompliance,
       );
       _update(
         _state.copyWith(

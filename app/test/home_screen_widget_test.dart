@@ -75,11 +75,13 @@ void main() {
     );
 
     expect(find.byType(MemberIdCard), findsOneWidget);
-    expect(find.text('अभयराजे गोंड'), findsOneWidget);
-    expect(find.text('Proud Member of Connect मराठा'), findsOneWidget);
-    expect(find.text('सदस्य · Member'), findsOneWidget);
+    // Guest card: no real person's name or member ID.
+    expect(find.text('पाहुणे / Guest'), findsOneWidget);
+    expect(find.text('अभयराजे गोंड'), findsNothing);
+    expect(find.text('Connect मराठा मध्ये आपले स्वागत'), findsOneWidget);
+    expect(find.text('पाहुणे · Guest'), findsOneWidget);
     expect(find.byType(QrImageView), findsOneWidget);
-    expect(find.text('CM-2026-9482'), findsOneWidget);
+    expect(find.text('CM-GUEST'), findsOneWidget);
     expect(
       find.text('“ || निश्चयाचा महामेरू, बहुत जनांसी आधारू || ”'),
       findsOneWidget,
@@ -156,9 +158,10 @@ void main() {
       expect(find.text('समाज सदस्य'), findsOneWidget);
       expect(find.text('समुदाय पोस्ट'), findsOneWidget);
       expect(find.text('व्यवसाय निर्देशिका'), findsOneWidget);
-      expect(find.text('कार्यक्रम'), findsOneWidget);
       expect(find.byIcon(Icons.chat_bubble_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.calendar_month_rounded), findsOneWidget);
+      // Events has no listings yet, so its tile is hidden (FeatureTilesConfig).
+      expect(find.text('कार्यक्रम'), findsNothing);
+      expect(find.byIcon(Icons.calendar_month_rounded), findsNothing);
       // Placeholders / fake helplines hidden
       expect(find.text('रक्त मदत'), findsNothing);
       expect(find.byIcon(Icons.water_drop_rounded), findsNothing);

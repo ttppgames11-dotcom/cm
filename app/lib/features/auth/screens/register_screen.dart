@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 import '../../../core/network/api_client.dart' show ApiException;
 import '../../../core/share/copy_share.dart';
+import '../../../core/share/install_referral.dart';
 import '../providers/auth_provider.dart' show apiClientProvider;
 
 import '../../../core/auth/auth_scope.dart';
@@ -110,8 +111,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _verifyReferralCode(widget.initialReferralCode!);
       });
+    } else {
+      _prefillInstallReferral();
     }
     _restoreDraft();
+  }
+
+  /// Fills in the inviter's code when the app was installed from a shared
+  /// Play Store invite link, unless the member has already typed a code.
+  Future<void> _prefillInstallReferral() async {
+    final code = await readInstallReferralCode();
+    if (code == null || !mounted || _referralCodeController.text.trim().isNotEmpty) {
+      return;
+    }
+    _referralCodeController.text = code;
+    await _verifyReferralCode(code);
   }
 
   Map<String, Object?> _draftFields() => {
@@ -628,6 +642,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     registrationSuccessOnScreen = true;
     final success = await auth.register(_data);
     if (!success) registrationSuccessOnScreen = false;
+    if (success) await markInstallReferralUsed();
     if (!mounted) return;
     setState(() => _isSubmitting = false);
 

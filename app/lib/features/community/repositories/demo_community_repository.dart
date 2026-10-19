@@ -38,7 +38,7 @@ class DemoCommunityRepository extends CommunityRepository {
     const CommunityFeedPost(
       id: 'demo-p3',
       authorId: 'cm-1',
-      authorName: 'अभय गोंड',
+      authorName: 'अमित शिंदे',
       authorTitle: 'सॉफ्टवेअर आर्किटेक्ट',
       authorAvatar: _avatar,
       timeAgo: '१ दिवसापूर्वी',

@@ -38,16 +38,25 @@ String postShareText({
 String withAppLink(String text) =>
     '${text.trim()}\n\nConnect मराठा अ‍ॅप: $appStoreLink';
 
+/// Play Store link that carries the inviter's referral code. Google Play hands
+/// `ref=<code>` to the app after install (see install_referral.dart), so the
+/// new member's registration form fills the code in by itself.
+String playStoreReferralLink(String referralCode) {
+  final code = referralCode.trim();
+  if (code.isEmpty) return appStoreLink;
+  return '$appStoreLink&referrer=${Uri.encodeComponent('ref=$code')}';
+}
+
 /// Text sent when a member shares their referral code to invite others:
-/// includes the Google Play Store link and their reference ID.
+/// includes the Google Play Store link (carrying the code) and their reference ID.
 String referralShareText(String referralCode) {
   final code = referralCode.trim();
   return '|| जय जिजाऊ, जय शिवराय ||\n\n'
       'मी Connect मराठा ॲपवर नोंदणी केली आहे. आपणही आपल्या हक्काच्या अधिकृत मराठा व्यासपीठावर नक्की सामील व्हा!\n\n'
       '📲 Google Play Store वरून ॲप डाउनलोड करा:\n'
-      '$appStoreLink\n\n'
+      '${playStoreReferralLink(code)}\n\n'
       'माझा रेफरल कोड (Reference ID): $code\n\n'
-      '(ॲप इन्स्टॉल केल्यावर नोंदणी करताना हा रेफरल कोड नक्की वापरा)';
+      '(या लिंकवरून ॲप इन्स्टॉल केल्यास रेफरल कोड आपोआप भरला जाईल; नसल्यास नोंदणी करताना हा कोड टाका)';
 }
 
 /// Opens the phone's share sheet (WhatsApp, Telegram, SMS, ...) with [text].

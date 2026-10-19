@@ -10,6 +10,7 @@ import '../../../core/auth/auth_scope.dart';
 import '../../../core/routing/route_state.dart';
 import '../../../core/config/api_config.dart';
 import '../models/user_role.dart';
+import '../widgets/signup_consent_dialog.dart';
 
 /// UX-redesigned Maratha-themed Login Screen.
 /// Key UX improvements applied:
@@ -1361,6 +1362,9 @@ class _LoginScreenState extends State<LoginScreen>
           _showNotRegisteredDialog(
             onRegister: () async {
               final registerAuth = AuthScope.of(context);
+              // Same terms / privacy / 18+ consent as the registration form.
+              final consent = await showSignupConsentDialog(context);
+              if (consent == null || !mounted) return;
               final ok = await registerAuth.loginWithGoogle(
                 googleId: account.id,
                 name: account.displayName ?? account.email,
@@ -1368,6 +1372,7 @@ class _LoginScreenState extends State<LoginScreen>
                 photoUrl: account.photoUrl,
                 idToken: idToken,
                 register: true,
+                legalCompliance: consent,
               );
               if (!mounted) return;
               if (ok) {

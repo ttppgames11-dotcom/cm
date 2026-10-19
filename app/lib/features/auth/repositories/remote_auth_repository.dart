@@ -242,6 +242,7 @@ class RemoteAuthRepository implements AuthRepository {
     String? photoUrl,
     String? idToken,
     bool register = false,
+    Map<String, Object?>? legalCompliance,
   }) async {
     if (idToken == null || idToken.isEmpty) {
       throw AuthException(
@@ -254,7 +255,14 @@ class RemoteAuthRepository implements AuthRepository {
       // or creates the member row on first sign-in.
       final data = await _api.post(
         '/api/auth/google',
-        body: {'idToken': idToken, if (register) 'register': true},
+        body: {
+          'idToken': idToken,
+          if (register) 'register': true,
+          // Same consent as the phone registration form; the server refuses
+          // a Google sign-up without it.
+          if (register && legalCompliance != null)
+            'legalCompliance': legalCompliance,
+        },
       );
       return _startSession(data);
     } on ApiException catch (e) {

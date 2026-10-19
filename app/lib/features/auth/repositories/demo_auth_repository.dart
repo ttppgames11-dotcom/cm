@@ -90,6 +90,7 @@ class DemoAuthRepository implements AuthRepository {
     String? photoUrl,
     String? idToken,
     bool register = false,
+    Map<String, Object?>? legalCompliance,
   }) =>
       throw AuthException(
         'डेमो आवृत्तीत Google लॉगिन उपलब्ध नाही. युझर "$demoLoginId" / पासवर्ड "$demoPassword" वापरा.',
