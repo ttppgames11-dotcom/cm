@@ -2,6 +2,45 @@
 -- Connect Maratha (कनेक्ट मराठा) SQLite Database Schema
 -- ========================================================
 
+CREATE TABLE IF NOT EXISTS countries (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  code TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS states (
+  id TEXT PRIMARY KEY,
+  country_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  code TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_states_country_id ON states(country_id);
+
+CREATE TABLE IF NOT EXISTS districts (
+  id TEXT PRIMARY KEY,
+  state_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  code TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_districts_state_id ON districts(state_id);
+
+CREATE TABLE IF NOT EXISTS talukas (
+  id TEXT PRIMARY KEY,
+  district_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  code TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_talukas_district_id ON talukas(district_id);
+
+CREATE TABLE IF NOT EXISTS villages (
+  id TEXT PRIMARY KEY,
+  taluka_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  code TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_villages_taluka_id ON villages(taluka_id);
+CREATE INDEX IF NOT EXISTS idx_villages_name ON villages(name);
+
 CREATE TABLE IF NOT EXISTS members (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
@@ -9,10 +48,18 @@ CREATE TABLE IF NOT EXISTS members (
   phone TEXT,
   password_hash TEXT,
   avatar TEXT DEFAULT '👤',
+  photo TEXT,
   city TEXT,
   district TEXT,
   state TEXT DEFAULT 'महाराष्ट्र',
   country TEXT DEFAULT 'भारत',
+  country_id TEXT,
+  state_id TEXT,
+  district_id TEXT,
+  taluka_id TEXT,
+  village_id TEXT,
+  taluka TEXT,
+  village TEXT,
   profession TEXT,
   business TEXT,
   skills TEXT DEFAULT '[]',
@@ -21,6 +68,10 @@ CREATE TABLE IF NOT EXISTS members (
   about TEXT,
   tier TEXT DEFAULT 'Gold',
   role TEXT DEFAULT 'member',
+  reference_id TEXT,
+  referral_id TEXT,
+  referred_by TEXT,
+  total_referrals INTEGER DEFAULT 0,
   verified_mobile INTEGER DEFAULT 1,
   verified_email INTEGER DEFAULT 1,
   verified_profile INTEGER DEFAULT 1,
@@ -80,10 +131,12 @@ CREATE TABLE IF NOT EXISTS meetings (
   recipient_name TEXT,
   date TEXT,
   time TEXT,
+  location TEXT,
   topic TEXT,
   status TEXT DEFAULT 'Confirmed',
   notes TEXT,
-  created_at TEXT
+  created_at TEXT,
+  updated_at TEXT
 );
 
 CREATE TABLE IF NOT EXISTS groups (
@@ -122,6 +175,8 @@ CREATE TABLE IF NOT EXISTS post_likes (
   post_id TEXT,
   member_id TEXT
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_post_likes_post_member ON post_likes(post_id, member_id);
 
 CREATE TABLE IF NOT EXISTS post_comments (
   id TEXT PRIMARY KEY,
@@ -280,42 +335,24 @@ CREATE TABLE IF NOT EXISTS quiz_submissions (
 
 CREATE INDEX IF NOT EXISTS idx_quiz_submissions_points ON quiz_submissions (points DESC);
 
-CREATE TABLE IF NOT EXISTS site_content (
-  key TEXT PRIMARY KEY,
-  section TEXT NOT NULL,
-  value_json TEXT NOT NULL,
-  updated_at TEXT
+CREATE TABLE IF NOT EXISTS password_resets (
+  email TEXT PRIMARY KEY,
+  otp_hash TEXT NOT NULL,
+  expires_at TEXT NOT NULL,
+  attempts INTEGER DEFAULT 0,
+  created_at TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS hotels (
+CREATE TABLE IF NOT EXISTS media (
   id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  city TEXT,
-  district TEXT,
-  category TEXT DEFAULT 'Hotel',
-  star_rating REAL DEFAULT 4.0,
-  address TEXT,
-  phone TEXT,
-  email TEXT,
-  website TEXT,
-  rooms_count INTEGER DEFAULT 10,
-  amenities TEXT DEFAULT '[]',
-  price_range TEXT,
-  photo TEXT DEFAULT '🏨',
-  verified INTEGER DEFAULT 1,
-  created_at TEXT
+  owner_id TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  mime TEXT NOT NULL,
+  bytes BLOB NOT NULL,
+  size INTEGER NOT NULL,
+  created_at TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS information_articles (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL,
-  category TEXT,
-  author TEXT,
-  summary TEXT,
-  content TEXT,
-  tags TEXT DEFAULT '[]',
-  image_url TEXT,
-  featured INTEGER DEFAULT 0,
-  created_at TEXT
-);
+CREATE INDEX IF NOT EXISTS idx_media_owner ON media (owner_id);
+CREATE INDEX IF NOT EXISTS idx_media_kind ON media (kind);
 

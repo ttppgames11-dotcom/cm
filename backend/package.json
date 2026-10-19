@@ -6,17 +6,23 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch-path=server.js --watch-path=routes --watch-path=middleware --watch-path=utils --watch-path=db/realtimeDb.js server.js",
-    "seed": "node ../database/seed.js"
+    "dev": "node --watch server.js",
+    "seed": "node ../database/seed.js",
+    "test:ratelimit": "node test_rate_limiter.js",
+    "test:validate": "node test_validator.js",
+    "test:secrets": "node test_secrets_env.js",
+    "test:errors": "node test_error_handling.js",
+    "test:upload": "node test_upload_security.js",
+    "test": "node test_rate_limiter.js && node test_validator.js && node test_secrets_env.js && node test_error_handling.js && node test_upload_security.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "compression": "^1.8.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.2",
-    "sql.js": "^1.14.2"
+    "nodemailer": "^10.0.10",
+    "sql.js": "^1.14.2",
+    "pg": "^8.13.1"
   }
 }

@@ -106,12 +106,15 @@ export default function DeleteAccountPage() {
         confirmation: true
       });
 
-      if (!res?.data?.deleted && !res?.deleted) {
-        throw new Error(res?.error || 'हा सदस्य डेटाबेसमध्ये सापडला नाही. कृपया नोंदणीकृत मोबाईल नंबर किंवा ईमेल तपासा.');
+      // Logged out, the server records a deletion request (staff verify, then delete);
+      // it never deletes an account on a phone/email alone.
+      const accepted = res?.deleted || res?.data?.deleted || res?.requested || res?.data?.requested;
+      if (!accepted) {
+        throw new Error(res?.error || 'विनंती नोंदवता आली नाही. कृपया पुन्हा प्रयत्न करा.');
       }
 
       setRequestSuccess(true);
-      setRequestResult(res.data || res);
+      setRequestResult({ ...(res.data || {}), message: res.message });
 
       // If user is currently logged in, immediately log them out
       if (user) {
@@ -495,11 +498,14 @@ export default function DeleteAccountPage() {
                 <h4 style={{ margin: '0 0 8px', color: '#065f46', fontSize: '1.3rem' }}>
                   आपली विनंती यशस्वीरित्या नोंदवली गेली आहे!
                 </h4>
-                <p style={{ margin: '0 0 12px', color: '#047857', fontSize: '0.95rem' }}>
-                  विनंती संदर्भ आयडी: <strong>{requestResult?.requestId || 'DEL-' + Math.floor(100000 + Math.random() * 900000)}</strong>
-                </p>
+                {requestResult?.requestId && (
+                  <p style={{ margin: '0 0 12px', color: '#047857', fontSize: '0.95rem' }}>
+                    विनंती संदर्भ आयडी: <strong>{requestResult.requestId}</strong>
+                  </p>
+                )}
                 <p style={{ margin: '0', color: '#065f46', fontSize: '0.88rem', lineHeight: 1.6 }}>
-                  आमच्या केंद्रीय डेटा सुरक्षा कक्षाकडून २४ ते ४८ तासांच्या आत आपल्या नोंदणीकृत संपर्कावर अंतिम पुष्टीकरण पाठवून संपूर्ण डेटा कायमचा नष्ट केला जाईल.
+                  {requestResult?.message ||
+                    'आपल्या नोंदणीकृत संपर्काची पडताळणी केल्यानंतर ३० दिवसांत खाते व संपूर्ण वैयक्तिक डेटा कायमचा हटवला जाईल.'}
                 </p>
               </div>
             ) : (

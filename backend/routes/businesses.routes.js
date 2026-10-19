@@ -1,177 +1,116 @@
 import { Router } from 'express';
-import { db } from '../db/realtimeDb.js';
-import { authenticateToken, optionalToken } from '../middleware/auth.js';
-import { sendSuccess, sendError } from '../utils/response.js';
-import { validateBusiness, validateBusinessReview, sanitize, isValidPhone, cleanPhone } from '../utils/validator.js';
+import { all, get, runQuery } from '../../database/database.js';
 
 const router = Router();
 
 // GET /api/businesses
-// Search businesses by category, district, keywords, ratings
-router.get('/', (req, res) => {
-  const { cat, district, search, rating } = req.query;
-  let list = db.getCollection('businesses');
+router.get('/', async (req, res, next) => {
+  try {
+    const { cat, district, search } = req.query;
+    let sql = 'SELECT * FROM businesses WHERE 1=1';
+    const params = [];
 
-  if (cat && cat !== 'all') {
-    list = list.filter(b => (b.cat || b.category || '').toLowerCase().includes(cat.toLowerCase()));
+    if (cat && cat !== 'all') {
+      sql += ' AND cat = ?';
+      params.push(cat);
+    }
+    if (district && district !== 'सर्व') {
+      sql += ' AND district = ?';
+      params.push(district);
+    }
+    if (search) {
+      sql += ' AND (name LIKE ? OR owner LIKE ? OR services LIKE ? OR city LIKE ?)';
+      params.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
+    }
+
+    sql += ' ORDER BY rating DESC';
+    const rows = await all(sql, params);
+
+    const formatted = rows.map(b => {
+      try {
+        b.services = JSON.parse(b.services || '[]');
+      } catch {
+        b.services = [];
+      }
+      return b;
+    });
+
+    res.json({ success: true, count: formatted.length, businesses: formatted });
+  } catch (err) {
+    next(err);
   }
-
-  if (district && district !== 'सर्व') {
-    list = list.filter(b => (b.district || '').toLowerCase() === district.toLowerCase());
-  }
-
-  if (rating) {
-    list = list.filter(b => Number(b.rating || 0) >= Number(rating));
-  }
-
-  if (search) {
-    const q = search.toLowerCase();
-    list = list.filter(b => 
-      (b.name || '').toLowerCase().includes(q) ||
-      (b.owner || '').toLowerCase().includes(q) ||
-      (b.city || '').toLowerCase().includes(q) ||
-      (b.district || '').toLowerCase().includes(q) ||
-      (b.offers || '').toLowerCase().includes(q)
-    );
-  }
-
-  return sendSuccess(res, 'व्यवसाय सूची प्राप्त झाली', {
-    businesses: list,
-    count: list.length
-  });
-});
-
-// POST /api/businesses
-// Register new business entity, GST/Udyam details, catalog
-router.post('/', authenticateToken, (req, res) => {
-  const { isValid, errors, sanitized } = validateBusiness(req.body);
-  if (!isValid) {
-    return sendError(res, errors[0]?.error || 'अवैध व्यवसाय माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
-  }
-
-  const { name, phone } = sanitized;
-  const { owner, cat, city, district, whatsapp, website, services, offers, gstNumber, udyamNo } = req.body;
-
-  const newBusiness = {
-    id: `BIZ-${Date.now().toString().slice(-5)}`,
-    name,
-    owner: sanitize(owner) || req.user.name,
-    ownerId: req.user.id,
-    cat: sanitize(cat) || 'उद्योग / व्यापार',
-    city: sanitize(city) || req.user.district || 'पुणे',
-    district: sanitize(district) || req.user.district || 'पुणे',
-    phone,
-    whatsapp: whatsapp ? cleanPhone(whatsapp) : phone,
-    website: sanitize(website) || '',
-    services: Array.isArray(services) ? services.map(s => sanitize(s)) : (services ? [sanitize(services)] : []),
-    offers: sanitize(offers) || '',
-    gstNumber: sanitize(gstNumber) || '',
-    udyamNo: sanitize(udyamNo) || '',
-    rating: 5.0,
-    reviewCount: 0,
-    photo: '🏢',
-    verified: true,
-    createdAt: new Date().toISOString()
-  };
-
-  db.insert('businesses', newBusiness);
-  db.addAuditLog('REGISTER_BUSINESS', req.user.id, { businessId: newBusiness.id, name });
-
-  return sendSuccess(res, 'व्यवसाय यशस्वीरीत्या जोडला गेला!', { business: newBusiness }, 201);
 });
 
 // GET /api/businesses/:id
-// Get single business portfolio, gallery, reviews, contact
-router.get('/:id', (req, res) => {
-  const business = db.findById('businesses', req.params.id);
-  if (!business) {
-    return sendError(res, 'व्यवसाय सापडला नाही.', 'BUSINESS_NOT_FOUND', 404);
+router.get('/:id', async (req, res, next) => {
+  try {
+    const business = await get('SELECT * FROM businesses WHERE id = ?', [req.params.id]);
+    if (!business) {
+      return res.status(404).json({ success: false, error: 'व्यवसाय सापडला नाही.' });
+    }
+
+    try {
+      business.services = JSON.parse(business.services || '[]');
+    } catch {
+      business.services = [];
+    }
+
+    const reviews = await all('SELECT * FROM business_reviews WHERE business_id = ? ORDER BY created_at DESC', [req.params.id]);
+    business.reviews = reviews;
+
+    res.json({ success: true, business });
+  } catch (err) {
+    next(err);
   }
-
-  const allReviews = db.getCollection('businessReviews');
-  const reviews = allReviews.filter(r => r.businessId === req.params.id);
-
-  return sendSuccess(res, 'व्यवसाय तपशील प्राप्त झाला', {
-    business,
-    reviews
-  });
 });
 
-// PUT /api/businesses/:id
-// Update business info, operating hours, offerings
-router.put('/:id', authenticateToken, (req, res) => {
-  const business = db.findById('businesses', req.params.id);
-  if (!business) {
-    return sendError(res, 'व्यवसाय सापडला नाही.', 'BUSINESS_NOT_FOUND', 404);
-  }
+// POST /api/businesses
+router.post('/', async (req, res, next) => {
+  try {
+    const { name, owner, cat, city, district, phone, whatsapp, website, hours, services, offers } = req.body;
 
-  if (business.ownerId && business.ownerId !== req.user.id && req.user.role !== 'admin' && req.user.role !== 'ceo') {
-    return sendError(res, 'आपणास हा व्यवसाय अपडेट करण्याची परवानगी नाही.', 'FORBIDDEN', 403);
-  }
-
-  const updates = {};
-  if (req.body.phone !== undefined) {
-    const cleaned = cleanPhone(req.body.phone);
-    if (!isValidPhone(cleaned)) {
-      return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
+    if (!name || !owner || !cat) {
+      return res.status(400).json({ success: false, error: 'व्यवसायाचे नाव, मालकाचे नाव आणि वर्गवारी आवश्यक आहे.' });
     }
-    updates.phone = cleaned;
-  }
 
-  const allowed = ['name', 'cat', 'city', 'district', 'whatsapp', 'website', 'services', 'offers', 'gstNumber', 'udyamNo'];
-  for (const k of allowed) {
-    if (req.body[k] !== undefined) {
-      updates[k] = typeof req.body[k] === 'string' ? sanitize(req.body[k]) : req.body[k];
+    const id = 'B' + Math.floor(10 + Math.random() * 90);
+    const servicesJson = Array.isArray(services) ? JSON.stringify(services) : JSON.stringify(services ? [services] : []);
+    const photo = cat === 'restaurant' ? '🍛' : cat === 'it' ? '💻' : cat === 'manufacturing' ? '⚙️' : cat === 'travel' ? '🚌' : '🏢';
+
+    await runQuery(`
+      INSERT INTO businesses (id, name, owner, cat, city, district, photo, phone, whatsapp, website, hours, services, offers, rating, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 5.0, datetime('now'))
+    `, [id, name, owner, cat, city || 'पुणे', district || 'पुणे', photo, phone || '', whatsapp || '', website || '', hours || 'सकाळी ९ ते रात्री ८', servicesJson, offers || '']);
+
+    const created = await get('SELECT * FROM businesses WHERE id = ?', [id]);
+    try {
+      created.services = JSON.parse(created.services || '[]');
+    } catch {
+      created.services = [];
     }
+
+    res.status(201).json({ success: true, message: 'व्यवसाय यशस्वीरित्या नोंदवला गेला!', business: created });
+  } catch (err) {
+    next(err);
   }
-
-  const updated = db.update('businesses', req.params.id, updates);
-  db.addAuditLog('UPDATE_BUSINESS', req.user.id, { businessId: req.params.id });
-
-  return sendSuccess(res, 'व्यवसाय माहिती यशस्वीरीत्या अद्यतनित झाली!', { business: updated });
 });
 
 // POST /api/businesses/:id/reviews
-// Submit verified customer review & star rating
-router.post('/:id/reviews', authenticateToken, (req, res) => {
-  const business = db.findById('businesses', req.params.id);
-  if (!business) {
-    return sendError(res, 'व्यवसाय सापडला नाही.', 'BUSINESS_NOT_FOUND', 404);
+router.post('/:id/reviews', async (req, res, next) => {
+  try {
+    const { member_name, rating, text } = req.body;
+    const reviewId = 'REV-' + Date.now();
+
+    await runQuery(`
+      INSERT INTO business_reviews (id, business_id, member_name, rating, text, created_at)
+      VALUES (?, ?, ?, ?, ?, datetime('now'))
+    `, [reviewId, req.params.id, member_name || 'सदस्य', rating || 5, text || '']);
+
+    res.status(201).json({ success: true, message: 'अभिप्राय नोंदवला गेला!' });
+  } catch (err) {
+    next(err);
   }
-
-  const { isValid, errors, sanitized } = validateBusinessReview(req.body);
-  if (!isValid) {
-    return sendError(res, errors[0]?.error || 'अवैध रिव्ह्यू माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
-  }
-
-  const { rating, text } = sanitized;
-  const memberName = sanitize(req.body.member_name) || req.user.name;
-
-  const newReview = {
-    id: `REV-${Date.now().toString().slice(-4)}`,
-    businessId: req.params.id,
-    reviewerId: req.user.id,
-    memberName,
-    rating,
-    text: text || 'उत्कृष्ट सेवा!',
-    createdAt: new Date().toISOString()
-  };
-
-  db.insert('businessReviews', newReview);
-
-  // Recalculate average rating
-  const reviews = db.getCollection('businessReviews').filter(r => r.businessId === req.params.id);
-  const avg = reviews.reduce((sum, r) => sum + Number(r.rating || 5), 0) / reviews.length;
-
-  db.update('businesses', req.params.id, {
-    rating: parseFloat(avg.toFixed(1)),
-    reviewCount: reviews.length
-  });
-
-  return sendSuccess(res, 'पुनरावलोकन (Review) यशस्वीरीत्या जोडले गेले!', {
-    review: newReview,
-    newRating: parseFloat(avg.toFixed(1))
-  }, 201);
 });
 
 export default router;
+
