@@ -31,6 +31,9 @@ const DATABASE_URL = process.env.DATABASE_URL;
 let pool = null;
 let ready = null;
 let sqliteDb = null;
+// sql.js export() (used by saveDatabase) ends an open transaction, so writes
+// inside transaction() are saved once, at COMMIT.
+let sqliteInTransaction = false;
 let SQL = null;
 
 /**
@@ -219,12 +222,15 @@ export async function transaction(fn) {
 
   const db = await getDatabase();
   db.run('BEGIN TRANSACTION;');
+  sqliteInTransaction = true;
   try {
     const result = await fn({ runQuery, all, get });
     db.run('COMMIT;');
+    sqliteInTransaction = false;
     saveDatabase();
     return result;
   } catch (err) {
+    sqliteInTransaction = false;
     db.run('ROLLBACK;');
     throw err;
   }
@@ -238,7 +244,7 @@ export async function runQuery(sql, params = []) {
   }
   const db = await getDatabase();
   db.run(sql, params);
-  saveDatabase();
+  if (!sqliteInTransaction) saveDatabase();
   return { success: true };
 }
 

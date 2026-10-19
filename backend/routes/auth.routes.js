@@ -7,6 +7,7 @@ import { sendPasswordResetOtpEmail, sendWelcomeEmail } from '../utils/mailer.js'
 import { validateLocationHierarchy } from './locations.routes.js';
 import { authRateLimiter } from '../middleware/rateLimiter.js';
 import { validateBody } from '../middleware/validator.js';
+import { ensureWebsiteTables } from '../utils/websiteTables.js';
 import {
   loginSchema,
   registerSchema,
@@ -621,7 +622,7 @@ router.post('/reset-password', authRateLimiter, validateBody(resetPasswordSchema
 });
 
 // DELETE /api/auth/account
-router.delete('/account', authenticateToken, validateBody(deleteAccountSchema), async (req, res, next) => {
+async function deleteAccountHandler(req, res, next) {
   const memberId = req.user?.id;
   if (!memberId) {
     return res.status(401).json({ success: false, error: 'प्रमाणीकरण आवश्यक आहे (Authentication required)' });
@@ -665,6 +666,16 @@ router.delete('/account', authenticateToken, validateBody(deleteAccountSchema), 
       }
     }
 
+    // Tables that may not exist in every environment are cleaned up outside the
+    // transaction: on PostgreSQL a failed statement aborts the whole transaction.
+    for (const sql of ['DELETE FROM media WHERE owner_id = ?', 'DELETE FROM refresh_tokens WHERE member_id = ?']) {
+      try {
+        await runQuery(sql, [memberId]);
+      } catch (_) {
+        // Table not present here.
+      }
+    }
+
     await transaction(async (t) => {
       // 1. Likes placed by this member on OTHER posts
       const otherPostLikes = await t.all('SELECT post_id FROM post_likes WHERE member_id = ?', [memberId]);
@@ -689,22 +700,8 @@ router.delete('/account', authenticateToken, validateBody(deleteAccountSchema), 
       }
       await t.runQuery('DELETE FROM posts WHERE author_id = ?', [memberId]);
 
-      // 4. Media owned by this member (check table existence safely)
-      try {
-        await t.runQuery('DELETE FROM media WHERE owner_id = ?', [memberId]);
-      } catch (_) {
-        // Ignored if media table is not present in local SQLite environment
-      }
-
       // 5. Notifications
       await t.runQuery('DELETE FROM notifications WHERE member_id = ?', [memberId]);
-
-      // 6. Refresh tokens (Production session table)
-      try {
-        await t.runQuery('DELETE FROM refresh_tokens WHERE member_id = ?', [memberId]);
-      } catch (_) {
-        // Ignored if refresh_tokens table is not present in local SQLite environment
-      }
 
       // 7. Group memberships and recount
       const memberGroups = await t.all('SELECT group_id FROM group_members WHERE member_id = ?', [memberId]);
@@ -746,7 +743,72 @@ router.delete('/account', authenticateToken, validateBody(deleteAccountSchema), 
 
     return res.json({
       success: true,
+      deleted: true,
       message: 'खाते आणि सर्व वैयक्तिक डेटा यशस्वीरित्या कायमस्वरूपी हटवला गेला आहे (Account and personal data deleted successfully).'
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+router.delete('/account', authenticateToken, validateBody(deleteAccountSchema), deleteAccountHandler);
+
+// POST /api/auth/delete-account  (website "Delete account" page)
+// Logged in (Bearer token): same deletion as DELETE /account, password checked.
+// Not logged in: records a deletion request for staff to verify and action;
+// an identifier alone must never delete an account.
+router.post('/delete-account', authRateLimiter, async (req, res, next) => {
+  try {
+    if (req.user?.id) {
+      req.body = { confirm: 'DELETE', password: req.body?.password };
+      return deleteAccountHandler(req, res, next);
+    }
+
+    const identifier = String(req.body?.identifier || req.body?.phone || req.body?.email || '').trim().slice(0, 120);
+    if (!identifier) {
+      return res.status(400).json({ success: false, code: 'IDENTIFIER_REQUIRED', error: 'कृपया नोंदणीकृत मोबाइल नंबर किंवा ईमेल टाका.' });
+    }
+    if (req.body?.confirmation !== true) {
+      return res.status(400).json({ success: false, code: 'CONFIRMATION_REQUIRED', error: 'कृपया पुष्टीकरण चेकबॉक्स निवडा.' });
+    }
+
+    const digits = identifier.replace(/\D/g, '');
+    const last10 = digits.length >= 10 ? digits.slice(-10) : '';
+    const member = await get(
+      `SELECT id, name, phone, email FROM members
+       WHERE LOWER(email) = LOWER(?) OR UPPER(id) = UPPER(?) OR (? != '' AND phone LIKE ?)`,
+      [identifier, identifier, last10, `%${last10}`]
+    );
+
+    if (member) {
+      await ensureWebsiteTables();
+      const open = await get(
+        "SELECT id FROM support_tickets WHERE source = 'account_deletion' AND requester_id = ? AND status NOT IN ('Resolved', 'Closed')",
+        [member.id]
+      );
+      if (!open) {
+        const reason = String(req.body?.reason || '').trim().slice(0, 500);
+        const now = new Date().toISOString();
+        await runQuery(
+          `INSERT INTO support_tickets (id, source, title, description, category, priority, status,
+             requester_id, requester_name, requester_phone, requester_email, sla_hours, audit_trail, updated_at)
+           VALUES (?, 'account_deletion', ?, ?, 'Account Deletion', 'High', 'New', ?, ?, ?, ?, 720, ?, ?)`,
+          [`DEL-${Date.now().toString(36).toUpperCase()}`, `Account deletion request: ${member.id}`,
+            `Web request to delete account ${member.id}. Verify the requester before deleting.${reason ? ` Reason: ${reason}` : ''}`,
+            member.id, member.name || '', member.phone || '', member.email || '',
+            JSON.stringify([{ action: 'CREATED', by: 'web delete-account page', timestamp: now }]), now]
+        );
+      }
+    }
+
+    // Same answer whether or not the account exists, so the form can't be used
+    // to find out who is registered.
+    return res.json({
+      success: true,
+      requested: true,
+      deleted: false,
+      message: 'आपली खाते हटवण्याची विनंती प्राप्त झाली आहे. पडताळणीनंतर ३० दिवसांत खाते व वैयक्तिक डेटा हटवला जाईल. (Your deletion request was received; after verification the account and personal data are deleted within 30 days.)',
+      data: { requested: true, deleted: false },
     });
   } catch (err) {
     next(err);
