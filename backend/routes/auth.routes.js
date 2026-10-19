@@ -324,6 +324,13 @@ async function verifyGoogleIdToken(idToken) {
 // with accepted terms/privacy/age creates the member from the verified profile.
 router.post('/google', authRateLimiter, validateBody(googleAuthSchema), async (req, res, next) => {
   try {
+    if (GOOGLE_CLIENT_IDS.length === 0 && process.env.NODE_ENV === 'production') {
+      return res.status(503).json({
+        success: false,
+        code: 'GOOGLE_NOT_CONFIGURED',
+        error: 'Google लॉगिन सध्या उपलब्ध नाही. कृपया मोबाईल/ईमेल व पासवर्डने लॉगिन करा. (Google sign-in is not available yet.)'
+      });
+    }
     const info = await verifyGoogleIdToken(req.body.idToken);
     if (!info) {
       return res.status(401).json({
