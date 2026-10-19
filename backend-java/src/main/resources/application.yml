@@ -1,0 +1,16 @@
+server:
+  # 5001 so it can run next to the Node backend (5000) while both exist.
+  port: ${PORT:5001}
+  forward-headers-strategy: framework   # behind nginx / Cloudflare, like Node's trust proxy
+
+app:
+  jwt-secret: ${JWT_SECRET:}
+  production: ${APP_PRODUCTION:false}
+
+spring:
+  application:
+    name: connect-maratha-api
+  jackson:
+    default-property-inclusion: always
+    serialization:
+      write-dates-as-timestamps: false
