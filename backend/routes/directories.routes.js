@@ -1,702 +1,879 @@
 import { Router } from 'express';
-import { db } from '../db/realtimeDb.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { authenticateToken, optionalToken } from '../middleware/auth.js';
-import { sendSuccess, sendError } from '../utils/response.js';
-import { 
-  sanitize, 
-  isValidPhone, 
-  cleanPhone, 
-  isPositiveNumber, 
-  validateLoan, 
-  validateSpeakerBooking 
-} from '../utils/validator.js';
+import { runQuery } from '../../database/database.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DB_FILE = path.join(__dirname, '../db.json');
 
 const router = Router();
 
-// ==========================================
-// 1. DOCTORS DIRECTORY (/api/doctors)
-// ==========================================
-router.get('/doctors', (req, res) => {
-  const { specialty, city, search } = req.query;
-  let list = db.getCollection('doctors');
+function isDairyReq(req) {
+  return req.baseUrl.includes('dairy') || req.path.startsWith('/dairy');
+}
 
-  if (specialty && specialty !== 'सर्व') {
-    list = list.filter(d => (d.specialty || '').includes(specialty) || (d.category || '').includes(specialty));
-  }
-  if (city && city !== 'सर्व') {
-    list = list.filter(d => (d.city || '').includes(city));
-  }
-  if (search) {
-    const q = search.toLowerCase();
-    list = list.filter(d => 
-      (d.name || '').toLowerCase().includes(q) ||
-      (d.hospital || '').toLowerCase().includes(q) ||
-      (d.specialty || '').toLowerCase().includes(q)
-    );
-  }
+function isBuilderReq(req) {
+  return req.baseUrl.includes('builders') || req.path.startsWith('/builders');
+}
 
-  return sendSuccess(res, 'डॉक्टर्स यादी प्राप्त झाली', { doctors: list, count: list.length });
-});
+// In-memory rate limiter for enquiries (e.g., max 10 requests per 15 minutes per IP)
+const enquiryRateLimitMap = new Map();
+function enquiryRateLimiter(req, res, next) {
+  const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000; // 15 minutes
+  const maxRequests = 10;
 
-router.post('/doctors', optionalToken, (req, res) => {
-  const { name, specialty, hospital, city, phone, consultationFee, degree } = req.body;
-  const cleanName = sanitize(name);
-  const cleanedPhone = cleanPhone(phone);
+  const record = enquiryRateLimitMap.get(ip) || { count: 0, resetTime: now + windowMs };
 
-  if (!cleanName || !cleanedPhone) {
-    return sendError(res, 'कृपया नाव आणि फोन नंबर प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+  if (now > record.resetTime) {
+    record.count = 1;
+    record.resetTime = now + windowMs;
+  } else {
+    record.count += 1;
   }
 
-  if (!isValidPhone(cleanedPhone)) {
-    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
+  enquiryRateLimitMap.set(ip, record);
+
+  if (record.count > maxRequests) {
+    return res.status(429).json({
+      success: false,
+      code: 'RATE_LIMIT_EXCEEDED',
+      error: 'खूप जास्त चौकशी विनंत्या पाठवल्या आहेत. कृपया १५ मिनिटांनंतर पुन्हा प्रयत्न करा (Too many enquiry requests).'
+    });
   }
 
-  const newDoc = {
-    id: `DOC-${Date.now().toString().slice(-4)}`,
-    name: cleanName,
-    specialty: sanitize(specialty) || 'सामान्य चिकित्सक',
-    degree: sanitize(degree) || 'M.B.B.S.',
-    category: sanitize(specialty) || 'सामान्य',
-    hospital: sanitize(hospital) || 'सह्याद्री हॉस्पिटल',
-    city: sanitize(city) || 'पुणे',
-    phone: cleanedPhone,
-    consultationFee: sanitize(consultationFee) || '₹५००',
-    timing: sanitize(req.body.timing) || 'स. १० ते सायं. ६',
-    experience: sanitize(req.body.experience) || '१० वर्षे अनुभव',
-    rating: '5.0 ★ (नवीन नोंदणी)',
-    icon: '🩺',
-    verified: true,
-    createdAt: new Date().toISOString()
-  };
+  next();
+}
 
-  db.insert('doctors', newDoc);
-  db.addAuditLog('REGISTER_DOCTOR', req.user?.id || 'GUEST', { name: cleanName, phone: cleanedPhone });
-
-  return sendSuccess(res, 'डॉक्टर प्रोफाइल यशस्वीरीत्या जोडले गेले!', { doctor: newDoc }, 201);
-});
-
-// ==========================================
-// 2. ARTISTS DIRECTORY (/api/artists)
-// ==========================================
-router.get('/artists', (req, res) => {
-  const list = db.getCollection('artists');
-  return sendSuccess(res, 'कलाकार व शाहिरी परंपरा यादी', { artists: list, count: list.length });
-});
-
-router.post('/artists', optionalToken, (req, res) => {
-  const { name, field, awards, city, phone } = req.body;
-  const cleanName = sanitize(name);
-
-  if (!cleanName) {
-    return sendError(res, 'कलाकाराचे नाव आवश्यक आहे.', 'MISSING_FIELDS', 400);
+// Helpers for reading/writing db.json
+function readData() {
+  try {
+    const raw = fs.readFileSync(DB_FILE, 'utf8');
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error('Error reading db.json:', err);
+    return {};
   }
+}
 
-  const cleanedPhone = phone ? cleanPhone(phone) : '';
-  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
-    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
+function writeData(data) {
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Error writing db.json:', err);
   }
+}
 
-  const item = {
-    id: `ART-${Date.now().toString().slice(-4)}`,
-    name: cleanName,
-    field: sanitize(field) || 'नाट्य व चित्रपट / शाहिरी',
-    awards: sanitize(awards) || 'महाराष्ट्र राज्य गौरव',
-    city: sanitize(city) || 'पुणे/मुंबई',
-    phone: cleanedPhone,
-    photo: '🎭',
-    createdAt: new Date().toISOString()
-  };
+// Phone validator: Indian mobile (10 digits starting with 6-9)
+function validateIndianMobile(phone) {
+  if (!phone || typeof phone !== 'string') return null;
+  const digitsOnly = phone.replace(/\D/g, '');
+  const match = digitsOnly.match(/^(?:91|0)?([6-9]\d{9})$/);
+  return match ? match[1] : null;
+}
 
-  db.insert('artists', item);
-  return sendSuccess(res, 'कलाकार प्रोफाइल यशस्वीरीत्या जोडले गेले!', { artist: item }, 201);
-});
-
-// ==========================================
-// 3. GOVERNMENT OFFICERS (/api/officers)
-// ==========================================
-router.get('/officers', (req, res) => {
-  const list = db.getCollection('officers');
-  return sendSuccess(res, 'प्रशासकीय अधिकारी यादी', { officers: list, count: list.length });
-});
-
-router.post('/officers', optionalToken, (req, res) => {
-  const { name, designation, department, batch, postingCity } = req.body;
-  const cleanName = sanitize(name);
-  const cleanDesignation = sanitize(designation);
-
-  if (!cleanName || !cleanDesignation) {
-    return sendError(res, 'नाव व पद आवश्यक आहे.', 'MISSING_FIELDS', 400);
-  }
-
-  const item = {
-    id: `OFF-${Date.now().toString().slice(-4)}`,
-    name: cleanName,
-    designation: cleanDesignation,
-    department: sanitize(department) || 'सामान्य प्रशासन',
-    batch: sanitize(batch) || 'IAS / IPS / MPSC',
-    postingCity: sanitize(postingCity) || 'महाराष्ट्र शासन',
-    photo: '🏛️',
-    createdAt: new Date().toISOString()
-  };
-
-  db.insert('officers', item);
-  return sendSuccess(res, 'अधिकारी प्रोफाइल यशस्वीरीत्या नोंदवले गेले!', { officer: item }, 201);
-});
-
-// ==========================================
-// 4. SPEAKERS & BOOKINGS (/api/speakers)
-// ==========================================
-router.get('/speakers', (req, res) => {
-  const list = db.getCollection('speakers');
-  return sendSuccess(res, 'प्रबोधनकार व वक्ते यादी', { speakers: list, count: list.length });
-});
-
-router.post('/speakers', optionalToken, (req, res) => {
-  const { name, expertise, topics, city, contact } = req.body;
-  const cleanName = sanitize(name);
-
-  if (!cleanName) {
-    return sendError(res, 'नाव आवश्यक आहे.', 'MISSING_FIELDS', 400);
-  }
-
-  const cleanedPhone = contact ? cleanPhone(contact) : '';
-  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
-    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
-  }
-
-  const item = {
-    id: `SPK-${Date.now().toString().slice(-4)}`,
-    name: cleanName,
-    expertise: sanitize(expertise) || 'शिवचरित्र व मराठा इतिहास',
-    topics: sanitize(topics) || 'शिवकालीन व्यवस्थापन व स्वराज्य प्रेरणा',
-    city: sanitize(city) || 'महाराष्ट्र',
-    contact: cleanedPhone,
-    photo: '🎤',
-    createdAt: new Date().toISOString()
-  };
-
-  db.insert('speakers', item);
-  return sendSuccess(res, 'वक्ते प्रोफाइल जोडले गेले!', { speaker: item }, 201);
-});
-
-router.post('/speakers/book', authenticateToken, (req, res) => {
-  const { isValid, errors, sanitized } = validateSpeakerBooking(req.body);
-  if (!isValid) {
-    return sendError(res, errors[0]?.error || 'अवैध व्याख्यान बुकिंग माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
-  }
-
-  const { speakerName, eventDate, organizerPhone } = sanitized;
-  const { speakerId, eventTopic, venue } = req.body;
-
-  const booking = {
-    id: `SBK-${Date.now().toString().slice(-4)}`,
-    speakerId: sanitize(speakerId) || '',
-    speakerName,
-    requesterId: req.user.id,
-    requesterName: req.user.name,
-    eventDate,
-    eventTopic: sanitize(eventTopic) || 'शिवजयंती व्याख्यान',
-    venue: sanitize(venue) || 'महाराष्ट्र',
-    organizerPhone,
-    status: 'प्रलंबित (Pending Approval)',
-    createdAt: new Date().toISOString()
-  };
-
-  db.insert('speakerBookings', booking);
-  db.addAuditLog('BOOK_SPEAKER', req.user.id, { speakerName, eventDate });
-
-  return sendSuccess(res, 'व्याख्यान आमंत्रण विनंती सादर झाली!', { booking }, 201);
-});
-
-// ==========================================
-// 5. ORGANIZATIONS (/api/organizations)
-// ==========================================
-router.get('/organizations', (req, res) => {
-  const list = db.getCollection('organizations');
-  return sendSuccess(res, 'मराठा संस्था व संघटना यादी', { organizations: list, count: list.length });
-});
-
-router.post('/organizations', optionalToken, (req, res) => {
-  const { name, regNo, president, city, district, contact, workScope } = req.body;
-  const cleanName = sanitize(name);
-
-  if (!cleanName) {
-    return sendError(res, 'संस्थेचे नाव आवश्यक आहे.', 'MISSING_FIELDS', 400);
-  }
-
-  const cleanedPhone = contact ? cleanPhone(contact) : '';
-  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
-    return sendError(res, 'कृपया संस्थेचा वैध संपर्क क्रमांक प्रविष्ट करा.', 'INVALID_PHONE', 400);
-  }
-
-  const item = {
-    id: `ORG-${Date.now().toString().slice(-4)}`,
-    name: cleanName,
-    regNo: sanitize(regNo) || 'संस्था नोंदणी क्र.',
-    president: sanitize(president) || 'मा. अध्यक्ष',
-    city: sanitize(city) || 'पुणे',
-    district: sanitize(district) || 'पुणे',
-    contact: cleanedPhone,
-    workScope: sanitize(workScope) || 'सामाजिक, शैक्षणिक व सांस्कृतिक',
-    logo: '🚩',
-    createdAt: new Date().toISOString()
-  };
-
-  db.insert('organizations', item);
-  return sendSuccess(res, 'संस्था नोंदणी यशस्वी झाली!', { organization: item }, 201);
-});
-
-// ==========================================
-// 6. BUILDERS & REAL ESTATE (/api/builders)
-// ==========================================
-router.get('/builders', (req, res) => {
-  const list = db.getCollection('builders');
-  return sendSuccess(res, 'बिल्डर प्रकल्प यादी', { builders: list, count: list.length });
-});
-
-router.post('/builders', optionalToken, (req, res) => {
-  const { projectName, developer, location, configuration, priceRange, phone } = req.body;
-  const cleanProj = sanitize(projectName);
-  const cleanDev = sanitize(developer);
-
-  if (!cleanProj || !cleanDev) {
-    return sendError(res, 'प्रकल्प व विकासकाचे नाव आवश्यक आहे.', 'MISSING_FIELDS', 400);
-  }
-
-  const cleanedPhone = phone ? cleanPhone(phone) : '';
-  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
-    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
-  }
-
-  const item = {
-    id: `BLD-${Date.now().toString().slice(-4)}`,
-    projectName: cleanProj,
-    developer: cleanDev,
-    location: sanitize(location) || 'पुणे / मुंबई',
-    configuration: sanitize(configuration) || '2 & 3 BHK Premium Homes',
-    priceRange: sanitize(priceRange) || '₹६५ लाख ते ₹१.५ कोटी',
-    phone: cleanedPhone,
-    reraApproved: true,
-    discountForMembers: 'मराठा महासंघ सदस्यांसाठी विशेष ३% सवलत',
-    createdAt: new Date().toISOString()
-  };
-
-  db.insert('builders', item);
-  return sendSuccess(res, 'बिल्डर प्रकल्प यशस्वीरीत्या नोंदवला गेला!', { project: item }, 201);
-});
-
-// ==========================================
-// 7. MANUFACTURERS (/api/manufacturers)
-// ==========================================
-router.get('/manufacturers', (req, res) => {
-  const list = db.getCollection('manufacturers');
-  return sendSuccess(res, 'उद्योग व मॅन्युफॅक्चरर्स यादी', { manufacturers: list, count: list.length });
-});
-
-router.post('/manufacturers', optionalToken, (req, res) => {
-  const { companyName, industry, products, district, contact, turnover } = req.body;
-  const cleanCompany = sanitize(companyName);
-
-  if (!cleanCompany) {
-    return sendError(res, 'कंपनीचे नाव आवश्यक आहे.', 'MISSING_FIELDS', 400);
-  }
-
-  const cleanedPhone = contact ? cleanPhone(contact) : '';
-  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
-    return sendError(res, 'कृपया वैध संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
-  }
-
-  const item = {
-    id: `MFG-${Date.now().toString().slice(-4)}`,
-    companyName: cleanCompany,
-    industry: sanitize(industry) || 'इंजिनिअरिंग / ऑटोमोबाईल',
-    products: sanitize(products) || 'पार्ट्स व मेकॅनिकल उपकरणे',
-    district: sanitize(district) || 'चाकण, पुणे',
-    contact: cleanedPhone,
-    turnover: sanitize(turnover) || '₹१० कोटी+',
-    createdAt: new Date().toISOString()
-  };
-
-  db.insert('manufacturers', item);
-  return sendSuccess(res, 'उत्पादक उद्योग यशस्वीरीत्या जोडला गेला!', { manufacturer: item }, 201);
-});
-
-// ==========================================
-// 8. DAIRY COOPERATIVES (/api/dairy)
-// ==========================================
-router.get('/dairy', (req, res) => {
-  const list = db.getCollection('dairy');
-  return sendSuccess(res, 'मराठा डेअरी व दुग्ध व्यवसाय केंद्र यादी', { dairy: list, count: list.length });
-});
-
-router.post('/dairy', optionalToken, (req, res) => {
-  const { dairyName, centerHead, dailyCollection, district, milkRateCow, milkRateBuffalo, contact } = req.body;
-  const cleanDairy = sanitize(dairyName);
-
-  if (!cleanDairy) {
-    return sendError(res, 'डेअरीचे नाव आवश्यक आहे.', 'MISSING_FIELDS', 400);
-  }
-
-  const cleanedPhone = contact ? cleanPhone(contact) : '';
-  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
-    return sendError(res, 'कृपया वैध संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
-  }
-
-  const item = {
-    id: `DRY-${Date.now().toString().slice(-4)}`,
-    dairyName: cleanDairy,
-    centerHead: sanitize(centerHead) || 'केंद्र प्रमुख',
-    dailyCollection: sanitize(dailyCollection) || '२,५०० लिटर/दिवस',
-    district: sanitize(district) || 'कोल्हापूर/सांगली',
-    milkRateCow: sanitize(milkRateCow) || '₹३६ / लिटर',
-    milkRateBuffalo: sanitize(milkRateBuffalo) || '₹५४ / लिटर',
-    contact: cleanedPhone,
-    createdAt: new Date().toISOString()
-  };
-
-  db.insert('dairy', item);
-  return sendSuccess(res, 'डेअरी केंद्र जोडले गेले!', { dairyCenter: item }, 201);
-});
-
-// ==========================================
-// 9. MARATHA BANK & LOANS (/api/bank/loans)
-// ==========================================
-router.get('/bank/loans', authenticateToken, (req, res) => {
-  const list = db.getCollection('bankLoans');
-  const userLoans = req.user.role === 'admin' ? list : list.filter(l => l.applicantId === req.user.id);
-
-  return sendSuccess(res, 'कर्ज योजना व अर्ज स्थिती', {
-    schemes: [
-      { id: 'ANNABHAU-01', name: 'अण्णासाहेब पाटील महामंडळ बिनव्याजी कर्ज योजना', maxAmount: '₹१५,००,०००', interestSubsidy: '१२% व्याज परतावा', category: 'स्वयंरोजगार' },
-      { id: 'AGRI-02', name: 'कृषी व प्रक्रिया उद्योग विस्तार योजना', maxAmount: '₹५०,००,०००', interestSubsidy: 'विशेष सवलत', category: 'कृषी उद्योग' },
-      { id: 'STARTUP-03', name: 'मराठा युवा स्टार्ट-अप सीड कॅपिटल', maxAmount: '₹१०,००,०००', interestSubsidy: 'सुलभ हप्ते', category: 'स्टार्टअप' }
-    ],
-    myApplications: userLoans
+// Standard envelope helpers
+export function sendSuccess(res, data = {}, message = '', statusCode = 200) {
+  return res.status(statusCode).json({
+    success: true,
+    ...(message ? { message } : {}),
+    ...data
   });
-});
+}
 
-router.post('/bank/loans', authenticateToken, (req, res) => {
-  const { isValid, errors, sanitized } = validateLoan(req.body);
-  if (!isValid) {
-    return sendError(res, errors[0]?.error || 'अवैध कर्ज अर्ज माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
+export function sendError(res, error = 'Error', code = 'ERROR', statusCode = 400, validationErrors = null) {
+  let displayError = typeof error === 'object' && error?.message ? error.message : String(error);
+
+  // If 5xx or error contains internal details, log server-side and sanitize user-facing output
+  if (statusCode >= 500 || /sqlite|syntax error|no such|stack|\.(?:js|ts):\d+|node_modules|[a-zA-Z]:[\\\/]/i.test(displayError)) {
+    console.error(`🚨 [DIRECTORIES ERROR ${code}] Status ${statusCode}:`, error);
+    displayError = 'सर्व्हरवर तांत्रिक अडचण आली आहे. कृपया थोड्या वेळाने पुन्हा प्रयत्न करा (Internal server error).';
+    statusCode = statusCode >= 500 ? statusCode : 500;
   }
 
-  const { loanAmount, purpose } = sanitized;
-  const { schemeName, businessName, annualIncome, contact } = req.body;
+  return res.status(statusCode).json({
+    success: false,
+    error: displayError,
+    code,
+    ...(validationErrors ? { validationErrors } : {})
+  });
+}
 
-  const cleanedPhone = contact ? cleanPhone(contact) : (req.user.phone ? cleanPhone(req.user.phone) : '');
-  if (cleanedPhone && !isValidPhone(cleanedPhone)) {
-    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
+// ==========================================
+// 1. GET /api/builders & /builders
+// ==========================================
+router.get(['/', '/builders'], (req, res, next) => {
+  if (isDairyReq(req)) return next();
+  try {
+    const db = readData();
+    const builders = db.builders || [];
+    return sendSuccess(res, { count: builders.length, builders, data: { builders } });
+  } catch (err) {
+    return sendError(res, err.message, 'INTERNAL_ERROR', 500);
   }
-
-  const item = {
-    id: `LN-${Date.now().toString().slice(-4)}`,
-    applicantId: req.user.id,
-    applicantName: req.user.name,
-    schemeName: sanitize(schemeName) || 'अण्णासाहेब पाटील महामंडळ बिनव्याजी कर्ज योजना',
-    loanAmount,
-    purpose,
-    businessName: sanitize(businessName) || 'नवीन व्यवसाय',
-    annualIncome: sanitize(annualIncome) || '₹५ लाख',
-    contact: cleanedPhone,
-    status: 'कागदपत्र पडताळणी अंतर्गत (In Review)',
-    createdAt: new Date().toISOString()
-  };
-
-  db.insert('bankLoans', item);
-  db.addAuditLog('APPLY_LOAN', req.user.id, { loanId: item.id, amount: loanAmount });
-
-  return sendSuccess(res, 'कर्ज अर्ज यशस्वीरीत्या सादर केला गेला!', { loanApplication: item }, 201);
 });
 
 // ==========================================
-// 10. HOTELS & HOSPITALITY DIRECTORY (/api/hotels)
+// 2. POST /api/builders & /builders
 // ==========================================
-router.get('/hotels', (req, res) => {
-  const { city, district, search } = req.query;
-  let list = db.getCollection('hotels');
+router.post(['/', '/builders'], optionalToken, (req, res, next) => {
+  if (isDairyReq(req)) return next();
+  try {
+    const {
+      developer,
+      name,
+      projectName,
+      projects,
+      location,
+      city,
+      configuration,
+      category,
+      specialty,
+      phone,
+      experience,
+      icon,
+      desc,
+      description,
+      ownerName,
+      projectType,
+      flatsDelivered,
+      amenities,
+      possessionDate,
+      reraNumber,
+      memberDiscountPercent
+    } = req.body;
 
-  if (city && city !== 'सर्व') {
-    list = list.filter(h => (h.city || '').includes(city));
-  }
-  if (district && district !== 'सर्व') {
-    list = list.filter(h => (h.district || '').includes(district));
-  }
-  if (search) {
-    const q = search.toLowerCase();
-    list = list.filter(h => 
-      (h.name || '').toLowerCase().includes(q) ||
-      (h.city || '').toLowerCase().includes(q) ||
-      (h.category || '').toLowerCase().includes(q)
-    );
-  }
+    // Validate phone
+    const normalizedPhone = validateIndianMobile(phone);
+    if (!normalizedPhone) {
+      return sendError(
+        res,
+        'कृपया वैध १०-अंकी भारतीय मोबाईल नंबर प्रविष्ट करा (Valid 10-digit Indian phone required).',
+        'VALIDATION_ERROR',
+        400
+      );
+    }
 
-  return sendSuccess(res, 'हॉटेल्स व लॉजिंग यादी प्राप्त झाली', { hotels: list, count: list.length });
-});
-
-router.get('/hotels/:id', (req, res) => {
-  const hotel = db.findById('hotels', req.params.id);
-  if (!hotel) {
-    return sendError(res, 'हॉटेल सापडले नाही.', 'HOTEL_NOT_FOUND', 404);
-  }
-  return sendSuccess(res, 'हॉटेल तपशील', { hotel });
-});
-
-router.post('/hotels', optionalToken, (req, res) => {
-  const { name, city, district, category, address, phone, website, rooms_count, price_range, star_rating } = req.body;
-  const cleanName = sanitize(name);
-  const cleanedPhone = cleanPhone(phone);
-
-  if (!cleanName || !cleanedPhone) {
-    return sendError(res, 'कृपया हॉटेलचे नाव आणि संपर्क नंबर प्रविष्ट करा.', 'MISSING_FIELDS', 400);
-  }
-
-  const newHotel = {
-    id: `HTL-${Date.now().toString().slice(-4)}`,
-    name: cleanName,
-    city: sanitize(city) || 'पुणे',
-    district: sanitize(district) || 'पुणे',
-    category: sanitize(category) || 'हॉटेल',
-    star_rating: Number(star_rating) || 4.2,
-    address: sanitize(address) || 'महाराष्ट्र',
-    phone: cleanedPhone,
-    website: sanitize(website) || '',
-    rooms_count: Number(rooms_count) || 12,
-    amenities: req.body.amenities || ['वायफाय', 'पार्किंग', 'भोजनालय'],
-    price_range: sanitize(price_range) || '₹२,००० - ₹४,०००',
-    photo: '🏨',
-    verified: true,
-    created_at: new Date().toISOString()
-  };
-
-  db.insert('hotels', newHotel);
-  db.addAuditLog('ADD_HOTEL', req.user?.id || 'GUEST', { hotelId: newHotel.id, name: cleanName });
-
-  return sendSuccess(res, 'नवीन हॉटेल यशस्वीरीत्या जोडण्यात आले!', { hotel: newHotel }, 201);
-});
-
-// ==========================================
-// 11. INFORMATION & HERITAGE ARTICLES (/api/information)
-// ==========================================
-router.get('/information', (req, res) => {
-  const { category, search } = req.query;
-  let list = db.getCollection('information');
-
-  if (category && category !== 'सर्व') {
-    list = list.filter(i => (i.category || '').includes(category));
-  }
-  if (search) {
-    const q = search.toLowerCase();
-    list = list.filter(i => 
-      (i.title || '').toLowerCase().includes(q) ||
-      (i.summary || '').toLowerCase().includes(q) ||
-      (i.author || '').toLowerCase().includes(q)
-    );
-  }
-
-  return sendSuccess(res, 'माहिती व ज्ञानकोश लेख यादी प्राप्त झाली', { information: list, count: list.length });
-});
-
-router.get('/information/:id', (req, res) => {
-  const item = db.findById('information', req.params.id);
-  if (!item) {
-    return sendError(res, 'माहिती लेख सापडला नाही.', 'INFO_NOT_FOUND', 404);
-  }
-  return sendSuccess(res, 'माहिती लेख तपशील', { article: item });
-});
-
-router.post('/information', optionalToken, (req, res) => {
-  const { title, category, author, summary, content, tags, image_url } = req.body;
-  const cleanTitle = sanitize(title);
-
-  if (!cleanTitle) {
-    return sendError(res, 'कृपया लेखाचे शीर्षक प्रविष्ट करा.', 'MISSING_TITLE', 400);
-  }
-
-  const newArticle = {
-    id: `INFO-${Date.now().toString().slice(-4)}`,
-    title: cleanTitle,
-    category: sanitize(category) || 'मराठा वारसा व इतिहास',
-    author: sanitize(author) || req.user?.name || 'संपादकीय मंडळ',
-    summary: sanitize(summary) || '',
-    content: sanitize(content) || '',
-    tags: Array.isArray(tags) ? tags : ['माहिती', 'इतिहास'],
-    image_url: sanitize(image_url) || '/assets/images/real-raigad-panoramic.jpg',
-    featured: req.body.featured ? 1 : 0,
-    created_at: new Date().toISOString()
-  };
-
-  db.insert('information', newArticle);
-  db.addAuditLog('ADD_INFORMATION', req.user?.id || 'GUEST', { articleId: newArticle.id, title: cleanTitle });
-
-  return sendSuccess(res, 'नवीन माहिती लेख यशस्वीरीत्या जोडण्यात आला!', { article: newArticle }, 201);
-});
-
-// ==========================================
-// 12. CLIENT ENQUIRIES & B2B LEADS (/api/enquiries)
-// ==========================================
-router.get('/enquiries', (req, res) => {
-  const { category, district, search } = req.query;
-  let list = db.getCollection('clientEnquiries');
-
-  if (list.length === 0) {
-    const seedEnquiries = [
-      {
-        id: 'ENQ-001',
-        title: 'Interior Designer हवा (३ BHK फ्लॅट)',
-        category: 'Interior Design',
-        district: 'पुणे',
-        budget: '₹१५ - २० लाख',
-        description: 'बाणेर येथील ३ BHK फ्लॅटचे संपूर्ण मॉड्युलर किचन, वॉर्डरोब व फॉल सिलिंग काम.',
-        postedBy: 'राहुल जाधव',
-        phone: '9822011223',
-        status: 'सक्रिय (Active)',
-        quotesCount: 3,
-        createdAt: new Date().toISOString()
-      },
-      {
-        id: 'ENQ-002',
-        title: 'E-commerce Website & App Developer',
-        category: 'IT & Software',
-        district: 'मुंबई',
-        budget: '₹७५,००० - १.५ लाख',
-        description: 'पारंपरिक पैठणी व साड्यांच्या ब्रँडसाठी पेमेंट गेटवे सज्ज ई-कॉमर्स पोर्टल हवे.',
-        postedBy: 'स्नेहल पाटील',
-        phone: '9822033445',
-        status: 'सक्रिय (Active)',
-        quotesCount: 5,
-        createdAt: new Date().toISOString()
-      },
-      {
-        id: 'ENQ-003',
-        title: 'Wedding Photographer & Drone Team',
-        category: 'Photography',
-        district: 'नाशिक',
-        budget: '₹८०,००० - १.२ लाख',
-        description: 'दोन दिवसीय मराठा विवाह सोहळ्याचे सिनेमॅटिक व ड्रोन शूटिंग.',
-        postedBy: 'अमोल शिंदे',
-        phone: '9822055667',
-        status: 'सक्रिय (Active)',
-        quotesCount: 2,
-        createdAt: new Date().toISOString()
-      },
-      {
-        id: 'ENQ-004',
-        title: 'GST & Legal Consultant हवा',
-        category: 'CA & Legal',
-        district: 'कोल्हापूर',
-        budget: 'वार्षिक रिटेनरशिप',
-        description: 'ऑटो पार्ट्स फाउंड्री मॅन्युफॅक्चरिंग युनिटचे ऑडिट व जीएसटी अनुपालन.',
-        postedBy: 'सचिन मोरे',
-        phone: '9822077889',
-        status: 'सक्रिय (Active)',
-        quotesCount: 4,
-        createdAt: new Date().toISOString()
-      },
-      {
-        id: 'ENQ-005',
-        title: 'कृषी मालासाठी Transport Partner',
-        category: 'Logistics',
-        district: 'सातारा',
-        budget: 'प्रति टन दर',
-        description: 'साताऱ्यातून वाशी व पुणे मार्केटसाठी भाजीपाला व स्ट्रॉबेरी वाहतूक.',
-        postedBy: 'प्रवीण भोसले',
-        phone: '9822099001',
-        status: 'सक्रिय (Active)',
-        quotesCount: 2,
-        createdAt: new Date().toISOString()
-      },
-      {
-        id: 'ENQ-006',
-        title: 'Civil Contractor हवा (गोडाऊन बांधकाम)',
-        category: 'Construction',
-        district: 'पुणे',
-        budget: '₹२५ - ३५ लाख',
-        description: 'चाकण एमआयडीसीत ५००० चौ.फूट इंडस्ट्रियल शेड व फ्लोअरिंग काम.',
-        postedBy: 'विक्रम सावंत',
-        phone: '9822022334',
-        status: 'सक्रिय (Active)',
-        quotesCount: 6,
-        createdAt: new Date().toISOString()
+    // Validate projectType if provided: "flats" | "villas" | "plots"
+    if (projectType !== undefined && projectType !== null) {
+      const allowedTypes = ['flats', 'villas', 'plots'];
+      if (!allowedTypes.includes(String(projectType).toLowerCase())) {
+        return sendError(
+          res,
+          'projectType must be one of "flats", "villas", "plots".',
+          'VALIDATION_ERROR',
+          400
+        );
       }
-    ];
-    seedEnquiries.forEach(e => db.insert('clientEnquiries', e));
-    list = seedEnquiries;
-  }
+    }
 
-  if (category && category !== 'सर्व') {
-    list = list.filter(e => (e.category || '').toLowerCase().includes(category.toLowerCase()));
+    // Validate flatsDelivered if provided (number >= 0)
+    if (flatsDelivered !== undefined && flatsDelivered !== null && flatsDelivered !== '') {
+      const numFlats = Number(flatsDelivered);
+      if (isNaN(numFlats) || numFlats < 0) {
+        return sendError(
+          res,
+          'flatsDelivered must be a number greater than or equal to 0.',
+          'VALIDATION_ERROR',
+          400
+        );
+      }
+    }
+
+    // Validate amenities if provided (array of up to 12 short strings)
+    let sanitizedAmenities = [];
+    if (amenities !== undefined && amenities !== null) {
+      if (!Array.isArray(amenities)) {
+        return sendError(res, 'amenities must be an array of strings.', 'VALIDATION_ERROR', 400);
+      }
+      if (amenities.length > 12) {
+        return sendError(res, 'amenities can contain at most 12 items.', 'VALIDATION_ERROR', 400);
+      }
+      sanitizedAmenities = amenities
+        .map(a => String(a || '').trim().slice(0, 100))
+        .filter(a => a.length > 0);
+    }
+
+    // Validate memberDiscountPercent if provided (number 0 to 10)
+    let discountPercent = null;
+    if (memberDiscountPercent !== undefined && memberDiscountPercent !== null && memberDiscountPercent !== '') {
+      const pct = Number(memberDiscountPercent);
+      if (isNaN(pct) || pct < 0 || pct > 10) {
+        return sendError(
+          res,
+          'memberDiscountPercent must be a number between 0 and 10.',
+          'VALIDATION_ERROR',
+          400
+        );
+      }
+      discountPercent = pct;
+    }
+
+    // Behavior rule: reraApproved is false unless reraNumber is provided
+    const cleanReraNumber = (reraNumber || '').toString().trim();
+    const reraApproved = cleanReraNumber.length > 0;
+
+    // Behavior rule: only set discountForMembers when memberDiscountPercent > 0
+    let discountForMembers = null;
+    if (discountPercent !== null && discountPercent > 0) {
+      discountForMembers = `मराठा महासंघ सदस्यांसाठी विशेष ${discountPercent}% सवलत`;
+    }
+
+    // OwnerId from authenticated user if token present
+    const ownerId = req.user?.id || req.body.ownerId || null;
+
+    const devName = (developer || name || ownerName || 'मराठा बिल्डर्स').toString().trim();
+    const projName = (projectName || projects || `${devName} हाइट्स`).toString().trim();
+    const cleanCity = (city || location || 'महाराष्ट्र').toString().trim();
+    const cleanConfig = (configuration || specialty || category || 'गृहनिर्माण').toString().trim();
+
+    const db = readData();
+    db.builders = db.builders || [];
+
+    const item = {
+      id: `BLD-${Date.now().toString().slice(-4)}`,
+      developer: devName,
+      name: devName,
+      projectName: projName,
+      projects: projName,
+      location: cleanCity,
+      city: cleanCity,
+      configuration: cleanConfig,
+      category: category ? String(category).trim() : cleanConfig,
+      phone: normalizedPhone,
+      ownerName: ownerName ? String(ownerName).trim() : devName,
+      ownerId: ownerId,
+      projectType: projectType ? String(projectType).toLowerCase() : 'flats',
+      flatsDelivered: (flatsDelivered !== undefined && flatsDelivered !== null && flatsDelivered !== '')
+        ? Number(flatsDelivered)
+        : 0,
+      amenities: sanitizedAmenities,
+      possessionDate: possessionDate ? String(possessionDate).trim() : 'तयार (Ready)',
+      reraNumber: cleanReraNumber,
+      rera: cleanReraNumber || (reraApproved ? 'RERA मान्यताप्राप्त' : 'नोंदणीकृत'),
+      reraApproved,
+      memberDiscountPercent: discountPercent,
+      discountForMembers: discountForMembers,
+      experience: experience ? String(experience).trim() : '१०+ वर्षे',
+      icon: icon ? String(icon).trim() : '🏢',
+      desc: discountForMembers || desc || description || 'विश्वासार्ह व दर्जेदार गृहप्रकल्प उभारणीतील अग्रगण्य मराठा ब्रँड.',
+      createdAt: new Date().toISOString()
+    };
+
+    db.builders.unshift(item);
+    writeData(db);
+
+    return res.status(201).json({
+      success: true,
+      message: '🏗️ बिल्डर प्रोजेक्ट चौकशी यशस्वीरीत्या नोंदवली गेली!',
+      project: item,
+      builder: item,
+      data: { project: item, builder: item }
+    });
+  } catch (err) {
+    return sendError(res, err.message, 'INTERNAL_ERROR', 500);
   }
-  if (district && district !== 'सर्व') {
-    list = list.filter(e => (e.district || '').toLowerCase().includes(district.toLowerCase()));
+});
+
+// ==========================================
+// 3. GET /api/builders/:id & /builders/:id
+// ==========================================
+router.get(['/:id', '/builders/:id'], (req, res, next) => {
+  if (isDairyReq(req)) return next();
+  try {
+    const db = readData();
+    const builders = db.builders || [];
+    const targetId = req.params.id;
+
+    const builder = builders.find(b => String(b.id) === String(targetId));
+
+    if (!builder) {
+      return res.status(404).json({
+        success: false,
+        code: 'BUILDER_NOT_FOUND',
+        error: 'बिल्डर आढळला नाही (Builder not found).'
+      });
+    }
+
+    return res.json({
+      success: true,
+      builder
+    });
+  } catch (err) {
+    return sendError(res, err.message, 'INTERNAL_ERROR', 500);
   }
-  if (search) {
-    const q = search.toLowerCase();
-    list = list.filter(e => 
-      (e.title || '').toLowerCase().includes(q) ||
-      (e.description || '').toLowerCase().includes(q) ||
-      (e.district || '').toLowerCase().includes(q)
+});
+
+// ==========================================
+// 4. POST /api/builders/:id/enquiries & /builders/:id/enquiries
+// ==========================================
+router.post(['/:id/enquiries', '/builders/:id/enquiries'], optionalToken, enquiryRateLimiter, async (req, res, next) => {
+  if (isDairyReq(req)) return next();
+  try {
+    const db = readData();
+    const builders = db.builders || [];
+    const targetId = req.params.id;
+
+    const builder = builders.find(b => String(b.id) === String(targetId));
+
+    if (!builder) {
+      return res.status(404).json({
+        success: false,
+        code: 'BUILDER_NOT_FOUND',
+        error: 'बिल्डर आढळला नाही (Builder not found).'
+      });
+    }
+
+    const { name, phone, budget, preferredCity, message } = req.body;
+
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return sendError(res, 'नाव आवश्यक आहे (Name is required).', 'VALIDATION_ERROR', 400);
+    }
+
+    const normalizedPhone = validateIndianMobile(phone);
+    if (!normalizedPhone) {
+      return sendError(
+        res,
+        'कृपया वैध १०-अंकी भारतीय मोबाईल नंबर प्रविष्ट करा (Valid 10-digit Indian phone required).',
+        'VALIDATION_ERROR',
+        400
+      );
+    }
+
+    const enquiryId = 'ENQ-' + Date.now() + '-' + Math.floor(100 + Math.random() * 900);
+    const createdAt = new Date().toISOString();
+    const memberId = req.user?.id || null;
+
+    const enquiry = {
+      id: enquiryId,
+      builderId: builder.id,
+      developer: builder.developer || builder.name || '',
+      projectName: builder.projectName || builder.projects || '',
+      name: name.trim(),
+      phone: normalizedPhone,
+      budget: budget !== undefined && budget !== null ? String(budget).trim() : '',
+      preferredCity: preferredCity !== undefined && preferredCity !== null ? String(preferredCity).trim() : '',
+      message: message !== undefined && message !== null ? String(message).trim() : '',
+      memberId,
+      createdAt
+    };
+
+    db.builderInquiries = db.builderInquiries || [];
+    db.builderInquiries.unshift(enquiry);
+    writeData(db);
+
+    // If builder has an ownerId, insert notification in SQLite notifications table
+    if (builder.ownerId) {
+      try {
+        const notifId = 'NOTIF-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+        const notifTitle = 'नवीन प्रोजेक्ट चौकशी (New Project Enquiry)';
+        const projName = builder.projectName || 'आपल्या प्रोजेक्ट';
+        const notifMsg = `${name.trim()} यांनी ${projName}साठी चौकशी नोंदवली आहे (फोन: ${normalizedPhone}).`;
+        await runQuery(`
+          INSERT INTO notifications (id, member_id, title, message, type, is_read, created_at)
+          VALUES (?, ?, ?, ?, 'enquiry', 0, datetime('now'))
+        `, [notifId, builder.ownerId, notifTitle, notifMsg]);
+      } catch (notifErr) {
+        console.error('Error inserting builder enquiry notification:', notifErr);
+      }
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: 'चौकशी यशस्वीरीत्या नोंदवली गेली!',
+      enquiry
+    });
+  } catch (err) {
+    return sendError(res, err.message, 'INTERNAL_ERROR', 500);
+  }
+});
+
+// ==========================================
+// DAIRY FEATURE (/api/dairy & /dairy)
+// ==========================================
+
+// 1. GET /api/dairy/products (Public) - Declared BEFORE /:id
+router.get(['/products', '/dairy/products'], (req, res, next) => {
+  if (isBuilderReq(req)) return next();
+  try {
+    const db = readData();
+    let products = db.dairyProducts || [];
+    const { category, sellerId, search } = req.query;
+
+    if (category && category !== 'सर्व' && category !== 'all') {
+      products = products.filter(p => (p.category || '').toLowerCase() === category.toLowerCase());
+    }
+    if (sellerId) {
+      products = products.filter(p => String(p.sellerId) === String(sellerId));
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      products = products.filter(p =>
+        (p.name || '').toLowerCase().includes(q) ||
+        (p.description || '').toLowerCase().includes(q) ||
+        (p.category || '').toLowerCase().includes(q)
+      );
+    }
+
+    return res.json({
+      success: true,
+      count: products.length,
+      products,
+      data: { products }
+    });
+  } catch (err) {
+    return sendError(res, err.message, 'INTERNAL_ERROR', 500);
+  }
+});
+
+// 2. POST /api/dairy/products (login required; only admin or owner of seller dairy record)
+router.post(['/products', '/dairy/products'], authenticateToken, (req, res, next) => {
+  if (isBuilderReq(req)) return next();
+  try {
+    const { name, category, packSize, price, description, sellerId, available } = req.body;
+
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return sendError(res, 'उत्पादनाचे नाव आवश्यक आहे (Product name is required).', 'VALIDATION_ERROR', 400);
+    }
+
+    if (price === undefined || price === null || price === '' || isNaN(Number(price)) || Number(price) < 0) {
+      return sendError(res, 'कृपया वैध किंमत प्रविष्ट करा (Valid positive price is required).', 'VALIDATION_ERROR', 400);
+    }
+
+    const db = readData();
+    db.dairy = db.dairy || [];
+    db.dairyProducts = db.dairyProducts || [];
+
+    const isAdmin = req.user?.role === 'admin';
+    let targetSellerId = sellerId ? String(sellerId).trim() : null;
+
+    if (targetSellerId) {
+      const sellerDairy = db.dairy.find(d => String(d.id) === targetSellerId);
+      if (!sellerDairy) {
+        return res.status(404).json({
+          success: false,
+          code: 'DAIRY_NOT_FOUND',
+          error: 'विक्रेता डेअरी सापडली नाही (Seller dairy not found).'
+        });
+      }
+      if (!isAdmin && String(sellerDairy.ownerId) !== String(req.user?.id)) {
+        return res.status(403).json({
+          success: false,
+          code: 'FORBIDDEN',
+          error: 'केवळ डेअरी मालक किंवा प्रशासक उत्पादन जोडू शकतात (Only seller dairy owner or admin can add products).'
+        });
+      }
+    } else {
+      if (!isAdmin) {
+        const ownedDairy = db.dairy.find(d => String(d.ownerId) === String(req.user?.id));
+        if (!ownedDairy) {
+          return res.status(403).json({
+            success: false,
+            code: 'FORBIDDEN',
+            error: 'उत्पादन जोडण्यासाठी आपल्याकडे डेअरी केंद्र नोंदणी असणे आवश्यक आहे (Forbidden).'
+          });
+        }
+        targetSellerId = ownedDairy.id;
+      }
+    }
+
+    const validCategories = ['दूध', 'दही', 'पनीर', 'तूप', 'ताक', 'श्रीखंड', 'इतर'];
+    const cleanCategory = validCategories.includes(String(category).trim())
+      ? String(category).trim()
+      : 'इतर';
+
+    const product = {
+      id: `PROD-${Date.now().toString().slice(-4)}`,
+      name: name.trim(),
+      category: cleanCategory,
+      packSize: packSize ? String(packSize).trim() : 'मानक पॅक',
+      price: Number(price),
+      description: description ? String(description).trim() : '',
+      sellerId: targetSellerId,
+      available: available !== undefined ? Boolean(available) : true,
+      createdAt: new Date().toISOString()
+    };
+
+    db.dairyProducts.unshift(product);
+    writeData(db);
+
+    return res.status(201).json({
+      success: true,
+      message: 'उत्पादन यशस्वीरीत्या जोडले गेले!',
+      product,
+      data: { product }
+    });
+  } catch (err) {
+    return sendError(res, err.message, 'INTERNAL_ERROR', 500);
+  }
+});
+
+// 3. POST /api/dairy/products/:id/enquiries (optionalToken, rate-limited)
+router.post(['/products/:id/enquiries', '/dairy/products/:id/enquiries'], optionalToken, enquiryRateLimiter, async (req, res, next) => {
+  if (isBuilderReq(req)) return next();
+  try {
+    const db = readData();
+    db.dairyProducts = db.dairyProducts || [];
+    const targetId = req.params.id;
+
+    const product = db.dairyProducts.find(p => String(p.id) === String(targetId));
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        code: 'PRODUCT_NOT_FOUND',
+        error: 'उत्पादन सापडले नाही (Product not found).'
+      });
+    }
+
+    const { name, phone, quantity, deliveryCity, message } = req.body;
+
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return sendError(res, 'नाव आवश्यक आहे (Name is required).', 'VALIDATION_ERROR', 400);
+    }
+
+    const normalizedPhone = validateIndianMobile(phone);
+    if (!normalizedPhone) {
+      return sendError(res, 'कृपया वैध १०-अंकी भारतीय मोबाईल नंबर प्रविष्ट करा (Valid 10-digit Indian mobile required).', 'VALIDATION_ERROR', 400);
+    }
+
+    const enquiry = {
+      id: `DENQ-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`,
+      productId: product.id,
+      productName: product.name,
+      sellerId: product.sellerId || null,
+      memberId: req.user?.id || null,
+      name: name.trim(),
+      phone: normalizedPhone,
+      quantity: quantity !== undefined && quantity !== null ? String(quantity).trim() : '',
+      deliveryCity: deliveryCity !== undefined && deliveryCity !== null ? String(deliveryCity).trim() : '',
+      message: message !== undefined && message !== null ? String(message).trim() : '',
+      createdAt: new Date().toISOString()
+    };
+
+    db.dairyEnquiries = db.dairyEnquiries || [];
+    db.dairyEnquiries.unshift(enquiry);
+    writeData(db);
+
+    // Notify seller's owner if known
+    if (product.sellerId) {
+      const sellerDairy = (db.dairy || []).find(d => String(d.id) === String(product.sellerId));
+      if (sellerDairy && sellerDairy.ownerId) {
+        try {
+          const notifId = 'NOTIF-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+          const notifTitle = 'नवीन उत्पादन चौकशी (Dairy Product Enquiry)';
+          const notifMsg = `${name.trim()} यांनी "${product.name}" साठी चौकशी पाठवली आहे (फोन: ${normalizedPhone}).`;
+          await runQuery(`
+            INSERT INTO notifications (id, member_id, title, message, type, is_read, created_at)
+            VALUES (?, ?, ?, ?, 'dairy_enquiry', 0, datetime('now'))
+          `, [notifId, sellerDairy.ownerId, notifTitle, notifMsg]);
+        } catch (notifErr) {
+          console.error('Error inserting dairy product enquiry notification:', notifErr);
+        }
+      }
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: 'उत्पादन चौकशी यशस्वीरीत्या नोंदवली गेली!',
+      enquiry,
+      data: { enquiry }
+    });
+  } catch (err) {
+    return sendError(res, err.message, 'INTERNAL_ERROR', 500);
+  }
+});
+
+// 4. POST /api/dairy/:id/registrations (login required, rate-limited)
+router.post(['/:id/registrations', '/dairy/:id/registrations'], authenticateToken, enquiryRateLimiter, async (req, res, next) => {
+  if (isBuilderReq(req)) return next();
+  try {
+    const db = readData();
+    db.dairy = db.dairy || [];
+    db.dairyRegistrations = db.dairyRegistrations || [];
+    const targetId = req.params.id;
+
+    const dairy = db.dairy.find(d => String(d.id) === String(targetId));
+    if (!dairy) {
+      return res.status(404).json({
+        success: false,
+        code: 'DAIRY_NOT_FOUND',
+        error: 'डेअरी सापडली नाही (Dairy not found).'
+      });
+    }
+
+    const { farmerName, phone, village, cattleCount, milkType, expectedDailyLitres } = req.body;
+
+    if (!farmerName || typeof farmerName !== 'string' || !farmerName.trim()) {
+      return sendError(res, 'शेतकऱ्याचे नाव आवश्यक आहे (Farmer name is required).', 'VALIDATION_ERROR', 400);
+    }
+
+    const normalizedPhone = validateIndianMobile(phone);
+    if (!normalizedPhone) {
+      return sendError(res, 'कृपया वैध १०-अंकी भारतीय मोबाईल नंबर प्रविष्ट करा (Valid 10-digit Indian phone required).', 'VALIDATION_ERROR', 400);
+    }
+
+    // Reject a second registration by the same member for the same centre
+    const alreadyRegistered = db.dairyRegistrations.find(r =>
+      String(r.dairyId) === String(dairy.id) && String(r.memberId) === String(req.user.id)
     );
-  }
+    if (alreadyRegistered) {
+      return sendError(
+        res,
+        'तुम्ही या संकलन केंद्रासाठी आधीच शेतकरी नोंदणी केली आहे (Already registered for this centre).',
+        'DUPLICATE_REGISTRATION',
+        409
+      );
+    }
 
-  return sendSuccess(res, 'ग्राहक Enquiries व Leads यादी', { enquiries: list, totalCount: list.length });
+    const allowedMilkTypes = ['cow', 'buffalo', 'both'];
+    const cleanMilkType = allowedMilkTypes.includes(String(milkType).toLowerCase())
+      ? String(milkType).toLowerCase()
+      : 'cow';
+
+    const registration = {
+      id: `REG-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`,
+      dairyId: dairy.id,
+      dairyName: dairy.dairyName || dairy.brandName || dairy.name || 'संकलन केंद्र',
+      memberId: req.user.id,
+      farmerName: farmerName.trim(),
+      phone: normalizedPhone,
+      village: village ? String(village).trim() : '',
+      cattleCount: (cattleCount !== undefined && cattleCount !== null && !isNaN(Number(cattleCount)))
+        ? Number(cattleCount)
+        : 0,
+      milkType: cleanMilkType,
+      expectedDailyLitres: (expectedDailyLitres !== undefined && expectedDailyLitres !== null && !isNaN(Number(expectedDailyLitres)))
+        ? Number(expectedDailyLitres)
+        : 0,
+      status: 'pending',
+      createdAt: new Date().toISOString()
+    };
+
+    db.dairyRegistrations.unshift(registration);
+    writeData(db);
+
+    // Notify the centre's ownerId if present
+    if (dairy.ownerId) {
+      try {
+        const notifId = 'NOTIF-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+        const notifTitle = 'नवीन शेतकरी नोंदणी (New Farmer Registration)';
+        const notifMsg = `${farmerName.trim()} यांनी ${dairy.dairyName || 'डेअरी केंद्रा'}साठी दूध नोंदणी केली आहे (अपेक्षित: ${registration.expectedDailyLitres} लिटर).`;
+        await runQuery(`
+          INSERT INTO notifications (id, member_id, title, message, type, is_read, created_at)
+          VALUES (?, ?, ?, ?, 'dairy_registration', 0, datetime('now'))
+        `, [notifId, dairy.ownerId, notifTitle, notifMsg]);
+      } catch (notifErr) {
+        console.error('Error inserting dairy registration notification:', notifErr);
+      }
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: 'शेतकरी नोंदणी यशस्वीरीत्या पूर्ण झाली!',
+      registration,
+      data: { registration }
+    });
+  } catch (err) {
+    return sendError(res, err.message, 'INTERNAL_ERROR', 500);
+  }
 });
 
-router.post('/enquiries', optionalToken, (req, res) => {
-  const { title, category, district, budget, description, phone, contactName } = req.body;
-  const cleanTitle = sanitize(title);
-  const cleanP = cleanPhone(phone || req.user?.phone || '');
+// 5. GET /api/dairy/:id/registrations (only centre owner or admin can read; never public)
+router.get(['/:id/registrations', '/dairy/:id/registrations'], authenticateToken, (req, res, next) => {
+  if (isBuilderReq(req)) return next();
+  try {
+    const db = readData();
+    db.dairy = db.dairy || [];
+    db.dairyRegistrations = db.dairyRegistrations || [];
+    const targetId = req.params.id;
 
-  if (!cleanTitle) {
-    return sendError(res, 'कृपया इन्क्वायरीचे शीर्षक प्रविष्ट करा.', 'MISSING_TITLE', 400);
+    const dairy = db.dairy.find(d => String(d.id) === String(targetId));
+    if (!dairy) {
+      return res.status(404).json({
+        success: false,
+        code: 'DAIRY_NOT_FOUND',
+        error: 'डेअरी सापडली नाही (Dairy not found).'
+      });
+    }
+
+    const isAdmin = req.user?.role === 'admin';
+    const isOwner = dairy.ownerId && String(dairy.ownerId) === String(req.user?.id);
+
+    if (!isAdmin && !isOwner) {
+      return res.status(403).json({
+        success: false,
+        code: 'FORBIDDEN',
+        error: 'नोंदण्या पाहण्याची परवानगी फक्त केंद्र मालक किंवा प्रशासकाला आहे (Only centre owner or admin can read registrations).'
+      });
+    }
+
+    const registrations = db.dairyRegistrations.filter(r => String(r.dairyId) === String(dairy.id));
+
+    return res.json({
+      success: true,
+      count: registrations.length,
+      registrations,
+      data: { registrations }
+    });
+  } catch (err) {
+    return sendError(res, err.message, 'INTERNAL_ERROR', 500);
   }
-
-  const newEnq = {
-    id: `ENQ-${Date.now().toString().slice(-4)}`,
-    title: cleanTitle,
-    category: sanitize(category) || 'सामान्य व्यवसाय',
-    district: sanitize(district) || 'पुणे',
-    budget: sanitize(budget) || 'चर्चेनुसार',
-    description: sanitize(description) || '',
-    postedBy: sanitize(contactName) || req.user?.name || 'संबंधित ग्राहक',
-    phone: cleanP || '9800000000',
-    status: 'सक्रिय (Active)',
-    quotesCount: 0,
-    createdAt: new Date().toISOString()
-  };
-
-  db.insert('clientEnquiries', newEnq);
-  db.addAuditLog('POST_ENQUIRY', req.user?.id || 'GUEST', { enquiryId: newEnq.id, title: cleanTitle });
-
-  return sendSuccess(res, 'नवीन व्यवसाय इन्क्वायरी यशस्वीरीत्या नोंदवली गेली!', { enquiry: newEnq }, 201);
 });
 
-router.post('/enquiries/:id/quote', authenticateToken, (req, res) => {
-  const enquiry = db.findById('clientEnquiries', req.params.id);
-  if (!enquiry) {
-    return sendError(res, 'इन्क्वायरी सापडली नाही.', 'ENQUIRY_NOT_FOUND', 404);
+// 6. GET /api/dairy/:id & /dairy/:id (404 DAIRY_NOT_FOUND)
+router.get(['/:id', '/dairy/:id'], (req, res, next) => {
+  if (isBuilderReq(req)) return next();
+  try {
+    const db = readData();
+    const list = db.dairy || [];
+    const targetId = req.params.id;
+
+    const item = list.find(d => String(d.id) === String(targetId));
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        code: 'DAIRY_NOT_FOUND',
+        error: 'डेअरी सापडली नाही (Dairy not found).'
+      });
+    }
+
+    return res.json({
+      success: true,
+      dairy: item,
+      data: { dairy: item }
+    });
+  } catch (err) {
+    return sendError(res, err.message, 'INTERNAL_ERROR', 500);
   }
+});
 
-  const { quotedPrice, proposalNote, businessName, phone } = req.body;
-  const quote = {
-    id: `QTE-${Date.now().toString().slice(-4)}`,
-    enquiryId: req.params.id,
-    userId: req.user.id,
-    businessName: sanitize(businessName) || req.user.name,
-    phone: cleanPhone(phone || req.user.phone),
-    quotedPrice: sanitize(quotedPrice) || 'चर्चेनुसार',
-    proposalNote: sanitize(proposalNote) || '',
-    status: 'सादर केले (Submitted)',
-    submittedAt: new Date().toISOString()
-  };
+// 7. GET /api/dairy & /dairy (Public list with district and kind filter)
+router.get(['/', '/dairy'], (req, res, next) => {
+  if (isBuilderReq(req)) return next();
+  try {
+    const db = readData();
+    let list = db.dairy || [];
+    const { district, kind, search } = req.query;
 
-  db.insert('businessQuotes', quote);
-  db.update('clientEnquiries', req.params.id, {
-    quotesCount: (enquiry.quotesCount || 0) + 1
-  });
+    if (kind && kind !== 'all' && kind !== 'सर्व') {
+      list = list.filter(d => (d.kind || '').toLowerCase() === String(kind).toLowerCase());
+    }
 
-  return sendSuccess(res, 'आपले कोटेशन संबंधित ग्राहकास यशस्वीरीत्या पाठवले गेले!', { quote }, 201);
+    if (district && district !== 'सर्व' && district !== 'all') {
+      const q = district.toLowerCase();
+      list = list.filter(d =>
+        (d.district || '').toLowerCase().includes(q) ||
+        (d.headquarters || '').toLowerCase().includes(q) ||
+        (d.village || '').toLowerCase().includes(q) ||
+        (d.location || '').toLowerCase().includes(q)
+      );
+    }
+
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter(d =>
+        (d.dairyName || '').toLowerCase().includes(q) ||
+        (d.brandName || '').toLowerCase().includes(q) ||
+        (d.village || '').toLowerCase().includes(q) ||
+        (d.district || '').toLowerCase().includes(q) ||
+        (d.centerHead || '').toLowerCase().includes(q)
+      );
+    }
+
+    return sendSuccess(res, { count: list.length, dairy: list, data: { dairy: list } }, 'मराठा डेअरी व दुग्ध व्यवसाय केंद्र यादी');
+  } catch (err) {
+    return sendError(res, err.message, 'INTERNAL_ERROR', 500);
+  }
+});
+
+// 8. POST /api/dairy & /dairy (optionalToken)
+// Create centre with required fields and NO fake defaults
+router.post(['/', '/dairy'], optionalToken, (req, res, next) => {
+  if (isBuilderReq(req)) return next();
+  try {
+    const {
+      dairyName,
+      village,
+      taluka,
+      district,
+      morningTiming,
+      eveningTiming,
+      registeredFarmers,
+      centerHead,
+      contact,
+      facilities,
+      milkRateCow,
+      milkRateBuffalo,
+      dailyCollection
+    } = req.body;
+
+    if (!dairyName || typeof dairyName !== 'string' || !dairyName.trim()) {
+      return sendError(res, 'डेअरीचे नाव आवश्यक आहे (dairyName is required).', 'VALIDATION_ERROR', 400);
+    }
+
+    if (!district || typeof district !== 'string' || !district.trim()) {
+      return sendError(res, 'जिल्हा आवश्यक आहे (district is required).', 'VALIDATION_ERROR', 400);
+    }
+
+    const normalizedPhone = validateIndianMobile(contact);
+    if (!normalizedPhone) {
+      return sendError(res, 'कृपया वैध १०-अंकी भारतीय मोबाईल नंबर प्रविष्ट करा (Valid Indian mobile contact is required).', 'VALIDATION_ERROR', 400);
+    }
+
+    // Clean facilities array
+    let sanitizedFacilities = [];
+    if (facilities !== undefined && facilities !== null) {
+      if (Array.isArray(facilities)) {
+        sanitizedFacilities = facilities.map(f => String(f).trim()).filter(f => f.length > 0);
+      } else if (typeof facilities === 'string') {
+        sanitizedFacilities = facilities.split(',').map(f => f.trim()).filter(f => f.length > 0);
+      }
+    }
+
+    const ownerId = req.user?.id || req.body.ownerId || null;
+
+    const item = {
+      id: `DRY-${Date.now().toString().slice(-4)}`,
+      dairyName: dairyName.trim(),
+      village: village ? String(village).trim() : '',
+      taluka: taluka ? String(taluka).trim() : '',
+      district: district.trim(),
+      morningTiming: morningTiming ? String(morningTiming).trim() : '',
+      eveningTiming: eveningTiming ? String(eveningTiming).trim() : '',
+      registeredFarmers: (registeredFarmers !== undefined && registeredFarmers !== null && !isNaN(Number(registeredFarmers)))
+        ? Number(registeredFarmers)
+        : 0,
+      centerHead: centerHead ? String(centerHead).trim() : '',
+      contact: normalizedPhone,
+      facilities: sanitizedFacilities,
+      milkRateCow: milkRateCow ? String(milkRateCow).trim() : '',
+      milkRateBuffalo: milkRateBuffalo ? String(milkRateBuffalo).trim() : '',
+      dailyCollection: dailyCollection ? String(dailyCollection).trim() : '',
+      kind: 'centre',
+      verified: false,
+      ownerId,
+      createdAt: new Date().toISOString()
+    };
+
+    const db = readData();
+    db.dairy = db.dairy || [];
+    db.dairy.unshift(item);
+    writeData(db);
+
+    return res.status(201).json({
+      success: true,
+      message: 'डेअरी केंद्र जोडले गेले!',
+      dairyCenter: item,
+      dairy: item,
+      data: { dairyCenter: item, dairy: item }
+    });
+  } catch (err) {
+    return sendError(res, err.message, 'INTERNAL_ERROR', 500);
+  }
 });
 
 export default router;
-

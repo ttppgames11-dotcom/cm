@@ -1,159 +1,282 @@
-import express from 'express';
-import cors from 'cors';
-import compression from 'compression';
+import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Security & Isolation Suite
-import { securityHeaders, corsOptions, responseDataMasker } from './middleware/security.js';
-import { sanitizationMiddleware } from './middleware/sanitizer.js';
-import { authRateLimiter, globalRateLimiter } from './middleware/rateLimiter.js';
-import { requestIsolationContext } from './middleware/dataIsolation.js';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config();
 
-// Route Handlers
+import express from 'express';
+import cors from 'cors';
+import fs from 'fs';
+import quizRoutes from './routes/quiz.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import membersRoutes from './routes/members.routes.js';
 import businessesRoutes from './routes/businesses.routes.js';
 import sangamRoutes from './routes/sangam.routes.js';
-import directoriesRoutes from './routes/directories.routes.js';
-import emergencyRoutes from './routes/emergency.routes.js';
-import communityRoutes from './routes/community.routes.js';
 import eventsRoutes from './routes/events.routes.js';
 import donationsRoutes from './routes/donations.routes.js';
 import jobsRoutes from './routes/jobs.routes.js';
-import servicesRoutes from './routes/services.routes.js';
-import cultureRoutes from './routes/culture.routes.js';
-import quizRoutes from './routes/quiz.routes.js';
+import communityRoutes from './routes/community.routes.js';
 import adminRoutes from './routes/admin.routes.js';
-import crmOperationsRoutes from './routes/crmOperations.routes.js';
+import cultureRoutes from './routes/culture.routes.js';
+import locationsRoutes from './routes/locations.routes.js';
+import mediaRoutes from './routes/media.routes.js';
+import directoriesRoutes from './routes/directories.routes.js';
 import aiRoutes from './routes/ai.routes.js';
-import errorHandler from './middleware/errorHandler.js';
-import { sendSuccess } from './utils/response.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import servicesRoutes, { adminServicesRouter } from './routes/services.routes.js';
+import crmRoutes from './routes/crm.routes.js';
+import { generalRateLimiter } from './middleware/rateLimiter.js';
+import { optionalToken } from './middleware/auth.js';
+import { validateBody } from './middleware/validator.js';
+import { doctorSchema, bloodRequestSchema } from './schemas/general.schemas.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-
-// Trust reverse proxy (for Load Balancers, Nginx, Cloudflare)
 app.set('trust proxy', 1);
+const PORT = process.env.PORT || 5000;
+const DB_FILE = path.join(__dirname, 'db.json');
 
-// 1. High-Performance Gzip/Brotli Compression (Cuts bandwidth by ~80% for 1M users)
-app.use(compression({
-  threshold: 1024,
-  filter: (req, res) => {
-    if (req.headers['x-no-compression']) return false;
-    return compression.filter(req, res);
+app.use(cors());
+app.use(express.json());
+
+// Optional JWT inspection to classify requests for Tier 2 (Public) vs Tier 3 (Authenticated User) rate limits
+app.use(optionalToken);
+app.use(generalRateLimiter);
+
+// ==========================================
+// MOUNT ALL CONNECT MARATHA REST API ROUTERS
+// ==========================================
+app.use('/media', mediaRoutes);
+app.use('/api/media', mediaRoutes);
+app.use('/api/locations', locationsRoutes);
+app.use('/api/quiz', quizRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/members', membersRoutes);
+app.use('/api/businesses', businessesRoutes);
+app.use('/api/sangam', sangamRoutes);
+app.use('/api/events', eventsRoutes);
+app.use('/api/donations', donationsRoutes);
+app.use('/api/jobs', jobsRoutes);
+app.use('/api/community', communityRoutes);
+// Website features (AI assistant, services, helpdesk/CRM); admin paths before /api/admin.
+app.use('/api/ai', aiRoutes);
+app.use('/api/services', servicesRoutes);
+app.use('/api/admin/services', adminServicesRouter);
+app.use('/api/admin/crm', crmRoutes);
+app.use('/api/crm', crmRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/culture', cultureRoutes);
+app.use('/api/builders', directoriesRoutes);
+app.use('/api/dairy', directoriesRoutes);
+
+// Fallback route aliases for local dev & legacy paths
+app.use('/sangam', sangamRoutes);
+app.use('/businesses', businessesRoutes);
+app.use('/members', membersRoutes);
+app.use('/builders', directoriesRoutes);
+app.use('/dairy', directoriesRoutes);
+
+// Helper functions for reading and writing to DB
+function readData() {
+  try {
+    const raw = fs.readFileSync(DB_FILE, 'utf8');
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error('Error reading db.json:', err);
+    return {};
   }
-}));
+}
 
-// 2. HTTP Security Headers (OWASP Top 10, HSTS, CSP, Frameguard, NoSniff, Anti-Clickjacking)
-app.use(securityHeaders);
+function writeData(data) {
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Error writing to db.json:', err);
+  }
+}
 
-// 3. Strict CORS Policy
-app.use(cors(corsOptions));
-
-// 4. Request Payload Size Limiters (Anti-Heap Exhaustion DDoS)
-app.use(express.json({ limit: '1mb' }));
-app.use(express.urlencoded({ extended: true, limit: '1mb' }));
-
-// 5. Unique Request Correlation & User Isolation Context (Zero Data Mixing)
-app.use(requestIsolationContext);
-
-// 6. Deep Input Sanitization (Anti-XSS, Anti-SQLi, Anti-Prototype Pollution)
-app.use(sanitizationMiddleware);
-
-// 7. Automatic Sensitive Data Masking (Strips password_hash, tokens, and secrets from JSON outputs)
-app.use(responseDataMasker);
-
-// 8. Global API Rate Limiter
-app.use('/api', globalRateLimiter);
-
-// 9. Strict Brute-Force Rate Limiter for Authentication
-app.use('/api/auth/login', authRateLimiter);
-app.use('/api/auth/register', authRateLimiter);
-app.use('/api/auth/forgot-password', authRateLimiter);
-app.use('/api/auth/verify-otp', authRateLimiter);
-app.use('/api/auth/reset-password', authRateLimiter);
-
-// Global Health & Scalability Metrics Endpoint
+// System Health Endpoint
 app.get('/api/health', (req, res) => {
-  const mem = process.memoryUsage();
-  return sendSuccess(res, 'Connect Maratha Protected API Server is Healthy and Operational', {
-    status: 'SECURE_AND_OPERATIONAL',
-    version: '2.0.0',
-    timestamp: new Date().toISOString(),
-    security: {
-      headers: 'ENFORCED (OWASP CSP + HSTS)',
-      rateLimiter: 'ACTIVE (Sliding Window)',
-      sanitization: 'ACTIVE (Anti-XSS + Anti-SQLi)',
-      dataIsolation: 'STRICT_ZERO_DATA_MIXING',
-      masking: 'AUTOMATIC_PII_REMOVAL'
-    },
-    systemMetrics: {
-      uptimeSeconds: Math.floor(process.uptime()),
-      heapUsedMB: (mem.heapUsed / 1024 / 1024).toFixed(2),
-      heapTotalMB: (mem.heapTotal / 1024 / 1024).toFixed(2),
-      rssMB: (mem.rss / 1024 / 1024).toFixed(2)
-    }
+  res.json({ status: 'OK', system: 'Connect Maratha Express REST API Server', timestamp: new Date() });
+});
+
+// --- DOCTORS ---
+app.get('/api/doctors', (req, res) => {
+  const db = readData();
+  res.json(db.doctors || []);
+});
+
+app.post('/api/doctors', validateBody(doctorSchema), (req, res) => {
+  const db = readData();
+  db.doctors = db.doctors || [];
+  const newDoctor = {
+    id: `DOC-${Date.now().toString().slice(-4)}`,
+    rating: '5.0 ★ (नवीन नोंदणी)',
+    icon: '🩺',
+    ...req.body
+  };
+  db.doctors.unshift(newDoctor);
+  writeData(db);
+  res.status(201).json({ success: true, message: 'डॉक्टर प्रोफाइल यशस्वीरीत्या जोडले गेले!', doctor: newDoctor });
+});
+
+// --- BLOOD REQUESTS & DONORS ---
+app.get('/api/blood/requests', (req, res) => {
+  const db = readData();
+  res.json(db.bloodRequests || []);
+});
+
+app.post('/api/blood/requests', validateBody(bloodRequestSchema), (req, res) => {
+  const db = readData();
+  db.bloodRequests = db.bloodRequests || [];
+  const newReq = {
+    id: `REQ-${Date.now().toString().slice(-3)}`,
+    time: 'आत्ताच',
+    ...req.body
+  };
+  db.bloodRequests.unshift(newReq);
+  writeData(db);
+  res.status(201).json({ success: true, message: '🚨 तातडीची रक्त मागणी प्रसारित करण्यात आली!', request: newReq });
+});
+
+app.get('/api/blood/donors', (req, res) => {
+  const db = readData();
+  res.json(db.bloodDonors || []);
+});
+
+app.post('/api/blood/donors', (req, res) => {
+  const db = readData();
+  db.bloodDonors = db.bloodDonors || [];
+  const newDonor = {
+    id: `DON-${Date.now().toString().slice(-4)}`,
+    totalDonations: 1,
+    lastDonated: 'नवीन नोंदणी',
+    ...req.body
+  };
+  db.bloodDonors.unshift(newDonor);
+  writeData(db);
+  res.status(201).json({ success: true, message: '❤️ रक्तदाता नोंदणी यशस्वी झाली!', donor: newDonor });
+});
+
+// --- MATRIMONY ---
+app.get('/api/matrimony', (req, res) => {
+  const db = readData();
+  res.json(db.matrimony || []);
+});
+
+app.post('/api/matrimony', (req, res) => {
+  const db = readData();
+  db.matrimony = db.matrimony || [];
+  const newProfile = {
+    id: `CM-${(req.body.gender || '').includes('वर') ? 'M' : 'F'}-${Date.now().toString().slice(-3)}`,
+    verified: true,
+    photo: (req.body.gender || '').includes('वर') ? '👨‍💼' : '👩‍💼',
+    caste: '९६ कुळी मराठा',
+    ...req.body
+  };
+  db.matrimony.unshift(newProfile);
+  writeData(db);
+  res.status(201).json({ success: true, message: '💍 विवाह प्रोफाइल यशस्वीरीत्या नोंदवले गेले!', profile: newProfile });
+});
+
+// --- POLITICAL GRIEVANCES / REPRESENTATIONS ---
+app.get('/api/political/grievances', (req, res) => {
+  const db = readData();
+  res.json(db.grievances || []);
+});
+
+app.post('/api/political/grievances', (req, res) => {
+  const db = readData();
+  db.grievances = db.grievances || [];
+  const item = {
+    id: `GRV-${Date.now().toString().slice(-4)}`,
+    createdAt: new Date().toLocaleDateString('mr-IN'),
+    ...req.body
+  };
+  db.grievances.unshift(item);
+  writeData(db);
+  res.status(201).json({ success: true, message: '📜 मागणी/निवेदन यशस्वीरीत्या सादर केले गेले!', grievance: item });
+});
+
+// --- SOCIAL WORKERS & VOLUNTEERS ---
+app.get('/api/social/volunteers', (req, res) => {
+  const db = readData();
+  res.json(db.volunteers || []);
+});
+
+app.post('/api/social/volunteers', (req, res) => {
+  const db = readData();
+  db.volunteers = db.volunteers || [];
+  const item = {
+    id: `VOL-${Date.now().toString().slice(-4)}`,
+    createdAt: new Date().toLocaleDateString('mr-IN'),
+    ...req.body
+  };
+  db.volunteers.unshift(item);
+  writeData(db);
+  res.status(201).json({ success: true, message: '🤝 स्वयंसेवक नोंदणी यशस्वीरीत्या पूर्ण झाली!', volunteer: item });
+});
+
+// --- WOMEN EMPOWERMENT HELP & MENTORS ---
+app.get('/api/women/help', (req, res) => {
+  const db = readData();
+  res.json(db.womenHelp || []);
+});
+
+app.post('/api/women/help', (req, res) => {
+  const db = readData();
+  db.womenHelp = db.womenHelp || [];
+  const item = {
+    id: `WHELP-${Date.now().toString().slice(-4)}`,
+    createdAt: new Date().toLocaleDateString('mr-IN'),
+    ...req.body
+  };
+  db.womenHelp.unshift(item);
+  writeData(db);
+  res.status(201).json({ success: true, message: '🌸 मदत व मार्गदर्शनाची विनंती नोंदवली गेली!', help: item });
+});
+
+// --- BUILDERS & REAL ESTATE: Handled by directoriesRoutes (routes/directories.routes.js) ---
+
+// --- MARATHA BANK & LOANS ---
+app.get('/api/bank/loans', (req, res) => {
+  const db = readData();
+  res.json(db.bankLoans || []);
+});
+
+app.post('/api/bank/loans', (req, res) => {
+  const db = readData();
+  db.bankLoans = db.bankLoans || [];
+  const item = { id: `LN-${Date.now().toString().slice(-4)}`, ...req.body };
+  db.bankLoans.unshift(item);
+  writeData(db);
+  res.status(201).json({ success: true, message: '🏦 कर्ज अर्ज यशस्वीरीत्या सादर केला गेला!', loan: item });
+});
+
+// 404 Not Found Catch-All Handler for API Routes
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    code: 'ROUTE_NOT_FOUND',
+    error: 'विनंती केलेला मार्ग आढळला नाही (Requested endpoint not found).'
   });
 });
 
-// ==========================================
-// CONNECT MARATHA REST API ROUTERS (11 MODULES)
-// ==========================================
-
-// 1. Authentication & Member Identity
-app.use('/api/auth', authRoutes);
-
-// 2. Member Profile & Digital ID Card
-app.use('/api/members', membersRoutes);
-
-// 3. Business Sangam & Commerce Ecosystem
-app.use('/api/businesses', businessesRoutes);
-app.use('/api/sangam', sangamRoutes);
-
-// 4. Specialized Community Directories & Commercial Verticals
-app.use('/api', directoriesRoutes);
-
-// 5. Community Safety, Seva & Emergency
-app.use('/api', emergencyRoutes);
-
-// 6. Community Social Feed & Forums
-app.use('/api/community', communityRoutes);
-
-// 7. Events, Gatherings & Shivjayanti Utsav
-app.use('/api/events', eventsRoutes);
-
-// 8. Donations & Crowdfunding Campaigns
-app.use('/api/donations', donationsRoutes);
-
-// 9. Jobs Portal & Service Bookings
-app.use('/api/jobs', jobsRoutes);
-app.use('/api/services', servicesRoutes);
-
-// 10. History, Culture & Knowledge Graph
-app.use('/api/culture', cultureRoutes);
-app.use('/api/quiz', quizRoutes);
-
-// 11. Role-Based CRM & Admin ERP
-app.use('/api/admin', adminRoutes);
-app.use('/api/crm', crmOperationsRoutes);
-app.use('/api/admin/crm', crmOperationsRoutes);
-
-// 12. Connect Maratha AI Agent (Trilingual Knowledge Base, RAG & Support)
-app.use('/api/ai', aiRoutes);
-
-// Centralized Secure Error Handler (No stack trace leaks)
+// Centralized Error Handling Middleware (Catches all sync & async errors, logs server-side, returns sanitized responses)
 app.use(errorHandler);
 
-// Start Express Server
-if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
-    console.log(`🛡️ Connect Maratha Protected Enterprise Server running on port ${PORT}`);
-    console.log(`🔒 Active Defenses: Helmet CSP | Rate Limiter | Data Isolation Guard | Anti-XSS/SQLi`);
-  });
-}
+// Global Uncaught / Unhandled Safety Guards
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('🚨 [CRITICAL] Unhandled Promise Rejection at:', promise, 'reason:', reason);
+});
 
-export default app;
+process.on('uncaughtException', (err) => {
+  console.error('🚨 [CRITICAL] Uncaught Exception:', err);
+});
+
+// Start Express Server
+app.listen(PORT, () => {
+  console.log(`🚀 Connect Maratha Express REST API Server running on port ${PORT}`);
+});

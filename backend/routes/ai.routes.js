@@ -2,18 +2,19 @@ import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { db } from '../db/realtimeDb.js';
+import { runQuery } from '../../database/database.js';
 import { sendSuccess, sendError } from '../utils/response.js';
-import { sanitize, isValidPhone, cleanPhone, isValidEmail } from '../utils/validator.js';
+import { ensureWebsiteTables, cleanMobile, text, newId } from '../utils/websiteTables.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const router = Router();
 
-// Paths to AI Agent knowledge base & support file
-const KNOWLEDGE_BASE_PATH = path.join(__dirname, '..', '..', 'Connect-Maratha-AI-Agent', 'backend', 'data', 'connect_maratha_content.json');
-const SUPPORT_FILE_PATH = path.join(__dirname, '..', '..', 'Connect-Maratha-AI-Agent', 'backend', 'technical_support_requests.json');
+// Optional Q&A knowledge base (array of { question, topic, category, answer: { mr, hi, en }, source }).
+// Without it, chat answers with the contextual fallback guidance below.
+const KNOWLEDGE_BASE_PATH = process.env.AI_KNOWLEDGE_FILE ||
+  path.join(__dirname, '..', '..', 'Connect-Maratha-AI-Agent', 'backend', 'data', 'connect_maratha_content.json');
+// Optional external agent (e.g. the Python FastAPI service); only called when configured.
+const AI_AGENT_URL = process.env.AI_AGENT_URL || '';
 
 let knowledgeBase = [];
 try {
@@ -25,36 +26,33 @@ try {
   console.warn('[AI Agent] Could not load knowledge base file:', err.message);
 }
 
-// Text normalization helper
 function normalize(str = '') {
   return String(str)
     .toLowerCase()
     .normalize('NFKC')
-    .replace(/[^\w\s\u0900-\u097f]/g, ' ')
+    .replace(/[^\w\sऀ-ॿ]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
-// Language detection
-function detectLang(text = '', requested = 'en') {
+function detectLang(input = '', requested = 'en') {
   if (requested === 'mr' || requested === 'hi') return requested;
-  const t = text.toLowerCase();
+  const t = input.toLowerCase();
   const marathiMarkers = ['काय', 'आहे', 'सांगा', 'इतिहास', 'माहिती', 'किल्ला', 'स्वराज्य', 'कसा', 'कधी', 'कोण'];
   const hindiMarkers = ['क्या', 'है', 'बताओ', 'जानकारी', 'किला', 'कैसे', 'कब', 'कौन'];
-  if (marathiMarkers.some(m => t.includes(m))) return 'mr';
-  if (hindiMarkers.some(m => t.includes(m))) return 'hi';
+  if (marathiMarkers.some((m) => t.includes(m))) return 'mr';
+  if (hindiMarkers.some((m) => t.includes(m))) return 'hi';
   return requested || 'en';
 }
 
-// Semantic & keyword search over Connect Maratha knowledge base
+// Keyword search over the knowledge base; null below the match threshold.
 function searchKnowledge(query, lang = 'en') {
   if (!knowledgeBase.length || !query) return null;
   const qNorm = normalize(query);
-  const qTokens = qNorm.split(' ').filter(w => w.length > 1);
+  const qTokens = qNorm.split(' ').filter((w) => w.length > 1);
 
   let bestMatch = null;
   let highestScore = 0;
-
   for (const item of knowledgeBase) {
     let score = 0;
     const qText = normalize(item.question);
@@ -62,44 +60,28 @@ function searchKnowledge(query, lang = 'en') {
     const category = normalize(item.category || '');
     const ansText = normalize(item.answer?.[lang] || item.answer?.en || '');
 
-    // Exact question match
-    if (qNorm === qText || qText.includes(qNorm) || qNorm.includes(qText)) {
-      score += 50;
-    }
-
-    // Token overlap in question
+    if (qNorm === qText || qText.includes(qNorm) || qNorm.includes(qText)) score += 50;
     for (const token of qTokens) {
       if (qText.includes(token)) score += 8;
       if (topic.includes(token)) score += 5;
       if (category.includes(token)) score += 4;
       if (ansText.includes(token)) score += 1;
     }
-
     if (score > highestScore) {
       highestScore = score;
       bestMatch = item;
     }
   }
-
-  // Minimum threshold to prevent spurious false positives
-  if (highestScore >= 6) {
-    return {
-      match: bestMatch,
-      score: highestScore
-    };
-  }
-
-  return null;
+  return highestScore >= 6 ? { match: bestMatch, score: highestScore } : null;
 }
 
-// Fallback response generator
 function getFallbackResponse(query, lang = 'mr') {
   const norm = normalize(query);
 
   if (norm.includes('रक्त') || norm.includes('blood') || norm.includes('donat')) {
-    if (lang === 'mr') return '🔴 Connect Maratha २४x७ आपत्कालीन रक्त साहाय्य उपलब्ध आहे. तुम्ही /blood किंवा /crm/helpdesk वर जाऊन तात्काळ रक्त विनंती नोंदवू शकता किंवा थेट हेल्पलाइन १८००-१२३-१६७४ वर संपर्क करू शकता.';
-    if (lang === 'hi') return '🔴 Connect Maratha २४x७ आपातकालीन रक्त सहायता उपलब्ध कराता है। आप /blood पोर्टल पर अनुरोध कर सकते हैं या हेल्पलाइन 1800-123-1674 पर संपर्क करें।';
-    return '🔴 Connect Maratha provides 24x7 emergency blood donor coordination. Visit /blood or call helpline 1800-123-1674.';
+    if (lang === 'mr') return '🔴 रक्त साहाय्यासाठी /blood वर तात्काळ रक्त विनंती नोंदवा किंवा /crm/helpdesk वर मदत मागा.';
+    if (lang === 'hi') return '🔴 रक्त सहायता के लिए /blood पोर्टल पर अनुरोध करें या /crm/helpdesk पर मदद माँगें।';
+    return '🔴 For blood donor help, post a request at /blood or ask at /crm/helpdesk.';
   }
 
   if (norm.includes('नोंदणी') || norm.includes('सदस्य') || norm.includes('register') || norm.includes('membership')) {
@@ -116,159 +98,116 @@ function getFallbackResponse(query, lang = 'mr') {
 
   if (lang === 'mr') {
     return '🙏 आपल्या प्रश्नासाठी कनेक्ट मराठा ज्ञानकोशात थेट माहिती सापडली नाही. आपण गड-किल्ले, मराठा इतिहास, स्वराज्य, रक्तदान, व्यवसाय संगम किंवा सदस्यत्वाबाबत प्रश्न विचारू शकता. तांत्रिक मदतीसाठी खालील फॉर्म भरा.';
-  } else if (lang === 'hi') {
-    return '🙏 आपके प्रश्न के लिए कनेक्ट मराठा ज्ञानकोश में सीधा उत्तर नहीं मिला। आप किले, मराठा इतिहास, स्वराज्य, रक्तदान या व्यवसाय संगम के बारे में पूछ सकते हैं।';
-  } else {
-    return "🙏 No direct matching information was found in the Connect Maratha knowledge base. Please ask about Maratha forts, history, Swarajya, blood donation, or Business Sangam, or contact our technical team below.";
   }
+  if (lang === 'hi') {
+    return '🙏 आपके प्रश्न के लिए कनेक्ट मराठा ज्ञानकोश में सीधा उत्तर नहीं मिला। आप किले, मराठा इतिहास, स्वराज्य, रक्तदान या व्यवसाय संगम के बारे में पूछ सकते हैं।';
+  }
+  return '🙏 No direct matching information was found in the Connect Maratha knowledge base. Please ask about Maratha forts, history, Swarajya, blood donation, or Business Sangam, or contact our technical team below.';
 }
 
-// ============================================================
-// POST /api/ai/chat
-// Trilingual AI Chat Agent endpoint
-// ============================================================
+// POST /api/ai/chat  { message, language?, session_id? }
 router.post('/chat', async (req, res) => {
-  const { message, language = 'mr', session_id = 'default' } = req.body;
-  const cleanMessage = sanitize(message || '').trim();
-
+  const { language = 'mr', session_id = 'default' } = req.body || {};
+  const cleanMessage = text(req.body?.message, 1000);
   if (!cleanMessage) {
     return sendError(res, 'कृपया प्रश्न किंवा संदेश पाठवा.', 'EMPTY_MESSAGE', 400);
   }
-
   const effectiveLang = detectLang(cleanMessage, language);
+  const sessionId = text(session_id, 80) || 'default';
 
-  // 1. First attempt calling local Python FastAPI agent if running on port 8000
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 1800); // 1.8s fast timeout
-
-    const pyRes = await fetch('http://127.0.0.1:8000/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: cleanMessage,
-        language: effectiveLang,
-        session_id
-      }),
-      signal: controller.signal
-    });
-    clearTimeout(timeout);
-
-    if (pyRes.ok) {
-      const data = await pyRes.json();
-      if (data && data.response) {
-        return sendSuccess(res, 'AI उत्तर प्राप्त झाले (Python Agent)', {
-          response: data.response,
-          source: 'python_agent',
-          language: effectiveLang,
-          sessionId: session_id
-        });
+  if (AI_AGENT_URL) {
+    try {
+      const agentRes = await fetch(AI_AGENT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: cleanMessage, language: effectiveLang, session_id: sessionId }),
+        signal: AbortSignal.timeout(5000),
+      });
+      if (agentRes.ok) {
+        const data = await agentRes.json();
+        if (data && data.response) {
+          return sendSuccess(res, 'AI उत्तर प्राप्त झाले (Python Agent)', {
+            response: data.response, source: 'python_agent', language: effectiveLang, sessionId,
+          });
+        }
       }
+    } catch (_) {
+      // Agent offline or slow: fall back to the built-in knowledge search.
     }
-  } catch (pyErr) {
-    // Python agent offline or timed out; proceed to built-in knowledge RAG
   }
 
-  // 2. Intelligent embedded RAG query over Connect Maratha knowledge base
-  const searchResult = searchKnowledge(cleanMessage, effectiveLang);
-
-  if (searchResult && searchResult.match) {
-    const item = searchResult.match;
-    const answerObj = item.answer || {};
-    const text = answerObj[effectiveLang] || answerObj.mr || answerObj.en || Object.values(answerObj)[0] || '';
-
+  const found = searchKnowledge(cleanMessage, effectiveLang);
+  if (found) {
+    const answer = found.match.answer || {};
     return sendSuccess(res, 'AI उत्तर प्राप्त झाले (Knowledge Engine)', {
-      response: text,
-      topic: item.topic,
-      category: item.category,
-      sourceUrl: item.source,
+      response: answer[effectiveLang] || answer.mr || answer.en || Object.values(answer)[0] || '',
+      topic: found.match.topic,
+      category: found.match.category,
+      sourceUrl: found.match.source,
       source: 'embedded_rag',
-      confidence: searchResult.score,
+      confidence: found.score,
       language: effectiveLang,
-      sessionId: session_id
+      sessionId,
     });
   }
 
-  // 3. Contextual fallback guidance
-  const fallback = getFallbackResponse(cleanMessage, effectiveLang);
   return sendSuccess(res, 'मार्गदर्शन उत्तर', {
-    response: fallback,
+    response: getFallbackResponse(cleanMessage, effectiveLang),
     source: 'contextual_engine',
     language: effectiveLang,
-    sessionId: session_id
+    sessionId,
   });
 });
 
-// ============================================================
-// POST /api/ai/support (or /technical-support)
-// Technical Support Ticket creation
-// ============================================================
-router.post(['/support', '/technical-support'], (req, res) => {
-  const { mobile, email, issue, language = 'mr', name = '' } = req.body;
-
-  const cleanedPhone = cleanPhone(mobile);
-  if (!cleanedPhone || !isValidPhone(cleanedPhone)) {
-    return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
-  }
-
-  const cleanEmailStr = sanitize(email || '').trim();
-  if (cleanEmailStr && !isValidEmail(cleanEmailStr)) {
-    return sendError(res, 'कृपया वैध ई-मेल पत्ता प्रविष्ट करा.', 'INVALID_EMAIL', 400);
-  }
-
-  const cleanIssue = sanitize(issue || '').trim();
-  if (!cleanIssue) {
-    return sendError(res, 'कृपया समस्येचे संक्षिप्त वर्णन द्या.', 'ISSUE_REQUIRED', 400);
-  }
-
-  const ticketData = {
-    id: `TECH-REQ-${Date.now().toString().slice(-6)}`,
-    name: sanitize(name) || 'वापरकर्ता',
-    mobile: cleanedPhone,
-    email: cleanEmailStr || `${cleanedPhone}@connectmaratha.org`,
-    issue: cleanIssue,
-    language: sanitize(language) || 'mr',
-    status: 'Open',
-    timestamp: new Date().toISOString()
-  };
-
-  // Save to technical support requests file in AI agent directory
+// POST /api/ai/support (or /technical-support)  { mobile, email?, issue, name?, language? }
+// Saved as a helpdesk ticket so staff see it with all other tickets.
+router.post(['/support', '/technical-support'], async (req, res, next) => {
   try {
-    let requestsList = [];
-    if (fs.existsSync(SUPPORT_FILE_PATH)) {
-      const raw = fs.readFileSync(SUPPORT_FILE_PATH, 'utf8');
-      requestsList = JSON.parse(raw);
-      if (!Array.isArray(requestsList)) requestsList = [];
+    const mobile = cleanMobile(req.body?.mobile);
+    if (!mobile) {
+      return sendError(res, 'कृपया वैध १० अंकी संपर्क नंबर प्रविष्ट करा.', 'INVALID_PHONE', 400);
     }
-    requestsList.push(ticketData);
-    fs.writeFileSync(SUPPORT_FILE_PATH, JSON.stringify(requestsList, null, 2), 'utf8');
-  } catch (fErr) {
-    console.warn('[AI Support] File write warning:', fErr.message);
+    const email = text(req.body?.email, 120);
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return sendError(res, 'कृपया वैध ई-मेल पत्ता प्रविष्ट करा.', 'INVALID_EMAIL', 400);
+    }
+    const issue = text(req.body?.issue, 2000);
+    if (!issue) {
+      return sendError(res, 'कृपया समस्येचे संक्षिप्त वर्णन द्या.', 'ISSUE_REQUIRED', 400);
+    }
+
+    await ensureWebsiteTables();
+    const ticket = {
+      id: newId('TECH'),
+      name: text(req.body?.name, 100) || 'वापरकर्ता',
+      mobile,
+      email,
+      issue,
+      language: text(req.body?.language, 5) || 'mr',
+      status: 'Open',
+      timestamp: new Date().toISOString(),
+    };
+    await runQuery(
+      `INSERT INTO support_tickets (id, source, title, description, category, priority, status,
+         requester_id, requester_name, requester_phone, requester_email, language, audit_trail, updated_at)
+       VALUES (?, 'ai_support', ?, ?, 'Technical Support', 'Medium', 'New', ?, ?, ?, ?, ?, ?, ?)`,
+      [ticket.id, issue.slice(0, 120), issue, req.user?.id || 'GUEST', ticket.name, mobile, email,
+        ticket.language, JSON.stringify([{ action: 'CREATED', by: ticket.name, timestamp: ticket.timestamp }]), ticket.timestamp]
+    );
+
+    return sendSuccess(res, 'आपली तांत्रिक साहाय्य विनंती नोंदवली गेली आहे! तांत्रिक पथक लवकरच संपर्क करेल.', { ticket }, 201);
+  } catch (err) {
+    next(err);
   }
-
-  // Log in central audit and notification system
-  try {
-    db.addAuditLog('AI_TECH_SUPPORT_TICKET', ticketData.mobile, {
-      ticketId: ticketData.id,
-      issue: cleanIssue.slice(0, 100)
-    });
-  } catch (e) {}
-
-  return sendSuccess(res, 'आपली तांत्रिक साहाय्य विनंती नोंदवली गेली आहे! तांत्रिक पथक लवकरच संपर्क करेल.', {
-    ticket: ticketData
-  }, 201);
 });
 
-// ============================================================
 // GET /api/ai/health
-// Healthcheck & Knowledge Base status
-// ============================================================
 router.get('/health', (req, res) => {
   return sendSuccess(res, 'Connect Maratha AI Agent Active', {
     status: 'online',
     knowledgeBaseItems: knowledgeBase.length,
+    externalAgent: Boolean(AI_AGENT_URL),
     languages: ['mr', 'hi', 'en'],
-    capabilities: ['rag', 'voice_speech_to_text', 'text_to_speech', 'tech_support', 'history_forts_swarajya']
   });
 });
 
