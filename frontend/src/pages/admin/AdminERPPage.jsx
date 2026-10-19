@@ -110,18 +110,20 @@ export default function AdminERPPage() {
         auditRes
       ] = await Promise.allSettled([
         apiClient.get('/admin/metrics'),
-        apiClient.get('/admin/users'),
+        apiClient.get('/members'),
         apiClient.get('/sangam/businesses'),
         apiClient.get('/sangam/referrals'),
         apiClient.get('/blood/requests'),
         apiClient.get('/admin/audit-logs')
       ]);
 
-      if (metricsRes.status === 'fulfilled' && metricsRes.value?.data) {
-        setMetrics(metricsRes.value.data);
+      if (metricsRes.status === 'fulfilled') {
+        const m = metricsRes.value?.metrics || metricsRes.value?.data;
+        if (m) setMetrics(m);
       }
-      if (usersRes.status === 'fulfilled' && usersRes.value?.data) {
-        const uList = Array.isArray(usersRes.value.data) ? usersRes.value.data : usersRes.value.data.users || [];
+      if (usersRes.status === 'fulfilled' && usersRes.value) {
+        const v = usersRes.value;
+        const uList = Array.isArray(v) ? v : v.members || v.users || [];
         setUsers(uList);
       }
       if (bizRes.status === 'fulfilled' && bizRes.value?.data) {
