@@ -280,7 +280,7 @@ void main() {
 
     test('referralShareText generates message with Play Store link and reference ID', () {
       final message = referralShareText('REF-96K-5578');
-      expect(message, contains('https://play.google.com/store/apps/details?id=com.connectmaratha.app'));
+      expect(message, contains('https://play.google.com/store/apps/details?id=com.connetcm.app'));
       expect(message, contains('REF-96K-5578'));
       expect(message, contains('Connect मराठा'));
     });

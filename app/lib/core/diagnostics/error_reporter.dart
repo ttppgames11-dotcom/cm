@@ -23,7 +23,7 @@ Future<void> startCrashReporting(Future<void> Function() appRunner) async {
   await SentryFlutter.init((options) {
     options.dsn = ApiConfig.sentryDsn;
     options.environment = ApiConfig.env.name;
-    options.release = 'com.connectmaratha.app@$appVersionName+$appBuildNumber';
+    options.release = 'com.connetcm.app@$appVersionName+$appBuildNumber';
     options.sendDefaultPii = false;
     options.attachScreenshot = false;
     options.attachViewHierarchy = false;

@@ -106,7 +106,7 @@ void main() {
     test('carries the referral code for Google Play to hand to the app', () {
       expect(
         playStoreReferralLink('REF-96K-1001'),
-        'https://play.google.com/store/apps/details?id=com.connectmaratha.app'
+        'https://play.google.com/store/apps/details?id=com.connetcm.app'
         '&referrer=ref%3DREF-96K-1001',
       );
       expect(referralShareText('REF-96K-1001'), contains('&referrer=ref%3DREF-96K-1001'));
