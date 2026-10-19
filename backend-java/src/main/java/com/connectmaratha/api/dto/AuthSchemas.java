@@ -1,22 +1,22 @@
-package com.connectmaratha.api.auth;
+package com.connectmaratha.api.dto;
 
 import com.connectmaratha.api.validation.Rule;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /** Port of backend/schemas/auth.schemas.js — same fields, rules and order. */
-final class AuthSchemas {
+public final class AuthSchemas {
 
     private AuthSchemas() {}
 
-    static final Map<String, Rule> LOGIN = ordered(
+    public static final Map<String, Rule> LOGIN = ordered(
         "identifier", Rule.string().min(1).max(120),
         "phone", Rule.string().max(30),
         "mobile", Rule.string().max(30),
         "email", Rule.string().max(120),
         "password", Rule.string().min(1).max(128));
 
-    static final Map<String, Rule> REGISTER = ordered(
+    public static final Map<String, Rule> REGISTER = ordered(
         "name", Rule.string().required().min(2).max(100),
         "email", Rule.string().format("email").max(120),
         "phone", Rule.string().format("phone").min(10).max(15),
@@ -56,24 +56,24 @@ final class AuthSchemas {
         "bloodGroup", Rule.string().max(20),
         "blood_group", Rule.string().max(20));
 
-    static final Map<String, Rule> GOOGLE = ordered(
+    public static final Map<String, Rule> GOOGLE = ordered(
         "idToken", Rule.string().required().min(20).max(5000),
         "register", Rule.bool(),
         "legalCompliance", Rule.object());
 
-    static final Map<String, Rule> FORGOT_PASSWORD = ordered(
+    public static final Map<String, Rule> FORGOT_PASSWORD = ordered(
         "email", Rule.string().required().format("email").max(120));
 
-    static final Map<String, Rule> VERIFY_RESET_OTP = ordered(
+    public static final Map<String, Rule> VERIFY_RESET_OTP = ordered(
         "email", Rule.string().required().format("email").max(120),
         "otp", Rule.string().required().format("otp"));
 
-    static final Map<String, Rule> RESET_PASSWORD = ordered(
+    public static final Map<String, Rule> RESET_PASSWORD = ordered(
         "email", Rule.string().required().format("email").max(120),
         "resetToken", Rule.string().required().min(20).max(1024),
         "newPassword", Rule.string().required().min(6).max(128));
 
-    static final Map<String, Rule> DELETE_ACCOUNT = ordered(
+    public static final Map<String, Rule> DELETE_ACCOUNT = ordered(
         "confirm", Rule.string().required().oneOf("DELETE"),
         "password", Rule.string().max(128),
         "idToken", Rule.string().max(2048));

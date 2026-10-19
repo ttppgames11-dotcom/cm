@@ -1,5 +1,10 @@
 package com.connectmaratha.api.auth;
 
+import com.connectmaratha.api.service.GoogleTokenVerifier;
+import com.connectmaratha.api.entity.Member;
+import com.connectmaratha.api.entity.State;
+import com.connectmaratha.api.entity.District;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -12,7 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.connectmaratha.api.PostgresTestBase;
 import com.connectmaratha.api.config.JwtService;
-import com.connectmaratha.api.mail.MailService;
+import com.connectmaratha.api.service.MailService;
 import com.connectmaratha.api.ratelimit.AuthRateLimiter;
 import com.connectmaratha.api.ratelimit.RateLimitFilter;
 import com.fasterxml.jackson.databind.JsonNode;

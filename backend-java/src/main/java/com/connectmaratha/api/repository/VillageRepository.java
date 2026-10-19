@@ -1,4 +1,6 @@
-package com.connectmaratha.api.location;
+package com.connectmaratha.api.repository;
+
+import com.connectmaratha.api.entity.Village;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

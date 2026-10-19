@@ -1,4 +1,4 @@
-package com.connectmaratha.api.auth;
+package com.connectmaratha.api.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,7 +56,7 @@ public class GoogleTokenVerifier {
     }
 
     /** The rules applied to Google's answer (split out so tests can exercise them). */
-    Optional<Map<String, Object>> check(Map<String, Object> info) {
+    public Optional<Map<String, Object>> check(Map<String, Object> info) {
         Object verified = info.get("email_verified");
         if (!"true".equals(verified) && !Boolean.TRUE.equals(verified)) return Optional.empty();
         if (!clientIds.isEmpty() && !clientIds.contains(String.valueOf(info.get("aud")))) return Optional.empty();

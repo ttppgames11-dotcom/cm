@@ -1,11 +1,11 @@
-package com.connectmaratha.api.auth;
+package com.connectmaratha.api.service;
 
 import com.connectmaratha.api.config.JwtService;
-import com.connectmaratha.api.location.LocationHierarchy;
-import com.connectmaratha.api.mail.MailService;
-import com.connectmaratha.api.member.Member;
-import com.connectmaratha.api.member.MemberJson;
-import com.connectmaratha.api.member.MemberRepository;
+import com.connectmaratha.api.service.LocationHierarchy;
+import com.connectmaratha.api.service.MailService;
+import com.connectmaratha.api.entity.Member;
+import com.connectmaratha.api.dto.MemberJson;
+import com.connectmaratha.api.repository.MemberRepository;
 import com.connectmaratha.api.schema.LazyTables;
 import com.connectmaratha.api.web.ApiException;
 import com.connectmaratha.api.web.CurrentUser;

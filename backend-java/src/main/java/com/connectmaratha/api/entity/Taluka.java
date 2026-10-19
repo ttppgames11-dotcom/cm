@@ -1,4 +1,4 @@
-package com.connectmaratha.api.location;
+package com.connectmaratha.api.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

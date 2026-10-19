@@ -1,4 +1,4 @@
-package com.connectmaratha.api.member;
+package com.connectmaratha.api.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

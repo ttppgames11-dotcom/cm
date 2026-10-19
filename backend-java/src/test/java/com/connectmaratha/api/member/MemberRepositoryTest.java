@@ -1,5 +1,8 @@
 package com.connectmaratha.api.member;
 
+import com.connectmaratha.api.repository.MemberRepository;
+import com.connectmaratha.api.entity.Member;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.connectmaratha.api.PostgresTestBase;

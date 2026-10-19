@@ -1,4 +1,4 @@
-package com.connectmaratha.api.mail;
+package com.connectmaratha.api.service;
 
 import jakarta.mail.internet.MimeMessage;
 import java.io.IOException;

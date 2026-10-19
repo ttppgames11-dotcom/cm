@@ -1,4 +1,7 @@
-package com.connectmaratha.api.auth;
+package com.connectmaratha.api.controller;
+
+import com.connectmaratha.api.service.AuthService;
+import com.connectmaratha.api.dto.AuthSchemas;
 
 import com.connectmaratha.api.ratelimit.AuthRateLimiter;
 import com.connectmaratha.api.validation.SchemaValidator;

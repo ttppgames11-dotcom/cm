@@ -1,4 +1,4 @@
-package com.connectmaratha.api.mail;
+package com.connectmaratha.api.service;
 
 /** Emails the auth flows send (Node: backend/utils/mailer.js). */
 public interface MailService {

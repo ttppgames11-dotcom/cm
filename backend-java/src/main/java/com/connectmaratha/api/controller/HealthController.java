@@ -1,4 +1,4 @@
-package com.connectmaratha.api.web;
+package com.connectmaratha.api.controller;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;

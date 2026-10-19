@@ -1,4 +1,6 @@
-package com.connectmaratha.api.member;
+package com.connectmaratha.api.repository;
+
+import com.connectmaratha.api.entity.Member;
 
 import java.util.List;
 import java.util.Optional;

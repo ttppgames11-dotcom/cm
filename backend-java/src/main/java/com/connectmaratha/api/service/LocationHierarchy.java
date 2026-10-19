@@ -1,4 +1,15 @@
-package com.connectmaratha.api.location;
+package com.connectmaratha.api.service;
+
+import com.connectmaratha.api.repository.CountryRepository;
+import com.connectmaratha.api.repository.StateRepository;
+import com.connectmaratha.api.repository.DistrictRepository;
+import com.connectmaratha.api.repository.TalukaRepository;
+import com.connectmaratha.api.repository.VillageRepository;
+import com.connectmaratha.api.entity.Country;
+import com.connectmaratha.api.entity.State;
+import com.connectmaratha.api.entity.District;
+import com.connectmaratha.api.entity.Taluka;
+import com.connectmaratha.api.entity.Village;
 
 import java.util.Objects;
 import java.util.Optional;

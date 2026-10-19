@@ -1,4 +1,6 @@
-package com.connectmaratha.api.member;
+package com.connectmaratha.api.dto;
+
+import com.connectmaratha.api.entity.Member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
