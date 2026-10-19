@@ -14,8 +14,9 @@ public record CurrentUser(String id, String name, String role, String tier) {
     public static final String INVALID_TOKEN_ATTRIBUTE = "cm.invalidToken";
 
     static CurrentUser from(Claims claims) {
+        Object id = claims.get("id");
         return new CurrentUser(
-            String.valueOf(claims.get("id")),
+            id == null ? null : String.valueOf(id),
             claims.get("name") == null ? "" : String.valueOf(claims.get("name")),
             claims.get("role") == null ? "member" : String.valueOf(claims.get("role")),
             claims.get("tier") == null ? "Gold" : String.valueOf(claims.get("tier")));

@@ -12,6 +12,8 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Table(name = "members")
+@org.hibernate.annotations.DynamicInsert
+@org.hibernate.annotations.DynamicUpdate
 public class Member {
 
     @Id

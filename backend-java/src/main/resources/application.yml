@@ -6,6 +6,10 @@ server:
 app:
   jwt-secret: ${JWT_SECRET:}
   production: ${APP_PRODUCTION:false}
+  # Comma-separated Google OAuth client IDs whose ID tokens are accepted (Node: GOOGLE_CLIENT_IDS).
+  google-client-ids: ${GOOGLE_CLIENT_IDS:}
+  # Node: ALLOW_DEV_LOGIN_FALLBACK — lets "password123" log in, never in production.
+  allow-dev-login: ${ALLOW_DEV_LOGIN_FALLBACK:false}
   # Same names and defaults as the Node backend's rate limiter.
   rate-limit:
     public-window-ms: ${RATE_LIMIT_PUBLIC_WINDOW_MS:900000}
@@ -14,6 +18,18 @@ app:
     user-max: ${RATE_LIMIT_USER_MAX:600}
     auth-ip-window-ms: ${RATE_LIMIT_AUTH_IP_WINDOW_MS:900000}
     auth-ip-max: ${RATE_LIMIT_AUTH_IP_MAX:20}
+    auth-account-window-ms: ${RATE_LIMIT_AUTH_ACCOUNT_WINDOW_MS:900000}
+    auth-account-max: ${RATE_LIMIT_AUTH_ACCOUNT_MAX:5}
+    auth-backoff-base-sec: ${RATE_LIMIT_AUTH_BACKOFF_BASE_SEC:2}
+    auth-backoff-max-sec: ${RATE_LIMIT_AUTH_BACKOFF_MAX_SEC:900}
+    auth-backoff-factor: ${RATE_LIMIT_AUTH_BACKOFF_FACTOR:2.0}
+  # Same SMTP settings as the Node mailer. Without host/user/pass, mail is only logged.
+  mail:
+    host: ${SMTP_HOST:}
+    port: ${SMTP_PORT:465}
+    user: ${SMTP_USER:}
+    pass: ${SMTP_PASS:}
+    from: ${MAIL_FROM:"Connect Maratha" <noreply@connectmaratha.com>}
 
 spring:
   application:

@@ -32,6 +32,10 @@ final class SlidingWindow {
         }
     }
 
+    void remove(String key) {
+        hits.remove(key);
+    }
+
     void clear() {
         hits.clear();
     }

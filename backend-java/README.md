@@ -27,11 +27,29 @@ and the same `RATE_LIMIT_*` variables as Node.
 - Tests extend **`PostgresTestBase`**: real PostgreSQL with the schema built from
   `../database/migrations`.
 
+## Proving it matches Node
+
+`NodeParityTest` starts the real Node backend (needs `node`, `../backend/node_modules` and
+`../database/node_modules` — run `npm install --no-save` in `database/`) and the Java server on one
+PostgreSQL, sends both the same requests, and diffs status, field names and messages. Run it for every
+new group of endpoints: add a scenario to `javaAnswersLikeNode`. It also checks the cut-over case:
+accounts, passwords and tokens made by one server work on the other.
+
+## Deliberate differences from Node (all safer, none visible to the app or website)
+
+- Reset-code tokens are not accepted as login tokens (Node accepted them for 15 minutes).
+- OTPs come from SecureRandom, not Math.random; a reset code is never logged in production.
+- Registration retries a taken member id instead of failing with a 500.
+- Registration and the referral count update in one transaction.
+
 ## Known gaps found while porting
 
-- `004_password_resets.sql` and `005_media.sql` exist only on the server, not in git.
-  `members.photo` comes from 005; tests add it by hand. Copy both files into
-  `database/migrations`.
+- Migration numbers clash (two `001_`, two `004_`) and run in name order; both Node and the tests
+  tolerate this today. Rename them before building a database from scratch.
+- The live `members` table may have columns beyond the `Member` entity (login returns `SELECT *`).
+  Compare `d members` on the server with `MemberJson.ALL` before the cut-over.
+- Tokens are not single-use: a password-reset token can be reused until it expires (15 min), as in Node.
+- Forgot-password answers 404 for unknown emails, which lets anyone test who is registered (as in Node).
 
 ## Rules for the port
 
@@ -55,7 +73,7 @@ and the same `RATE_LIMIT_*` variables as Node.
 |---|---|---|
 | 0 | Project, health, JWT + bcrypt compatibility | ✅ done |
 | 1 | Database access (JPA), error format, auth filter, rate limits | ✅ done |
-| 2 | Auth: register, login, me, Google, password reset, delete account, referrals (+ per-account login backoff) | ⬜ |
+| 2 | Auth: register, login, me, Google, password reset, delete account, referrals (+ per-account login backoff) | ✅ done — 11 endpoints, 80 replies match Node |
 | 3 | Members, community (posts, likes, comments, report/block), media upload | ⬜ |
 | 4 | Business: sangam, directories (builders, dairy), businesses, jobs, events, donations | ⬜ |
 | 5 | Website features: AI, services, CRM; culture, quiz, locations, admin | ⬜ |
@@ -78,17 +96,17 @@ and the same `RATE_LIMIT_*` variables as Node.
 
 ### auth.routes (11)
 
-- [ ] `DELETE /api/auth/account`
-- [ ] `POST   /api/auth/delete-account`
-- [ ] `POST   /api/auth/forgot-password`
-- [ ] `POST   /api/auth/google`
-- [ ] `POST   /api/auth/login`
-- [ ] `GET    /api/auth/me`
-- [ ] `GET    /api/auth/referrals/my-referrals`
-- [ ] `GET    /api/auth/referrals/verify/:code`
-- [ ] `POST   /api/auth/register`
-- [ ] `POST   /api/auth/reset-password`
-- [ ] `POST   /api/auth/verify-reset-otp`
+- [x] `DELETE /api/auth/account`
+- [x] `POST   /api/auth/delete-account`
+- [x] `POST   /api/auth/forgot-password`
+- [x] `POST   /api/auth/google`
+- [x] `POST   /api/auth/login`
+- [x] `GET    /api/auth/me`
+- [x] `GET    /api/auth/referrals/my-referrals`
+- [x] `GET    /api/auth/referrals/verify/:code`
+- [x] `POST   /api/auth/register`
+- [x] `POST   /api/auth/reset-password`
+- [x] `POST   /api/auth/verify-reset-otp`
 
 ### businesses.routes (4)
 

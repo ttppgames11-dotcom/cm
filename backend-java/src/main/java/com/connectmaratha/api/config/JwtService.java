@@ -64,6 +64,24 @@ public class JwtService {
             .compact();
     }
 
+    /**
+     * Node's 15-minute password reset token: { id, email, purpose: 'password_reset' },
+     * signed with the same secret as login tokens.
+     */
+    public String generateResetToken(String memberId, String email) {
+        Instant issued = clock.instant();
+        Map<String, Object> claims = new java.util.HashMap<>();
+        claims.put("id", memberId);
+        claims.put("email", email);
+        claims.put("purpose", "password_reset");
+        return Jwts.builder()
+            .claims(claims)
+            .issuedAt(Date.from(issued))
+            .expiration(Date.from(issued.plus(Duration.ofMinutes(15))))
+            .signWith(key, Jwts.SIG.HS256)
+            .compact();
+    }
+
     /** The token's claims, or empty when it is missing, forged, or expired. */
     public Optional<Claims> parse(String token) {
         if (token == null || token.isBlank()) return Optional.empty();

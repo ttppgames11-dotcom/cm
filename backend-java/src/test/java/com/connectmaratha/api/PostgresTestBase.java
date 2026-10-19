@@ -26,14 +26,16 @@ public abstract class PostgresTestBase {
     /** Applied in this order. The 45k-line location data file is not needed here. */
     private static final List<String> SCHEMA_FILES = List.of(
         "001_initial.sql",
+        "001_create_location_hierarchy.sql",
         "002_security_moderation.sql",
         "003_account_lifecycle.sql",
-        "004_referrals.sql");
+        "004_referrals.sql",
+        "004_password_resets.sql",
+        "005_media.sql");
 
     /**
-     * Columns the live database has that no migration in git creates:
-     * the referral ALTERs that database.js runs at startup, and members.photo,
-     * which comes from 005_media.sql (present only on the server).
+     * Columns the live database has that the migrations above do not create:
+     * the referral/location ALTERs that database.js runs at startup.
      */
     private static final String EXTRA_COLUMNS = """
         ALTER TABLE members ADD COLUMN IF NOT EXISTS reference_id TEXT;
@@ -79,6 +81,10 @@ public abstract class PostgresTestBase {
 
     protected static DataSource dataSource() {
         return POSTGRES.getPostgresDatabase();
+    }
+
+    protected static int postgresPort() {
+        return POSTGRES.getPort();
     }
 
     @DynamicPropertySource

@@ -35,8 +35,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String[] parts = header.trim().split(" ");
             String token = parts.length > 1 ? parts[1] : null;
             if (token != null) {
+                // A password-reset token ("purpose" claim) proves an email OTP, not a login.
+                // Node accepted it as a login token for 15 minutes; Java does not.
                 jwt.parse(token).ifPresentOrElse(
-                    claims -> req.setAttribute(CurrentUser.ATTRIBUTE, CurrentUser.from(claims)),
+                    claims -> {
+                        if (claims.get("purpose") != null) {
+                            req.setAttribute(CurrentUser.INVALID_TOKEN_ATTRIBUTE, Boolean.TRUE);
+                        } else {
+                            req.setAttribute(CurrentUser.ATTRIBUTE, CurrentUser.from(claims));
+                        }
+                    },
                     () -> req.setAttribute(CurrentUser.INVALID_TOKEN_ATTRIBUTE, Boolean.TRUE));
             }
         }

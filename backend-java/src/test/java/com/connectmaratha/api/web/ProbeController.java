@@ -47,7 +47,8 @@ class ProbeController {
 
     @PostMapping("/api/auth/login-probe")
     Map<String, Object> authAttempt(HttpServletRequest req, HttpServletResponse res) {
-        authLimiter.check(req, res);
-        return Map.of("success", true);
+        authLimiter.check(req, res, java.util.Map.of());
+        // Always a failed attempt: a success clears the IP count, as in Node.
+        throw ApiException.badRequest("BAD_LOGIN", "x");
     }
 }

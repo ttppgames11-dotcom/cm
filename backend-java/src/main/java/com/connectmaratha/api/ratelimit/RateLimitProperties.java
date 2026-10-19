@@ -10,6 +10,11 @@ public record RateLimitProperties(
     long userWindowMs,
     int userMax,
     long authIpWindowMs,
-    int authIpMax
+    int authIpMax,
+    long authAccountWindowMs,
+    int authAccountMax,
+    int authBackoffBaseSec,
+    int authBackoffMaxSec,
+    double authBackoffFactor
 ) {
 }

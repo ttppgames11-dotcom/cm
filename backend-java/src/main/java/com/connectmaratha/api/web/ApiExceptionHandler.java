@@ -1,6 +1,7 @@
 package com.connectmaratha.api.web;
 
 import com.connectmaratha.api.ratelimit.AuthRateLimiter;
+import com.connectmaratha.api.validation.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.SecureRandom;
 import java.util.HexFormat;
@@ -36,7 +37,7 @@ public class ApiExceptionHandler {
     public static Map<String, Object> body(String code, String message) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("success", false);
-        body.put("code", code);
+        if (code != null) body.put("code", code);
         body.put("error", message);
         return body;
     }
@@ -45,7 +46,13 @@ public class ApiExceptionHandler {
     public ResponseEntity<Map<String, Object>> api(ApiException e) {
         Map<String, Object> body = body(e.getCode(), e.getMessage());
         if (e instanceof AuthRateLimiter.RateLimitedException limited) {
-            body.put("retryAfter", limited.getRetryAfter());
+            // Node's field order: retryAfter, backoff, failures
+            for (String key : new String[] {"retryAfter", "backoff", "failures"}) {
+                if (limited.getExtra().containsKey(key)) body.put(key, limited.getExtra().get(key));
+            }
+        }
+        if (e instanceof ValidationException invalid) {
+            body.put("errors", invalid.getErrors());
         }
         return ResponseEntity.status(e.getStatus()).body(body);
     }

@@ -22,8 +22,8 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (!required || req.getAttribute(CurrentUser.ATTRIBUTE) != null) return true;
 
         if (Boolean.TRUE.equals(req.getAttribute(CurrentUser.INVALID_TOKEN_ATTRIBUTE))) {
-            throw new ApiException(HttpStatus.FORBIDDEN, "INVALID_TOKEN", TOKEN_INVALID);
+            throw ApiException.plain(HttpStatus.FORBIDDEN, TOKEN_INVALID);
         }
-        throw new ApiException(HttpStatus.UNAUTHORIZED, "TOKEN_MISSING", TOKEN_MISSING);
+        throw ApiException.plain(HttpStatus.UNAUTHORIZED, TOKEN_MISSING);
     }
 }

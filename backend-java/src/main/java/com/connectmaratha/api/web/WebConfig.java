@@ -1,5 +1,6 @@
 package com.connectmaratha.api.web;
 
+import com.connectmaratha.api.ratelimit.AuthOutcomeInterceptor;
 import java.util.List;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.MethodParameter;
@@ -16,14 +17,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     private final AuthInterceptor authInterceptor;
+    private final AuthOutcomeInterceptor authOutcome;
 
-    public WebConfig(AuthInterceptor authInterceptor) {
+    public WebConfig(AuthInterceptor authInterceptor, AuthOutcomeInterceptor authOutcome) {
         this.authInterceptor = authInterceptor;
+        this.authOutcome = authOutcome;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor);
+        registry.addInterceptor(authOutcome);
     }
 
     /** Open CORS, as the Node backend has (app.use(cors())). */

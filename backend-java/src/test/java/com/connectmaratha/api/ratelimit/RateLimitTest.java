@@ -79,7 +79,7 @@ class RateLimitTest extends PostgresTestBase {
     void authRoutesUseTheSeparateLoginAttemptLimit() throws Exception {
         for (int i = 0; i < 2; i++) {
             mvc.perform(post("/api/auth/login-probe").header("X-Forwarded-For", "198.51.100.1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
         }
         mvc.perform(post("/api/auth/login-probe").header("X-Forwarded-For", "198.51.100.1"))
             .andExpect(status().isTooManyRequests())
