@@ -440,6 +440,61 @@ export function recordNewReferral({
   return newRecord;
 }
 
+// The logged-in member's real referrals, from the server (the source of truth:
+// registration saves referred_by and the referrer's total_referrals there).
+// Returns { referenceId, shareLink, totalReferred, referrals } or null when the
+// member is logged out or the server can't be reached.
+export async function fetchMyReferralsFromServer({ signal } = {}) {
+  let token = null;
+  try {
+    token = localStorage.getItem('cm_jwt_token');
+  } catch (_) {
+    return null;
+  }
+  if (!token) return null;
+  try {
+    const res = await fetch('/api/auth/referrals/my-referrals', {
+      headers: { Authorization: `Bearer ${token}` },
+      signal
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.success) return null;
+    const referrals = (json.referred_members || []).map((m) => ({
+      id: m.id,
+      refereeName: m.name,
+      refereePhone: m.phone || '',
+      district: m.district || m.city || '',
+      registeredAt: m.joined || '',
+      // The server has no subscription/payment concept: a referral is a completed registration.
+      status: 'registered'
+    }));
+    return {
+      referenceId: json.reference_id || json.referral_id || '',
+      shareLink: json.share_link || '',
+      totalReferred: Math.max(Number(json.total_referrals) || 0, referrals.length),
+      referrals
+    };
+  } catch (e) {
+    if (e && e.name === 'AbortError') throw e;
+    return null;
+  }
+}
+
+// Dashboard data built from the server's answer. Money stays 0: no payout system exists on the server.
+export function referralDataFromServer(server, user) {
+  return {
+    memberCode: server.referenceId || formatMemberReferralCode(user),
+    totalReferred: server.totalReferred,
+    activeSubscribed: 0,
+    pendingSubscription: 0,
+    totalEarnings: 0,
+    totalPaidOut: 0,
+    withdrawableBalance: 0,
+    referrals: server.referrals,
+    payouts: []
+  };
+}
+
 // Get referral metrics and list for a specific logged in member
 export function getMemberReferralData(user) {
   const memberCode = formatMemberReferralCode(user);
