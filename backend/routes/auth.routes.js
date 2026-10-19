@@ -293,28 +293,87 @@ router.post('/login', authRateLimiter, validateBody(loginSchema, { allowUnknown:
   }
 });
 
-// POST /api/auth/google
-router.post('/google', authRateLimiter, validateBody(googleAuthSchema, { atLeastOneOf: ['email', 'googleId'] }), async (req, res, next) => {
+// Google client IDs (comma separated) allowed to issue ID tokens for this API:
+// the Web client ID the mobile app passes as `serverClientId`. Required in production.
+const GOOGLE_CLIENT_IDS = (process.env.GOOGLE_CLIENT_IDS || '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+// Asks Google whether the ID token is genuine. Returns the token's claims, or
+// null when it is invalid, expired, unverified, or issued for another app.
+async function verifyGoogleIdToken(idToken) {
+  if (GOOGLE_CLIENT_IDS.length === 0 && process.env.NODE_ENV === 'production') {
+    throw new Error('GOOGLE_CLIENT_IDS must be set in production');
+  }
+  const resp = await fetch(
+    `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`,
+    { signal: AbortSignal.timeout(8000) }
+  );
+  if (!resp.ok) return null;
+  const info = await resp.json();
+  if (info.email_verified !== 'true' && info.email_verified !== true) return null;
+  if (GOOGLE_CLIENT_IDS.length > 0 && !GOOGLE_CLIENT_IDS.includes(info.aud)) return null;
+  return info.email ? info : null;
+}
+
+// POST /api/auth/google  { idToken, register?, legalCompliance? }
+// The identity comes ONLY from the Google-verified token, never from fields the
+// client sends. Unknown emails get 404 USER_NOT_REGISTERED; { register: true }
+// with accepted terms/privacy/age creates the member from the verified profile.
+router.post('/google', authRateLimiter, validateBody(googleAuthSchema), async (req, res, next) => {
   try {
-    const { googleId, name, email, photoUrl } = req.body;
-
-    if (!email && !googleId) {
-      return res.status(400).json({ success: false, error: 'Google खात्याची माहिती मिळाली नाही.' });
-    }
-
-    // Check if user already exists by email
-    let member = await get('SELECT * FROM members WHERE email = ?', [email || '']);
-
-    if (!member) {
-      // User is not registered in the database
-      return res.status(404).json({
+    const info = await verifyGoogleIdToken(req.body.idToken);
+    if (!info) {
+      return res.status(401).json({
         success: false,
-        code: 'USER_NOT_REGISTERED',
-        error: 'वापरकर्ता तपशील आढळले नाहीत. कृपया आधी नोंदणी करा.'
+        code: 'INVALID_GOOGLE_TOKEN',
+        error: 'Google खाते सत्यापित करता आले नाही. कृपया पुन्हा प्रयत्न करा.'
       });
     }
 
-    // Clean sensitive data
+    const email = String(info.email).trim().toLowerCase();
+    let member = await get('SELECT * FROM members WHERE LOWER(email) = ?', [email]);
+
+    if (!member) {
+      if (req.body.register !== true) {
+        return res.status(404).json({
+          success: false,
+          code: 'USER_NOT_REGISTERED',
+          error: 'वापरकर्ता तपशील आढळले नाहीत. कृपया आधी नोंदणी करा.'
+        });
+      }
+
+      const consent = req.body.legalCompliance || {};
+      if (consent.termsAccepted !== true || consent.privacyAccepted !== true || consent.ageConfirmed !== true) {
+        return res.status(400).json({
+          success: false,
+          code: 'CONSENT_REQUIRED',
+          error: 'नोंदणीसाठी अटी, गोपनीयता धोरण व १८+ वयाची पुष्टी आवश्यक आहे.'
+        });
+      }
+
+      let memberId = null;
+      for (let i = 0; i < 10 && !memberId; i++) {
+        const candidate = 'M' + Math.floor(1000 + Math.random() * 9000);
+        if (!(await get('SELECT id FROM members WHERE id = ?', [candidate]))) memberId = candidate;
+      }
+      if (!memberId) throw new Error('Could not allocate a member ID');
+
+      const name = String(info.name || email.split('@')[0]).trim().slice(0, 100);
+      const referenceId = `REF-96K-${memberId.replace(/\D/g, '')}`;
+      // No password: password login refuses accounts without a password_hash.
+      await runQuery(`
+        INSERT INTO members (
+          id, name, email, phone, password_hash, avatar, city, district, state, country,
+          profession, business, education, skills, about, tier, role, joined, created_at,
+          reference_id, referral_id, referred_by, total_referrals
+        )
+        VALUES (?, ?, ?, '', NULL, '👤', '', '', '', '', '', '', '', '', '', 'Basic', 'member', date('now'), datetime('now'), ?, ?, NULL, 0)
+      `, [memberId, name, email, referenceId, referenceId]);
+      member = await get('SELECT * FROM members WHERE id = ?', [memberId]);
+    }
+
     delete member.password_hash;
     normalizeMemberStrings(member);
     try {

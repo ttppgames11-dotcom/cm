@@ -4,6 +4,31 @@ import { authenticateToken, optionalToken } from '../middleware/auth.js';
 
 const router = Router();
 
+// ---------- Moderation (report / block), required by Google Play for UGC ----------
+const REPORT_TARGETS = { post: 'posts', comment: 'post_comments', member: 'members', business: 'businesses' };
+const REPORT_REASONS = ['spam', 'abuse', 'harassment', 'hate', 'sexual', 'violence', 'misinformation', 'impersonation', 'other'];
+
+// Creates the moderation tables on first use (no-op when migration 002 already
+// made them). Portable across PostgreSQL and the SQLite fallback.
+let moderationReady = null;
+function ensureModerationTables() {
+  if (!moderationReady) {
+    moderationReady = (async () => {
+      await runQuery(`CREATE TABLE IF NOT EXISTS reports (
+        id TEXT PRIMARY KEY, reporter_id TEXT NOT NULL, target_type TEXT NOT NULL,
+        target_id TEXT NOT NULL, reason TEXT NOT NULL, details TEXT,
+        status TEXT DEFAULT 'open', created_at TEXT DEFAULT CURRENT_TIMESTAMP)`);
+      await runQuery(`CREATE TABLE IF NOT EXISTS blocks (
+        blocker_id TEXT NOT NULL, blocked_id TEXT NOT NULL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (blocker_id, blocked_id))`);
+    })().catch((err) => {
+      moderationReady = null;
+      throw err;
+    });
+  }
+  return moderationReady;
+}
+
 // GET /api/community/posts
 router.get('/posts', optionalToken, async (req, res, next) => {
   try {
@@ -19,6 +44,14 @@ router.get('/posts', optionalToken, async (req, res, next) => {
     `;
     const params = [currentUserId, currentUserId];
 
+    // Hide posts and comments from members the viewer has blocked.
+    const blockedFilter = (column) => ` AND ${column} NOT IN (SELECT blocked_id FROM blocks WHERE blocker_id = ?)`;
+    if (currentUserId) {
+      await ensureModerationTables();
+      sql += blockedFilter('p.author_id');
+      params.push(currentUserId);
+    }
+
     if (groupId) {
       sql += ' AND p.group_id = ?';
       params.push(groupId);
@@ -33,9 +66,9 @@ router.get('/posts', optionalToken, async (req, res, next) => {
         SELECT c.*, COALESCE(m.name, c.author_name) AS author_name, m.photo AS author_photo
         FROM post_comments c
         LEFT JOIN members m ON c.author_id = m.id
-        WHERE c.post_id = ?
+        WHERE c.post_id = ?${currentUserId ? blockedFilter('c.author_id') : ''}
         ORDER BY c.created_at ASC
-      `, [post.id]);
+      `, currentUserId ? [post.id, currentUserId] : [post.id]);
     }
 
     res.json({ success: true, count: posts.length, posts });
@@ -45,17 +78,18 @@ router.get('/posts', optionalToken, async (req, res, next) => {
 });
 
 // POST /api/community/posts
-router.post('/posts', optionalToken, async (req, res, next) => {
+router.post('/posts', authenticateToken, async (req, res, next) => {
   try {
-    const { author_id, author_name, author_avatar, group_id, text, image, image_id } = req.body;
+    const { author_avatar, group_id, text, image, image_id } = req.body;
 
     if (!text) {
       return res.status(400).json({ success: false, error: 'मजकूर आवश्यक आहे.' });
     }
 
     const id = 'P-' + Date.now();
-    let finalAuthorId = req.user?.id || author_id || 'M1001';
-    let finalAuthorName = req.user?.name || author_name || 'समाज सदस्य';
+    // The author is always the logged-in member, never a client-sent author_id.
+    let finalAuthorId = req.user.id;
+    let finalAuthorName = req.user.name || 'समाज सदस्य';
     let finalAuthorAvatar = author_avatar || '👤';
 
     if (finalAuthorId) {
@@ -220,6 +254,85 @@ router.post('/groups/:id/join', async (req, res, next) => {
   try {
     await runQuery('UPDATE groups SET members_count = members_count + 1 WHERE id = ?', [req.params.id]);
     res.json({ success: true, message: 'गटात यशस्वीरित्या सामील झालात!' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/community/report  { target_type, target_id, reason, details? }
+router.post('/report', authenticateToken, async (req, res, next) => {
+  try {
+    const targetType = String(req.body?.target_type || '');
+    const targetId = String(req.body?.target_id || '').slice(0, 60);
+    const reason = String(req.body?.reason || '');
+    const table = REPORT_TARGETS[targetType];
+    if (!table || !targetId || !REPORT_REASONS.includes(reason)) {
+      return res.status(400).json({ success: false, code: 'INVALID_REPORT', error: 'अवैध तक्रार. कृपया कारण निवडा.' });
+    }
+    if (targetType === 'member' && targetId === req.user.id) {
+      return res.status(400).json({ success: false, code: 'INVALID_REPORT', error: 'आपण स्वतःची तक्रार करू शकत नाही.' });
+    }
+    const exists = await get(`SELECT id FROM ${table} WHERE id = ?`, [targetId]);
+    if (!exists) {
+      return res.status(404).json({ success: false, code: 'NOT_FOUND', error: 'सामग्री सापडली नाही.' });
+    }
+
+    await ensureModerationTables();
+    const dup = await get(
+      "SELECT id FROM reports WHERE reporter_id = ? AND target_type = ? AND target_id = ? AND status = 'open'",
+      [req.user.id, targetType, targetId]
+    );
+    if (!dup) {
+      const id = 'RPT-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      await runQuery(
+        'INSERT INTO reports (id, reporter_id, target_type, target_id, reason, details) VALUES (?, ?, ?, ?, ?, ?)',
+        [id, req.user.id, targetType, targetId, reason, String(req.body?.details || '').slice(0, 500)]
+      );
+    }
+    res.status(201).json({ success: true, message: 'तक्रार नोंदवली गेली. आमची टीम ती तपासेल.' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/community/blocks  -> members the caller has blocked
+router.get('/blocks', authenticateToken, async (req, res, next) => {
+  try {
+    await ensureModerationTables();
+    const blocks = await all(
+      'SELECT m.id, m.name, m.avatar FROM blocks b JOIN members m ON m.id = b.blocked_id WHERE b.blocker_id = ? ORDER BY b.created_at DESC',
+      [req.user.id]
+    );
+    res.json({ success: true, count: blocks.length, blocks });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/community/blocks/:memberId
+router.post('/blocks/:memberId', authenticateToken, async (req, res, next) => {
+  try {
+    if (req.params.memberId === req.user.id) {
+      return res.status(400).json({ success: false, code: 'INVALID_BLOCK', error: 'आपण स्वतःला ब्लॉक करू शकत नाही.' });
+    }
+    const target = await get('SELECT id FROM members WHERE id = ?', [req.params.memberId]);
+    if (!target) {
+      return res.status(404).json({ success: false, code: 'NOT_FOUND', error: 'सदस्य आढळला नाही.' });
+    }
+    await ensureModerationTables();
+    await runQuery('INSERT INTO blocks (blocker_id, blocked_id) VALUES (?, ?) ON CONFLICT DO NOTHING', [req.user.id, target.id]);
+    res.status(201).json({ success: true, message: 'सदस्य ब्लॉक केला.' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// DELETE /api/community/blocks/:memberId
+router.delete('/blocks/:memberId', authenticateToken, async (req, res, next) => {
+  try {
+    await ensureModerationTables();
+    await runQuery('DELETE FROM blocks WHERE blocker_id = ? AND blocked_id = ?', [req.user.id, req.params.memberId]);
+    res.json({ success: true });
   } catch (err) {
     next(err);
   }

@@ -1,8 +1,18 @@
 import { Router } from 'express';
 import { all, get, runQuery } from '../../database/database.js';
 import { normalizeMemberStrings } from './auth.routes.js';
+import { authenticateToken } from '../middleware/auth.js';
 
 const router = Router();
+
+// The member themself or an admin. req.user is set by the global optionalToken
+// middleware (or authenticateToken) from a valid JWT.
+function isSelfOrAdmin(req, memberId) {
+  const user = req.user;
+  if (!user) return false;
+  const role = String(user.role || '').toLowerCase();
+  return String(user.id) === String(memberId) || role === 'admin' || role === 'superadmin';
+}
 
 // GET /api/members
 router.get('/', async (req, res, next) => {
@@ -76,6 +86,12 @@ router.get('/:id', async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'सदस्य आढळला नाही.' });
     }
 
+    // Contact details are private: only the member and admins may see them.
+    if (!isSelfOrAdmin(req, member.id)) {
+      delete member.email;
+      delete member.phone;
+    }
+
     normalizeMemberStrings(member);
     try {
       member.interests = JSON.parse(member.interests || '[]');
@@ -90,8 +106,11 @@ router.get('/:id', async (req, res, next) => {
 });
 
 // PUT /api/members/:id
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', authenticateToken, async (req, res, next) => {
   try {
+    if (!isSelfOrAdmin(req, req.params.id)) {
+      return res.status(403).json({ success: false, error: 'आपण फक्त आपली स्वतःची माहिती बदलू शकता. (You can only edit your own profile)' });
+    }
     const { name, city, district, profession, business, skills, education, about, phone } = req.body;
     const member = await get('SELECT id FROM members WHERE id = ?', [req.params.id]);
 
@@ -125,7 +144,9 @@ router.put('/:id', async (req, res, next) => {
         about = COALESCE(?, about),
         phone = COALESCE(?, phone)
       WHERE id = ?
-    `, [name, city, district, profession, business, skillsVal, education, aboutVal, phone, req.params.id]);
+    `, [name, city, district, profession, business, skillsVal, education, aboutVal, phone, req.params.id]
+      // Omitted fields stay unchanged (COALESCE); SQLite can't bind undefined.
+      .map((v) => (v === undefined ? null : v)));
 
     const updated = await get('SELECT id, name, email, phone, avatar, city, district, profession, business, skills, education, about, tier, role FROM members WHERE id = ?', [req.params.id]);
     normalizeMemberStrings(updated);

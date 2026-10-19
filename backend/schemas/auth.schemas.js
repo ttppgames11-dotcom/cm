@@ -234,28 +234,22 @@ export const registerSchema = {
   }
 };
 
+// Identity comes only from the Google ID token (verified with Google), never
+// from client-sent email/name fields.
 export const googleAuthSchema = {
-  googleId: {
+  idToken: {
     type: 'string',
-    required: false,
-    maxLength: 100
+    required: true,
+    minLength: 20,
+    maxLength: 5000
   },
-  email: {
-    type: 'string',
-    required: false,
-    format: 'email',
-    maxLength: 120
+  register: {
+    type: 'boolean',
+    required: false
   },
-  name: {
-    type: 'string',
-    required: false,
-    minLength: 1,
-    maxLength: 100
-  },
-  photoUrl: {
-    type: 'string',
-    required: false,
-    maxLength: 500
+  legalCompliance: {
+    type: 'object',
+    required: false
   }
 };
 

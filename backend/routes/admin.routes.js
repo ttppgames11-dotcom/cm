@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { all, get, runQuery } from '../../database/database.js';
+import { authenticateToken } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -48,8 +49,12 @@ router.get('/audit-logs', async (req, res, next) => {
 });
 
 // POST /api/admin/verify-member/:id
-router.post('/verify-member/:id', async (req, res, next) => {
+router.post('/verify-member/:id', authenticateToken, async (req, res, next) => {
   try {
+    const role = String(req.user?.role || '').toLowerCase();
+    if (role !== 'admin' && role !== 'superadmin') {
+      return res.status(403).json({ success: false, error: 'फक्त प्रशासकांना परवानगी आहे. (Admins only)' });
+    }
     const { status } = req.body;
     await runQuery('UPDATE members SET verified_profile = ? WHERE id = ?', [status ? 1 : 0, req.params.id]);
     res.json({ success: true, message: 'सदस्य पडताळणी स्थिती बदलली!' });
