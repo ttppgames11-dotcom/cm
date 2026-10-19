@@ -36,15 +36,14 @@ export const DISTRICT_TALUKAS = {
   'सांगली': ['मिरज', 'तासगाव', 'खानापूर', 'आटपाडी', 'कवठे महांकाळ', 'जत', 'कडेगाव', 'वाळवा', 'शिराळा', 'पलूस']
 };
 
-// Helper to get formatted referral code for any user
+// The member's own referral code, in the server's format (REF-96K-<digits of member id>),
+// so a code shown or shared before the server reply arrives is still accepted at sign-up.
 export function formatMemberReferralCode(user) {
   if (!user) return 'CM-OFFICIAL-2026';
-  const id = String(user.id || user.memberId || user.phone || '9822011924');
-  if (id.startsWith('CM-')) return id;
-  if (/^\d{10}$/.test(id)) {
-    return `CM-MH-${id.slice(-4)}`;
-  }
-  return `CM-${id.toUpperCase()}`;
+  if (user.reference_id) return String(user.reference_id);
+  if (user.referral_id) return String(user.referral_id);
+  const digits = String(user.id || user.memberId || '').replace(/\D/g, '');
+  return digits ? `REF-96K-${digits}` : 'CM-OFFICIAL-2026';
 }
 
 // Generate realistic initial seed dataset if empty
