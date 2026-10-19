@@ -67,6 +67,19 @@ accounts, passwords and tokens made by one server work on the other.
 5. **Port with tests.** Each group is done when its responses match the
    Node backend for the same requests.
 
+## Code layout (layered architecture)
+
+Each request goes down through the layers and never skips one:
+
+| Layer | Package | Job |
+|---|---|---|
+| Controller | `controller` | HTTP only: read the request, call one service method, return the reply. No rules, no SQL. |
+| Service | `service` | The rules (who may do what, what to save). Works with entities and repositories. |
+| Repository | `repository` | Database access only (Spring Data JPA, native SQL where the exact Node query matters). |
+| Entity | `entity` | One class per database table. |
+| DTO / mapping | `dto` | The JSON shapes sent back (same field names as the Node API) and validation schemas. |
+| Support | `web`, `config`, `ratelimit`, `validation`, `schema`, `util` | Filters, error format, JWT, rate limits, input checks. |
+
 ## Phases
 
 | Phase | Scope | Status |
@@ -74,7 +87,8 @@ accounts, passwords and tokens made by one server work on the other.
 | 0 | Project, health, JWT + bcrypt compatibility | ✅ done |
 | 1 | Database access (JPA), error format, auth filter, rate limits | ✅ done |
 | 2 | Auth: register, login, me, Google, password reset, delete account, referrals (+ per-account login backoff) | ✅ done — 11 endpoints, 80 replies match Node |
-| 3 | Members, community (posts, likes, comments, report/block), media upload | ⬜ |
+| 3 | Members, community (posts, likes, comments, report/block) | ✅ done — 14 endpoints, 133 replies match Node |
+| 3b | Media upload (`/api/media`, `/media/:id`) | ⬜ next |
 | 4 | Business: sangam, directories (builders, dairy), businesses, jobs, events, donations | ⬜ |
 | 5 | Website features: AI, services, CRM; culture, quiz, locations, admin | ⬜ |
 | 6 | Legacy `server.js` endpoints (blood, matrimony, ...) — port or retire | ⬜ |
@@ -117,16 +131,16 @@ accounts, passwords and tokens made by one server work on the other.
 
 ### community.routes (10)
 
-- [ ] `GET    /api/community/blocks`
-- [ ] `POST   /api/community/blocks/:memberId`
-- [ ] `DELETE /api/community/blocks/:memberId`
-- [ ] `GET    /api/community/groups`
-- [ ] `POST   /api/community/groups/:id/join`
-- [ ] `GET    /api/community/posts`
-- [ ] `POST   /api/community/posts`
-- [ ] `POST   /api/community/posts/:id/comments`
-- [ ] `POST   /api/community/posts/:id/like`
-- [ ] `POST   /api/community/report`
+- [x] `GET    /api/community/blocks`
+- [x] `POST   /api/community/blocks/:memberId`
+- [x] `DELETE /api/community/blocks/:memberId`
+- [x] `GET    /api/community/groups`
+- [x] `POST   /api/community/groups/:id/join`
+- [x] `GET    /api/community/posts`
+- [x] `POST   /api/community/posts`
+- [x] `POST   /api/community/posts/:id/comments`
+- [x] `POST   /api/community/posts/:id/like`
+- [x] `POST   /api/community/report`
 
 ### crm.routes (8)
 
@@ -197,11 +211,11 @@ accounts, passwords and tokens made by one server work on the other.
 
 ### members.routes (5)
 
-- [ ] `GET    /api/members`
-- [ ] `GET    /api/members/:id`
-- [ ] `PUT    /api/members/:id`
-- [ ] `GET    /api/members/stats`
-- [ ] `GET    /api/members/stats/summary`
+- [x] `GET    /api/members`
+- [x] `GET    /api/members/:id`
+- [x] `PUT    /api/members/:id`
+- [x] `GET    /api/members/stats`
+- [x] `GET    /api/members/stats/summary`
 
 ### quiz.routes (6)
 

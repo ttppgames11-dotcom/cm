@@ -73,4 +73,23 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     @Transactional
     @Query(nativeQuery = true, value = "UPDATE members SET total_referrals = COALESCE(total_referrals, 0) + 1 WHERE id = :id")
     void incrementTotalReferrals(@Param("id") String id);
+    /** Directory search: every filter is optional (empty means "any"); text matches are case-insensitive substrings. */
+    @Query(nativeQuery = true, value = """
+        SELECT * FROM members
+        WHERE (CAST(:district AS TEXT) IS NULL OR district = CAST(:district AS TEXT))
+          AND (CAST(:tier AS TEXT) IS NULL OR tier = CAST(:tier AS TEXT))
+          AND (CAST(:profession AS TEXT) IS NULL OR profession ILIKE CONCAT('%', CAST(:profession AS TEXT), '%'))
+          AND (CAST(:search AS TEXT) IS NULL
+               OR name ILIKE CONCAT('%', CAST(:search AS TEXT), '%')
+               OR profession ILIKE CONCAT('%', CAST(:search AS TEXT), '%')
+               OR business ILIKE CONCAT('%', CAST(:search AS TEXT), '%')
+               OR city ILIKE CONCAT('%', CAST(:search AS TEXT), '%'))
+        ORDER BY id ASC""")
+    List<Member> search(@Param("district") String district, @Param("tier") String tier,
+                        @Param("profession") String profession, @Param("search") String search);
+
+    long countByTier(String tier);
+
+    @Query(nativeQuery = true, value = "SELECT COUNT(DISTINCT district) FROM members")
+    long countDistinctDistricts();
 }

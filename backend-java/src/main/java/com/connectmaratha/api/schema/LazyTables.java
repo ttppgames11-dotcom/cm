@@ -22,7 +22,19 @@ public class LazyTables {
           language TEXT, sla_hours INTEGER, audit_trail TEXT,
           created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT)""";
 
+    private static final String REPORTS = """
+        CREATE TABLE IF NOT EXISTS reports (
+          id TEXT PRIMARY KEY, reporter_id TEXT NOT NULL, target_type TEXT NOT NULL,
+          target_id TEXT NOT NULL, reason TEXT NOT NULL, details TEXT,
+          status TEXT DEFAULT 'open', created_at TEXT DEFAULT CURRENT_TIMESTAMP)""";
+
+    private static final String BLOCKS = """
+        CREATE TABLE IF NOT EXISTS blocks (
+          blocker_id TEXT NOT NULL, blocked_id TEXT NOT NULL,
+          created_at TEXT DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (blocker_id, blocked_id))""";
+
     private final JdbcTemplate jdbc;
+    private final AtomicBoolean moderationReady = new AtomicBoolean();
     private final AtomicBoolean supportTicketsReady = new AtomicBoolean();
 
     public LazyTables(JdbcTemplate jdbc) {
@@ -33,5 +45,13 @@ public class LazyTables {
         if (supportTicketsReady.get()) return;
         jdbc.execute(SUPPORT_TICKETS);
         supportTicketsReady.set(true);
+    }
+
+    /** Report and block tables, created on first use (a no-op once migration 002 has made them). */
+    public void ensureModeration() {
+        if (moderationReady.get()) return;
+        jdbc.execute(REPORTS);
+        jdbc.execute(BLOCKS);
+        moderationReady.set(true);
     }
 }

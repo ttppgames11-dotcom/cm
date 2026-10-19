@@ -243,6 +243,8 @@ class NodeParityTest extends PostgresTestBase {
     private static final Pattern PHONE_MASKED = Pattern.compile("\\b\\d{4} •••••");
     private static final Pattern PHONE = Pattern.compile("\\b\\d{10}\\b");
     private static final Pattern PARITY_EMAIL = Pattern.compile("[A-Za-z0-9.]+@parity\\.test");
+    private static final Pattern POST_ID = Pattern.compile("\\b(P|CMM)-\\d{10,}");
+    private static final Pattern TAGGED = Pattern.compile("(Zq|GZ)[nj]");
     private static final Pattern ERR_ID = Pattern.compile("ERR-[A-Z0-9]+-[A-F0-9]+");
     private static final Pattern IN_SECONDS = Pattern.compile("in \\d+s");
     private static final Pattern RETRY_SECONDS = Pattern.compile("कृपया \\d+ सेकंदांनंतर");
@@ -256,6 +258,8 @@ class NodeParityTest extends PostgresTestBase {
         s = PARITY_EMAIL.matcher(s).replaceAll("<email>");
         s = REF_CODE.matcher(s).replaceAll("REF-96K-####");
         s = MEMBER_ID.matcher(s).replaceAll("M####");
+        s = POST_ID.matcher(s).replaceAll("$1-#");
+        s = TAGGED.matcher(s).replaceAll("$1#");
         s = ERR_ID.matcher(s).replaceAll("<errid>");
         s = IN_SECONDS.matcher(s).replaceAll("in Ns");
         s = RETRY_SECONDS.matcher(s).replaceAll("कृपया N सेकंदांनंतर");
@@ -430,6 +434,92 @@ class NodeParityTest extends PostgresTestBase {
             r.rec("extra field", s.post("/api/auth/google", Map.of("idToken", "x".repeat(40), "unexpected", 1)));
             r.rec("short token", s.post("/api/auth/google", Map.of("idToken", "short")));
             r.rec("register wrong type", s.post("/api/auth/google", Map.of("idToken", "x".repeat(40), "register", "yes")));
+        });
+
+        compare("members", (s, r) -> {
+            String zq = "Zq" + s.tag;
+            Resp a = s.post("/api/auth/register", reg(zq + " Alpha", s.phone(), s.email(), "profession", zq + "prof",
+                "district", "सातारा", "skills", List.of("Go", "Java"), "about", "hello"));
+            Resp b = s.post("/api/auth/register", reg(zq + " Beta", s.phone(), s.email(), "profession", "Other", "district", "पुणे"));
+            String ta = tokenOf(a);
+            String tb = tokenOf(b);
+            String idA = a.json().get("member").get("id").asText();
+            r.rec("list by name", s.get("/api/members?search=" + zq + "%20Alpha", null));
+            r.rec("list by profession", s.get("/api/members?profession=" + zq + "prof", null));
+            r.rec("list by district and name", s.get("/api/members?district=%E0%A4%AA%E0%A5%81%E0%A4%A3%E0%A5%87&search=" + zq, null));
+            r.rec("list all districts", s.get("/api/members?district=%E0%A4%B8%E0%A4%B0%E0%A5%8D%E0%A4%B5&search=" + zq, null));
+            r.rec("list by tier", s.get("/api/members?tier=Platinum&search=" + zq, null));
+            r.rec("list nothing", s.get("/api/members?search=" + zq + "-nobody", null));
+            r.rec("detail visitor", s.get("/api/members/" + idA, null));
+            r.rec("detail self", s.get("/api/members/" + idA, ta));
+            r.rec("detail other member", s.get("/api/members/" + idA, tb));
+            r.rec("detail bad token", s.get("/api/members/" + idA, "not-a-token"));
+            r.rec("detail missing", s.get("/api/members/M0", null));
+            r.rec("edit no token", s.req("PUT", "/api/members/" + idA, Map.of("city", "X"), null));
+            r.rec("edit someone else", s.req("PUT", "/api/members/" + idA, Map.of("city", "X"), tb));
+            r.rec("edit empty body", s.req("PUT", "/api/members/" + idA, Map.of(), ta));
+            r.rec("edit fields", s.req("PUT", "/api/members/" + idA, Map.of("city", "Pune", "business", "Biz",
+                "skills", List.of(" Flutter ", "", "Dart"), "about", List.of("line1", "line2")), ta));
+            r.rec("edit text skills", s.req("PUT", "/api/members/" + idA, Map.of("skills", "  a, b  ", "about", " bio "), ta));
+            r.rec("edit missing member", s.req("PUT", "/api/members/M0", Map.of("city", "X"), ta));
+            r.rec("detail after edit", s.get("/api/members/" + idA, ta));
+            Resp stats = s.get("/api/members/stats", null);
+            assertThat(stats.status()).as(s.name + " stats").isEqualTo(200);
+            assertThat(stats.json().get("stats").get("totalMembers").asInt()).isGreaterThanOrEqualTo(2);
+            assertThat(s.get("/api/members/stats/summary", null).json().get("stats").has("activeDistricts")).isTrue();
+        });
+
+        compare("community", (s, r) -> {
+            String group = "GZ" + s.tag;
+            Resp a = s.post("/api/auth/register", reg("Zq" + s.tag + " Poster", s.phone(), s.email()));
+            Resp b = s.post("/api/auth/register", reg("Zq" + s.tag + " Reader", s.phone(), s.email()));
+            String ta = tokenOf(a);
+            String tb = tokenOf(b);
+            String idA = a.json().get("member").get("id").asText();
+            String idB = b.json().get("member").get("id").asText();
+
+            r.rec("post no token", s.post("/api/community/posts", Map.of("text", "hi"), null));
+            r.rec("post no text", s.post("/api/community/posts", Map.of("group_id", group), ta));
+            Resp p1 = s.post("/api/community/posts", Map.of("text", "पहिली पोस्ट", "group_id", group, "image_id", "abc.jpg"), ta);
+            r.rec("post ok", p1);
+            r.rec("post by image path", s.post("/api/community/posts", Map.of("text", "second", "group_id", group, "image", "/media/x.png"), ta));
+            String postId = p1.json().get("post").get("id").asText();
+
+            r.rec("like no token", s.post("/api/community/posts/" + postId + "/like", Map.of(), null));
+            r.rec("like missing post", s.post("/api/community/posts/P-0/like", Map.of(), tb));
+            r.rec("like", s.post("/api/community/posts/" + postId + "/like", Map.of(), tb));
+            r.rec("feed with like", s.get("/api/community/posts?groupId=" + group, tb));
+            r.rec("unlike", s.post("/api/community/posts/" + postId + "/like", Map.of(), tb));
+
+            r.rec("comment no token", s.post("/api/community/posts/" + postId + "/comments", Map.of("text", "x"), null));
+            r.rec("comment empty", s.post("/api/community/posts/" + postId + "/comments", Map.of("text", "   "), tb));
+            r.rec("comment ok", s.post("/api/community/posts/" + postId + "/comments", Map.of("text", " nice "), tb));
+            r.rec("comment on missing post", s.post("/api/community/posts/" + group + "-ghost/comments", Map.of("text", "orphan"), tb));
+            r.rec("feed visitor", s.get("/api/community/posts?groupId=" + group, null));
+            r.rec("feed other group", s.get("/api/community/posts?groupId=" + group + "-none", null));
+
+            r.rec("report no token", s.post("/api/community/report", Map.of("target_type", "post", "target_id", postId, "reason", "spam"), null));
+            r.rec("report bad reason", s.post("/api/community/report", Map.of("target_type", "post", "target_id", postId, "reason", "nope"), tb));
+            r.rec("report bad type", s.post("/api/community/report", Map.of("target_type", "planet", "target_id", postId, "reason", "spam"), tb));
+            r.rec("report missing target", s.post("/api/community/report", Map.of("target_type", "post", "target_id", "P-0", "reason", "spam"), tb));
+            r.rec("report self", s.post("/api/community/report", Map.of("target_type", "member", "target_id", idB, "reason", "spam"), tb));
+            r.rec("report post", s.post("/api/community/report", Map.of("target_type", "post", "target_id", postId, "reason", "spam", "details", "bad"), tb));
+            r.rec("report post again", s.post("/api/community/report", Map.of("target_type", "post", "target_id", postId, "reason", "abuse"), tb));
+            r.rec("report member", s.post("/api/community/report", Map.of("target_type", "member", "target_id", idA, "reason", "harassment"), tb));
+
+            r.rec("blocks no token", s.get("/api/community/blocks", null));
+            r.rec("block self", s.post("/api/community/blocks/" + idB, Map.of(), tb));
+            r.rec("block missing", s.post("/api/community/blocks/M0", Map.of(), tb));
+            r.rec("block", s.post("/api/community/blocks/" + idA, Map.of(), tb));
+            r.rec("block again", s.post("/api/community/blocks/" + idA, Map.of(), tb));
+            r.rec("blocked list", s.get("/api/community/blocks", tb));
+            r.rec("feed hides blocked", s.get("/api/community/posts?groupId=" + group, tb));
+            r.rec("feed for others unchanged", s.get("/api/community/posts?groupId=" + group, ta));
+            r.rec("unblock", s.delete("/api/community/blocks/" + idA, null, tb));
+            r.rec("blocked list empty", s.get("/api/community/blocks", tb));
+
+            r.rec("groups filtered", s.get("/api/community/groups?type=zzz-none", null));
+            r.rec("group join", s.post("/api/community/groups/G-none/join", Map.of(), null));
         });
 
         // Cut-over case: both servers share one database, so accounts and tokens must work on either.

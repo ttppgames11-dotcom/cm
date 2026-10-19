@@ -79,6 +79,22 @@ public final class MemberJson {
         "business", "skills", "education", "interests", "about", "tier", "role",
         "verified_mobile", "verified_email", "verified_profile", "joined");
 
+    /** GET /api/members (the directory list). */
+    public static final List<String> LIST = List.of(
+        "id", "name", "avatar", "photo", "city", "district", "state", "profession", "business",
+        "skills", "education", "about", "tier", "role", "joined");
+
+    /** GET /api/members/:id (contact details are removed for strangers). */
+    public static final List<String> DETAIL = List.of(
+        "id", "name", "email", "phone", "avatar", "photo", "city", "district", "state", "country",
+        "profession", "business", "skills", "education", "interests", "about", "tier", "role",
+        "verified_mobile", "verified_email", "verified_profile", "joined");
+
+    /** PUT /api/members/:id reply. */
+    public static final List<String> UPDATED = List.of(
+        "id", "name", "email", "phone", "avatar", "city", "district", "profession", "business",
+        "skills", "education", "about", "tier", "role");
+
     /** The chosen columns, with skills/about normalised like Node's normalizeMemberStrings. */
     public static Map<String, Object> of(Member m, List<String> columns) {
         Map<String, Object> out = new LinkedHashMap<>();
