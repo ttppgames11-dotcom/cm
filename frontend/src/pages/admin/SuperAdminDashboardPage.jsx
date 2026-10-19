@@ -20,6 +20,8 @@ export default function SuperAdminDashboardPage() {
   // Data states
   const [users, setUsers] = useState([]);
   const [userStats, setUserStats] = useState({});
+  // 'admin' = full list from the admin endpoint, 'public' = public list (no contact details), 'failed' = not loaded
+  const [usersSource, setUsersSource] = useState('admin');
   const [doctors, setDoctors] = useState([]);
   const [services, setServices] = useState([]);
   const [hotels, setHotels] = useState([]);
@@ -119,8 +121,11 @@ export default function SuperAdminDashboardPage() {
         api.admin.getEnquiriesSummary().catch(() => ({ enquiries: [] }))
       ]);
 
-      setUsers(usersRes.users || []);
-      setUserStats(usersRes.stats || {});
+      setUsersSource(usersRes?.source || 'failed');
+      if (usersRes && usersRes.source !== 'failed') {
+        setUsers(usersRes.users || []);
+        setUserStats(usersRes.stats || {});
+      }
       setDoctors(docsRes || []);
       setServices(srvsRes || []);
       setHotels(htlsRes || []);
@@ -140,7 +145,8 @@ export default function SuperAdminDashboardPage() {
     loadAllData();
   }, [userRoleFilter, userVerifiedFilter]);
 
-  // Fast 1-Second Real-Time Polling to reflect added/registered users immediately
+  // Refresh once a minute (a 1-second poll used up the server's rate limit within minutes).
+  // A failed refresh keeps the list already on screen.
   useEffect(() => {
     const pollInterval = setInterval(() => {
       apiClient.getAdminUsers({
@@ -148,12 +154,13 @@ export default function SuperAdminDashboardPage() {
         role: userRoleFilter,
         verified: userVerifiedFilter
       }).then(res => {
-        if (res && res.users) {
+        setUsersSource(res?.source || 'failed');
+        if (res && res.source !== 'failed' && res.users) {
           setUsers(res.users);
           if (res.stats) setUserStats(res.stats);
         }
-      }).catch(() => {});
-    }, 1000);
+      }).catch(() => setUsersSource('failed'));
+    }, 60000);
     return () => clearInterval(pollInterval);
   }, [userSearch, userRoleFilter, userVerifiedFilter]);
 
@@ -660,6 +667,15 @@ export default function SuperAdminDashboardPage() {
                 सध्या तुम्ही {user ? `"${user.name}" (${user.role || 'member'})` : 'अतिथी (Guest)'} म्हणून कन्सोल पाहत आहात. वापरकर्ते बदलणे/हटवणे आणि डेटाबेस थेट अपडेट करण्यासाठी Admin खाते आवश्यक आहे.
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Says plainly when the numbers below are not real, instead of showing 0 as if it were */}
+        {usersSource !== 'admin' && (
+          <div style={{ background: usersSource === 'failed' ? '#FEF2F2' : '#FFFBEB', border: `2px solid ${usersSource === 'failed' ? '#DC2626' : '#F59E0B'}`, color: usersSource === 'failed' ? '#991B1B' : '#92400E', borderRadius: '12px', padding: '14px 18px', marginBottom: '18px', fontWeight: 700, lineHeight: 1.5 }}>
+            {usersSource === 'failed'
+              ? '⚠️ सदस्यांची माहिती लोड झाली नाही — खालील आकडे खरे नाहीत. थोड्या वेळाने पान रीफ्रेश करा. (Member data did not load — the numbers below are not real. Refresh in a few minutes.)'
+              : 'ℹ️ Admin लॉगिन नसल्यामुळे फक्त सार्वजनिक यादी दिसत आहे (ईमेल/फोन लपवलेले). कृपया लॉग आउट करून आपल्या Admin खात्याने पुन्हा लॉगिन करा. (Showing the public list only — log out and log in again with your admin account.)'}
           </div>
         )}
 

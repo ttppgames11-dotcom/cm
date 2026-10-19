@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Routes, Route, NavLink, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import adminApi from '../../services/adminApi';
+import adminApi, { adminLoadFailures } from '../../services/adminApi';
 import {
   REFERRAL_BANDS,
   DEPARTMENT_WINGS,
@@ -370,10 +370,11 @@ export default function AdminShell() {
 
   const [data, setData] = useState({
     metrics: {},
-    users: defaultUsers,
+    failed: [],
+    users: [],
     leads: defaultLeads,
-    businesses: defaultBusinesses,
-    referrals: defaultReferrals,
+    businesses: [],
+    referrals: [],
     content: {
       articles: defaultArticles,
       history: defaultHistory,
@@ -437,10 +438,12 @@ export default function AdminShell() {
 
         setData({
           metrics: metrics || {},
-          users: (fetchedUsers && fetchedUsers.length > 0) ? fetchedUsers : defaultUsers,
+          // Which loads failed, so the page can say so instead of showing a fake 0.
+          failed: [...adminLoadFailures],
+          users: Array.isArray(fetchedUsers) ? fetchedUsers : [],
           leads: (Array.isArray(leads) && leads.length > 0) ? leads : defaultLeads,
-          businesses: (Array.isArray(businesses) && businesses.length > 0) ? businesses : defaultBusinesses,
-          referrals: (Array.isArray(referrals) && referrals.length > 0) ? referrals : defaultReferrals,
+          businesses: Array.isArray(businesses) ? businesses : [],
+          referrals: Array.isArray(referrals) ? referrals : [],
           content: {
             articles: (fetchedArticles && fetchedArticles.length > 0) ? fetchedArticles : defaultArticles,
             history: (fetchedHistory && fetchedHistory.length > 0) ? fetchedHistory : defaultHistory,
@@ -618,6 +621,12 @@ export default function AdminShell() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <TopBar navigate={navigate} toast={toast$} />
         <main style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20, flex: 1 }}>
+          {data.failed && data.failed.length > 0 && (
+            <div style={{ background: '#FEF2F2', border: '2px solid #DC2626', color: '#991B1B', borderRadius: 12, padding: '12px 16px', fontWeight: 700, lineHeight: 1.5 }}>
+              ⚠️ काही माहिती लोड झाली नाही ({data.failed.join(', ')}) — त्यासंबंधित आकडे खरे नाहीत. Admin खात्याने पुन्हा लॉगिन करा किंवा थोड्या वेळाने रीफ्रेश करा.
+              (Some data did not load — related numbers are not real. Log in again with your admin account or refresh later.)
+            </div>
+          )}
           {loading ? (
             <Card style={{ textAlign: 'center', padding: 60 }}>
               <div style={{ fontSize: '1rem', fontWeight: 800, color: T.saffron }}>
@@ -778,11 +787,11 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>👥</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.saffron, margin: '6px 0' }}>
-              {(m.totalMembers || users.length || 2540).toLocaleString()}
+              {(m.totalMembers ?? users.length).toLocaleString()}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>{certifiedUsers || 1850}</strong> प्रमाणित</div>
-              <div>• <strong>{pendingKyc || 690}</strong> प्रलंबित KYC</div>
+              <div>• <strong>{certifiedUsers}</strong> प्रमाणित</div>
+              <div>• <strong>{pendingKyc}</strong> प्रलंबित KYC</div>
               <div>• <strong>12</strong> नवीन सदस्य आज</div>
             </div>
             <button onClick={() => navigate('/admin/users/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.saffron, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
@@ -797,7 +806,7 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>🔐</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.amber, margin: '6px 0' }}>
-              {pendingKyc || 690}
+              {pendingKyc}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
               <div>• <strong>140</strong> पडताळणी आवश्यक</div>
@@ -816,7 +825,7 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>🏢</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.deep, margin: '6px 0' }}>
-              {businesses.length || 420}
+              {businesses.length}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
               <div>• <strong>380</strong> Verified</div>
@@ -835,7 +844,7 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>🤝</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.green, margin: '6px 0' }}>
-              {referrals.length || 185}
+              {referrals.length}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
               <div>• <strong>45</strong> Converted</div>
@@ -911,7 +920,7 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>📚</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#8B5CF6', margin: '6px 0' }}>
-              {contentTotal || 156}
+              {contentTotal}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
               <div>• <strong>120</strong> Published</div>
@@ -1037,7 +1046,7 @@ function Dashboard({ data, navigate }) {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {[
-              { label: 'KYC Applications', count: pendingKyc || 690, route: '/admin/kyc/report' },
+              { label: 'KYC Applications', count: pendingKyc, route: '/admin/kyc/report' },
               { label: 'Business Verifications', count: 40, route: '/admin/business/report' },
               { label: 'Event Approvals', count: 5, route: '/admin/events/report' },
               { label: 'Content Review (CMS)', count: 24, route: '/admin/content/report' },
@@ -1905,10 +1914,10 @@ function BloodView({ data }) {
    ============================================================ */
 function ReportsView({ data }) {
   const stats = [
-    { label: 'एकूण सदस्य', value: data.users.length || 2540, color: T.saffron },
-    { label: 'प्रमाणित KYC', value: data.users.filter(u => u.verified).length || 1850, color: T.green },
-    { label: 'व्यवसाय', value: data.businesses.length || 420, color: T.amber },
-    { label: 'B2B रेफरल्स', value: data.referrals.length || 185, color: T.deep },
+    { label: 'एकूण सदस्य', value: data.users.length, color: T.saffron },
+    { label: 'प्रमाणित KYC', value: data.users.filter(u => u.verified).length, color: T.green },
+    { label: 'व्यवसाय', value: data.businesses.length, color: T.amber },
+    { label: 'B2B रेफरल्स', value: data.referrals.length, color: T.deep },
     { label: '२४x७ सेवारक्त विनंत्या', value: data.blood.length || 94, color: T.red },
     { label: 'कार्यक्रम नोंदणी', value: data.events.length || 28, color: T.saffron }
   ];

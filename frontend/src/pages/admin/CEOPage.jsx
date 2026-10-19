@@ -137,14 +137,15 @@ export default function CEOPage() {
   const dbCount = realUsers.length;
   // Scaled view ratio for executive macro display while preserving exact live database counts
   const liveMultiplier = dbCount > 0 ? dbCount : 1;
-  const totalMembers = dbCount > 0 ? dbCount : 48520;
+  const totalMembers = dbCount;
   const verifiedCount = realUsers.filter(u => u.verified).length;
   const paidCount = realUsers.filter(u => u.tier !== 'Basic' || u.verified).length;
-  const paidMembers = dbCount > 0 ? (paidCount || Math.round(totalMembers * 0.65)) : 31840;
-  const newThisMonth = dbCount > 0 ? Math.max(1, Math.round(totalMembers * 0.12)) : 4286;
+  const paidMembers = paidCount;
+  const monthPrefix = new Date().toISOString().slice(0, 7);
+  const newThisMonth = realUsers.filter(u => String(u.created_at || u.joined || '').startsWith(monthPrefix)).length;
   const conversionRate = ((paidMembers / (totalMembers || 1)) * 100).toFixed(1);
 
-  const totalReferrals = realReferrals.length > 0 ? realReferrals.length : 18640;
+  const totalReferrals = realReferrals.length;
   const referralRevenueFormatted = '₹15.92 L';
   const incentivesPaidFormatted = '₹12.45 L';
   const pendingPayoutFormatted = '₹1.84 L';
