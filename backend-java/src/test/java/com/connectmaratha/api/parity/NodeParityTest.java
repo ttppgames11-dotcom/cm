@@ -1,12 +1,12 @@
 package com.connectmaratha.api.parity;
 
-import com.connectmaratha.api.entity.Member;
+import com.connectmaratha.api.member.Member;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.connectmaratha.api.PostgresTestBase;
 import com.connectmaratha.api.config.JwtService;
-import com.connectmaratha.api.service.MailService;
+import com.connectmaratha.api.mail.MailService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -303,6 +303,20 @@ class NodeParityTest extends PostgresTestBase {
         return m;
     }
 
+    /** Setup sign-up. Node can occasionally hand out a member id twice in a row (it answers 500), so try again. */
+    private static Resp regOk(Srv s, Map<String, Object> body) throws Exception {
+        Resp r = null;
+        for (int i = 0; i < 5; i++) {
+            r = s.post("/api/auth/register", body);
+            if (r.status() == 201) return r;
+            body = new LinkedHashMap<>(body);
+            body.put("phone", s.phone());
+            body.put("email", s.email());
+            Thread.sleep(50);
+        }
+        return r;
+    }
+
     private static String tokenOf(Resp r) {
         return r.json().get("token").asText();
     }
@@ -438,9 +452,9 @@ class NodeParityTest extends PostgresTestBase {
 
         compare("members", (s, r) -> {
             String zq = "Zq" + s.tag;
-            Resp a = s.post("/api/auth/register", reg(zq + " Alpha", s.phone(), s.email(), "profession", zq + "prof",
+            Resp a = regOk(s, reg(zq + " Alpha", s.phone(), s.email(), "profession", zq + "prof",
                 "district", "सातारा", "skills", List.of("Go", "Java"), "about", "hello"));
-            Resp b = s.post("/api/auth/register", reg(zq + " Beta", s.phone(), s.email(), "profession", "Other", "district", "पुणे"));
+            Resp b = regOk(s, reg(zq + " Beta", s.phone(), s.email(), "profession", "Other", "district", "पुणे"));
             String ta = tokenOf(a);
             String tb = tokenOf(b);
             String idA = a.json().get("member").get("id").asText();
@@ -471,8 +485,8 @@ class NodeParityTest extends PostgresTestBase {
 
         compare("community", (s, r) -> {
             String group = "GZ" + s.tag;
-            Resp a = s.post("/api/auth/register", reg("Zq" + s.tag + " Poster", s.phone(), s.email()));
-            Resp b = s.post("/api/auth/register", reg("Zq" + s.tag + " Reader", s.phone(), s.email()));
+            Resp a = regOk(s, reg("Zq" + s.tag + " Poster", s.phone(), s.email()));
+            Resp b = regOk(s, reg("Zq" + s.tag + " Reader", s.phone(), s.email()));
             String ta = tokenOf(a);
             String tb = tokenOf(b);
             String idA = a.json().get("member").get("id").asText();

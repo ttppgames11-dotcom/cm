@@ -67,18 +67,23 @@ accounts, passwords and tokens made by one server work on the other.
 5. **Port with tests.** Each group is done when its responses match the
    Node backend for the same requests.
 
-## Code layout (layered architecture)
+## Code layout (package by feature)
 
-Each request goes down through the layers and never skips one:
+Everything for one feature lives in one package, and inside it the code is still
+split by job, so a request always goes controller -> service -> repository:
 
-| Layer | Package | Job |
-|---|---|---|
-| Controller | `controller` | HTTP only: read the request, call one service method, return the reply. No rules, no SQL. |
-| Service | `service` | The rules (who may do what, what to save). Works with entities and repositories. |
-| Repository | `repository` | Database access only (Spring Data JPA, native SQL where the exact Node query matters). |
-| Entity | `entity` | One class per database table. |
-| DTO / mapping | `dto` | The JSON shapes sent back (same field names as the Node API) and validation schemas. |
-| Support | `web`, `config`, `ratelimit`, `validation`, `schema`, `util` | Filters, error format, JWT, rate limits, input checks. |
+| Package | Contents |
+|---|---|
+| `auth` | AuthController, AuthService, GoogleTokenVerifier, AuthSchemas |
+| `member` | Member (entity), MemberRepository, MemberService, MemberController, MemberJson |
+| `community` | Posts, comments, likes, groups, report, block: entities, repositories, CommunityService, ModerationService, CommunityController, PostJson |
+| `location` | Country to Village entities and repositories, LocationHierarchy |
+| `mail` | MailService, SmtpMailService |
+| `web`, `config`, `ratelimit`, `validation`, `schema`, `util` | Shared plumbing used by every feature: filters, error format, JWT, rate limits, input checks |
+
+Rules: a controller only handles HTTP and calls a service; a service holds the
+rules; a repository only talks to the database. A feature may use another
+feature's service or repository but never its controller.
 
 ## Phases
 

@@ -1,6 +1,6 @@
 package com.connectmaratha.api;
 
-import com.connectmaratha.api.entity.Member;
+import com.connectmaratha.api.member.Member;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
