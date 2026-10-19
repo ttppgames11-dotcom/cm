@@ -5,7 +5,7 @@ import { authenticateToken } from '../middleware/auth.js';
 const router = Router();
 
 // GET /api/admin/metrics
-router.get('/metrics', async (req, res, next) => {
+router.get('/metrics', authenticateToken, requireAdmin, async (req, res, next) => {
   try {
     const membersCount = await get('SELECT COUNT(*) as count FROM members');
     const businessesCount = await get('SELECT COUNT(*) as count FROM businesses');
@@ -17,13 +17,13 @@ router.get('/metrics', async (req, res, next) => {
     res.json({
       success: true,
       metrics: {
-        totalMembers: membersCount.count || 24000,
-        totalBusinesses: businessesCount.count || 2540,
-        totalReferrals: referralsCount.count || 480,
-        totalDonationsAmount: donationsSum.totalCollected || 3345000,
-        totalDonors: donationsSum.totalDonors || 13490,
-        totalEvents: eventsCount.count || 48,
-        totalPosts: postsCount.count || 120,
+        totalMembers: Number(membersCount?.count) || 0,
+        totalBusinesses: Number(businessesCount?.count) || 0,
+        totalReferrals: Number(referralsCount?.count) || 0,
+        totalDonationsAmount: Number(donationsSum?.totalCollected) || 0,
+        totalDonors: Number(donationsSum?.totalDonors) || 0,
+        totalEvents: Number(eventsCount?.count) || 0,
+        totalPosts: Number(postsCount?.count) || 0,
         serverStatus: 'Online',
         dbEngine: 'SQLite3 (Pure SQL Native / ACID Compliant)',
         uptime: process.uptime()

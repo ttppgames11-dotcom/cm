@@ -292,7 +292,7 @@ export const apiClient = {
       const qs = new URLSearchParams(params).toString();
       const res = await fetchJson(`/admin/users${qs ? '?' + qs : ''}`);
       if (res && res.data && res.data.users && res.data.users.length > 0) {
-        return res.data;
+        return { ...res.data, source: 'admin' };
       }
     } catch (e) {
       // Fallback seamlessly to live database members endpoint
@@ -371,11 +371,13 @@ export const apiClient = {
       return {
         users: filtered,
         count: filtered.length,
-        stats
+        stats,
+        source: 'public'
       };
     } catch (err) {
       console.warn('Fallback members error:', err.message);
-      return { users: [], count: 0, stats: {} };
+      // source 'failed': nothing was loaded; callers keep what they already show.
+      return { users: [], count: 0, stats: {}, source: 'failed' };
     }
   },
 

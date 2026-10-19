@@ -3,15 +3,21 @@ import apiClient from './apiClient';
 
 // -----------------------------------------------------------
 // CENTRALIZED ADMIN API LAYER
-// Every call falls back to local data so the UI never breaks
+// A failed call returns the fallback so the page still renders, and its name is
+// recorded in adminLoadFailures so the page can say the data did not load
+// (instead of showing an empty or made-up number as if it were real).
 // -----------------------------------------------------------
 
-const safe = async (promise, fallback = null) => {
+export const adminLoadFailures = new Set();
+
+const safe = async (promise, fallback = null, name = null, pick = (res) => res?.data) => {
   try {
     const res = await promise;
-    return res?.data ?? fallback;
+    if (name) adminLoadFailures.delete(name);
+    return pick(res) ?? fallback;
   } catch (err) {
     console.warn('[adminApi fallback]', err?.message);
+    if (name) adminLoadFailures.add(name);
     return fallback;
   }
 };
@@ -19,15 +25,10 @@ const safe = async (promise, fallback = null) => {
 export const adminApi = {
   // ---- Dashboard / Metrics ----
   getMetrics: () =>
-    safe(apiClient.get('/admin/metrics'), {
-      totalMembers: 0, activeMembers: 0, newRegistrations: 0,
-      businesses: 0, chapters: 0, events: 0, donations: 0,
-      contributions: 0, leads: 0, serviceRequests: 0, complaints: 0,
-      pendingApprovals: 0, contentAwaitingReview: 0, revenue: 0
-    }),
+    safe(apiClient.get('/admin/metrics'), null, 'metrics', (res) => res?.metrics || res?.data),
 
   // ---- People ----
-  getMembers: (params) => safe(apiClient.get('/admin/users', { params }), []),
+  getMembers: (params) => safe(apiClient.get('/admin/users', { params }), [], 'members'),
   verifyMember: (id, verified) =>
     safe(apiClient.put(`/admin/users/${id}/verify`, { verified }), { ok: true }),
 
@@ -37,8 +38,8 @@ export const adminApi = {
     safe(apiClient.put(`/admin/leads/${id}`, { stage }), { ok: true }),
 
   // ---- Businesses & Referrals ----
-  getBusinesses: () => safe(apiClient.get('/sangam/businesses'), []),
-  getReferrals: () => safe(apiClient.get('/sangam/referrals'), []),
+  getBusinesses: () => safe(apiClient.get('/businesses'), [], 'businesses', (res) => res?.businesses || res?.data),
+  getReferrals: () => safe(apiClient.get('/sangam/referrals'), [], 'referrals', (res) => res?.referrals || res?.data),
   createReferral: (payload) =>
     safe(apiClient.post('/sangam/referrals', payload), { ok: true }),
 
