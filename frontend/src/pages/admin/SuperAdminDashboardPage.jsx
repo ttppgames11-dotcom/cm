@@ -17,21 +17,6 @@ export default function SuperAdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
 
-  const handleQuickAdminLogin = async () => {
-    try {
-      showToast('Admin खात्यात लॉगिन करत आहे...', 'success');
-      const res = await login('admin@connectmaratha.org', 'password123');
-      if (res && (res.success || res.member)) {
-        showToast('यशस्वी! Admin अधिकार प्राप्त झाले.', 'success');
-        setTimeout(() => loadAllData(), 300);
-      } else {
-        showToast('लॉगिन अयशस्वी झाले.', 'error');
-      }
-    } catch (e) {
-      showToast('लॉगिन त्रुटी: ' + e.message, 'error');
-    }
-  };
-
   // Data states
   const [users, setUsers] = useState([]);
   const [userStats, setUserStats] = useState({});
@@ -675,25 +660,6 @@ export default function SuperAdminDashboardPage() {
                 सध्या तुम्ही {user ? `"${user.name}" (${user.role || 'member'})` : 'अतिथी (Guest)'} म्हणून कन्सोल पाहत आहात. वापरकर्ते बदलणे/हटवणे आणि डेटाबेस थेट अपडेट करण्यासाठी Admin खाते आवश्यक आहे.
               </div>
             </div>
-            <button
-              onClick={handleQuickAdminLogin}
-              style={{
-                background: 'linear-gradient(135deg, #EA580C, #C2410C)',
-                color: '#FFFFFF',
-                fontWeight: 900,
-                fontSize: '0.95rem',
-                padding: '12px 24px',
-                borderRadius: '10px',
-                border: 'none',
-                boxShadow: '0 4px 20px rgba(234, 88, 12, 0.35)',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-              <span>⚡</span>
-              <span>Admin म्हणून थेट १-क्लिक लॉगिन करा</span>
-            </button>
           </div>
         )}
 
