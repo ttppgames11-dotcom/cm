@@ -8,12 +8,30 @@ so neither needs changes.
 ## Run
 
 ```sh
-mvn test                 # compatibility + endpoint tests
+mvn test                 # tests run on an embedded PostgreSQL 16 (no Docker needed)
 mvn spring-boot:run      # http://localhost:5001/api/health
 ```
 
-Settings (environment variables): `PORT` (default 5001), `JWT_SECRET`
-(must equal the Node backend's), `APP_PRODUCTION=true` on the server.
+Settings (environment variables): `PORT` (default 5001), `DATABASE_URL`
+(same value as the Node backend, postgres://...), `PGSSL`, `JWT_SECRET`
+(must equal the Node backend's), `APP_PRODUCTION=true` on the server,
+and the same `RATE_LIMIT_*` variables as Node.
+
+## Building blocks
+
+- **Entities** map existing tables; `ddl-auto: none` — JPA never changes the schema.
+- **`@RequireAuth`** on a controller method = Node's `authenticateToken`; add a
+  `CurrentUser` parameter to get the logged-in member (null when logged out).
+- **`ApiException`** for expected errors: becomes `{ success:false, code, error }`.
+- **`AuthRateLimiter.check(req, res)`** at the start of login/register/reset handlers.
+- Tests extend **`PostgresTestBase`**: real PostgreSQL with the schema built from
+  `../database/migrations`.
+
+## Known gaps found while porting
+
+- `004_password_resets.sql` and `005_media.sql` exist only on the server, not in git.
+  `members.photo` comes from 005; tests add it by hand. Copy both files into
+  `database/migrations`.
 
 ## Rules for the port
 
@@ -36,8 +54,8 @@ Settings (environment variables): `PORT` (default 5001), `JWT_SECRET`
 | Phase | Scope | Status |
 |---|---|---|
 | 0 | Project, health, JWT + bcrypt compatibility | ✅ done |
-| 1 | Database access, error format, auth filter, rate limits | ⬜ |
-| 2 | Auth: register, login, me, Google, password reset, delete account, referrals | ⬜ |
+| 1 | Database access (JPA), error format, auth filter, rate limits | ✅ done |
+| 2 | Auth: register, login, me, Google, password reset, delete account, referrals (+ per-account login backoff) | ⬜ |
 | 3 | Members, community (posts, likes, comments, report/block), media upload | ⬜ |
 | 4 | Business: sangam, directories (builders, dairy), businesses, jobs, events, donations | ⬜ |
 | 5 | Website features: AI, services, CRM; culture, quiz, locations, admin | ⬜ |

@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class HealthEndpointTest {
+class HealthEndpointTest extends PostgresTestBase {
 
     @Autowired
     MockMvc mvc;
