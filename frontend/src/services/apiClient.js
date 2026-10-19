@@ -303,31 +303,9 @@ export const apiClient = {
       const res = await fetchJson(`/members${qs ? '?' + qs : ''}`);
       const rawList = res?.members || res?.data?.members || (Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []));
       
-      // Fetch real details for members to get real phone and email
-      const detailedList = await Promise.all(
-        rawList.map(async (m) => {
-          const mId = m.id || m._id;
-          if (!mId) return m;
-
-          // Check memory cache first
-          if (apiClient._memberDetailsCache.has(mId)) {
-            const cached = apiClient._memberDetailsCache.get(mId);
-            return { ...m, ...cached };
-          }
-
-          try {
-            const detailRes = await fetchJson(`/members/${mId}`);
-            const detail = detailRes?.member || detailRes?.data || detailRes;
-            if (detail) {
-              apiClient._memberDetailsCache.set(mId, detail);
-              return { ...m, ...detail };
-            }
-          } catch (err) {
-            // Keep basic info if single detail lookup fails
-          }
-          return m;
-        })
-      );
+      // One request only: the public list has no contact details anyway (only the
+      // admin endpoint above sends those), and one request per member hit the rate limit.
+      const detailedList = rawList;
 
       let filtered = detailedList.map(m => {
         const cleanPhone = (m.phone || m.mobile || '').trim();
