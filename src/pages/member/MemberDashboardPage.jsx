@@ -4,6 +4,8 @@ import { useAuth } from '../../context/AuthContext';
 import CMDB from '../../services/cmdb';
 import {
   getMemberReferralData,
+  fetchMyReferralsFromServer,
+  referralDataFromServer,
   requestReferralPayout,
   formatMemberReferralCode
 } from '../../services/referralService';
@@ -145,20 +147,41 @@ export default function MemberDashboardPage() {
   const [payoutMsg, setPayoutMsg] = useState({ text: '', type: '' });
   const [isRequestingPayout, setIsRequestingPayout] = useState(false);
 
+  // The member's real referral code from the server (REF-96K-...). The server only
+  // recognises this code, so the old made-up CM-... code is only a fallback.
+  const [serverReferralCode, setServerReferralCode] = useState('');
+
   useEffect(() => {
+    const controller = new AbortController();
+    let serverLoaded = false;
+
     const handleSync = () => {
-      setReferralData(getMemberReferralData(member));
+      // Once the server's answer is shown, browser storage must not overwrite it.
+      if (!serverLoaded) setReferralData(getMemberReferralData(member));
     };
     handleSync();
+
+    fetchMyReferralsFromServer({ signal: controller.signal })
+      .then((server) => {
+        if (!server) return;
+        serverLoaded = true;
+        setReferralData(referralDataFromServer(server, member));
+        setServerReferralCode(server.referenceId);
+      })
+      .catch(() => {
+        // Aborted on unmount.
+      });
+
     window.addEventListener('cm_referral_updated', handleSync);
     window.addEventListener('storage', handleSync);
     return () => {
+      controller.abort();
       window.removeEventListener('cm_referral_updated', handleSync);
       window.removeEventListener('storage', handleSync);
     };
   }, [member]);
 
-  const myReferralCode = formatMemberReferralCode(member);
+  const myReferralCode = serverReferralCode || formatMemberReferralCode(member);
   const shareUrl = `https://www.connectmaratha.com/register?ref=${myReferralCode}`;
 
   const handleCopyLink = () => {
@@ -1640,7 +1663,12 @@ export default function MemberDashboardPage() {
                           {r.registeredAt ? new Date(r.registeredAt).toLocaleDateString('mr-IN') : 'आत्ताच'}
                         </td>
                         <td style={{ padding: '12px 14px' }}>
-                          {r.status === 'active' ? (
+                          {r.status === 'registered' ? (
+                            <span style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #10B981', padding: '4px 10px', borderRadius: '12px', fontWeight: 800, fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <span>🟢</span>
+                              <span>नोंदणी पूर्ण (Registered)</span>
+                            </span>
+                          ) : r.status === 'active' ? (
                             <span style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #10B981', padding: '4px 10px', borderRadius: '12px', fontWeight: 800, fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                               <span>🟢</span>
                               <span>सक्रिय वर्गणीदार (Paid)</span>
@@ -1653,7 +1681,9 @@ export default function MemberDashboardPage() {
                           )}
                         </td>
                         <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                          {r.status === 'active' ? (
+                          {r.status === 'registered' ? (
+                            <span style={{ color: '#94A3B8', fontSize: '0.82rem', fontWeight: 700 }}>—</span>
+                          ) : r.status === 'active' ? (
                             <strong style={{ color: '#059669', fontSize: '0.98rem' }}>
                               + ₹१०० जमा ✅
                             </strong>
