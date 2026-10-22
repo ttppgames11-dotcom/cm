@@ -1117,6 +1117,20 @@ class NodeParityTest extends PostgresTestBase {
             r.rec("centers list other tier", s.get("/api/crm/community-centers?district=" + z + "&tier=state", null));
         });
 
+        // Ids: Node used to pick one of only 90 business ids without checking, and failed (500) when it was taken.
+        // Fill almost all of them, then both servers must still create businesses.
+        JdbcTemplate crowded = new JdbcTemplate(dataSource());
+        for (int n = 10; n <= 94; n++) {
+            crowded.update("INSERT INTO businesses (id, name, owner, cat) VALUES (?, 'filler', 'x', 'x') ON CONFLICT DO NOTHING", "B" + n);
+        }
+        for (Srv server : List.of(
+                new Srv("node", "http://127.0.0.1:" + NODE_PORT, "n"), new Srv("java", "http://127.0.0.1:" + javaPort, "j"))) {
+            for (int i = 0; i < 3; i++) {
+                Resp created = server.post("/api/businesses", Map.of("name", "Crowded " + i, "owner", "O", "cat", "it"));
+                assertThat(created.status()).as(server.name + " creates a business even when most ids are taken").isEqualTo(201);
+            }
+        }
+
         // Cut-over case: both servers share one database, so accounts and tokens must work on either.
         Srv node = new Srv("node", "http://127.0.0.1:" + NODE_PORT, "n");
         Srv java = new Srv("java", "http://127.0.0.1:" + javaPort, "j");
