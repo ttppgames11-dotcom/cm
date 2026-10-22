@@ -348,10 +348,11 @@ router.get('/metrics', async (req, res, next) => {
     res.json({
       success: true,
       metrics: {
-        totalReferrals: totalReferrals.count,
-        wonDeals: wonDeals.count,
-        totalBusinessValue: wonDeals.totalValue || 470000,
-        totalMeetings: totalMeetings.count
+        totalReferrals: Number(totalReferrals?.count) || 0,
+        wonDeals: Number(wonDeals?.count) || 0,
+        // Real total only (it used to show a made-up 470000 when there were no won deals).
+        totalBusinessValue: Number(wonDeals?.totalValue) || 0,
+        totalMeetings: Number(totalMeetings?.count) || 0
       }
     });
   } catch (err) {
