@@ -110,7 +110,7 @@ Rules:
 | 4 | Business: sangam, directories (builders, dairy), businesses, jobs, events, donations | ✅ done |
 | 5 | Website features: AI assistant, services, CRM; culture, quiz, locations, admin | ✅ done |
 | 6 | Older `server.js` endpoints (doctors, blood, matrimony, grievances, volunteers, women, loans) | ✅ done — moved from db.json to the database |
-| 7 | Run side by side on the server, compare, switch traffic, retire Node | ⬜ |
+| 7 | Run side by side on the server, compare, switch traffic, retire Node | 🔶 Docker files ready (`Dockerfile`, `deploy/docker-compose.java.yml`); server steps pending |
 
 ## Endpoint checklist
 

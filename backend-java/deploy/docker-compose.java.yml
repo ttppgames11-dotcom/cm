@@ -1,0 +1,35 @@
+# Runs the Spring Boot API NEXT TO the Node one. Nothing public changes: it listens on 127.0.0.1:5101 only.
+# Same database, same secrets (read from the existing deploy/.env). Start/stop never touches the Node api, postgres or epay.
+#
+#   cd /opt/connect-maratha/deploy
+#   docker compose -f docker-compose.shared.yml -f ../backend-java/deploy/docker-compose.java.yml up -d --build --no-deps api-java
+name: connect-maratha
+
+services:
+  api-java:
+    build:
+      context: ../../backend-java
+    restart: unless-stopped
+    # Caps so this can never take memory/CPU from epay.
+    mem_limit: 640m
+    cpus: 1.0
+    environment:
+      PORT: 5001
+      APP_PRODUCTION: "true"
+      DATABASE_URL: postgres://cm_user:${POSTGRES_PASSWORD}@postgres:5432/connect_maratha
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in deploy/.env}
+      GOOGLE_CLIENT_IDS: ${GOOGLE_CLIENT_IDS:-}
+      SMTP_HOST: ${SMTP_HOST:-smtp.hostinger.com}
+      SMTP_PORT: ${SMTP_PORT:-465}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      RATE_LIMIT_PUBLIC_MAX: 1000
+      RATE_LIMIT_AUTH_IP_MAX: 100
+    ports:
+      - "127.0.0.1:5101:5001"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5001/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
