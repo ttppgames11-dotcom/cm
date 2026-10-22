@@ -9,6 +9,9 @@ services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
+    # Caps so Connect Maratha can never take memory/CPU from epay on this shared server.
+    mem_limit: 1g
+    cpus: 1.0
     environment:
       POSTGRES_USER: cm_user
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/.env}
@@ -26,6 +29,9 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile
     restart: unless-stopped
+    # Caps so Connect Maratha can never take memory/CPU from epay on this shared server.
+    mem_limit: 512m
+    cpus: 1.0
     depends_on:
       postgres:
         condition: service_healthy
