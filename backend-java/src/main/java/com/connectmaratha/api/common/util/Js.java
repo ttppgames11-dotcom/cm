@@ -60,6 +60,31 @@ public final class Js {
         }
     }
 
+    private static final java.util.regex.Pattern JS_NUMBER = java.util.regex.Pattern.compile(
+        "^[+-]?(Infinity|\\d+\\.?\\d*(?:[eE][+-]?\\d+)?|\\.\\d+(?:[eE][+-]?\\d+)?)$");
+
+    /** Number(v): "" and null -> 0, true -> 1, " 12 " -> 12, "0x10" -> 16, "12abc" -> NaN. */
+    public static double number(Object v) {
+        if (v == null) return 0;
+        if (v instanceof Boolean b) return b ? 1 : 0;
+        if (v instanceof Number n) return n.doubleValue();
+        if (v instanceof java.util.Map<?, ?>) return Double.NaN;
+        String s = string(v).strip();
+        if (s.isEmpty()) return 0;
+        if (s.matches("(?i)0x[0-9a-f]+")) return Long.parseLong(s.substring(2), 16);
+        if (s.matches("(?i)0b[01]+")) return Long.parseLong(s.substring(2), 2);
+        if (s.matches("(?i)0o[0-7]+")) return Long.parseLong(s.substring(2), 8);
+        if (!JS_NUMBER.matcher(s).matches()) return Double.NaN;
+        if (s.endsWith("Infinity")) return s.startsWith("-") ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+        return Double.parseDouble(s);
+    }
+
+    /** A JavaScript number as Java: whole values as Long (so JSON shows 5, not 5.0), others as Double. */
+    public static Number jsNumber(double d) {
+        if (d == Math.rint(d) && !Double.isInfinite(d) && Math.abs(d) < 1e15) return (long) d;
+        return d;
+    }
+
     /** parseFloat(String(v)): the leading number, or null for NaN. */
     public static Double parseFloat(Object v) {
         java.util.regex.Matcher m = FLOAT_PREFIX.matcher(string(v));

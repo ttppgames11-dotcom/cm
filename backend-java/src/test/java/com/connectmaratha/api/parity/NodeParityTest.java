@@ -294,7 +294,8 @@ class NodeParityTest extends PostgresTestBase {
     private static final Pattern MEDIA_ID = Pattern.compile("\\b[a-f0-9]{32}\\b");
     /** Random record ids Node picks: B42, JOB-42, E42, TXN-AB12CD34, CM-80G-12345, DON-<ms>, REV-/APP-/RSVP-<ms>. */
     private static final Pattern RANDOM_IDS = Pattern.compile(
-        "^(B|JOB-|E)\\d{2,}$|^REF-\\d{3}$|\\bTXN-[A-Z0-9]+|\\bCM-80G-\\d{5}\\b|\\b(DON|REV|APP|RSVP|MT)-\\d{10,}");
+        "^(B|JOB-|E)\\d{2,}$|^REF-\\d{3}$|^(BLD|DRY|PROD)-\\d{4,}$|\\bTXN-[A-Z0-9]+|\\bCM-80G-\\d{5}\\b"
+            + "|\\b(DON|REV|APP|RSVP|MT)-\\d{10,}|\\b(ENQ|DENQ|REG)-\\d{10,}-\\d{3}\\b");
     private static final Pattern TAGGED = Pattern.compile("(Zq|GZ)[nj]");
     private static final Pattern ERR_ID = Pattern.compile("ERR-[A-Z0-9]+-[A-F0-9]+");
     private static final Pattern IN_SECONDS = Pattern.compile("in \\d+s");
@@ -830,6 +831,105 @@ class NodeParityTest extends PostgresTestBase {
             assertThat(metrics.json().get("metrics").get("totalReferrals").asInt()).as(s.name + " sangam totals").isGreaterThanOrEqualTo(3);
             r.rec("metrics shape", metrics.without("metrics", "totalReferrals").without("metrics", "wonDeals")
                 .without("metrics", "totalBusinessValue").without("metrics", "totalMeetings"));
+        });
+
+        compare("directories", (s, r) -> {
+            String z = "Zq" + s.tag;
+            JdbcTemplate db = new JdbcTemplate(dataSource());
+            String owner = jwt.generate(z + "-owner", "Owner", "member", "Gold");
+            String farmer = jwt.generate(z + "-farmer", "Farmer", "member", "Gold");
+            String stranger = jwt.generate(z + "-x", "Stranger", "member", "Gold");
+            String admin = jwt.generate(z + "-admin", "Admin", "admin", "Gold");
+            String superadmin = jwt.generate(z + "-super", "Super", "superadmin", "Gold");
+
+            // builders
+            r.rec("builder bad phone", s.post("/api/builders", Map.of("developer", z + " Dev", "phone", "12345")));
+            r.rec("builder phone not text", s.post("/api/builders", Map.of("developer", z + " Dev", "phone", 9876543210L)));
+            r.rec("builder bad type", s.post("/api/builders", Map.of("phone", "9876543210", "projectType", "castle")));
+            r.rec("builder empty type", s.post("/api/builders", Map.of("phone", "9876543210", "projectType", "")));
+            r.rec("builder bad flats", s.post("/api/builders", Map.of("phone", "9876543210", "flatsDelivered", "-2")));
+            r.rec("builder amenities not list", s.post("/api/builders", Map.of("phone", "9876543210", "amenities", "Gym")));
+            r.rec("builder too many amenities", s.post("/api/builders", Map.of("phone", "9876543210",
+                "amenities", java.util.Collections.nCopies(13, "Gym"))));
+            r.rec("builder bad discount", s.post("/api/builders", Map.of("phone", "9876543210", "memberDiscountPercent", 11)));
+            Resp b1 = s.post("/api/builders", Map.of("developer", z + " Developers", "phone", "+91 98765 43210", "city", "Pune",
+                "projectType", "VILLAS", "flatsDelivered", "120", "amenities", List.of(" Gym ", "", "Pool"), "reraNumber", " P5210 ",
+                "memberDiscountPercent", "2.5", "ownerName", "Patil"), owner);
+            r.rec("builder create", b1);
+            r.rec("builder defaults", s.post("/api/builders", Map.of("phone", "09876543211", "ownerId", z + "-body-owner", "desc", 42)));
+            String bid = b1.json().get("builder").get("id").asText();
+            r.rec("builder detail", s.get("/api/builders/" + bid, null));
+            r.rec("builder missing", s.get("/api/builders/BLD-none", null));
+            r.rec("builder via short path", s.get("/builders/" + bid, null));
+            r.rec("builders/products is a builder id", s.get("/api/builders/products", null));
+            r.rec("enquiry missing builder", s.post("/api/builders/BLD-none/enquiries", Map.of("name", "A", "phone", "9876543210")));
+            r.rec("enquiry no name", s.post("/api/builders/" + bid + "/enquiries", Map.of("phone", "9876543210")));
+            r.rec("enquiry bad phone", s.post("/api/builders/" + bid + "/enquiries", Map.of("name", "Ravi", "phone", "1")));
+            r.rec("enquiry", s.post("/api/builders/" + bid + "/enquiries", Map.of("name", " Ravi ", "phone", "9876500000",
+                "budget", 7500000, "message", " 2BHK "), farmer));
+
+            // dairy centres
+            r.rec("dairy no name", s.post("/api/dairy", Map.of("district", "Satara", "contact", "9876543210")));
+            r.rec("dairy no district", s.post("/api/dairy", Map.of("dairyName", "X", "contact", "9876543210")));
+            r.rec("dairy bad contact", s.post("/api/dairy", Map.of("dairyName", "X", "district", "Satara", "contact", "123")));
+            Resp d1 = s.post("/api/dairy", Map.of("dairyName", z + " Dudh Kendra", "district", " Satara ", "village", "Wai",
+                "contact", "9876543212", "facilities", "BMC, Testing, ", "registeredFarmers", "40", "milkRateCow", 35), owner);
+            r.rec("dairy create", d1);
+            r.rec("dairy create list facilities", s.post("/api/dairy", Map.of("dairyName", z + " Second", "district", "Pune",
+                "contact", "9876543213", "facilities", List.of(" Cold store ", ""), "registeredFarmers", "many")));
+            String did = d1.json().get("dairy").get("id").asText();
+            r.rec("dairy detail", s.get("/api/dairy/" + did, null));
+            r.rec("dairy missing", s.get("/api/dairy/DRY-none", null));
+            r.rec("dairy list by search", s.get("/api/dairy?search=" + z, null));
+            r.rec("dairy list district + search", s.get("/api/dairy?search=" + z + "&district=wai", null));
+            r.rec("dairy list kind", s.get("/api/dairy?search=" + z + "&kind=centre", null));
+            r.rec("dairy list kind none", s.get("/api/dairy?search=" + z + "&kind=union", null));
+
+            // products
+            r.rec("product no login", s.post("/api/dairy/products", Map.of("name", "Milk", "price", 60)));
+            r.rec("product no name", s.post("/api/dairy/products", Map.of("price", 60), owner));
+            r.rec("product bad price", s.post("/api/dairy/products", Map.of("name", "Milk", "price", "free"), owner));
+            r.rec("product stranger without centre", s.post("/api/dairy/products", Map.of("name", "Milk", "price", 60), stranger));
+            r.rec("product stranger for centre", s.post("/api/dairy/products", Map.of("name", "Milk", "price", 60, "sellerId", did), stranger));
+            r.rec("product unknown centre", s.post("/api/dairy/products", Map.of("name", "Milk", "price", 60, "sellerId", "DRY-none"), owner));
+            Resp p1 = s.post("/api/dairy/products", Map.of("name", " A2 Milk ", "price", "60.5", "category", "दूध", "packSize", "1 L"), owner);
+            r.rec("product by owner", p1);
+            r.rec("product by admin for centre", s.post("/api/dairy/products", Map.of("name", "Ghee", "price", 0, "category", "ghee",
+                "sellerId", did, "available", false), admin));
+            r.rec("product superadmin is not admin", s.post("/api/dairy/products", Map.of("name", "Curd", "price", 30), superadmin));
+            r.rec("products of centre", s.get("/api/dairy/products?sellerId=" + did, null));
+            r.rec("products of centre, milk", s.get("/api/dairy/products?sellerId=" + did + "&category=दूध", null));
+            r.rec("products of centre, search", s.get("/api/dairy/products?sellerId=" + did + "&search=ghee", null));
+            String pid = p1.json().get("product").get("id").asText();
+            r.rec("product enquiry missing", s.post("/api/dairy/products/PROD-none/enquiries", Map.of("name", "A", "phone", "9876543210")));
+            r.rec("product enquiry", s.post("/api/dairy/products/" + pid + "/enquiries", Map.of("name", "Sunita", "phone", "9876500001",
+                "quantity", 5), farmer));
+
+            // registrations
+            r.rec("register no login", s.post("/api/dairy/" + did + "/registrations", Map.of("farmerName", "A", "phone", "9876543210")));
+            r.rec("register missing centre", s.post("/api/dairy/DRY-none/registrations", Map.of("farmerName", "A", "phone", "9876543210"), farmer));
+            r.rec("register no name", s.post("/api/dairy/" + did + "/registrations", Map.of("phone", "9876543210"), farmer));
+            r.rec("register", s.post("/api/dairy/" + did + "/registrations", Map.of("farmerName", " Shankar ", "phone", "9876500002",
+                "cattleCount", "6", "milkType", "Buffalo", "expectedDailyLitres", 25.5), farmer));
+            r.rec("register again", s.post("/api/dairy/" + did + "/registrations", Map.of("farmerName", "Shankar", "phone", "9876500002"), farmer));
+            r.rec("registrations stranger", s.get("/api/dairy/" + did + "/registrations", stranger));
+            r.rec("registrations owner", s.get("/api/dairy/" + did + "/registrations", owner));
+            r.rec("registrations admin", s.get("/api/dairy/" + did + "/registrations", admin));
+            r.rec("registrations missing", s.get("/api/dairy/DRY-none/registrations", admin));
+
+            // the shared enquiry limit (10 per 15 minutes): 7 counted calls so far
+            Resp last = null;
+            for (int i = 8; i <= 11; i++) {
+                last = s.post("/api/builders/" + bid + "/enquiries", Map.of("name", "N" + i, "phone", "9876500009"));
+                r.rec("limit call " + i, last);
+            }
+            assertThat(last.status()).as(s.name + " 11th enquiry in 15 minutes is refused").isEqualTo(429);
+
+            Integer notes = db.queryForObject("SELECT COUNT(*) FROM notifications WHERE member_id = ?", Integer.class, z + "-owner");
+            String text = "owner notifications=" + notes;
+            r.rec("owner notifications", new Resp(200, text, JsonNodeFactory.instance.textNode(text)));
+            assertThat(s.get("/api/builders", null).json().get("count").asInt()).as(s.name + " builders incl. copied db.json")
+                .isGreaterThanOrEqualTo(12);
         });
 
         // Cut-over case: both servers share one database, so accounts and tokens must work on either.

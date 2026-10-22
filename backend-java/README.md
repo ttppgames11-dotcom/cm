@@ -181,18 +181,18 @@ Rules:
 
 ### directories.routes (12)
 
-- [ ] `GET    /api/builders  (also /api/builders/builders)`
-- [ ] `POST   /api/builders  (also /api/builders/builders)`
-- [ ] `GET    /api/builders  (also /api/builders/dairy)`
-- [ ] `POST   /api/builders  (also /api/builders/dairy)`
-- [ ] `GET    /api/builders/:id  (also /api/builders/builders/:id)`
-- [ ] `GET    /api/builders/:id  (also /api/builders/dairy/:id)`
-- [ ] `POST   /api/builders/:id/enquiries  (also /api/builders/builders/:id/enquiries)`
-- [ ] `POST   /api/builders/:id/registrations  (also /api/builders/dairy/:id/registrations)`
-- [ ] `GET    /api/builders/:id/registrations  (also /api/builders/dairy/:id/registrations)`
-- [ ] `GET    /api/builders/products  (also /api/builders/dairy/products)`
-- [ ] `POST   /api/builders/products  (also /api/builders/dairy/products)`
-- [ ] `POST   /api/builders/products/:id/enquiries  (also /api/builders/dairy/products/:id/enquiries)`
+- [x] `GET    /api/builders  (also /api/builders/builders)`
+- [x] `POST   /api/builders  (also /api/builders/builders)`
+- [x] `GET    /api/builders  (also /api/builders/dairy)`
+- [x] `POST   /api/builders  (also /api/builders/dairy)`
+- [x] `GET    /api/builders/:id  (also /api/builders/builders/:id)`
+- [x] `GET    /api/builders/:id  (also /api/builders/dairy/:id)`
+- [x] `POST   /api/builders/:id/enquiries  (also /api/builders/builders/:id/enquiries)`
+- [x] `POST   /api/builders/:id/registrations  (also /api/builders/dairy/:id/registrations)`
+- [x] `GET    /api/builders/:id/registrations  (also /api/builders/dairy/:id/registrations)`
+- [x] `GET    /api/builders/products  (also /api/builders/dairy/products)`
+- [x] `POST   /api/builders/products  (also /api/builders/dairy/products)`
+- [x] `POST   /api/builders/products/:id/enquiries  (also /api/builders/dairy/products/:id/enquiries)`
 
 ### donations.routes (4)
 
