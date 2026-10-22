@@ -294,7 +294,7 @@ class NodeParityTest extends PostgresTestBase {
     private static final Pattern MEDIA_ID = Pattern.compile("\\b[a-f0-9]{32}\\b");
     /** Random record ids Node picks: B42, JOB-42, E42, TXN-AB12CD34, CM-80G-12345, DON-<ms>, REV-/APP-/RSVP-<ms>. */
     private static final Pattern RANDOM_IDS = Pattern.compile(
-        "^(B|JOB-|E)\\d{2,}$|^REF-\\d{3}$|^(BLD|DRY|PROD)-\\d{4,}$|\\bTXN-[A-Z0-9]+|\\bCM-80G-\\d{5}\\b"
+        "^(B|JOB-|E)\\d{2,}$|^REF-\\d{3}$|^(BLD|DRY|PROD)-\\d{4,}$|^SUB-\\d{6}$|^oral_\\d{10,}$|\\bTXN-[A-Z0-9]+|\\bCM-80G-\\d{5}\\b"
             + "|\\b(DON|REV|APP|RSVP|MT)-\\d{10,}|\\b(ENQ|DENQ|REG)-\\d{10,}-\\d{3}\\b");
     private static final Pattern TAGGED = Pattern.compile("(Zq|GZ)[nj]");
     private static final Pattern ERR_ID = Pattern.compile("ERR-[A-Z0-9]+-[A-F0-9]+");
@@ -930,6 +930,79 @@ class NodeParityTest extends PostgresTestBase {
             r.rec("owner notifications", new Resp(200, text, JsonNodeFactory.instance.textNode(text)));
             assertThat(s.get("/api/builders", null).json().get("count").asInt()).as(s.name + " builders incl. copied db.json")
                 .isGreaterThanOrEqualTo(12);
+        });
+
+        JdbcTemplate places = new JdbcTemplate(dataSource());
+        places.execute("""
+            INSERT INTO countries (id, name, code) VALUES ('ZZC1', 'Zeta Land', 'ZZ1'), ('ZZC2', 'Alpha Land', 'ZZ2') ON CONFLICT DO NOTHING;
+            INSERT INTO states (id, country_id, name, code) VALUES ('ZZS1', 'ZZC1', 'Sahyadri', 'S1'), ('ZZS2', 'ZZC1', 'Konkan', 'S2') ON CONFLICT DO NOTHING;
+            INSERT INTO districts (id, state_id, name, code) VALUES ('ZZD1', 'ZZS1', 'Satara', 'D1') ON CONFLICT DO NOTHING;
+            INSERT INTO talukas (id, district_id, name, code) VALUES ('ZZT1', 'ZZD1', 'Wai', 'T1') ON CONFLICT DO NOTHING;
+            INSERT INTO villages (id, taluka_id, name, code) VALUES ('ZZV1', 'ZZT1', 'Bavdhan', 'V1'), ('ZZV2', 'ZZT1', 'Asle', NULL),
+              ('ZZV3', 'ZZT1', 'Pasarni', 'V3') ON CONFLICT DO NOTHING;
+            INSERT INTO quiz_questions (question_id, category, difficulty, question_type, question, option_a, option_b, option_c,
+              option_d, correct_answer, explanation, year) VALUES
+              ('ZQ1', 'Chhatrapati Shivaji Maharaj', 'easy', 'mcq', 'Q1', 'a', 'b', 'c', 'd', 'a', 'e1', 1674),
+              ('ZQ2', 'Chhatrapati Shivaji Maharaj', 'hard', 'mcq', 'Q2', 'a', 'b', 'c', 'd', 'b', 'e2', NULL),
+              ('ZQ3', 'Maratha Navy', 'medium', 'true_false', 'Q3', 'a', 'b', 'c', 'd', 'c', 'e3', 1700) ON CONFLICT DO NOTHING;
+            """);
+        compare("locations", (s, r) -> {
+            r.rec("countries", s.get("/api/locations/countries", null));
+            r.rec("states no country", s.get("/api/locations/states", null));
+            r.rec("states unknown country", s.get("/api/locations/states?countryId=NOPE", null));
+            r.rec("states", s.get("/api/locations/states?countryId=ZZC1", null));
+            r.rec("states none", s.get("/api/locations/states?countryId=ZZC2", null));
+            r.rec("districts", s.get("/api/locations/districts?stateId=ZZS1", null));
+            r.rec("districts no state", s.get("/api/locations/districts", null));
+            r.rec("districts unknown state", s.get("/api/locations/districts?stateId=NOPE", null));
+            r.rec("talukas", s.get("/api/locations/talukas?districtId=ZZD1", null));
+            r.rec("talukas unknown", s.get("/api/locations/talukas?districtId=NOPE", null));
+            r.rec("villages", s.get("/api/locations/villages?talukaId=ZZT1", null));
+            r.rec("villages no taluka", s.get("/api/locations/villages", null));
+            r.rec("villages unknown taluka", s.get("/api/locations/villages?talukaId=NOPE", null));
+            r.rec("villages search", s.get("/api/locations/villages?talukaId=ZZT1&search=%20as%20", null));
+            r.rec("villages page 2 of 2", s.get("/api/locations/villages?talukaId=ZZT1&limit=2&page=2", null));
+            r.rec("villages bad limit", s.get("/api/locations/villages?talukaId=ZZT1&limit=abc&page=-3", null));
+            r.rec("villages limit 0", s.get("/api/locations/villages?talukaId=ZZT1&limit=0", null));
+        });
+
+        compare("quiz", (s, r) -> {
+            r.rec("stats", s.get("/api/quiz/stats", null));
+            r.rec("categories", s.get("/api/quiz/categories", null));
+            r.rec("questions all", s.get("/api/quiz/questions", null));
+            r.rec("questions marathi category", s.get("/api/quiz/questions?category=" + java.net.URLEncoder.encode("छत्रपती शिवराय व स्वराज्य", StandardCharsets.UTF_8), null));
+            r.rec("questions partial category", s.get("/api/quiz/questions?category=navy", null));
+            r.rec("questions difficulty marathi", s.get("/api/quiz/questions?difficulty=" + java.net.URLEncoder.encode("प्रगत", StandardCharsets.UTF_8), null));
+            r.rec("questions type", s.get("/api/quiz/questions?type=true_false", null));
+            r.rec("questions random 10", s.get("/api/quiz/questions?count=10", null));
+            r.rec("questions count bad", s.get("/api/quiz/questions?count=abc", null));
+            r.rec("questions ALL", s.get("/api/quiz/questions?category=ALL&difficulty=सर्व&type=all&count=all", null));
+            Resp one = s.get("/api/quiz/questions?count=1", null);
+            assertThat(one.json().get("count").asInt()).as(s.name + " count=1").isEqualTo(1);
+            r.rec("daily", s.get("/api/quiz/daily", null));
+            r.rec("submit", s.post("/api/quiz/submit", Map.of("candidate_name", "Zq" + s.tag + " Mavla", "score", 7, "total", 10, "points", 70)));
+            r.rec("submit defaults", s.post("/api/quiz/submit", Map.of()));
+            r.rec("submit text numbers, round half", s.post("/api/quiz/submit", Map.of("score", "1", "total", "8", "points", "5")));
+            Map<String, Object> nulls = new LinkedHashMap<>();
+            nulls.put("category", null);
+            nulls.put("total", null);
+            r.rec("submit nulls", s.post("/api/quiz/submit", nulls));
+            r.rec("submit bad score", s.post("/api/quiz/submit", Map.of("score", "lots")));
+            r.rec("submit decimal points", s.post("/api/quiz/submit", Map.of("points", 7.5)));
+            assertThat(s.get("/api/quiz/leaderboard", null).raw()).as(s.name + " leaderboard").contains("Zq" + s.tag + " Mavla");
+        });
+
+        compare("culture", (s, r) -> {
+            r.rec("add missing story", s.post("/api/culture/oral-history", Map.of("title", "T", "village", "V")));
+            r.rec("add", s.post("/api/culture/oral-history", Map.of("title", "Zq" + s.tag + " Vihir", "village", "Pachad",
+                "story", "Old well", "district", "Raigad", "contributor", "Bal More")));
+            r.rec("add minimal", s.post("/api/culture/oral-history", Map.of("title", 42, "village", "Wai", "story", "Story")));
+            r.rec("add empty district", s.post("/api/culture/oral-history", Map.of("title", "X", "village", "Y", "story", "Z", "district", "")));
+            Resp list = s.get("/api/culture/oral-history", null);
+            assertThat(list.raw()).as(s.name + " oral history list").contains("Zq" + s.tag + " Vihir");
+            int count = list.json().get("count").asInt();
+            assertThat(s.get("/api/culture/stats", null).json().get("stats").get("totalOralHistories").asInt()).isEqualTo(count);
+            r.rec("stats shape", s.get("/api/culture/stats", null).without("stats", "totalOralHistories"));
         });
 
         // Cut-over case: both servers share one database, so accounts and tokens must work on either.

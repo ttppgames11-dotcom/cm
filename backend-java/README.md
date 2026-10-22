@@ -175,9 +175,9 @@ Rules:
 
 ### culture.routes (3)
 
-- [ ] `GET    /api/culture/oral-history`
-- [ ] `POST   /api/culture/oral-history`
-- [ ] `GET    /api/culture/stats`
+- [x] `GET    /api/culture/oral-history`
+- [x] `POST   /api/culture/oral-history`
+- [x] `GET    /api/culture/stats`
 
 ### directories.routes (12)
 
@@ -217,11 +217,11 @@ Rules:
 
 ### locations.routes (5)
 
-- [ ] `GET    /api/locations/countries`
-- [ ] `GET    /api/locations/districts`
-- [ ] `GET    /api/locations/states`
-- [ ] `GET    /api/locations/talukas`
-- [ ] `GET    /api/locations/villages`
+- [x] `GET    /api/locations/countries`
+- [x] `GET    /api/locations/districts`
+- [x] `GET    /api/locations/states`
+- [x] `GET    /api/locations/talukas`
+- [x] `GET    /api/locations/villages`
 
 ### media.routes (3)
 
@@ -239,12 +239,12 @@ Rules:
 
 ### quiz.routes (6)
 
-- [ ] `GET    /api/quiz/categories`
-- [ ] `GET    /api/quiz/daily`
-- [ ] `GET    /api/quiz/leaderboard`
-- [ ] `GET    /api/quiz/questions`
-- [ ] `GET    /api/quiz/stats`
-- [ ] `POST   /api/quiz/submit`
+- [x] `GET    /api/quiz/categories`
+- [x] `GET    /api/quiz/daily`
+- [x] `GET    /api/quiz/leaderboard`
+- [x] `GET    /api/quiz/questions`
+- [x] `GET    /api/quiz/stats`
+- [x] `POST   /api/quiz/submit`
 
 ### sangam.routes (8)
 

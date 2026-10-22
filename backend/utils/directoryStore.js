@@ -87,6 +87,45 @@ export async function insertRecord(collection, item) {
   );
 }
 
+const importedLists = new Map();
+
+/**
+ * One-time copy of a list kept in its own JSON file (e.g. culture's data_oral_history.json)
+ * into the store: the file's items if the file exists, otherwise the built-in defaults the
+ * old code showed when the file was missing. Skipped once the collection has records.
+ */
+export function importLegacyList(collection, file, defaults) {
+  if (!importedLists.has(collection)) {
+    importedLists.set(collection, (async () => {
+      await ensureStore();
+      const have = await get('SELECT COUNT(*) AS n FROM directory_records WHERE collection = ?', [collection]);
+      if (Number(have?.n) > 0) return;
+      let items = defaults;
+      if (fs.existsSync(file)) {
+        try {
+          const parsed = JSON.parse(fs.readFileSync(file, 'utf8'));
+          items = Array.isArray(parsed) ? parsed : [];
+        } catch {
+          items = [];
+        }
+      }
+      const base = Date.now() * 1000;
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (!item || item.id === undefined || item.id === null) continue;
+        await runQuery(
+          'INSERT INTO directory_records (collection, id, data, seq) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING',
+          [collection, String(item.id), JSON.stringify(item), base - i]
+        );
+      }
+    })().catch((err) => {
+      importedLists.delete(collection);
+      throw err;
+    }));
+  }
+  return importedLists.get(collection);
+}
+
 /**
  * prefix + the last 4 digits of the current time (as before, e.g. BLD-4821); if that id is
  * taken, the next free number is used instead of creating a duplicate.
