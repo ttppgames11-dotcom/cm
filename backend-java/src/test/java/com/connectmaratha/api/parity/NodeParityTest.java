@@ -292,6 +292,9 @@ class NodeParityTest extends PostgresTestBase {
     private static final Pattern PARITY_EMAIL = Pattern.compile("[A-Za-z0-9.]+@parity\\.test");
     private static final Pattern POST_ID = Pattern.compile("\\b(P|CMM)-\\d{10,}");
     private static final Pattern MEDIA_ID = Pattern.compile("\\b[a-f0-9]{32}\\b");
+    /** Random record ids Node picks: B42, JOB-42, E42, TXN-AB12CD34, CM-80G-12345, DON-<ms>, REV-/APP-/RSVP-<ms>. */
+    private static final Pattern RANDOM_IDS = Pattern.compile(
+        "^(B|JOB-|E)\\d{2,}$|\\bTXN-[A-Z0-9]+|\\bCM-80G-\\d{5}\\b|\\b(DON|REV|APP|RSVP)-\\d{10,}");
     private static final Pattern TAGGED = Pattern.compile("(Zq|GZ)[nj]");
     private static final Pattern ERR_ID = Pattern.compile("ERR-[A-Z0-9]+-[A-F0-9]+");
     private static final Pattern IN_SECONDS = Pattern.compile("in \\d+s");
@@ -308,6 +311,7 @@ class NodeParityTest extends PostgresTestBase {
         s = MEMBER_ID.matcher(s).replaceAll("M####");
         s = POST_ID.matcher(s).replaceAll("$1-#");
         s = MEDIA_ID.matcher(s).replaceAll("<media-id>");
+        s = RANDOM_IDS.matcher(s).replaceAll("<random-id>");
         s = TAGGED.matcher(s).replaceAll("$1#");
         s = ERR_ID.matcher(s).replaceAll("<errid>");
         s = IN_SECONDS.matcher(s).replaceAll("in Ns");
@@ -678,6 +682,88 @@ class NodeParityTest extends PostgresTestBase {
             r.rec("delete profile no login", s.delete("/api/media/profile", null, null));
             r.rec("delete profile", s.delete("/api/media/profile", null, token));
             r.rec("member photo removed", s.get("/api/members/" + memberId, token));
+        });
+
+        compare("businesses", (s, r) -> {
+            String d = "Zq" + s.tag; // this server's own district, so lists don't mix
+            r.rec("create missing fields", s.post("/api/businesses", Map.of("name", "Only Name")));
+            Resp b1 = s.post("/api/businesses", Map.of("name", "Zq" + s.tag + " Mess", "owner", "Shinde", "cat", "restaurant",
+                "district", d, "services", List.of("Thali", "Catering"), "phone", 9800000000L));
+            r.rec("create restaurant", b1);
+            r.rec("create it, one service", s.post("/api/businesses", Map.of("name", "Zq" + s.tag + " Soft", "owner", "Patil",
+                "cat", "it", "district", d, "services", "Apps")));
+            r.rec("create other, no services", s.post("/api/businesses", Map.of("name", "Zq" + s.tag + " Shop", "owner", "More",
+                "cat", "retail", "district", d)));
+            String id = b1.json().get("business").get("id").asText();
+            r.rec("review", s.post("/api/businesses/" + id + "/reviews", Map.of("member_name", "Rao", "rating", "4", "text", "छान")));
+            r.rec("review defaults", s.post("/api/businesses/" + id + "/reviews", Map.of()));
+            r.rec("detail with reviews", s.get("/api/businesses/" + id, null));
+            r.rec("detail missing", s.get("/api/businesses/B0", null));
+            r.rec("list district", s.get("/api/businesses?district=" + d, null));
+            r.rec("list cat", s.get("/api/businesses?district=" + d + "&cat=it", null));
+            r.rec("list cat all", s.get("/api/businesses?district=" + d + "&cat=all", null));
+            r.rec("list search service", s.get("/api/businesses?district=" + d + "&search=catering", null));
+        });
+
+        compare("jobs", (s, r) -> {
+            String d = "Zq" + s.tag;
+            r.rec("create missing company", s.post("/api/jobs", Map.of("title", "Dev")));
+            Resp j1 = s.post("/api/jobs", Map.of("title", "Flutter Dev", "company", "Zq" + s.tag + " IT", "district", d,
+                "category", "IT", "desc", "Build the Maratha app"));
+            r.rec("create", j1);
+            r.rec("create defaults", s.post("/api/jobs", Map.of("title", "Clerk", "company", "Zq" + s.tag + " Office", "district", d)));
+            String id = j1.json().get("job").get("id").asText();
+            r.rec("detail", s.get("/api/jobs/" + id, null));
+            r.rec("detail missing", s.get("/api/jobs/JOB-0", null));
+            r.rec("list district", s.get("/api/jobs?district=" + d, null));
+            r.rec("search in description", s.get("/api/jobs?district=" + d + "&search=maratha", null));
+            r.rec("list category", s.get("/api/jobs?district=" + d + "&category=IT", null));
+            r.rec("apply missing phone", s.post("/api/jobs/" + id + "/apply", Map.of("applicant_name", "Ram")));
+            r.rec("apply", s.post("/api/jobs/" + id + "/apply", Map.of("applicant_name", "Ram", "phone", "9800000001")));
+        });
+
+        compare("events", (s, r) -> {
+            String d = "Zq" + s.tag;
+            r.rec("create missing venue", s.post("/api/events", Map.of("title", "Melava", "date", "2026-12-01")));
+            Resp e1 = s.post("/api/events", Map.of("title", "Zq" + s.tag + " Melava", "date", "2026-12-05", "venue", "Pune", "district", d));
+            r.rec("create", e1);
+            r.rec("create earlier", s.post("/api/events", Map.of("title", "Zq" + s.tag + " Shivjayanti", "date", "2026-02-19",
+                "venue", "Raigad", "district", d, "category", "festival", "desc", "जयंती")));
+            String id = e1.json().get("event").get("id").asText();
+            r.rec("rsvp default seat", s.post("/api/events/" + id + "/rsvp", Map.of()));
+            r.rec("rsvp 3 seats text", s.post("/api/events/" + id + "/rsvp", Map.of("seats", "3", "member_name", "Rao")));
+            r.rec("rsvp 2.7 seats", s.post("/api/events/" + id + "/rsvp", Map.of("seats", 2.7)));
+            r.rec("rsvp bad seats", s.post("/api/events/" + id + "/rsvp", Map.of("seats", "many")));
+            r.rec("rsvp unknown event", s.post("/api/events/EZ" + s.tag + "/rsvp", Map.of()));
+            r.rec("detail", s.get("/api/events/" + id, null));
+            r.rec("detail missing", s.get("/api/events/E0", null));
+            r.rec("list district (date order)", s.get("/api/events?district=" + d, null));
+            r.rec("list category", s.get("/api/events?district=" + d + "&category=festival", null));
+        });
+
+        JdbcTemplate seed = new JdbcTemplate(dataSource());
+        for (String t : List.of("n", "j")) {
+            seed.update("INSERT INTO campaigns (id, cat, title, target, collected, donors, \"desc\", active, created_at) "
+                + "VALUES (?, 'fort', ?, 500000, 1000.5, 3, 'test', 1, '2026-01-01 00:00:00') ON CONFLICT DO NOTHING",
+                "GZ" + t + "C", "Zq" + t + " Fort Campaign");
+        }
+        compare("donations", (s, r) -> {
+            String cid = "GZ" + s.tag + "C";
+            r.rec("campaign detail before", s.get("/api/donations/campaigns/" + cid, null));
+            r.rec("campaign missing", s.get("/api/donations/campaigns/C0", null));
+            r.rec("donate no amount", s.post("/api/donations/donate", Map.of("campaign_id", cid)));
+            r.rec("donate zero", s.post("/api/donations/donate", Map.of("campaign_id", cid, "amount", 0)));
+            r.rec("donate negative", s.post("/api/donations/donate", Map.of("campaign_id", cid, "amount", "-5")));
+            r.rec("donate words", s.post("/api/donations/donate", Map.of("campaign_id", cid, "amount", "lots")));
+            r.rec("donate 500", s.post("/api/donations/donate", Map.of("campaign_id", cid, "campaign_title", "Zq" + s.tag + " Fort",
+                "donor_name", "Rao", "amount", 500)));
+            r.rec("donate 12.5abc anonymous", s.post("/api/donations/donate", Map.of("campaign_id", cid, "amount", "12.5abc",
+                "is_anonymous", true, "donor_name", "Hidden")));
+            r.rec("donate without campaign", s.post("/api/donations/donate", Map.of("amount", 1)));
+            r.rec("campaign detail after", s.get("/api/donations/campaigns/" + cid, null));
+            Resp list = s.get("/api/donations/campaigns", null);
+            assertThat(list.raw()).as(s.name + " active campaigns").contains(cid);
+            assertThat(s.get("/api/donations/recent", null).json().get("count").asInt()).isGreaterThan(0);
         });
 
         // Cut-over case: both servers share one database, so accounts and tokens must work on either.

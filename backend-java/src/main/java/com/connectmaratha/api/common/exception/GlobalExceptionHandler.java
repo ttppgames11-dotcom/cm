@@ -84,9 +84,18 @@ public class GlobalExceptionHandler {
         Object user = req.getAttribute(CurrentUser.ATTRIBUTE);
         log.error("[SERVER ERROR {}] {} {} user={} ip={}", errorId, req.getMethod(), req.getRequestURI(),
             user instanceof CurrentUser u ? u.id() : "Unauthenticated", ClientIp.of(req), e);
-        Map<String, Object> body = body("INTERNAL_SERVER_ERROR", SERVER_ERROR_MESSAGE);
+        // Like Node (err.code): a database error carries its SQLSTATE code (e.g. 23505), anything else INTERNAL_SERVER_ERROR.
+        Map<String, Object> body = body(sqlState(e).orElse("INTERNAL_SERVER_ERROR"), SERVER_ERROR_MESSAGE);
         body.put("errorId", errorId);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+    }
+
+    private static java.util.Optional<String> sqlState(Throwable e) {
+        for (Throwable t = e; t != null; t = t.getCause()) {
+            if (t instanceof java.sql.SQLException sql && sql.getSQLState() != null) return java.util.Optional.of(sql.getSQLState());
+            if (t.getCause() == t) break;
+        }
+        return java.util.Optional.empty();
     }
 
     private static byte[] randomBytes(int n) {

@@ -144,10 +144,10 @@ Rules:
 
 ### businesses.routes (4)
 
-- [ ] `GET    /api/businesses`
-- [ ] `POST   /api/businesses`
-- [ ] `GET    /api/businesses/:id`
-- [ ] `POST   /api/businesses/:id/reviews`
+- [x] `GET    /api/businesses`
+- [x] `POST   /api/businesses`
+- [x] `GET    /api/businesses/:id`
+- [x] `POST   /api/businesses/:id/reviews`
 
 ### community.routes (10)
 
@@ -196,24 +196,24 @@ Rules:
 
 ### donations.routes (4)
 
-- [ ] `GET    /api/donations/campaigns`
-- [ ] `GET    /api/donations/campaigns/:id`
-- [ ] `POST   /api/donations/donate`
-- [ ] `GET    /api/donations/recent`
+- [x] `GET    /api/donations/campaigns`
+- [x] `GET    /api/donations/campaigns/:id`
+- [x] `POST   /api/donations/donate`
+- [x] `GET    /api/donations/recent`
 
 ### events.routes (4)
 
-- [ ] `GET    /api/events`
-- [ ] `POST   /api/events`
-- [ ] `GET    /api/events/:id`
-- [ ] `POST   /api/events/:id/rsvp`
+- [x] `GET    /api/events`
+- [x] `POST   /api/events`
+- [x] `GET    /api/events/:id`
+- [x] `POST   /api/events/:id/rsvp`
 
 ### jobs.routes (4)
 
-- [ ] `GET    /api/jobs`
-- [ ] `POST   /api/jobs`
-- [ ] `GET    /api/jobs/:id`
-- [ ] `POST   /api/jobs/:id/apply`
+- [x] `GET    /api/jobs`
+- [x] `POST   /api/jobs`
+- [x] `GET    /api/jobs/:id`
+- [x] `POST   /api/jobs/:id/apply`
 
 ### locations.routes (5)
 
