@@ -161,6 +161,7 @@ router.post('/register', authRateLimiter, validateBody(registerSchema, { atLeast
     let verifiedReferrer = null;
     if (referralInput) {
       const cleanUpper = referralInput.toUpperCase();
+      const idUpper = cleanUpper.replace(/^CM-(?=M[0-9]+$)/, ''); // old dashboard code CM-M1234 means member M1234
       const cleanDigits = referralInput.replace(/\D/g, '');
       verifiedReferrer = await get(`
         SELECT id, name, reference_id, referral_id, total_referrals FROM members
@@ -168,7 +169,7 @@ router.post('/register', authRateLimiter, validateBody(registerSchema, { atLeast
            OR UPPER(referral_id) = ?
            OR UPPER(id) = ?
            OR (? != '' AND SUBSTR(phone, -10) = ?)
-      `, [cleanUpper, cleanUpper, cleanUpper, cleanDigits.length >= 10 ? cleanDigits.slice(-10) : '', cleanDigits.length >= 10 ? cleanDigits.slice(-10) : '']);
+      `, [cleanUpper, cleanUpper, idUpper, cleanDigits.length >= 10 ? cleanDigits.slice(-10) : '', cleanDigits.length >= 10 ? cleanDigits.slice(-10) : '']);
     }
 
     const assignedReferredBy = verifiedReferrer ? (verifiedReferrer.reference_id || verifiedReferrer.id) : (referralInput || null);
@@ -324,13 +325,6 @@ async function verifyGoogleIdToken(idToken) {
 // with accepted terms/privacy/age creates the member from the verified profile.
 router.post('/google', authRateLimiter, validateBody(googleAuthSchema), async (req, res, next) => {
   try {
-    if (GOOGLE_CLIENT_IDS.length === 0 && process.env.NODE_ENV === 'production') {
-      return res.status(503).json({
-        success: false,
-        code: 'GOOGLE_NOT_CONFIGURED',
-        error: 'Google लॉगिन सध्या उपलब्ध नाही. कृपया मोबाईल/ईमेल व पासवर्डने लॉगिन करा. (Google sign-in is not available yet.)'
-      });
-    }
     const info = await verifyGoogleIdToken(req.body.idToken);
     if (!info) {
       return res.status(401).json({
@@ -833,6 +827,7 @@ router.get('/referrals/verify/:code', async (req, res, next) => {
     }
 
     const cleanUpper = rawCode.toUpperCase();
+    const idUpper = cleanUpper.replace(/^CM-(?=M[0-9]+$)/, ''); // old dashboard code CM-M1234 means member M1234
     const cleanDigits = rawCode.replace(/\D/g, '');
 
     const referrer = await get(`
@@ -841,7 +836,7 @@ router.get('/referrals/verify/:code', async (req, res, next) => {
          OR UPPER(referral_id) = ?
          OR UPPER(id) = ?
          OR (? != '' AND SUBSTR(phone, -10) = ?)
-    `, [cleanUpper, cleanUpper, cleanUpper, cleanDigits.length >= 10 ? cleanDigits.slice(-10) : '', cleanDigits.length >= 10 ? cleanDigits.slice(-10) : '']);
+    `, [cleanUpper, cleanUpper, idUpper, cleanDigits.length >= 10 ? cleanDigits.slice(-10) : '', cleanDigits.length >= 10 ? cleanDigits.slice(-10) : '']);
 
     if (referrer) {
       return res.json({

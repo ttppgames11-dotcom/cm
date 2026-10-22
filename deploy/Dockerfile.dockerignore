@@ -1,0 +1,9 @@
+**
+!backend/**
+!database/**
+**/node_modules
+**/.env
+**/.env.*
+backend/tests
+database/seed.js
+database/*.db

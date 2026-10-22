@@ -5,7 +5,7 @@ import { authenticateToken } from '../middleware/auth.js';
 const router = Router();
 
 // GET /api/admin/metrics
-router.get('/metrics', async (req, res, next) => {
+router.get('/metrics', authenticateToken, requireAdmin, async (req, res, next) => {
   try {
     const membersCount = await get('SELECT COUNT(*) as count FROM members');
     const businessesCount = await get('SELECT COUNT(*) as count FROM businesses');
@@ -17,13 +17,13 @@ router.get('/metrics', async (req, res, next) => {
     res.json({
       success: true,
       metrics: {
-        totalMembers: membersCount.count || 24000,
-        totalBusinesses: businessesCount.count || 2540,
-        totalReferrals: referralsCount.count || 480,
-        totalDonationsAmount: donationsSum.totalCollected || 3345000,
-        totalDonors: donationsSum.totalDonors || 13490,
-        totalEvents: eventsCount.count || 48,
-        totalPosts: postsCount.count || 120,
+        totalMembers: Number(membersCount?.count) || 0,
+        totalBusinesses: Number(businessesCount?.count) || 0,
+        totalReferrals: Number(referralsCount?.count) || 0,
+        totalDonationsAmount: Number(donationsSum?.totalCollected) || 0,
+        totalDonors: Number(donationsSum?.totalDonors) || 0,
+        totalEvents: Number(eventsCount?.count) || 0,
+        totalPosts: Number(postsCount?.count) || 0,
         serverStatus: 'Online',
         dbEngine: 'SQLite3 (Pure SQL Native / ACID Compliant)',
         uptime: process.uptime()
@@ -63,5 +63,67 @@ router.post('/verify-member/:id', authenticateToken, async (req, res, next) => {
   }
 });
 
-export default router;
+// ---------- Admin user list (website admin dashboard) ----------
+// Admins only: these replies include members' email and phone.
+const ADMIN_ROLES = ['admin', 'superadmin', 'ceo'];
+function requireAdmin(req, res, next) {
+  const role = String(req.user?.role || '').toLowerCase();
+  if (!ADMIN_ROLES.includes(role)) {
+    return res.status(403).json({ success: false, code: 'ADMIN_ONLY', error: 'फक्त प्रशासकांना परवानगी आहे. (Admins only)' });
+  }
+  next();
+}
 
+
+// Every column except the password hash (column sets differ between the SQLite and PostgreSQL databases).
+function adminUserJson(row) {
+  const { password_hash: _omit, ...m } = row;
+  const verified = Number(m.verified_profile) === 1;
+  return { ...m, verified, verificationStatus: verified ? 'प्रमाणित (Verified)' : 'प्रलंबित (Pending)' };
+}
+
+// GET /api/admin/users?search=&role=&verified=
+router.get('/users', authenticateToken, requireAdmin, async (req, res, next) => {
+  try {
+    const rows = (await all(`SELECT * FROM members ORDER BY created_at DESC`)).map(adminUserJson);
+
+    let users = rows;
+    const search = String(req.query.search || '').trim().toLowerCase();
+    if (search) {
+      users = users.filter((u) => [u.id, u.name, u.email, u.phone, u.district, u.city]
+        .some((v) => String(v || '').toLowerCase().includes(search)));
+    }
+    const role = String(req.query.role || '');
+    if (role && role !== 'all') users = users.filter((u) => String(u.role || 'member').toLowerCase() === role.toLowerCase());
+    const verified = String(req.query.verified || '');
+    if (verified === 'true' || verified === 'false') users = users.filter((u) => u.verified === (verified === 'true'));
+
+    const countRole = (...r) => rows.filter((u) => r.includes(String(u.role || '').toLowerCase())).length;
+    const stats = {
+      total: rows.length,
+      activeUsersNow: rows.length,
+      superadmins: countRole('superadmin'),
+      admins: countRole('admin', 'ceo'),
+      districtHeads: countRole('district_admin', 'district_head'),
+      chapterPresidents: countRole('chapter_president', 'chapter_head'),
+      verifiedMembers: rows.filter((u) => u.verified).length,
+      pendingVerifications: rows.filter((u) => !u.verified).length,
+    };
+    res.json({ success: true, data: { users, stats } });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/admin/users/:id
+router.get('/users/:id', authenticateToken, requireAdmin, async (req, res, next) => {
+  try {
+    const m = await get(`SELECT * FROM members WHERE id = ?`, [req.params.id]);
+    if (!m) return res.status(404).json({ success: false, code: 'NOT_FOUND', error: 'सदस्य आढळला नाही.' });
+    res.json({ success: true, data: { user: adminUserJson(m) }, user: adminUserJson(m) });
+  } catch (err) {
+    next(err);
+  }
+});
+
+export default router;

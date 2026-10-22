@@ -63,3 +63,6 @@ live_phone_screen.png
 
 # Logs
 *.log
+
+# IDE index files
+.codeatlas/
