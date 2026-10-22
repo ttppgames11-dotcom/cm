@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { runQuery, all, get } from '../../database/database.js';
-import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+// Oral histories live in the database (utils/directoryStore.js, list "oralHistory"); the old
+// JSON file is copied in once on first use and otherwise left untouched.
+import { listRecords, insertRecord, importLegacyList } from '../utils/directoryStore.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,16 +11,8 @@ const ORAL_HISTORY_FILE = path.join(__dirname, '..', 'data_oral_history.json');
 
 const router = Router();
 
-// In-memory / JSON file fallback for community oral history contributions
-function getOralHistoryData() {
-  if (fs.existsSync(ORAL_HISTORY_FILE)) {
-    try {
-      return JSON.parse(fs.readFileSync(ORAL_HISTORY_FILE, 'utf8'));
-    } catch {
-      return [];
-    }
-  }
-  return [
+// Shown (and stored) when there is no oral-history file to copy from, as before.
+const DEFAULT_ORAL_HISTORY = [
     {
       id: 'oral_01',
       title: 'पाचाड येथील जिजाऊ वाड्याची विहीर व भुयारी पाण्याचा झरा',
@@ -51,24 +44,24 @@ function getOralHistoryData() {
       status: 'सत्यापित (Community Verified)'
     }
   ];
-}
 
-function saveOralHistoryData(data) {
-  try {
-    fs.writeFileSync(ORAL_HISTORY_FILE, JSON.stringify(data, null, 2), 'utf8');
-  } catch (err) {
-    console.error('Error saving oral history:', err);
-  }
+async function getOralHistoryData() {
+  await importLegacyList('oralHistory', ORAL_HISTORY_FILE, DEFAULT_ORAL_HISTORY);
+  return listRecords('oralHistory');
 }
 
 // GET /api/culture/oral-history
-router.get('/oral-history', (req, res) => {
-  const data = getOralHistoryData();
-  res.json({ success: true, count: data.length, data });
+router.get('/oral-history', async (req, res, next) => {
+  try {
+    const data = await getOralHistoryData();
+    res.json({ success: true, count: data.length, data });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // POST /api/culture/oral-history
-router.post('/oral-history', (req, res, next) => {
+router.post('/oral-history', async (req, res, next) => {
   try {
     const { title, village, taluka, district, region, contributor, contributorClan, story, historicalReference } = req.body;
     
@@ -76,7 +69,7 @@ router.post('/oral-history', (req, res, next) => {
       return res.status(400).json({ success: false, error: 'शीर्षक, गाव आणि इतिहास कथा आवश्यक आहे.' });
     }
 
-    const current = getOralHistoryData();
+    await getOralHistoryData();
     const newEntry = {
       id: `oral_${Date.now()}`,
       title,
@@ -93,8 +86,7 @@ router.post('/oral-history', (req, res, next) => {
       status: 'पडताळणी अंतर्गत (Under Community Review)'
     };
 
-    current.unshift(newEntry);
-    saveOralHistoryData(current);
+    await insertRecord('oralHistory', newEntry);
 
     res.status(201).json({
       success: true,
@@ -107,7 +99,8 @@ router.post('/oral-history', (req, res, next) => {
 });
 
 // GET /api/culture/stats
-router.get('/stats', (req, res) => {
+router.get('/stats', async (req, res, next) => {
+  try {
   res.json({
     success: true,
     stats: {
@@ -116,9 +109,12 @@ router.get('/stats', (req, res) => {
       totalRegions: 8,
       totalDialects: 7,
       sourceTiers: 4,
-      totalOralHistories: getOralHistoryData().length
+      totalOralHistories: (await getOralHistoryData()).length
     }
   });
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;
