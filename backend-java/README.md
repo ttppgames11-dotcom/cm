@@ -164,14 +164,14 @@ Rules:
 
 ### crm.routes (8)
 
-- [ ] `GET    /api/admin/crm/community-centers`
-- [ ] `POST   /api/admin/crm/community-centers`
-- [ ] `POST   /api/admin/crm/community-centers/:id/checkin`
-- [ ] `POST   /api/admin/crm/community-centers/:id/transaction`
-- [ ] `GET    /api/admin/crm/tickets`
-- [ ] `POST   /api/admin/crm/tickets`
-- [ ] `PATCH  /api/admin/crm/tickets/:id/escalate`
-- [ ] `PATCH  /api/admin/crm/tickets/:id/status`
+- [x] `GET    /api/admin/crm/community-centers`
+- [x] `POST   /api/admin/crm/community-centers`
+- [x] `POST   /api/admin/crm/community-centers/:id/checkin`
+- [x] `POST   /api/admin/crm/community-centers/:id/transaction`
+- [x] `GET    /api/admin/crm/tickets`
+- [x] `POST   /api/admin/crm/tickets`
+- [x] `PATCH  /api/admin/crm/tickets/:id/escalate`
+- [x] `PATCH  /api/admin/crm/tickets/:id/status`
 
 ### culture.routes (3)
 
@@ -267,7 +267,7 @@ Rules:
 - [ ] `POST   /api/blood/requests`
 - [ ] `GET    /api/doctors`
 - [ ] `POST   /api/doctors`
-- [ ] `GET    /api/health`
+- [x] `GET    /api/health`
 - [ ] `GET    /api/matrimony`
 - [ ] `POST   /api/matrimony`
 - [ ] `GET    /api/political/grievances`
@@ -279,9 +279,9 @@ Rules:
 
 ### services.routes (6)
 
-- [ ] `GET    /api/admin/services`
-- [ ] `POST   /api/admin/services`
-- [ ] `PUT    /api/admin/services/:id`
-- [ ] `DELETE /api/admin/services/:id`
-- [ ] `GET    /api/services`
-- [ ] `POST   /api/services/booking`
+- [x] `GET    /api/admin/services`
+- [x] `POST   /api/admin/services`
+- [x] `PUT    /api/admin/services/:id`
+- [x] `DELETE /api/admin/services/:id`
+- [x] `GET    /api/services`
+- [x] `POST   /api/services/booking`

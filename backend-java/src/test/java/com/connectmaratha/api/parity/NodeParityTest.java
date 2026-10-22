@@ -121,6 +121,14 @@ class NodeParityTest extends PostgresTestBase {
 
     record Resp(int status, String raw, JsonNode json) {
         /** The same reply without one nested field (for whole-database counts that differ between runs). */
+        /** The same reply without one top-level field. */
+        Resp withoutTop(String field) {
+            if (json == null || !json.isObject()) return this;
+            ObjectNode copy = json.deepCopy();
+            copy.remove(field);
+            return new Resp(status, raw, copy);
+        }
+
         Resp without(String parent, String field) {
             if (json == null || !json.has(parent) || !json.get(parent).isObject()) return this;
             ObjectNode copy = json.deepCopy();
@@ -286,7 +294,8 @@ class NodeParityTest extends PostgresTestBase {
     private static final Pattern MEMBER_ID = Pattern.compile("\\bM\\d{4}\\b");
     private static final Pattern REF_CODE = Pattern.compile("REF-96K-\\d+");
     private static final Pattern ISO = Pattern.compile("\\d{4}-\\d{2}-\\d{2}T[\\d:.]+Z");
-    private static final Pattern DATE_TIME = Pattern.compile("\\d{4}-\\d{2}-\\d{2}( \\d{2}:\\d{2}:\\d{2})?");
+    private static final Pattern DATE_TIME = Pattern.compile("\\d{4}-\\d{2}-\\d{2}( \\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([+-]\\d{2}(:?\\d{2})?)?)?");
+    private static final Pattern WEBSITE_IDS = Pattern.compile("\\b(SBK|SRV|CC|ACT|RCPT)-[A-Z0-9]{6,}\\b|\\bTKT-\\d{6}-[A-Z0-9]+\\b");
     private static final Pattern PHONE_MASKED = Pattern.compile("\\b\\d{4} •••••");
     private static final Pattern PHONE = Pattern.compile("\\b\\d{10}\\b");
     private static final Pattern PARITY_EMAIL = Pattern.compile("[A-Za-z0-9.]+@parity\\.test");
@@ -313,6 +322,7 @@ class NodeParityTest extends PostgresTestBase {
         s = POST_ID.matcher(s).replaceAll("$1-#");
         s = MEDIA_ID.matcher(s).replaceAll("<media-id>");
         s = RANDOM_IDS.matcher(s).replaceAll("<random-id>");
+        s = WEBSITE_IDS.matcher(s).replaceAll("<website-id>");
         s = TAGGED.matcher(s).replaceAll("$1#");
         s = ERR_ID.matcher(s).replaceAll("<errid>");
         s = IN_SECONDS.matcher(s).replaceAll("in Ns");
@@ -1003,6 +1013,108 @@ class NodeParityTest extends PostgresTestBase {
             int count = list.json().get("count").asInt();
             assertThat(s.get("/api/culture/stats", null).json().get("stats").get("totalOralHistories").asInt()).isEqualTo(count);
             r.rec("stats shape", s.get("/api/culture/stats", null).without("stats", "totalOralHistories"));
+        });
+
+        compare("services", (s, r) -> {
+            String z = "Zq" + s.tag;
+            String member = jwt.generate(z + "-m", "Member Name", "member", "Gold");
+            String admin = jwt.generate(z + "-a", "Admin", "admin", "Gold");
+            String ceo = jwt.generate(z + "-c", "Ceo", "ceo", "Gold");
+
+            r.rec("booking nothing", s.post("/api/services/booking", Map.of()));
+            r.rec("booking no phone", s.post("/api/services/booking", Map.of("serviceCategory", "Legal")));
+            r.rec("booking bad phone", s.post("/api/services/booking", Map.of("serviceCategory", "Legal", "phone", "12345")));
+            r.rec("booking guest", s.post("/api/services/booking", Map.of("serviceCategory", "<b>Legal</b>", "phone", "+91 98765-43210",
+                "customerName", "Ravi", "requirementNotes", " need <script>x</script>help ")));
+            r.rec("booking logged in", s.post("/api/services/booking", Map.of("serviceCategory", "CA", "phone", "9876543210",
+                "professionalName", "CA Joshi", "address", "Pune", "requestedDate", "tomorrow"), member));
+
+            r.rec("admin list no login", s.get("/api/admin/services", null));
+            r.rec("admin list member", s.get("/api/admin/services", member));
+            r.rec("admin create missing", s.post("/api/admin/services", Map.of("name", "Only name"), admin));
+            Resp s1 = s.post("/api/admin/services", Map.of("name", z + " Adv Patil", "category", "Legal", "location", "Satara",
+                "phone", "9876500011", "experience", "10 yrs", "pricing", "<i>500</i>/visit", "description", "Property law"), ceo);
+            r.rec("admin create", s1);
+            r.rec("admin create 2", s.post("/api/admin/services", Map.of("name", z + " Electrician", "category", "Electric"), admin));
+            String sid = s1.json().get("service").get("id").asText();
+            r.rec("update missing", s.req("PUT", "/api/admin/services/SRV-NONE", Map.of("name", "X"), admin));
+            r.rec("update partial", s.req("PUT", "/api/admin/services/" + sid, Map.of("pricing", "700", "status", "hidden"), admin));
+            r.rec("update bad status ignored", s.req("PUT", "/api/admin/services/" + sid, Map.of("status", "deleted"), admin));
+            Map<String, Object> nullName = new LinkedHashMap<>();
+            nullName.put("name", null);
+            r.rec("update null name", s.req("PUT", "/api/admin/services/" + sid, nullName, admin));
+            r.rec("update back", s.req("PUT", "/api/admin/services/" + sid, Map.of("name", z + " Adv Patil", "status", "active"), admin));
+
+            Resp pub = s.get("/api/services", null);
+            assertThat(pub.raw()).as(s.name + " public list").contains("Adv Patil");
+            Resp adm = s.get("/api/admin/services", admin);
+            assertThat(adm.json().get("count").asInt()).as(s.name + " admin list").isGreaterThanOrEqualTo(2);
+            r.rec("public list shape", pub.withoutTop("services").withoutTop("count").without("data", "services").without("data", "count"));
+            r.rec("delete", s.delete("/api/admin/services/" + sid, null, admin));
+            r.rec("delete again", s.delete("/api/admin/services/" + sid, null, admin));
+            assertThat(s.get("/api/admin/services", admin).raw()).as(s.name + " after delete").doesNotContain(sid);
+        });
+
+        compare("crm", (s, r) -> {
+            String z = "Zq" + s.tag;
+            String member = jwt.generate(z + "-m", "Member Name", "member", "Gold");
+            String other = jwt.generate(z + "-o", "Other", "member", "Gold");
+            String staff = jwt.generate(z + "-s", "Desk Staff", "helpdesk", "Gold");
+            String admin = jwt.generate(z + "-a", "Admin", "admin", "Gold");
+
+            r.rec("ticket no login", s.post("/api/crm/tickets", Map.of("title", "T", "description", "D")));
+            r.rec("ticket missing", s.post("/api/crm/tickets", Map.of("title", "T"), member));
+            Resp t1 = s.post("/api/crm/tickets", Map.of("title", " <b>Water</b> problem ", "description", "No water", "priority", "High",
+                "district", z, "category", "Civic", "requesterPhone", "09876543210"), member);
+            r.rec("ticket high", t1);
+            r.rec("ticket default priority", s.post("/api/crm/tickets", Map.of("title", "Light", "description", "Dark", "priority", "Urgent", "district", z), member));
+            r.rec("ticket critical", s.post("/api/crm/tickets", Map.of("title", "Fire", "description", "Help", "priority", "Critical", "district", z,
+                "requesterName", "Ignored"), other));
+            String tid = t1.json().get("data").get("id").asText();
+            r.rec("member sees only own", s.get("/api/crm/tickets?district=" + z, member));
+            r.rec("other sees only own", s.get("/api/crm/tickets?district=" + z, other));
+            r.rec("staff sees all", s.get("/api/crm/tickets?district=" + z, staff));
+            r.rec("staff filter priority", s.get("/api/admin/crm/tickets?district=" + z + "&priority=Critical", staff));
+            r.rec("staff filter status", s.get("/api/crm/tickets?district=" + z + "&status=Resolved", staff));
+            r.rec("list no login", s.get("/api/crm/tickets", null));
+
+            r.rec("escalate member refused", s.req("PATCH", "/api/crm/tickets/" + tid + "/escalate", Map.of(), member));
+            r.rec("escalate missing", s.req("PATCH", "/api/crm/tickets/TKT-NONE/escalate", Map.of(), staff));
+            r.rec("escalate 1", s.req("PATCH", "/api/crm/tickets/" + tid + "/escalate", Map.of("reason", " <i>Unresolved</i> "), staff));
+            r.rec("escalate 2", s.req("PATCH", "/api/crm/tickets/" + tid + "/escalate", Map.of(), staff));
+            r.rec("escalate 3", s.req("PATCH", "/api/crm/tickets/" + tid + "/escalate", Map.of(), admin));
+            r.rec("escalate 4 stays at state", s.req("PATCH", "/api/crm/tickets/" + tid + "/escalate", Map.of(), staff));
+            r.rec("status member refused", s.req("PATCH", "/api/crm/tickets/" + tid + "/status", Map.of("status", "Closed"), member));
+            r.rec("status invalid", s.req("PATCH", "/api/crm/tickets/" + tid + "/status", Map.of("status", "Done"), staff));
+            r.rec("status not text", s.req("PATCH", "/api/crm/tickets/" + tid + "/status", Map.of("status", 5), staff));
+            r.rec("status missing ticket", s.req("PATCH", "/api/crm/tickets/TKT-NONE/status", Map.of("status", "Closed"), staff));
+            r.rec("status resolved", s.req("PATCH", "/api/crm/tickets/" + tid + "/status", Map.of("status", "Resolved", "note", " fixed <b>now</b> "), staff));
+            r.rec("member reads resolved ticket", s.get("/api/crm/tickets?district=" + z + "&status=Resolved", member));
+
+            r.rec("centers create no login", s.post("/api/crm/community-centers", Map.of("name", "Seva")));
+            r.rec("centers create staff refused", s.post("/api/crm/community-centers", Map.of("name", "Seva"), staff));
+            r.rec("centers create no name", s.post("/api/crm/community-centers", Map.of("district", z), admin));
+            Resp c1 = s.post("/api/crm/community-centers", Map.of("name", z + " Seva Kendra", "tier", "taluka", "district", z, "taluka", "Wai",
+                "address", "Main road", "contactPerson", "Patil", "phone", "9876500022"), admin);
+            r.rec("centers create", c1);
+            String cid = c1.json().get("data").get("center").get("id").asText();
+            r.rec("checkin no login", s.post("/api/crm/community-centers/" + cid + "/checkin", Map.of()));
+            r.rec("checkin member refused", s.post("/api/crm/community-centers/" + cid + "/checkin", Map.of(), member));
+            r.rec("checkin unknown", s.post("/api/crm/community-centers/CC-NONE/checkin", Map.of(), staff));
+            r.rec("checkin", s.post("/api/crm/community-centers/" + cid + "/checkin", Map.of("visitorName", "Ram", "phone", "98765 00033", "purpose", "Cert"), staff));
+            r.rec("checkin defaults", s.post("/api/crm/community-centers/" + cid + "/checkin", Map.of(), staff));
+            r.rec("transaction member refused", s.post("/api/crm/community-centers/" + cid + "/transaction", Map.of("amount", 5), member));
+            r.rec("transaction zero", s.post("/api/crm/community-centers/" + cid + "/transaction", Map.of("amount", 0), staff));
+            r.rec("transaction negative", s.post("/api/crm/community-centers/" + cid + "/transaction", Map.of("amount", -5), staff));
+            r.rec("transaction words", s.post("/api/crm/community-centers/" + cid + "/transaction", Map.of("amount", "abc"), staff));
+            r.rec("transaction too large", s.post("/api/crm/community-centers/" + cid + "/transaction", Map.of("amount", 20000000), staff));
+            r.rec("transaction none", s.post("/api/crm/community-centers/" + cid + "/transaction", Map.of(), staff));
+            r.rec("transaction unknown", s.post("/api/crm/community-centers/CC-NONE/transaction", Map.of("amount", 5), staff));
+            r.rec("transaction 500", s.post("/api/crm/community-centers/" + cid + "/transaction", Map.of("amount", 500, "payerName", "Rao"), staff));
+            r.rec("transaction 12.5 text", s.post("/api/crm/community-centers/" + cid + "/transaction", Map.of("amount", "12.5", "category", "Donation"), admin));
+            r.rec("centers list", s.get("/api/crm/community-centers?district=" + z, null));
+            r.rec("centers list by tier", s.get("/api/admin/crm/community-centers?district=" + z + "&tier=taluka", null));
+            r.rec("centers list other tier", s.get("/api/crm/community-centers?district=" + z + "&tier=state", null));
         });
 
         // Cut-over case: both servers share one database, so accounts and tokens must work on either.
