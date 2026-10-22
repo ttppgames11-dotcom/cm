@@ -294,7 +294,7 @@ class NodeParityTest extends PostgresTestBase {
     private static final Pattern MEDIA_ID = Pattern.compile("\\b[a-f0-9]{32}\\b");
     /** Random record ids Node picks: B42, JOB-42, E42, TXN-AB12CD34, CM-80G-12345, DON-<ms>, REV-/APP-/RSVP-<ms>. */
     private static final Pattern RANDOM_IDS = Pattern.compile(
-        "^(B|JOB-|E)\\d{2,}$|\\bTXN-[A-Z0-9]+|\\bCM-80G-\\d{5}\\b|\\b(DON|REV|APP|RSVP)-\\d{10,}");
+        "^(B|JOB-|E)\\d{2,}$|^REF-\\d{3}$|\\bTXN-[A-Z0-9]+|\\bCM-80G-\\d{5}\\b|\\b(DON|REV|APP|RSVP|MT)-\\d{10,}");
     private static final Pattern TAGGED = Pattern.compile("(Zq|GZ)[nj]");
     private static final Pattern ERR_ID = Pattern.compile("ERR-[A-Z0-9]+-[A-F0-9]+");
     private static final Pattern IN_SECONDS = Pattern.compile("in \\d+s");
@@ -764,6 +764,72 @@ class NodeParityTest extends PostgresTestBase {
             Resp list = s.get("/api/donations/campaigns", null);
             assertThat(list.raw()).as(s.name + " active campaigns").contains(cid);
             assertThat(s.get("/api/donations/recent", null).json().get("count").asInt()).isGreaterThan(0);
+        });
+
+        compare("sangam", (s, r) -> {
+            String z = "Zq" + s.tag;
+            String giver = z + "-giver";
+            JdbcTemplate db = new JdbcTemplate(dataSource());
+            String tokenUser = jwt.generate(z + "-tok", "Token User", "member", "Gold");
+            String requester = jwt.generate(z + "-a", "Req A", "member", "Gold");
+            String recipient = jwt.generate(z + "-b", "", "member", "Gold");
+            String stranger = jwt.generate(z + "-x", "Stranger", "member", "Gold");
+            String admin = jwt.generate(z + "-admin", "Admin", "admin", "Gold");
+            String superadmin = jwt.generate(z + "-super", "Super", "superadmin", "Gold");
+
+            r.rec("referral missing client", s.post("/api/sangam/referrals", Map.of("title", "Solar")));
+            Resp ref = s.post("/api/sangam/referrals", Map.of("title", "Solar lead", "client_name", "Kale", "giver_id", giver,
+                "giverName", "Giver", "recipientId", z + "-r", "value", "25000", "client_phone", "9800000002"));
+            r.rec("referral create", ref);
+            r.rec("referral defaults", s.post("/api/sangam/referrals", Map.of("title", "Lead 2", "clientName", "Pawar", "giver_id", giver)));
+            r.rec("referral giver from login", s.post("/api/sangam/referrals", Map.of("title", "Lead 3", "client_name", "Jadhav"), tokenUser));
+            String refId = ref.json().get("referral").get("id").asText();
+            r.rec("deal won", s.req("PUT", "/api/sangam/referrals/" + refId + "/status", Map.of("status", "Deal Won", "value", 50000), null));
+            r.rec("status only", s.req("PUT", "/api/sangam/referrals/" + refId + "/status", Map.of("status", "In Progress"), null));
+            r.rec("no status clears it", s.req("PUT", "/api/sangam/referrals/" + refId + "/status", Map.of("value", "7"), null));
+            r.rec("bad value", s.req("PUT", "/api/sangam/referrals/" + refId + "/status", Map.of("status", "x", "value", ""), null));
+            r.rec("unknown referral", s.req("PUT", "/api/sangam/referrals/REF-0/status", Map.of("status", "x"), null));
+            r.rec("list by member", s.get("/api/sangam/referrals?memberId=" + giver, null));
+            r.rec("list by member and status", s.get("/api/sangam/referrals?memberId=" + giver + "&status=New", null));
+            r.rec("list status all", s.get("/api/sangam/referrals?memberId=" + giver + "&status=all", null));
+            r.rec("list by login giver", s.get("/api/sangam/referrals?memberId=" + z + "-tok", null));
+
+            r.rec("meeting defaults", s.post("/api/sangam/meetings", Map.of("requester_id", z + "-d", "recipient_id", z + "-e")));
+            Resp mt = s.post("/api/sangam/meetings", Map.of("requesterId", z + "-a", "requesterName", "Req A", "recipient_id", z + "-b",
+                "recipient_name", "Rec B", "date", "2026-11-01", "time", "10:00", "location", "Pune", "topic", "Solar deal"));
+            r.rec("meeting create", mt);
+            String mid = mt.json().get("meeting").get("id").asText();
+            r.rec("meetings for member", s.get("/api/sangam/meetings?memberId=" + z + "-a", null));
+            r.rec("reschedule no login", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("date", "2026-11-02"), null));
+            r.rec("reschedule stranger", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("date", "2026-11-02"), stranger));
+            r.rec("reschedule superadmin", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("date", "2026-11-02"), superadmin));
+            r.rec("reschedule missing", s.req("PUT", "/api/sangam/meetings/MT-0", Map.of("date", "2026-11-02"), requester));
+            r.rec("reschedule no date", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("time", "11:00"), requester));
+            r.rec("reschedule number date", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("date", 20261102), requester));
+            r.rec("reschedule blank date", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("date", "   "), requester));
+            r.rec("reschedule by requester", s.req("PUT", "/api/sangam/meetings/" + mid,
+                Map.of("date", " 2026-11-03 ", "time", " 12:00 ", "notes", " bring docs "), requester));
+            Map<String, Object> keepTime = new LinkedHashMap<>();
+            keepTime.put("date", "2026-11-04");
+            keepTime.put("time", null);
+            r.rec("reschedule by recipient, keep time", s.req("PUT", "/api/sangam/meetings/" + mid, keepTime, recipient));
+            r.rec("reschedule by admin", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("date", "2026-11-05", "location", 42), admin));
+            r.rec("status invalid", s.req("PUT", "/api/sangam/meetings/" + mid + "/status", Map.of("status", "done"), requester));
+            r.rec("status number", s.req("PUT", "/api/sangam/meetings/" + mid + "/status", Map.of("status", 5), requester));
+            r.rec("status stranger", s.req("PUT", "/api/sangam/meetings/" + mid + "/status", Map.of("status", "cancelled"), stranger));
+            r.rec("status cancelled marathi", s.req("PUT", "/api/sangam/meetings/" + mid + "/status", Map.of("status", " रद्द "), recipient));
+            r.rec("status completed by admin", s.req("PUT", "/api/sangam/meetings/" + mid + "/status", Map.of("status", "COMPLETED"), admin));
+
+            Integer notifA = db.queryForObject("SELECT COUNT(*) FROM notifications WHERE member_id = ?", Integer.class, z + "-a");
+            Integer notifB = db.queryForObject("SELECT COUNT(*) FROM notifications WHERE member_id = ?", Integer.class, z + "-b");
+            Integer audits = db.queryForObject("SELECT COUNT(*) FROM audit_logs WHERE details LIKE ?", Integer.class, "%" + mid + "%");
+            String text = "notifications A=" + notifA + " B=" + notifB + " audit=" + audits;
+            r.rec("side effects", new Resp(200, text, JsonNodeFactory.instance.textNode(text)));
+
+            Resp metrics = s.get("/api/sangam/metrics", null);
+            assertThat(metrics.json().get("metrics").get("totalReferrals").asInt()).as(s.name + " sangam totals").isGreaterThanOrEqualTo(3);
+            r.rec("metrics shape", metrics.without("metrics", "totalReferrals").without("metrics", "wonDeals")
+                .without("metrics", "totalBusinessValue").without("metrics", "totalMeetings"));
         });
 
         // Cut-over case: both servers share one database, so accounts and tokens must work on either.

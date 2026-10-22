@@ -31,7 +31,8 @@ public abstract class PostgresTestBase {
         "003_account_lifecycle.sql",
         "004_referrals.sql",
         "004_password_resets.sql",
-        "005_media.sql");
+        "005_media.sql",
+        "006_meetings_columns.sql");
 
     /**
      * Columns the live database has that the migrations above do not create:

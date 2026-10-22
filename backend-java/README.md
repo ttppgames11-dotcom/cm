@@ -248,14 +248,14 @@ Rules:
 
 ### sangam.routes (8)
 
-- [ ] `GET    /api/sangam/meetings`
-- [ ] `POST   /api/sangam/meetings`
-- [ ] `PUT    /api/sangam/meetings/:id`
-- [ ] `PUT    /api/sangam/meetings/:id/status`
-- [ ] `GET    /api/sangam/metrics`
-- [ ] `GET    /api/sangam/referrals`
-- [ ] `POST   /api/sangam/referrals`
-- [ ] `PUT    /api/sangam/referrals/:id/status`
+- [x] `GET    /api/sangam/meetings`
+- [x] `POST   /api/sangam/meetings`
+- [x] `PUT    /api/sangam/meetings/:id`
+- [x] `PUT    /api/sangam/meetings/:id/status`
+- [x] `GET    /api/sangam/metrics`
+- [x] `GET    /api/sangam/referrals`
+- [x] `POST   /api/sangam/referrals`
+- [x] `PUT    /api/sangam/referrals/:id/status`
 
 ### server.js (legacy db.json) (17)
 

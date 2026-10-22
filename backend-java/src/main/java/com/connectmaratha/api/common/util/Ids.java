@@ -22,8 +22,13 @@ public final class Ids {
 
     /** prefix + a random 2-digit number 10-99 ("B42"), as Node; falls back to milliseconds when all are taken. */
     public static String twoDigit(String prefix, Predicate<String> taken) {
-        for (int i = 0; i < 200; i++) {
-            String id = prefix + (10 + RANDOM.nextInt(90));
+        return twoDigit(prefix, taken, 10, 100);
+    }
+
+    /** prefix + a random number from min (inclusive) to max (exclusive), e.g. REF-100..999 for sangam referrals. */
+    public static String twoDigit(String prefix, Predicate<String> taken, int min, int max) {
+        for (int i = 0; i < 3 * (max - min); i++) {
+            String id = prefix + (min + RANDOM.nextInt(max - min));
             if (!taken.test(id)) return id;
         }
         return millis(prefix, taken);
