@@ -9,7 +9,6 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
-import fs from 'fs';
 import quizRoutes from './routes/quiz.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import membersRoutes from './routes/members.routes.js';
@@ -32,11 +31,12 @@ import { optionalToken } from './middleware/auth.js';
 import { validateBody } from './middleware/validator.js';
 import { doctorSchema, bloodRequestSchema } from './schemas/general.schemas.js';
 import { errorHandler } from './middleware/errorHandler.js';
+// Old-style lists (doctors, blood, matrimony, ...) live in the database, not in db.json.
+import { listRecords, insertRecord, freeShortId } from './utils/directoryStore.js';
 
 const app = express();
 app.set('trust proxy', 1);
 const PORT = process.env.PORT || 5000;
-const DB_FILE = path.join(__dirname, 'db.json');
 
 app.use(cors());
 app.use(express.json());
@@ -78,181 +78,195 @@ app.use('/members', membersRoutes);
 app.use('/builders', directoriesRoutes);
 app.use('/dairy', directoriesRoutes);
 
-// Helper functions for reading and writing to DB
-function readData() {
-  try {
-    const raw = fs.readFileSync(DB_FILE, 'utf8');
-    return JSON.parse(raw);
-  } catch (err) {
-    console.error('Error reading db.json:', err);
-    return {};
-  }
-}
-
-function writeData(data) {
-  try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
-  } catch (err) {
-    console.error('Error writing to db.json:', err);
-  }
-}
-
 // System Health Endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', system: 'Connect Maratha Express REST API Server', timestamp: new Date() });
 });
 
 // --- DOCTORS ---
-app.get('/api/doctors', (req, res) => {
-  const db = readData();
-  res.json(db.doctors || []);
+app.get('/api/doctors', async (req, res, next) => {
+  try {
+    res.json(await listRecords('doctors'));
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.post('/api/doctors', validateBody(doctorSchema), (req, res) => {
-  const db = readData();
-  db.doctors = db.doctors || [];
-  const newDoctor = {
-    id: `DOC-${Date.now().toString().slice(-4)}`,
-    rating: '5.0 ★ (नवीन नोंदणी)',
-    icon: '🩺',
-    ...req.body
-  };
-  db.doctors.unshift(newDoctor);
-  writeData(db);
-  res.status(201).json({ success: true, message: 'डॉक्टर प्रोफाइल यशस्वीरीत्या जोडले गेले!', doctor: newDoctor });
+app.post('/api/doctors', validateBody(doctorSchema), async (req, res, next) => {
+  try {
+    const newDoctor = {
+      id: await freeShortId('doctors', 'DOC-'),
+      rating: '5.0 ★ (नवीन नोंदणी)',
+      icon: '🩺',
+      ...req.body
+    };
+    await insertRecord('doctors', newDoctor);
+    res.status(201).json({ success: true, message: 'डॉक्टर प्रोफाइल यशस्वीरीत्या जोडले गेले!', doctor: newDoctor });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // --- BLOOD REQUESTS & DONORS ---
-app.get('/api/blood/requests', (req, res) => {
-  const db = readData();
-  res.json(db.bloodRequests || []);
+app.get('/api/blood/requests', async (req, res, next) => {
+  try {
+    res.json(await listRecords('bloodRequests'));
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.post('/api/blood/requests', validateBody(bloodRequestSchema), (req, res) => {
-  const db = readData();
-  db.bloodRequests = db.bloodRequests || [];
-  const newReq = {
-    id: `REQ-${Date.now().toString().slice(-3)}`,
-    time: 'आत्ताच',
-    ...req.body
-  };
-  db.bloodRequests.unshift(newReq);
-  writeData(db);
-  res.status(201).json({ success: true, message: '🚨 तातडीची रक्त मागणी प्रसारित करण्यात आली!', request: newReq });
+app.post('/api/blood/requests', validateBody(bloodRequestSchema), async (req, res, next) => {
+  try {
+    const newReq = {
+      id: await freeShortId('bloodRequests', 'REQ-', 3),
+      time: 'आत्ताच',
+      ...req.body
+    };
+    await insertRecord('bloodRequests', newReq);
+    res.status(201).json({ success: true, message: '🚨 तातडीची रक्त मागणी प्रसारित करण्यात आली!', request: newReq });
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.get('/api/blood/donors', (req, res) => {
-  const db = readData();
-  res.json(db.bloodDonors || []);
+app.get('/api/blood/donors', async (req, res, next) => {
+  try {
+    res.json(await listRecords('bloodDonors'));
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.post('/api/blood/donors', (req, res) => {
-  const db = readData();
-  db.bloodDonors = db.bloodDonors || [];
-  const newDonor = {
-    id: `DON-${Date.now().toString().slice(-4)}`,
-    totalDonations: 1,
-    lastDonated: 'नवीन नोंदणी',
-    ...req.body
-  };
-  db.bloodDonors.unshift(newDonor);
-  writeData(db);
-  res.status(201).json({ success: true, message: '❤️ रक्तदाता नोंदणी यशस्वी झाली!', donor: newDonor });
+app.post('/api/blood/donors', async (req, res, next) => {
+  try {
+    const newDonor = {
+      id: await freeShortId('bloodDonors', 'DON-'),
+      totalDonations: 1,
+      lastDonated: 'नवीन नोंदणी',
+      ...req.body
+    };
+    await insertRecord('bloodDonors', newDonor);
+    res.status(201).json({ success: true, message: '❤️ रक्तदाता नोंदणी यशस्वी झाली!', donor: newDonor });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // --- MATRIMONY ---
-app.get('/api/matrimony', (req, res) => {
-  const db = readData();
-  res.json(db.matrimony || []);
+app.get('/api/matrimony', async (req, res, next) => {
+  try {
+    res.json(await listRecords('matrimony'));
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.post('/api/matrimony', (req, res) => {
-  const db = readData();
-  db.matrimony = db.matrimony || [];
-  const newProfile = {
-    id: `CM-${(req.body.gender || '').includes('वर') ? 'M' : 'F'}-${Date.now().toString().slice(-3)}`,
-    verified: true,
-    photo: (req.body.gender || '').includes('वर') ? '👨‍💼' : '👩‍💼',
-    caste: '९६ कुळी मराठा',
-    ...req.body
-  };
-  db.matrimony.unshift(newProfile);
-  writeData(db);
-  res.status(201).json({ success: true, message: '💍 विवाह प्रोफाइल यशस्वीरीत्या नोंदवले गेले!', profile: newProfile });
+app.post('/api/matrimony', async (req, res, next) => {
+  try {
+    const isGroom = (req.body.gender || '').includes('वर');
+    const newProfile = {
+      id: await freeShortId('matrimony', `CM-${isGroom ? 'M' : 'F'}-`, 3),
+      verified: true,
+      photo: isGroom ? '👨‍💼' : '👩‍💼',
+      caste: '९६ कुळी मराठा',
+      ...req.body
+    };
+    await insertRecord('matrimony', newProfile);
+    res.status(201).json({ success: true, message: '💍 विवाह प्रोफाइल यशस्वीरीत्या नोंदवले गेले!', profile: newProfile });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // --- POLITICAL GRIEVANCES / REPRESENTATIONS ---
-app.get('/api/political/grievances', (req, res) => {
-  const db = readData();
-  res.json(db.grievances || []);
+app.get('/api/political/grievances', async (req, res, next) => {
+  try {
+    res.json(await listRecords('grievances'));
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.post('/api/political/grievances', (req, res) => {
-  const db = readData();
-  db.grievances = db.grievances || [];
-  const item = {
-    id: `GRV-${Date.now().toString().slice(-4)}`,
-    createdAt: new Date().toLocaleDateString('mr-IN'),
-    ...req.body
-  };
-  db.grievances.unshift(item);
-  writeData(db);
-  res.status(201).json({ success: true, message: '📜 मागणी/निवेदन यशस्वीरीत्या सादर केले गेले!', grievance: item });
+app.post('/api/political/grievances', async (req, res, next) => {
+  try {
+    const item = {
+      id: await freeShortId('grievances', 'GRV-'),
+      createdAt: new Date().toLocaleDateString('mr-IN'),
+      ...req.body
+    };
+    await insertRecord('grievances', item);
+    res.status(201).json({ success: true, message: '📜 मागणी/निवेदन यशस्वीरीत्या सादर केले गेले!', grievance: item });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // --- SOCIAL WORKERS & VOLUNTEERS ---
-app.get('/api/social/volunteers', (req, res) => {
-  const db = readData();
-  res.json(db.volunteers || []);
+app.get('/api/social/volunteers', async (req, res, next) => {
+  try {
+    res.json(await listRecords('volunteers'));
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.post('/api/social/volunteers', (req, res) => {
-  const db = readData();
-  db.volunteers = db.volunteers || [];
-  const item = {
-    id: `VOL-${Date.now().toString().slice(-4)}`,
-    createdAt: new Date().toLocaleDateString('mr-IN'),
-    ...req.body
-  };
-  db.volunteers.unshift(item);
-  writeData(db);
-  res.status(201).json({ success: true, message: '🤝 स्वयंसेवक नोंदणी यशस्वीरीत्या पूर्ण झाली!', volunteer: item });
+app.post('/api/social/volunteers', async (req, res, next) => {
+  try {
+    const item = {
+      id: await freeShortId('volunteers', 'VOL-'),
+      createdAt: new Date().toLocaleDateString('mr-IN'),
+      ...req.body
+    };
+    await insertRecord('volunteers', item);
+    res.status(201).json({ success: true, message: '🤝 स्वयंसेवक नोंदणी यशस्वीरीत्या पूर्ण झाली!', volunteer: item });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // --- WOMEN EMPOWERMENT HELP & MENTORS ---
-app.get('/api/women/help', (req, res) => {
-  const db = readData();
-  res.json(db.womenHelp || []);
+app.get('/api/women/help', async (req, res, next) => {
+  try {
+    res.json(await listRecords('womenHelp'));
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.post('/api/women/help', (req, res) => {
-  const db = readData();
-  db.womenHelp = db.womenHelp || [];
-  const item = {
-    id: `WHELP-${Date.now().toString().slice(-4)}`,
-    createdAt: new Date().toLocaleDateString('mr-IN'),
-    ...req.body
-  };
-  db.womenHelp.unshift(item);
-  writeData(db);
-  res.status(201).json({ success: true, message: '🌸 मदत व मार्गदर्शनाची विनंती नोंदवली गेली!', help: item });
+app.post('/api/women/help', async (req, res, next) => {
+  try {
+    const item = {
+      id: await freeShortId('womenHelp', 'WHELP-'),
+      createdAt: new Date().toLocaleDateString('mr-IN'),
+      ...req.body
+    };
+    await insertRecord('womenHelp', item);
+    res.status(201).json({ success: true, message: '🌸 मदत व मार्गदर्शनाची विनंती नोंदवली गेली!', help: item });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // --- BUILDERS & REAL ESTATE: Handled by directoriesRoutes (routes/directories.routes.js) ---
 
 // --- MARATHA BANK & LOANS ---
-app.get('/api/bank/loans', (req, res) => {
-  const db = readData();
-  res.json(db.bankLoans || []);
+app.get('/api/bank/loans', async (req, res, next) => {
+  try {
+    res.json(await listRecords('bankLoans'));
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.post('/api/bank/loans', (req, res) => {
-  const db = readData();
-  db.bankLoans = db.bankLoans || [];
-  const item = { id: `LN-${Date.now().toString().slice(-4)}`, ...req.body };
-  db.bankLoans.unshift(item);
-  writeData(db);
-  res.status(201).json({ success: true, message: '🏦 कर्ज अर्ज यशस्वीरीत्या सादर केला गेला!', loan: item });
+app.post('/api/bank/loans', async (req, res, next) => {
+  try {
+    const item = { id: await freeShortId('bankLoans', 'LN-'), ...req.body };
+    await insertRecord('bankLoans', item);
+    res.status(201).json({ success: true, message: '🏦 कर्ज अर्ज यशस्वीरीत्या सादर केला गेला!', loan: item });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // 404 Not Found Catch-All Handler for API Routes
