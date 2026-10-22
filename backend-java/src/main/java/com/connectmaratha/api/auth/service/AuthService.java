@@ -619,7 +619,10 @@ public class AuthService {
 
     private Optional<Member> findReferrer(String code) {
         String digits = code.replaceAll("\\D", "");
-        return members.findReferrer(code.toUpperCase(), digits.length() >= 10 ? digits.substring(digits.length() - 10) : "");
+        String upper = code.toUpperCase();
+        // Old dashboard code CM-M1234 means member M1234 (as in the Node backend).
+        String idCode = upper.replaceFirst("^CM-(?=M[0-9]+$)", "");
+        return members.findReferrer(upper, idCode, digits.length() >= 10 ? digits.substring(digits.length() - 10) : "");
     }
 
     /** M + 4 digits, retried so two sign-ups never collide on the same id. */

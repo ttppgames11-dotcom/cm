@@ -105,6 +105,13 @@ public final class MemberJson {
         return out;
     }
 
+    /** Every column exactly as stored (SELECT * without password_hash), for the admin endpoints. */
+    public static Map<String, Object> raw(Member m) {
+        Map<String, Object> out = new LinkedHashMap<>();
+        for (String c : ALL) out.put(c, COLUMNS.get(c).apply(m));
+        return out;
+    }
+
     /** interests: JSON.parse(member.interests || '[]'), or [] when it isn't JSON. */
     public static void parseInterests(Map<String, Object> out) {
         Object raw = out.get("interests");

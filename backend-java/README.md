@@ -116,9 +116,11 @@ Rules:
 
 ### admin.routes (3)
 
-- [ ] `GET    /api/admin/audit-logs`
-- [ ] `GET    /api/admin/metrics`
-- [ ] `POST   /api/admin/verify-member/:id`
+- [x] `GET    /api/admin/audit-logs`
+- [x] `GET    /api/admin/metrics`
+- [x] `POST   /api/admin/verify-member/:id`
+- [x] `GET    /api/admin/users`  (added to Node 2026-10-19)
+- [x] `GET    /api/admin/users/:id`  (added to Node 2026-10-19)
 
 ### ai.routes (3)
 

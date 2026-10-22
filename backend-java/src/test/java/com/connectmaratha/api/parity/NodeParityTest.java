@@ -119,7 +119,15 @@ class NodeParityTest extends PostgresTestBase {
 
     // -------------------------------------------------------------------- http
 
-    record Resp(int status, String raw, JsonNode json) {}
+    record Resp(int status, String raw, JsonNode json) {
+        /** The same reply without one nested field (for whole-database counts that differ between runs). */
+        Resp without(String parent, String field) {
+            if (json == null || !json.has(parent) || !json.get(parent).isObject()) return this;
+            ObjectNode copy = json.deepCopy();
+            ((ObjectNode) copy.get(parent)).remove(field);
+            return new Resp(status, raw, copy);
+        }
+    }
 
     static Resp send(String method, String url, String body, Map<String, String> headers) throws Exception {
         HttpRequest.Builder b = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(30));
@@ -534,6 +542,57 @@ class NodeParityTest extends PostgresTestBase {
 
             r.rec("groups filtered", s.get("/api/community/groups?type=zzz-none", null));
             r.rec("group join", s.post("/api/community/groups/G-none/join", Map.of(), null));
+        });
+
+        compare("admin", (s, r) -> {
+            String zq = "Zq" + s.tag;
+            String admin = jwt.generate("M0001", "Admin", "admin", "Gold");
+            String ceo = jwt.generate("M0002", "CEO", "ceo", "Gold");
+            Resp a = regOk(s, reg(zq + " Admin List A", s.phone(), s.email(), "city", "Pune"));
+            regOk(s, reg(zq + " Admin List B", s.phone(), s.email(), "city", "Satara"));
+            String member = tokenOf(a);
+            String idA = a.json().get("member").get("id").asText();
+
+            r.rec("metrics no token", s.get("/api/admin/metrics", null));
+            r.rec("metrics member", s.get("/api/admin/metrics", member));
+            r.rec("metrics bad token", s.get("/api/admin/metrics", "x.y.z"));
+            Resp metrics = s.get("/api/admin/metrics", admin);
+            assertThat(metrics.status()).as(s.name + " admin metrics").isEqualTo(200);
+            assertThat(metrics.json().get("metrics").get("totalMembers").asInt()).isGreaterThanOrEqualTo(2);
+            assertThat(metrics.json().get("metrics").has("uptime")).isTrue();
+            r.rec("metrics ceo shape", s.get("/api/admin/metrics", ceo).without("metrics", "uptime")
+                .without("metrics", "totalMembers").without("metrics", "totalPosts").without("metrics", "totalReferrals")
+                .without("metrics", "totalBusinesses").without("metrics", "totalEvents"));
+            r.rec("audit logs", s.get("/api/admin/audit-logs", null));
+
+            r.rec("users no token", s.get("/api/admin/users", null));
+            r.rec("users member", s.get("/api/admin/users", member));
+            r.rec("users search", s.get("/api/admin/users?search=" + zq + "%20Admin", admin).without("data", "stats"));
+            r.rec("users search role all", s.get("/api/admin/users?search=" + zq + "%20Admin&role=all&verified=all", admin).without("data", "stats"));
+            r.rec("users role admin", s.get("/api/admin/users?search=" + zq + "%20Admin&role=admin", admin).without("data", "stats"));
+            Resp all = s.get("/api/admin/users", ceo);
+            assertThat(all.json().get("data").get("stats").get("total").asInt()).as(s.name + " users total")
+                .isEqualTo(all.json().get("data").get("users").size());
+            assertThat(all.raw()).as(s.name + " never sends password hashes").doesNotContain("password_hash");
+            r.rec("one user", s.get("/api/admin/users/" + idA, admin));
+            r.rec("one user missing", s.get("/api/admin/users/M0", admin));
+
+            r.rec("verify no token", s.post("/api/admin/verify-member/" + idA, Map.of("status", true)));
+            r.rec("verify ceo", s.post("/api/admin/verify-member/" + idA, Map.of("status", true), ceo));
+            r.rec("verify member", s.post("/api/admin/verify-member/" + idA, Map.of("status", true), member));
+            r.rec("verify admin", s.post("/api/admin/verify-member/" + idA, Map.of("status", true), admin));
+            r.rec("users verified only", s.get("/api/admin/users?search=" + zq + "%20Admin&verified=true", admin).without("data", "stats"));
+            r.rec("unverify admin", s.post("/api/admin/verify-member/" + idA, Map.of("status", 0), admin));
+            r.rec("one user after", s.get("/api/admin/users/" + idA, admin));
+        });
+
+        compare("old dashboard referral code", (s, r) -> {
+            Resp a = regOk(s, reg("Zq" + s.tag + " Old Code", s.phone(), null));
+            String idA = a.json().get("member").get("id").asText();
+            r.rec("verify CM- code", s.get("/api/auth/referrals/verify/CM-" + idA, null));
+            r.rec("verify cm- lower", s.get("/api/auth/referrals/verify/cm-" + idA.toLowerCase(), null));
+            r.rec("verify CM-M0", s.get("/api/auth/referrals/verify/CM-M0", null));
+            r.rec("register with CM- code", regOk(s, reg("Zq" + s.tag + " Via Old Code", s.phone(), null, "referredBy", "CM-" + idA)));
         });
 
         // Cut-over case: both servers share one database, so accounts and tokens must work on either.

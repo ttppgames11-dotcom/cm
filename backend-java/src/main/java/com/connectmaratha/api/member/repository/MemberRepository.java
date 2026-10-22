@@ -35,15 +35,19 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     Optional<Member> findForLogin(@Param("id") String id, @Param("digits10") String digits10,
                                   @Param("suffix") String suffix, @Param("contains") String contains);
 
-    /** Referral code check: reference/referral code, member id, or a 10-digit phone. */
+    /**
+     * Referral code check: reference/referral code, member id, or a 10-digit phone.
+     * idCode is the code as a member id (an old dashboard code CM-M1234 means M1234).
+     */
     @Query(nativeQuery = true, value = """
         SELECT * FROM members
         WHERE UPPER(reference_id) = :code
            OR UPPER(referral_id) = :code
-           OR UPPER(id) = :code
+           OR UPPER(id) = :idCode
            OR (:digits10 != '' AND SUBSTR(phone, -10) = :digits10)
         LIMIT 1""")
-    Optional<Member> findReferrer(@Param("code") String upperCode, @Param("digits10") String digits10);
+    Optional<Member> findReferrer(@Param("code") String upperCode, @Param("idCode") String idCode,
+                                  @Param("digits10") String digits10);
 
     /** Registration duplicate check (only non-empty values, exact match). */
     @Query(nativeQuery = true, value = """
