@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { all, get, runQuery } from '../../database/database.js';
+import { uniqueRandomId } from '../utils/ids.js';
 
 const router = Router();
 
@@ -73,7 +74,7 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'व्यवसायाचे नाव, मालकाचे नाव आणि वर्गवारी आवश्यक आहे.' });
     }
 
-    const id = 'B' + Math.floor(10 + Math.random() * 90);
+    const id = await uniqueRandomId('businesses', () => 'B' + Math.floor(10 + Math.random() * 90));
     const servicesJson = Array.isArray(services) ? JSON.stringify(services) : JSON.stringify(services ? [services] : []);
     const photo = cat === 'restaurant' ? '🍛' : cat === 'it' ? '💻' : cat === 'manufacturing' ? '⚙️' : cat === 'travel' ? '🚌' : '🏢';
 

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { all, get, runQuery } from '../../database/database.js';
+import { uniqueRandomId } from '../utils/ids.js';
 
 const router = Router();
 
@@ -70,7 +71,7 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'कार्यक्रमाचे नाव, तारीख आणि ठिकाण आवश्यक आहे.' });
     }
 
-    const id = 'E' + Math.floor(10 + Math.random() * 90);
+    const id = await uniqueRandomId('events', () => 'E' + Math.floor(10 + Math.random() * 90));
 
     await runQuery(`
       INSERT INTO events (id, title, category, date, time, venue, district, "desc", organizer, banner, rsvp_count, created_at)

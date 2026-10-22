@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { all, get, runQuery } from '../../database/database.js';
+import { uniqueRandomId } from '../utils/ids.js';
 
 const router = Router();
 
@@ -53,7 +54,7 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'पदाचे नाव आणि कंपनी आवश्यक आहे.' });
     }
 
-    const id = 'JOB-' + Math.floor(10 + Math.random() * 90);
+    const id = await uniqueRandomId('jobs', () => 'JOB-' + Math.floor(10 + Math.random() * 90));
 
     await runQuery(`
       INSERT INTO jobs (id, title, company, district, category, salary, job_type, experience, "desc", contact_email, phone, created_at)
