@@ -1,13 +1,8 @@
 import { Router } from 'express';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { authenticateToken, optionalToken } from '../middleware/auth.js';
 import { runQuery } from '../../database/database.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const DB_FILE = path.join(__dirname, '../db.json');
+// Builders and dairy data live in the database (utils/directoryStore.js), not in db.json.
+import { listRecords, findRecord, insertRecord, freeShortId } from '../utils/directoryStore.js';
 
 const router = Router();
 
@@ -49,25 +44,6 @@ function enquiryRateLimiter(req, res, next) {
   next();
 }
 
-// Helpers for reading/writing db.json
-function readData() {
-  try {
-    const raw = fs.readFileSync(DB_FILE, 'utf8');
-    return JSON.parse(raw);
-  } catch (err) {
-    console.error('Error reading db.json:', err);
-    return {};
-  }
-}
-
-function writeData(data) {
-  try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
-  } catch (err) {
-    console.error('Error writing db.json:', err);
-  }
-}
-
 // Phone validator: Indian mobile (10 digits starting with 6-9)
 function validateIndianMobile(phone) {
   if (!phone || typeof phone !== 'string') return null;
@@ -106,11 +82,10 @@ export function sendError(res, error = 'Error', code = 'ERROR', statusCode = 400
 // ==========================================
 // 1. GET /api/builders & /builders
 // ==========================================
-router.get(['/', '/builders'], (req, res, next) => {
+router.get(['/', '/builders'], async (req, res, next) => {
   if (isDairyReq(req)) return next();
   try {
-    const db = readData();
-    const builders = db.builders || [];
+    const builders = await listRecords('builders');
     return sendSuccess(res, { count: builders.length, builders, data: { builders } });
   } catch (err) {
     return sendError(res, err.message, 'INTERNAL_ERROR', 500);
@@ -120,7 +95,7 @@ router.get(['/', '/builders'], (req, res, next) => {
 // ==========================================
 // 2. POST /api/builders & /builders
 // ==========================================
-router.post(['/', '/builders'], optionalToken, (req, res, next) => {
+router.post(['/', '/builders'], optionalToken, async (req, res, next) => {
   if (isDairyReq(req)) return next();
   try {
     const {
@@ -231,11 +206,8 @@ router.post(['/', '/builders'], optionalToken, (req, res, next) => {
     const cleanCity = (city || location || 'महाराष्ट्र').toString().trim();
     const cleanConfig = (configuration || specialty || category || 'गृहनिर्माण').toString().trim();
 
-    const db = readData();
-    db.builders = db.builders || [];
-
     const item = {
-      id: `BLD-${Date.now().toString().slice(-4)}`,
+      id: await freeShortId('builders', 'BLD-'),
       developer: devName,
       name: devName,
       projectName: projName,
@@ -264,8 +236,7 @@ router.post(['/', '/builders'], optionalToken, (req, res, next) => {
       createdAt: new Date().toISOString()
     };
 
-    db.builders.unshift(item);
-    writeData(db);
+    await insertRecord('builders', item);
 
     return res.status(201).json({
       success: true,
@@ -282,14 +253,10 @@ router.post(['/', '/builders'], optionalToken, (req, res, next) => {
 // ==========================================
 // 3. GET /api/builders/:id & /builders/:id
 // ==========================================
-router.get(['/:id', '/builders/:id'], (req, res, next) => {
+router.get(['/:id', '/builders/:id'], async (req, res, next) => {
   if (isDairyReq(req)) return next();
   try {
-    const db = readData();
-    const builders = db.builders || [];
-    const targetId = req.params.id;
-
-    const builder = builders.find(b => String(b.id) === String(targetId));
+    const builder = await findRecord('builders', req.params.id);
 
     if (!builder) {
       return res.status(404).json({
@@ -314,11 +281,7 @@ router.get(['/:id', '/builders/:id'], (req, res, next) => {
 router.post(['/:id/enquiries', '/builders/:id/enquiries'], optionalToken, enquiryRateLimiter, async (req, res, next) => {
   if (isDairyReq(req)) return next();
   try {
-    const db = readData();
-    const builders = db.builders || [];
-    const targetId = req.params.id;
-
-    const builder = builders.find(b => String(b.id) === String(targetId));
+    const builder = await findRecord('builders', req.params.id);
 
     if (!builder) {
       return res.status(404).json({
@@ -362,9 +325,7 @@ router.post(['/:id/enquiries', '/builders/:id/enquiries'], optionalToken, enquir
       createdAt
     };
 
-    db.builderInquiries = db.builderInquiries || [];
-    db.builderInquiries.unshift(enquiry);
-    writeData(db);
+    await insertRecord('builderInquiries', enquiry);
 
     // If builder has an ownerId, insert notification in SQLite notifications table
     if (builder.ownerId) {
@@ -397,11 +358,10 @@ router.post(['/:id/enquiries', '/builders/:id/enquiries'], optionalToken, enquir
 // ==========================================
 
 // 1. GET /api/dairy/products (Public) - Declared BEFORE /:id
-router.get(['/products', '/dairy/products'], (req, res, next) => {
+router.get(['/products', '/dairy/products'], async (req, res, next) => {
   if (isBuilderReq(req)) return next();
   try {
-    const db = readData();
-    let products = db.dairyProducts || [];
+    let products = await listRecords('dairyProducts');
     const { category, sellerId, search } = req.query;
 
     if (category && category !== 'सर्व' && category !== 'all') {
@@ -431,7 +391,7 @@ router.get(['/products', '/dairy/products'], (req, res, next) => {
 });
 
 // 2. POST /api/dairy/products (login required; only admin or owner of seller dairy record)
-router.post(['/products', '/dairy/products'], authenticateToken, (req, res, next) => {
+router.post(['/products', '/dairy/products'], authenticateToken, async (req, res, next) => {
   if (isBuilderReq(req)) return next();
   try {
     const { name, category, packSize, price, description, sellerId, available } = req.body;
@@ -444,15 +404,13 @@ router.post(['/products', '/dairy/products'], authenticateToken, (req, res, next
       return sendError(res, 'कृपया वैध किंमत प्रविष्ट करा (Valid positive price is required).', 'VALIDATION_ERROR', 400);
     }
 
-    const db = readData();
-    db.dairy = db.dairy || [];
-    db.dairyProducts = db.dairyProducts || [];
+    const dairyList = await listRecords('dairy');
 
     const isAdmin = req.user?.role === 'admin';
     let targetSellerId = sellerId ? String(sellerId).trim() : null;
 
     if (targetSellerId) {
-      const sellerDairy = db.dairy.find(d => String(d.id) === targetSellerId);
+      const sellerDairy = dairyList.find(d => String(d.id) === targetSellerId);
       if (!sellerDairy) {
         return res.status(404).json({
           success: false,
@@ -469,7 +427,7 @@ router.post(['/products', '/dairy/products'], authenticateToken, (req, res, next
       }
     } else {
       if (!isAdmin) {
-        const ownedDairy = db.dairy.find(d => String(d.ownerId) === String(req.user?.id));
+        const ownedDairy = dairyList.find(d => String(d.ownerId) === String(req.user?.id));
         if (!ownedDairy) {
           return res.status(403).json({
             success: false,
@@ -487,7 +445,7 @@ router.post(['/products', '/dairy/products'], authenticateToken, (req, res, next
       : 'इतर';
 
     const product = {
-      id: `PROD-${Date.now().toString().slice(-4)}`,
+      id: await freeShortId('dairyProducts', 'PROD-'),
       name: name.trim(),
       category: cleanCategory,
       packSize: packSize ? String(packSize).trim() : 'मानक पॅक',
@@ -498,8 +456,7 @@ router.post(['/products', '/dairy/products'], authenticateToken, (req, res, next
       createdAt: new Date().toISOString()
     };
 
-    db.dairyProducts.unshift(product);
-    writeData(db);
+    await insertRecord('dairyProducts', product);
 
     return res.status(201).json({
       success: true,
@@ -516,11 +473,7 @@ router.post(['/products', '/dairy/products'], authenticateToken, (req, res, next
 router.post(['/products/:id/enquiries', '/dairy/products/:id/enquiries'], optionalToken, enquiryRateLimiter, async (req, res, next) => {
   if (isBuilderReq(req)) return next();
   try {
-    const db = readData();
-    db.dairyProducts = db.dairyProducts || [];
-    const targetId = req.params.id;
-
-    const product = db.dairyProducts.find(p => String(p.id) === String(targetId));
+    const product = await findRecord('dairyProducts', req.params.id);
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -554,13 +507,11 @@ router.post(['/products/:id/enquiries', '/dairy/products/:id/enquiries'], option
       createdAt: new Date().toISOString()
     };
 
-    db.dairyEnquiries = db.dairyEnquiries || [];
-    db.dairyEnquiries.unshift(enquiry);
-    writeData(db);
+    await insertRecord('dairyEnquiries', enquiry);
 
     // Notify seller's owner if known
     if (product.sellerId) {
-      const sellerDairy = (db.dairy || []).find(d => String(d.id) === String(product.sellerId));
+      const sellerDairy = await findRecord('dairy', product.sellerId);
       if (sellerDairy && sellerDairy.ownerId) {
         try {
           const notifId = 'NOTIF-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
@@ -591,12 +542,7 @@ router.post(['/products/:id/enquiries', '/dairy/products/:id/enquiries'], option
 router.post(['/:id/registrations', '/dairy/:id/registrations'], authenticateToken, enquiryRateLimiter, async (req, res, next) => {
   if (isBuilderReq(req)) return next();
   try {
-    const db = readData();
-    db.dairy = db.dairy || [];
-    db.dairyRegistrations = db.dairyRegistrations || [];
-    const targetId = req.params.id;
-
-    const dairy = db.dairy.find(d => String(d.id) === String(targetId));
+    const dairy = await findRecord('dairy', req.params.id);
     if (!dairy) {
       return res.status(404).json({
         success: false,
@@ -617,7 +563,7 @@ router.post(['/:id/registrations', '/dairy/:id/registrations'], authenticateToke
     }
 
     // Reject a second registration by the same member for the same centre
-    const alreadyRegistered = db.dairyRegistrations.find(r =>
+    const alreadyRegistered = (await listRecords('dairyRegistrations')).find(r =>
       String(r.dairyId) === String(dairy.id) && String(r.memberId) === String(req.user.id)
     );
     if (alreadyRegistered) {
@@ -653,8 +599,7 @@ router.post(['/:id/registrations', '/dairy/:id/registrations'], authenticateToke
       createdAt: new Date().toISOString()
     };
 
-    db.dairyRegistrations.unshift(registration);
-    writeData(db);
+    await insertRecord('dairyRegistrations', registration);
 
     // Notify the centre's ownerId if present
     if (dairy.ownerId) {
@@ -683,15 +628,10 @@ router.post(['/:id/registrations', '/dairy/:id/registrations'], authenticateToke
 });
 
 // 5. GET /api/dairy/:id/registrations (only centre owner or admin can read; never public)
-router.get(['/:id/registrations', '/dairy/:id/registrations'], authenticateToken, (req, res, next) => {
+router.get(['/:id/registrations', '/dairy/:id/registrations'], authenticateToken, async (req, res, next) => {
   if (isBuilderReq(req)) return next();
   try {
-    const db = readData();
-    db.dairy = db.dairy || [];
-    db.dairyRegistrations = db.dairyRegistrations || [];
-    const targetId = req.params.id;
-
-    const dairy = db.dairy.find(d => String(d.id) === String(targetId));
+    const dairy = await findRecord('dairy', req.params.id);
     if (!dairy) {
       return res.status(404).json({
         success: false,
@@ -711,7 +651,7 @@ router.get(['/:id/registrations', '/dairy/:id/registrations'], authenticateToken
       });
     }
 
-    const registrations = db.dairyRegistrations.filter(r => String(r.dairyId) === String(dairy.id));
+    const registrations = (await listRecords('dairyRegistrations')).filter(r => String(r.dairyId) === String(dairy.id));
 
     return res.json({
       success: true,
@@ -725,14 +665,10 @@ router.get(['/:id/registrations', '/dairy/:id/registrations'], authenticateToken
 });
 
 // 6. GET /api/dairy/:id & /dairy/:id (404 DAIRY_NOT_FOUND)
-router.get(['/:id', '/dairy/:id'], (req, res, next) => {
+router.get(['/:id', '/dairy/:id'], async (req, res, next) => {
   if (isBuilderReq(req)) return next();
   try {
-    const db = readData();
-    const list = db.dairy || [];
-    const targetId = req.params.id;
-
-    const item = list.find(d => String(d.id) === String(targetId));
+    const item = await findRecord('dairy', req.params.id);
     if (!item) {
       return res.status(404).json({
         success: false,
@@ -752,11 +688,10 @@ router.get(['/:id', '/dairy/:id'], (req, res, next) => {
 });
 
 // 7. GET /api/dairy & /dairy (Public list with district and kind filter)
-router.get(['/', '/dairy'], (req, res, next) => {
+router.get(['/', '/dairy'], async (req, res, next) => {
   if (isBuilderReq(req)) return next();
   try {
-    const db = readData();
-    let list = db.dairy || [];
+    let list = await listRecords('dairy');
     const { district, kind, search } = req.query;
 
     if (kind && kind !== 'all' && kind !== 'सर्व') {
@@ -792,7 +727,7 @@ router.get(['/', '/dairy'], (req, res, next) => {
 
 // 8. POST /api/dairy & /dairy (optionalToken)
 // Create centre with required fields and NO fake defaults
-router.post(['/', '/dairy'], optionalToken, (req, res, next) => {
+router.post(['/', '/dairy'], optionalToken, async (req, res, next) => {
   if (isBuilderReq(req)) return next();
   try {
     const {
@@ -837,7 +772,7 @@ router.post(['/', '/dairy'], optionalToken, (req, res, next) => {
     const ownerId = req.user?.id || req.body.ownerId || null;
 
     const item = {
-      id: `DRY-${Date.now().toString().slice(-4)}`,
+      id: await freeShortId('dairy', 'DRY-'),
       dairyName: dairyName.trim(),
       village: village ? String(village).trim() : '',
       taluka: taluka ? String(taluka).trim() : '',
@@ -859,10 +794,7 @@ router.post(['/', '/dairy'], optionalToken, (req, res, next) => {
       createdAt: new Date().toISOString()
     };
 
-    const db = readData();
-    db.dairy = db.dairy || [];
-    db.dairy.unshift(item);
-    writeData(db);
+    await insertRecord('dairy', item);
 
     return res.status(201).json({
       success: true,
