@@ -106,7 +106,7 @@ Rules:
 | 1 | Database access (JPA), error format, auth filter, rate limits | ✅ done |
 | 2 | Auth: register, login, me, Google, password reset, delete account, referrals (+ per-account login backoff) | ✅ done — 11 endpoints, 80 replies match Node |
 | 3 | Members, community (posts, likes, comments, report/block) | ✅ done — 14 endpoints, 133 replies match Node |
-| 3b | Media upload (`/api/media`, `/media/:id`) | ⬜ next |
+| 3b | Media upload (`/api/media`, `/media/:id`) | ✅ done — 188 replies match Node |
 | 4 | Business: sangam, directories (builders, dairy), businesses, jobs, events, donations | ⬜ |
 | 5 | Website features: AI, services, CRM; culture, quiz, locations, admin | ⬜ |
 | 6 | Legacy `server.js` endpoints (blood, matrimony, ...) — port or retire | ⬜ |
@@ -225,9 +225,9 @@ Rules:
 
 ### media.routes (3)
 
-- [ ] `GET    /api/media/:id`
-- [ ] `POST   /api/media/:kind`
-- [ ] `DELETE /api/media/profile`
+- [x] `GET    /api/media/:id`
+- [x] `POST   /api/media/:kind`
+- [x] `DELETE /api/media/profile`
 
 ### members.routes (5)
 

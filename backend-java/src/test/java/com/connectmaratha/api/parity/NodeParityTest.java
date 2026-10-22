@@ -149,6 +149,45 @@ class NodeParityTest extends PostgresTestBase {
         return new Resp(r.statusCode(), r.body(), parsed);
     }
 
+    /** A raw (non-JSON) body, e.g. an image upload. */
+    static Resp sendBytes(String method, String url, byte[] body, String contentType, String token) throws Exception {
+        HttpRequest.Builder b = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(60));
+        if (token != null) b.header("Authorization", "Bearer " + token);
+        if (contentType != null) b.header("Content-Type", contentType);
+        b.method(method, body == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofByteArray(body));
+        HttpResponse<String> r = HTTP.send(b.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        JsonNode parsed;
+        try {
+            parsed = JSON.readTree(r.body());
+        } catch (Exception e) {
+            parsed = null;
+        }
+        return new Resp(r.statusCode(), r.body(), parsed);
+    }
+
+    /** GET returning bytes and headers (for served images). */
+    static HttpResponse<byte[]> fetchBytes(String url) throws Exception {
+        return HTTP.send(HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(30)).GET().build(),
+            HttpResponse.BodyHandlers.ofByteArray());
+    }
+
+    static byte[] fakeImage(String kind, int size, String extra) {
+        byte[] b = new byte[size];
+        java.util.Arrays.fill(b, (byte) 0x11);
+        byte[] head = switch (kind) {
+            case "png" -> new byte[] {(byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 13, 0x49, 0x48, 0x44, 0x52};
+            case "jpeg" -> new byte[] {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0};
+            case "webp" -> new byte[] {0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x45, 0x42, 0x50};
+            default -> "plain text, not a picture".getBytes(StandardCharsets.US_ASCII);
+        };
+        System.arraycopy(head, 0, b, 0, Math.min(head.length, size));
+        if (extra != null) {
+            byte[] e = extra.getBytes(StandardCharsets.US_ASCII);
+            System.arraycopy(e, 0, b, 40, e.length);
+        }
+        return b;
+    }
+
     // ---------------------------------------------------------------- servers
 
     /** One of the two servers, with helpers that build the requests. */
@@ -252,6 +291,7 @@ class NodeParityTest extends PostgresTestBase {
     private static final Pattern PHONE = Pattern.compile("\\b\\d{10}\\b");
     private static final Pattern PARITY_EMAIL = Pattern.compile("[A-Za-z0-9.]+@parity\\.test");
     private static final Pattern POST_ID = Pattern.compile("\\b(P|CMM)-\\d{10,}");
+    private static final Pattern MEDIA_ID = Pattern.compile("\\b[a-f0-9]{32}\\b");
     private static final Pattern TAGGED = Pattern.compile("(Zq|GZ)[nj]");
     private static final Pattern ERR_ID = Pattern.compile("ERR-[A-Z0-9]+-[A-F0-9]+");
     private static final Pattern IN_SECONDS = Pattern.compile("in \\d+s");
@@ -267,6 +307,7 @@ class NodeParityTest extends PostgresTestBase {
         s = REF_CODE.matcher(s).replaceAll("REF-96K-####");
         s = MEMBER_ID.matcher(s).replaceAll("M####");
         s = POST_ID.matcher(s).replaceAll("$1-#");
+        s = MEDIA_ID.matcher(s).replaceAll("<media-id>");
         s = TAGGED.matcher(s).replaceAll("$1#");
         s = ERR_ID.matcher(s).replaceAll("<errid>");
         s = IN_SECONDS.matcher(s).replaceAll("in Ns");
@@ -317,9 +358,7 @@ class NodeParityTest extends PostgresTestBase {
         for (int i = 0; i < 5; i++) {
             r = s.post("/api/auth/register", body);
             if (r.status() == 201) return r;
-            body = new LinkedHashMap<>(body);
-            body.put("phone", s.phone());
-            body.put("email", s.email());
+            // The failed attempt saved nothing (the database refused the duplicate id), so the same details can be sent again.
             Thread.sleep(50);
         }
         return r;
@@ -368,7 +407,7 @@ class NodeParityTest extends PostgresTestBase {
         compare("login and me", (s, r) -> {
             String phone = s.phone();
             String email = s.email();
-            Resp created = s.post("/api/auth/register", reg("Login Member", phone, email, "skills", "a, b"));
+            Resp created = regOk(s, reg("Login Member", phone, email, "skills", "a, b"));
             String id = created.json().get("member").get("id").asText();
             r.rec("by id", s.post("/api/auth/login", Map.of("identifier", id, "password", "Swarajya#2026")));
             r.rec("by email", s.post("/api/auth/login", Map.of("identifier", email.toUpperCase(), "password", "Swarajya#2026")));
@@ -389,7 +428,7 @@ class NodeParityTest extends PostgresTestBase {
         });
 
         compare("referrals", (s, r) -> {
-            Resp owner = s.post("/api/auth/register", reg("Ref Owner", s.phone(), null));
+            Resp owner = regOk(s, reg("Ref Owner", s.phone(), null));
             String code = owner.json().get("member").get("reference_id").asText();
             String ownerId = owner.json().get("member").get("id").asText();
             String ownerToken = tokenOf(owner);
@@ -431,7 +470,7 @@ class NodeParityTest extends PostgresTestBase {
         });
 
         compare("account deletion", (s, r) -> {
-            Resp m1 = s.post("/api/auth/register", reg("Delete One", s.phone(), s.email()));
+            Resp m1 = regOk(s, reg("Delete One", s.phone(), s.email()));
             String t1 = tokenOf(m1);
             r.rec("app delete no token", s.delete("/api/auth/account", Map.of("confirm", "DELETE"), null));
             r.rec("app delete no password", s.delete("/api/auth/account", Map.of("confirm", "DELETE"), t1));
@@ -442,7 +481,7 @@ class NodeParityTest extends PostgresTestBase {
             r.rec("deleted can't login", s.post("/api/auth/login", Map.of("identifier", m1.json().get("member").get("id").asText(), "password", "Swarajya#2026")));
 
             String phone = s.phone();
-            Resp m2 = s.post("/api/auth/register", reg("Delete Two", phone, null));
+            Resp m2 = regOk(s, reg("Delete Two", phone, null));
             r.rec("web request", s.post("/api/auth/delete-account", Map.of("identifier", phone, "confirmation", true, "reason", "testing")));
             r.rec("web request unknown", s.post("/api/auth/delete-account", Map.of("identifier", "9000000001", "confirmation", true)));
             r.rec("web request no identifier", s.post("/api/auth/delete-account", Map.of("confirmation", true)));
@@ -593,6 +632,52 @@ class NodeParityTest extends PostgresTestBase {
             r.rec("verify cm- lower", s.get("/api/auth/referrals/verify/cm-" + idA.toLowerCase(), null));
             r.rec("verify CM-M0", s.get("/api/auth/referrals/verify/CM-M0", null));
             r.rec("register with CM- code", regOk(s, reg("Zq" + s.tag + " Via Old Code", s.phone(), null, "referredBy", "CM-" + idA)));
+        });
+
+        compare("media", (s, r) -> {
+            Resp m = regOk(s, reg("Zq" + s.tag + " Photo", s.phone(), null));
+            String token = tokenOf(m);
+            String memberId = m.json().get("member").get("id").asText();
+            byte[] jpeg = fakeImage("jpeg", 200, null);
+
+            Resp post = sendBytes("POST", s.base + "/api/media/post", jpeg, "image/jpeg", null);
+            r.rec("post photo, visitor", post);
+            r.rec("png", sendBytes("POST", s.base + "/api/media/post", fakeImage("png", 120, null), "application/octet-stream", token));
+            r.rec("webp, no content type", sendBytes("POST", s.base + "/api/media/banner", fakeImage("webp", 100, null), null, token));
+            r.rec("via /media path", sendBytes("POST", s.base + "/media/post", jpeg, "image/jpeg", token));
+            r.rec("profile no login", sendBytes("POST", s.base + "/api/media/profile", jpeg, "image/jpeg", null));
+            r.rec("profile bad token", sendBytes("POST", s.base + "/api/media/profile", jpeg, "image/jpeg", "x.y.z"));
+            r.rec("profile", sendBytes("POST", s.base + "/api/media/profile", jpeg, "image/jpeg", token));
+            r.rec("member shows photo", s.get("/api/members/" + memberId, token));
+            r.rec("bad kind", sendBytes("POST", s.base + "/api/media/avatar", jpeg, "image/jpeg", token));
+            r.rec("empty body", sendBytes("POST", s.base + "/api/media/post", new byte[0], "image/jpeg", token));
+            r.rec("too small", sendBytes("POST", s.base + "/api/media/post", fakeImage("jpeg", 20, null), "image/jpeg", token));
+            r.rec("not an image", sendBytes("POST", s.base + "/api/media/post", fakeImage("text", 200, null), "image/jpeg", token));
+            r.rec("hidden script", sendBytes("POST", s.base + "/api/media/post", fakeImage("jpeg", 200, "<script>alert(1)"), "image/jpeg", token));
+            r.rec("hidden php", sendBytes("POST", s.base + "/api/media/post", fakeImage("png", 200, "<?php echo"), "image/png", token));
+            r.rec("too large", sendBytes("POST", s.base + "/api/media/post", fakeImage("jpeg", 5 * 1024 * 1024 + 10, null), "image/jpeg", token));
+            r.rec("too large, bad kind", sendBytes("POST", s.base + "/api/media/avatar", fakeImage("jpeg", 5 * 1024 * 1024 + 10, null), "image/jpeg", token));
+            r.rec("exactly 5 MB", sendBytes("POST", s.base + "/api/media/post", fakeImage("jpeg", 5 * 1024 * 1024, null), "image/jpeg", token));
+            r.rec("json body", sendBytes("POST", s.base + "/api/media/post", "{\"a\":1}".getBytes(StandardCharsets.UTF_8), "application/json", token));
+            r.rec("broken json body", sendBytes("POST", s.base + "/api/media/post", "{ oops".getBytes(StandardCharsets.UTF_8), "application/json", token));
+
+            String id = post.json().get("id").asText();
+            HttpResponse<byte[]> img = fetchBytes(s.base + "/api/media/" + id);
+            assertThat(img.statusCode()).isEqualTo(200);
+            assertThat(img.body()).as(s.name + " serves the uploaded bytes unchanged").isEqualTo(jpeg);
+            for (String h : List.of("content-type", "x-content-type-options", "content-security-policy",
+                    "content-disposition", "cache-control", "cross-origin-resource-policy", "content-length")) {
+                r.rec("image header " + h, new Resp(200, img.headers().firstValue(h).orElse("<missing>"),
+                    JsonNodeFactory.instance.textNode(img.headers().firstValue(h).orElse("<missing>").toLowerCase().replace(" ", ""))));
+            }
+            assertThat(fetchBytes(s.base + "/media/" + id.toUpperCase() + ".jpg").body()).as(s.name + " /media/ID.jpg").isEqualTo(jpeg);
+            r.rec("image bad id", s.get("/api/media/xyz", null));
+            r.rec("image traversal", s.get("/api/media/..%2F..%2Fetc%2Fpasswd", null));
+            r.rec("image unknown", s.get("/api/media/" + "0".repeat(32), null));
+
+            r.rec("delete profile no login", s.delete("/api/media/profile", null, null));
+            r.rec("delete profile", s.delete("/api/media/profile", null, token));
+            r.rec("member photo removed", s.get("/api/members/" + memberId, token));
         });
 
         // Cut-over case: both servers share one database, so accounts and tokens must work on either.
