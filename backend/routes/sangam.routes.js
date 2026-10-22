@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { all, get, runQuery } from '../../database/database.js';
+import { uniqueRandomId } from '../utils/ids.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 const router = Router();
@@ -47,7 +48,7 @@ router.post('/referrals', async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'शीर्षक आणि ग्राहकाचे नाव आवश्यक आहे.' });
     }
 
-    const id = 'REF-' + Math.floor(100 + Math.random() * 900);
+    const id = await uniqueRandomId('referrals', () => 'REF-' + Math.floor(100 + Math.random() * 900));
 
     await runQuery(`
       INSERT INTO referrals (id, title, category, giver_id, giver_name, recipient_id, recipient_name, client_name, client_phone, client_email, status, value, notes, created_at)
