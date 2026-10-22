@@ -295,7 +295,9 @@ class NodeParityTest extends PostgresTestBase {
     private static final Pattern REF_CODE = Pattern.compile("REF-96K-\\d+");
     private static final Pattern ISO = Pattern.compile("\\d{4}-\\d{2}-\\d{2}T[\\d:.]+Z");
     private static final Pattern DATE_TIME = Pattern.compile("\\d{4}-\\d{2}-\\d{2}( \\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([+-]\\d{2}(:?\\d{2})?)?)?");
-    private static final Pattern WEBSITE_IDS = Pattern.compile("\\b(SBK|SRV|CC|ACT|RCPT)-[A-Z0-9]{6,}\\b|\\bTKT-\\d{6}-[A-Z0-9]+\\b");
+    private static final Pattern WEBSITE_IDS = Pattern.compile("\\b(SBK|SRV|CC|ACT|RCPT|TECH)-[A-Z0-9]{6,}\\b|\\bTKT-\\d{6}-[A-Z0-9]+\\b");
+    /** Ids made from the clock: DOC-4821, REQ-482, CM-M-482 and so on. */
+    private static final Pattern CLOCK_IDS = Pattern.compile("^((DOC|DON|GRV|VOL|WHELP|LN)-\\d{4}|REQ-\\d{3}|CM-[MF]-\\d{3})$");
     private static final Pattern PHONE_MASKED = Pattern.compile("\\b\\d{4} •••••");
     private static final Pattern PHONE = Pattern.compile("\\b\\d{10}\\b");
     private static final Pattern PARITY_EMAIL = Pattern.compile("[A-Za-z0-9.]+@parity\\.test");
@@ -323,6 +325,7 @@ class NodeParityTest extends PostgresTestBase {
         s = MEDIA_ID.matcher(s).replaceAll("<media-id>");
         s = RANDOM_IDS.matcher(s).replaceAll("<random-id>");
         s = WEBSITE_IDS.matcher(s).replaceAll("<website-id>");
+        s = CLOCK_IDS.matcher(s).replaceAll("<clock-id>");
         s = TAGGED.matcher(s).replaceAll("$1#");
         s = ERR_ID.matcher(s).replaceAll("<errid>");
         s = IN_SECONDS.matcher(s).replaceAll("in Ns");
@@ -1115,6 +1118,95 @@ class NodeParityTest extends PostgresTestBase {
             r.rec("centers list", s.get("/api/crm/community-centers?district=" + z, null));
             r.rec("centers list by tier", s.get("/api/admin/crm/community-centers?district=" + z + "&tier=taluka", null));
             r.rec("centers list other tier", s.get("/api/crm/community-centers?district=" + z + "&tier=state", null));
+        });
+
+        compare("portal lists", (s, r) -> {
+            String z = "Zq" + s.tag;
+            // doctors: strict input
+            r.rec("doctor nothing", s.post("/api/doctors", Map.of()));
+            r.rec("doctor unknown field", s.post("/api/doctors", Map.of("name", "Dr A", "specialty", "ENT", "id", "X1")));
+            r.rec("doctor bad phone", s.post("/api/doctors", Map.of("name", "Dr A", "specialty", "ENT", "phone", "12")));
+            r.rec("doctor", s.post("/api/doctors", Map.of("name", z + " Dr Patil", "specialty", "Cardio", "phone", "9876543210",
+                "city", "Pune", "degree", "MD")));
+            r.rec("doctor minimal", s.post("/api/doctors", Map.of("name", "Dr B", "specialty", "Skin")));
+            // blood requests: strict input
+            Map<String, Object> ok = new LinkedHashMap<>(Map.of("patientName", z + " Patient", "bloodGroup", "O+", "units", 2,
+                "hospital", "Sassoon", "city", "Pune", "district", "Pune", "contactPhone", "9876543211"));
+            r.rec("blood request", s.post("/api/blood/requests", ok));
+            for (String[] bad : new String[][] {{"bloodGroup", "Z+"}, {"city", ""}, {"contactPhone", "1"}}) {
+                Map<String, Object> m = new LinkedHashMap<>(ok);
+                m.put(bad[0], bad[1]);
+                r.rec("blood request bad " + bad[0], s.post("/api/blood/requests", m));
+            }
+            Map<String, Object> units = new LinkedHashMap<>(ok);
+            units.put("units", 25);
+            r.rec("blood request units 25", s.post("/api/blood/requests", units));
+            units.put("units", 2.5);
+            r.rec("blood request units 2.5", s.post("/api/blood/requests", units));
+            Map<String, Object> extra = new LinkedHashMap<>(ok);
+            extra.put("verified", true);
+            r.rec("blood request unknown field", s.post("/api/blood/requests", extra));
+
+            // free-form lists: whatever is sent is kept, and wins over the defaults
+            r.rec("donor", s.post("/api/blood/donors", Map.of("name", z + " Donor", "bloodGroup", "A+", "phone", "9876543212")));
+            r.rec("donor overrides", s.post("/api/blood/donors", Map.of("id", z + "-DON", "totalDonations", 5, "lastDonated", "2026-01-01")));
+            r.rec("donor duplicate id", s.post("/api/blood/donors", Map.of("id", z + "-DON")));
+            r.rec("donor empty", s.post("/api/blood/donors", Map.of()));
+            r.rec("matrimony groom", s.post("/api/matrimony", Map.of("name", z + " Vara", "gender", "वर (Groom)")));
+            r.rec("matrimony bride", s.post("/api/matrimony", Map.of("name", z + " Vadhu", "gender", "वधू", "age", 25.0)));
+            r.rec("matrimony no gender", s.post("/api/matrimony", Map.of("name", "X")));
+            r.rec("matrimony gender list", s.post("/api/matrimony", Map.of("gender", List.of("वर"))));
+            r.rec("matrimony gender number", s.post("/api/matrimony", Map.of("gender", 5)));
+            r.rec("matrimony gender zero", s.post("/api/matrimony", Map.of("gender", 0)));
+            r.rec("matrimony overrides", s.post("/api/matrimony", Map.of("id", z + "-M", "verified", false, "photo", "x", "caste", "other")));
+            r.rec("grievance", s.post("/api/political/grievances", Map.of("title", z + " Road", "details", "Potholes")));
+            r.rec("grievance overrides createdAt", s.post("/api/political/grievances", Map.of("createdAt", "yesterday")));
+            r.rec("volunteer", s.post("/api/social/volunteers", Map.of("name", z + " Vol", "skills", List.of("a", "b"))));
+            r.rec("women help", s.post("/api/women/help", Map.of("name", z + " Help", "need", "mentor")));
+            r.rec("loan", s.post("/api/bank/loans", Map.of("name", z + " Loan", "amount", 100000)));
+
+            for (String path : List.of("/api/doctors", "/api/blood/requests", "/api/blood/donors", "/api/matrimony",
+                    "/api/political/grievances", "/api/social/volunteers", "/api/women/help", "/api/bank/loans")) {
+                Resp list = s.get(path, null);
+                assertThat(list.status()).as(s.name + " " + path).isEqualTo(200);
+                assertThat(list.json().isArray()).as(s.name + " " + path + " is a plain list").isTrue();
+            }
+            assertThat(s.get("/api/doctors", null).raw()).as(s.name + " doctor listed").contains(z + " Dr Patil");
+            assertThat(s.get("/api/blood/requests", null).raw()).as(s.name + " blood request listed").contains(z + " Patient");
+            assertThat(s.get("/api/matrimony", null).raw()).as(s.name + " profile listed").contains(z + " Vara");
+        });
+
+        compare("ai assistant", (s, r) -> {
+            String z = "Zq" + s.tag;
+            String member = jwt.generate(z + "-m", "Member", "member", "Gold");
+            r.rec("chat empty", s.post("/api/ai/chat", Map.of()));
+            r.rec("chat blank", s.post("/api/ai/chat", Map.of("message", "   <b></b>  ")));
+            r.rec("chat english", s.post("/api/ai/chat", Map.of("message", "tell me something", "language", "en")));
+            r.rec("chat default language", s.post("/api/ai/chat", Map.of("message", "hello there")));
+            r.rec("chat blood english", s.post("/api/ai/chat", Map.of("message", "Where can I donate blood?", "language", "en")));
+            r.rec("chat blood marathi", s.post("/api/ai/chat", Map.of("message", "रक्त हवे आहे")));
+            r.rec("chat blood hindi", s.post("/api/ai/chat", Map.of("message", "blood chahiye", "language", "hi")));
+            r.rec("chat register", s.post("/api/ai/chat", Map.of("message", "how to register as member", "language", "en")));
+            r.rec("chat register marathi", s.post("/api/ai/chat", Map.of("message", "सदस्य नोंदणी कशी करू", "language", "mr")));
+            r.rec("chat sangam", s.post("/api/ai/chat", Map.of("message", "business b2b help", "language", "hi")));
+            r.rec("chat detects marathi", s.post("/api/ai/chat", Map.of("message", "शिवाजी महाराजांचा इतिहास सांगा", "language", "en")));
+            r.rec("chat detects hindi", s.post("/api/ai/chat", Map.of("message", "इतिहास बताओ क्या है", "language", "fr")));
+            r.rec("chat other language", s.post("/api/ai/chat", Map.of("message", "plain question", "language", "fr")));
+            r.rec("chat language number", s.post("/api/ai/chat", Map.of("message", "plain question", "language", 5)));
+            Map<String, Object> nulls = new LinkedHashMap<>();
+            nulls.put("message", "plain question");
+            nulls.put("language", null);
+            nulls.put("session_id", null);
+            r.rec("chat null language and session", s.post("/api/ai/chat", nulls));
+            r.rec("chat session", s.post("/api/ai/chat", Map.of("message", "hi", "session_id", "x".repeat(100))));
+
+            r.rec("support no mobile", s.post("/api/ai/support", Map.of("issue", "App crashes")));
+            r.rec("support bad mobile", s.post("/api/ai/support", Map.of("mobile", "123", "issue", "App crashes")));
+            r.rec("support bad email", s.post("/api/ai/support", Map.of("mobile", "9876543210", "email", "nope", "issue", "App crashes")));
+            r.rec("support no issue", s.post("/api/ai/support", Map.of("mobile", "9876543210")));
+            r.rec("support guest", s.post("/api/ai/support", Map.of("mobile", "+91 98765 43210", "email", "a@b.co", "issue", "<b>App</b> crashes", "name", " Ravi ")));
+            r.rec("support logged in", s.post("/api/ai/technical-support", Map.of("mobile", "9876543211", "issue", "x".repeat(300), "language", "english-long"), member));
+            r.rec("health", s.get("/api/ai/health", null));
         });
 
         // Ids: Node used to pick one of only 90 business ids without checking, and failed (500) when it was taken.

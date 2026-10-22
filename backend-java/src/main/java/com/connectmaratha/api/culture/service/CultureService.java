@@ -81,7 +81,7 @@ public class CultureService {
     }
 
     /** new Date().toLocaleDateString('mr-IN'): day/month/year in Devanagari digits, e.g. ५/१०/२०२६. */
-    static String marathiDate(LocalDate d) {
+    public static String marathiDate(LocalDate d) {
         String latin = d.getDayOfMonth() + "/" + d.getMonthValue() + "/" + d.getYear();
         StringBuilder sb = new StringBuilder(latin.length());
         for (char c : latin.toCharArray()) sb.append(c >= '0' && c <= '9' ? (char) ('०' + (c - '0')) : c);

@@ -11,7 +11,10 @@ import { all, get, runQuery } from '../../database/database.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LEGACY_FILE = path.join(__dirname, '../db.json');
 
-export const COLLECTIONS = ['builders', 'builderInquiries', 'dairy', 'dairyProducts', 'dairyEnquiries', 'dairyRegistrations'];
+export const COLLECTIONS = [
+  'builders', 'builderInquiries', 'dairy', 'dairyProducts', 'dairyEnquiries', 'dairyRegistrations',
+  'doctors', 'bloodRequests', 'bloodDonors', 'matrimony', 'grievances', 'volunteers', 'womenHelp', 'bankLoans',
+];
 
 let ready = null;
 let seqCounter = 0;
@@ -130,10 +133,11 @@ export function importLegacyList(collection, file, defaults) {
  * prefix + the last 4 digits of the current time (as before, e.g. BLD-4821); if that id is
  * taken, the next free number is used instead of creating a duplicate.
  */
-export async function freeShortId(collection, prefix) {
-  let n = Number(Date.now().toString().slice(-4));
-  for (let i = 0; i < 10000; i++) {
-    const id = prefix + String((n + i) % 10000).padStart(4, '0');
+export async function freeShortId(collection, prefix, digits = 4) {
+  const size = 10 ** digits;
+  const n = Number(Date.now().toString().slice(-digits));
+  for (let i = 0; i < size; i++) {
+    const id = prefix + String((n + i) % size).padStart(digits, '0');
     if (!(await findRecord(collection, id))) return id;
   }
   return prefix + Date.now();

@@ -107,9 +107,9 @@ Rules:
 | 2 | Auth: register, login, me, Google, password reset, delete account, referrals (+ per-account login backoff) | ✅ done — 11 endpoints, 80 replies match Node |
 | 3 | Members, community (posts, likes, comments, report/block) | ✅ done — 14 endpoints, 133 replies match Node |
 | 3b | Media upload (`/api/media`, `/media/:id`) | ✅ done — 188 replies match Node |
-| 4 | Business: sangam, directories (builders, dairy), businesses, jobs, events, donations | ⬜ |
-| 5 | Website features: AI, services, CRM; culture, quiz, locations, admin | ⬜ |
-| 6 | Legacy `server.js` endpoints (blood, matrimony, ...) — port or retire | ⬜ |
+| 4 | Business: sangam, directories (builders, dairy), businesses, jobs, events, donations | ✅ done |
+| 5 | Website features: AI assistant, services, CRM; culture, quiz, locations, admin | ✅ done |
+| 6 | Older `server.js` endpoints (doctors, blood, matrimony, grievances, volunteers, women, loans) | ✅ done — moved from db.json to the database |
 | 7 | Run side by side on the server, compare, switch traffic, retire Node | ⬜ |
 
 ## Endpoint checklist
@@ -124,9 +124,9 @@ Rules:
 
 ### ai.routes (3)
 
-- [ ] `POST   /api/ai/chat`
-- [ ] `GET    /api/ai/health`
-- [ ] `POST   /api/ai/support  (also /api/ai/technical-support)`
+- [x] `POST   /api/ai/chat`
+- [x] `GET    /api/ai/health`
+- [x] `POST   /api/ai/support  (also /api/ai/technical-support)`
 
 ### auth.routes (11)
 
@@ -259,23 +259,23 @@ Rules:
 
 ### server.js (legacy db.json) (17)
 
-- [ ] `GET    /api/bank/loans`
-- [ ] `POST   /api/bank/loans`
-- [ ] `GET    /api/blood/donors`
-- [ ] `POST   /api/blood/donors`
-- [ ] `GET    /api/blood/requests`
-- [ ] `POST   /api/blood/requests`
-- [ ] `GET    /api/doctors`
-- [ ] `POST   /api/doctors`
+- [x] `GET    /api/bank/loans`
+- [x] `POST   /api/bank/loans`
+- [x] `GET    /api/blood/donors`
+- [x] `POST   /api/blood/donors`
+- [x] `GET    /api/blood/requests`
+- [x] `POST   /api/blood/requests`
+- [x] `GET    /api/doctors`
+- [x] `POST   /api/doctors`
 - [x] `GET    /api/health`
-- [ ] `GET    /api/matrimony`
-- [ ] `POST   /api/matrimony`
-- [ ] `GET    /api/political/grievances`
-- [ ] `POST   /api/political/grievances`
-- [ ] `GET    /api/social/volunteers`
-- [ ] `POST   /api/social/volunteers`
-- [ ] `GET    /api/women/help`
-- [ ] `POST   /api/women/help`
+- [x] `GET    /api/matrimony`
+- [x] `POST   /api/matrimony`
+- [x] `GET    /api/political/grievances`
+- [x] `POST   /api/political/grievances`
+- [x] `GET    /api/social/volunteers`
+- [x] `POST   /api/social/volunteers`
+- [x] `GET    /api/women/help`
+- [x] `POST   /api/women/help`
 
 ### services.routes (6)
 

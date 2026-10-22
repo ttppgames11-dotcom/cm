@@ -58,10 +58,16 @@ public class DirectoryStore {
 
     /** prefix + the last 4 digits of the time ("BLD-4821"), moving on to the next free number when taken. */
     public String freeShortId(String collection, String prefix) {
+        return freeShortId(collection, prefix, 4);
+    }
+
+    /** Same with a chosen number of digits (3 for "REQ-482"). */
+    public String freeShortId(String collection, String prefix, int digits) {
         String ms = String.valueOf(System.currentTimeMillis());
-        int n = Integer.parseInt(ms.substring(ms.length() - 4));
-        for (int i = 0; i < 10000; i++) {
-            String id = prefix + String.format("%04d", (n + i) % 10000);
+        int size = (int) Math.pow(10, digits);
+        int n = Integer.parseInt(ms.substring(ms.length() - digits));
+        for (int i = 0; i < size; i++) {
+            String id = prefix + String.format("%0" + digits + "d", (n + i) % size);
             if (!records.existsById(new DirectoryRecordId(collection, id))) return id;
         }
         return prefix + System.currentTimeMillis();
