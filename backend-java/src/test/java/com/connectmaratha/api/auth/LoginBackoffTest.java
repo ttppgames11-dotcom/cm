@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.connectmaratha.api.PostgresTestBase;
-import com.connectmaratha.api.ratelimit.AuthRateLimiter;
+import com.connectmaratha.api.common.ratelimit.AuthRateLimiter;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;

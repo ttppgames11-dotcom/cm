@@ -1,2 +1,2 @@
 org.springframework.boot.env.EnvironmentPostProcessor=\
-com.connectmaratha.api.config.DatabaseUrlEnvironment
+com.connectmaratha.api.common.config.DatabaseUrlEnvironment

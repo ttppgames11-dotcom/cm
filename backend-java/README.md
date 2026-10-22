@@ -67,23 +67,36 @@ accounts, passwords and tokens made by one server work on the other.
 5. **Port with tests.** Each group is done when its responses match the
    Node backend for the same requests.
 
-## Code layout (package by feature)
+## Code layout (package by feature, layers inside each feature)
 
-Everything for one feature lives in one package, and inside it the code is still
-split by job, so a request always goes controller -> service -> repository:
+```
+com.connectmaratha.api
+├── auth/        controller · service · dto
+├── member/      controller · service · repository · entity · dto
+├── community/   controller · service · repository · entity · dto
+├── location/    service · repository · entity
+├── mail/        service
+├── health/      controller
+└── common/      shared by every feature
+    ├── exception/   ApiException, ValidationException, GlobalExceptionHandler
+    ├── security/    JwtService, JwtAuthFilter, AuthInterceptor, CurrentUser, @RequireAuth
+    ├── web/         WebConfig, JsonBody, ClientIp
+    ├── ratelimit/   general + login limits (same numbers as Node, set by RATE_LIMIT_* env)
+    ├── validation/  request schema checks (port of the Node validator)
+    ├── config/      DATABASE_URL -> JDBC settings
+    ├── schema/      tables Node creates on first use
+    └── util/
+```
 
-| Package | Contents |
-|---|---|
-| `auth` | AuthController, AuthService, GoogleTokenVerifier, AuthSchemas |
-| `member` | Member (entity), MemberRepository, MemberService, MemberController, MemberJson |
-| `community` | Posts, comments, likes, groups, report, block: entities, repositories, CommunityService, ModerationService, CommunityController, PostJson |
-| `location` | Country to Village entities and repositories, LocationHierarchy |
-| `mail` | MailService, SmtpMailService |
-| `web`, `config`, `ratelimit`, `validation`, `schema`, `util` | Shared plumbing used by every feature: filters, error format, JWT, rate limits, input checks |
-
-Rules: a controller only handles HTTP and calls a service; a service holds the
-rules; a repository only talks to the database. A feature may use another
-feature's service or repository but never its controller.
+Rules:
+- A **controller** only handles HTTP: read the request, call one service method, return the reply.
+- A **service** holds the rules (who may do what, what to save).
+- A **repository** only talks to the database (Spring Data JPA; native SQL where the exact Node query matters).
+- An **entity** maps one existing table. Hibernate never creates or changes tables (`ddl-auto: none`).
+- A **dto** is the JSON shape sent back (same field names as the Node API) or a request schema.
+- Errors are thrown as `ApiException` / `ValidationException`; `GlobalExceptionHandler` turns every
+  error into the Node reply `{ success: false, code, error }` and hides internal details behind an `ERR-` id.
+- A feature may use another feature's service or repository, never its controller.
 
 ## Phases
 

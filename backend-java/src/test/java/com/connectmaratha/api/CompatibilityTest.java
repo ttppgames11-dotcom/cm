@@ -1,11 +1,11 @@
 package com.connectmaratha.api;
 
-import com.connectmaratha.api.member.Member;
+import com.connectmaratha.api.member.entity.Member;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.connectmaratha.api.config.JwtService;
+import com.connectmaratha.api.common.security.JwtService;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;

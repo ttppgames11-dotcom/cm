@@ -1,12 +1,12 @@
 package com.connectmaratha.api.parity;
 
-import com.connectmaratha.api.member.Member;
+import com.connectmaratha.api.member.entity.Member;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.connectmaratha.api.PostgresTestBase;
-import com.connectmaratha.api.config.JwtService;
-import com.connectmaratha.api.mail.MailService;
+import com.connectmaratha.api.common.security.JwtService;
+import com.connectmaratha.api.mail.service.MailService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;

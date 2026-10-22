@@ -1,8 +1,10 @@
 package com.connectmaratha.api.auth;
 
-import com.connectmaratha.api.member.Member;
-import com.connectmaratha.api.location.State;
-import com.connectmaratha.api.location.District;
+import com.connectmaratha.api.auth.service.GoogleTokenVerifier;
+
+import com.connectmaratha.api.member.entity.Member;
+import com.connectmaratha.api.location.entity.State;
+import com.connectmaratha.api.location.entity.District;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -15,10 +17,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import com.connectmaratha.api.PostgresTestBase;
-import com.connectmaratha.api.config.JwtService;
-import com.connectmaratha.api.mail.MailService;
-import com.connectmaratha.api.ratelimit.AuthRateLimiter;
-import com.connectmaratha.api.ratelimit.RateLimitFilter;
+import com.connectmaratha.api.common.security.JwtService;
+import com.connectmaratha.api.mail.service.MailService;
+import com.connectmaratha.api.common.ratelimit.AuthRateLimiter;
+import com.connectmaratha.api.common.ratelimit.RateLimitFilter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
