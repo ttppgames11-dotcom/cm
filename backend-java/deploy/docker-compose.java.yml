@@ -8,7 +8,7 @@ name: connect-maratha
 services:
   api-java:
     build:
-      context: ../../backend-java
+      context: ../backend-java
     restart: unless-stopped
     # Caps so this can never take memory/CPU from epay.
     mem_limit: 640m
