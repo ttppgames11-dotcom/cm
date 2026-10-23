@@ -63,6 +63,8 @@ tar -xf "$TAR" -C "$ROOT" \
 for f in "$DEPLOY"/*.sh "$DEPLOY"/*.yml "$DEPLOY"/Dockerfile*; do
   [ -f "$f" ] && sed -i 's/\r$//' "$f"
 done
+# Archives made on Windows lose the "executable" flag; the nightly backup job needs it.
+chmod +x "$DEPLOY"/*.sh
 echo "done"
 
 say "5/6 Rebuilding and restarting only the Connect Maratha API"
