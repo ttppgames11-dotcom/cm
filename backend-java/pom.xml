@@ -19,6 +19,8 @@
 
   <properties>
     <java.version>17</java.version>
+    <!-- 2.18 can write emoji as raw UTF-8 like Node (see JsonConfig) -->
+    <jackson-bom.version>2.18.2</jackson-bom.version>
     <jjwt.version>0.12.6</jjwt.version>
   </properties>
 

@@ -1,6 +1,7 @@
 package com.connectmaratha.api.common.web;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Numbers in replies look like the Node server's (JavaScript): a whole double is written
  * without ".0" (5, 1000000) and large values are never in exponent form (12345678.5, not 1.23E7).
+ * Emoji are written as raw UTF-8 bytes, as JSON.stringify does, not as an escaped surrogate pair.
  */
 @Configuration
 public class JsonConfig {
@@ -28,7 +30,8 @@ public class JsonConfig {
         };
         module.addSerializer(Double.class, doubles);
         module.addSerializer(Double.TYPE, doubles);
-        return builder -> builder.modulesToInstall(module);
+        return builder -> builder.modulesToInstall(module).postConfigurer(mapper -> mapper.getFactory()
+            .configure(JsonWriteFeature.COMBINE_UNICODE_SURROGATES_IN_UTF8.mappedFeature(), true));
     }
 
     static void writeJsNumber(double v, JsonGenerator gen) throws IOException {

@@ -75,6 +75,18 @@ class WebPlumbingTest extends PostgresTestBase {
     }
 
     @Test
+    void emojiAreWrittenAsRawUtf8LikeNode() throws Exception {
+        // JSON.stringify sends 👤 as its 4 UTF-8 bytes; Jackson 2.17 escaped it as a surrogate pair.
+        byte[] reply = mvc.perform(post("/api/test/echo").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"a\":\"👤\"}".getBytes(java.nio.charset.StandardCharsets.UTF_8)))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsByteArray();
+        String raw = new String(reply, java.nio.charset.StandardCharsets.UTF_8);
+        org.junit.jupiter.api.Assertions.assertTrue(raw.contains("👤"), raw);
+        org.junit.jupiter.api.Assertions.assertFalse(raw.contains("\\" + "uD83D"), raw);
+    }
+
+    @Test
     void loginRequiredWithoutTokenIs401TokenMissing() throws Exception {
         mvc.perform(get("/api/test/me"))
             .andExpect(status().isUnauthorized())
