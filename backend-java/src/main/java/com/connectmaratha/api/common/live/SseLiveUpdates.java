@@ -31,12 +31,12 @@ public class SseLiveUpdates implements LiveUpdates {
 
     static final int MAX_PER_IP = 5;
     static final int MAX_TOTAL = 500;
-    static final long TIMEOUT_MS = 30 * 60 * 1000L;
     static final long RETRY_MS = 5000;
 
     private record Stream(String channel, String ip, SseEmitter emitter) {}
 
     private final ObjectMapper json;
+    private final long timeoutMs;
     private final Set<Stream> streams = ConcurrentHashMap.newKeySet();
     private final ScheduledExecutorService sender = Executors.newSingleThreadScheduledExecutor(task -> {
         Thread t = new Thread(task, "live-updates");
@@ -44,9 +44,14 @@ public class SseLiveUpdates implements LiveUpdates {
         return t;
     });
 
-    /** heartbeatSeconds: how often an empty comment is sent so idle connections stay open (Cloudflare closes quiet ones). */
-    public SseLiveUpdates(ObjectMapper json, @Value("${app.live.heartbeat-seconds:25}") long heartbeatSeconds) {
+    /**
+     * heartbeatSeconds: how often an empty comment is sent so idle connections stay open (Cloudflare closes quiet ones).
+     * timeoutMs: how long one stream stays open (30 minutes); the browser then reconnects by itself.
+     */
+    public SseLiveUpdates(ObjectMapper json, @Value("${app.live.heartbeat-seconds:25}") long heartbeatSeconds,
+                          @Value("${app.live.timeout-ms:1800000}") long timeoutMs) {
         this.json = json;
+        this.timeoutMs = timeoutMs;
         sender.scheduleAtFixedRate(this::heartbeat, heartbeatSeconds, heartbeatSeconds, TimeUnit.SECONDS);
     }
 
@@ -58,10 +63,14 @@ public class SseLiveUpdates implements LiveUpdates {
             refuse(res);
             return null;
         }
-        SseEmitter emitter = new SseEmitter(TIMEOUT_MS);
+        SseEmitter emitter = new SseEmitter(timeoutMs);
         Stream stream = new Stream(channel, ip, emitter);
         emitter.onCompletion(() -> streams.remove(stream));
-        emitter.onTimeout(() -> streams.remove(stream));
+        // End it normally: an uncompleted timeout reaches the error handler as a server error.
+        emitter.onTimeout(() -> {
+            streams.remove(stream);
+            emitter.complete();
+        });
         emitter.onError(e -> streams.remove(stream));
         // Sent before the stream is shared with the sender thread; Spring holds it until the response starts.
         emitter.send(SseEmitter.event().reconnectTime(RETRY_MS).name("connected").data("{}"));
