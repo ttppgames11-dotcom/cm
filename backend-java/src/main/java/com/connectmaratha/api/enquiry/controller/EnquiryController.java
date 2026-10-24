@@ -9,7 +9,9 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,5 +41,25 @@ public class EnquiryController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> create(CurrentUser user, HttpServletRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(enquiries.create(user, bodies.read(req)));
+    }
+
+    /** 201 for a new quote, 200 when the member's earlier quote was updated. */
+    @RequireAuth
+    @PostMapping("/{id}/quote")
+    public ResponseEntity<Map<String, Object>> quote(CurrentUser user, @PathVariable String id, HttpServletRequest req) {
+        EnquiryService.QuoteResult result = enquiries.quote(user, id, bodies.read(req));
+        return ResponseEntity.status(result.created() ? HttpStatus.CREATED : HttpStatus.OK).body(result.reply());
+    }
+
+    @RequireAuth
+    @GetMapping("/mine")
+    public Map<String, Object> mine(CurrentUser user) {
+        return enquiries.mine(user);
+    }
+
+    @RequireAuth
+    @PutMapping("/{id}/status")
+    public Map<String, Object> status(CurrentUser user, @PathVariable String id, HttpServletRequest req) {
+        return enquiries.setStatus(user, id, bodies.read(req));
     }
 }

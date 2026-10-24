@@ -19,6 +19,16 @@ public final class EnquirySchemas {
         "clientName", Rule.string().max(100),
         "phone", Rule.string().format("phone"));
 
+    public static final Map<String, Rule> QUOTE = ordered(
+        "businessName", Rule.string().required().min(2).max(150),
+        "phone", Rule.string().required().format("phone"),
+        "ownerName", Rule.string().max(100),
+        "quoteAmount", Rule.string().max(50),
+        "proposalNotes", Rule.string().max(2000));
+
+    public static final Map<String, Rule> STATUS = ordered(
+        "status", Rule.string().required().oneOf("open", "closed"));
+
     /** A copy in which a text phone has its spaces and dashes removed ("+91 98221-44550" → "+919822144550"). */
     public static Map<String, Object> normalizePhone(Map<String, Object> body) {
         Map<String, Object> copy = new LinkedHashMap<>(body);

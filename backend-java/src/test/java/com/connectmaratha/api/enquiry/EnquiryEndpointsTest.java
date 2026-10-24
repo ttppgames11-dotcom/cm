@@ -4,6 +4,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -95,6 +96,47 @@ class EnquiryEndpointsTest extends PostgresTestBase {
 
     String raw(ResultActions result) throws Exception {
         return result.andReturn().getResponse().getContentAsString(UTF_8);
+    }
+
+    /** Posts a valid requirement and returns its id. */
+    String posted(String token) throws Exception {
+        return json.readTree(raw(postEnquiry(token, valid()).andExpect(status().isCreated()))).at("/enquiry/id").asText();
+    }
+
+    static Map<String, Object> validQuote() {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("businessName", "पाटील इंटेरियर्स");
+        body.put("ownerName", "Raj Patil");
+        body.put("phone", "9890011122");
+        body.put("quoteAmount", "₹ 1,80,000");
+        body.put("proposalNotes", "१५ दिवसांत काम");
+        return body;
+    }
+
+    static Map<String, Object> quoteWith(String key, Object value) {
+        Map<String, Object> body = validQuote();
+        body.put(key, value);
+        return body;
+    }
+
+    ResultActions quote(String token, String enquiryId, Map<String, Object> body) throws Exception {
+        return mvc.perform(post("/api/enquiries/" + enquiryId + "/quote").header("Authorization", token)
+            .contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsBytes(body)));
+    }
+
+    ResultActions setStatus(String token, String enquiryId, String value) throws Exception {
+        return mvc.perform(put("/api/enquiries/" + enquiryId + "/status").header("Authorization", token)
+            .contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsBytes(Map.of("status", value))));
+    }
+
+    ResultActions mine(String token) throws Exception {
+        return mvc.perform(get("/api/enquiries/mine").header("Authorization", token));
+    }
+
+    ResultActions summary(String token) throws Exception {
+        MockHttpServletRequestBuilder req = get("/api/admin/enquiries-summary");
+        if (token != null) req.header("Authorization", token);
+        return mvc.perform(req);
     }
 
     // ------------------------------------------------------------------ posting
@@ -209,5 +251,128 @@ class EnquiryEndpointsTest extends PostgresTestBase {
                 "open", null, null, null, 0, false));
         }
         getList(null).andExpect(jsonPath("$.count").value(100));
+    }
+
+    // ------------------------------------------------------------------ quotes
+
+    @Test
+    void quoteRules() throws Exception {
+        member("M7001", "Test Poster", "9822144550");
+        String poster = token("M7001", "member");
+        String business = token("M7002", "member");
+        String id = posted(poster);
+
+        quote(poster, id, validQuote()).andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value("OWN_ENQUIRY"));
+        quote(business, "ENQ-missing", validQuote()).andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value("ENQUIRY_NOT_FOUND"));
+        Map<String, Object> noName = validQuote();
+        noName.remove("businessName");
+        quote(business, id, noName).andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+
+        quote(business, id, validQuote())
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.updated").value(false))
+            .andExpect(jsonPath("$.quote.businessName").value("पाटील इंटेरियर्स"));
+        quote(business, id, quoteWith("quoteAmount", "₹ 1,70,000"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.updated").value(true))
+            .andExpect(jsonPath("$.quote.quoteAmount").value("₹ 1,70,000"));
+        getList(null).andExpect(jsonPath("$.enquiries[0].quotesCount").value(1));
+    }
+
+    @Test
+    void quoteOnClosedRequirementIsRefusedAndNothingSaved() throws Exception {
+        member("M7001", "Test Poster", "9822144550");
+        String id = posted(token("M7001", "member"));
+        setStatus(token("M7001", "member"), id, "closed").andExpect(status().isOk());
+        quote(token("M7002", "member"), id, validQuote())
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.code").value("ENQUIRY_CLOSED"));
+        getList(null).andExpect(jsonPath("$.enquiries[0].quotesCount").value(0));
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM enquiry_quotes", Integer.class)).isZero();
+    }
+
+    @Test
+    void quotePhoneWithSpacesIsAccepted() throws Exception {
+        member("M7001", "Test Poster", "9822144550");
+        String id = posted(token("M7001", "member"));
+        quote(token("M7002", "member"), id, quoteWith("phone", "098221 44550")).andExpect(status().isCreated());
+        assertThat(jdbc.queryForObject("SELECT phone FROM enquiry_quotes WHERE member_id = 'M7002'", String.class))
+            .isEqualTo("09822144550");
+    }
+
+    @Test
+    void listShowsQuotedByMe() throws Exception {
+        member("M7001", "Test Poster", "9822144550");
+        String id = posted(token("M7001", "member"));
+        quote(token("M7002", "member"), id, validQuote()).andExpect(status().isCreated());
+        getList(token("M7002", "member")).andExpect(jsonPath("$.enquiries[0].quotedByMe").value(true));
+        getList(token("M7003", "member")).andExpect(jsonPath("$.enquiries[0].quotedByMe").value(false));
+    }
+
+    @Test
+    void mineShowsQuotesWithPhonesOnlyToTheOwner() throws Exception {
+        member("M7001", "Test Poster", "9822144550");
+        String poster = token("M7001", "member");
+        String id = posted(poster);
+        quote(token("M7002", "member"), id, validQuote()).andExpect(status().isCreated());
+
+        mine(poster)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.count").value(1))
+            .andExpect(jsonPath("$.enquiries[0].isMine").value(true))
+            .andExpect(jsonPath("$.enquiries[0].phone").value("9822144550"))
+            .andExpect(jsonPath("$.enquiries[0].quotes[0].businessName").value("पाटील इंटेरियर्स"))
+            .andExpect(jsonPath("$.enquiries[0].quotes[0].phone").value("9890011122"))
+            .andExpect(jsonPath("$.enquiries[0].quotes[0].quoteAmount").value("₹ 1,80,000"));
+        mine(token("M7002", "member")).andExpect(jsonPath("$.count").value(0));
+        assertThat(raw(getList(null))).doesNotContain("9890011122").doesNotContain("1,80,000");
+    }
+
+    @Test
+    void onlyPosterOrAdminChangesStatus() throws Exception {
+        member("M7001", "Test Poster", "9822144550");
+        String poster = token("M7001", "member");
+        String id = posted(poster);
+        setStatus(token("M7002", "member"), id, "closed").andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.code").value("NOT_OWNER"));
+        setStatus(poster, id, "closed").andExpect(status().isOk()).andExpect(jsonPath("$.enquiry.status").value("closed"));
+        setStatus(poster, id, "closed").andExpect(status().isOk());
+        setStatus(token("M7009", "admin"), id, "open").andExpect(status().isOk())
+            .andExpect(jsonPath("$.enquiry.status").value("open"));
+        setStatus(poster, id, "done").andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+        setStatus(poster, "ENQ-missing", "closed").andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value("ENQUIRY_NOT_FOUND"));
+    }
+
+    @Test
+    void adminSummaryIsAdminOnlyAndIncludesPhones() throws Exception {
+        member("M7001", "Test Poster", "9822144550");
+        String id = posted(token("M7001", "member"));
+        quote(token("M7002", "member"), id, validQuote()).andExpect(status().isCreated());
+        summary(null).andExpect(status().isUnauthorized());
+        summary(token("M7002", "member")).andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value("ADMIN_ONLY"));
+        summary(token("M7009", "admin"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.count").value(1))
+            .andExpect(jsonPath("$.enquiries[0].phone").value("9822144550"))
+            .andExpect(jsonPath("$.enquiries[0].memberId").value("M7001"))
+            .andExpect(jsonPath("$.enquiries[0].quotesCount").value(1))
+            .andExpect(jsonPath("$.enquiries[0].isMine").doesNotExist());
+    }
+
+    @Test
+    void thirtyFirstQuoteInAnHourIsRefused() throws Exception {
+        for (int i = 0; i < 31; i++) {
+            repo.insert(new EnquiryRow("ENQ-Q" + i, "M7001", "T " + i, null, "IT", null, "Pune", null, null, null,
+                "open", null, null, null, 0, false));
+        }
+        String business = token("M7002", "member");
+        for (int i = 0; i < 30; i++) quote(business, "ENQ-Q" + i, validQuote()).andExpect(status().isCreated());
+        quote(business, "ENQ-Q30", validQuote())
+            .andExpect(status().isTooManyRequests())
+            .andExpect(jsonPath("$.code").value("RATE_LIMIT_EXCEEDED"));
     }
 }
