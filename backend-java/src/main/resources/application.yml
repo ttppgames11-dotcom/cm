@@ -10,6 +10,9 @@ app:
   google-client-ids: ${GOOGLE_CLIENT_IDS:}
   # Node: ALLOW_DEV_LOGIN_FALLBACK — lets "password123" log in, never in production.
   allow-dev-login: ${ALLOW_DEV_LOGIN_FALLBACK:false}
+  # Live updates (server-sent events): seconds between heartbeats that keep idle connections open through Cloudflare.
+  live:
+    heartbeat-seconds: ${LIVE_HEARTBEAT_SECONDS:25}
   # Same names and defaults as the Node backend's rate limiter.
   rate-limit:
     public-window-ms: ${RATE_LIMIT_PUBLIC_WINDOW_MS:900000}
