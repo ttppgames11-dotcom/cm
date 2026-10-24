@@ -41,6 +41,14 @@ accounts, passwords and tokens made by one server work on the other.
 - OTPs come from SecureRandom, not Math.random; a reset code is never logged in production.
 - Registration retries a taken member id instead of failing with a 500.
 - Registration and the referral count update in one transaction.
+- The older community forms (blood donors, matrimony, grievances, volunteers, women's help, loans)
+  save only the fields the website forms send, with type and size limits. Node saved any field, so a
+  sender could set id, verified or createdAt. Doctors and blood requests were already strict.
+- Grievances, women's help requests and loan applications are listed to admins only (401 without
+  login, 403 for members). Node listed them publicly; no public page uses these lists.
+- The public matrimony list leaves out phone numbers (the website does not show them).
+- At most 20 form submissions per IP in 15 minutes (429 after that).
+- Tested in PortalSecurityTest instead of the Node comparison.
 
 ## Known gaps found while porting
 

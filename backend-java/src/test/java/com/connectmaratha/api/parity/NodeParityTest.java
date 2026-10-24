@@ -1147,33 +1147,16 @@ class NodeParityTest extends PostgresTestBase {
             extra.put("verified", true);
             r.rec("blood request unknown field", s.post("/api/blood/requests", extra));
 
-            // free-form lists: whatever is sent is kept, and wins over the defaults
-            r.rec("donor", s.post("/api/blood/donors", Map.of("name", z + " Donor", "bloodGroup", "A+", "phone", "9876543212")));
-            r.rec("donor overrides", s.post("/api/blood/donors", Map.of("id", z + "-DON", "totalDonations", 5, "lastDonated", "2026-01-01")));
-            r.rec("donor duplicate id", s.post("/api/blood/donors", Map.of("id", z + "-DON")));
-            r.rec("donor empty", s.post("/api/blood/donors", Map.of()));
-            r.rec("matrimony groom", s.post("/api/matrimony", Map.of("name", z + " Vara", "gender", "वर (Groom)")));
-            r.rec("matrimony bride", s.post("/api/matrimony", Map.of("name", z + " Vadhu", "gender", "वधू", "age", 25.0)));
-            r.rec("matrimony no gender", s.post("/api/matrimony", Map.of("name", "X")));
-            r.rec("matrimony gender list", s.post("/api/matrimony", Map.of("gender", List.of("वर"))));
-            r.rec("matrimony gender number", s.post("/api/matrimony", Map.of("gender", 5)));
-            r.rec("matrimony gender zero", s.post("/api/matrimony", Map.of("gender", 0)));
-            r.rec("matrimony overrides", s.post("/api/matrimony", Map.of("id", z + "-M", "verified", false, "photo", "x", "caste", "other")));
-            r.rec("grievance", s.post("/api/political/grievances", Map.of("title", z + " Road", "details", "Potholes")));
-            r.rec("grievance overrides createdAt", s.post("/api/political/grievances", Map.of("createdAt", "yesterday")));
-            r.rec("volunteer", s.post("/api/social/volunteers", Map.of("name", z + " Vol", "skills", List.of("a", "b"))));
-            r.rec("women help", s.post("/api/women/help", Map.of("name", z + " Help", "need", "mentor")));
-            r.rec("loan", s.post("/api/bank/loans", Map.of("name", z + " Loan", "amount", 100000)));
+            // The free-form lists (donors, matrimony, grievances, volunteers, women, loans) are
+            // deliberately stricter in Java: see PortalSecurityTest.
 
-            for (String path : List.of("/api/doctors", "/api/blood/requests", "/api/blood/donors", "/api/matrimony",
-                    "/api/political/grievances", "/api/social/volunteers", "/api/women/help", "/api/bank/loans")) {
+            for (String path : List.of("/api/doctors", "/api/blood/requests", "/api/blood/donors", "/api/social/volunteers")) {
                 Resp list = s.get(path, null);
                 assertThat(list.status()).as(s.name + " " + path).isEqualTo(200);
                 assertThat(list.json().isArray()).as(s.name + " " + path + " is a plain list").isTrue();
             }
             assertThat(s.get("/api/doctors", null).raw()).as(s.name + " doctor listed").contains(z + " Dr Patil");
             assertThat(s.get("/api/blood/requests", null).raw()).as(s.name + " blood request listed").contains(z + " Patient");
-            assertThat(s.get("/api/matrimony", null).raw()).as(s.name + " profile listed").contains(z + " Vara");
         });
 
         compare("ai assistant", (s, r) -> {
