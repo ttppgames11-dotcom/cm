@@ -148,8 +148,8 @@ class EnquiryEndpointsTest extends PostgresTestBase {
 
     @Test
     void postValidatesFields() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        String t = token("M7001", "member");
+        member("M9401", "Test Poster", "9822144550");
+        String t = token("M9401", "member");
         Map<String, Object> noTitle = valid();
         noTitle.remove("title");
         postEnquiry(t, noTitle).andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
@@ -163,8 +163,8 @@ class EnquiryEndpointsTest extends PostgresTestBase {
 
     @Test
     void postSavesWithProfileDefaultsAndNormalisedPhone() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        String t = token("M7001", "member");
+        member("M9401", "Test Poster", "9822144550");
+        String t = token("M9401", "member");
         postEnquiry(t, valid())
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.success").value(true))
@@ -177,7 +177,7 @@ class EnquiryEndpointsTest extends PostgresTestBase {
             .andExpect(jsonPath("$.enquiry.quotesCount").value(0))
             .andExpect(jsonPath("$.enquiry.phone").doesNotExist())
             .andExpect(jsonPath("$.enquiry.memberId").doesNotExist());
-        assertThat(jdbc.queryForObject("SELECT phone FROM enquiries WHERE member_id = 'M7001'", String.class)).isEqualTo("9822144550");
+        assertThat(jdbc.queryForObject("SELECT phone FROM enquiries WHERE member_id = 'M9401'", String.class)).isEqualTo("9822144550");
 
         Map<String, Object> second = with("phone", "+91 98221-44551");
         second.put("title", "Second requirement");
@@ -190,18 +190,18 @@ class EnquiryEndpointsTest extends PostgresTestBase {
 
     @Test
     void publicListNeverShowsPhones() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        postEnquiry(token("M7001", "member"), valid()).andExpect(status().isCreated());
+        member("M9401", "Test Poster", "9822144550");
+        postEnquiry(token("M9401", "member"), valid()).andExpect(status().isCreated());
         String body = raw(getList(null).andExpect(status().isOk()));
-        assertThat(body).contains(TITLE).doesNotContain("9822144550").doesNotContain("M7001");
+        assertThat(body).contains(TITLE).doesNotContain("9822144550").doesNotContain("M9401");
     }
 
     @Test
     void listFlagsMineForTheViewer() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        postEnquiry(token("M7001", "member"), valid()).andExpect(status().isCreated());
-        getList(token("M7001", "member")).andExpect(jsonPath("$.enquiries[0].isMine").value(true));
-        getList(token("M7002", "member")).andExpect(jsonPath("$.enquiries[0].isMine").value(false));
+        member("M9401", "Test Poster", "9822144550");
+        postEnquiry(token("M9401", "member"), valid()).andExpect(status().isCreated());
+        getList(token("M9401", "member")).andExpect(jsonPath("$.enquiries[0].isMine").value(true));
+        getList(token("M9402", "member")).andExpect(jsonPath("$.enquiries[0].isMine").value(false));
         getList(null).andExpect(jsonPath("$.success").value(true))
             .andExpect(jsonPath("$.count").value(1))
             .andExpect(jsonPath("$.enquiries[0].isMine").value(false))
@@ -210,8 +210,8 @@ class EnquiryEndpointsTest extends PostgresTestBase {
 
     @Test
     void brokenOrExpiredTokenStillGetsTheList() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        postEnquiry(token("M7001", "member"), valid()).andExpect(status().isCreated());
+        member("M9401", "Test Poster", "9822144550");
+        postEnquiry(token("M9401", "member"), valid()).andExpect(status().isCreated());
         getList("Bearer not.a.token")
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.count").value(1))
@@ -220,8 +220,8 @@ class EnquiryEndpointsTest extends PostgresTestBase {
 
     @Test
     void allFilterValuesMeanEverything() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        String t = token("M7001", "member");
+        member("M9401", "Test Poster", "9822144550");
+        String t = token("M9401", "member");
         postEnquiry(t, valid()).andExpect(status().isCreated());
         Map<String, Object> nashik = with("district", "नाशिक");
         nashik.put("title", "Nashik requirement");
@@ -235,8 +235,8 @@ class EnquiryEndpointsTest extends PostgresTestBase {
 
     @Test
     void eleventhPostInADayIsRefused() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        String t = token("M7001", "member");
+        member("M9401", "Test Poster", "9822144550");
+        String t = token("M9401", "member");
         for (int i = 0; i < 3; i++) postEnquiry(t, with("title", "")).andExpect(status().isBadRequest()); // not counted
         for (int i = 0; i < 10; i++) postEnquiry(t, with("title", "Requirement " + i)).andExpect(status().isCreated());
         postEnquiry(t, with("title", "One too many"))
@@ -247,7 +247,7 @@ class EnquiryEndpointsTest extends PostgresTestBase {
     @Test
     void listIsCappedAt100() throws Exception {
         for (int i = 0; i < 101; i++) {
-            repo.insert(new EnquiryRow("ENQ-CAP" + i, "M7001", "T " + i, null, "IT", null, "Pune", null, null, null,
+            repo.insert(new EnquiryRow("ENQ-CAP" + i, "M9401", "T " + i, null, "IT", null, "Pune", null, null, null,
                 "open", null, null, null, 0, false));
         }
         getList(null).andExpect(jsonPath("$.count").value(100));
@@ -257,9 +257,9 @@ class EnquiryEndpointsTest extends PostgresTestBase {
 
     @Test
     void quoteRules() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        String poster = token("M7001", "member");
-        String business = token("M7002", "member");
+        member("M9401", "Test Poster", "9822144550");
+        String poster = token("M9401", "member");
+        String business = token("M9402", "member");
         String id = posted(poster);
 
         quote(poster, id, validQuote()).andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value("OWN_ENQUIRY"));
@@ -283,10 +283,10 @@ class EnquiryEndpointsTest extends PostgresTestBase {
 
     @Test
     void quoteOnClosedRequirementIsRefusedAndNothingSaved() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        String id = posted(token("M7001", "member"));
-        setStatus(token("M7001", "member"), id, "closed").andExpect(status().isOk());
-        quote(token("M7002", "member"), id, validQuote())
+        member("M9401", "Test Poster", "9822144550");
+        String id = posted(token("M9401", "member"));
+        setStatus(token("M9401", "member"), id, "closed").andExpect(status().isOk());
+        quote(token("M9402", "member"), id, validQuote())
             .andExpect(status().isConflict())
             .andExpect(jsonPath("$.code").value("ENQUIRY_CLOSED"));
         getList(null).andExpect(jsonPath("$.enquiries[0].quotesCount").value(0));
@@ -295,28 +295,28 @@ class EnquiryEndpointsTest extends PostgresTestBase {
 
     @Test
     void quotePhoneWithSpacesIsAccepted() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        String id = posted(token("M7001", "member"));
-        quote(token("M7002", "member"), id, quoteWith("phone", "098221 44550")).andExpect(status().isCreated());
-        assertThat(jdbc.queryForObject("SELECT phone FROM enquiry_quotes WHERE member_id = 'M7002'", String.class))
+        member("M9401", "Test Poster", "9822144550");
+        String id = posted(token("M9401", "member"));
+        quote(token("M9402", "member"), id, quoteWith("phone", "098221 44550")).andExpect(status().isCreated());
+        assertThat(jdbc.queryForObject("SELECT phone FROM enquiry_quotes WHERE member_id = 'M9402'", String.class))
             .isEqualTo("09822144550");
     }
 
     @Test
     void listShowsQuotedByMe() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        String id = posted(token("M7001", "member"));
-        quote(token("M7002", "member"), id, validQuote()).andExpect(status().isCreated());
-        getList(token("M7002", "member")).andExpect(jsonPath("$.enquiries[0].quotedByMe").value(true));
-        getList(token("M7003", "member")).andExpect(jsonPath("$.enquiries[0].quotedByMe").value(false));
+        member("M9401", "Test Poster", "9822144550");
+        String id = posted(token("M9401", "member"));
+        quote(token("M9402", "member"), id, validQuote()).andExpect(status().isCreated());
+        getList(token("M9402", "member")).andExpect(jsonPath("$.enquiries[0].quotedByMe").value(true));
+        getList(token("M9403", "member")).andExpect(jsonPath("$.enquiries[0].quotedByMe").value(false));
     }
 
     @Test
     void mineShowsQuotesWithPhonesOnlyToTheOwner() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        String poster = token("M7001", "member");
+        member("M9401", "Test Poster", "9822144550");
+        String poster = token("M9401", "member");
         String id = posted(poster);
-        quote(token("M7002", "member"), id, validQuote()).andExpect(status().isCreated());
+        quote(token("M9402", "member"), id, validQuote()).andExpect(status().isCreated());
 
         mine(poster)
             .andExpect(status().isOk())
@@ -326,20 +326,20 @@ class EnquiryEndpointsTest extends PostgresTestBase {
             .andExpect(jsonPath("$.enquiries[0].quotes[0].businessName").value("पाटील इंटेरियर्स"))
             .andExpect(jsonPath("$.enquiries[0].quotes[0].phone").value("9890011122"))
             .andExpect(jsonPath("$.enquiries[0].quotes[0].quoteAmount").value("₹ 1,80,000"));
-        mine(token("M7002", "member")).andExpect(jsonPath("$.count").value(0));
+        mine(token("M9402", "member")).andExpect(jsonPath("$.count").value(0));
         assertThat(raw(getList(null))).doesNotContain("9890011122").doesNotContain("1,80,000");
     }
 
     @Test
     void onlyPosterOrAdminChangesStatus() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        String poster = token("M7001", "member");
+        member("M9401", "Test Poster", "9822144550");
+        String poster = token("M9401", "member");
         String id = posted(poster);
-        setStatus(token("M7002", "member"), id, "closed").andExpect(status().isForbidden())
+        setStatus(token("M9402", "member"), id, "closed").andExpect(status().isForbidden())
             .andExpect(jsonPath("$.code").value("NOT_OWNER"));
         setStatus(poster, id, "closed").andExpect(status().isOk()).andExpect(jsonPath("$.enquiry.status").value("closed"));
         setStatus(poster, id, "closed").andExpect(status().isOk());
-        setStatus(token("M7009", "admin"), id, "open").andExpect(status().isOk())
+        setStatus(token("M9409", "admin"), id, "open").andExpect(status().isOk())
             .andExpect(jsonPath("$.enquiry.status").value("open"));
         setStatus(poster, id, "done").andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
         setStatus(poster, "ENQ-missing", "closed").andExpect(status().isNotFound())
@@ -348,17 +348,17 @@ class EnquiryEndpointsTest extends PostgresTestBase {
 
     @Test
     void adminSummaryIsAdminOnlyAndIncludesPhones() throws Exception {
-        member("M7001", "Test Poster", "9822144550");
-        String id = posted(token("M7001", "member"));
-        quote(token("M7002", "member"), id, validQuote()).andExpect(status().isCreated());
+        member("M9401", "Test Poster", "9822144550");
+        String id = posted(token("M9401", "member"));
+        quote(token("M9402", "member"), id, validQuote()).andExpect(status().isCreated());
         summary(null).andExpect(status().isUnauthorized());
-        summary(token("M7002", "member")).andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value("ADMIN_ONLY"));
-        summary(token("M7009", "admin"))
+        summary(token("M9402", "member")).andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value("ADMIN_ONLY"));
+        summary(token("M9409", "admin"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.success").value(true))
             .andExpect(jsonPath("$.count").value(1))
             .andExpect(jsonPath("$.enquiries[0].phone").value("9822144550"))
-            .andExpect(jsonPath("$.enquiries[0].memberId").value("M7001"))
+            .andExpect(jsonPath("$.enquiries[0].memberId").value("M9401"))
             .andExpect(jsonPath("$.enquiries[0].quotesCount").value(1))
             .andExpect(jsonPath("$.enquiries[0].isMine").doesNotExist());
     }
@@ -366,10 +366,10 @@ class EnquiryEndpointsTest extends PostgresTestBase {
     @Test
     void thirtyFirstQuoteInAnHourIsRefused() throws Exception {
         for (int i = 0; i < 31; i++) {
-            repo.insert(new EnquiryRow("ENQ-Q" + i, "M7001", "T " + i, null, "IT", null, "Pune", null, null, null,
+            repo.insert(new EnquiryRow("ENQ-Q" + i, "M9401", "T " + i, null, "IT", null, "Pune", null, null, null,
                 "open", null, null, null, 0, false));
         }
-        String business = token("M7002", "member");
+        String business = token("M9402", "member");
         for (int i = 0; i < 30; i++) quote(business, "ENQ-Q" + i, validQuote()).andExpect(status().isCreated());
         quote(business, "ENQ-Q30", validQuote())
             .andExpect(status().isTooManyRequests())

@@ -50,8 +50,8 @@ class EnquiryStreamTest extends PostgresTestBase {
     void fresh() {
         tables.ensureEnquiryTables();
         jdbc.update("DELETE FROM enquiries");
-        jdbc.update("INSERT INTO members (id, name, phone) VALUES ('M7101', 'Live Poster', '9822144599') ON CONFLICT (id) DO NOTHING");
-        jdbc.update("INSERT INTO members (id, name, phone) VALUES ('M7102', 'Live Business', '9822144598') ON CONFLICT (id) DO NOTHING");
+        jdbc.update("INSERT INTO members (id, name, phone) VALUES ('M9411', 'Live Poster', '9822144599') ON CONFLICT (id) DO NOTHING");
+        jdbc.update("INSERT INTO members (id, name, phone) VALUES ('M9412', 'Live Business', '9822144598') ON CONFLICT (id) DO NOTHING");
     }
 
     @AfterEach
@@ -90,9 +90,9 @@ class EnquiryStreamTest extends PostgresTestBase {
         return body;
     }
 
-    /** Posts a requirement as M7101 and returns its id. */
+    /** Posts a requirement as M9411 and returns its id. */
     private String post() throws Exception {
-        HttpResponse<String> res = send("POST", "/api/enquiries", token("M7101"), requirement());
+        HttpResponse<String> res = send("POST", "/api/enquiries", token("M9411"), requirement());
         assertThat(res.statusCode()).isEqualTo(201);
         return json.readTree(res.body()).at("/enquiry/id").asText();
     }
@@ -105,7 +105,7 @@ class EnquiryStreamTest extends PostgresTestBase {
         c.awaitLine(l -> l.equals("event:enquiry.created"), WAIT);
         String data = c.awaitLine(l -> l.startsWith("data:"), WAIT);
         assertThat(data).contains("\"title\":\"Live requirement\"").contains("\"isMine\":false")
-            .doesNotContain("9822144599").doesNotContain("M7101");
+            .doesNotContain("9822144599").doesNotContain("M9411");
     }
 
     @Test
@@ -114,7 +114,7 @@ class EnquiryStreamTest extends PostgresTestBase {
         c.awaitLine(l -> l.equals("event:connected"), WAIT);
         String id = post();
         Map<String, Object> quote = Map.of("businessName", "Live Biz", "phone", "9890011122", "quoteAmount", "5000");
-        assertThat(send("POST", "/api/enquiries/" + id + "/quote", token("M7102"), quote).statusCode()).isEqualTo(201);
+        assertThat(send("POST", "/api/enquiries/" + id + "/quote", token("M9412"), quote).statusCode()).isEqualTo(201);
         c.awaitLine(l -> l.equals("event:enquiry.updated"), WAIT);
         String data = c.awaitLine(l -> l.startsWith("data:"), WAIT);
         assertThat(data).contains("\"id\":\"" + id + "\"").contains("\"quotesCount\":1").contains("\"status\":\"open\"")
@@ -126,7 +126,7 @@ class EnquiryStreamTest extends PostgresTestBase {
         SseTestClient c = stream();
         c.awaitLine(l -> l.equals("event:connected"), WAIT);
         String id = post();
-        assertThat(send("PUT", "/api/enquiries/" + id + "/status", token("M7101"), Map.of("status", "closed")).statusCode())
+        assertThat(send("PUT", "/api/enquiries/" + id + "/status", token("M9411"), Map.of("status", "closed")).statusCode())
             .isEqualTo(200);
         c.awaitLine(l -> l.equals("event:enquiry.updated"), WAIT);
         assertThat(c.awaitLine(l -> l.startsWith("data:"), WAIT)).contains("\"status\":\"closed\"");
@@ -138,7 +138,7 @@ class EnquiryStreamTest extends PostgresTestBase {
         c.awaitLine(l -> l.equals("event:connected"), WAIT);
         Map<String, Object> noTitle = requirement();
         noTitle.remove("title");
-        assertThat(send("POST", "/api/enquiries", token("M7101"), noTitle).statusCode()).isEqualTo(400);
+        assertThat(send("POST", "/api/enquiries", token("M9411"), noTitle).statusCode()).isEqualTo(400);
         assertThat(c.noLineWithin(l -> l.equals("event:enquiry.created"), Duration.ofSeconds(2))).isTrue();
     }
 
