@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  STATUS_LABELS, statusLabel, matchesFilters, listParams, addEnquiry, updateEnquiry, concernsMe, isNewQuoteForMe
+  STATUS_LABELS, statusLabel, matchesFilters, listParams, FILTER_DISTRICTS, FORM_DISTRICTS, OTHER_DISTRICT, addEnquiry, updateEnquiry, concernsMe, isNewQuoteForMe
 } from './enquiryList.js';
 
 test('labels', () => {
@@ -65,4 +65,15 @@ test('list params leave out the "all" filters', () => {
   assert.deepEqual(listParams({ district: 'पुणे', category: 'सर्व' }), { district: 'पुणे' });
   assert.deepEqual(listParams({ district: '', category: 'IT' }), { category: 'IT' });
   assert.deepEqual(listParams({}), {});
+});
+
+test('the post form offers the filter districts, so every post can be found under its own district button', () => {
+  assert.deepEqual(FILTER_DISTRICTS, ['सर्व', ...FORM_DISTRICTS]);
+  assert.ok(FORM_DISTRICTS.includes('पुणे'));
+  assert.ok(FORM_DISTRICTS.includes(OTHER_DISTRICT));
+  for (const district of FORM_DISTRICTS) {
+    const card = { id: 'E1', district, category: 'IT' };
+    const buttons = FILTER_DISTRICTS.filter((f) => matchesFilters(card, { district: f }));
+    assert.deepEqual(buttons, ['सर्व', district]);
+  }
 });

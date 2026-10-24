@@ -4,7 +4,9 @@ import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useEnquiryStream } from '../../hooks/useEnquiryStream';
-import { statusLabel, listParams, addEnquiry, updateEnquiry, concernsMe, isNewQuoteForMe } from './enquiryList';
+import {
+  statusLabel, listParams, addEnquiry, updateEnquiry, concernsMe, isNewQuoteForMe, FILTER_DISTRICTS, FORM_DISTRICTS
+} from './enquiryList';
 
 export default function BusinessLeadsPortalPage() {
   const { user } = useAuth();
@@ -40,7 +42,7 @@ export default function BusinessLeadsPortalPage() {
     clientName: user?.name || '',
     phone: user?.phone || '',
     category: 'इंटेरियर व बांधकाम',
-    city: 'पुणे',
+    city: '',
     district: 'पुणे',
     budget: '',
     description: ''
@@ -153,7 +155,7 @@ export default function BusinessLeadsPortalPage() {
         clientName: user?.name || '',
         phone: user?.phone || '',
         category: 'इंटेरियर व बांधकाम',
-        city: 'पुणे',
+        city: '',
         district: 'पुणे',
         budget: '',
         description: ''
@@ -352,7 +354,7 @@ export default function BusinessLeadsPortalPage() {
           <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#78350F', alignSelf: 'center', marginRight: '6px' }}>
             📍 जिल्हा निवडा:
           </span>
-          {['सर्व', 'पुणे', 'मुंबई', 'नाशिक', 'कोल्हापूर', 'छत्रपती संभाजीनगर', 'सातारा', 'नागपूर'].map((d) => (
+          {FILTER_DISTRICTS.map((d) => (
             <button
               key={d}
               onClick={() => setSelectedDistrict(d)}
@@ -841,15 +843,24 @@ export default function BusinessLeadsPortalPage() {
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
-                      जिल्हा / शहर *
+                      जिल्हा *
                     </label>
+                    {/* The same list as the district filter buttons, so the requirement shows under its district */}
+                    <select
+                      required
+                      value={newEnquiryForm.district}
+                      onChange={(e) => setNewEnquiryForm({ ...newEnquiryForm, district: e.target.value })}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.88rem' }}
+                    >
+                      {FORM_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
+                    </select>
                     <input
                       type="text"
-                      required
+                      maxLength={100}
                       value={newEnquiryForm.city}
-                      onChange={(e) => setNewEnquiryForm({ ...newEnquiryForm, city: e.target.value, district: e.target.value })}
-                      placeholder="उदा. पुणे"
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }}
+                      onChange={(e) => setNewEnquiryForm({ ...newEnquiryForm, city: e.target.value })}
+                      placeholder="शहर / गाव (ऐच्छिक), उदा. हडपसर"
+                      style={{ width: '100%', marginTop: '6px', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }}
                     />
                   </div>
                 </div>

@@ -3,6 +3,12 @@
 
 export const STATUS_LABELS = { open: 'सक्रिय (Open)', closed: 'पूर्ण (Closed)' };
 
+// One list for the post form and the filter buttons: the server filters by exact district,
+// so a typed "Pune" would never show under पुणे. "इतर" (other) covers every other district.
+export const OTHER_DISTRICT = 'इतर';
+export const FORM_DISTRICTS = ['पुणे', 'मुंबई', 'नाशिक', 'कोल्हापूर', 'छत्रपती संभाजीनगर', 'सातारा', 'नागपूर', OTHER_DISTRICT];
+export const FILTER_DISTRICTS = ['सर्व', ...FORM_DISTRICTS];
+
 export function statusLabel(status) {
   return STATUS_LABELS[status] ?? STATUS_LABELS.open;
 }
