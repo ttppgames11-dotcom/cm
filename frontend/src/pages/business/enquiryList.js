@@ -16,6 +16,15 @@ export function matchesFilters(card, { district, category } = {}) {
   return (isAll(district) || card.district === district) && (isAll(category) || card.category === category);
 }
 
+// Query parameters for the list, without the "all" filters (URLSearchParams would send
+// an undefined value as the text "undefined").
+export function listParams({ district, category } = {}) {
+  const params = {};
+  if (!isAll(district)) params.district = district;
+  if (!isAll(category)) params.category = category;
+  return params;
+}
+
 // A live "enquiry.created": prepend it, unless it is already listed or outside the current filters.
 export function addEnquiry(list, card, filters) {
   if (list.some((item) => item.id === card.id) || !matchesFilters(card, filters)) return list;

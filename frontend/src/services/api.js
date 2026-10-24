@@ -272,6 +272,13 @@ export const api = {
     submitQuote: (id, quoteData) => request(`/enquiries/${id}/quote`, {
       method: 'POST',
       body: JSON.stringify(quoteData)
+    }),
+    // The logged-in member's own requirements, with every quote received
+    mine: () => request('/enquiries/mine'),
+    // Close or reopen: status is 'open' or 'closed'
+    setStatus: (id, status) => request(`/enquiries/${id}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status })
     })
   },
 

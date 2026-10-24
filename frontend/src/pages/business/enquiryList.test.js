@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  STATUS_LABELS, statusLabel, matchesFilters, addEnquiry, updateEnquiry, concernsMe, isNewQuoteForMe
+  STATUS_LABELS, statusLabel, matchesFilters, listParams, addEnquiry, updateEnquiry, concernsMe, isNewQuoteForMe
 } from './enquiryList.js';
 
 test('labels', () => {
@@ -57,4 +57,12 @@ test('new quote for me only when mine and the count went up', () => {
   assert.equal(isNewQuoteForMe(list, { id: 'E9', status: 'open', quotesCount: 5 }), false);
   assert.equal(concernsMe(list, { id: 'E1', status: 'closed', quotesCount: 1 }), true);
   assert.equal(concernsMe(list, { id: 'E2', status: 'closed', quotesCount: 0 }), false);
+});
+
+test('list params leave out the "all" filters', () => {
+  // URLSearchParams would turn an undefined value into the text "undefined"
+  assert.deepEqual(listParams({ district: 'सर्व', category: 'सर्व' }), {});
+  assert.deepEqual(listParams({ district: 'पुणे', category: 'सर्व' }), { district: 'पुणे' });
+  assert.deepEqual(listParams({ district: '', category: 'IT' }), { category: 'IT' });
+  assert.deepEqual(listParams({}), {});
 });
