@@ -1,10 +1,14 @@
 package com.connectmaratha.api.enquiry.controller;
 
+import com.connectmaratha.api.common.live.LiveUpdates;
 import com.connectmaratha.api.common.security.CurrentUser;
 import com.connectmaratha.api.common.security.RequireAuth;
 import com.connectmaratha.api.common.web.JsonBody;
+import com.connectmaratha.api.enquiry.event.EnquiryLiveRelay;
 import com.connectmaratha.api.enquiry.service.EnquiryService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /** /api/enquiries — B2B opportunities for the website's /leads page (not in Node). */
 @RestController
@@ -23,10 +28,18 @@ public class EnquiryController {
 
     private final EnquiryService enquiries;
     private final JsonBody bodies;
+    private final LiveUpdates live;
 
-    public EnquiryController(EnquiryService enquiries, JsonBody bodies) {
+    public EnquiryController(EnquiryService enquiries, JsonBody bodies, LiveUpdates live) {
         this.enquiries = enquiries;
         this.bodies = bodies;
+        this.live = live;
+    }
+
+    /** Live updates for the /leads page (server-sent events). No login: only public data is sent. */
+    @GetMapping("/stream")
+    public SseEmitter stream(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        return live.subscribe(EnquiryLiveRelay.CHANNEL, req, res);
     }
 
     /** Anyone may browse; a login only adds isMine / quotedByMe. */
