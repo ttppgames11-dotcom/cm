@@ -60,10 +60,48 @@ public class LazyTables {
           blocker_id TEXT NOT NULL, blocked_id TEXT NOT NULL,
           created_at TEXT DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (blocker_id, blocked_id))""";
 
+    /** B2B requirements and quotes (/leads). Not from Node: the same SQL is kept as migration 008_enquiries.sql. */
+    static final String ENQUIRY_TABLES = """
+        CREATE TABLE IF NOT EXISTS enquiries (
+          id          TEXT PRIMARY KEY,
+          member_id   TEXT NOT NULL,
+          title       TEXT NOT NULL,
+          description TEXT,
+          category    TEXT NOT NULL,
+          city        TEXT,
+          district    TEXT NOT NULL,
+          budget      TEXT,
+          client_name TEXT,
+          phone       TEXT,
+          status      TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'closed')),
+          created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+          updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+          closed_at   TIMESTAMPTZ
+        );
+        CREATE INDEX IF NOT EXISTS idx_enquiries_member  ON enquiries (member_id);
+        CREATE INDEX IF NOT EXISTS idx_enquiries_created ON enquiries (created_at DESC);
+
+        CREATE TABLE IF NOT EXISTS enquiry_quotes (
+          id             TEXT PRIMARY KEY,
+          enquiry_id     TEXT NOT NULL REFERENCES enquiries (id) ON DELETE CASCADE,
+          member_id      TEXT NOT NULL,
+          business_name  TEXT NOT NULL,
+          owner_name     TEXT,
+          phone          TEXT NOT NULL,
+          quote_amount   TEXT,
+          proposal_notes TEXT,
+          created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+          updated_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+          UNIQUE (enquiry_id, member_id)
+        );
+        CREATE INDEX IF NOT EXISTS idx_enquiry_quotes_member ON enquiry_quotes (member_id);
+        """;
+
     private final JdbcTemplate jdbc;
     private final AtomicBoolean moderationReady = new AtomicBoolean();
     private final AtomicBoolean supportTicketsReady = new AtomicBoolean();
     private final AtomicBoolean websiteTablesReady = new AtomicBoolean();
+    private final AtomicBoolean enquiryTablesReady = new AtomicBoolean();
 
     public LazyTables(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
@@ -90,5 +128,12 @@ public class LazyTables {
             jdbc.execute(sql);
         }
         websiteTablesReady.set(true);
+    }
+
+    /** The B2B requirement tables, created on first use (a no-op when they exist). */
+    public void ensureEnquiryTables() {
+        if (enquiryTablesReady.get()) return;
+        jdbc.execute(ENQUIRY_TABLES);
+        enquiryTablesReady.set(true);
     }
 }
