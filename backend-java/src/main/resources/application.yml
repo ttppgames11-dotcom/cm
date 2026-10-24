@@ -1,0 +1,51 @@
+server:
+  # 5001 so it can run next to the Node backend (5000) while both exist.
+  port: ${PORT:5001}
+  forward-headers-strategy: framework   # behind nginx / Cloudflare, like Node's trust proxy
+
+app:
+  jwt-secret: ${JWT_SECRET:}
+  production: ${APP_PRODUCTION:false}
+  # Comma-separated Google OAuth client IDs whose ID tokens are accepted (Node: GOOGLE_CLIENT_IDS).
+  google-client-ids: ${GOOGLE_CLIENT_IDS:}
+  # Node: ALLOW_DEV_LOGIN_FALLBACK — lets "password123" log in, never in production.
+  allow-dev-login: ${ALLOW_DEV_LOGIN_FALLBACK:false}
+  # Same names and defaults as the Node backend's rate limiter.
+  rate-limit:
+    public-window-ms: ${RATE_LIMIT_PUBLIC_WINDOW_MS:900000}
+    public-max: ${RATE_LIMIT_PUBLIC_MAX:100}
+    user-window-ms: ${RATE_LIMIT_USER_WINDOW_MS:900000}
+    user-max: ${RATE_LIMIT_USER_MAX:600}
+    auth-ip-window-ms: ${RATE_LIMIT_AUTH_IP_WINDOW_MS:900000}
+    auth-ip-max: ${RATE_LIMIT_AUTH_IP_MAX:20}
+    auth-account-window-ms: ${RATE_LIMIT_AUTH_ACCOUNT_WINDOW_MS:900000}
+    auth-account-max: ${RATE_LIMIT_AUTH_ACCOUNT_MAX:5}
+    auth-backoff-base-sec: ${RATE_LIMIT_AUTH_BACKOFF_BASE_SEC:2}
+    auth-backoff-max-sec: ${RATE_LIMIT_AUTH_BACKOFF_MAX_SEC:900}
+    auth-backoff-factor: ${RATE_LIMIT_AUTH_BACKOFF_FACTOR:2.0}
+  # Same SMTP settings as the Node mailer. Without host/user/pass, mail is only logged.
+  mail:
+    host: ${SMTP_HOST:}
+    port: ${SMTP_PORT:465}
+    user: ${SMTP_USER:}
+    pass: ${SMTP_PASS:}
+    from: ${MAIL_FROM:"Connect Maratha" <noreply@connectmaratha.com>}
+
+spring:
+  application:
+    name: connect-maratha-api
+  # spring.datasource.* comes from DATABASE_URL (see DatabaseUrlEnvironment).
+  jpa:
+    # Never create or alter tables: the schema belongs to the existing
+    # PostgreSQL database that the Node backend also uses.
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  jackson:
+    default-property-inclusion: always
+    serialization:
+      write-dates-as-timestamps: false

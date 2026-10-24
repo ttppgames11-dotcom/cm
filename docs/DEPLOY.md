@@ -34,3 +34,25 @@ Database changes (new tables/columns from migrations) stay; they only add things
 - Wait about 30 s after a deploy before testing; the API restarts.
 - Server passwords live only in `/opt/connect-maratha/deploy/.env` on the server. They are never in git.
 - To restore the database itself, use the dump the script made (`/var/backups/connect-maratha/`).
+
+## Java API (live since 2026-10-23)
+
+Live traffic goes to the Spring Boot API (`api-java`). Node (`api`) keeps running as the rollback.
+
+```powershell
+cd E:\community_mobile_main
+git checkout main
+powershell -ExecutionPolicy Bypass -File .\deploy\deploy-java.ps1
+```
+
+It backs up the database and the Java code, rebuilds only `api-java`, waits up to 2 minutes for it to be
+healthy, and puts the old version back by itself if not. The API is unavailable for about 20 seconds while
+the new container starts.
+
+**Switch traffic** (Cloudflare account info@connectmaratha.com → Networking → Tunnels → connectmaratha →
+Routes → api.connectmaratha.com → Edit → Service URL). Paste the value, save, then read the saved row:
+
+| Target | Service URL |
+|---|---|
+| Java | `http://api-java:5001` |
+| Node (rollback) | `http://api:5000` |
