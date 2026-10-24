@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /** The B2B requirement tables: created by Java on first use, identical to migration 008. */
 @SpringBootTest
@@ -22,6 +24,7 @@ class EnquiryTablesTest extends PostgresTestBase {
 
     @Autowired LazyTables tables;
     @Autowired JdbcTemplate jdbc;
+    @Autowired PlatformTransactionManager txManager;
 
     @Test
     void migrationFileMatchesTheJavaCopy() throws Exception {
@@ -42,6 +45,22 @@ class EnquiryTablesTest extends PostgresTestBase {
         assertThatThrownBy(() -> jdbc.update(quote, "QT-2")).isInstanceOf(DuplicateKeyException.class);
         jdbc.update("DELETE FROM enquiries WHERE id='ENQ-T1'");
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM enquiry_quotes WHERE enquiry_id='ENQ-T1'", Integer.class)).isZero();
+    }
+
+    @Test
+    void tablesNeededByAFailedRequestStayCreated() {
+        jdbc.execute("DROP TABLE IF EXISTS enquiry_quotes; DROP TABLE IF EXISTS enquiries");
+        LazyTables fresh = new LazyTables(jdbc, txManager); // has not created anything yet
+        try {
+            assertThatThrownBy(() -> new TransactionTemplate(txManager).executeWithoutResult(status -> {
+                fresh.ensureEnquiryTables();
+                throw new IllegalStateException("the request fails after the tables were needed");
+            })).isInstanceOf(IllegalStateException.class);
+            // otherwise the tables are gone while "fresh" believes they exist: every later call fails
+            assertThat(jdbc.queryForObject("SELECT to_regclass('enquiries') IS NOT NULL", Boolean.class)).isTrue();
+        } finally {
+            jdbc.execute(LazyTables.ENQUIRY_TABLES); // leave the shared test database as the other tests expect
+        }
     }
 
     /** Without BOM and "--" comment lines, every run of whitespace as one space. */
