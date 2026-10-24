@@ -450,6 +450,13 @@ public class AuthService {
             jdbc.update("DELETE FROM referrals WHERE giver_id = ? OR recipient_id = ?", memberId, memberId);
             jdbc.update("UPDATE donations SET donor_id = NULL, donor_name = 'Deleted Member' WHERE donor_id = ?", memberId);
 
+            // B2B requirements and quotes. Their tables are created on first use, so check they exist:
+            // a failing statement would abort this transaction.
+            if (Boolean.TRUE.equals(jdbc.queryForObject("SELECT to_regclass('public.enquiries') IS NOT NULL", Boolean.class))) {
+                jdbc.update("DELETE FROM enquiry_quotes WHERE member_id = ?", memberId);
+                jdbc.update("DELETE FROM enquiries WHERE member_id = ?", memberId); // quotes on them go too (ON DELETE CASCADE)
+            }
+
             if (member.getEmail() != null && !member.getEmail().isEmpty()) {
                 jdbc.update("DELETE FROM password_resets WHERE LOWER(email) = ?", member.getEmail().toLowerCase());
             }
