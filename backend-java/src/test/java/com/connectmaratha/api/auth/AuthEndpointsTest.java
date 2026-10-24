@@ -21,6 +21,7 @@ import com.connectmaratha.api.common.security.JwtService;
 import com.connectmaratha.api.mail.service.MailService;
 import com.connectmaratha.api.common.ratelimit.AuthRateLimiter;
 import com.connectmaratha.api.common.ratelimit.RateLimitFilter;
+import com.connectmaratha.api.common.schema.LazyTables;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
@@ -51,6 +52,7 @@ class AuthEndpointsTest extends PostgresTestBase {
     @Autowired JwtService jwt;
     @Autowired AuthRateLimiter authLimiter;
     @Autowired RateLimitFilter rateLimit;
+    @Autowired LazyTables tables;
     @MockBean MailService mail;
     @MockBean GoogleTokenVerifier google;
 
@@ -499,6 +501,10 @@ class AuthEndpointsTest extends PostgresTestBase {
     void appDeleteAccountRemovesTheMemberAndTheirContent() throws Exception {
         nodeMember("M8030", "delete.me@example.com", "9811100030");
         addActivity("M8030");
+        // B2B requirements: one by M8030 (quoted by M8099), and M8030's quote on M8099's requirement
+        tables.ensureEnquiryTables();
+        jdbc.update("INSERT INTO enquiries (id, member_id, title, category, district) VALUES ('ENQ-D1', 'M8030', 'Mine', 'IT', 'Pune'), ('ENQ-D2', 'M8099', 'Other', 'IT', 'Pune')");
+        jdbc.update("INSERT INTO enquiry_quotes (id, enquiry_id, member_id, business_name, phone) VALUES ('QT-D1', 'ENQ-D1', 'M8099', 'B', '9822144550'), ('QT-D2', 'ENQ-D2', 'M8030', 'B', '9822144551')");
         String auth = bearer("M8030", "member");
 
         call(delete("/api/auth/account").header("Authorization", auth).contentType(MediaType.APPLICATION_JSON)
@@ -520,6 +526,11 @@ class AuthEndpointsTest extends PostgresTestBase {
         Map<String, Object> donation = jdbc.queryForMap("SELECT donor_id, donor_name, amount FROM donations WHERE id = 'D-M8030'");
         assertThat(donation.get("donor_id")).isNull();
         assertThat(donation.get("donor_name")).isEqualTo("Deleted Member");
+        // Their requirements and quotes are gone; other members' requirements stay.
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM enquiries WHERE member_id = 'M8030'", Integer.class)).isZero();
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM enquiry_quotes WHERE member_id = 'M8030'", Integer.class)).isZero();
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM enquiry_quotes WHERE enquiry_id = 'ENQ-D1'", Integer.class)).isZero();
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM enquiries WHERE id = 'ENQ-D2'", Integer.class)).isEqualTo(1);
     }
 
     @Test
