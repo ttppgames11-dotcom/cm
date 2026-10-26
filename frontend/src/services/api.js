@@ -131,6 +131,13 @@ export const api = {
     addReview: (id, review) => request(`/businesses/${id}/reviews`, {
       method: 'POST',
       body: JSON.stringify(review)
+    }),
+    // The logged-in member's own businesses, hidden ones included
+    mine: () => request('/businesses/mine'),
+    // Hide (hidden = true) or show a business; the owner or an admin
+    setVisibility: (id, hidden) => request(`/businesses/${id}/visibility`, {
+      method: 'PUT',
+      body: JSON.stringify({ hidden })
     })
   },
 
