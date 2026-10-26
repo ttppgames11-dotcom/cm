@@ -46,13 +46,6 @@ public class SangamService {
 
     // ------------------------------------------------------------------ referrals
 
-    public Map<String, Object> listReferrals(String memberId, String status) {
-        String statusFilter = Js.truthy(status) && !"all".equals(status) ? status : null;
-        List<Map<String, Object>> rows = new ArrayList<>();
-        for (SangamReferral r : referrals.search(Js.nullIfFalsy(memberId), statusFilter)) rows.add(referral(r));
-        return list("referrals", rows);
-    }
-
     /** Sets the status (cleared when none is sent, as in Node) and, if sent, the deal value. */
     @Transactional
     public Map<String, Object> updateReferralStatus(String id, Map<String, Object> b) {

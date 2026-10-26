@@ -32,10 +32,26 @@ public class SangamController {
         this.bodies = bodies;
     }
 
+    /** Your referrals (given and received); admins see all. */
+    @RequireAuth
     @GetMapping("/referrals")
-    public Map<String, Object> referrals(@RequestParam(required = false) String memberId,
+    public Map<String, Object> referrals(CurrentUser user,
+                                         @RequestParam(required = false) String memberId,
                                          @RequestParam(required = false) String status) {
-        return sangam.listReferrals(memberId, status);
+        return referrals.list(user, memberId, status);
+    }
+
+    /** Members who own a visible business: the receivers a referral can go to. */
+    @RequireAuth
+    @GetMapping("/referrals/receivers")
+    public Map<String, Object> receivers(CurrentUser user) {
+        return referrals.receivers(user);
+    }
+
+    /** Community totals: numbers only. */
+    @GetMapping("/referrals/stats")
+    public Map<String, Object> stats() {
+        return referrals.stats();
     }
 
     /** Giving a referral needs a login and a receiver who owns a visible business. */

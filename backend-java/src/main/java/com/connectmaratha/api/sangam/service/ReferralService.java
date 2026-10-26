@@ -4,6 +4,7 @@ import com.connectmaratha.api.common.exception.ApiException;
 import com.connectmaratha.api.common.schema.LazyTables;
 import com.connectmaratha.api.common.security.CurrentUser;
 import com.connectmaratha.api.common.util.Ids;
+import com.connectmaratha.api.common.security.Roles;
 import com.connectmaratha.api.common.util.Js;
 import com.connectmaratha.api.common.validation.SchemaValidator;
 import com.connectmaratha.api.member.entity.Member;
@@ -14,7 +15,11 @@ import com.connectmaratha.api.sangam.entity.SangamReferral;
 import com.connectmaratha.api.sangam.event.ReferralChanged;
 import com.connectmaratha.api.sangam.repository.ReferralReceiverRepository;
 import com.connectmaratha.api.sangam.repository.SangamReferralRepository;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -91,6 +96,62 @@ public class ReferralService {
         out.put("success", true);
         out.put("message", "नवीन संदर्भ यशस्वीरीत्या नोंदवला! (Referral given.)");
         out.put("referral", ReferralJson.referral(SangamService.referral(saved), saved, businessId.isEmpty() ? null : businessId, user.id()));
+        return out;
+    }
+
+    /**
+     * The caller's referrals (as giver or receiver), newest first. Admins get every referral, and only they may
+     * narrow the list with memberIdFilter. status empty or "all" means every status.
+     */
+    @Transactional(readOnly = true)
+    public Map<String, Object> list(CurrentUser user, String memberIdFilter, String status) {
+        tables.ensureReferralColumns();
+        String statusFilter = Js.truthy(status) && !"all".equals(status) ? status : null;
+        String member = Roles.isAdmin(user) ? Js.nullIfFalsy(memberIdFilter) : user.id();
+        List<SangamReferral> rows = referrals.search(member, statusFilter);
+        Map<String, String> businessIds = businessIds(rows);
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (SangamReferral r : rows) {
+            list.add(ReferralJson.referral(SangamService.referral(r), r, businessIds.get(r.getId()), user.id()));
+        }
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("success", true);
+        out.put("count", list.size());
+        out.put("referrals", list);
+        return out;
+    }
+
+    /** Members who own a visible business, with those businesses (the picker for "give a referral"). */
+    public Map<String, Object> receivers(CurrentUser user) {
+        List<ReferralReceiverRepository.Receiver> list = receivers.receivers(user.id(), 200);
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("success", true);
+        out.put("count", list.size());
+        out.put("receivers", list);
+        return out;
+    }
+
+    /** Totals for everyone to see: numbers only, no names. */
+    public Map<String, Object> stats() {
+        Object[] won = referrals.wonDeals().get(0);
+        Map<String, Object> stats = new LinkedHashMap<>();
+        stats.put("given", referrals.countAll());
+        stats.put("won", won[0] == null ? 0 : ((Number) won[0]).longValue());
+        stats.put("wonValue", won[1] == null ? 0.0 : ((Number) won[1]).doubleValue());
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("success", true);
+        out.put("stats", stats);
+        return out;
+    }
+
+    /** business_id of each referral (read separately: the column is created on first use). */
+    private Map<String, String> businessIds(List<SangamReferral> rows) {
+        if (rows.isEmpty()) return Map.of();
+        String placeholders = String.join(", ", Collections.nCopies(rows.size(), "?"));
+        Map<String, String> out = new HashMap<>();
+        jdbc.query("SELECT id, business_id FROM referrals WHERE id IN (" + placeholders + ")",
+            rs -> { out.put(rs.getString("id"), rs.getString("business_id")); },
+            rows.stream().map(SangamReferral::getId).toArray());
         return out;
     }
 

@@ -208,4 +208,112 @@ class ReferralEndpointsTest extends PostgresTestBase {
         give(t, with(referral("M9602"), "title", "Zr One too many")).andExpect(status().isTooManyRequests())
             .andExpect(jsonPath("$.code").value("RATE_LIMIT_EXCEEDED"));
     }
+
+    // ------------------------------------------------------------------ listing
+
+    ResultActions list(String token, String query) throws Exception {
+        MockHttpServletRequestBuilder req = get("/api/sangam/referrals" + query);
+        if (token != null) req.header("Authorization", token);
+        return mvc.perform(req);
+    }
+
+    /** Referral ids in a list reply, as a text for simple contains checks. */
+    String ids(ResultActions result) throws Exception {
+        JsonNode body = json.readTree(result.andExpect(status().isOk()).andReturn().getResponse().getContentAsString(UTF_8));
+        return body.get("referrals").findValuesAsText("id").toString();
+    }
+
+    /** M9601 gives M9602 one; M9604 gives M9602 one; (M9601 receives one from M9602 via SQL, as M9602 owns a business only). */
+    String[] threeReferrals() throws Exception {
+        business("ZRB5", "Zr Shop Giver", "M9601", "visible");
+        String a = given(token("M9601", "member"), "M9602", "Zr A to M9602");
+        String b = given(token("M9604", "member"), "M9601", "Zr B to M9601");
+        String c = given(token("M9604", "member"), "M9602", "Zr C to M9602");
+        return new String[] {a, b, c};
+    }
+
+    @Test
+    void listNeedsALogin() throws Exception {
+        list(null, "").andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void listShowsOnlyMyReferralsWithMyRole() throws Exception {
+        String[] r = threeReferrals();
+        String forM9601 = ids(list(token("M9601", "member"), ""));
+        assertThat(forM9601).contains(r[0], r[1]).doesNotContain(r[2]);
+        String forM9602 = ids(list(token("M9602", "member"), ""));
+        assertThat(forM9602).contains(r[0], r[2]).doesNotContain(r[1]);
+        assertThat(ids(list(token("M9603", "member"), ""))).doesNotContain(r[0]).doesNotContain(r[1]).doesNotContain(r[2]);
+        list(token("M9601", "member"), "").andExpect(jsonPath("$.count").value(2))
+            .andExpect(jsonPath("$.referrals[?(@.id=='" + r[0] + "')].role").value("giver"))
+            .andExpect(jsonPath("$.referrals[?(@.id=='" + r[1] + "')].role").value("receiver"))
+            .andExpect(jsonPath("$.referrals[?(@.id=='" + r[0] + "')].client_phone").value("9822144550"));
+    }
+
+    @Test
+    void adminSeesEverythingAndMemberIdFilterIsAdminOnly() throws Exception {
+        String[] r = threeReferrals();
+        assertThat(ids(list(token("M9609", "admin"), ""))).contains(r[0], r[1], r[2]);
+        String onlyM9601 = ids(list(token("M9609", "admin"), "?memberId=M9601"));
+        assertThat(onlyM9601).contains(r[0], r[1]).doesNotContain(r[2]);
+        // a member asking for someone else's referrals still gets only their own
+        assertThat(ids(list(token("M9601", "member"), "?memberId=M9602"))).doesNotContain(r[2]);
+    }
+
+    @Test
+    void statusFilterAndLegacyStatuses() throws Exception {
+        String[] r = threeReferrals();
+        jdbc.update("UPDATE referrals SET status = 'Deal Won' WHERE id = ?", r[0]);
+        jdbc.update("UPDATE referrals SET status = 'In Progress' WHERE id = ?", r[1]);
+        jdbc.update("UPDATE referrals SET status = NULL WHERE id = ?", r[2]);
+        String t = token("M9609", "admin");
+        assertThat(ids(list(t, ""))).contains(r[0], r[1], r[2]);
+        assertThat(ids(list(t, "?status=all"))).contains(r[0], r[1], r[2]);
+        assertThat(ids(list(t, "?status="))).contains(r[0], r[1], r[2]);
+        assertThat(ids(list(t, "?status=Deal Won"))).contains(r[0]).doesNotContain(r[1]);
+        list(token("M9601", "member"), "").andExpect(jsonPath("$.referrals[?(@.id=='" + r[0] + "')].status").value("Deal Won"));
+    }
+
+    @Test
+    void existingReferralsStayVisibleWhenTheReceiversBusinessIsHidden() throws Exception {
+        String id = given(token("M9601", "member"), "M9602", "Zr Before hiding");
+        jdbc.update("UPDATE businesses SET status = 'hidden' WHERE id = 'ZRB1'");
+        assertThat(ids(list(token("M9601", "member"), ""))).contains(id);
+        assertThat(ids(list(token("M9602", "member"), ""))).contains(id);
+        give(token("M9601", "member"), referral("M9602")).andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("RECIPIENT_NOT_ELIGIBLE"));
+    }
+
+    // ------------------------------------------------------------------ receivers and totals
+
+    @Test
+    void receiversListIsRealAndExcludesMe() throws Exception {
+        business("ZRB6", "Zr Shop Giver", "M9601", "visible");
+        String forM9601 = mvc.perform(get("/api/sangam/referrals/receivers").header("Authorization", token("M9601", "member")))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(UTF_8);
+        JsonNode receivers = json.readTree(forM9601).get("receivers");
+        String receiverIds = receivers.findValuesAsText("id").toString();
+        assertThat(receiverIds).contains("M9602").doesNotContain("M9601").doesNotContain("M9603").doesNotContain("M9604");
+        assertThat(forM9601).contains("Zr Shop One");
+        String forM9602 = mvc.perform(get("/api/sangam/referrals/receivers").header("Authorization", token("M9602", "member")))
+            .andReturn().getResponse().getContentAsString(UTF_8);
+        assertThat(json.readTree(forM9602).get("receivers").findValuesAsText("id").toString()).doesNotContain("M9602").contains("M9601");
+        mvc.perform(get("/api/sangam/referrals/receivers")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void statsAreNumbersOnly() throws Exception {
+        String[] r = threeReferrals();
+        jdbc.update("UPDATE referrals SET status = 'Won', value = 1000 WHERE id = ?", r[0]);
+        jdbc.update("UPDATE referrals SET status = 'Deal Won', value = 500 WHERE id = ?", r[1]);
+        String body = mvc.perform(get("/api/sangam/referrals/stats")).andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true)).andReturn().getResponse().getContentAsString(UTF_8);
+        JsonNode stats = json.readTree(body).get("stats");
+        long all = jdbc.queryForObject("SELECT COUNT(*) FROM referrals", Long.class);
+        assertThat(stats.get("given").asLong()).isEqualTo(all);
+        assertThat(stats.get("won").asLong()).isEqualTo(jdbc.queryForObject("SELECT COUNT(*) FROM referrals WHERE status IN ('Won', 'Deal Won')", Long.class));
+        assertThat(stats.get("wonValue").asDouble()).isEqualTo(jdbc.queryForObject("SELECT COALESCE(SUM(value), 0) FROM referrals WHERE status IN ('Won', 'Deal Won')", Double.class));
+        assertThat(body).doesNotContain("Suresh").doesNotContain("9822144550");
+    }
 }
