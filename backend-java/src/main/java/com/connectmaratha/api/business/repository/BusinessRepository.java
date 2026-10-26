@@ -34,6 +34,21 @@ public interface BusinessRepository extends JpaRepository<Business, String> {
                         @Param("website") String website, @Param("hours") String hours, @Param("services") String services,
                         @Param("offers") String offers, @Param("ownerId") String ownerId);
 
+    /** Changes the twelve editable columns (never id, owner_id, status or rating). */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(nativeQuery = true, value = """
+        UPDATE businesses SET name = :name, owner = :owner, cat = :cat, city = :city, district = :district,
+               phone = :phone, whatsapp = :whatsapp, website = :website, hours = :hours, services = :services, offers = :offers
+        WHERE id = :id""")
+    void updateBusiness(@Param("id") String id, @Param("name") String name, @Param("owner") String owner,
+                        @Param("cat") String cat, @Param("city") String city, @Param("district") String district,
+                        @Param("phone") String phone, @Param("whatsapp") String whatsapp, @Param("website") String website,
+                        @Param("hours") String hours, @Param("services") String services, @Param("offers") String offers);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(nativeQuery = true, value = "UPDATE businesses SET status = :status WHERE id = :id")
+    void setStatus(@Param("id") String id, @Param("status") String status);
+
     /** A member's own businesses, hidden ones included, newest first. */
     @Query(nativeQuery = true, value = "SELECT * FROM businesses WHERE owner_id = :ownerId ORDER BY created_at DESC, id DESC")
     List<Business> findByOwner(@Param("ownerId") String ownerId);

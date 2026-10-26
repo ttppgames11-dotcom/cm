@@ -92,6 +92,24 @@ class BusinessOwnershipTest extends PostgresTestBase {
         return json.readTree(body);
     }
 
+    ResultActions edit(String token, String id, Map<String, Object> body) throws Exception {
+        MockHttpServletRequestBuilder req = put("/api/businesses/" + id).contentType(MediaType.APPLICATION_JSON)
+            .content(json.writeValueAsBytes(body));
+        if (token != null) req.header("Authorization", token);
+        return mvc.perform(req);
+    }
+
+    ResultActions visibility(String token, String id, Map<String, Object> body) throws Exception {
+        MockHttpServletRequestBuilder req = put("/api/businesses/" + id + "/visibility").contentType(MediaType.APPLICATION_JSON)
+            .content(json.writeValueAsBytes(body));
+        if (token != null) req.header("Authorization", token);
+        return mvc.perform(req);
+    }
+
+    Map<String, Object> row(String id) {
+        return jdbc.queryForMap("SELECT id, name, owner, cat, city, phone, services, owner_id, status, rating FROM businesses WHERE id = ?", id);
+    }
+
     // ------------------------------------------------------------------ adding
 
     @Test
@@ -185,5 +203,100 @@ class BusinessOwnershipTest extends PostgresTestBase {
             .andExpect(jsonPath("$.businesses[0].isMine").value(true));
         fetch("/api/businesses/mine", token("M9502", "member")).andExpect(jsonPath("$.count").value(0));
         fetch("/api/businesses/mine", null).andExpect(status().isUnauthorized());
+    }
+
+    // ------------------------------------------------------------------ editing
+
+    @Test
+    void ownerEditsOnlyTheFieldsSent() throws Exception {
+        String id = added(token("M9501", "member"), "Zo Edit Me");
+        Map<String, Object> before = row(id);
+        edit(token("M9501", "member"), id, Map.of("phone", "9800000001", "services", List.of("A", "B")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.message").value("व्यवसाय अद्ययावत केला गेला! (Business updated.)"))
+            .andExpect(jsonPath("$.business.phone").value("9800000001"));
+        Map<String, Object> after = row(id);
+        assertThat(after.get("phone")).isEqualTo("9800000001");
+        assertThat(after.get("services")).isEqualTo("[\"A\",\"B\"]");
+        for (String unchanged : List.of("name", "owner", "cat", "city", "owner_id", "status")) {
+            assertThat(after.get(unchanged)).as(unchanged).isEqualTo(before.get(unchanged));
+        }
+    }
+
+    @Test
+    void adminCanEditToo() throws Exception {
+        String id = added(token("M9501", "member"), "Zo Admin Edit");
+        edit(token("M9509", "admin"), id, Map.of("city", "नाशिक")).andExpect(status().isOk());
+        assertThat(row(id).get("city")).isEqualTo("नाशिक");
+    }
+
+    @Test
+    void otherMemberCannotEdit() throws Exception {
+        String id = added(token("M9501", "member"), "Zo Not Yours");
+        edit(token("M9502", "member"), id, Map.of("phone", "9800000002")).andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.code").value("NOT_OWNER"));
+        assertThat(row(id).get("phone")).isNotEqualTo("9800000002");
+        edit(null, id, Map.of("phone", "9800000002")).andExpect(status().isUnauthorized());
+        edit(token("M9501", "member"), "B0", Map.of("phone", "9800000002")).andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.error").value(NOT_FOUND));
+    }
+
+    @Test
+    void emptyRequiredFieldIsRejected() throws Exception {
+        String id = added(token("M9501", "member"), "Zo Required");
+        edit(token("M9501", "member"), id, Map.of("name", "")).andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(NO_FIELDS));
+        edit(token("M9501", "member"), id, Map.of("cat", "  ")).andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(NO_FIELDS));
+        Map<String, Object> after = row(id);
+        assertThat(after.get("name")).isEqualTo("Zo Required");
+        assertThat(after.get("cat")).isEqualTo("it");
+    }
+
+    @Test
+    void protectedFieldsCannotBeChanged() throws Exception {
+        String id = added(token("M9501", "member"), "Zo Protected");
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("owner_id", "M9502");
+        body.put("status", "hidden");
+        body.put("rating", 1);
+        body.put("id", "X9");
+        body.put("name", "Zo Renamed");
+        edit(token("M9501", "member"), id, body).andExpect(status().isOk());
+        Map<String, Object> after = row(id);
+        assertThat(after.get("owner_id")).isEqualTo("M9501");
+        assertThat(after.get("status")).isEqualTo("visible");
+        assertThat(((Number) after.get("rating")).doubleValue()).isEqualTo(5.0);
+        assertThat(after.get("id")).isEqualTo(id);
+        assertThat(after.get("name")).isEqualTo("Zo Renamed");
+    }
+
+    // ------------------------------------------------------------------ hide and show
+
+    @Test
+    void ownerHidesAndShowsAgain() throws Exception {
+        String id = added(token("M9501", "member"), "Zo Hide Me");
+        visibility(token("M9501", "member"), id, Map.of("hidden", true)).andExpect(status().isOk())
+            .andExpect(jsonPath("$.business.status").value("hidden"));
+        assertThat(row(id).get("status")).isEqualTo("hidden");
+        assertThat(listBody(null).findValuesAsText("name").toString()).doesNotContain("Zo Hide Me");
+        fetch("/api/businesses/" + id, null).andExpect(status().isNotFound());
+        visibility(token("M9501", "member"), id, Map.of("hidden", false)).andExpect(status().isOk())
+            .andExpect(jsonPath("$.business.status").value("visible"));
+        assertThat(listBody(null).findValuesAsText("name").toString()).contains("Zo Hide Me");
+    }
+
+    @Test
+    void visibilityNeedsABooleanAndTheRightPerson() throws Exception {
+        String id = added(token("M9501", "member"), "Zo Visibility");
+        visibility(token("M9501", "member"), id, Map.of("hidden", "yes")).andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+        visibility(token("M9501", "member"), id, Map.of()).andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+        visibility(token("M9502", "member"), id, Map.of("hidden", true)).andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.code").value("NOT_OWNER"));
+        visibility(token("M9509", "admin"), id, Map.of("hidden", true)).andExpect(status().isOk());
+        assertThat(row(id).get("status")).isEqualTo("hidden");
     }
 }

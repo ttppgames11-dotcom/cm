@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,6 +53,18 @@ public class BusinessController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> create(CurrentUser user, HttpServletRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(businesses.create(user, bodies.read(req)));
+    }
+
+    @RequireAuth
+    @PutMapping("/{id}")
+    public Map<String, Object> update(CurrentUser user, @PathVariable String id, HttpServletRequest req) {
+        return businesses.update(user, id, bodies.read(req));
+    }
+
+    @RequireAuth
+    @PutMapping("/{id}/visibility")
+    public Map<String, Object> visibility(CurrentUser user, @PathVariable String id, HttpServletRequest req) {
+        return businesses.setVisibility(user, id, bodies.read(req));
     }
 
     @PostMapping("/{id}/reviews")
