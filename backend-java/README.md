@@ -85,6 +85,7 @@ com.connectmaratha.api
 ├── location/    service · repository · entity
 ├── mail/        service
 ├── health/      controller
+├── enquiry/     controller · service · repository · dto · event   (new, not in Node)
 └── common/      shared by every feature
     ├── exception/   ApiException, ValidationException, GlobalExceptionHandler
     ├── security/    JwtService, JwtAuthFilter, AuthInterceptor, CurrentUser, @RequireAuth
@@ -92,7 +93,8 @@ com.connectmaratha.api
     ├── ratelimit/   general + login limits (same numbers as Node, set by RATE_LIMIT_* env)
     ├── validation/  request schema checks (port of the Node validator)
     ├── config/      DATABASE_URL -> JDBC settings
-    ├── schema/      tables Node creates on first use
+    ├── schema/      tables Node creates on first use (+ the enquiry tables, migration 008)
+    ├── live/        live updates to open pages (server-sent events), shared by features
     └── util/
 ```
 
@@ -105,6 +107,24 @@ Rules:
 - Errors are thrown as `ApiException` / `ValidationException`; `GlobalExceptionHandler` turns every
   error into the Node reply `{ success: false, code, error }` and hides internal details behind an `ERR-` id.
 - A feature may use another feature's service or repository, never its controller.
+
+## New features (not in Node)
+
+**B2B opportunities** for the website's `/leads` page. Design: `docs/superpowers/specs/2026-10-24-b2b-leads-realtime-design.md`.
+
+| Endpoint | Login | |
+|---|---|---|
+| `GET /api/enquiries?district=&category=` | optional | public list, open first, newest first, max 100; never phones |
+| `POST /api/enquiries` | member | post a requirement (10 per member per 24 h) |
+| `POST /api/enquiries/{id}/quote` | member | send or update your quote (30 per member per hour); not on your own or a closed one |
+| `GET /api/enquiries/mine` | member | your requirements with the quotes received |
+| `PUT /api/enquiries/{id}/status` | poster or admin | `open` / `closed` |
+| `GET /api/enquiries/stream` | none | live updates: `enquiry.created`, `enquiry.updated` (public data only) |
+| `GET /api/admin/enquiries-summary` | admin | all requirements with poster phones |
+
+Live updates (`common/live`): one in-memory hub; events go out only after the database commit; a heartbeat
+every 25 s (`LIVE_HEARTBEAT_SECONDS`) keeps idle connections open through Cloudflare; at most 5 streams per IP
+and 500 in total. Tests: `EnquiryEndpointsTest`, `EnquiryStreamTest`, `EnquiryRepositoryTest`, `SseLiveUpdatesTest`.
 
 ## Phases
 

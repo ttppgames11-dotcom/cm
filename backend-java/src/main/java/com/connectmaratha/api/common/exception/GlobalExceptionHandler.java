@@ -17,6 +17,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -75,6 +76,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> tooLarge() {
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(
             body("PAYLOAD_TOO_LARGE", "पाठवलेला डेटा खूप मोठा आहे (Payload exceeds size limit)."));
+    }
+
+    /**
+     * The visitor closed the page while a live stream (or a slow reply) was being sent. That is
+     * normal, not a server error, and there is no connection left to answer on.
+     */
+    @ExceptionHandler(AsyncRequestNotUsableException.class)
+    public void clientGone() {
+        // nothing to send
     }
 
     @ExceptionHandler(Exception.class)
