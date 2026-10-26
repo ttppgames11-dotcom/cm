@@ -1,10 +1,15 @@
 package com.connectmaratha.api.sangam.controller;
 
+import com.connectmaratha.api.common.live.LiveUpdates;
 import com.connectmaratha.api.common.security.CurrentUser;
 import com.connectmaratha.api.common.security.RequireAuth;
 import com.connectmaratha.api.common.web.JsonBody;
+import com.connectmaratha.api.sangam.event.ReferralLiveRelay;
+import com.connectmaratha.api.sangam.service.ReferralService;
 import com.connectmaratha.api.sangam.service.SangamService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /** /api/sangam/* — the same endpoints as backend/routes/sangam.routes.js. */
 @RestController
@@ -22,27 +28,57 @@ import org.springframework.web.bind.annotation.RestController;
 public class SangamController {
 
     private final SangamService sangam;
+    private final ReferralService referrals;
+    private final LiveUpdates live;
     private final JsonBody bodies;
 
-    public SangamController(SangamService sangam, JsonBody bodies) {
+    public SangamController(SangamService sangam, ReferralService referrals, LiveUpdates live, JsonBody bodies) {
         this.sangam = sangam;
+        this.referrals = referrals;
+        this.live = live;
         this.bodies = bodies;
     }
 
+    /** Your referrals (given and received); admins see all. */
+    @RequireAuth
     @GetMapping("/referrals")
-    public Map<String, Object> referrals(@RequestParam(required = false) String memberId,
+    public Map<String, Object> referrals(CurrentUser user,
+                                         @RequestParam(required = false) String memberId,
                                          @RequestParam(required = false) String status) {
-        return sangam.listReferrals(memberId, status);
+        return referrals.list(user, memberId, status);
     }
 
+    /** Members who own a visible business: the receivers a referral can go to. */
+    @RequireAuth
+    @GetMapping("/referrals/receivers")
+    public Map<String, Object> receivers(CurrentUser user) {
+        return referrals.receivers(user);
+    }
+
+    /** Live referral events (server-sent events); ids and status only, so no login is needed. */
+    @GetMapping("/referrals/stream")
+    public SseEmitter referralStream(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        return live.subscribe(ReferralLiveRelay.CHANNEL, req, res);
+    }
+
+    /** Community totals: numbers only. */
+    @GetMapping("/referrals/stats")
+    public Map<String, Object> stats() {
+        return referrals.stats();
+    }
+
+    /** Giving a referral needs a login and a receiver who owns a visible business. */
+    @RequireAuth
     @PostMapping("/referrals")
     public ResponseEntity<Map<String, Object>> createReferral(CurrentUser user, HttpServletRequest req) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(sangam.createReferral(user, bodies.read(req)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(referrals.give(user, bodies.read(req)));
     }
 
+    /** Only the receiver (or an admin) changes a referral status. */
+    @RequireAuth
     @PutMapping("/referrals/{id}/status")
-    public Map<String, Object> referralStatus(@PathVariable String id, HttpServletRequest req) {
-        return sangam.updateReferralStatus(id, bodies.read(req));
+    public Map<String, Object> referralStatus(CurrentUser user, @PathVariable String id, HttpServletRequest req) {
+        return referrals.setStatus(user, id, bodies.read(req));
     }
 
     @GetMapping("/meetings")

@@ -46,54 +46,6 @@ public class SangamService {
 
     // ------------------------------------------------------------------ referrals
 
-    public Map<String, Object> listReferrals(String memberId, String status) {
-        String statusFilter = Js.truthy(status) && !"all".equals(status) ? status : null;
-        List<Map<String, Object>> rows = new ArrayList<>();
-        for (SangamReferral r : referrals.search(Js.nullIfFalsy(memberId), statusFilter)) rows.add(referral(r));
-        return list("referrals", rows);
-    }
-
-    @Transactional
-    public Map<String, Object> createReferral(CurrentUser user, Map<String, Object> b) {
-        Object title = b.get("title");
-        Object clientName = first(b, "client_name", "clientName");
-        if (!Js.truthy(title) || !Js.truthy(clientName)) {
-            throw ApiException.plain(HttpStatus.BAD_REQUEST, "शीर्षक आणि ग्राहकाचे नाव आवश्यक आहे.");
-        }
-        Object giverId = firstOr(first(b, "giver_id", "giverId"), user == null ? null : user.id());
-        Object giverName = firstOr(first(b, "giver_name", "giverName"), user == null ? null : user.name());
-        Object value = b.get("value");
-        String id = Ids.twoDigit("REF-", referrals::existsById, 100, 1000);
-
-        referrals.insertReferral(id, Js.string(title), Js.orElse(b.get("category"), "सामान्य"),
-            Js.orElse(giverId, "M1001"), Js.orElse(giverName, "अमोल जाधव"),
-            Js.orElse(first(b, "recipient_id", "recipientId"), "M1008"),
-            Js.orElse(first(b, "recipient_name", "recipientName"), "विकास गायकवाड"),
-            Js.string(clientName), Js.textOrEmpty(first(b, "client_phone", "clientPhone")),
-            Js.textOrEmpty(first(b, "client_email", "clientEmail")),
-            Js.truthy(value) ? Js.string(value) : "0", Js.textOrEmpty(b.get("notes")));
-
-        Map<String, Object> out = new LinkedHashMap<>();
-        out.put("success", true);
-        out.put("message", "नवीन संदर्भ यशस्वीरित्या नोंदवला!");
-        out.put("referral", referral(referrals.findById(id).orElseThrow()));
-        return out;
-    }
-
-    /** Sets the status (cleared when none is sent, as in Node) and, if sent, the deal value. */
-    @Transactional
-    public Map<String, Object> updateReferralStatus(String id, Map<String, Object> b) {
-        Object status = b.get("status");
-        Object value = b.get("value");
-        referrals.updateStatus(id, status == null ? null : Js.string(status), value == null ? null : Js.string(value));
-        Map<String, Object> out = new LinkedHashMap<>();
-        out.put("success", true);
-        out.put("message", "स्थिती अद्ययावत केली!");
-        // For an unknown id Node sends "referral": null.
-        out.put("referral", referrals.findById(id).map(SangamService::referral).orElse(null));
-        return out;
-    }
-
     // ------------------------------------------------------------------- meetings
 
     public Map<String, Object> listMeetings(String memberId) {
