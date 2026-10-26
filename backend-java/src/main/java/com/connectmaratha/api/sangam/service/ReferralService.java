@@ -1,0 +1,105 @@
+package com.connectmaratha.api.sangam.service;
+
+import com.connectmaratha.api.common.exception.ApiException;
+import com.connectmaratha.api.common.schema.LazyTables;
+import com.connectmaratha.api.common.security.CurrentUser;
+import com.connectmaratha.api.common.util.Ids;
+import com.connectmaratha.api.common.util.Js;
+import com.connectmaratha.api.common.validation.SchemaValidator;
+import com.connectmaratha.api.member.entity.Member;
+import com.connectmaratha.api.member.repository.MemberRepository;
+import com.connectmaratha.api.sangam.dto.ReferralJson;
+import com.connectmaratha.api.sangam.dto.ReferralSchemas;
+import com.connectmaratha.api.sangam.entity.SangamReferral;
+import com.connectmaratha.api.sangam.event.ReferralChanged;
+import com.connectmaratha.api.sangam.repository.ReferralReceiverRepository;
+import com.connectmaratha.api.sangam.repository.SangamReferralRepository;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * Member-to-member business referrals. Not the Node behaviour: a login is needed, the receiver must be a
+ * member who owns a visible business, only the giver, the receiver and admins can see a referral, and
+ * nothing is invented. Changes are announced as events after the transaction commits.
+ */
+@Service
+public class ReferralService {
+
+    static final String DEFAULT_NAME = "सदस्य";
+
+    private final SangamReferralRepository referrals;
+    private final ReferralReceiverRepository receivers;
+    private final MemberRepository members;
+    private final ReferralLimiter limiter;
+    private final LazyTables tables;
+    private final JdbcTemplate jdbc;
+    private final ApplicationEventPublisher events;
+
+    public ReferralService(SangamReferralRepository referrals, ReferralReceiverRepository receivers, MemberRepository members,
+                           ReferralLimiter limiter, LazyTables tables, JdbcTemplate jdbc, ApplicationEventPublisher events) {
+        this.referrals = referrals;
+        this.receivers = receivers;
+        this.members = members;
+        this.limiter = limiter;
+        this.tables = tables;
+        this.jdbc = jdbc;
+        this.events = events;
+    }
+
+    /** The logged-in member gives a referral to a member who owns a visible business. */
+    @Transactional
+    public Map<String, Object> give(CurrentUser user, Map<String, Object> body) {
+        tables.ensureReferralColumns();
+        Map<String, Object> input = ReferralSchemas.normalize(body);
+        SchemaValidator.check(input, ReferralSchemas.REFERRAL, true, null); // invalid requests do not count
+        limiter.check(user.id());
+
+        String recipientId = text(input.get("recipientId"));
+        if (recipientId.equals(user.id())) {
+            throw ApiException.badRequest("SELF_REFERRAL", "स्वतःला संदर्भ देता येत नाही (You cannot refer to yourself).");
+        }
+        Member recipient = members.findById(recipientId).orElse(null);
+        if (recipient == null || !receivers.ownsVisibleBusiness(recipientId)) {
+            throw ApiException.badRequest("RECIPIENT_NOT_ELIGIBLE",
+                "हा सदस्य संदर्भ स्वीकारू शकत नाही; त्याच्याकडे नोंदवलेला व्यवसाय असावा (This member has no listed business).");
+        }
+        String businessId = text(input.get("businessId"));
+        if (!businessId.isEmpty() && !receivers.ownsVisibleBusiness(recipientId, businessId)) {
+            throw ApiException.badRequest("BUSINESS_NOT_RECEIVERS",
+                "हा व्यवसाय निवडलेल्या सदस्याचा नाही (That business does not belong to this member).");
+        }
+
+        Member giver = members.findById(user.id()).orElse(null);
+        String giverName = giver == null || text(giver.getName()).isEmpty() ? DEFAULT_NAME : text(giver.getName());
+        Object value = input.get("value");
+        String id = Ids.twoDigit("REF-", referrals::existsById, 100, 1000);
+        referrals.insertReferral(id, text(input.get("title")), orElse(text(input.get("category")), "सामान्य"),
+            user.id(), giverName, recipientId, orElse(text(recipient.getName()), DEFAULT_NAME),
+            text(input.get("clientName")), text(input.get("clientPhone")), text(input.get("clientEmail")),
+            Js.truthy(value) ? Js.string(value) : "0", text(input.get("notes")));
+        if (!businessId.isEmpty()) jdbc.update("UPDATE referrals SET business_id = ? WHERE id = ?", businessId, id);
+
+        SangamReferral saved = referrals.findById(id).orElseThrow();
+        events.publishEvent(new ReferralChanged(id, user.id(), recipientId, saved.getStatus()));
+
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("success", true);
+        out.put("message", "नवीन संदर्भ यशस्वीरीत्या नोंदवला! (Referral given.)");
+        out.put("referral", ReferralJson.referral(SangamService.referral(saved), saved, businessId.isEmpty() ? null : businessId, user.id()));
+        return out;
+    }
+
+    /** Trimmed text; null or missing becomes "". */
+    private static String text(Object value) {
+        return value == null ? "" : Js.string(value).trim();
+    }
+
+    private static String orElse(String value, String fallback) {
+        return value.isEmpty() ? fallback : value;
+    }
+}

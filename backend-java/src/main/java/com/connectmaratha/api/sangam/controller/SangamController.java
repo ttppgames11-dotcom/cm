@@ -3,6 +3,7 @@ package com.connectmaratha.api.sangam.controller;
 import com.connectmaratha.api.common.security.CurrentUser;
 import com.connectmaratha.api.common.security.RequireAuth;
 import com.connectmaratha.api.common.web.JsonBody;
+import com.connectmaratha.api.sangam.service.ReferralService;
 import com.connectmaratha.api.sangam.service.SangamService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -22,10 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class SangamController {
 
     private final SangamService sangam;
+    private final ReferralService referrals;
     private final JsonBody bodies;
 
-    public SangamController(SangamService sangam, JsonBody bodies) {
+    public SangamController(SangamService sangam, ReferralService referrals, JsonBody bodies) {
         this.sangam = sangam;
+        this.referrals = referrals;
         this.bodies = bodies;
     }
 
@@ -35,9 +38,11 @@ public class SangamController {
         return sangam.listReferrals(memberId, status);
     }
 
+    /** Giving a referral needs a login and a receiver who owns a visible business. */
+    @RequireAuth
     @PostMapping("/referrals")
     public ResponseEntity<Map<String, Object>> createReferral(CurrentUser user, HttpServletRequest req) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(sangam.createReferral(user, bodies.read(req)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(referrals.give(user, bodies.read(req)));
     }
 
     @PutMapping("/referrals/{id}/status")
