@@ -264,6 +264,21 @@ export const apiClient = {
   createMeeting: async (data) => {
     return await fetchJson('/sangam/meetings', { method: 'POST', body: JSON.stringify(data) });
   },
+  // Members who own a visible business, with their businesses: who a meeting can be requested from
+  getMeetingPartners: async () => {
+    const res = await fetchJson('/sangam/meetings/partners');
+    return res.partners || res.data?.partners || [];
+  },
+  // status: 'accepted' | 'declined' | 'cancelled' | 'completed'
+  updateMeetingStatus: async (id, status) => {
+    return await fetchJson(`/sangam/meetings/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) });
+  },
+  rescheduleMeeting: async (id, data) => {
+    return await fetchJson(`/sangam/meetings/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+  saveMeetingNote: async (id, notes) => {
+    return await fetchJson(`/sangam/meetings/${id}/notes`, { method: 'PUT', body: JSON.stringify({ notes }) });
+  },
 
   // Site Content & CMS Management API
   getSiteContent: async () => {
