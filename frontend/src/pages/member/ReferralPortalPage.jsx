@@ -2,11 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getMemberReferrals, getMemberReferralStats } from '../../services/referralService';
+import apiClient from '../../services/apiClient';
 
 export default function ReferralPortalPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
+  // Community totals for business referrals (numbers only, no names); stays empty if the server does not answer.
+  const [totals, setTotals] = useState(null);
+
+  useEffect(() => {
+    apiClient.getReferralStats().then(setTotals).catch(() => setTotals(null));
+  }, []);
 
   useEffect(() => {
     if (!user) {
@@ -98,6 +105,44 @@ export default function ReferralPortalPage() {
             <p style={{ margin: 0, maxWidth: '750px', fontSize: '0.98rem', color: '#FED7AA', lineHeight: 1.5 }}>
               आपल्या कुटुंबातील व मित्रपरिवारातील बांधवांना Connect Maratha मध्ये सहभागी करा. प्रत्येक पडताळणीनंतर अधिकृत मानधन व संघटनात्मक पदांसाठी पात्रता गुण मिळवा.
             </p>
+          </div>
+        </div>
+
+        {/* 1b. Business referrals: give one, follow them, community totals */}
+        <div style={{
+          background: '#FFFFFF',
+          borderRadius: '20px',
+          border: '2px solid #FED7AA',
+          padding: '22px 28px',
+          marginBottom: '24px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '16px'
+        }}>
+          <div>
+            <h2 style={{ margin: '0 0 4px', fontSize: '1.25rem', fontFamily: 'Baloo 2', color: '#431407' }}>
+              🤝 व्यवसाय संदर्भ (Business Referrals)
+            </h2>
+            {totals ? (
+              <p style={{ margin: 0, color: '#78350F', fontSize: '0.9rem' }}>
+                समाजात आतापर्यंत <strong>{totals.given}</strong> संदर्भ दिले गेले, <strong>{totals.won}</strong> सौदे यशस्वी,
+                एकूण <strong>₹{Number(totals.wonValue || 0).toLocaleString('en-IN')}</strong> चा व्यवसाय.
+              </p>
+            ) : (
+              <p style={{ margin: 0, color: '#78350F', fontSize: '0.9rem' }}>
+                एखाद्या सदस्याच्या व्यवसायासाठी ग्राहक सुचवा आणि त्याची प्रगती पाहा.
+              </p>
+            )}
+          </div>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <Link to="/referrals/create" style={{ background: '#EA580C', color: '#FFFFFF', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, textDecoration: 'none' }}>
+              ➕ संदर्भ द्या
+            </Link>
+            <Link to="/referrals/tracker" style={{ background: '#FFF7ED', color: '#C2410C', border: '1.5px solid #FED7AA', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, textDecoration: 'none' }}>
+              📋 माझे संदर्भ
+            </Link>
           </div>
         </div>
 
