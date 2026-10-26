@@ -96,6 +96,11 @@ export default function BusinessDirectoryPage() {
       }
     } catch (err) {
       console.warn('Backend businesses fetch fallback to default dataset:', err.message);
+      if (showMine) {
+        // never show the sample businesses as if they were the member's own
+        setBusinesses([]);
+        return;
+      }
       let list = DEFAULT_BUSINESSES;
       if (selectedCat !== 'all') list = list.filter(b => b.cat === selectedCat);
       if (selectedDistrict !== 'सर्व') list = list.filter(b => b.district === selectedDistrict);
@@ -346,8 +351,8 @@ export default function BusinessDirectoryPage() {
         ) : businesses.length === 0 ? (
           <div style={{ background: '#fff', borderRadius: '14px', padding: '60px', textAlign: 'center', color: '#666' }}>
             <div style={{ fontSize: '3rem', marginBottom: '12px' }}>🏬</div>
-            <h2>कोणताही व्यवसाय आढळला नाही</h2>
-            <p>कृपया वेगळा जिल्हा किंवा वर्गवारी निवडून पहा किंवा आपला व्यवसाय सर्वप्रथम जोडा!</p>
+            <h2>{showMine ? 'तुमचा अद्याप कोणताही व्यवसाय नाही' : 'कोणताही व्यवसाय आढळला नाही'}</h2>
+            <p>{showMine ? '"+ आपला व्यवसाय जोडा" वर क्लिक करून तुमचा व्यवसाय नोंदवा.' : 'कृपया वेगळा जिल्हा किंवा वर्गवारी निवडून पहा किंवा आपला व्यवसाय सर्वप्रथम जोडा!'}</p>
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '22px' }}>
