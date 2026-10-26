@@ -766,7 +766,7 @@ function Dashboard({ data, navigate }) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <span style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(6px)', padding: '6px 14px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 700 }}>
-            ⏱️ Last Updated: Today, 03:15 PM
+            ⏱️ Updated: {new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
           </span>
           <Btn variant="primary" style={{ background: '#FFF', color: T.saffron, fontWeight: 900 }} onClick={() => navigate('/admin/users/report')}>
             📊 Full MIS Reports →
@@ -792,7 +792,6 @@ function Dashboard({ data, navigate }) {
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
               <div>• <strong>{certifiedUsers}</strong> प्रमाणित</div>
               <div>• <strong>{pendingKyc}</strong> प्रलंबित KYC</div>
-              <div>• <strong>12</strong> नवीन सदस्य आज</div>
             </div>
             <button onClick={() => navigate('/admin/users/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.saffron, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               View Details →
@@ -809,9 +808,7 @@ function Dashboard({ data, navigate }) {
               {pendingKyc}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>140</strong> पडताळणी आवश्यक</div>
-              <div>• <strong>85</strong> Documents Missing</div>
-              <div>• <strong>Avg Time:</strong> 4.2 hrs</div>
+              <div>• <strong>{certifiedUsers}</strong> प्रमाणित</div>
             </div>
             <button onClick={() => navigate('/admin/kyc/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.amber, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               Open KYC Queue →
@@ -827,11 +824,6 @@ function Dashboard({ data, navigate }) {
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.deep, margin: '6px 0' }}>
               {businesses.length}
             </div>
-            <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>380</strong> Verified</div>
-              <div>• <strong>40</strong> Pending</div>
-              <div>• <strong>18</strong> New This Month</div>
-            </div>
             <button onClick={() => navigate('/admin/business/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.deep, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               Business Directory →
             </button>
@@ -846,11 +838,6 @@ function Dashboard({ data, navigate }) {
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.green, margin: '6px 0' }}>
               {referrals.length}
             </div>
-            <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>45</strong> Converted</div>
-              <div>• <strong>₹12,40,000</strong> Business Value</div>
-              <div>• <strong>82%</strong> Success Rate</div>
-            </div>
             <button onClick={() => navigate('/admin/b2b/referrals/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.green, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               Open B2B CRM →
             </button>
@@ -863,12 +850,7 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>🩸</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.red, margin: '6px 0' }}>
-              {blood.length || 94}
-            </div>
-            <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>12</strong> Emergency Open</div>
-              <div>• <strong>78</strong> Resolved Today</div>
-              <div>• <strong>Donor Match:</strong> 96%</div>
+              {blood.length}
             </div>
             <button onClick={() => navigate('/admin/seva/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.red, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               24×7 Seva Center →
@@ -882,12 +864,7 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>🎫</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.amber, margin: '6px 0' }}>
-              {tickets.length || 42}
-            </div>
-            <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>5</strong> High Priority</div>
-              <div>• <strong>2</strong> SLA Breached</div>
-              <div>• <strong>35</strong> Resolved</div>
+              {tickets.length}
             </div>
             <button onClick={() => navigate('/admin/tickets/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.amber, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               Ticket Management →
@@ -901,12 +878,7 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>📅</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.saffron, margin: '6px 0' }}>
-              {events.length || 28}
-            </div>
-            <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>3</strong> Today</div>
-              <div>• <strong>8</strong> Upcoming</div>
-              <div>• <strong>1,450</strong> Total Registrations</div>
+              {events.length}
             </div>
             <button onClick={() => navigate('/admin/events/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.saffron, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               Event Calendar →
@@ -921,11 +893,6 @@ function Dashboard({ data, navigate }) {
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#8B5CF6', margin: '6px 0' }}>
               {contentTotal}
-            </div>
-            <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>120</strong> Published</div>
-              <div>• <strong>24</strong> Under Review</div>
-              <div>• <strong>12</strong> Draft</div>
             </div>
             <button onClick={() => navigate('/admin/content/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: '#8B5CF6', fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               CMS Report →
