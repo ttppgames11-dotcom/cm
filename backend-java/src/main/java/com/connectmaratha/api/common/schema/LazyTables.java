@@ -100,12 +100,16 @@ public class LazyTables {
         CREATE INDEX IF NOT EXISTS idx_enquiry_quotes_member ON enquiry_quotes (member_id);
         """;
 
+    /** Which of the receiver's businesses a referral is for. Not from Node: the same SQL is kept as migration 009. */
+    static final String REFERRAL_COLUMNS = "ALTER TABLE referrals ADD COLUMN IF NOT EXISTS business_id TEXT";
+
     private final JdbcTemplate jdbc;
     private final TransactionTemplate ownTransaction;
     private final AtomicBoolean moderationReady = new AtomicBoolean();
     private final AtomicBoolean supportTicketsReady = new AtomicBoolean();
     private final AtomicBoolean websiteTablesReady = new AtomicBoolean();
     private final AtomicBoolean enquiryTablesReady = new AtomicBoolean();
+    private final AtomicBoolean referralColumnsReady = new AtomicBoolean();
 
     public LazyTables(JdbcTemplate jdbc, PlatformTransactionManager transactions) {
         this.jdbc = jdbc;
@@ -143,5 +147,10 @@ public class LazyTables {
     /** The B2B requirement tables, created on first use (a no-op when they exist). */
     public void ensureEnquiryTables() {
         createOnce(enquiryTablesReady, ENQUIRY_TABLES);
+    }
+
+    /** The referrals.business_id column, added on first use (a no-op when it exists). */
+    public void ensureReferralColumns() {
+        createOnce(referralColumnsReady, REFERRAL_COLUMNS);
     }
 }

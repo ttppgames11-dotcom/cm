@@ -52,6 +52,11 @@ accounts, passwords and tokens made by one server work on the other.
   Hidden businesses (status `hidden`) are left out of the list and are a 404 on their detail page except for
   the owner and admins. Logged-in viewers get an extra `isMine` field on each business.
   Tested in `BusinessOwnershipTest`; the Node comparison seeds its businesses instead of creating them.
+- Referrals (`/api/sangam/referrals`) need a login. Only the giver, the receiver and admins can see one (the customer's
+  name and phone are private); the receiver must be a member who owns a visible business; only the receiver or an
+  admin changes the status (New, Contacted, Qualified, Proposal, Won, Lost). Nothing is invented any more (Node
+  filled in fake givers, receivers and values). Tested in `ReferralEndpointsTest`; the Node comparison seeds referral
+  rows for the totals instead of creating them.
 - Tested in PortalSecurityTest instead of the Node comparison.
 
 ## Known gaps found while porting
@@ -113,6 +118,17 @@ Rules:
 - A feature may use another feature's service or repository, never its controller.
 
 ## New features (not in Node)
+
+**Referrals** (design: `docs/superpowers/specs/2026-10-26-referrals-design.md`):
+
+| Endpoint | Login | |
+|---|---|---|
+| `POST /api/sangam/referrals` | member | give a referral to a member who owns a visible business (20 per day) |
+| `GET /api/sangam/referrals?status=` | member | your referrals (given and received, each with `role`); admins get all |
+| `PUT /api/sangam/referrals/{id}/status` | receiver or admin | `{ "status": one of six words, "value"? }` |
+| `GET /api/sangam/referrals/receivers` | member | members who own a visible business, with their businesses |
+| `GET /api/sangam/referrals/stats` | none | totals only: given, won, won value |
+| `GET /api/sangam/referrals/stream` | none | live `referral.changed` events: ids and status only |
 
 **Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
 

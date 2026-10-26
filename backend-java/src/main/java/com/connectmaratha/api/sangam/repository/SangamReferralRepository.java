@@ -40,7 +40,7 @@ public interface SangamReferralRepository extends JpaRepository<SangamReferral, 
     @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM referrals")
     long countAll();
 
-    /** [count, total value] of referrals marked 'Deal Won'. */
-    @Query(nativeQuery = true, value = "SELECT COUNT(*), SUM(value) FROM referrals WHERE status = 'Deal Won'")
+    /** [count, total value] of won referrals: the old status 'Deal Won' and the pipeline's 'Won'. */
+    @Query(nativeQuery = true, value = "SELECT COUNT(*), SUM(value) FROM referrals WHERE status IN ('Won', 'Deal Won')")
     List<Object[]> wonDeals();
 }
