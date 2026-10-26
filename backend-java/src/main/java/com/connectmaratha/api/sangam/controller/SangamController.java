@@ -1,11 +1,15 @@
 package com.connectmaratha.api.sangam.controller;
 
+import com.connectmaratha.api.common.live.LiveUpdates;
 import com.connectmaratha.api.common.security.CurrentUser;
 import com.connectmaratha.api.common.security.RequireAuth;
 import com.connectmaratha.api.common.web.JsonBody;
+import com.connectmaratha.api.sangam.event.ReferralLiveRelay;
 import com.connectmaratha.api.sangam.service.ReferralService;
 import com.connectmaratha.api.sangam.service.SangamService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /** /api/sangam/* — the same endpoints as backend/routes/sangam.routes.js. */
 @RestController
@@ -24,11 +29,13 @@ public class SangamController {
 
     private final SangamService sangam;
     private final ReferralService referrals;
+    private final LiveUpdates live;
     private final JsonBody bodies;
 
-    public SangamController(SangamService sangam, ReferralService referrals, JsonBody bodies) {
+    public SangamController(SangamService sangam, ReferralService referrals, LiveUpdates live, JsonBody bodies) {
         this.sangam = sangam;
         this.referrals = referrals;
+        this.live = live;
         this.bodies = bodies;
     }
 
@@ -46,6 +53,12 @@ public class SangamController {
     @GetMapping("/referrals/receivers")
     public Map<String, Object> receivers(CurrentUser user) {
         return referrals.receivers(user);
+    }
+
+    /** Live referral events (server-sent events); ids and status only, so no login is needed. */
+    @GetMapping("/referrals/stream")
+    public SseEmitter referralStream(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        return live.subscribe(ReferralLiveRelay.CHANNEL, req, res);
     }
 
     /** Community totals: numbers only. */
