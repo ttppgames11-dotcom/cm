@@ -798,22 +798,13 @@ class NodeParityTest extends PostgresTestBase {
             String admin = jwt.generate(z + "-admin", "Admin", "admin", "Gold");
             String superadmin = jwt.generate(z + "-super", "Super", "superadmin", "Gold");
 
-            r.rec("referral missing client", s.post("/api/sangam/referrals", Map.of("title", "Solar")));
-            Resp ref = s.post("/api/sangam/referrals", Map.of("title", "Solar lead", "client_name", "Kale", "giver_id", giver,
-                "giverName", "Giver", "recipientId", z + "-r", "value", "25000", "client_phone", "9800000002"));
-            r.rec("referral create", ref);
-            r.rec("referral defaults", s.post("/api/sangam/referrals", Map.of("title", "Lead 2", "clientName", "Pawar", "giver_id", giver)));
-            r.rec("referral giver from login", s.post("/api/sangam/referrals", Map.of("title", "Lead 3", "client_name", "Jadhav"), tokenUser));
-            String refId = ref.json().get("referral").get("id").asText();
-            r.rec("deal won", s.req("PUT", "/api/sangam/referrals/" + refId + "/status", Map.of("status", "Deal Won", "value", 50000), null));
-            r.rec("status only", s.req("PUT", "/api/sangam/referrals/" + refId + "/status", Map.of("status", "In Progress"), null));
-            r.rec("no status clears it", s.req("PUT", "/api/sangam/referrals/" + refId + "/status", Map.of("value", "7"), null));
-            r.rec("bad value", s.req("PUT", "/api/sangam/referrals/" + refId + "/status", Map.of("status", "x", "value", ""), null));
-            r.rec("unknown referral", s.req("PUT", "/api/sangam/referrals/REF-0/status", Map.of("status", "x"), null));
-            r.rec("list by member", s.get("/api/sangam/referrals?memberId=" + giver, null));
-            r.rec("list by member and status", s.get("/api/sangam/referrals?memberId=" + giver + "&status=New", null));
-            r.rec("list status all", s.get("/api/sangam/referrals?memberId=" + giver + "&status=all", null));
-            r.rec("list by login giver", s.get("/api/sangam/referrals?memberId=" + z + "-tok", null));
+            // Referrals are private and checked in Java (login, real receiver, receiver-only status) but open in Node, so
+            // their requests are not compared; ReferralEndpointsTest covers them. Rows are seeded so the totals below still compare.
+            for (int i = 1; i <= 3; i++) {
+                db.update("INSERT INTO referrals (id, title, category, giver_id, giver_name, recipient_id, recipient_name, client_name, client_phone, client_email, status, value, notes, created_at) "
+                    + "VALUES (?, ?, 'x', ?, 'Giver', ?, 'Receiver', 'Client', '9800000002', '', ?, ?, '', '2026-01-01 10:00:00') ON CONFLICT DO NOTHING",
+                    "GZ" + s.tag + "R" + i, "Seed " + i, giver, z + "-r", i == 1 ? "Deal Won" : "New", i == 1 ? 50000 : 0);
+            }
 
             r.rec("meeting defaults", s.post("/api/sangam/meetings", Map.of("requester_id", z + "-d", "recipient_id", z + "-e")));
             Resp mt = s.post("/api/sangam/meetings", Map.of("requesterId", z + "-a", "requesterName", "Req A", "recipient_id", z + "-b",
