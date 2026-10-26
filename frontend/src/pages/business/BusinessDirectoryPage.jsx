@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { DEFAULT_BUSINESSES } from '../../data/defaultBusinesses';
+import { listParams } from './businessParams';
 
 const MAHARASHTRA_DISTRICTS = [
   'सर्व', 'पुणे', 'मुंबई', 'मुंबई उपनगर', 'ठाणे', 'नाशिक', 'सातारा', 'कोल्हापूर',
@@ -22,11 +23,15 @@ const CATEGORIES = [
 
 export default function BusinessDirectoryPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [businesses, setBusinesses] = useState(DEFAULT_BUSINESSES);
   const [selectedCat, setSelectedCat] = useState('all');
   const [selectedDistrict, setSelectedDistrict] = useState('सर्व');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
+  // showMine: only the member's own businesses (hidden ones too); editingId: the business being edited, if any
+  const [showMine, setShowMine] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -35,7 +40,7 @@ export default function BusinessDirectoryPage() {
   const [reviewText, setReviewText] = useState('');
 
   // New business form state
-  const [formData, setFormData] = useState({
+  const emptyForm = () => ({
     name: '',
     owner: user?.name || '',
     cat: 'it',
@@ -48,18 +53,23 @@ export default function BusinessDirectoryPage() {
     servicesText: '',
     offers: ''
   });
+  const [formData, setFormData] = useState(emptyForm());
 
   useEffect(() => {
     loadBusinesses();
-  }, [selectedCat, selectedDistrict]);
+  }, [selectedCat, selectedDistrict, showMine]);
 
   const loadBusinesses = async () => {
     setLoading(true);
     try {
+      if (showMine && user) {
+        const mine = await api.businesses.mine();
+        setBusinesses(mine?.businesses || []);
+        return;
+      }
       const res = await api.businesses.getAll({
-        cat: selectedCat !== 'all' ? selectedCat : undefined,
-        district: selectedDistrict !== 'सर्व' ? selectedDistrict : undefined,
-        search: searchQuery || undefined
+        ...listParams({ cat: selectedCat, district: selectedDistrict }),
+        ...(searchQuery ? { search: searchQuery } : {})
       });
       if (res && res.businesses && res.businesses.length > 0) {
         setBusinesses(res.businesses);
@@ -100,32 +110,75 @@ export default function BusinessDirectoryPage() {
     loadBusinesses();
   };
 
+  // Adding needs a login: logged-out visitors are sent to log in and brought back here.
+  const openAddModal = () => {
+    if (!user) {
+      alert('व्यवसाय जोडण्यासाठी कृपया आधी लॉगिन करा.');
+      sessionStorage.setItem('cm_login_redirect', '/business');
+      navigate('/login?redirect=' + encodeURIComponent('/business'));
+      return;
+    }
+    setEditingId(null);
+    setFormData(emptyForm());
+    setShowAddModal(true);
+  };
+
+  // The add form, filled with one of the member's own businesses.
+  const openEditModal = (b) => {
+    setEditingId(b.id);
+    setFormData({
+      name: b.name || '',
+      owner: b.owner || '',
+      cat: b.cat || 'it',
+      city: b.city || '',
+      district: b.district || 'पुणे',
+      phone: b.phone || '',
+      whatsapp: b.whatsapp || '',
+      website: b.website || '',
+      hours: b.hours || '',
+      servicesText: Array.isArray(b.services) ? b.services.join(', ') : '',
+      offers: b.offers || ''
+    });
+    setShowAddModal(true);
+  };
+
   const handleCreateBusiness = async (e) => {
     e.preventDefault();
     try {
       const services = formData.servicesText.split(',').map(s => s.trim()).filter(Boolean);
-      const payload = { ...formData, services };
+      const { servicesText, ...fields } = formData;
+      const payload = { ...fields, services };
+      if (editingId) {
+        const res = await api.businesses.update(editingId, payload);
+        if (res && res.business) {
+          alert('व्यवसाय अद्ययावत केला गेला! 🚩');
+          setBusinesses(businesses.map(item => (item.id === editingId ? res.business : item)));
+          setShowAddModal(false);
+          setEditingId(null);
+        }
+        return;
+      }
       const res = await api.businesses.create(payload);
       if (res && res.business) {
         alert('व्यवसाय यशस्वीरित्या जोडला गेला! 🚩');
         setBusinesses([res.business, ...businesses]);
         setShowAddModal(false);
-        setFormData({
-          name: '',
-          owner: user?.name || '',
-          cat: 'it',
-          city: 'पुणे',
-          district: 'पुणे',
-          phone: '',
-          whatsapp: '',
-          website: '',
-          hours: 'सकाळी ९ ते संध्याकाळी ७',
-          servicesText: '',
-          offers: ''
-        });
+        setFormData(emptyForm());
       }
     } catch (err) {
-      alert('व्यवसाय जोडताना त्रुटी: ' + err.message);
+      alert((editingId ? 'व्यवसाय बदलताना त्रुटी: ' : 'व्यवसाय जोडताना त्रुटी: ') + err.message);
+    }
+  };
+
+  // Hide a business from the public directory, or show it again.
+  const toggleHidden = async (b) => {
+    try {
+      const res = await api.businesses.setVisibility(b.id, b.status !== 'hidden');
+      if (res && res.business) {
+        setBusinesses(businesses.map(item => (item.id === b.id ? res.business : item)));
+      }
+    } catch (err) {
+      alert('स्थिती बदलताना त्रुटी: ' + err.message);
     }
   };
 
@@ -179,7 +232,7 @@ export default function BusinessDirectoryPage() {
           </div>
 
           <button
-            onClick={() => setShowAddModal(true)}
+            onClick={openAddModal}
             className="btn btn-primary"
             style={{ background: '#fff', color: '#C73800', border: 'none', padding: '12px 24px', fontWeight: 800, borderRadius: '8px', fontSize: '1rem', cursor: 'pointer' }}>
             + आपला व्यवसाय जोडा
@@ -243,6 +296,23 @@ export default function BusinessDirectoryPage() {
 
           {/* Industry Category Pills */}
           <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', marginTop: '16px', paddingBottom: '4px' }}>
+            {user && (
+              <button
+                onClick={() => setShowMine(!showMine)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  border: showMine ? '2px solid #0369A1' : '1px solid #E5E7EB',
+                  background: showMine ? '#E0F2FE' : '#F9FAFB',
+                  color: showMine ? '#0369A1' : '#4B5563',
+                  fontWeight: showMine ? 700 : 500,
+                  fontSize: '0.88rem',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap'
+                }}>
+                👤 माझे व्यवसाय
+              </button>
+            )}
             {CATEGORIES.map(cat => (
               <button
                 key={cat.id}
@@ -318,6 +388,11 @@ export default function BusinessDirectoryPage() {
                       <span style={{ background: 'rgba(199, 56, 0, 0.9)', color: '#fff', padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, backdropFilter: 'blur(4px)' }}>
                         {b.categoryName || (CATEGORIES.find(c => c.id === b.cat)?.label) || 'उद्योग / व्यापार'}
                       </span>
+                      {b.status === 'hidden' && (
+                        <span style={{ background: 'rgba(55, 65, 81, 0.95)', color: '#fff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
+                          लपवलेला
+                        </span>
+                      )}
                       {b.verified && (
                         <span style={{ background: 'rgba(16, 185, 129, 0.95)', color: '#fff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, backdropFilter: 'blur(4px)' }}>
                           ✓ प्रमाणित
@@ -406,6 +481,20 @@ export default function BusinessDirectoryPage() {
                     </a>
                   )}
 
+                  {b.isMine && (
+                    <>
+                      <button
+                        onClick={() => openEditModal(b)}
+                        style={{ background: '#FFFFFF', border: '1px solid #0369A1', padding: '8px 12px', borderRadius: '8px', color: '#0369A1', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer' }}>
+                        ✏ संपादित करा
+                      </button>
+                      <button
+                        onClick={() => toggleHidden(b)}
+                        style={{ background: '#FFFFFF', border: '1px solid #6B7280', padding: '8px 12px', borderRadius: '8px', color: '#374151', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer' }}>
+                        {b.status === 'hidden' ? 'पुन्हा दाखवा' : 'लपवा'}
+                      </button>
+                    </>
+                  )}
                   <button
                     onClick={() => setShowReviewModal(b)}
                     style={{ background: '#FFFFFF', border: '1px solid #D1D5DB', padding: '8px 12px', borderRadius: '8px', color: '#4B5563', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer' }}
@@ -424,9 +513,9 @@ export default function BusinessDirectoryPage() {
             <div style={{ background: '#fff', borderRadius: '16px', maxWidth: '600px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: '28px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                 <h3 style={{ fontSize: '1.4rem', margin: 0, color: '#C73800', fontFamily: 'Baloo 2' }}>
-                  🚩 आपला व्यवसाय नोंदवा
+                  {editingId ? '✏ व्यवसाय संपादित करा' : '🚩 आपला व्यवसाय नोंदवा'}
                 </h3>
-                <button onClick={() => setShowAddModal(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+                <button onClick={() => { setShowAddModal(false); setEditingId(null); }} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
               </div>
 
               <form onSubmit={handleCreateBusiness}>
@@ -549,7 +638,7 @@ export default function BusinessDirectoryPage() {
                   <button
                     type="submit"
                     style={{ background: '#C73800', color: '#fff', border: 'none', padding: '10px 24px', borderRadius: '6px', fontWeight: 700, cursor: 'pointer' }}>
-                    नोंदणी करा 🚀
+                    {editingId ? 'जतन करा 💾' : 'नोंदणी करा 🚀'}
                   </button>
                 </div>
               </form>
