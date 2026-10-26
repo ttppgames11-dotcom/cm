@@ -150,6 +150,90 @@ class ReferralReportTest extends PostgresTestBase {
         for (int i = 0; i < expected.length; i++) assertThat(by.get(i).get("count").asLong()).as(by.get(i).get("status").asText()).isEqualTo(expected[i]);
     }
 
+    // ------------------------------------------------------------------ period and top lists
+
+    @Test
+    void periodFilterUsesTheGivenDate() throws Exception {
+        referral("M9701", "M9702", "New", null, 5);
+        referral("M9701", "M9702", "New", null, 45);
+        referral("M9701", "M9702", "New", null, 200);
+        jdbc.update("INSERT INTO referrals (id, title, giver_id, recipient_id, status, created_at) VALUES ('RPTNULL', 't', 'M9701', 'M9702', 'New', NULL)");
+        String admin = token("M9709", "admin");
+        assertThat(body(report(admin, "?period=30d")).at("/summary/given").asLong()).isEqualTo(1);
+        assertThat(body(report(admin, "?period=90d")).at("/summary/given").asLong()).isEqualTo(2);
+        assertThat(body(report(admin, "?period=all")).at("/summary/given").asLong()).isEqualTo(4);
+    }
+
+    @Test
+    void topReferrersAreOrderedByWonValueThenCounts() throws Exception {
+        // M9701 gave 3: two won worth 2000 in total; M9702 gave 5: one won worth 2000; M9703 gave 1: won worth 9000
+        referral("M9701", "M9702", "Won", 1500.0, null);
+        referral("M9701", "M9702", "Won", 500.0, null);
+        referral("M9701", "M9702", "New", null, null);
+        referral("M9702", "M9701", "Won", 2000.0, null);
+        for (int i = 0; i < 4; i++) referral("M9702", "M9701", "New", null, null);
+        referral("M9703", "M9701", "Won", 9000.0, null);
+        JsonNode top = body(report(token("M9709", "admin"), "")).get("topReferrers");
+        assertThat(top.findValuesAsText("memberId")).containsExactly("M9703", "M9701", "M9702");
+        assertThat(top.get(0).get("given").asLong()).isEqualTo(1);
+        assertThat(top.get(0).get("won").asLong()).isEqualTo(1);
+        assertThat(top.get(0).get("wonValue").asDouble()).isEqualTo(9000.0);
+        assertThat(top.get(1).get("given").asLong()).isEqualTo(3);
+        assertThat(top.get(1).get("won").asLong()).isEqualTo(2);
+        assertThat(top.get(1).get("wonValue").asDouble()).isEqualTo(2000.0);
+        assertThat(top.get(2).get("given").asLong()).isEqualTo(5);
+        assertThat(top.get(2).get("won").asLong()).isEqualTo(1);
+        assertThat(top.get(2).get("name").asText()).isEqualTo("Member M9702");
+    }
+
+    @Test
+    void topReceiversMirrorThat() throws Exception {
+        referral("M9701", "M9702", "Won", 700.0, null);
+        referral("M9703", "M9702", "New", null, null);
+        referral("M9701", "M9704", "Lost", null, null);
+        JsonNode top = body(report(token("M9709", "admin"), "")).get("topReceivers");
+        assertThat(top.findValuesAsText("memberId")).containsExactly("M9702", "M9704");
+        assertThat(top.get(0).get("received").asLong()).isEqualTo(2);
+        assertThat(top.get(0).get("won").asLong()).isEqualTo(1);
+        assertThat(top.get(0).get("wonValue").asDouble()).isEqualTo(700.0);
+        // M9701 and M9703 only gave, so they are not receivers
+        assertThat(top.findValuesAsText("memberId")).doesNotContain("M9701", "M9703");
+    }
+
+    @Test
+    void topListsAreCappedAtTen() throws Exception {
+        for (int i = 1; i <= 12; i++) {
+            String giver = String.format("M98%02d", i);
+            jdbc.update("INSERT INTO members (id, name) VALUES (?, ?) ON CONFLICT (id) DO NOTHING", giver, "Giver " + i);
+            referral(giver, "M9702", "Won", i * 100.0, null); // M9801 is the weakest, M9812 the strongest
+        }
+        JsonNode top = body(report(token("M9709", "admin"), "")).get("topReferrers");
+        assertThat(top).hasSize(10);
+        assertThat(top.get(0).get("memberId").asText()).isEqualTo("M9812");
+        assertThat(top.findValuesAsText("memberId")).doesNotContain("M9801", "M9802");
+    }
+
+    @Test
+    void namesComeFromMembersWithAStoredFallback() throws Exception {
+        jdbc.update("UPDATE members SET name = 'Renamed Giver' WHERE id = 'M9704'");
+        referral("M9704", "M9702", "New", null, null);
+        referral("M9799", "M9702", "New", null, null); // M9799 is not a member (deleted account)
+        JsonNode top = body(report(token("M9709", "admin"), "")).get("topReferrers");
+        for (JsonNode row : top) {
+            if (row.get("memberId").asText().equals("M9704")) assertThat(row.get("name").asText()).isEqualTo("Renamed Giver");
+            if (row.get("memberId").asText().equals("M9799")) assertThat(row.get("name").asText()).isEqualTo("Giver M9799");
+        }
+        assertThat(top.findValuesAsText("memberId")).contains("M9704", "M9799");
+    }
+
+    @Test
+    void periodAlsoLimitsTheTopLists() throws Exception {
+        referral("M9701", "M9702", "Won", 5000.0, 200);
+        referral("M9703", "M9702", "New", null, 2);
+        JsonNode top = body(report(token("M9709", "admin"), "?period=30d")).get("topReferrers");
+        assertThat(top.findValuesAsText("memberId")).containsExactly("M9703");
+    }
+
     @Test
     void replyHoldsNoCustomerData() throws Exception {
         mixedReferrals();
