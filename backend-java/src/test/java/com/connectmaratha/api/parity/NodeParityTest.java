@@ -806,37 +806,8 @@ class NodeParityTest extends PostgresTestBase {
                     "GZ" + s.tag + "R" + i, "Seed " + i, giver, z + "-r", i == 1 ? "Deal Won" : "New", i == 1 ? 50000 : 0);
             }
 
-            r.rec("meeting defaults", s.post("/api/sangam/meetings", Map.of("requester_id", z + "-d", "recipient_id", z + "-e")));
-            Resp mt = s.post("/api/sangam/meetings", Map.of("requesterId", z + "-a", "requesterName", "Req A", "recipient_id", z + "-b",
-                "recipient_name", "Rec B", "date", "2026-11-01", "time", "10:00", "location", "Pune", "topic", "Solar deal"));
-            r.rec("meeting create", mt);
-            String mid = mt.json().get("meeting").get("id").asText();
-            r.rec("meetings for member", s.get("/api/sangam/meetings?memberId=" + z + "-a", null));
-            r.rec("reschedule no login", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("date", "2026-11-02"), null));
-            r.rec("reschedule stranger", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("date", "2026-11-02"), stranger));
-            r.rec("reschedule superadmin", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("date", "2026-11-02"), superadmin));
-            r.rec("reschedule missing", s.req("PUT", "/api/sangam/meetings/MT-0", Map.of("date", "2026-11-02"), requester));
-            r.rec("reschedule no date", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("time", "11:00"), requester));
-            r.rec("reschedule number date", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("date", 20261102), requester));
-            r.rec("reschedule blank date", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("date", "   "), requester));
-            r.rec("reschedule by requester", s.req("PUT", "/api/sangam/meetings/" + mid,
-                Map.of("date", " 2026-11-03 ", "time", " 12:00 ", "notes", " bring docs "), requester));
-            Map<String, Object> keepTime = new LinkedHashMap<>();
-            keepTime.put("date", "2026-11-04");
-            keepTime.put("time", null);
-            r.rec("reschedule by recipient, keep time", s.req("PUT", "/api/sangam/meetings/" + mid, keepTime, recipient));
-            r.rec("reschedule by admin", s.req("PUT", "/api/sangam/meetings/" + mid, Map.of("date", "2026-11-05", "location", 42), admin));
-            r.rec("status invalid", s.req("PUT", "/api/sangam/meetings/" + mid + "/status", Map.of("status", "done"), requester));
-            r.rec("status number", s.req("PUT", "/api/sangam/meetings/" + mid + "/status", Map.of("status", 5), requester));
-            r.rec("status stranger", s.req("PUT", "/api/sangam/meetings/" + mid + "/status", Map.of("status", "cancelled"), stranger));
-            r.rec("status cancelled marathi", s.req("PUT", "/api/sangam/meetings/" + mid + "/status", Map.of("status", " रद्द "), recipient));
-            r.rec("status completed by admin", s.req("PUT", "/api/sangam/meetings/" + mid + "/status", Map.of("status", "COMPLETED"), admin));
-
-            Integer notifA = db.queryForObject("SELECT COUNT(*) FROM notifications WHERE member_id = ?", Integer.class, z + "-a");
-            Integer notifB = db.queryForObject("SELECT COUNT(*) FROM notifications WHERE member_id = ?", Integer.class, z + "-b");
-            Integer audits = db.queryForObject("SELECT COUNT(*) FROM audit_logs WHERE details LIKE ?", Integer.class, "%" + mid + "%");
-            String text = "notifications A=" + notifA + " B=" + notifB + " audit=" + audits;
-            r.rec("side effects", new Resp(200, text, JsonNodeFactory.instance.textNode(text)));
+            // Meetings are private and checked in Java (login, real partner, receiver-only answers) but open in Node, so their
+            // requests are not compared; MeetingEndpointsTest covers them.
 
             Resp metrics = s.get("/api/sangam/metrics", null);
             assertThat(metrics.json().get("metrics").get("totalReferrals").asInt()).as(s.name + " sangam totals").isGreaterThanOrEqualTo(3);

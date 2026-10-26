@@ -48,7 +48,7 @@ class ReferralEndpointsTest extends PostgresTestBase {
         jdbc.update("DELETE FROM referrals WHERE title LIKE 'Zr%' OR giver_id LIKE 'M96%' OR recipient_id LIKE 'M96%'");
         jdbc.update("DELETE FROM businesses WHERE name LIKE 'Zr%'");
         for (String id : List.of("M9601", "M9602", "M9603", "M9604", "M9609")) {
-            jdbc.update("INSERT INTO members (id, name, phone) VALUES (?, ?, ?) ON CONFLICT (id) DO NOTHING", id, "Member " + id, "98000" + id.substring(1));
+            jdbc.update("INSERT INTO members (id, name, phone) VALUES (?, ?, ?) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name", id, "Member " + id, "98000" + id.substring(1));
         }
         business("ZRB1", "Zr Shop One", "M9602", "visible");
         business("ZRB2", "Zr Shop Hidden", "M9603", "hidden");

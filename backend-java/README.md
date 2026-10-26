@@ -57,6 +57,10 @@ accounts, passwords and tokens made by one server work on the other.
   admin changes the status (New, Contacted, Qualified, Proposal, Won, Lost). Nothing is invented any more (Node
   filled in fake givers, receivers and values). Tested in `ReferralEndpointsTest`; the Node comparison seeds referral
   rows for the totals instead of creating them.
+- Meetings (`/api/sangam/meetings`) need a login. Only the two members (and admins, to read) can see one; the other
+  person must be a member who owns a visible business and answers the request (accept or decline). Node let anyone
+  list every meeting, create one as anybody and filled in invented names and dates. Dates and times are real and
+  judged in Indian time. Tested in `MeetingEndpointsTest`; the Node comparison no longer sends meeting requests.
 - Tested in PortalSecurityTest instead of the Node comparison.
 
 ## Known gaps found while porting
@@ -130,6 +134,18 @@ Rules:
 | `GET /api/sangam/referrals/stats` | none | totals only: given, won, won value |
 | `GET /api/sangam/referrals/stream` | none | live `referral.changed` events: ids and status only |
 | `GET /api/admin/referrals/report?period=30d\|90d\|all` | admin | the admin report: given, won, lost, open, win rate, won value, stage counts, top 10 referrers and receivers (names and numbers only, never customer data). Periods count back from now in the database clock (server time zone), to the hour |
+
+**Meetings** (design: `docs/superpowers/specs/2026-10-27-meetings-design.md`):
+
+| Endpoint | Login | |
+|---|---|---|
+| `POST /api/sangam/meetings` | member | ask a business owner for a meeting: `recipientId`, `date` (YYYY-MM-DD), `time` (HH:mm), `mode` (Offline or Online), `place` (an Online one must be a web link), `topic` (20 per day, 10 waiting at once) |
+| `GET /api/sangam/meetings` | member | your meetings (asked and received, each with `role`, `partner_*`, `mode`); admins get all |
+| `GET /api/sangam/meetings/partners` | member | members who own a visible business, with their businesses |
+| `PUT /api/sangam/meetings/{id}/status` | the two members | `{ "status": accepted | declined | cancelled | completed }`: only the one asked accepts or declines; completing needs the meeting day to have come |
+| `PUT /api/sangam/meetings/{id}` | the two members | a new `date`, `time` (and optional `place`); the meeting goes back to Requested |
+| `PUT /api/sangam/meetings/{id}/notes` | the two members | `{ "notes": up to 2000 characters }`, shared by both |
+| `GET /api/sangam/meetings/stream` | none | live `meeting.changed` events: ids and status only |
 
 **Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
 
