@@ -698,17 +698,24 @@ class NodeParityTest extends PostgresTestBase {
             r.rec("member photo removed", s.get("/api/members/" + memberId, token));
         });
 
+        // Adding a business needs a login in Java (Node lets anyone add one), so the businesses are put into the
+        // shared database directly; creating them is tested in BusinessOwnershipTest.
+        JdbcTemplate bizSeed = new JdbcTemplate(dataSource());
+        for (String t : List.of("n", "j")) {
+            String dist = "Zq" + t;
+            String[][] rows = {
+                {"GZ" + t + "B1", dist + " Mess", "Shinde", "restaurant", "[\"Thali\",\"Catering\"]", "9800000000"},
+                {"GZ" + t + "B2", dist + " Soft", "Patil", "it", "[\"Apps\"]", ""},
+                {"GZ" + t + "B3", dist + " Shop", "More", "retail", "[]", ""}};
+            for (String[] row : rows) {
+                bizSeed.update("INSERT INTO businesses (id, name, owner, cat, city, district, photo, phone, whatsapp, website, hours, services, offers, rating, created_at, owner_id, status) "
+                    + "VALUES (?, ?, ?, ?, 'पुणे', ?, '🏢', ?, '', '', 'सकाळी ९ ते रात्री ८', ?, '', 5.0, '2026-01-01 10:00:00', NULL, 'visible') ON CONFLICT DO NOTHING",
+                    row[0], row[1], row[2], row[3], dist, row[5], row[4]);
+            }
+        }
         compare("businesses", (s, r) -> {
             String d = "Zq" + s.tag; // this server's own district, so lists don't mix
-            r.rec("create missing fields", s.post("/api/businesses", Map.of("name", "Only Name")));
-            Resp b1 = s.post("/api/businesses", Map.of("name", "Zq" + s.tag + " Mess", "owner", "Shinde", "cat", "restaurant",
-                "district", d, "services", List.of("Thali", "Catering"), "phone", 9800000000L));
-            r.rec("create restaurant", b1);
-            r.rec("create it, one service", s.post("/api/businesses", Map.of("name", "Zq" + s.tag + " Soft", "owner", "Patil",
-                "cat", "it", "district", d, "services", "Apps")));
-            r.rec("create other, no services", s.post("/api/businesses", Map.of("name", "Zq" + s.tag + " Shop", "owner", "More",
-                "cat", "retail", "district", d)));
-            String id = b1.json().get("business").get("id").asText();
+            String id = "GZ" + s.tag + "B1";
             r.rec("review", s.post("/api/businesses/" + id + "/reviews", Map.of("member_name", "Rao", "rating", "4", "text", "छान")));
             r.rec("review defaults", s.post("/api/businesses/" + id + "/reviews", Map.of()));
             r.rec("detail with reviews", s.get("/api/businesses/" + id, null));
@@ -1201,7 +1208,9 @@ class NodeParityTest extends PostgresTestBase {
         for (Srv server : List.of(
                 new Srv("node", "http://127.0.0.1:" + NODE_PORT, "n"), new Srv("java", "http://127.0.0.1:" + javaPort, "j"))) {
             for (int i = 0; i < 3; i++) {
-                Resp created = server.post("/api/businesses", Map.of("name", "Crowded " + i, "owner", "O", "cat", "it"));
+                // Java needs a login to add a business (Node ignores it)
+                Resp created = server.post("/api/businesses", Map.of("name", "Crowded " + i, "owner", "O", "cat", "it"),
+                    jwt.generate("M9599", "Test", "member", "Gold"));
                 assertThat(created.status()).as(server.name + " creates a business even when most ids are taken").isEqualTo(201);
             }
         }
