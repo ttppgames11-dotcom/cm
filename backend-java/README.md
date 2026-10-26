@@ -129,6 +129,7 @@ Rules:
 | `GET /api/sangam/referrals/receivers` | member | members who own a visible business, with their businesses |
 | `GET /api/sangam/referrals/stats` | none | totals only: given, won, won value |
 | `GET /api/sangam/referrals/stream` | none | live `referral.changed` events: ids and status only |
+| `GET /api/admin/referrals/report?period=30d\|90d\|all` | admin | the admin report: given, won, lost, open, win rate, won value, stage counts, top 10 referrers and receivers (names and numbers only, never customer data). Periods count back from now in the database clock (server time zone), to the hour |
 
 **Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
 
