@@ -41,16 +41,17 @@ export default function LanguageSwitcher({ variant = 'topbar' }) {
         onClick={() => setIsOpen((prev) => !prev)}
         title="भाषा निवडा / Select Language / भाषा चुनें"
         aria-label="Language Selector"
+        className="cm-lang-btn"
         style={{
           display: 'inline-flex',
           alignItems: 'center',
-          gap: '5px',
+          gap: '4px',
           background: isTopbar ? 'rgba(255, 255, 255, 0.18)' : '#FFF8F0',
           border: isTopbar ? '1px solid rgba(253, 230, 138, 0.4)' : '1.5px solid #FFCC80',
           color: isTopbar ? '#FFFFFF' : '#8C1D03',
-          padding: isTopbar ? '2px 9px' : '6px 12px',
+          padding: isTopbar ? '2px 9px' : '4px 9px',
           borderRadius: '20px',
-          fontSize: isTopbar ? '0.78rem' : '0.86rem',
+          fontSize: isTopbar ? '0.78rem' : '0.80rem',
           fontWeight: '700',
           cursor: 'pointer',
           transition: 'all 0.2s ease',

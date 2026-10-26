@@ -42,6 +42,7 @@ export default function SuperAdminDashboardPage() {
   const [rolesMatrix, setRolesMatrix] = useState([]);
   const [jobApps, setJobApps] = useState([]);
   const [enquiries, setEnquiries] = useState([]);
+  const [portalApprovals, setPortalApprovals] = useState({ articles: [], scholarshipApplications: [], careerGuidance: [] });
 
   // Filter states
   const [userSearch, setUserSearch] = useState('');
@@ -58,6 +59,7 @@ export default function SuperAdminDashboardPage() {
   const [refEndDate, setRefEndDate] = useState('');
   const [refStatus, setRefStatus] = useState('all'); // 'all' | 'active' | 'pending'
   const [refReferrerId, setRefReferrerId] = useState('all');
+  const [selectedReferralAuditModal, setSelectedReferralAuditModal] = useState(null);
   const [referralReportData, setReferralReportData] = useState(() => getAdminReferralReport());
 
   const refreshReferralReport = () => {
@@ -119,7 +121,7 @@ export default function SuperAdminDashboardPage() {
   const loadAllData = async () => {
     setLoading(true);
     try {
-      const [usersRes, docsRes, srvsRes, htlsRes, infoRes, rolesRes, appsRes, enqsRes] = await Promise.all([
+      const [usersRes, docsRes, srvsRes, htlsRes, infoRes, rolesRes, appsRes, enqsRes, portalRes] = await Promise.all([
         apiClient.getAdminUsers({
           search: userSearch,
           role: userRoleFilter,
@@ -131,7 +133,8 @@ export default function SuperAdminDashboardPage() {
         apiClient.getAdminInformation().catch(() => []),
         apiClient.getRolesMatrix().catch(() => []),
         api.admin.getJobApplications().catch(() => ({ applications: [] })),
-        api.admin.getEnquiriesSummary().catch(() => ({ enquiries: [] }))
+        api.admin.getEnquiriesSummary().catch(() => ({ enquiries: [] })),
+        api.portals.getPendingApprovals().catch(() => ({ data: { articles: [], scholarshipApplications: [], careerGuidance: [] } }))
       ]);
 
       setUsers(usersRes.users || []);
@@ -143,6 +146,7 @@ export default function SuperAdminDashboardPage() {
       setRolesMatrix(rolesRes || []);
       setJobApps(appsRes.applications || []);
       setEnquiries(enqsRes.enquiries || []);
+      if (portalRes?.data) setPortalApprovals(portalRes.data);
     } catch (err) {
       console.error('Admin load error:', err);
       showToast('माहिती लोड करताना अडचण आली.', 'error');
@@ -627,7 +631,7 @@ export default function SuperAdminDashboardPage() {
               <span>•</span>
               <span>थेट डेटाबेस रिअल-टाइम नियंत्रण</span>
             </div>
-            <h1 style={{ margin: '4px 0 8px 0', fontSize: '2.2rem', fontWeight: 900, color: '#431407', letterSpacing: '-0.5px' }}>
+            <h1 style={{ margin: '4px 0 8px 0', fontSize: '2.2rem', fontWeight: 900, color: '#EA580C', letterSpacing: '-0.5px' }}>
               केंद्रीय प्रशासकीय व्यवस्थापन केंद्र (Admin Management Hub)
             </h1>
             <p style={{ margin: 0, color: '#9A3412', fontSize: '1rem', fontWeight: 700 }}>
@@ -776,6 +780,7 @@ export default function SuperAdminDashboardPage() {
         <div style={{ display: 'flex', gap: '10px', borderBottom: '2px solid #FED7AA', paddingBottom: '14px', marginBottom: '26px', overflowX: 'auto' }}>
           {[
             { id: 'users', label: '👥 वापरकर्ते (Users CRUD)', count: users.length },
+            { id: 'portals_cms', label: '🏛️ १० पोर्टल्स सामाजिक कल्याण व नेतृत्व CRM (10 Portals Central CRM)', count: (portalApprovals.articles?.length || 0) + (portalApprovals.scholarshipApplications?.length || 0) + (portalApprovals.organizations?.length || 0) + (portalApprovals.helpRequests?.length || 0) + (portalApprovals.newsArticles?.length || 0) },
             { id: 'opportunities', label: '💼 नोकऱ्या व लीड्स (Jobs & Leads)', count: jobApps.length + enquiries.length },
             { id: 'referrals', label: '🤝 रेफरल अहवाल (Referral Intelligence)', count: referralReportData.filtered.length },
             { id: 'doctors', label: '🩺 डॉक्टर्स (Doctors)', count: doctors.length },
@@ -1041,7 +1046,7 @@ export default function SuperAdminDashboardPage() {
             {/* Header with Title and Actions */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px', flexWrap: 'wrap', gap: '16px' }}>
               <div>
-                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.35rem', color: '#431407', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.35rem', color: '#EA580C', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <span>🤝</span>
                   <span>राज्यव्यापी रेफरल बुद्धिमत्ता व ऑडिट अहवाल</span>
                 </h3>
@@ -1413,7 +1418,7 @@ export default function SuperAdminDashboardPage() {
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
                 <div>
-                  <h4 style={{ margin: '0 0 4px 0', fontSize: '1.2rem', color: '#431407', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <h4 style={{ margin: '0 0 4px 0', fontSize: '1.2rem', color: '#EA580C', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span>🏆</span>
                     <span>अव्वल शिफारसकर्ते लीडरबोर्ड (Top Referrers Performance)</span>
                   </h4>
@@ -1535,7 +1540,7 @@ export default function SuperAdminDashboardPage() {
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
                 <div>
-                  <h4 style={{ margin: '0 0 4px 0', fontSize: '1.2rem', color: '#431407', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <h4 style={{ margin: '0 0 4px 0', fontSize: '1.2rem', color: '#EA580C', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span>📋</span>
                     <span>सविस्तर रेफरल नोंदी ऑडिट नोंदवही (Referral Audit Ledger)</span>
                   </h4>
@@ -1553,7 +1558,7 @@ export default function SuperAdminDashboardPage() {
               {referralReportData.filtered.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '50px 20px', background: '#FFF7ED', borderRadius: '12px', border: '1.5px dashed #FED7AA' }}>
                   <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🔍</div>
-                  <h4 style={{ margin: '0 0 6px 0', color: '#431407', fontWeight: 900, fontSize: '1.15rem' }}>कोणत्याही नोंदी आढळल्या नाहीत</h4>
+                  <h4 style={{ margin: '0 0 6px 0', color: '#EA580C', fontWeight: 900, fontSize: '1.15rem' }}>कोणत्याही नोंदी आढळल्या नाहीत</h4>
                   <p style={{ margin: '0 0 16px 0', color: '#64748B', fontSize: '0.9rem' }}>कृपया फिल्टर निकष बदला किंवा रीसेट करा.</p>
                   <button
                     type="button"
@@ -1563,114 +1568,322 @@ export default function SuperAdminDashboardPage() {
                   </button>
                 </div>
               ) : (
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '950px' }}>
+                <div style={{ overflowX: 'auto', border: '1px solid #FED7AA', borderRadius: '12px' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '1100px', fontSize: '0.88rem' }}>
                     <thead>
                       <tr style={{ background: '#FFF7ED', borderBottom: '2px solid #FED7AA' }}>
-                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>#</th>
-                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>नोंदणी तारीख</th>
-                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>नवीन सभासद (Referee)</th>
-                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>स्थान (शहर/जिल्हा, तालुका)</th>
-                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>भूमिका</th>
-                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900 }}>शिफारसकर्ता (Referrer)</th>
-                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, textAlign: 'center' }}>सदस्यत्व स्थिती</th>
-                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, textAlign: 'center' }}>कमिशन स्थिती</th>
-                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, textAlign: 'right' }}>कृती</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, whiteSpace: 'nowrap' }}>SNo.</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, whiteSpace: 'nowrap' }}>Member ID</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, whiteSpace: 'nowrap' }}>Name</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, whiteSpace: 'nowrap' }}>Referral ID</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, whiteSpace: 'nowrap' }}>Referral Name</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, whiteSpace: 'nowrap' }}>Joining Date</th>
+                        <th style={{ padding: '12px 14px', color: '#EA580C', fontSize: '0.85rem', fontWeight: 900, whiteSpace: 'nowrap', textAlign: 'center' }}>Click Here!</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, whiteSpace: 'nowrap' }}>Mobile No.</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, whiteSpace: 'nowrap' }}>Email</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, whiteSpace: 'nowrap' }}>Package</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, whiteSpace: 'nowrap' }}>Activ.Date</th>
+                        <th style={{ padding: '12px 14px', color: '#7C2D12', fontSize: '0.85rem', fontWeight: 900, whiteSpace: 'nowrap', textAlign: 'center' }}>Status</th>
                       </tr>
                     </thead>
                     <tbody>
                       {referralReportData.filtered.map((item, idx) => {
-                        const isPaid = item.status === 'active';
+                        const sNo = item.sno || idx + 1;
+                        const mId = item.memberId || item.refereeId || '-';
+                        const mName = item.name || item.refereeName || '-';
+                        const refId = item.referralId || item.referrerId || '-';
+                        const refName = item.referralName || item.referrerName || '-';
+                        const joinDate = item.joiningDate || (item.registeredAt ? item.registeredAt.slice(0, 10) : item.date) || '-';
+                        const mobileNo = item.mobileNo || item.refereePhone || '-';
+                        const email = item.email || `${mId.toLowerCase()}@connectmaratha.com`;
+                        const pkg = item.package || 'Basic (प्राथमिक)';
+                        const activDate = item.activDate || item.joiningDate || (item.registeredAt ? item.registeredAt.slice(0, 10) : '') || '-';
+                        const status = item.status || 'Active';
+                        const isPaid = status.toLowerCase() === 'active';
+
                         return (
                           <tr key={item.id || idx} style={{ borderBottom: '1px solid #FED7AA', background: idx % 2 === 0 ? '#FFFFFF' : '#FAFAF9' }}>
-                            <td style={{ padding: '14px', color: '#64748B', fontWeight: 800, fontSize: '0.85rem' }}>
-                              {idx + 1}
+                            <td style={{ padding: '12px 14px', color: '#64748B', fontWeight: 800 }}>
+                              {sNo}
                             </td>
-                            <td style={{ padding: '14px', fontSize: '0.85rem', color: '#475569', fontWeight: 700, whiteSpace: 'nowrap' }}>
-                              {item.registeredAt || item.date || 'नुकतेच'}
-                            </td>
-                            <td style={{ padding: '14px' }}>
-                              <div style={{ fontWeight: 900, color: '#1E293B', fontSize: '0.95rem' }}>{item.refereeName}</div>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px', fontSize: '0.82rem', color: '#64748B' }}>
-                                <span>📞 {item.refereePhone}</span>
-                                <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#EA580C', background: '#FFF7ED', padding: '1px 6px', borderRadius: '4px', border: '1px solid #FED7AA' }}>
-                                  {item.refereeId}
-                                </span>
-                              </div>
-                            </td>
-                            <td style={{ padding: '14px' }}>
-                              <div style={{ fontWeight: 800, color: '#1E293B', fontSize: '0.88rem' }}>📍 {item.district || 'महाराष्ट्र'}</div>
-                              <div style={{ color: '#64748B', fontSize: '0.82rem', fontWeight: 600 }}>तालुका: {item.taluka || 'सर्व'}</div>
-                            </td>
-                            <td style={{ padding: '14px' }}>
-                              <span style={{ background: '#FFF7ED', color: '#EA580C', border: '1px solid #FED7AA', padding: '3px 8px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 800 }}>
-                                {item.role === 'entrepreneur' ? 'उद्योजक' :
-                                 item.role === 'business' ? 'व्यावसायिक' :
-                                 item.role === 'professional' ? 'प्रोेशनल' :
-                                 item.role === 'chapter_president' ? 'शाखा अध्यक्ष' :
-                                 item.role === 'district_admin' ? 'जिल्हा ॲडमिन' :
-                                 item.role === 'student' ? 'विद्यार्थी' : 'सभासद'}
+                            <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
+                              <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#EA580C', background: '#FFF7ED', padding: '3px 8px', borderRadius: '6px', border: '1px solid #FED7AA' }}>
+                                {mId}
                               </span>
                             </td>
-                            <td style={{ padding: '14px' }}>
-                              <div style={{ fontWeight: 800, color: '#1E293B', fontSize: '0.88rem' }}>{item.referrerName}</div>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-                                <span style={{ fontFamily: 'monospace', fontWeight: 900, color: '#EA580C', fontSize: '0.8rem', background: '#FFF7ED', padding: '1px 6px', borderRadius: '4px', border: '1px solid #FED7AA' }}>
-                                  {item.referrerId}
-                                </span>
-                                <span style={{ fontSize: '0.75rem', color: '#64748B' }}>({item.referrerDistrict || 'महाराष्ट्र'})</span>
+                            <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
+                              <div style={{ fontWeight: 900, color: '#1E293B', fontSize: '0.92rem' }}>{mName}</div>
+                              <div style={{ fontSize: '0.74rem', color: '#64748B' }}>📍 {item.district || 'महाराष्ट्र'}{item.taluka ? `, ${item.taluka}` : ''}</div>
+                            </td>
+                            <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
+                              <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#1F2937', background: '#F8FAFC', padding: '3px 8px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
+                                {refId}
+                              </span>
+                            </td>
+                            <td style={{ padding: '12px 14px', color: '#334155', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                              {refName}
+                            </td>
+                            <td style={{ padding: '12px 14px', fontSize: '0.85rem', color: '#475569', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                              {joinDate}
+                            </td>
+                            <td style={{ padding: '12px 14px', textAlign: 'center', whiteSpace: 'nowrap' }}>
+                              <button
+                                type="button"
+                                onClick={() => setSelectedReferralAuditModal(item)}
+                                style={{
+                                  background: 'linear-gradient(135deg, #EA580C 0%, #C2410C 100%)',
+                                  color: '#FFFFFF',
+                                  border: 'none',
+                                  padding: '6px 14px',
+                                  borderRadius: '8px',
+                                  fontWeight: 800,
+                                  fontSize: '0.82rem',
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '6px',
+                                  boxShadow: '0 2px 8px rgba(234, 88, 12, 0.3)'
+                                }}>
+                                <span>🔍 Click Here!</span>
+                              </button>
+                            </td>
+                            <td style={{ padding: '12px 14px', color: '#0369A1', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span>{mobileNo}</span>
+                                {mobileNo !== '-' && (
+                                  <a href={`tel:${mobileNo}`} title="कॉल करा" style={{ textDecoration: 'none', fontSize: '0.75rem' }}>📞</a>
+                                )}
                               </div>
                             </td>
-                            <td style={{ padding: '14px', textAlign: 'center' }}>
+                            <td style={{ padding: '12px 14px', color: '#475569', fontSize: '0.82rem', whiteSpace: 'nowrap' }}>
+                              {email}
+                            </td>
+                            <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
+                              <span style={{
+                                background: pkg.includes('Gold') ? '#FEF9C3' : pkg.includes('Silver') ? '#F1F5F9' : '#FFF7ED',
+                                color: pkg.includes('Gold') ? '#854D0E' : pkg.includes('Silver') ? '#334155' : '#EA580C',
+                                border: `1px solid ${pkg.includes('Gold') ? '#FDE047' : pkg.includes('Silver') ? '#CBD5E1' : '#FED7AA'}`,
+                                padding: '3px 10px',
+                                borderRadius: '12px',
+                                fontSize: '0.78rem',
+                                fontWeight: 800
+                              }}>
+                                {pkg}
+                              </span>
+                            </td>
+                            <td style={{ padding: '12px 14px', color: '#64748B', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
+                              {activDate}
+                            </td>
+                            <td style={{ padding: '12px 14px', textAlign: 'center', whiteSpace: 'nowrap' }}>
                               {isPaid ? (
                                 <span style={{ background: '#DCFCE7', color: '#15803D', border: '1px solid #86EFAC', padding: '4px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 900, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                                   <span>✓</span>
-                                  <span>सक्रिय सशुल्क</span>
+                                  <span>Active</span>
                                 </span>
                               ) : (
                                 <span style={{ background: '#FEF3C7', color: '#B45309', border: '1px solid #FDE68A', padding: '4px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 900, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                                   <span>⏳</span>
-                                  <span>नोंदणी प्रलंबित</span>
+                                  <span>Pending</span>
                                 </span>
                               )}
-                            </td>
-                            <td style={{ padding: '14px', textAlign: 'center' }}>
-                              {isPaid ? (
-                                <span style={{ background: '#FFF7ED', color: '#EA580C', border: '1px solid #FED7AA', padding: '4px 10px', borderRadius: '10px', fontSize: '0.82rem', fontWeight: 900 }}>
-                                  ₹१०० जमा (Paid)
-                                </span>
-                              ) : (
-                                <span style={{ background: '#F1F5F9', color: '#64748B', border: '1px solid #CBD5E1', padding: '4px 10px', borderRadius: '10px', fontSize: '0.82rem', fontWeight: 800 }}>
-                                  ₹१०० प्रलंबित (Pending)
-                                </span>
-                              )}
-                            </td>
-                            <td style={{ padding: '14px', textAlign: 'right' }}>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  navigator.clipboard.writeText(item.refereeId || item.refereePhone);
-                                  showToast(`📋 सभासद आयडी (${item.refereeId}) कॉपी केला!`, 'success');
-                                }}
-                                title="सभासद आयडी कॉपी करा"
-                                style={{
-                                  background: '#FFF7ED',
-                                  border: '1px solid #FED7AA',
-                                  color: '#EA580C',
-                                  padding: '6px 10px',
-                                  borderRadius: '6px',
-                                  cursor: 'pointer',
-                                  fontWeight: 800,
-                                  fontSize: '0.78rem'
-                                }}>
-                                📋 कॉपी
-                              </button>
                             </td>
                           </tr>
                         );
                       })}
                     </tbody>
                   </table>
+                </div>
+              )}
+
+              {/* AUDIT DETAILS MODAL (CLICK HERE!) */}
+              {selectedReferralAuditModal && (
+                <div style={{
+                  position: 'fixed',
+                  inset: 0,
+                  background: 'rgba(0,0,0,0.6)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 1000,
+                  padding: '20px',
+                  backdropFilter: 'blur(4px)'
+                }}>
+                  <div style={{
+                    background: '#FFFFFF',
+                    borderRadius: '24px',
+                    maxWidth: '560px',
+                    width: '100%',
+                    boxShadow: '0 24px 48px rgba(0,0,0,0.25)',
+                    border: '2px solid #FED7AA',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{
+                      background: 'linear-gradient(135deg, #1F2937 0%, #7C2D12 100%)',
+                      color: '#FFFFFF',
+                      padding: '24px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                        <div style={{
+                          width: '56px',
+                          height: '56px',
+                          borderRadius: '50%',
+                          background: '#FFF7ED',
+                          color: '#EA580C',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '1.6rem',
+                          fontWeight: 900
+                        }}>
+                          {(selectedReferralAuditModal.name || selectedReferralAuditModal.refereeName || 'म').charAt(0)}
+                        </div>
+                        <div>
+                          <h3 style={{ margin: '0 0 4px', fontSize: '1.25rem', fontWeight: 900 }}>
+                            {selectedReferralAuditModal.name || selectedReferralAuditModal.refereeName}
+                          </h3>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ background: 'rgba(255,255,255,0.2)', padding: '2px 8px', borderRadius: '6px', fontFamily: 'monospace', fontWeight: 800, fontSize: '0.82rem' }}>
+                              {selectedReferralAuditModal.memberId || selectedReferralAuditModal.refereeId}
+                            </span>
+                            <span style={{ fontSize: '0.8rem', color: '#FED7AA' }}>
+                              📍 {selectedReferralAuditModal.district || 'महाराष्ट्र'}{selectedReferralAuditModal.taluka ? `, ${selectedReferralAuditModal.taluka}` : ''}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setSelectedReferralAuditModal(null)}
+                        style={{
+                          background: 'rgba(255,255,255,0.15)',
+                          border: 'none',
+                          color: '#FFFFFF',
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '50%',
+                          cursor: 'pointer',
+                          fontSize: '1.1rem',
+                          fontWeight: 900
+                        }}>
+                        ✕
+                      </button>
+                    </div>
+
+                    <div style={{ padding: '24px' }}>
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(2, 1fr)',
+                        gap: '14px',
+                        marginBottom: '20px'
+                      }}>
+                        <div style={{ background: '#FFF7ED', padding: '12px 14px', borderRadius: '12px', border: '1px solid #FED7AA' }}>
+                          <div style={{ fontSize: '0.76rem', color: '#9A3412', fontWeight: 800 }}>शिफारसकर्ता आयडी (Referral ID)</div>
+                          <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#1F2937', fontFamily: 'monospace', marginTop: '2px' }}>
+                            {selectedReferralAuditModal.referralId || selectedReferralAuditModal.referrerId}
+                          </div>
+                        </div>
+
+                        <div style={{ background: '#FFF7ED', padding: '12px 14px', borderRadius: '12px', border: '1px solid #FED7AA' }}>
+                          <div style={{ fontSize: '0.76rem', color: '#9A3412', fontWeight: 800 }}>शिफारसकर्ता नाव (Referral Name)</div>
+                          <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#1F2937', marginTop: '2px' }}>
+                            {selectedReferralAuditModal.referralName || selectedReferralAuditModal.referrerName}
+                          </div>
+                        </div>
+
+                        <div style={{ background: '#F8FAFC', padding: '12px 14px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+                          <div style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>नोंदणी दिनांक (Joining Date)</div>
+                          <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#1E293B', marginTop: '2px' }}>
+                            {selectedReferralAuditModal.joiningDate || (selectedReferralAuditModal.registeredAt ? selectedReferralAuditModal.registeredAt.slice(0, 10) : selectedReferralAuditModal.date)}
+                          </div>
+                        </div>
+
+                        <div style={{ background: '#F8FAFC', padding: '12px 14px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+                          <div style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>सक्रिय दिनांक (Activ. Date)</div>
+                          <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#1E293B', marginTop: '2px' }}>
+                            {selectedReferralAuditModal.activDate || selectedReferralAuditModal.joiningDate}
+                          </div>
+                        </div>
+
+                        <div style={{ background: '#F8FAFC', padding: '12px 14px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+                          <div style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>पॅकेज (Package)</div>
+                          <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#B45309', marginTop: '2px' }}>
+                            {selectedReferralAuditModal.package || 'Basic (प्राथमिक)'}
+                          </div>
+                        </div>
+
+                        <div style={{ background: '#F8FAFC', padding: '12px 14px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+                          <div style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>स्थिती (Status)</div>
+                          <div style={{ fontSize: '0.92rem', fontWeight: 900, color: (selectedReferralAuditModal.status || 'Active').toLowerCase() === 'active' ? '#15803D' : '#D97706', marginTop: '2px' }}>
+                            {selectedReferralAuditModal.status || 'Active'}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: '18px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                          <a
+                            href={`tel:${selectedReferralAuditModal.mobileNo || selectedReferralAuditModal.refereePhone}`}
+                            style={{
+                              flex: 1,
+                              background: '#0284C7',
+                              color: '#FFFFFF',
+                              textDecoration: 'none',
+                              padding: '10px 16px',
+                              borderRadius: '10px',
+                              fontWeight: 800,
+                              fontSize: '0.88rem',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '6px'
+                            }}>
+                            📞 थेट कॉल करा ({selectedReferralAuditModal.mobileNo || selectedReferralAuditModal.refereePhone})
+                          </a>
+
+                          <a
+                            href={`https://wa.me/91${(selectedReferralAuditModal.mobileNo || selectedReferralAuditModal.refereePhone || '').replace(/\D/g, '').slice(-10)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              flex: 1,
+                              background: '#16A34A',
+                              color: '#FFFFFF',
+                              textDecoration: 'none',
+                              padding: '10px 16px',
+                              borderRadius: '10px',
+                              fontWeight: 800,
+                              fontSize: '0.88rem',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '6px'
+                            }}>
+                            💬 WhatsApp
+                          </a>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(selectedReferralAuditModal.memberId || selectedReferralAuditModal.refereeId);
+                            showToast(`📋 सभासद आयडी (${selectedReferralAuditModal.memberId || selectedReferralAuditModal.refereeId}) कॉपी केला!`, 'success');
+                          }}
+                          style={{
+                            background: '#F8FAFC',
+                            border: '1px solid #CBD5E1',
+                            color: '#475569',
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            fontWeight: 700,
+                            fontSize: '0.84rem',
+                            cursor: 'pointer'
+                          }}>
+                          📋 Member ID कॉपी करा
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -1684,7 +1897,7 @@ export default function SuperAdminDashboardPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px', flexWrap: 'wrap', gap: '16px' }}>
               <div>
-                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.3rem', color: '#431407', fontWeight: 900 }}>🩺 डॉक्टर्स व वैद्यकीय तज्ज्ञ व्यवस्थापन</h3>
+                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.3rem', color: '#EA580C', fontWeight: 900 }}>🩺 डॉक्टर्स व वैद्यकीय तज्ज्ञ व्यवस्थापन</h3>
                 <p style={{ margin: 0, color: '#64748B', fontSize: '0.92rem', fontWeight: 600 }}>वेबसाइटवरील अधिकृत मराठा डॉक्टर्स सूची संपादन, जोडणे व व्यवस्थापन.</p>
               </div>
               <button
@@ -1756,7 +1969,7 @@ export default function SuperAdminDashboardPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px', flexWrap: 'wrap', gap: '16px' }}>
               <div>
-                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.3rem', color: '#431407', fontWeight: 900 }}>🛠️ सेवा व सेवा प्रदाते व्यवस्थापन (Services & Providers)</h3>
+                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.3rem', color: '#EA580C', fontWeight: 900 }}>🛠️ सेवा व सेवा प्रदाते व्यवस्थापन (Services & Providers)</h3>
                 <p style={{ margin: 0, color: '#64748B', fontSize: '0.92rem', fontWeight: 600 }}>स्थानिक व्यावसायिक (कायदेशीर, सीए, इंटिरिअर, सोलर, प्लंबिंग, इ.) जोडा व संपादित करा.</p>
               </div>
               <button
@@ -1822,7 +2035,7 @@ export default function SuperAdminDashboardPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px', flexWrap: 'wrap', gap: '16px' }}>
               <div>
-                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.3rem', color: '#431407', fontWeight: 900 }}>🏨 हॉटेल्स, रिसॉर्ट्स व लॉजिंग व्यवस्थापन</h3>
+                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.3rem', color: '#EA580C', fontWeight: 900 }}>🏨 हॉटेल्स, रिसॉर्ट्स व लॉजिंग व्यवस्थापन</h3>
                 <p style={{ margin: 0, color: '#64748B', fontSize: '0.92rem', fontWeight: 600 }}>मराठा पर्यटन व आदरातिथ्य नेटवर्कमधील हॉटेल्स थेट डेटाबेसमध्ये जोडा व संपादित करा.</p>
               </div>
               <button
@@ -1890,7 +2103,7 @@ export default function SuperAdminDashboardPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px', flexWrap: 'wrap', gap: '16px' }}>
               <div>
-                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.3rem', color: '#431407', fontWeight: 900 }}>📖 माहिती व ज्ञानकोश लेख व्यवस्थापन (Information CRUD)</h3>
+                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.3rem', color: '#EA580C', fontWeight: 900 }}>📖 माहिती व ज्ञानकोश लेख व्यवस्थापन (Information CRUD)</h3>
                 <p style={{ margin: 0, color: '#64748B', fontSize: '0.92rem', fontWeight: 600 }}>संस्कृती, इतिहास, किल्ले, उद्योग योजना व संशोधन लेख थेट प्रकाशित करा.</p>
               </div>
               <button
@@ -1959,7 +2172,7 @@ export default function SuperAdminDashboardPage() {
         {activeTab === 'roles' && (
           <div>
             <div style={{ marginBottom: '26px' }}>
-              <h3 style={{ margin: '0 0 4px 0', fontSize: '1.35rem', color: '#431407', fontWeight: 900 }}>🛡️ पद व अधिकार मॅट्रिक्स (Roles & Access Control)</h3>
+              <h3 style={{ margin: '0 0 4px 0', fontSize: '1.35rem', color: '#EA580C', fontWeight: 900 }}>🛡️ पद व अधिकार मॅट्रिक्स (Roles & Access Control)</h3>
               <p style={{ margin: 0, color: '#64748B', fontSize: '0.95rem', fontWeight: 600 }}>Connect Maratha मधील प्रत्येक पदाचे अधिकार, कार्यकक्षा व नियमन रचना.</p>
             </div>
 
@@ -1967,7 +2180,7 @@ export default function SuperAdminDashboardPage() {
               {rolesMatrix.map((r, idx) => (
                 <div key={idx} style={{ background: '#FFFFFF', borderRadius: '16px', padding: '24px', border: '1.5px solid #FED7AA', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                    <span style={{ fontWeight: 900, fontSize: '1.1rem', color: '#431407' }}>{r.titleMarathi}</span>
+                    <span style={{ fontWeight: 900, fontSize: '1.1rem', color: '#EA580C' }}>{r.titleMarathi}</span>
                     <span style={{ background: '#EA580C', color: '#FFFFFF', padding: '4px 10px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 900 }}>
                       {r.role}
                     </span>
@@ -2036,7 +2249,7 @@ export default function SuperAdminDashboardPage() {
             <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
-                  <h3 style={{ margin: '0 0 4px', fontSize: '1.35rem', color: '#431407', fontFamily: 'Baloo 2', fontWeight: 900 }}>
+                  <h3 style={{ margin: '0 0 4px', fontSize: '1.35rem', color: '#EA580C', fontFamily: 'Baloo 2', fontWeight: 900 }}>
                     💼 नोकरी अर्ज व उमेदवार यादी (Candidate Applications)
                   </h3>
                   <p style={{ margin: 0, color: '#64748B', fontSize: '0.9rem' }}>
@@ -2081,7 +2294,7 @@ export default function SuperAdminDashboardPage() {
                         <tr key={app.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
                           <td style={{ padding: '12px 14px', fontWeight: 800, color: '#C2410C' }}>{app.id}</td>
                           <td style={{ padding: '12px 14px', fontWeight: 800, color: '#1E293B' }}>{app.applicantName}</td>
-                          <td style={{ padding: '12px 14px', fontWeight: 800, color: '#431407' }}>{app.jobTitle}</td>
+                          <td style={{ padding: '12px 14px', fontWeight: 800, color: '#EA580C' }}>{app.jobTitle}</td>
                           <td style={{ padding: '12px 14px', color: '#475569' }}>{app.company}</td>
                           <td style={{ padding: '12px 14px', color: '#1E293B' }}>{app.district || 'पुणे'}</td>
                           <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontWeight: 700 }}>{app.applicantPhone || '-'}</td>
@@ -2113,7 +2326,7 @@ export default function SuperAdminDashboardPage() {
             <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
-                  <h3 style={{ margin: '0 0 4px', fontSize: '1.35rem', color: '#431407', fontFamily: 'Baloo 2', fontWeight: 900 }}>
+                  <h3 style={{ margin: '0 0 4px', fontSize: '1.35rem', color: '#EA580C', fontFamily: 'Baloo 2', fontWeight: 900 }}>
                     🏢 ग्राहक Enquiries व B2B व्यावसायिक Leads
                   </h3>
                   <p style={{ margin: 0, color: '#64748B', fontSize: '0.9rem' }}>
@@ -2188,6 +2401,440 @@ export default function SuperAdminDashboardPage() {
 
           </div>
         )}
+
+        {/* =========================================================================
+            TAB: 7 PORTALS CMS & APPROVAL MATRIX (PHASE 5)
+        ========================================================================= */}
+        {activeTab === 'portals_cms' && (
+          <div>
+            {/* Header & Quick Stats */}
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', padding: '24px', marginBottom: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '1.4rem', color: '#EA580C', fontFamily: 'Baloo 2', fontWeight: 900 }}>
+                    🏛️ १० पोर्टल्स सामाजिक कल्याण, नेतृत्व व संपादकीय CRM कक्ष (Central Approval Matrix)
+                  </h3>
+                  <p style={{ margin: 0, color: '#64748B', fontSize: '0.92rem' }}>
+                    कम्युनिटी ज्ञानकोश, शिष्यवृत्ती, सामाजिक संस्था, मदत विनंत्या आणि बातमीदारांच्या बातम्यांची एकाच छताखाली सुपर ॲडमिन तपासणी व मंजुरी.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => {
+                      setFormData({
+                        name: '',
+                        code: '',
+                        district: 'पुणे',
+                        city: 'पुणे',
+                        division: 'Pune',
+                        stream: 'Engineering',
+                        stream_label: 'अभियांत्रिकी व तंत्रज्ञान',
+                        courses: 'B.E., B.Tech, M.Tech',
+                        fee_range: '₹80,000 - ₹1,40,000',
+                        established_year: 2005,
+                        naac_grade: 'A',
+                        hostel_facility: 1,
+                        phone: '',
+                        website: ''
+                      });
+                      setModalType('addCollege');
+                    }}
+                    style={{ background: 'linear-gradient(135deg, #15803D, #166534)', color: '#FFF', border: 'none', padding: '10px 18px', borderRadius: '8px', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <span>➕</span> नवीन कॉलेज जोडा
+                  </button>
+                  <button
+                    onClick={() => {
+                      setFormData({
+                        title: '',
+                        org: 'SARTHI / CM Foundation',
+                        type: 'govt',
+                        category: 'मराठा / EBC प्रवर्ग',
+                        benefit: '१००% शिक्षण शुल्क सवलत',
+                        eligible: 'वार्षिक उत्पन्न ८ लाखांपेक्षा कमी',
+                        courses: 'सर्व उच्च शिक्षण कोर्सेस',
+                        min_marks: 60,
+                        max_income: 800000,
+                        portal_url: 'https://mahadbt.maharashtra.gov.in',
+                        last_date: '31 Dec 2026',
+                        badge: 'लोकप्रिय'
+                      });
+                      setModalType('addScholarship');
+                    }}
+                    style={{ background: 'linear-gradient(135deg, #EA580C, #C2410C)', color: '#FFF', border: 'none', padding: '10px 18px', borderRadius: '8px', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <span>➕</span> नवीन स्कॉलरशिप जोडा
+                  </button>
+                  <button
+                    onClick={async () => {
+                      const res = await api.portals.getPendingApprovals().catch(() => null);
+                      if (res?.data) {
+                        setPortalApprovals(res.data);
+                        showToast('डेटा अद्ययावत केला!');
+                      }
+                    }}
+                    style={{ background: '#FFF7ED', color: '#EA580C', border: '1.5px solid #FED7AA', padding: '10px 18px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}
+                  >
+                    🔄 रिफ्रेश यादी
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* 1. Dnyankosh Articles Approval Table */}
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', padding: '24px', marginBottom: '28px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+              <h4 style={{ margin: '0 0 14px', fontSize: '1.2rem', color: '#7C2D12', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>📖</span> ज्ञानकोश नवीन लेख मंजुरी (Pending / Draft Articles)
+              </h4>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                  <thead>
+                    <tr style={{ background: '#FFF7ED', color: '#9A3412', borderBottom: '2px solid #FED7AA' }}>
+                      <th style={{ padding: '12px 14px' }}>शीर्षक (Title)</th>
+                      <th style={{ padding: '12px 14px' }}>श्रेणी (Category)</th>
+                      <th style={{ padding: '12px 14px' }}>लेखक (Contributor)</th>
+                      <th style={{ padding: '12px 14px' }}>सादर दिनांक</th>
+                      <th style={{ padding: '12px 14px' }}>सद्य स्थिती</th>
+                      <th style={{ padding: '12px 14px', textAlign: 'right' }}>कारवाई (Action)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(!portalApprovals.articles || portalApprovals.articles.length === 0) ? (
+                      <tr>
+                        <td colSpan="6" style={{ padding: '28px', textAlign: 'center', color: '#94A3B8' }}>
+                          सध्या मंजुरीसाठी कोणताही लेख प्रलंबित नाही.
+                        </td>
+                      </tr>
+                    ) : (
+                      portalApprovals.articles.map(art => (
+                        <tr key={art.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                          <td style={{ padding: '12px 14px', fontWeight: 800, color: '#1E293B' }}>{art.title}</td>
+                          <td style={{ padding: '12px 14px', color: '#78350F', fontWeight: 700 }}>{art.category}</td>
+                          <td style={{ padding: '12px 14px', color: '#475569' }}>{art.author_name}</td>
+                          <td style={{ padding: '12px 14px', color: '#64748B', fontSize: '0.82rem' }}>{art.created_at?.split('T')[0] || '२०२६'}</td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <span style={{
+                              background: art.status === 'published' ? '#DCFCE7' : '#FEF3C7',
+                              color: art.status === 'published' ? '#166534' : '#92400E',
+                              padding: '4px 10px',
+                              borderRadius: '6px',
+                              fontSize: '0.78rem',
+                              fontWeight: 800
+                            }}>
+                              {art.status}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                            <div style={{ display: 'inline-flex', gap: '8px' }}>
+                              <button
+                                onClick={async () => {
+                                  await api.portals.actionArticle(art.id, 'publish');
+                                  showToast('लेख यशस्वीरीत्या प्रकाशित केला!');
+                                  const res = await api.portals.getPendingApprovals();
+                                  if (res?.data) setPortalApprovals(res.data);
+                                }}
+                                style={{ background: '#15803D', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer' }}
+                              >
+                                ✅ मंजूर व प्रकाशित
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  await api.portals.actionArticle(art.id, 'reject');
+                                  showToast('लेख नाकारला.');
+                                  const res = await api.portals.getPendingApprovals();
+                                  if (res?.data) setPortalApprovals(res.data);
+                                }}
+                                style={{ background: '#DC2626', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer' }}
+                              >
+                                ❌ नाकारा
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* 2. Scholarship Applications Table */}
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+              <h4 style={{ margin: '0 0 14px', fontSize: '1.2rem', color: '#7C2D12', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>📜</span> शिष्यवृत्ती अर्ज व सहाय्य निधी पडताळणी (Scholarship Applications)
+              </h4>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                  <thead>
+                    <tr style={{ background: '#FFF7ED', color: '#9A3412', borderBottom: '2px solid #FED7AA' }}>
+                      <th style={{ padding: '12px 14px' }}>विद्यार्थी नाव</th>
+                      <th style={{ padding: '12px 14px' }}>शिष्यवृत्ती योजना</th>
+                      <th style={{ padding: '12px 14px' }}>जिल्हा / कोर्स</th>
+                      <th style={{ padding: '12px 14px' }}>उत्पन्न / गुण %</th>
+                      <th style={{ padding: '12px 14px' }}>स्थिती</th>
+                      <th style={{ padding: '12px 14px', textAlign: 'right' }}>मंजुरी निर्णय</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(!portalApprovals.scholarshipApplications || portalApprovals.scholarshipApplications.length === 0) ? (
+                      <tr>
+                        <td colSpan="6" style={{ padding: '28px', textAlign: 'center', color: '#94A3B8' }}>
+                          सध्या कोणताही शिष्यवृत्ती अर्ज प्रलंबित नाही.
+                        </td>
+                      </tr>
+                    ) : (
+                      portalApprovals.scholarshipApplications.map(app => (
+                        <tr key={app.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                          <td style={{ padding: '12px 14px', fontWeight: 800, color: '#1E293B' }}>
+                            {app.student_name}
+                            <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 500 }}>{app.phone}</div>
+                          </td>
+                          <td style={{ padding: '12px 14px', color: '#78350F', fontWeight: 700, maxWidth: '240px' }}>
+                            {app.scholarship_title || 'शैक्षणिक मदत निधी'}
+                          </td>
+                          <td style={{ padding: '12px 14px', color: '#475569' }}>
+                            {app.district} • {app.current_course}
+                          </td>
+                          <td style={{ padding: '12px 14px', color: '#15803D', fontWeight: 800 }}>
+                            ₹{app.family_income} / {app.marks_percentage}%
+                          </td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <span style={{
+                              background: app.status === 'approved' ? '#DCFCE7' : (app.status === 'rejected' ? '#FEE2E2' : '#FEF3C7'),
+                              color: app.status === 'approved' ? '#166534' : (app.status === 'rejected' ? '#991B1B' : '#92400E'),
+                              padding: '4px 10px',
+                              borderRadius: '6px',
+                              fontSize: '0.78rem',
+                              fontWeight: 800
+                            }}>
+                              {app.status}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                            <div style={{ display: 'inline-flex', gap: '8px' }}>
+                              <button
+                                onClick={async () => {
+                                  await api.portals.actionScholarship(app.id, 'approved', 'पात्रता निकष योग्य आढळले.');
+                                  showToast('शिष्यवृत्ती अर्ज मंजूर केला!');
+                                  const res = await api.portals.getPendingApprovals();
+                                  if (res?.data) setPortalApprovals(res.data);
+                                }}
+                                style={{ background: '#15803D', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer' }}
+                              >
+                                ✅ मंजूर
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  await api.portals.actionScholarship(app.id, 'rejected', 'अपूर्ण कागदपत्रे.');
+                                  showToast('शिष्यवृत्ती अर्ज नाकारला.');
+                                  const res = await api.portals.getPendingApprovals();
+                                  if (res?.data) setPortalApprovals(res.data);
+                                }}
+                                style={{ background: '#DC2626', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer' }}
+                              >
+                                ❌ नाकारा
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* 3. Pending Organizations Verification Table */}
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', padding: '24px', marginTop: '28px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+              <h4 style={{ margin: '0 0 14px', fontSize: '1.2rem', color: '#7C2D12', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>🤝</span> सामाजिक संस्था नोंदणी पडताळणी (Organizations Verification)
+              </h4>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                  <thead>
+                    <tr style={{ background: '#FFF7ED', color: '#9A3412', borderBottom: '2px solid #FED7AA' }}>
+                      <th style={{ padding: '12px 14px' }}>संस्थेचे नाव</th>
+                      <th style={{ padding: '12px 14px' }}>श्रेणी</th>
+                      <th style={{ padding: '12px 14px' }}>जिल्हा / शहर</th>
+                      <th style={{ padding: '12px 14px' }}>संपर्क</th>
+                      <th style={{ padding: '12px 14px' }}>स्थिती</th>
+                      <th style={{ padding: '12px 14px', textAlign: 'right' }}>कारवाई</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(!portalApprovals.organizations || portalApprovals.organizations.length === 0) ? (
+                      <tr>
+                        <td colSpan="6" style={{ padding: '28px', textAlign: 'center', color: '#94A3B8' }}>
+                          कोणतीही नवीन संस्था पडताळणीसाठी प्रलंबित नाही.
+                        </td>
+                      </tr>
+                    ) : (
+                      portalApprovals.organizations.map(org => (
+                        <tr key={org.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                          <td style={{ padding: '12px 14px', fontWeight: 800, color: '#1E293B' }}>{org.name}</td>
+                          <td style={{ padding: '12px 14px', color: '#78350F' }}>{org.category || 'सामाजिक'}</td>
+                          <td style={{ padding: '12px 14px' }}>{org.district || org.city || 'महाराष्ट्र'}</td>
+                          <td style={{ padding: '12px 14px', color: '#0369A1', fontWeight: 700 }}>{org.phone || '-'}</td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <span style={{ background: '#FEF3C7', color: '#92400E', padding: '4px 10px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 800 }}>
+                              {org.status || 'Pending'}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                            <button
+                              onClick={async () => {
+                                await api.organizations.updateStatus(org.id, { verification_status: 'verified' });
+                                showToast('संस्था यशस्वीरीत्या प्रमाणित केली!');
+                                const res = await api.portals.getPendingApprovals();
+                                if (res?.data) setPortalApprovals(res.data);
+                              }}
+                              style={{ background: '#15803D', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer' }}
+                            >
+                              ✅ प्रमाणित करा
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* 4. Social Help Requests Table */}
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', padding: '24px', marginTop: '28px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+              <h4 style={{ margin: '0 0 14px', fontSize: '1.2rem', color: '#7C2D12', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>🆘</span> समाजसेवक हेल्प बोर्ड विनंत्या (Citizen Help Requests)
+              </h4>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                  <thead>
+                    <tr style={{ background: '#FFF7ED', color: '#9A3412', borderBottom: '2px solid #FED7AA' }}>
+                      <th style={{ padding: '12px 14px' }}>अर्जदार नाव</th>
+                      <th style={{ padding: '12px 14px' }}>मदतीचे स्वरूप</th>
+                      <th style={{ padding: '12px 14px' }}>जिल्हा</th>
+                      <th style={{ padding: '12px 14px' }}>तीव्रता</th>
+                      <th style={{ padding: '12px 14px' }}>स्थिती</th>
+                      <th style={{ padding: '12px 14px', textAlign: 'right' }}>कारवाई</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(!portalApprovals.helpRequests || portalApprovals.helpRequests.length === 0) ? (
+                      <tr>
+                        <td colSpan="6" style={{ padding: '28px', textAlign: 'center', color: '#94A3B8' }}>
+                          सध्या कोणतीही प्रलंबित मदत विनंती नाही.
+                        </td>
+                      </tr>
+                    ) : (
+                      portalApprovals.helpRequests.map(req => (
+                        <tr key={req.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                          <td style={{ padding: '12px 14px', fontWeight: 800, color: '#1E293B' }}>{req.applicant_name}</td>
+                          <td style={{ padding: '12px 14px', color: '#78350F' }}>{req.category}</td>
+                          <td style={{ padding: '12px 14px' }}>{req.district}</td>
+                          <td style={{ padding: '12px 14px', fontWeight: 700, color: req.urgency === 'urgent' ? '#DC2626' : '#EA580C' }}>{req.urgency || 'Normal'}</td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <span style={{ background: req.status === 'सोडवले' ? '#DCFCE7' : '#FEF3C7', color: req.status === 'सोडवले' ? '#166534' : '#92400E', padding: '4px 10px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 800 }}>
+                              {req.status}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                            <button
+                              onClick={async () => {
+                                await api.socialWorkers.updateHelpRequest(req.id, { status: 'सोडवले' });
+                                showToast('मदत विनंती सोडवली म्हणून नोंदवली!');
+                                const res = await api.portals.getPendingApprovals();
+                                if (res?.data) setPortalApprovals(res.data);
+                              }}
+                              style={{ background: '#15803D', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer' }}
+                            >
+                              ✅ निकाली काढा
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* 5. Community Reporter News Moderation Table */}
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #FED7AA', padding: '24px', marginTop: '28px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+              <h4 style={{ margin: '0 0 14px', fontSize: '1.2rem', color: '#7C2D12', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>📺</span> मराठा न्यूज व ई-पेपर्स संपादकीय मंजुरी (Editorial Review)
+              </h4>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                  <thead>
+                    <tr style={{ background: '#FFF7ED', color: '#9A3412', borderBottom: '2px solid #FED7AA' }}>
+                      <th style={{ padding: '12px 14px' }}>बातमी शीर्षक</th>
+                      <th style={{ padding: '12px 14px' }}>श्रेणी</th>
+                      <th style={{ padding: '12px 14px' }}>जिल्हा</th>
+                      <th style={{ padding: '12px 14px' }}>बातमीदार</th>
+                      <th style={{ padding: '12px 14px' }}>स्थिती</th>
+                      <th style={{ padding: '12px 14px', textAlign: 'right' }}>कारवाई</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(!portalApprovals.newsArticles || portalApprovals.newsArticles.length === 0) ? (
+                      <tr>
+                        <td colSpan="6" style={{ padding: '28px', textAlign: 'center', color: '#94A3B8' }}>
+                          संपादकीय तपासणीसाठी कोणतीही बातमी प्रलंबित नाही.
+                        </td>
+                      </tr>
+                    ) : (
+                      portalApprovals.newsArticles.map(news => (
+                        <tr key={news.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                          <td style={{ padding: '12px 14px', fontWeight: 800, color: '#1E293B' }}>{news.title}</td>
+                          <td style={{ padding: '12px 14px', color: '#78350F' }}>{news.category}</td>
+                          <td style={{ padding: '12px 14px' }}>{news.district}</td>
+                          <td style={{ padding: '12px 14px', color: '#475569' }}>{news.author || 'कम्युनिटी रिपोर्टर'}</td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <span style={{ background: news.status === 'published' ? '#DCFCE7' : '#FEF3C7', color: news.status === 'published' ? '#166534' : '#92400E', padding: '4px 10px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 800 }}>
+                              {news.status}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                            <div style={{ display: 'inline-flex', gap: '8px' }}>
+                              <button
+                                onClick={async () => {
+                                  await api.portals.actionNewsArticle(news.id, 'publish');
+                                  showToast('बातमी यशस्वीरीत्या प्रसिद्ध केली!');
+                                  const res = await api.portals.getPendingApprovals();
+                                  if (res?.data) setPortalApprovals(res.data);
+                                }}
+                                style={{ background: '#15803D', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer' }}
+                              >
+                                ✅ प्रसिद्ध करा
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  await api.portals.actionNewsArticle(news.id, 'reject');
+                                  showToast('बातमी नाकारली.');
+                                  const res = await api.portals.getPendingApprovals();
+                                  if (res?.data) setPortalApprovals(res.data);
+                                }}
+                                style={{ background: '#DC2626', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '6px', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer' }}
+                              >
+                                ❌ नाकारा
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        )}
       </div>
 
       {/* =========================================================================
@@ -2219,12 +2866,14 @@ export default function SuperAdminDashboardPage() {
           }}>
             {/* Modal Title */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #FED7AA', paddingBottom: '16px', marginBottom: '22px' }}>
-              <h3 style={{ margin: 0, fontSize: '1.35rem', fontWeight: 900, color: '#431407' }}>
+              <h3 style={{ margin: 0, fontSize: '1.35rem', fontWeight: 900, color: '#EA580C' }}>
                 {modalType === 'viewUser' && `🪪 वापरकर्ता संपूर्ण तपशील: ${activeItem?.name}`}
                 {modalType === 'addUser' && '➕ नवीन वापरकर्ता तयार करा (Live DB)'}
                 {modalType === 'editUser' && `✏️ वापरकर्ता संपादन: ${activeItem?.name}`}
                 {modalType === 'addDoctor' && '🩺 नवीन डॉक्टर जोडा'}
                 {modalType === 'editDoctor' && `✏️ डॉक्टर संपादन: ${activeItem?.name}`}
+                {modalType === 'addCollege' && '🏛️ नवीन महाविद्यालय नोंदणी (Colleges Directory)'}
+                {modalType === 'addScholarship' && '📜 नवीन शिष्यवृत्ती योजना नोंदणी (Scholarship CMS)'}
                 {modalType === 'addService' && '🛠️ नवीन सेवा प्रदाता जोडा'}
                 {modalType === 'editService' && `✏️ सेवा संपादन: ${activeItem?.name}`}
                 {modalType === 'addHotel' && '🏨 नवीन हॉटेल जोडा'}
@@ -2271,7 +2920,7 @@ export default function SuperAdminDashboardPage() {
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                      <h4 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, color: '#431407' }}>{activeItem.name}</h4>
+                      <h4 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, color: '#EA580C' }}>{activeItem.name}</h4>
                     </div>
                     <div style={{ fontSize: '0.9rem', color: '#475569', marginTop: '6px', fontWeight: 700 }}>
                       <span style={{ color: '#EA580C' }}>सदस्य आयडी:</span> <span style={{ fontFamily: 'monospace', fontWeight: 900, color: '#0F172A' }}>{activeItem.id}</span>
@@ -2405,7 +3054,7 @@ export default function SuperAdminDashboardPage() {
               <form onSubmit={handleSaveUser}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>पूर्ण नाव *</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>पूर्ण नाव *</label>
                     <input
                       type="text"
                       required
@@ -2416,7 +3065,7 @@ export default function SuperAdminDashboardPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>फोन नंबर (१० अंकी लॉगिन आयडी) *</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>फोन नंबर (१० अंकी लॉगिन आयडी) *</label>
                     <input
                       type="tel"
                       required
@@ -2430,7 +3079,7 @@ export default function SuperAdminDashboardPage() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>ई-मेल</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>ई-मेल</label>
                     <input
                       type="email"
                       value={formData.email || ''}
@@ -2440,7 +3089,7 @@ export default function SuperAdminDashboardPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>
                       {modalType === 'addUser' ? 'लॉगिन पासवर्ड (Default: password123)' : 'नवीन पासवर्ड'}
                     </label>
                     <input
@@ -2455,7 +3104,7 @@ export default function SuperAdminDashboardPage() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>भूमिका (Role) *</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>भूमिका (Role) *</label>
                     <select
                       value={formData.role || 'member'}
                       onChange={(e) => setFormData({ ...formData, role: e.target.value })}
@@ -2470,7 +3119,7 @@ export default function SuperAdminDashboardPage() {
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>श्रेणी (Tier)</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>श्रेणी (Tier)</label>
                     <select
                       value={formData.tier || 'Gold'}
                       onChange={(e) => setFormData({ ...formData, tier: e.target.value })}
@@ -2486,7 +3135,7 @@ export default function SuperAdminDashboardPage() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>जिल्हा</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>जिल्हा</label>
                     <input
                       type="text"
                       value={formData.district || ''}
@@ -2496,7 +3145,7 @@ export default function SuperAdminDashboardPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>तालुका</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>तालुका</label>
                     <input
                       type="text"
                       value={formData.taluka || ''}
@@ -2509,7 +3158,7 @@ export default function SuperAdminDashboardPage() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '22px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>कुळ / ९६ कुळ</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>कुळ / ९६ कुळ</label>
                     <input
                       type="text"
                       value={formData.kul || ''}
@@ -2551,7 +3200,7 @@ export default function SuperAdminDashboardPage() {
             {(modalType === 'addDoctor' || modalType === 'editDoctor') && (
               <form onSubmit={handleSaveDoctor}>
                 <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>डॉक्टरचे नाव *</label>
+                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>डॉक्टरचे नाव *</label>
                   <input
                     type="text"
                     required
@@ -2562,7 +3211,7 @@ export default function SuperAdminDashboardPage() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>पदवी (Degree)</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>पदवी (Degree)</label>
                     <input
                       type="text"
                       value={formData.degree || ''}
@@ -2571,7 +3220,7 @@ export default function SuperAdminDashboardPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>विशेषज्ञता (Specialty)</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>विशेषज्ञता (Specialty)</label>
                     <input
                       type="text"
                       value={formData.specialty || ''}
@@ -2582,7 +3231,7 @@ export default function SuperAdminDashboardPage() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>हॉस्पिटल नाव</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>हॉस्पिटल नाव</label>
                     <input
                       type="text"
                       value={formData.hospital || ''}
@@ -2591,7 +3240,7 @@ export default function SuperAdminDashboardPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>शहर / जिल्हा</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>शहर / जिल्हा</label>
                     <input
                       type="text"
                       value={formData.city || ''}
@@ -2602,7 +3251,7 @@ export default function SuperAdminDashboardPage() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>संपर्क नंबर *</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>संपर्क नंबर *</label>
                     <input
                       type="tel"
                       required
@@ -2612,7 +3261,7 @@ export default function SuperAdminDashboardPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>फी (Consultation Fee)</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>फी (Consultation Fee)</label>
                     <input
                       type="text"
                       value={formData.consultationFee || ''}
@@ -2632,7 +3281,7 @@ export default function SuperAdminDashboardPage() {
             {(modalType === 'addService' || modalType === 'editService') && (
               <form onSubmit={handleSaveService}>
                 <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>सेवा प्रदाता नाव *</label>
+                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>सेवा प्रदाता नाव *</label>
                   <input
                     type="text"
                     required
@@ -2643,7 +3292,7 @@ export default function SuperAdminDashboardPage() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>सेवा प्रकार (Category)</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>सेवा प्रकार (Category)</label>
                     <input
                       type="text"
                       value={formData.category || ''}
@@ -2652,7 +3301,7 @@ export default function SuperAdminDashboardPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>स्थान (Location)</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>स्थान (Location)</label>
                     <input
                       type="text"
                       value={formData.location || ''}
@@ -2663,7 +3312,7 @@ export default function SuperAdminDashboardPage() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>संपर्क नंबर</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>संपर्क नंबर</label>
                     <input
                       type="tel"
                       value={formData.phone || ''}
@@ -2672,7 +3321,7 @@ export default function SuperAdminDashboardPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>दर / फी (Pricing)</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>दर / फी (Pricing)</label>
                     <input
                       type="text"
                       value={formData.pricing || ''}
@@ -2692,7 +3341,7 @@ export default function SuperAdminDashboardPage() {
             {(modalType === 'addHotel' || modalType === 'editHotel') && (
               <form onSubmit={handleSaveHotel}>
                 <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>हॉटेलचे नाव *</label>
+                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>हॉटेलचे नाव *</label>
                   <input
                     type="text"
                     required
@@ -2703,7 +3352,7 @@ export default function SuperAdminDashboardPage() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>शहर</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>शहर</label>
                     <input
                       type="text"
                       value={formData.city || ''}
@@ -2712,7 +3361,7 @@ export default function SuperAdminDashboardPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>जिल्हा</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>जिल्हा</label>
                     <input
                       type="text"
                       value={formData.district || ''}
@@ -2723,7 +3372,7 @@ export default function SuperAdminDashboardPage() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>हॉटेल प्रकार (Category)</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>हॉटेल प्रकार (Category)</label>
                     <input
                       type="text"
                       value={formData.category || ''}
@@ -2732,7 +3381,7 @@ export default function SuperAdminDashboardPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>स्टार रेटिंग</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>स्टार रेटिंग</label>
                     <input
                       type="number"
                       step="0.1"
@@ -2746,7 +3395,7 @@ export default function SuperAdminDashboardPage() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>दर श्रेणी (Price Range)</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>दर श्रेणी (Price Range)</label>
                     <input
                       type="text"
                       value={formData.price_range || ''}
@@ -2755,7 +3404,7 @@ export default function SuperAdminDashboardPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>संपर्क फोन</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>संपर्क फोन</label>
                     <input
                       type="tel"
                       value={formData.phone || ''}
@@ -2775,7 +3424,7 @@ export default function SuperAdminDashboardPage() {
             {(modalType === 'addInfo' || modalType === 'editInfo') && (
               <form onSubmit={handleSaveInfo}>
                 <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>लेखाचे शीर्षक *</label>
+                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>लेखाचे शीर्षक *</label>
                   <input
                     type="text"
                     required
@@ -2786,7 +3435,7 @@ export default function SuperAdminDashboardPage() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>विभाग (Category)</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>विभाग (Category)</label>
                     <input
                       type="text"
                       value={formData.category || ''}
@@ -2795,7 +3444,7 @@ export default function SuperAdminDashboardPage() {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>लेखक (Author)</label>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>लेखक (Author)</label>
                     <input
                       type="text"
                       value={formData.author || ''}
@@ -2805,7 +3454,7 @@ export default function SuperAdminDashboardPage() {
                   </div>
                 </div>
                 <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>संक्षिप्त सारांश (Summary)</label>
+                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>संक्षिप्त सारांश (Summary)</label>
                   <textarea
                     rows="2"
                     value={formData.summary || ''}
@@ -2814,7 +3463,7 @@ export default function SuperAdminDashboardPage() {
                   />
                 </div>
                 <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>सविस्तर मजकूर (Full Content)</label>
+                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>सविस्तर मजकूर (Full Content)</label>
                   <textarea
                     rows="4"
                     value={formData.content || ''}
@@ -2823,7 +3472,7 @@ export default function SuperAdminDashboardPage() {
                   />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#431407', fontWeight: 800, marginBottom: '6px' }}>टॅग्ज (स्वल्पविरामाने वेगळे करा)</label>
+                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>टॅग्ज (स्वल्पविरामाने वेगळे करा)</label>
                   <input
                     type="text"
                     value={formData.tags || ''}
@@ -2834,6 +3483,259 @@ export default function SuperAdminDashboardPage() {
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                   <button type="button" onClick={() => setModalType(null)} style={{ padding: '12px 20px', background: '#FFFFFF', border: '1.5px solid #CBD5E1', color: '#475569', borderRadius: '10px', cursor: 'pointer', fontWeight: 800 }}>रद्द करा</button>
                   <button type="submit" style={{ padding: '12px 24px', background: 'linear-gradient(135deg, #EA580C, #C2410C)', border: 'none', color: '#FFFFFF', fontWeight: 900, borderRadius: '10px', cursor: 'pointer' }}>जतन करा</button>
+                </div>
+              </form>
+            )}
+
+            {/* ADD COLLEGE MODAL FORM */}
+            {modalType === 'addCollege' && (
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  const res = await api.portals.addCollege(formData);
+                  if (res?.success) {
+                    showToast('नवीन महाविद्यालय यशस्वीरीत्या नोंदवले गेले!');
+                    setModalType(null);
+                  } else {
+                    showToast(res?.message || 'महाविद्यालय जोडता आले नाही.', 'error');
+                  }
+                } catch (err) {
+                  showToast(err.message || 'त्रुटी आली.', 'error');
+                }
+              }}>
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#166534', fontWeight: 800, marginBottom: '6px' }}>महाविद्यालयाचे पूर्ण नाव *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="उदा. कॉलेज ऑफ इंजिनिअरिंग पुणे (COEP)"
+                    value={formData.name || ''}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #BBF7D0', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                  />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#166534', fontWeight: 800, marginBottom: '6px' }}>विद्याशाखा (Stream) *</label>
+                    <select
+                      value={formData.stream || 'Engineering'}
+                      onChange={(e) => {
+                        const sMap = {
+                          Engineering: 'अभियांत्रिकी व तंत्रज्ञान',
+                          Medical: 'वैद्यकीय व आरोग्य विज्ञान',
+                          Pharmacy: 'औषधनिर्माणशास्त्र (Pharmacy)',
+                          Agriculture: 'कृषी व संलग्न विज्ञान',
+                          Management: 'व्यवस्थापन शास्त्र (MBA/BBA)',
+                          Law: 'विधि व न्यायशास्त्र (Law)',
+                          Nursing: 'नर्सिंग व पॅरामेडिकल',
+                          IT_Science: 'सायबर सुरक्षा व AI'
+                        };
+                        setFormData({ ...formData, stream: e.target.value, stream_label: sMap[e.target.value] || e.target.value });
+                      }}
+                      style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #BBF7D0', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                    >
+                      <option value="Engineering">अभियांत्रिकी (Engineering)</option>
+                      <option value="Medical">वैद्यकीय (Medical / MBBS)</option>
+                      <option value="Pharmacy">फार्मसी (Pharmacy)</option>
+                      <option value="Agriculture">कृषी (Agriculture)</option>
+                      <option value="Management">व्यवस्थापन (MBA/BBA)</option>
+                      <option value="Law">विधि (Law)</option>
+                      <option value="Nursing">नर्सिंग (Nursing)</option>
+                      <option value="IT_Science">सायबर / AI (IT)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#166534', fontWeight: 800, marginBottom: '6px' }}>जिल्हा / शहर *</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.city || ''}
+                      onChange={(e) => setFormData({ ...formData, city: e.target.value, district: e.target.value })}
+                      style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #BBF7D0', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                    />
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#166534', fontWeight: 800, marginBottom: '6px' }}>संलग्न विद्यापीठ</label>
+                    <input
+                      type="text"
+                      value={formData.affiliation || ''}
+                      onChange={(e) => setFormData({ ...formData, affiliation: e.target.value })}
+                      style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #BBF7D0', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#166534', fontWeight: 800, marginBottom: '6px' }}>NAAC ग्रेड</label>
+                    <select
+                      value={formData.naac_grade || 'A+'}
+                      onChange={(e) => setFormData({ ...formData, naac_grade: e.target.value })}
+                      style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #BBF7D0', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                    >
+                      <option value="A++">A++</option>
+                      <option value="A+">A+</option>
+                      <option value="A">A</option>
+                      <option value="B++">B++</option>
+                      <option value="B+">B+</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#166534', fontWeight: 800, marginBottom: '6px' }}>वसतिगृह सुविधा</label>
+                    <select
+                      value={formData.hostel_facility ? '1' : '0'}
+                      onChange={(e) => setFormData({ ...formData, hostel_facility: e.target.value === '1' ? 1 : 0 })}
+                      style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #BBF7D0', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                    >
+                      <option value="1">उपलब्ध (Yes)</option>
+                      <option value="0">नाही (No)</option>
+                    </select>
+                  </div>
+                </div>
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#166534', fontWeight: 800, marginBottom: '6px' }}>कोर्सेस (स्वल्पविरामाने वेगळे करा)</label>
+                  <input
+                    type="text"
+                    value={formData.courses || ''}
+                    placeholder="उदा. B.Tech Computer, Mechanical, AI & Data Science"
+                    onChange={(e) => setFormData({ ...formData, courses: e.target.value })}
+                    style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #BBF7D0', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                  />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#166534', fontWeight: 800, marginBottom: '6px' }}>फी मर्यादा (वार्षिक)</label>
+                    <input
+                      type="text"
+                      placeholder="उदा. ₹85,000 - ₹1,35,000"
+                      value={formData.fee_range || ''}
+                      onChange={(e) => setFormData({ ...formData, fee_range: e.target.value })}
+                      style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #BBF7D0', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#166534', fontWeight: 800, marginBottom: '6px' }}>वेबसाइट / संपर्क</label>
+                    <input
+                      type="text"
+                      placeholder="उदा. https://coep.org.in"
+                      value={formData.website || ''}
+                      onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                      style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #BBF7D0', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                    />
+                  </div>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                  <button type="button" onClick={() => setModalType(null)} style={{ padding: '12px 20px', background: '#FFFFFF', border: '1.5px solid #CBD5E1', color: '#475569', borderRadius: '10px', cursor: 'pointer', fontWeight: 800 }}>रद्द करा</button>
+                  <button type="submit" style={{ padding: '12px 24px', background: 'linear-gradient(135deg, #166534, #15803D)', border: 'none', color: '#FFFFFF', fontWeight: 900, borderRadius: '10px', cursor: 'pointer' }}>🏛️ कॉलेज जतन करा</button>
+                </div>
+              </form>
+            )}
+
+            {/* ADD SCHOLARSHIP MODAL FORM */}
+            {modalType === 'addScholarship' && (
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  const res = await api.portals.addScholarship(formData);
+                  if (res?.success) {
+                    showToast('नवीन शिष्यवृत्ती योजना यशस्वीरीत्या जोडली!');
+                    setModalType(null);
+                  } else {
+                    showToast(res?.message || 'योजना जोडता आली नाही.', 'error');
+                  }
+                } catch (err) {
+                  showToast(err.message || 'त्रुटी आली.', 'error');
+                }
+              }}>
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>शिष्यवृत्ती योजनेचे नाव *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="उदा. राजर्षी छत्रपती शाहू महाराज शिक्षण शुल्क शिष्यवृत्ती"
+                    value={formData.title || ''}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                  />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>देणारी संस्था / विभाग *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="उदा. सारथी (SARTHI) / महाडीबीटी"
+                      value={formData.org || ''}
+                      onChange={(e) => setFormData({ ...formData, org: e.target.value })}
+                      style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>लाभ / स्वरूप *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="उदा. ५०% ते १००% शिक्षण शुल्क प्रतिपूर्ती"
+                      value={formData.benefit || ''}
+                      onChange={(e) => setFormData({ ...formData, benefit: e.target.value })}
+                      style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                    />
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>कमाल उत्पन्न मर्यादा (₹)</label>
+                    <input
+                      type="number"
+                      placeholder="800000"
+                      value={formData.max_income || ''}
+                      onChange={(e) => setFormData({ ...formData, max_income: e.target.value })}
+                      style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>किमान टक्केवारी (%)</label>
+                    <input
+                      type="number"
+                      placeholder="50"
+                      value={formData.min_marks || ''}
+                      onChange={(e) => setFormData({ ...formData, min_marks: e.target.value })}
+                      style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>अंतिम मुदत (Last Date)</label>
+                    <input
+                      type="text"
+                      placeholder="31 Dec 2026"
+                      value={formData.last_date || ''}
+                      onChange={(e) => setFormData({ ...formData, last_date: e.target.value })}
+                      style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                    />
+                  </div>
+                </div>
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>पात्रता निकष</label>
+                  <input
+                    type="text"
+                    placeholder="उदा. महाराष्ट्र राज्यातील रहिवासी, मराठा व खुल्या प्रवर्गातील विद्यार्थी"
+                    value={formData.eligible || ''}
+                    onChange={(e) => setFormData({ ...formData, eligible: e.target.value })}
+                    style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                  />
+                </div>
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{ display: 'block', fontSize: '0.88rem', color: '#EA580C', fontWeight: 800, marginBottom: '6px' }}>अधिकृत पोर्टल URL (Apply Link)</label>
+                  <input
+                    type="url"
+                    placeholder="https://mahadbt.maharashtra.gov.in"
+                    value={formData.portal_url || ''}
+                    onChange={(e) => setFormData({ ...formData, portal_url: e.target.value })}
+                    style={{ width: '100%', padding: '12px 14px', background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none' }}
+                  />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                  <button type="button" onClick={() => setModalType(null)} style={{ padding: '12px 20px', background: '#FFFFFF', border: '1.5px solid #CBD5E1', color: '#475569', borderRadius: '10px', cursor: 'pointer', fontWeight: 800 }}>रद्द करा</button>
+                  <button type="submit" style={{ padding: '12px 24px', background: 'linear-gradient(135deg, #EA580C, #C2410C)', border: 'none', color: '#FFFFFF', fontWeight: 900, borderRadius: '10px', cursor: 'pointer' }}>📜 शिष्यवृत्ती जतन करा</button>
                 </div>
               </form>
             )}

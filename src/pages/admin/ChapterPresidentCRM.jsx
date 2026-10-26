@@ -110,7 +110,7 @@ export default function ChapterPresidentCRM() {
           position: 'fixed',
           bottom: '24px',
           right: '24px',
-          background: '#431407',
+          background: '#EA580C',
           color: '#FED7AA',
           border: '1px solid #EA580C',
           padding: '12px 20px',
@@ -129,7 +129,7 @@ export default function ChapterPresidentCRM() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <span style={{ fontSize: '1.4rem' }}>💼</span>
             <div>
-              <strong style={{ fontSize: '1.05rem', color: '#431407', fontFamily: 'Baloo 2' }}>
+              <strong style={{ fontSize: '1.05rem', color: '#EA580C', fontFamily: 'Baloo 2' }}>
                 CONNECT MARATHA — चॅप्टर अध्यक्ष CRM (Live Database)
               </strong>
               <div style={{ fontSize: '0.75rem', color: '#7C2D12' }}>
@@ -288,7 +288,7 @@ export default function ChapterPresidentCRM() {
         {activeTab === 'roster' && (
           <div style={{ background: '#fff', borderRadius: '14px', border: '1.5px solid #FED7AA', padding: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#431407', fontWeight: 900 }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#EA580C', fontWeight: 900 }}>
                 👥 {targetDist} चॅप्टर अधिकृत सदस्य यादी (Live Database)
               </h3>
               <input
@@ -368,7 +368,7 @@ export default function ChapterPresidentCRM() {
         {activeTab === 'referrals' && (
           <div style={{ background: '#fff', borderRadius: '14px', border: '1.5px solid #FED7AA', padding: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#431407', fontWeight: 900 }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#EA580C', fontWeight: 900 }}>
                 🤝 चॅप्टर व्यवसाय संदर्भ (B2B Referrals)
               </h3>
               <button
@@ -452,7 +452,7 @@ export default function ChapterPresidentCRM() {
           padding: '20px'
         }}>
           <div style={{ background: '#fff', borderRadius: '16px', padding: '24px', width: '100%', maxWidth: '480px', border: '2px solid #EA580C' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '1.2rem', color: '#431407', fontWeight: 900 }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '1.2rem', color: '#EA580C', fontWeight: 900 }}>
               ➕ नवीन B2B व्यवसाय संदर्भ (Referral Slip)
             </h3>
             <form onSubmit={handleRecordSlip} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

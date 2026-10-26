@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import apiClient from '../../services/apiClient';
 
 const INITIAL_BLOOD_REQUESTS = [
-  { id: 'BLD-401', patient: 'सुमित्रा संभाजी कदम', group: 'O- Negative', hospital: 'ससून सर्वोपचार रुग्णालय, पुणे', units: '२ युनिट्स', urgency: '🔴 तात्काळ (२ तासात)', status: 'Pending', donor: 'शोध सुरू...' },
-  { id: 'BLD-402', patient: 'विक्रम तानाजी भोसले', group: 'AB+ Positive', hospital: 'दीनानाथ मंगेशकर रुग्णालय, पुणे', units: '१ युनिट', urgency: '🟠 तातडीने (६ तासात)', status: 'Assigned', donor: 'अमोल मोहिते (9822114455)' },
-  { id: 'BLD-403', patient: 'राजेंद्र विश्वासराव मोरे', group: 'B+ Positive', hospital: 'छत्रपती प्रमिलाराजे रुग्णालय (CPR), कोल्हापूर', units: '३ युनिट्स', urgency: '🟡 नियमित (२४ तास)', status: 'Fulfilled', donor: 'कोल्हापूर रक्तपेढी पथक' },
-  { id: 'BLD-404', patient: 'अनिता दीपक जगताप', group: 'A+ Positive', hospital: 'जिल्हा शासकीय रुग्णालय, सातारा', units: '२ युनिट्स', urgency: '🔴 तात्काळ (२ तासात)', status: 'Assigned', donor: 'सचिन पवार (9855223311)' }
+  { id: 'BLD-401', patient: 'सुमित्रा संभाजी कदम', bloodGroup: 'O-', hospital: 'ससून सर्वोपचार रुग्णालय, पुणे', district: 'पुणे', taluka: 'हवेली', units: 2, urgency: '🔴 तात्काळ (२ तासात)', status: 'active', donor: 'शोध सुरू...' },
+  { id: 'BLD-402', patient: 'विक्रम तानाजी भोसले', bloodGroup: 'AB+', hospital: 'दीनानाथ मंगेशकर रुग्णालय, पुणे', district: 'पुणे', taluka: 'पुणे शहर', units: 1, urgency: '🟠 तातडीने (६ तासात)', status: 'assigned', donor: 'अमोल मोहिते (9822114455)' },
+  { id: 'BLD-403', patient: 'राजेंद्र विश्वासराव मोरे', bloodGroup: 'B+', hospital: 'छत्रपती प्रमिलाराजे रुग्णालय (CPR), कोल्हापूर', district: 'कोल्हापूर', taluka: 'करवीर', units: 3, urgency: '🟡 नियमित (२४ तास)', status: 'fulfilled', donor: 'कोल्हापूर रक्तपेढी पथक' }
 ];
 
 const INITIAL_SCHOLARSHIPS = [
@@ -30,26 +30,120 @@ const REGISTERED_DONORS = [
 ];
 
 export default function SevaHelpdeskCRM() {
-  const [activeTab, setActiveTab] = useState('blood'); // 'blood', 'scholarship', 'hospital', 'donors'
-  const [bloodList, setBloodList] = useState(INITIAL_BLOOD_REQUESTS);
+  const [activeTab, setActiveTab] = useState('blood'); // 'blood', 'matrimony', 'scholarship', 'hospital', 'donors'
+  const [bloodList, setBloodList] = useState([]);
+  const [donorsList, setDonorsList] = useState([]);
+  const [matrimonyPending, setMatrimonyPending] = useState([]);
+  const [matrimonyReports, setMatrimonyReports] = useState([]);
+  const [womenStats, setWomenStats] = useState(null);
+  const [womenCases, setWomenCases] = useState([]);
   const [scholarshipList, setScholarshipList] = useState(INITIAL_SCHOLARSHIPS);
   const [hospitalList, setHospitalList] = useState(INITIAL_HOSPITAL_AID);
   const [donorBloodFilter, setDonorBloodFilter] = useState('all');
+  const [selectedDistrict, setSelectedDistrict] = useState('all');
   const [toastMessage, setToastMessage] = useState(null);
+  const [assignModal, setAssignModal] = useState(null);
+  const [assignForm, setAssignForm] = useState({ donorName: '', donorPhone: '', notes: '' });
 
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const handleAssignBloodDonor = (id) => {
-    setBloodList(prev => prev.map(b => b.id === id ? { ...b, status: 'Assigned', donor: 'सक्रिय स्वयंसेवक नियुक्त' } : b));
-    showToast(`✓ विनंती #${id} साठी स्वयंसेवक रक्तदाता नियुक्त केला!`);
+  const loadData = () => {
+    apiClient.getBloodRequests({ status: 'all' })
+      .then(reqs => {
+        if (Array.isArray(reqs) && reqs.length > 0) setBloodList(reqs);
+        else setBloodList(INITIAL_BLOOD_REQUESTS);
+      })
+      .catch(() => setBloodList(INITIAL_BLOOD_REQUESTS));
+
+    apiClient.getDonors()
+      .then(dns => {
+        if (Array.isArray(dns) && dns.length > 0) setDonorsList(dns);
+        else setDonorsList(REGISTERED_DONORS);
+      })
+      .catch(() => setDonorsList(REGISTERED_DONORS));
+
+    apiClient.getMatrimonyAdminQueue()
+      .then(res => {
+        if (res) {
+          setMatrimonyPending(res.pendingProfiles || []);
+          setMatrimonyReports(res.openReports || []);
+        }
+      })
+      .catch(() => {});
+
+    apiClient.getWomenAdminStats()
+      .then(res => {
+        if (res) {
+          setWomenStats(res.stats || null);
+          setWomenCases(res.openCases || []);
+        }
+      })
+      .catch(() => {});
   };
 
-  const handleFulfillBlood = (id) => {
-    setBloodList(prev => prev.map(b => b.id === id ? { ...b, status: 'Fulfilled' } : b));
-    showToast(`✓ विनंती #${id} पूर्ण झाली, रुग्णाला रक्त मिळाले!`);
+  useEffect(() => {
+    loadData();
+    const interval = setInterval(loadData, 15000); // Poll every 15s for live SOS cases
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleVerifyMatrimony = async (id, status, verifiedVal) => {
+    try {
+      await apiClient.verifyMatrimonyProfile(id, {
+        status: status,
+        verified: verifiedVal,
+        adminNotes: status === 'active' ? 'पडताळणी अधिकारीद्वारे मंजूर व प्रमाणित' : 'माहिती अपूर्ण असल्याने नाकारली'
+      });
+      showToast(status === 'active' ? `✓ प्रोफाईल #${id} यशस्वीरित्या मंजूर व प्रमाणित (Verified) केली!` : `✕ प्रोफाईल #${id} नाकारण्यात आली.`);
+      loadData();
+    } catch (err) {
+      showToast('त्रुटी: ' + err.message);
+    }
+  };
+
+  const handleUpdateWomenCase = async (id, newStatus, coordinator, notes) => {
+    try {
+      await apiClient.updateWomenCase(id, {
+        status: newStatus,
+        coordinator: coordinator || 'जिल्हा महिला संरक्षण अधिकारी',
+        notes: notes || 'समन्वयकाद्वारे प्रत्यक्ष संपर्क व कारवाई पूर्ण.'
+      });
+      showToast(`✓ महिला मदत प्रकरण #${id} अद्यतनित केले: ${newStatus}`);
+      loadData();
+    } catch (err) {
+      showToast('त्रुटी: ' + err.message);
+    }
+  };
+
+  const handleAssignBloodDonor = async (e) => {
+    e.preventDefault();
+    if (!assignModal) return;
+    try {
+      await apiClient.respondToBloodRequest(assignModal.id, {
+        donorName: assignForm.donorName,
+        phone: assignForm.donorPhone,
+        message: assignForm.notes || 'हेल्पडेस्कद्वारे नियुक्त रक्तदाता'
+      });
+      showToast(`✓ विनंती #${assignModal.id} साठी स्वयंसेवक '${assignForm.donorName}' नियुक्त केला!`);
+      setAssignModal(null);
+      setAssignForm({ donorName: '', donorPhone: '', notes: '' });
+      loadData();
+    } catch (err) {
+      showToast('त्रुटी: ' + err.message);
+    }
+  };
+
+  const handleFulfillBlood = async (id) => {
+    try {
+      await apiClient.fulfillBloodRequest(id);
+      showToast(`✓ विनंती #${id} पूर्ण झाली, रुग्णाला रक्त मिळाले!`);
+      loadData();
+    } catch (err) {
+      showToast('त्रुटी: ' + err.message);
+    }
   };
 
   const handleApproveScholarship = (id, student) => {
@@ -212,6 +306,8 @@ export default function SevaHelpdeskCRM() {
         <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #e2e8f0', marginBottom: '20px', overflowX: 'auto' }}>
           {[
             { id: 'blood', label: '🩸 २४x७ आपत्कालीन रक्तपेढी (Blood Requests)', count: bloodList.length },
+            { id: 'women', label: '🌸 महिला सक्षमीकरण व मदत कक्ष (Women Helpdesk)', count: womenCases.length },
+            { id: 'matrimony', label: '💍 वधू-वर पडताळणी कक्ष (Matrimony Verification)', count: (matrimonyPending.length + matrimonyReports.length) },
             { id: 'scholarship', label: '🎓 शैक्षणिक शिष्यवृत्ती (Scholarships)', count: scholarshipList.length },
             { id: 'hospital', label: '🏥 रुग्णालय व बेड समन्वय (Medical Aid)', count: hospitalList.length },
             { id: 'donors', label: '🔍 आपत्कालीन रक्तदाते शोधक (Donor Finder)', count: REGISTERED_DONORS.length }
@@ -275,57 +371,83 @@ export default function SevaHelpdeskCRM() {
                   </tr>
                 </thead>
                 <tbody>
-                  {bloodList.map((b) => (
-                    <tr key={b.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '12px 14px', fontWeight: 700, color: '#dc2626' }}>{b.id}</td>
-                      <td style={{ padding: '12px 14px', fontWeight: 700 }}>{b.patient}</td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <span style={{ background: '#fee2e2', color: '#991b1b', padding: '3px 8px', borderRadius: '4px', fontWeight: 800, fontSize: '0.85rem' }}>
-                          🩸 {b.group}
-                        </span>
-                      </td>
-                      <td style={{ padding: '12px 14px', color: '#475569' }}>{b.hospital}</td>
-                      <td style={{ padding: '12px 14px', fontWeight: 600 }}>{b.units}</td>
-                      <td style={{ padding: '12px 14px', fontSize: '0.82rem', fontWeight: 700 }}>{b.urgency}</td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <div style={{
-                          display: 'inline-block',
-                          padding: '2px 8px',
-                          borderRadius: '12px',
-                          fontSize: '0.72rem',
-                          fontWeight: 700,
-                          background: b.status === 'Fulfilled' ? '#dcfce7' : b.status === 'Assigned' ? '#ffedd5' : '#fee2e2',
-                          color: b.status === 'Fulfilled' ? '#166534' : b.status === 'Assigned' ? '#c2410c' : '#991b1b'
-                        }}>
-                          {b.status}
-                        </div>
-                        <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '3px' }}>{b.donor}</div>
-                      </td>
-                      <td style={{ padding: '12px 14px', textAlign: 'center' }}>
-                        {b.status === 'Pending' && (
-                          <button
-                            type="button"
-                            onClick={() => handleAssignBloodDonor(b.id)}
-                            style={{ padding: '5px 10px', background: '#ea580c', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
-                          >
-                            स्वयंसेवक नियुक्त करा
-                          </button>
-                        )}
-                        {b.status === 'Assigned' && (
-                          <button
-                            type="button"
-                            onClick={() => handleFulfillBlood(b.id)}
-                            style={{ padding: '5px 10px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
-                          >
-                            ✓ रक्त मिळाले (पूर्ण)
-                          </button>
-                        )}
-                        {b.status === 'Fulfilled' && (
-                          <span style={{ fontSize: '0.78rem', color: '#16a34a', fontWeight: 700 }}>✓ सेवा संपन्न</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                  {bloodList.map((b) => {
+                    const st = (b.status || 'active').toLowerCase();
+                    const isDone = st === 'fulfilled' || st === 'closed';
+                    const isAssigned = st === 'assigned';
+                    const isPending = st === 'active' || st === 'pending';
+                    const bgGroup = b.bloodGroup || b.group || 'O+';
+                    const locationText = b.taluka ? `${b.taluka}, ${b.district || b.city}` : (b.district || b.city || 'महाराष्ट्र');
+
+                    return (
+                      <tr key={b.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '12px 14px', fontWeight: 700, color: '#dc2626' }}>{b.id}</td>
+                        <td style={{ padding: '12px 14px' }}>
+                          <div style={{ fontWeight: 700, color: '#1e293b' }}>{b.patient}</div>
+                          {b.contact && (
+                            <a href={`tel:${b.contact}`} style={{ fontSize: '0.78rem', color: '#0284c7', textDecoration: 'none' }}>
+                              📞 {b.contact}
+                            </a>
+                          )}
+                        </td>
+                        <td style={{ padding: '12px 14px' }}>
+                          <span style={{ background: '#fee2e2', color: '#991b1b', padding: '3px 8px', borderRadius: '4px', fontWeight: 800, fontSize: '0.85rem' }}>
+                            🩸 {bgGroup}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px 14px', color: '#475569' }}>
+                          <div style={{ fontWeight: 600 }}>{b.hospital}</div>
+                          <div style={{ fontSize: '0.76rem', color: '#64748b' }}>📍 {locationText}</div>
+                        </td>
+                        <td style={{ padding: '12px 14px', fontWeight: 600 }}>{b.units} बाटल्या</td>
+                        <td style={{ padding: '12px 14px', fontSize: '0.82rem', fontWeight: 700, color: '#dc2626' }}>{b.urgency}</td>
+                        <td style={{ padding: '12px 14px' }}>
+                          <div style={{
+                            display: 'inline-block',
+                            padding: '3px 9px',
+                            borderRadius: '12px',
+                            fontSize: '0.74rem',
+                            fontWeight: 700,
+                            background: isDone ? '#dcfce7' : isAssigned ? '#ffedd5' : '#fee2e2',
+                            color: isDone ? '#166534' : isAssigned ? '#c2410c' : '#991b1b'
+                          }}>
+                            {isDone ? '✓ रक्त मिळाले' : isAssigned ? '🤝 दाता नियुक्त' : '🔴 तातडीने आवश्यक'}
+                          </div>
+                          {b.lastDonorAssigned && (
+                            <div style={{ fontSize: '0.75rem', color: '#059669', marginTop: '3px', fontWeight: 600 }}>
+                              दाता: {b.lastDonorAssigned}
+                            </div>
+                          )}
+                        </td>
+                        <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                          {isPending && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setAssignModal(b);
+                                setAssignForm({ donorName: '', donorPhone: '', notes: '' });
+                              }}
+                              style={{ padding: '6px 12px', background: '#ea580c', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
+                            >
+                              स्वयंसेवक नियुक्त करा
+                            </button>
+                          )}
+                          {isAssigned && (
+                            <button
+                              type="button"
+                              onClick={() => handleFulfillBlood(b.id)}
+                              style={{ padding: '6px 12px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
+                            >
+                              ✓ रक्त मिळाले (पूर्ण करा)
+                            </button>
+                          )}
+                          {isDone && (
+                            <span style={{ fontSize: '0.8rem', color: '#16a34a', fontWeight: 700 }}>✓ सेवा संपन्न</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -522,7 +644,465 @@ export default function SevaHelpdeskCRM() {
           </div>
         )}
 
+        {/* TAB 2: WOMEN EMPOWERMENT & HELPDESK CRM */}
+        {activeTab === 'women' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* Top Women KPIs */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
+              <div style={{ background: '#fff', padding: '18px', borderRadius: '12px', border: '1px solid #fbcfe8', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '0.82rem', color: '#be185d', fontWeight: 700 }}>दाखल महिला मदत प्रकरणे</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#9f1239', margin: '4px 0', fontFamily: 'Baloo 2' }}>
+                  {womenCases.length}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#be185d' }}>सक्रिय समुपदेशन व पाठपुरावा</div>
+              </div>
+
+              <div style={{ background: '#fff', padding: '18px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600 }}>नोंदणीकृत महिला उद्योजक</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#16a34a', margin: '4px 0', fontFamily: 'Baloo 2' }}>
+                  {womenStats?.totalEntrepreneurs || 5}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#16a34a' }}>सक्रिय व्यवसाय व स्टार्ट-अप्स</div>
+              </div>
+
+              <div style={{ background: '#fff', padding: '18px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600 }}>महिला बचत गट (SHGs)</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ea580c', margin: '4px 0', fontFamily: 'Baloo 2' }}>
+                  {womenStats?.totalShgs || 3}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#ea580c' }}>बचत गट खेळते भांडवल नेटवर्क</div>
+              </div>
+
+              <div style={{ background: '#fff', padding: '18px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600 }}>मार्गदर्शक तज्ज्ञ (Mentors)</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#2563eb', margin: '4px 0', fontFamily: 'Baloo 2' }}>
+                  {womenStats?.totalMentors || 3}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#2563eb' }}>विधी, उद्योग व सनदी सेवा</div>
+              </div>
+            </div>
+
+            {/* Cases Table */}
+            <div style={{ background: '#fff', borderRadius: '14px', border: '1px solid #fbcfe8', padding: '24px', boxShadow: '0 2px 10px rgba(0,0,0,0.03)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#9f1239', fontFamily: 'Baloo 2' }}>
+                    🌸 महिला गोपनीय मदत प्रकरणे व निवारण डेस्क (Women Grievance & Help Intake)
+                  </h3>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>
+                    कायदेशीर सल्ला, आर्थिक साहाय्य, बचत गट समस्या व कौटुंबिक अडचणींवर थेट समन्वयकांची नेमणूक करा.
+                  </p>
+                </div>
+                <span style={{ background: '#fdf2f8', color: '#be185d', padding: '4px 12px', borderRadius: '16px', fontWeight: 700, fontSize: '0.82rem', border: '1px solid #fbcfe8' }}>
+                  एकूण प्रकरणे: {womenCases.length}
+                </span>
+              </div>
+
+              {womenCases.length === 0 ? (
+                <div style={{ padding: '32px', textAlign: 'center', background: '#f8fafc', borderRadius: '8px', color: '#64748b' }}>
+                  सध्या कोणतीही प्रलंबित महिला मदत प्रकरणे नाहीत.
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+                    <thead>
+                      <tr style={{ background: '#fdf2f8', borderBottom: '2px solid #fbcfe8', textAlign: 'left', color: '#9f1239' }}>
+                        <th style={{ padding: '12px 14px' }}>प्रकरण क्र.</th>
+                        <th style={{ padding: '12px 14px' }}>अर्जदार भगिनी</th>
+                        <th style={{ padding: '12px 14px' }}>श्रेणी व निकड</th>
+                        <th style={{ padding: '12px 14px' }}>जिल्हा / तालुका</th>
+                        <th style={{ padding: '12px 14px' }}>तपशील व सोयीची वेळ</th>
+                        <th style={{ padding: '12px 14px' }}>सद्यस्थिती / समन्वयक</th>
+                        <th style={{ padding: '12px 14px', textAlign: 'center' }}>कारवाई</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {womenCases.map(c => (
+                        <tr key={c.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                          <td style={{ padding: '12px 14px', fontWeight: 800, color: '#be185d' }}>
+                            {c.case_number || c.id}
+                          </td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <div style={{ fontWeight: 700, color: '#0f172a' }}>{c.applicant_name}</div>
+                            <div style={{ fontSize: '0.8rem', color: '#64748b' }}>📞 {c.contact_phone}</div>
+                          </td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <div style={{ fontWeight: 600, color: '#1e293b' }}>{c.category}</div>
+                            <span style={{
+                              background: c.urgency?.includes('SOS') ? '#fee2e2' : c.urgency?.includes('तातडीने') ? '#ffedd5' : '#f1f5f9',
+                              color: c.urgency?.includes('SOS') ? '#b91c1c' : c.urgency?.includes('तातडीने') ? '#c2410c' : '#475569',
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              fontSize: '0.74rem',
+                              fontWeight: 700
+                            }}>
+                              {c.urgency}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px 14px', color: '#475569' }}>
+                            {c.taluka ? `${c.taluka}, ` : ''}{c.district}
+                          </td>
+                          <td style={{ padding: '12px 14px', maxWidth: '280px' }}>
+                            <div style={{ color: '#334155' }}>{c.description}</div>
+                            {c.preferred_time && (
+                              <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>
+                                🕒 वेळ: {c.preferred_time}
+                              </div>
+                            )}
+                          </td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <span style={{
+                              background: c.status?.includes('सोडवले') ? '#dcfce7' : '#fef3c7',
+                              color: c.status?.includes('सोडवले') ? '#15803d' : '#92400e',
+                              padding: '3px 8px',
+                              borderRadius: '4px',
+                              fontWeight: 700,
+                              fontSize: '0.76rem'
+                            }}>
+                              {c.status}
+                            </span>
+                            <div style={{ fontSize: '0.76rem', color: '#64748b', marginTop: '4px' }}>
+                              {c.assigned_coordinator || 'प्रतीक्षेत'}
+                            </div>
+                          </td>
+                          <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateWomenCase(c.id, 'प्रगतीपथावर', 'जिल्हा महिला समन्वय अधिकारी', 'समन्वयकांशी चर्चा सुरू आहे.')}
+                                style={{
+                                  padding: '5px 8px',
+                                  background: '#be185d',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: '4px',
+                                  fontSize: '0.74rem',
+                                  fontWeight: 700,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                अधिकारी नेमा
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateWomenCase(c.id, 'यशस्वीरीत्या सोडवले', c.assigned_coordinator, 'समस्या सोडवण्यात आली.')}
+                                style={{
+                                  padding: '5px 8px',
+                                  background: '#16a34a',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: '4px',
+                                  fontSize: '0.74rem',
+                                  fontWeight: 700,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                ✓ सोडवले
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: MATRIMONY VERIFICATION & COMPLAINTS DESK */}
+        {activeTab === 'matrimony' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* Verification Queue */}
+            <div style={{ background: '#fff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '24px', boxShadow: '0 2px 10px rgba(0,0,0,0.03)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a', fontFamily: 'Baloo 2' }}>
+                    💍 वधू-वर नवीन नोंदणी व प्रोफाइल पडताळणी कक्ष (Verification Queue)
+                  </h3>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>
+                    नवीन दाखल झालेल्या बायोडाटांची पडताळणी करून त्यांना "प्रमाणित (Verified)" बॅज द्या अथवा संशयास्पद माहिती असल्यास नाकारा.
+                  </p>
+                </div>
+                <span style={{ background: '#fef3c7', color: '#92400e', padding: '4px 12px', borderRadius: '16px', fontWeight: 700, fontSize: '0.82rem' }}>
+                  प्रलंबित: {matrimonyPending.length}
+                </span>
+              </div>
+
+              {matrimonyPending.length === 0 ? (
+                <div style={{ padding: '32px', textAlign: 'center', background: '#f8fafc', borderRadius: '8px', color: '#64748b' }}>
+                  सध्या कोणतीही प्रलंबित प्रोफाइल पडताळणी बाकी नाही. सर्व प्रोफाईल्स मंजूर आहेत.
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+                    <thead>
+                      <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', textAlign: 'left', color: '#475569' }}>
+                        <th style={{ padding: '12px 14px' }}>आयडी / फोटो</th>
+                        <th style={{ padding: '12px 14px' }}>उमेदवाराचे नाव व वय</th>
+                        <th style={{ padding: '12px 14px' }}>कुल / गोत्र / देवक</th>
+                        <th style={{ padding: '12px 14px' }}>शिक्षण व व्यवसाय</th>
+                        <th style={{ padding: '12px 14px' }}>जिल्हा / मूळ गाव</th>
+                        <th style={{ padding: '12px 14px' }}>संपर्क क्रमांक</th>
+                        <th style={{ padding: '12px 14px', textAlign: 'center' }}>कारवाई</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {matrimonyPending.map(p => (
+                        <tr key={p.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                          <td style={{ padding: '12px 14px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <img
+                                src={p.photo || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}
+                                alt={p.name}
+                                style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
+                              />
+                              <span style={{ fontWeight: 700, color: '#dc2626' }}>#{p.id}</span>
+                            </div>
+                          </td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <div style={{ fontWeight: 700, color: '#0f172a' }}>{p.name}</div>
+                            <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
+                              {p.gender === 'female' ? 'वधू (Bride)' : 'वर (Groom)'} • {p.age ? `${p.age} वर्षे` : ''} {p.height ? `(${p.height})` : ''}
+                            </div>
+                          </td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <div style={{ fontWeight: 600, color: '#b91c1c' }}>{p.kul || 'मराठा'}</div>
+                            <div style={{ fontSize: '0.78rem', color: '#64748b' }}>गोत्र: {p.gotra || 'कश्यप'} • देवक: {p.devak || 'सूर्यफूल'}</div>
+                          </td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <div style={{ fontWeight: 600 }}>{p.profession || p.occupation || '-'}</div>
+                            <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{p.education || '-'} {p.income ? `• ${p.income}` : ''}</div>
+                          </td>
+                          <td style={{ padding: '12px 14px', color: '#475569' }}>
+                            {p.district || p.city || '-'}
+                            {p.native_place && <div style={{ fontSize: '0.78rem', color: '#64748b' }}>मूळ: {p.native_place}</div>}
+                          </td>
+                          <td style={{ padding: '12px 14px', fontWeight: 600, color: '#0f172a' }}>
+                            {p.contact || p.phone || '-'}
+                          </td>
+                          <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                              <button
+                                type="button"
+                                onClick={() => handleVerifyMatrimony(p.id, 'active', 1)}
+                                style={{
+                                  padding: '6px 12px',
+                                  background: '#16a34a',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 700,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                ✓ मंजूर व प्रमाणित
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleVerifyMatrimony(p.id, 'rejected', 0)}
+                                style={{
+                                  padding: '6px 12px',
+                                  background: '#dc2626',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 700,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                ✕ नाकारा
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {/* Complaints / Abuse Reports Queue */}
+            <div style={{ background: '#fff', borderRadius: '14px', border: '1px solid #fee2e2', padding: '24px', boxShadow: '0 2px 10px rgba(0,0,0,0.03)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#991b1b', fontFamily: 'Baloo 2' }}>
+                    🚨 प्रोफाईल तक्रारी व गैरवर्तन निवारण (Complaints & Abuse Reports)
+                  </h3>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>
+                    समाजातील सदस्यांनी संशयास्पद बायोडाटा किंवा गैरवर्तनाबाबत केलेल्या अधिकृत तक्रारींचे निवारण.
+                  </p>
+                </div>
+                <span style={{ background: '#fee2e2', color: '#991b1b', padding: '4px 12px', borderRadius: '16px', fontWeight: 700, fontSize: '0.82rem' }}>
+                  तक्रारी: {matrimonyReports.length}
+                </span>
+              </div>
+
+              {matrimonyReports.length === 0 ? (
+                <div style={{ padding: '24px', textAlign: 'center', background: '#f8fafc', borderRadius: '8px', color: '#16a34a', fontWeight: 600 }}>
+                  ✓ एकही खुली तक्रार नाही. सर्व प्रोफाईल्स सुरक्षित व सुस्थितीत आहेत.
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+                    <thead>
+                      <tr style={{ background: '#fef2f2', borderBottom: '2px solid #fecaca', textAlign: 'left', color: '#991b1b' }}>
+                        <th style={{ padding: '10px 12px' }}>तक्रार आयडी</th>
+                        <th style={{ padding: '10px 12px' }}>आरोपित प्रोफाईल</th>
+                        <th style={{ padding: '10px 12px' }}>तक्रारदार</th>
+                        <th style={{ padding: '10px 12px' }}>तक्रारीचे कारण</th>
+                        <th style={{ padding: '10px 12px' }}>तपशील</th>
+                        <th style={{ padding: '10px 12px', textAlign: 'center' }}>कारवाई</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {matrimonyReports.map(r => (
+                        <tr key={r.id} style={{ borderBottom: '1px solid #fee2e2' }}>
+                          <td style={{ padding: '10px 12px', fontWeight: 700, color: '#dc2626' }}>#{r.id}</td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <div style={{ fontWeight: 700 }}>{r.reported_name || `प्रोफाईल #${r.reported_profile_id}`}</div>
+                            <div style={{ fontSize: '0.78rem', color: '#64748b' }}>ID: #{r.reported_profile_id}</div>
+                          </td>
+                          <td style={{ padding: '10px 12px', color: '#475569' }}>
+                            {r.reporter_name || 'अज्ञात सभासद'}
+                          </td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <span style={{ background: '#fee2e2', color: '#b91c1c', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, fontSize: '0.78rem' }}>
+                              {r.reason}
+                            </span>
+                          </td>
+                          <td style={{ padding: '10px 12px', color: '#334155', maxWidth: '280px' }}>
+                            {r.details || '-'}
+                          </td>
+                          <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                              <button
+                                type="button"
+                                onClick={() => handleVerifyMatrimony(r.reported_profile_id, 'suspended', 0)}
+                                style={{
+                                  padding: '5px 10px',
+                                  background: '#dc2626',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: '4px',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 700,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                🚫 प्रोफाईल निलंबित करा
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
       </div>
+
+      {/* Manual Dispatch Modal for Seva Coordinator */}
+      {assignModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.65)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1rem',
+          zIndex: 9999
+        }}>
+          <div style={{
+            background: '#fff',
+            borderRadius: '16px',
+            maxWidth: '460px',
+            width: '100%',
+            padding: '24px',
+            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#0f172a', fontFamily: 'Baloo 2' }}>
+                  स्वयंसेवक रक्तदाता नियुक्त करा
+                </h3>
+                <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
+                  रुग्ण: <strong>{assignModal.patient}</strong> ({assignModal.bloodGroup || assignModal.group})
+                </div>
+              </div>
+              <button onClick={() => setAssignModal(null)} style={{ background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer' }}>✕</button>
+            </div>
+
+            <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '16px', fontSize: '0.82rem' }}>
+              🏥 {assignModal.hospital}<br />
+              📍 {assignModal.taluka ? `${assignModal.taluka}, ${assignModal.district || assignModal.city}` : (assignModal.district || assignModal.city)}
+            </div>
+
+            <form onSubmit={handleAssignBloodDonor} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>रक्तदात्याचे नाव *</label>
+                <input
+                  type="text"
+                  required
+                  value={assignForm.donorName}
+                  onChange={e => setAssignForm({ ...assignForm, donorName: e.target.value })}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                  placeholder="उदा. अमोल मोहिते (पुणे)"
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>रक्तदात्याचा फोन नंबर *</label>
+                <input
+                  type="tel"
+                  required
+                  value={assignForm.donorPhone}
+                  onChange={e => setAssignForm({ ...assignForm, donorPhone: e.target.value })}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                  placeholder="9822114455"
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>समन्वयक टिप्पणी (Notes)</label>
+                <input
+                  type="text"
+                  value={assignForm.notes}
+                  onChange={e => setAssignForm({ ...assignForm, notes: e.target.value })}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                  placeholder="उदा. दात्याशी फोनवर चर्चा झाली, ते ३० मिनिटांत पोहोचत आहेत."
+                />
+              </div>
+
+              <button
+                type="submit"
+                style={{
+                  background: '#ea580c',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '10px',
+                  borderRadius: '8px',
+                  fontWeight: 700,
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  marginTop: '4px'
+                }}
+              >
+                ✓ दाता नियुक्त करा व रुग्णास कळवा
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

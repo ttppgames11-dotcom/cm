@@ -41,16 +41,17 @@ export default function LanguageSwitcher({ variant = 'topbar' }) {
         onClick={() => setIsOpen((prev) => !prev)}
         title="भाषा निवडा / Select Language / भाषा चुनें"
         aria-label="Language Selector"
+        className="cm-lang-btn"
         style={{
           display: 'inline-flex',
           alignItems: 'center',
-          gap: '5px',
+          gap: '4px',
           background: isTopbar ? 'rgba(255, 255, 255, 0.18)' : '#FFF8F0',
           border: isTopbar ? '1px solid rgba(253, 230, 138, 0.4)' : '1.5px solid #FFCC80',
           color: isTopbar ? '#FFFFFF' : '#8C1D03',
-          padding: isTopbar ? '2px 9px' : '6px 12px',
+          padding: isTopbar ? '2px 9px' : '4px 9px',
           borderRadius: '20px',
-          fontSize: isTopbar ? '0.78rem' : '0.86rem',
+          fontSize: isTopbar ? '0.78rem' : '0.80rem',
           fontWeight: '700',
           cursor: 'pointer',
           transition: 'all 0.2s ease',
@@ -58,9 +59,9 @@ export default function LanguageSwitcher({ variant = 'topbar' }) {
           whiteSpace: 'nowrap',
         }}
       >
-        <span style={{ fontSize: isTopbar ? '0.9rem' : '1rem' }}>{currentLanguageObj.flag}</span>
-        <span style={{ letterSpacing: '0.2px' }}>{currentLanguageObj.label}</span>
-        <span style={{ fontSize: '0.65rem', opacity: 0.8, marginLeft: '2px' }}>▾</span>
+        <span className="cm-lang-flag" style={{ fontSize: isTopbar ? '0.9rem' : '1rem' }}>{currentLanguageObj.flag}</span>
+        <span className="cm-lang-label" style={{ letterSpacing: '0.2px' }}>{currentLanguageObj.label}</span>
+        <span className="cm-lang-caret" style={{ fontSize: '0.65rem', opacity: 0.8, marginLeft: '2px' }}>▾</span>
         {isTranslating && <span style={{ fontSize: '0.7rem', animation: 'spin 1s linear infinite' }}>⏳</span>}
       </button>
 

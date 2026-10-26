@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MAHARASHTRA_DISTRICTS, MASTER_MAHARASHTRA_COLLEGES } from '../../data/collegesData';
+import apiClient from '../../services/apiClient';
+import { MAHARASHTRA_DISTRICTS } from '../../data/collegesData';
 
 const SCHOLARSHIP_SCHEMES = [
   {
@@ -62,6 +63,11 @@ export default function HigherEducationPortalPage() {
   const [page, setPage] = useState(1);
   const pageSize = 20;
 
+  const [liveColleges, setLiveColleges] = useState([]);
+  const [totalCollegesCount, setTotalCollegesCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+
   // Guidance Consultation Modal
   const [showCounselModal, setShowCounselModal] = useState(false);
   const [counselCollege, setCounselCollege] = useState(null);
@@ -87,29 +93,41 @@ export default function HigherEducationPortalPage() {
     return MAHARASHTRA_DISTRICTS.filter(d => d.division === selectedDivision);
   }, [selectedDivision]);
 
-  // Filtered Colleges list
-  const filteredColleges = useMemo(() => {
-    return MASTER_MAHARASHTRA_COLLEGES.filter((col) => {
-      const matchDivision = selectedDivision === 'all' || col.division === selectedDivision;
-      const matchDistrict = selectedDistrict === 'all' || col.city === selectedDistrict;
-      const matchStream = selectedStream === 'all' || col.stream === selectedStream;
-      const q = searchQuery.toLowerCase().trim();
-      const matchQuery =
-        !q ||
-        col.name.toLowerCase().includes(q) ||
-        col.city.toLowerCase().includes(q) ||
-        col.streamLabel.toLowerCase().includes(q) ||
-        col.courses.some(c => c.toLowerCase().includes(q));
-      return matchDivision && matchDistrict && matchStream && matchQuery;
-    });
-  }, [selectedDivision, selectedDistrict, selectedStream, searchQuery]);
+  // Live Query from SQLite database
+  useEffect(() => {
+    let isCancelled = false;
+    async function fetchCollegesFromApi() {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+        if (selectedStream !== 'all') params.append('stream', selectedStream);
+        if (selectedDistrict !== 'all') params.append('district', selectedDistrict);
+        if (selectedDivision !== 'all') params.append('division', selectedDivision);
+        if (searchQuery.trim()) params.append('search', searchQuery.trim());
+        params.append('page', String(page));
+        params.append('limit', String(pageSize));
 
-  // Pagination
-  const totalPages = Math.ceil(filteredColleges.length / pageSize) || 1;
-  const pagedColleges = useMemo(() => {
-    const start = (page - 1) * pageSize;
-    return filteredColleges.slice(start, start + pageSize);
-  }, [filteredColleges, page, pageSize]);
+        const res = await apiClient.get(`/colleges?${params.toString()}`).catch(() => null);
+        if (!isCancelled && res) {
+          const list = res.data?.colleges || res.colleges || [];
+          const total = res.data?.total || res.total || list.length;
+          const pages = res.data?.totalPages || res.totalPages || Math.ceil(total / pageSize) || 1;
+          setLiveColleges(list);
+          setTotalCollegesCount(total);
+          setTotalPages(pages);
+        }
+      } catch (err) {
+        console.warn('Error fetching colleges:', err);
+      } finally {
+        if (!isCancelled) setLoading(false);
+      }
+    }
+
+    fetchCollegesFromApi();
+    return () => { isCancelled = true; };
+  }, [selectedDivision, selectedDistrict, selectedStream, searchQuery, page]);
+
+  const pagedColleges = liveColleges;
 
   const handleCounselSubmit = (e) => {
     e.preventDefault();
@@ -201,7 +219,7 @@ export default function HigherEducationPortalPage() {
                   fontSize: '0.92rem'
                 }}
               >
-                🏛️ सर्व कॉलेजेस ({MASTER_MAHARASHTRA_COLLEGES.length})
+                🏛️ सर्व कॉलेजेस ({totalCollegesCount || 720})
               </button>
               <button
                 onClick={() => { setActiveTab('scholarships'); }}
@@ -383,7 +401,7 @@ export default function HigherEducationPortalPage() {
               </select>
 
               <div style={{ fontSize: '0.86rem', color: '#7A1C08', fontWeight: 700, paddingLeft: '4px' }}>
-                उपलब्ध: <strong>{filteredColleges.length}</strong> कॉलेजेस
+                उपलब्ध: <strong>{totalCollegesCount || liveColleges.length}</strong> कॉलेजेस
               </div>
             </div>
 
@@ -575,7 +593,7 @@ export default function HigherEducationPortalPage() {
                   ← मागील
                 </button>
                 <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#4B5563', padding: '0 8px' }}>
-                  पान <strong>{page}</strong> / <strong>{totalPages}</strong> (एकूण {filteredColleges.length} कॉलेजेस)
+                  पान <strong>{page}</strong> / <strong>{totalPages}</strong> (एकूण {totalCollegesCount || liveColleges.length} कॉलेजेस)
                 </span>
                 <button
                   disabled={page >= totalPages}

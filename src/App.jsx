@@ -59,10 +59,10 @@ import SiteContentEditorPage from './pages/admin/SiteContentEditorPage';
 import SuperAdminDashboardPage from './pages/admin/SuperAdminDashboardPage';
 import SuperAdminPage from './pages/admin/SuperAdminPage';
 import AdminShell from './pages/admin/AdminShell';
-import ConnectMarathaAIAgentPage from './pages/ai/ConnectMarathaAIAgentPage';
 import GenericArticlePage from './pages/common/GenericArticlePage';
 import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
 import TermsAndConditionsPage from './pages/legal/TermsAndConditionsPage';
+import ChildSafetyPolicyPage from './pages/legal/ChildSafetyPolicyPage';
 
 // Specialized Converted Feature Pages
 import SearchPage from './pages/common/SearchPage';
@@ -127,6 +127,11 @@ import ShivkalFestivalsPage from './pages/culture/ShivkalFestivalsPage';
 import ConnectMarathaUniversePage from './pages/universe/ConnectMarathaUniversePage';
 import MaharashtraDataPlatformPage from './pages/platform/MaharashtraDataPlatformPage';
 
+// Connect Maratha Seva & Emergency Response Network
+import EmergencyAlertNetworkPage from './pages/seva/EmergencyAlertNetworkPage';
+import CommunityHelpRequestsPage from './pages/seva/CommunityHelpRequestsPage';
+import CommunityServicesExchangePage from './pages/seva/CommunityServicesExchangePage';
+import SevaCommandCenterPage from './pages/seva/SevaCommandCenterPage';
 
 // Complete 100% Mapping for Every Legacy .html File (All 81 Files Covered)
 const legacyRedirects = [
@@ -297,6 +302,8 @@ export default function App() {
             {/* Network & Community */}
             <Route path="/network" element={<MaharashtraNetworkPage />} />
             <Route path="/community" element={<CommunityFeedPage />} />
+            <Route path="/community/centers" element={<CommunityCenterCRM />} />
+            <Route path="/community-centers" element={<CommunityCenterCRM />} />
             <Route path="/community/safety" element={<CommunitySafetyPage />} />
             <Route path="/safety" element={<CommunitySafetyPage />} />
             <Route path="/groups" element={<CommunityFeedPage />} />
@@ -340,9 +347,12 @@ export default function App() {
             <Route path="/sangam" element={<BusinessSangamPage />} />
             <Route path="/meetings" element={<MemberProtectedRoute><MeetingsPortalPage /></MemberProtectedRoute>} />
             <Route path="/business/meetings" element={<MemberProtectedRoute><MeetingsPortalPage /></MemberProtectedRoute>} />
-            <Route path="/business-meetings" element={<MemberProtectedRoute><MeetingsPortalPage /></MemberProtectedRoute>} />
             <Route path="/referrals" element={<ReferralPortalPage />} />
+            <Route path="/referral-portal" element={<ReferralPortalPage />} />
+            <Route path="/referrals-portal" element={<ReferralPortalPage />} />
+            <Route path="/referral" element={<ReferralPortalPage />} />
             <Route path="/member/referrals" element={<ReferralPortalPage />} />
+            <Route path="/member/referral-portal" element={<ReferralPortalPage />} />
             <Route path="/referrals/tracker" element={<MemberProtectedRoute><ReferralsTrackerPage /></MemberProtectedRoute>} />
             <Route path="/create-referral" element={<MemberProtectedRoute><CreateReferralPage /></MemberProtectedRoute>} />
             <Route path="/referrals/create" element={<MemberProtectedRoute><CreateReferralPage /></MemberProtectedRoute>} />
@@ -365,6 +375,28 @@ export default function App() {
             <Route path="/services" element={<JobsPortalPage />} />
             <Route path="/services/booking" element={<MemberProtectedRoute><ServiceBookingPage /></MemberProtectedRoute>} />
             <Route path="/service-booking" element={<MemberProtectedRoute><ServiceBookingPage /></MemberProtectedRoute>} />
+
+            {/* Connect Maratha Seva & Emergency Response Network */}
+            <Route path="/emergency" element={<EmergencyAlertNetworkPage />} />
+            <Route path="/emergency-network" element={<EmergencyAlertNetworkPage />} />
+            <Route path="/urgent-help" element={<EmergencyAlertNetworkPage />} />
+            <Route path="/seva/emergency" element={<EmergencyAlertNetworkPage />} />
+
+            <Route path="/seva/help-requests" element={<CommunityHelpRequestsPage />} />
+            <Route path="/help-requests" element={<CommunityHelpRequestsPage />} />
+            <Route path="/community-help" element={<CommunityHelpRequestsPage />} />
+            <Route path="/seva/help" element={<CommunityHelpRequestsPage />} />
+
+            <Route path="/community/services" element={<CommunityServicesExchangePage />} />
+            <Route path="/seva/services" element={<CommunityServicesExchangePage />} />
+            <Route path="/service-exchange" element={<CommunityServicesExchangePage />} />
+            <Route path="/services/exchange" element={<CommunityServicesExchangePage />} />
+
+            <Route path="/seva/medical" element={<BloodHelpPortalPage />} />
+
+            <Route path="/crm/seva/emergency" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo', 'district_admin', 'center_manager', 'center_admin', 'state_admin', 'pradesh_admin']}><SevaCommandCenterPage /></CRMProtectedRoute>} />
+            <Route path="/crm/seva" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo', 'district_admin', 'center_manager', 'center_admin', 'state_admin', 'pradesh_admin']}><SevaCommandCenterPage /></CRMProtectedRoute>} />
+            <Route path="/crm/emergency" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo', 'district_admin', 'center_manager', 'center_admin', 'state_admin', 'pradesh_admin']}><SevaCommandCenterPage /></CRMProtectedRoute>} />
 
             {/* Maharashtra Culture & Heritage Knowledge Graph */}
             <Route path="/culture" element={<MaharashtraCultureHubPage />} />
@@ -508,11 +540,6 @@ export default function App() {
             <Route path="/cms" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SiteContentEditorPage /></CRMProtectedRoute>} />
             <Route path="/crm/cms" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SiteContentEditorPage /></CRMProtectedRoute>} />
 
-            {/* Connect Maratha AI Agent (Trilingual RAG, Forts, Swarajya, Support) */}
-            <Route path="/ai" element={<ConnectMarathaAIAgentPage />} />
-            <Route path="/ai-agent" element={<ConnectMarathaAIAgentPage />} />
-            <Route path="/assistant" element={<ConnectMarathaAIAgentPage />} />
-            <Route path="/crm/ai" element={<ConnectMarathaAIAgentPage />} />
 
             {/* Newly Added Community Ecosystem Modules with Full URL Variations */}
             <Route path="/doctors" element={<DoctorsDirectoryPage />} />
@@ -613,6 +640,9 @@ export default function App() {
             <Route path="/terms-and-conditions" element={<TermsAndConditionsPage />} />
             <Route path="/terms-of-service" element={<TermsAndConditionsPage />} />
             <Route path="/legal/terms" element={<TermsAndConditionsPage />} />
+            <Route path="/child-safety" element={<ChildSafetyPolicyPage />} />
+            <Route path="/child-safety-standards" element={<ChildSafetyPolicyPage />} />
+            <Route path="/legal/child-safety" element={<ChildSafetyPolicyPage />} />
 
             {/* Generic Article Route & Fallback */}
             <Route path="/article" element={<GenericArticlePage />} />

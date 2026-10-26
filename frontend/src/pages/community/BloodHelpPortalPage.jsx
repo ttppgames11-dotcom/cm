@@ -77,11 +77,15 @@ export default function BloodHelpPortalPage() {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [isDonorModalOpen, setIsDonorModalOpen] = useState(false);
   const [requestForm, setRequestForm] = useState({
-    patient: '', hospital: '', city: '', bloodGroup: 'O+', units: 1, urgency: 'तात्काळ (२ तासांत)', contact: ''
+    patient: '', hospital: '', city: 'पुणे', district: 'पुणे', taluka: '', bloodGroup: 'O+', units: 1, urgency: 'तात्काळ (२ तासांत)', contact: ''
   });
   const [donorForm, setDonorForm] = useState({
-    name: '', phone: '', city: '', bloodGroup: 'O+', age: '', weight: '', isReadyEmergency: true
+    name: '', phone: '', city: 'पुणे', district: 'पुणे', taluka: '', bloodGroup: 'O+', age: '', weight: '', lastDonated: '', isReadyEmergency: true
   });
+  const [lastSubmittedReq, setLastSubmittedReq] = useState(null);
+  const [respondingReqId, setRespondingReqId] = useState(null);
+  const [donorResponseModal, setDonorResponseModal] = useState(null);
+  const [volunteerForm, setVolunteerForm] = useState({ donorName: '', phone: '', etaMinutes: 45, message: 'मी रुग्णालयात रक्तदानासाठी येत आहे.' });
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
@@ -102,17 +106,24 @@ export default function BloodHelpPortalPage() {
       .catch(() => setDonorsList(DONORS_SAMPLE));
   }, []);
 
-  const filteredDonors = donorsList.filter(d => {
-    const matchesBlood = bloodFilter === 'all' || d.group === bloodFilter || d.group.includes(bloodFilter);
-    const matchesCity = searchDistrict === '' || d.city.toLowerCase().includes(searchDistrict.toLowerCase()) || d.name.toLowerCase().includes(searchDistrict.toLowerCase());
+  const filteredDonors = (donorsList.length > 0 ? donorsList : DONORS_SAMPLE).filter(d => {
+    const matchesBlood = bloodFilter === 'all' || d.group === bloodFilter || (d.group && d.group.includes(bloodFilter));
+    const searchLow = (searchDistrict || '').toLowerCase().trim();
+    const matchesCity = !searchLow ||
+      (d.city && d.city.toLowerCase().includes(searchLow)) ||
+      (d.name && d.name.toLowerCase().includes(searchLow)) ||
+      (d.district && d.district.toLowerCase().includes(searchLow));
     return matchesBlood && matchesCity;
   });
 
   const handleRequestSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     const payload = {
       patient: requestForm.patient,
-      hospital: requestForm.hospital + ', ' + requestForm.city,
+      hospital: requestForm.hospital,
+      city: requestForm.city || requestForm.district,
+      district: requestForm.district || requestForm.city,
+      taluka: requestForm.taluka,
       bloodGroup: requestForm.bloodGroup,
       units: requestForm.units,
       urgency: requestForm.urgency,
@@ -123,14 +134,15 @@ export default function BloodHelpPortalPage() {
       const res = await apiClient.addBloodRequest(payload);
       const newReq = res.request || res.data?.request || { id: `REQ-${Date.now().toString().slice(-3)}`, time: 'आत्ताच', ...payload };
       setActiveRequests(prev => [newReq, ...prev]);
-      setReqStatusBanner('🚨 REST API Confirmation: ' + (res.message || 'तातडीची रक्त मागणी प्रसारित झाली!'));
+      const notifiedCount = res.notifiedDonorsCount || res.data?.notifiedDonorsCount || 0;
+      setLastSubmittedReq({ ...newReq, notifiedCount });
+      setReqStatusBanner(`🚨 विनंती थेट प्रसारित झाली! तुमच्या भागातील ${notifiedCount} उपलब्ध दात्यांना अलर्ट पाठवला गेला आहे.`);
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
         setIsRequestModalOpen(false);
-        setReqStatusBanner(null);
-        setRequestForm({ patient: '', hospital: '', city: '', bloodGroup: 'O+', units: 1, urgency: 'तात्काळ (२ तासांत)', contact: '' });
-      }, 1500);
+        setRequestForm({ patient: '', hospital: '', city: 'पुणे', district: 'पुणे', taluka: '', bloodGroup: 'O+', units: 1, urgency: 'तात्काळ (२ तासांत)', contact: '' });
+      }, 2500);
     } catch (err) {
       setActiveRequests(prev => [{ id: `REQ-${Date.now().toString().slice(-3)}`, time: 'आत्ताच', ...payload }, ...prev]);
       setReqStatusBanner('🚨 तातडीची रक्त मागणी प्रसारित करण्यात आली!');
@@ -138,8 +150,7 @@ export default function BloodHelpPortalPage() {
       setTimeout(() => {
         setSubmitted(false);
         setIsRequestModalOpen(false);
-        setReqStatusBanner(null);
-        setRequestForm({ patient: '', hospital: '', city: '', bloodGroup: 'O+', units: 1, urgency: 'तात्काळ (२ तासांत)', contact: '' });
+        setRequestForm({ patient: '', hospital: '', city: 'पुणे', district: 'पुणे', taluka: '', bloodGroup: 'O+', units: 1, urgency: 'तात्काळ (२ तासांत)', contact: '' });
       }, 1500);
     }
   };
@@ -150,21 +161,26 @@ export default function BloodHelpPortalPage() {
       name: donorForm.name,
       group: donorForm.bloodGroup,
       city: donorForm.city,
-      phone: donorForm.phone
+      district: donorForm.district || donorForm.city,
+      taluka: donorForm.taluka,
+      phone: donorForm.phone,
+      age: donorForm.age,
+      weight: donorForm.weight,
+      lastDonated: donorForm.lastDonated || 'नवीन नोंदणी',
+      isReadyEmergency: donorForm.isReadyEmergency
     };
 
     try {
       const res = await apiClient.addDonor(payload);
       const newDonor = res.donor || res.data?.donor || { id: Date.now(), totalDonations: 1, lastDonated: 'आत्ताच', ...payload };
       setDonorsList(prev => [newDonor, ...prev]);
-      setDonorStatusBanner('❤️ REST API Confirmation: ' + (res.message || 'रक्तदाता म्हणून नोंदणी यशस्वी झाली!'));
+      setDonorStatusBanner('❤️ रक्तदाता म्हणून नोंदणी यशस्वी झाली! गरजूंसाठी आपले योगदान अमूल्य ठरेल.');
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
         setIsDonorModalOpen(false);
-        setDonorStatusBanner(null);
-        setDonorForm({ name: '', phone: '', city: '', bloodGroup: 'O+', age: '', weight: '', isReadyEmergency: true });
-      }, 1500);
+        setDonorForm({ name: '', phone: '', city: 'पुणे', district: 'पुणे', taluka: '', bloodGroup: 'O+', age: '', weight: '', lastDonated: '', isReadyEmergency: true });
+      }, 2000);
     } catch (err) {
       setDonorsList(prev => [{ id: Date.now(), totalDonations: 1, lastDonated: 'नवीन नोंदणी', ...payload }, ...prev]);
       setDonorStatusBanner('❤️ रक्तदाता म्हणून नोंदणी यशस्वी झाली!');
@@ -172,9 +188,40 @@ export default function BloodHelpPortalPage() {
       setTimeout(() => {
         setSubmitted(false);
         setIsDonorModalOpen(false);
-        setDonorStatusBanner(null);
-        setDonorForm({ name: '', phone: '', city: '', bloodGroup: 'O+', age: '', weight: '', isReadyEmergency: true });
+        setDonorForm({ name: '', phone: '', city: 'पुणे', district: 'पुणे', taluka: '', bloodGroup: 'O+', age: '', weight: '', lastDonated: '', isReadyEmergency: true });
       }, 1500);
+    }
+  };
+
+  const handleVolunteerRespond = async (e) => {
+    e.preventDefault();
+    if (!donorResponseModal) return;
+    try {
+      await apiClient.respondToBloodRequest(donorResponseModal.id, {
+        donorName: volunteerForm.donorName,
+        phone: volunteerForm.phone,
+        bloodGroup: donorResponseModal.bloodGroup,
+        etaMinutes: volunteerForm.etaMinutes,
+        message: volunteerForm.message
+      });
+      // Update UI state
+      setActiveRequests(prev => prev.map(r => r.id === donorResponseModal.id ? { ...r, status: 'assigned', lastDonorAssigned: volunteerForm.donorName, responsesCount: (r.responsesCount || 0) + 1 } : r));
+      setReqStatusBanner(`❤️ धन्यवाद! तुमची तयारी रुग्णाच्या कुटुंबीयांपर्यंत पोहोचवली आहे.`);
+      setDonorResponseModal(null);
+      setVolunteerForm({ donorName: '', phone: '', etaMinutes: 45, message: 'मी रुग्णालयात रक्तदानासाठी येत आहे.' });
+    } catch (err) {
+      alert('प्रतिसाद नोंदवताना त्रुटी: ' + (err.message || 'Error'));
+    }
+  };
+
+  const handleMarkFulfilled = async (reqId) => {
+    if (!window.confirm('रुग्णाला रक्त मिळाले आहे का आणि ही मागणी पूर्ण म्हणून बंद करायची आहे का?')) return;
+    try {
+      await apiClient.fulfillBloodRequest(reqId);
+      setActiveRequests(prev => prev.map(r => r.id === reqId ? { ...r, status: 'fulfilled' } : r));
+      setReqStatusBanner('✅ रक्त मागणी यशस्वीरीत्या पूर्ण झाली!');
+    } catch (err) {
+      alert('अपडेट त्रुटी: ' + err.message);
     }
   };
 
@@ -363,25 +410,77 @@ export default function BloodHelpPortalPage() {
                   <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>
                     🏥 {req.hospital}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#475569', marginBottom: '0.75rem' }}>
-                    आवश्यक युनिट्स: <strong>{req.units}</strong> | वेळ: {req.time}
+                  <div style={{ fontSize: '0.8rem', color: '#475569', marginBottom: '0.75rem', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                    <span>आवश्यक: <strong>{req.units} बाटल्या</strong></span>
+                    <span>{req.taluka ? `📍 ${req.taluka}, ${req.district || req.city}` : `📍 ${req.city || req.district || 'महाराष्ट्र'}`}</span>
                   </div>
+
+                  {req.matchedDonorsCount > 0 && (
+                    <div style={{ background: '#fef2f2', border: '1px dashed #fca5a5', padding: '6px 10px', borderRadius: '6px', fontSize: '0.78rem', color: '#991b1b', marginBottom: '0.75rem' }}>
+                      ⚡ परिसरातील <strong>{req.matchedDonorsCount}</strong> उपलब्ध दात्यांना अलर्ट पाठवला गेला आहे
+                    </div>
+                  )}
+
+                  {req.status === 'assigned' && (
+                    <div style={{ background: '#ecfdf5', border: '1px solid #6ee7b7', padding: '6px 10px', borderRadius: '6px', fontSize: '0.78rem', color: '#065f46', marginBottom: '0.75rem' }}>
+                      🤝 दाता तयार: <strong>{req.lastDonorAssigned || 'स्वयंसेवक'}</strong> रुग्णालयाकडे येत आहेत!
+                    </div>
+                  )}
                 </div>
-                <a
-                  href={`tel:${req.contact}`}
-                  style={{
-                    background: '#dc2626',
-                    color: '#fff',
-                    textDecoration: 'none',
-                    padding: '0.6rem',
-                    borderRadius: '8px',
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    textAlign: 'center'
-                  }}
-                >
-                  📞 तातडीने मदत करा ({req.contact})
-                </a>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    <a
+                      href={`tel:${req.contact}`}
+                      style={{
+                        background: '#dc2626',
+                        color: '#fff',
+                        textDecoration: 'none',
+                        padding: '0.6rem 0.4rem',
+                        borderRadius: '8px',
+                        fontSize: '0.82rem',
+                        fontWeight: 700,
+                        textAlign: 'center'
+                      }}
+                    >
+                      📞 संपर्क साधा
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => setDonorResponseModal(req)}
+                      style={{
+                        background: '#16a34a',
+                        color: '#fff',
+                        border: 'none',
+                        padding: '0.6rem 0.4rem',
+                        borderRadius: '8px',
+                        fontSize: '0.82rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        textAlign: 'center'
+                      }}
+                    >
+                      🙋‍♂️ मी येतो (Donate)
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleMarkFulfilled(req.id)}
+                    style={{
+                      background: '#f8fafc',
+                      color: '#475569',
+                      border: '1px solid #cbd5e1',
+                      padding: '0.45rem',
+                      borderRadius: '6px',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    ✓ रक्त मिळाले (मागणी पूर्ण करा)
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -667,16 +766,29 @@ export default function BloodHelpPortalPage() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>शहर / जिल्हा *</label>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>जिल्हा *</label>
                     <input
                       type="text"
                       required
-                      value={requestForm.city}
-                      onChange={e => setRequestForm({ ...requestForm, city: e.target.value })}
+                      value={requestForm.district}
+                      onChange={e => setRequestForm({ ...requestForm, district: e.target.value, city: e.target.value })}
                       style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                      placeholder="उदा. पुणे"
+                      placeholder="उदा. पुणे / सातारा / कोल्हापूर"
                     />
                   </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>तालुका *</label>
+                    <input
+                      type="text"
+                      required
+                      value={requestForm.taluka}
+                      onChange={e => setRequestForm({ ...requestForm, taluka: e.target.value })}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                      placeholder="उदा. हवेली / कराड / करवीर"
+                    />
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>तातडीची पातळी *</label>
                     <select
@@ -690,17 +802,17 @@ export default function BloodHelpPortalPage() {
                       <option value="नियोजित शस्त्रक्रिया">नियोजित शस्त्रक्रिया</option>
                     </select>
                   </div>
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>नातेवाईकाचा संपर्क क्रमांक *</label>
-                  <input
-                    type="tel"
-                    required
-                    value={requestForm.contact}
-                    onChange={e => setRequestForm({ ...requestForm, contact: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    placeholder="उदा. 9822XXXXXX"
-                  />
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>नातेवाईकाचा संपर्क क्रमांक *</label>
+                    <input
+                      type="tel"
+                      required
+                      value={requestForm.contact}
+                      onChange={e => setRequestForm({ ...requestForm, contact: e.target.value })}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                      placeholder="उदा. 9822XXXXXX"
+                    />
+                  </div>
                 </div>
                 <button
                   type="submit"
@@ -845,6 +957,118 @@ export default function BloodHelpPortalPage() {
                 </button>
               </form>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Volunteer Response Modal (I am ready to donate) */}
+      {donorResponseModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.65)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1rem',
+          zIndex: 9999
+        }}>
+          <div style={{
+            background: '#fff',
+            borderRadius: '20px',
+            maxWidth: '480px',
+            width: '100%',
+            padding: '2rem',
+            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#16a34a' }}>
+                  🙋‍♂️ मी रक्तदान करण्यास तयार आहे
+                </h3>
+                <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '2px' }}>
+                  रुग्ण: <strong>{donorResponseModal.patient}</strong> ({donorResponseModal.bloodGroup})
+                </div>
+              </div>
+              <button onClick={() => setDonorResponseModal(null)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+            </div>
+
+            <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', marginBottom: '1.25rem', fontSize: '0.82rem', color: '#334155' }}>
+              🏥 <strong>रुग्णालय:</strong> {donorResponseModal.hospital}<br />
+              🩸 <strong>रक्तगट:</strong> {donorResponseModal.bloodGroup} | <strong>आवश्यक:</strong> {donorResponseModal.units} बाटल्या
+            </div>
+
+            <form onSubmit={handleVolunteerRespond} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '0.3rem' }}>आपले नाव *</label>
+                <input
+                  type="text"
+                  required
+                  value={volunteerForm.donorName}
+                  onChange={e => setVolunteerForm({ ...volunteerForm, donorName: e.target.value })}
+                  style={{ width: '100%', padding: '0.7rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  placeholder="उदा. सचिन संभाजी मोरे"
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '0.3rem' }}>आपला संपर्क नंबर *</label>
+                  <input
+                    type="tel"
+                    required
+                    value={volunteerForm.phone}
+                    onChange={e => setVolunteerForm({ ...volunteerForm, phone: e.target.value })}
+                    style={{ width: '100%', padding: '0.7rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                    placeholder="9822XXXXXX"
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '0.3rem' }}>पोहोचण्याची वेळ (मिनिटे)</label>
+                  <select
+                    value={volunteerForm.etaMinutes}
+                    onChange={e => setVolunteerForm({ ...volunteerForm, etaMinutes: Number(e.target.value) })}
+                    style={{ width: '100%', padding: '0.7rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  >
+                    <option value={20}>२० मिनिटांत</option>
+                    <option value={35}>३५ मिनिटांत</option>
+                    <option value={45}>४५ मिनिटांत</option>
+                    <option value={60}>१ तासात</option>
+                    <option value={120}>२ तासांत</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '0.3rem' }}>नातेवाईकांना संदेश</label>
+                <input
+                  type="text"
+                  value={volunteerForm.message}
+                  onChange={e => setVolunteerForm({ ...volunteerForm, message: e.target.value })}
+                  style={{ width: '100%', padding: '0.7rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                />
+              </div>
+
+              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                🔒 आपली माहिती थेट रुग्णाच्या नातेवाईकांपर्यंत पोहोचवली जाईल जेणेकरून वेळेवर समन्वय साधता येईल.
+              </div>
+
+              <button
+                type="submit"
+                style={{
+                  background: '#16a34a',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '0.85rem',
+                  borderRadius: '10px',
+                  fontWeight: 700,
+                  fontSize: '0.9rem',
+                  cursor: 'pointer'
+                }}
+              >
+                ✓ रुग्णाच्या नातेवाईकांशी संपर्क जोडा (मी येतो)
+              </button>
+            </form>
           </div>
         </div>
       )}

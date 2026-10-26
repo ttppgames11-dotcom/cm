@@ -1233,7 +1233,7 @@ export default function ConnectMarathaUniversePage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#FFFDF9', color: '#431407', fontFamily: 'inherit' }}>
+    <div style={{ minHeight: '100vh', background: '#FFFDF9', color: '#EA580C', fontFamily: 'inherit' }}>
 
       <section style={{
         background: 'linear-gradient(135deg, #7C1D05 0%, #C2410C 50%, #EA580C 100%)',
@@ -1357,6 +1357,43 @@ export default function ConnectMarathaUniversePage() {
               : 'Discover Maharashtra not just as a single event, but as a rich civilization of soil, forts, hydrology, 12 historical epochs, battles, saints, architecture, dialects, food, and living traditions!'}
           </p>
 
+          {/* 7 Portals Quick Switcher */}
+          <div style={{
+            display: 'flex',
+            gap: '8px',
+            overflowX: 'auto',
+            paddingBottom: '14px',
+            marginBottom: '16px'
+          }}>
+            {[
+              { label: '🎓 उच्च शिक्षण', path: '/education' },
+              { label: '🏛️ महाविद्यालये', path: '/colleges' },
+              { label: '📜 शिष्यवृत्ती', path: '/scholarships' },
+              { label: '🎯 स्वराज्य क्विझ', path: '/quiz' },
+              { label: '💡 ज्ञानकोश', path: '/dnyankosh' },
+              { label: '📚 ग्रंथालय व बखरी', path: '/history/granthalaya' },
+              { label: '⏳ टाइम मशीन (सक्रिय)', path: '/time-machine', active: true }
+            ].map((portal, idx) => (
+              <Link
+                key={idx}
+                to={portal.path}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '16px',
+                  background: portal.active ? '#FEF3C7' : 'rgba(255,255,255,0.2)',
+                  color: portal.active ? '#7C1D05' : '#FFFFFF',
+                  border: '1px solid rgba(254, 243, 199, 0.4)',
+                  fontWeight: 700,
+                  fontSize: '0.8rem',
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {portal.label}
+              </Link>
+            ))}
+          </div>
+
           {/* Quick Launch Action Buttons */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
             <button
@@ -1442,7 +1479,7 @@ export default function ConnectMarathaUniversePage() {
                 cursor: 'pointer',
                 border: activeTab === tab.id ? '2px solid #7C1D05' : '1px solid #FED7AA',
                 background: activeTab === tab.id ? '#7C1D05' : '#FFFDF9',
-                color: activeTab === tab.id ? '#FFFFFF' : '#431407',
+                color: activeTab === tab.id ? '#FFFFFF' : '#EA580C',
                 transition: 'all 0.15s ease'
               }}
             >
@@ -1943,7 +1980,7 @@ export default function ConnectMarathaUniversePage() {
                     <span style={{ fontSize: '0.8rem', color: '#C2410C', fontWeight: 700 }}>{activeConnectedNode.type}</span>
                   </div>
                 </div>
-                <p style={{ fontSize: '0.92rem', color: '#431407', lineHeight: 1.6, marginBottom: '16px' }}>
+                <p style={{ fontSize: '0.92rem', color: '#EA580C', lineHeight: 1.6, marginBottom: '16px' }}>
                   {activeConnectedNode.summary}
                 </p>
 
@@ -2022,7 +2059,7 @@ export default function ConnectMarathaUniversePage() {
                     cursor: 'pointer',
                     border: selectedEpoch.id === ep.id ? '2px solid #7C1D05' : '1px solid #FED7AA',
                     background: selectedEpoch.id === ep.id ? '#7C1D05' : '#FFFFFF',
-                    color: selectedEpoch.id === ep.id ? '#FFFFFF' : '#431407',
+                    color: selectedEpoch.id === ep.id ? '#FFFFFF' : '#EA580C',
                     textAlign: 'left',
                     boxShadow: selectedEpoch.id === ep.id ? '0 4px 12px rgba(124,29,5,0.25)' : 'none',
                     transition: 'all 0.15s ease'
@@ -2051,7 +2088,7 @@ export default function ConnectMarathaUniversePage() {
                 <h3 style={{ fontSize: '1.45rem', color: '#7C1D05', fontWeight: 800, margin: '6px 0 10px' }}>
                   {selectedEpoch.title}
                 </h3>
-                <p style={{ fontSize: '0.94rem', color: '#431407', lineHeight: 1.6, margin: '0 0 16px' }}>
+                <p style={{ fontSize: '0.94rem', color: '#EA580C', lineHeight: 1.6, margin: '0 0 16px' }}>
                   {selectedEpoch.highlight}
                 </p>
 
@@ -2124,7 +2161,7 @@ export default function ConnectMarathaUniversePage() {
                     cursor: 'pointer',
                     border: selectedCity.id === c.id ? '2px solid #7C1D05' : '1px solid #FED7AA',
                     background: selectedCity.id === c.id ? '#7C1D05' : '#FFFDF9',
-                    color: selectedCity.id === c.id ? '#FFFFFF' : '#431407',
+                    color: selectedCity.id === c.id ? '#FFFFFF' : '#EA580C',
                     whiteSpace: 'nowrap'
                   }}
                 >
@@ -2171,7 +2208,7 @@ export default function ConnectMarathaUniversePage() {
                   पुरातन नाव: {selectedCity.ancientName || selectedCity.oldNames}
                 </span>
               </div>
-              <p style={{ color: '#431407', fontSize: '1rem', lineHeight: 1.6, marginBottom: '20px' }}>
+              <p style={{ color: '#EA580C', fontSize: '1rem', lineHeight: 1.6, marginBottom: '20px' }}>
                 {selectedCity.eras ? (selectedCity.eras[selectedCityEra] || selectedCity.eras.peshwa || selectedCity.eras.today) : ''}
               </p>
               
@@ -2225,7 +2262,7 @@ export default function ConnectMarathaUniversePage() {
                     <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#7C1D05' }}>{f.name}</h3>
                     <span style={{ fontSize: '0.78rem', background: '#FEF3C7', color: '#92400E', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>{f.height}</span>
                   </div>
-                  <div style={{ fontSize: '0.86rem', lineHeight: 1.5, color: '#431407', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div style={{ fontSize: '0.86rem', lineHeight: 1.5, color: '#EA580C', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <div>💧 <strong>जलव्यवस्था:</strong> {f.water}</div>
                     <div>🏛️ <strong>वास्तुकला:</strong> {f.architecture}</div>
                     <div>🧗 <strong>ट्रेकिंग काठिण्य:</strong> {f.diff}</div>
@@ -2355,7 +2392,7 @@ export default function ConnectMarathaUniversePage() {
 
               <div style={{ marginTop: '14px', background: '#FFFFFF', padding: '14px', borderRadius: '10px', border: '1px solid #FED7AA' }}>
                 <strong style={{ color: '#C2410C' }}>🎯 युद्धनीती व व्यूहरचना (Tactical Maneuver):</strong>
-                <p style={{ margin: '4px 0 0', lineHeight: 1.6, color: '#431407' }}>{selectedBattle.strategy}</p>
+                <p style={{ margin: '4px 0 0', lineHeight: 1.6, color: '#EA580C' }}>{selectedBattle.strategy}</p>
               </div>
 
               <div style={{ marginTop: '12px', background: '#FEF2F2', padding: '14px', borderRadius: '10px', border: '1px solid #FECACA' }}>
@@ -2394,7 +2431,7 @@ export default function ConnectMarathaUniversePage() {
                         fontWeight: 700,
                         border: selectedWeapon.id === w.id ? '1.5px solid #7C1D05' : '1px solid #FED7AA',
                         background: selectedWeapon.id === w.id ? '#7C1D05' : '#FFFFFF',
-                        color: selectedWeapon.id === w.id ? '#FFFFFF' : '#431407',
+                        color: selectedWeapon.id === w.id ? '#FFFFFF' : '#EA580C',
                         cursor: 'pointer'
                       }}
                     >
@@ -3378,7 +3415,7 @@ export default function ConnectMarathaUniversePage() {
 
               <div style={{ background: '#FFFFFF', padding: '14px', borderRadius: '10px', border: '1px solid #FECDD3' }}>
                 <strong style={{ color: '#BE123C' }}>{selectedDistrictFood} चे वैशिष्ट्य:</strong>
-                <div style={{ marginTop: '4px', fontSize: '0.9rem', color: '#431407' }}>
+                <div style={{ marginTop: '4px', fontSize: '0.9rem', color: '#EA580C' }}>
                   {selectedDistrictFood === 'पुणे' && 'पुणेरी मिसळ, बाकरवडी, सुजाता मस्तानी, साजूक तुपातील पुरणपोळी व आंबट-गोड वरण.'}
                   {selectedDistrictFood === 'कोल्हापूर' && 'कोल्हापुरी तांबडा व पांढरा रस्सा, झणझणीत मिसळ, भडंग व गूळ-काकवी.'}
                   {selectedDistrictFood === 'नागपूर (विदर्भ)' && 'सावजी मटण व चिकन, पाटवडी रस्सा, पोहे-तर्री, संत्रा बर्फी व ज्वारीची कडक भाकरी.'}
@@ -3481,7 +3518,7 @@ export default function ConnectMarathaUniversePage() {
                     <span style={{ fontSize: '0.74rem', background: '#FEF3C7', color: '#92400E', padding: '2px 8px', borderRadius: '6px', fontWeight: 700 }}>{ins.period}</span>
                   </div>
                   <div style={{ fontSize: '0.82rem', color: '#C2410C', fontWeight: 700, margin: '4px 0' }}>स्थान: {ins.location} • लिपी: {ins.script}</div>
-                  <p style={{ fontSize: '0.84rem', color: '#431407', margin: '6px 0 0' }}>{ins.content || ins.desc}</p>
+                  <p style={{ fontSize: '0.84rem', color: '#EA580C', margin: '6px 0 0' }}>{ins.content || ins.desc}</p>
                 </div>
               ))}
             </div>
@@ -3547,7 +3584,7 @@ export default function ConnectMarathaUniversePage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
               <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
                 <h4 style={{ margin: '0 0 6px', color: '#7C1D05', fontSize: '1.15rem' }}>🚶 वारी महामार्ग (Wari Route)</h4>
-                <p style={{ margin: '0 0 8px', fontSize: '0.85rem', color: '#431407', lineHeight: 1.5 }}>
+                <p style={{ margin: '0 0 8px', fontSize: '0.85rem', color: '#EA580C', lineHeight: 1.5 }}>
                   संत ज्ञानेश्वर माऊली पालखी (आळंदी → पुणे → सासवड → जेजुरी → पंढरपूर) आणि संत तुकाराम महाराज पालखी (देहू → आकुर्डी → पुणे → इंदापूर → पंढरपूर).
                 </p>
                 <div style={{ fontSize: '0.8rem', color: '#92400E', fontWeight: 700 }}>३५० किमी चालणारी जगातील सर्वात मोठी सामाजिक समतेची पदयात्रा!</div>
@@ -3555,7 +3592,7 @@ export default function ConnectMarathaUniversePage() {
 
               <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
                 <h4 style={{ margin: '0 0 6px', color: '#7C1D05', fontSize: '1.15rem' }}>🪔 सण दिनदर्शिका इंजिन (Calendar)</h4>
-                <p style={{ margin: '0 0 8px', fontSize: '0.85rem', color: '#431407', lineHeight: 1.5 }}>
+                <p style={{ margin: '0 0 8px', fontSize: '0.85rem', color: '#EA580C', lineHeight: 1.5 }}>
                   महाराष्ट्र → जिल्हा → तालुका → गाव; गुढीपाडवा, शिवराज्याभिषेक दिन (६ जून), आषाढी एकादशी, नारळी पौर्णिमा, गणेशोत्सव व शिवजयंती.
                 </p>
                 <Link to="/culture/shivkal-festivals" style={{ color: '#C2410C', fontWeight: 800, fontSize: '0.85rem', textDecoration: 'none' }}>
@@ -3588,19 +3625,19 @@ export default function ConnectMarathaUniversePage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', fontSize: '0.85rem' }}>
                 <div style={{ background: '#FFFFFF', padding: '10px', borderRadius: '8px', border: '1px solid #FECDD3' }}>
                   <strong style={{ color: '#BE123C' }}>🌅 सकाळ (Morning):</strong>
-                  <div style={{ marginTop: '2px', color: '#431407' }}>विहिरीचे पाणी → बैलांची दावण → शेतात नांगरणी → गावचा बाजार.</div>
+                  <div style={{ marginTop: '2px', color: '#EA580C' }}>विहिरीचे पाणी → बैलांची दावण → शेतात नांगरणी → गावचा बाजार.</div>
                 </div>
                 <div style={{ background: '#FFFFFF', padding: '10px', borderRadius: '8px', border: '1px solid #FECDD3' }}>
                   <strong style={{ color: '#BE123C' }}>☀️ दुपार (Afternoon):</strong>
-                  <div style={{ marginTop: '2px', color: '#431407' }}>भाकरी-ठेचा भोजन → बलुतेदारांचे काम → चावडीवर न्यायनिवाडे व महसूल.</div>
+                  <div style={{ marginTop: '2px', color: '#EA580C' }}>भाकरी-ठेचा भोजन → बलुतेदारांचे काम → चावडीवर न्यायनिवाडे व महसूल.</div>
                 </div>
                 <div style={{ background: '#FFFFFF', padding: '10px', borderRadius: '8px', border: '1px solid #FECDD3' }}>
                   <strong style={{ color: '#BE123C' }}>🌇 संध्याकाळ (Evening):</strong>
-                  <div style={{ marginTop: '2px', color: '#431407' }}>गुरांचे परतीचे खूर → मारुती मंदिरात कीर्तन/भजन → दिवाबत्ती.</div>
+                  <div style={{ marginTop: '2px', color: '#EA580C' }}>गुरांचे परतीचे खूर → मारुती मंदिरात कीर्तन/भजन → दिवाबत्ती.</div>
                 </div>
                 <div style={{ background: '#FFFFFF', padding: '10px', borderRadius: '8px', border: '1px solid #FECDD3' }}>
                   <strong style={{ color: '#BE123C' }}>🌙 रात्र (Night):</strong>
-                  <div style={{ marginTop: '2px', color: '#431407' }}>रामोशी-मांग पहारेकऱ्यांची गस्त → कुटुंब गोष्टी → कोट संरक्षण.</div>
+                  <div style={{ marginTop: '2px', color: '#EA580C' }}>रामोशी-मांग पहारेकऱ्यांची गस्त → कुटुंब गोष्टी → कोट संरक्षण.</div>
                 </div>
               </div>
             </div>
@@ -3650,7 +3687,7 @@ export default function ConnectMarathaUniversePage() {
 
               <div style={{ background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
                 <h4 style={{ margin: '0 0 6px', color: '#7C1D05', fontSize: '1.15rem' }}>🏭 गिरणी व साखर सहकार इतिहास</h4>
-                <p style={{ margin: 0, fontSize: '0.85rem', color: '#431407', lineHeight: 1.5 }}>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: '#EA580C', lineHeight: 1.5 }}>
                   मुंबईच्या गिरणगावातील कापड गिरण्या (१८५४) ते प्रवरानगरमधील आशियातील पहिला सहकारी साखर कारखाना (विठ्ठलराव विखे पाटील).
                 </p>
               </div>
@@ -3814,7 +3851,7 @@ export default function ConnectMarathaUniversePage() {
             <div style={{ marginTop: '24px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               <button
                 onClick={() => setShowAPIModal(true)}
-                style={{ background: '#431407', color: '#FDE68A', border: 'none', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, fontSize: '0.86rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                style={{ background: '#EA580C', color: '#FDE68A', border: 'none', padding: '10px 18px', borderRadius: '10px', fontWeight: 800, fontSize: '0.86rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
               >
                 🌐 ओपन हेरिटेज डेटा API (Open API)
               </button>
@@ -3963,7 +4000,7 @@ export default function ConnectMarathaUniversePage() {
                   <strong style={{ color: '#7C1D05' }}>{aiResponse.title}</strong>
                   <span style={{ fontSize: '0.78rem', fontWeight: 700 }}>{aiResponse.status}</span>
                 </div>
-                <p style={{ margin: '0 0 8px', lineHeight: 1.5, color: '#431407' }}>{aiResponse.history}</p>
+                <p style={{ margin: '0 0 8px', lineHeight: 1.5, color: '#EA580C' }}>{aiResponse.history}</p>
                 <div style={{ fontSize: '0.84rem', color: '#0369A1', marginBottom: '4px' }}><strong>जलव्यवस्था:</strong> {aiResponse.water}</div>
                 <div style={{ fontSize: '0.8rem', color: '#6B7280' }}><strong>संदर्भ:</strong> {aiResponse.sources}</div>
               </div>
@@ -4169,7 +4206,7 @@ export default function ConnectMarathaUniversePage() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
               <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 800, color: '#431407' }}>१. भौगोलिक स्थान निवडा:</label>
+                <label style={{ fontSize: '0.85rem', fontWeight: 800, color: '#EA580C' }}>१. भौगोलिक स्थान निवडा:</label>
                 <select value={fortSimState.mountain} onChange={(e) => setFortSimState(prev => ({ ...prev, mountain: e.target.value }))} style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #FED7AA', marginTop: '4px' }}>
                   <option>सह्याद्री सुळका (दुर्गम कातळ - उदा. राजगड)</option>
                   <option>सागरी बेट (समुद्रातील खडक - उदा. सिंधुदुर्ग)</option>
@@ -4178,7 +4215,7 @@ export default function ConnectMarathaUniversePage() {
               </div>
 
               <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 800, color: '#431407' }}>२. जलव्यवस्थापन रचना (Water Engineering):</label>
+                <label style={{ fontSize: '0.85rem', fontWeight: 800, color: '#EA580C' }}>२. जलव्यवस्थापन रचना (Water Engineering):</label>
                 <select value={fortSimState.water} onChange={(e) => setFortSimState(prev => ({ ...prev, water: e.target.value }))} style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #FED7AA', marginTop: '4px' }}>
                   <option>पाषाणातील नैसर्गिक टाक्या (बारामाही जलसाठा)</option>
                   <option>पावसाचे पाणी साठवण तलाव (गंगासागर पद्धत)</option>
@@ -4187,7 +4224,7 @@ export default function ConnectMarathaUniversePage() {
               </div>
 
               <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 800, color: '#431407' }}>३. तटबंदी व दरवाजा रचना:</label>
+                <label style={{ fontSize: '0.85rem', fontWeight: 800, color: '#EA580C' }}>३. तटबंदी व दरवाजा रचना:</label>
                 <select value={fortSimState.bastion} onChange={(e) => setFortSimState(prev => ({ ...prev, bastion: e.target.value }))} style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #FED7AA', marginTop: '4px' }}>
                   <option>दुहेरी बुरुज व गोमुखी दरवाजा (बाहेरून न दिसणारा)</option>
                   <option>सरळ प्रवेशद्वार (तोफांच्या माऱ्यास उघडे)</option>
@@ -4264,7 +4301,7 @@ export default function ConnectMarathaUniversePage() {
               </div>
             </div>
 
-            <p style={{ fontSize: '0.9rem', color: '#431407', lineHeight: 1.5, marginBottom: '14px' }}>
+            <p style={{ fontSize: '0.9rem', color: '#EA580C', lineHeight: 1.5, marginBottom: '14px' }}>
               <strong>कोडे:</strong> "वेरूळचे कैलास मंदिर वरून खाली एका अखंड कातळात कोणी कोरले?"
             </p>
 
@@ -4311,7 +4348,7 @@ export default function ConnectMarathaUniversePage() {
               <span style={{ fontSize: '2.2rem' }}>🎧</span>
               <h3 style={{ margin: 0, color: '#0C4A6E', fontSize: '1.4rem' }}>किल्ले रायगड: ५ मिनिटांची ऐतिहासिक ऑडिओ सफर</h3>
             </div>
-            <p style={{ fontSize: '0.9rem', color: '#431407', lineHeight: 1.6, marginBottom: '14px' }}>
+            <p style={{ fontSize: '0.9rem', color: '#EA580C', lineHeight: 1.6, marginBottom: '14px' }}>
               "तुम्ही सध्या किल्ले रायगडाच्या महादरवाज्यासमोर उभे आहात. हा दरवाजा दोन अजस्र बुरुजांच्या मागे असा वळणावर लपवलेला आहे की तोफेचा गोळा थेट दरवाजावर आदळू शकत नाही..."
             </p>
             <button onClick={() => alert('ऑडिओ प्लेअर सुरू झाला!')} style={{ width: '100%', background: '#0284C7', color: '#FFFFFF', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>

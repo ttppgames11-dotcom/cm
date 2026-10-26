@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 import { useAuth } from '../../context/AuthContext';
 import CRMScopeSwitcher from '../../components/layout/CRMScopeSwitcher';
+import UnitHierarchyPanel from '../../components/crm/UnitHierarchyPanel';
 
 /* ============================================================
    🚩 CONNECT MARATHA — प्रदेशाध्यक्ष संघटनात्मक CRM (State Organizational CRM)
@@ -397,6 +398,9 @@ export default function PradeshAdminCRM() {
           </div>
         )}
 
+        <div style={{ marginTop: '32px' }}>
+          <UnitHierarchyPanel defaultTab="overview" />
+        </div>
       </div>
     </div>
   );

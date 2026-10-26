@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 const newsChannels = [
   {
@@ -66,9 +68,95 @@ const epapersData = [
   { id: 6, name: 'नवशक्ति', year: '१९३२', city: 'मुंबई', editor: 'महाराष्ट्राचा औद्योगिक विकास' }
 ];
 
+const CATEGORIES = ['सर्व', 'सामाजिक', 'आरक्षण लढा', 'कृषी व ग्रामीण', 'शिक्षण व रोजगार', 'इतिहास व संस्कृती', 'संघटना वृत्त'];
+
 export default function MarathaNewsMediaPage() {
+  const { user } = useAuth();
   const [activeChannel, setActiveChannel] = useState(null);
   const [activeEpaper, setActiveEpaper] = useState(null);
+
+  // Real-time News Articles state
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedCat, setSelectedCat] = useState('सर्व');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState('');
+
+  // Submit Form state
+  const [newsForm, setNewsForm] = useState({
+    title: '',
+    category: 'सामाजिक',
+    district: 'पुणे',
+    summary: '',
+    content: '',
+    source_name: 'कम्युनिटी रिपोर्टर',
+    source_url: '',
+    image_url: '',
+    author_name: user?.name || ''
+  });
+
+  const loadArticles = async () => {
+    setLoading(true);
+    try {
+      const params = {};
+      if (selectedCat !== 'सर्व') params.category = selectedCat;
+      if (searchQuery.trim()) params.search = searchQuery.trim();
+      const res = await api.portals.getNewsArticles(params);
+      const list = res?.data?.articles || res?.articles || [];
+      setArticles(list);
+    } catch (err) {
+      console.error('Failed to load news articles:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadArticles();
+  }, [selectedCat]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    loadArticles();
+  };
+
+  const handleNewsSubmit = async (e) => {
+    e.preventDefault();
+    if (!newsForm.title.trim() || !newsForm.content.trim()) {
+      alert('कृपया बातमीचे शीर्षक आणि तपशील प्रविष्ट करा.');
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      await api.portals.submitNewsArticle({
+        ...newsForm,
+        author_name: newsForm.author_name || user?.name || 'मराठा बातमीदार'
+      });
+      setSubmitSuccess('🚩 आपली बातमी यशस्वीरित्या सादर झाली आहे! संपादकीय पडताळणीनंतर ती थेट पोर्टलवर प्रसिद्ध होईल.');
+      setNewsForm({
+        title: '',
+        category: 'सामाजिक',
+        district: 'पुणे',
+        summary: '',
+        content: '',
+        source_name: 'कम्युनिटी रिपोर्टर',
+        source_url: '',
+        image_url: '',
+        author_name: user?.name || ''
+      });
+      setTimeout(() => {
+        setSubmitSuccess('');
+        setShowSubmitModal(false);
+      }, 2500);
+      loadArticles();
+    } catch (err) {
+      alert('बातमी सबमिट करताना त्रुटी: ' + (err.message || 'सर्व्हर संपर्क अयशस्वी'));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="maratha-news-page" style={{ background: '#FAF7F2', minHeight: '100vh', paddingBottom: '60px' }}>
@@ -168,9 +256,189 @@ export default function MarathaNewsMediaPage() {
               >
                 📰 E-Paper वाचा (६ वृत्तपत्रे)
               </a>
+              <button
+                type="button"
+                onClick={() => setShowSubmitModal(true)}
+                style={{
+                  background: 'linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%)',
+                  color: '#FFFFFF',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  fontWeight: 800,
+                  fontSize: '0.95rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                ✍️ बातमी सबमिट करा (कम्युनिटी रिपोर्टर)
+              </button>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Real-time Community Reports Section */}
+      <section style={{ maxWidth: '1180px', margin: '36px auto 0', padding: '0 16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#2E1A17', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
+              ⚡ ताजी घडामोडी & समाज वृत्त
+              <span style={{ fontSize: '0.85rem', background: '#E65100', color: '#fff', padding: '3px 10px', borderRadius: '12px' }}>
+                रिअल-टाइम अपडेट्स
+              </span>
+            </h2>
+            <p style={{ margin: '4px 0 0', color: '#666', fontSize: '0.9rem' }}>
+              जिल्हानिहाय मराठा समाज, शेतकरी आंदोलन, शैक्षणिक निर्णय व यशोगाथा
+            </p>
+          </div>
+
+          <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '8px' }}>
+            <input
+              type="text"
+              placeholder="बातमी किंवा जिल्हा शोधा..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                padding: '8px 14px',
+                borderRadius: '8px',
+                border: '1px solid #CCC',
+                fontSize: '0.9rem',
+                minWidth: '220px'
+              }}
+            />
+            <button
+              type="submit"
+              style={{
+                background: '#E65100',
+                color: '#fff',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+            >
+              शोधा
+            </button>
+          </form>
+        </div>
+
+        {/* Category Filter Pills */}
+        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '12px', marginBottom: '16px' }}>
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCat(cat)}
+              style={{
+                background: selectedCat === cat ? '#B71C1C' : '#FFFFFF',
+                color: selectedCat === cat ? '#FFFFFF' : '#4E342E',
+                border: '1px solid #E0D4C8',
+                padding: '6px 16px',
+                borderRadius: '20px',
+                fontSize: '0.86rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.2s'
+              }}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Real-time Articles Grid */}
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#888' }}>
+            बातमी फीड लोड होत आहे...
+          </div>
+        ) : articles.length === 0 ? (
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '12px',
+            padding: '40px 20px',
+            textAlign: 'center',
+            border: '1px dashed #DDD',
+            color: '#666'
+          }}>
+            <span style={{ fontSize: '2.5rem' }}>📢</span>
+            <h3 style={{ margin: '10px 0 6px', color: '#3E2723' }}>सध्या या वर्गात नवीन बातम्या नाहीत</h3>
+            <p style={{ margin: '0 0 16px', fontSize: '0.9rem' }}>
+              आपल्या परिसरातील मराठा समाज वृत्त किंवा उपक्रमाची बातमी आपण स्वतः सबमिट करू शकता.
+            </p>
+            <button
+              onClick={() => setShowSubmitModal(true)}
+              style={{
+                background: '#E65100',
+                color: '#fff',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+            >
+              ✍️ पहिली बातमी सबमिट करा
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px', marginBottom: '40px' }}>
+            {articles.map((art) => (
+              <div
+                key={art.id}
+                style={{
+                  background: '#FFFFFF',
+                  borderRadius: '12px',
+                  border: '1px solid #EADBCE',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'transform 0.2s'
+                }}
+              >
+                {art.image && (
+                  <img
+                    src={art.image}
+                    alt={art.title}
+                    style={{ width: '100%', height: '180px', objectFit: 'cover' }}
+                  />
+                )}
+                <div style={{ padding: '18px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{
+                      background: '#FFF3E0',
+                      color: '#E65100',
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      padding: '3px 8px',
+                      borderRadius: '4px'
+                    }}>
+                      {art.category || 'सामाजिक'}
+                    </span>
+                    <span style={{ fontSize: '0.78rem', color: '#888' }}>
+                      📍 {art.district || 'महाराष्ट्र'}
+                    </span>
+                  </div>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#2E1A17', margin: '0 0 8px', lineHeight: 1.4 }}>
+                    {art.title}
+                  </h3>
+                  <p style={{ fontSize: '0.88rem', color: '#555', margin: '0 0 14px', flex: 1, lineHeight: 1.5 }}>
+                    {art.summary || (art.content ? art.content.slice(0, 120) + '...' : '')}
+                  </p>
+                  <div style={{ borderTop: '1px solid #F0E6DE', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem', color: '#888' }}>
+                    <span>बातमीदार: {art.author || art.source || 'मराठा बातमीदार'}</span>
+                    <span>{art.created_at ? new Date(art.created_at).toLocaleDateString('mr-IN') : 'आज'}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* News & Community Motto Strip */}
@@ -404,6 +672,136 @@ export default function MarathaNewsMediaPage() {
           </div>
         </div>
       </section>
+
+      {/* Modal: Community Reporter News Submission */}
+      {showSubmitModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '16px' }}>
+          <div style={{ background: '#FFFFFF', borderRadius: '16px', maxWidth: '580px', width: '100%', padding: '28px', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
+            <button onClick={() => setShowSubmitModal(false)} style={{ position: 'absolute', right: '16px', top: '16px', background: '#eee', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 700 }}>✕</button>
+            <h3 style={{ color: '#B71C1C', margin: '0 0 6px', fontSize: '1.4rem' }}>✍️ बातमी सबमिट करा (Community Reporter)</h3>
+            <p style={{ fontSize: '0.86rem', color: '#666', marginBottom: '18px' }}>
+              आपल्या गावातील, तालुक्यातील किंवा संघटनेची बातमी थेट कनेक्ट मराठा पोर्टलवर सादर करा.
+            </p>
+
+            {submitSuccess ? (
+              <div style={{ background: '#E8F5E9', border: '1px solid #A5D6A7', color: '#2E7D32', padding: '16px', borderRadius: '8px', fontWeight: 700, textAlign: 'center' }}>
+                {submitSuccess}
+              </div>
+            ) : (
+              <form onSubmit={handleNewsSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#333', marginBottom: '4px' }}>बातमीचे शीर्षक *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="उदा. सकल मराठा समाजाच्या वतीने पुण्यात भव्य रक्तदान शिबिर संपन्न"
+                    value={newsForm.title}
+                    onChange={(e) => setNewsForm({ ...newsForm, title: e.target.value })}
+                    style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#333', marginBottom: '4px' }}>वर्ग (Category)</label>
+                    <select
+                      value={newsForm.category}
+                      onChange={(e) => setNewsForm({ ...newsForm, category: e.target.value })}
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+                    >
+                      {CATEGORIES.filter(c => c !== 'सर्व').map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#333', marginBottom: '4px' }}>जिल्हा</label>
+                    <input
+                      type="text"
+                      placeholder="उदा. पुणे, छत्रपती संभाजीनगर"
+                      value={newsForm.district}
+                      onChange={(e) => setNewsForm({ ...newsForm, district: e.target.value })}
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#333', marginBottom: '4px' }}>संक्षिप्त सारांश (Summary)</label>
+                  <input
+                    type="text"
+                    placeholder="१-२ ओळीत बातमीचा मुख्य मुद्दा"
+                    value={newsForm.summary}
+                    onChange={(e) => setNewsForm({ ...newsForm, summary: e.target.value })}
+                    style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#333', marginBottom: '4px' }}>सविस्तर मजकूर (Full Content) *</label>
+                  <textarea
+                    rows={4}
+                    required
+                    placeholder="घडामोडीचा संपूर्ण तपशील, मान्यवर, घेतलेले निर्णय इत्यादी..."
+                    value={newsForm.content}
+                    onChange={(e) => setNewsForm({ ...newsForm, content: e.target.value })}
+                    style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#333', marginBottom: '4px' }}>बातमीदाराचे नाव</label>
+                    <input
+                      type="text"
+                      placeholder="आपले नाव"
+                      value={newsForm.author_name}
+                      onChange={(e) => setNewsForm({ ...newsForm, author_name: e.target.value })}
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#333', marginBottom: '4px' }}>फोटो लिंक (Image URL)</label>
+                    <input
+                      type="url"
+                      placeholder="https://... किंवा मोकळे ठेवा"
+                      value={newsForm.image_url}
+                      onChange={(e) => setNewsForm({ ...newsForm, image_url: e.target.value })}
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    style={{
+                      flex: 1,
+                      background: 'linear-gradient(135deg, #E65100 0%, #B71C1C 100%)',
+                      color: '#fff',
+                      border: 'none',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      fontWeight: 800,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {isSubmitting ? 'सादर करत आहे...' : '🚀 बातमी सादर करा'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowSubmitModal(false)}
+                    style={{ background: '#eee', color: '#333', border: 'none', padding: '12px 18px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+                  >
+                    रद्द करा
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Modal: Live TV Player */}
       {activeChannel && (

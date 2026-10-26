@@ -50,11 +50,11 @@ export const defaultSiteContent = {
     manufacturersHero: "/assets/images/generated/maratha_manufacturers_hero.jpg"
   },
   texts: {
-    tagline: "Connect Maratha — जागतिक मराठा समाजाचे अधिकृत डिजिटल व्यासपीठ",
+    tagline: "Connect Maratha — जागतिक मराठा समाजाचे आधुनिक युगातील आधुनिक संघटन",
     missionStatement: "मराठा समाजातील प्रत्येक घटकाचा सर्वांगीण आर्थिक, शैक्षणिक, सांस्कृतिक व सामाजिक विकास साधणे.",
     visionStatement: "जागतिक पातळीवर संघटित, स्वाभिमानी व आत्मनिर्भर मराठा समाज आणि उद्योजक पिढीची निर्मिती करणे.",
     emergencyNotice: "२४x७ मराठा समाज साहाय्य व आपत्कालीन रक्तदाता समन्वय कक्ष सदैव तत्पर.",
-    footerAbout: "Connect Maratha (कनेक्ट मराठा) हे जागतिक मराठा समाजाचे अधिकृत डिजिटल व्यासपीठ आहे — रोजगार संधी, बिझनेस संगम, ऐतिहासिक वारसा आणि समाज सक्षमीकरण."
+    footerAbout: "Connect Maratha (कनेक्ट मराठा) हे जागतिक मराठा समाजाचे आधुनिक युगातील आधुनिक संघटन आहे — रोजगार संधी, बिझनेस संगम, ऐतिहासिक वारसा आणि समाज सक्षमीकरण."
   },
   links: {
     navigation: [
@@ -113,6 +113,19 @@ export const defaultSiteContent = {
   footer: {
     copyright: "© २०२६ Connect Maratha (कनेक्ट मराठा) • सर्व हक्क राखीव",
     poweredBy: "Connect Maratha डिजिटल मिशन"
+  },
+  shivcharitraArticles: {},
+  customArticles: {},
+  pagesConfig: {
+    home: { title: "Connect Maratha — अधिकृत डिजिटल व्यासपीठ", badge: "🚩 अखंड मराठा समाज", metaDesc: "मराठा समाजाचे जागतिक डिजिटल व्यासपीठ" },
+    sangam: { title: "बिझनेस संगम (B2B)", badge: "🤝 मराठा उद्योजक महानेटवर्क", metaDesc: "मराठा उद्योजक, व्यावसायिक आणि सेवा पुरवठादार संगम" },
+    jobs: { title: "रोजगार व करिअर दालन", badge: "💼 मराठा युवा रोजगार", metaDesc: "मराठा समाजातील तरुणांसाठी हजारो नोकऱ्या व भरती संधी" },
+    forts: { title: "३५०+ गड-किल्ले व दुर्ग वैभव", badge: "🏰 सह्याद्रीचे पावन दुर्ग", metaDesc: "छत्रपती शिवरायांच्या गडकोटांचा ऐतिहासिक व भौगोलिक संग्रह" },
+    culture: { title: "मराठा संस्कृती व परंपरा", badge: "🚩 शौर्य व सांस्कृतिक वारसा", metaDesc: "मराठा सण, वारसा, वेशभूषा आणि ऐतिहासिक गौरव" },
+    history: { title: "मराठा इतिहास व शिवचरित्र", badge: "📜 अखंड इतिहास दालन", metaDesc: "छत्रपती शिवाजी महाराज, संभाजी महाराज आणि मराठा साम्राज्याचा सत्य इतिहास" },
+    donation: { title: "सामाजिक देणगी व मदत कक्ष", badge: "🙏 समाज साहाय्यता निधी", metaDesc: "मराठा समाजातील गरजूंसाठी पारदर्शक मदत निधी" },
+    about: { title: "आमच्याबद्दल — Connect Maratha", badge: "🚩 आमचे ध्येय व उद्दिष्टे", metaDesc: "Connect Maratha ची स्थापना, ध्येय आणि कार्यप्रणाली" },
+    contact: { title: "संपर्क कक्ष — २४x७ हेल्पलाइन", badge: "📞 मदत व संपर्क", metaDesc: "Connect Maratha समन्वयकांशी थेट संपर्क साधा" }
   }
 };
 
@@ -128,9 +141,26 @@ export function SiteContentProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Site content is driven directly by defaultSiteContent (no unmapped CMS backend calls)
+  // Fetch live site content from backend on mount so admin updates reflect universally
   useEffect(() => {
-    setIsLoading(false);
+    let isCancelled = false;
+    async function loadRemoteContent() {
+      try {
+        setIsLoading(true);
+        const res = await apiClient.getSiteContent().catch(() => null);
+        const serverContent = res?.data?.content || res?.content || res;
+        if (!isCancelled && serverContent && typeof serverContent === 'object' && Object.keys(serverContent).length > 0) {
+          setContent(serverContent);
+          localStorage.setItem('cm_site_content', JSON.stringify(serverContent));
+        }
+      } catch (err) {
+        console.warn('Backend site-content load fallback to local:', err);
+      } finally {
+        if (!isCancelled) setIsLoading(false);
+      }
+    }
+    loadRemoteContent();
+    return () => { isCancelled = true; };
   }, []);
 
   // Helper to extract nested values with fallback: getContent('hero.title', 'fallback')

@@ -85,7 +85,7 @@ export default function TermsAndConditionsPage() {
             <h4 style={{ margin: '0 0 6px', color: '#9A3412', fontWeight: 800 }}>
               महत्त्वाची नोंद (Important Notice for All Users):
             </h4>
-            <p style={{ margin: 0, fontSize: '0.95rem', color: '#431407' }}>
+            <p style={{ margin: 0, fontSize: '0.95rem', color: '#EA580C' }}>
               Connect Maratha ॲप किंवा संकेतस्थळाचा वापर करून, आपण या नियम व अटी आणि आमच्या गोपनीयता धोरणास पूर्णपणे सहमती दर्शवता. जर आपण या अटींशी सहमत नसाल, तर कृपया या व्यासपीठाचा वापर करू नये किंवा तात्काळ खाते रद्द करावे.
             </p>
           </div>

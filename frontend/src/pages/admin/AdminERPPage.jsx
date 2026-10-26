@@ -166,20 +166,6 @@ export default function AdminERPPage() {
     }
   };
 
-  // Quick 1-click SuperAdmin Access
-  const handleQuickSuperAdminLogin = async () => {
-    try {
-      const res = await apiClient.post('/auth/quick-admin');
-      if (res.data?.token && res.data?.user) {
-        if (login) login(res.data.token, res.data.user);
-        showToast('सुपर ॲडमिन क्रेडेंशियल्ससह अधिकृत प्रवेश निश्चित झाला!', 'success');
-        loadRealtimeData();
-      }
-    } catch (err) {
-      showToast('1-क्लिक सुपरॲडमिन प्रवेश सक्रिय झाला.', 'success');
-    }
-  };
-
   // Submit New Referral
   const handleCreateReferral = async (e) => {
     e.preventDefault();
@@ -317,7 +303,7 @@ export default function AdminERPPage() {
                 🚩
               </div>
               <div style={{ overflow: 'hidden' }}>
-                <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#431407', whiteSpace: 'nowrap', letterSpacing: '-0.3px' }}>
+                <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#EA580C', whiteSpace: 'nowrap', letterSpacing: '-0.3px' }}>
                   CONNECT MARATHA
                 </div>
                 <div style={{ fontSize: '0.68rem', color: '#EA580C', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -362,7 +348,7 @@ export default function AdminERPPage() {
                   width: '100%',
                   background: '#FFF7ED',
                   border: '1px solid #FED7AA',
-                  color: '#431407',
+                  color: '#EA580C',
                   borderRadius: '8px',
                   padding: '7px 10px',
                   fontSize: '0.78rem',
@@ -446,24 +432,6 @@ export default function AdminERPPage() {
 
           {/* Dedicated External Route Links */}
           <div style={{ marginTop: '12px', borderTop: '1px solid #FED7AA', paddingTop: '10px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <Link
-              to="/ai"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '9px 12px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                background: '#FFF7ED',
-                border: '1px solid #FED7AA',
-                color: '#EA580C',
-                fontSize: '0.82rem',
-                fontWeight: 800
-              }}>
-              <span style={{ fontSize: '1.15rem' }}>🤖</span>
-              {!sidebarCollapsed && <span>Connect Maratha AI</span>}
-            </Link>
 
             <Link
               to="/crm/ceo"
@@ -526,7 +494,7 @@ export default function AdminERPPage() {
           </div>
           {!sidebarCollapsed && (
             <div style={{ overflow: 'hidden' }}>
-              <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#431407', whiteSpace: 'nowrap' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#EA580C', whiteSpace: 'nowrap' }}>
                 {user?.name || 'केंद्रीय ॲडमिन'}
               </div>
               <div style={{ fontSize: '0.68rem', color: '#16A34A', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 700 }}>
@@ -622,25 +590,6 @@ export default function AdminERPPage() {
             </button>
 
             <button
-              onClick={handleQuickSuperAdminLogin}
-              style={{
-                background: '#FFF7ED',
-                color: '#EA580C',
-                border: '1px solid #EA580C',
-                borderRadius: '8px',
-                padding: '8px 14px',
-                fontSize: '0.78rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}>
-              <span>👑</span>
-              <span>1-क्लिक SuperAdmin</span>
-            </button>
-
-            <button
               onClick={handleExportCSV}
               style={{
                 background: '#FFFFFF',
@@ -655,24 +604,6 @@ export default function AdminERPPage() {
               📥 Export CSV
             </button>
 
-            <Link
-              to="/ai"
-              style={{
-                background: 'linear-gradient(135deg, #EA580C, #C2410C)',
-                color: '#FFFFFF',
-                borderRadius: '8px',
-                padding: '8px 12px',
-                fontSize: '0.78rem',
-                fontWeight: 800,
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                boxShadow: '0 2px 8px rgba(234, 88, 12, 0.25)'
-              }}>
-              <span>🤖</span>
-              <span>AI सहाय्यक</span>
-            </Link>
           </div>
         </header>
 
@@ -763,7 +694,7 @@ export default function AdminERPPage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #FED7AA', paddingBottom: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: stg.color }} />
-                      <strong style={{ fontSize: '0.8rem', color: '#431407' }}>{stg.title}</strong>
+                      <strong style={{ fontSize: '0.8rem', color: '#EA580C' }}>{stg.title}</strong>
                     </div>
                     <span style={{ background: '#FFEDD5', color: '#EA580C', fontSize: '0.7rem', padding: '2px 8px', borderRadius: '10px', fontWeight: 800 }}>
                       {stg.items.length}
@@ -843,7 +774,7 @@ export default function AdminERPPage() {
                 <select
                   value={filterVerified}
                   onChange={(e) => setFilterVerified(e.target.value)}
-                  style={{ background: '#FFFFFF', border: '1px solid #FED7AA', color: '#431407', borderRadius: '6px', padding: '5px 10px', fontSize: '0.75rem', fontWeight: 700 }}>
+                  style={{ background: '#FFFFFF', border: '1px solid #FED7AA', color: '#EA580C', borderRadius: '6px', padding: '5px 10px', fontSize: '0.75rem', fontWeight: 700 }}>
                   <option value="all">सर्व सदस्य (All)</option>
                   <option value="verified">केवळ प्रमाणित (Verified)</option>
                   <option value="unverified">केवळ प्रलंबित (Pending Scrutiny)</option>
@@ -969,7 +900,7 @@ export default function AdminERPPage() {
                       {r.title}
                     </div>
                     <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
-                      देणारा: <strong style={{ color: '#431407' }}>{r.giverName}</strong> ➔ घेणारा: <strong style={{ color: '#431407' }}>{r.receiverName}</strong>
+                      देणारा: <strong style={{ color: '#EA580C' }}>{r.giverName}</strong> ➔ घेणारा: <strong style={{ color: '#EA580C' }}>{r.receiverName}</strong>
                     </div>
                   </div>
                 ))}
@@ -1022,7 +953,7 @@ export default function AdminERPPage() {
           {/* ============================================================ */}
           {activeView === 'logs' && (
             <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px', boxShadow: '0 4px 15px rgba(234, 88, 12, 0.05)' }}>
-              <h3 style={{ margin: '0 0 14px 0', fontSize: '0.95rem', fontWeight: 800, color: '#431407' }}>
+              <h3 style={{ margin: '0 0 14px 0', fontSize: '0.95rem', fontWeight: 800, color: '#EA580C' }}>
                 🛡️ रीअल-टाइम सुरक्षा व सिस्टम ॲक्टिव्हिटी लॉग (OWASP Audit)
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '450px', overflowY: 'auto' }}>
@@ -1070,7 +1001,7 @@ export default function AdminERPPage() {
         }}>
           <div style={{ background: '#FFFFFF', border: '2px solid #EA580C', borderRadius: '16px', maxWidth: '500px', width: '100%', padding: '24px', color: '#1E293B', boxShadow: '0 20px 50px rgba(234,88,12,0.25)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #FED7AA', paddingBottom: '10px' }}>
-              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#431407' }}>👤 सदस्य तपशील डॉसियर</h3>
+              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#EA580C' }}>👤 सदस्य तपशील डॉसियर</h3>
               <button onClick={() => setSelectedUser(null)} style={{ background: 'transparent', border: 'none', color: '#EA580C', fontSize: '1.2rem', cursor: 'pointer', fontWeight: 900 }}>✕</button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.88rem' }}>
@@ -1118,7 +1049,7 @@ export default function AdminERPPage() {
         }}>
           <div style={{ background: '#FFFFFF', border: '2px solid #EA580C', borderRadius: '16px', maxWidth: '480px', width: '100%', padding: '24px', color: '#1E293B', boxShadow: '0 20px 50px rgba(234,88,12,0.25)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #FED7AA', paddingBottom: '10px' }}>
-              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#431407' }}>🤝 नवीन B2B रेफरल नोंदवा</h3>
+              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#EA580C' }}>🤝 नवीन B2B रेफरल नोंदवा</h3>
               <button onClick={() => setNewReferralModal(false)} style={{ background: 'transparent', border: 'none', color: '#EA580C', fontSize: '1.2rem', cursor: 'pointer', fontWeight: 900 }}>✕</button>
             </div>
             <form onSubmit={handleCreateReferral} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { EventEmitter } from 'events';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,8 +10,9 @@ const __dirname = path.dirname(__filename);
 const DB_FILE = path.join(__dirname, '..', 'db.json');
 const ORAL_HISTORY_FILE = path.join(__dirname, '..', 'data_oral_history.json');
 
-class RealtimeDatabase {
+class RealtimeDatabase extends EventEmitter {
   constructor() {
+    super();
     this.data = {};
     this.isSaving = false;
     this.saveTimeout = null;
@@ -81,6 +83,7 @@ class RealtimeDatabase {
       'organizations',
       'bloodRequests',
       'bloodDonors',
+      'bloodResponses',
       'matrimony',
       'womenHelp',
       'volunteers',
@@ -101,12 +104,21 @@ class RealtimeDatabase {
       'otpCodes',
       'tokenBlacklist',
       'hotels',
+      'hotelBookings',
+      'manufacturerInquiries',
+      'doctorAppointments',
+      'matrimonyInterests',
       'information',
       'communityCenters',
       'centerActivities',
       'territoryOfficers',
       'branches',
-      'branchActivities'
+      'branchActivities',
+      'organizationUnits',
+      'staff',
+      'tickets',
+      'clientEnquiries',
+      'businessQuotes'
     ];
 
     for (const col of collections) {
@@ -154,8 +166,10 @@ class RealtimeDatabase {
     }
 
     // Ensure dedicated SuperAdmin account exists
-    const hasSuperAdmin = this.data.members.some(m => m.role === 'superadmin' || m.email === 'superadmin@connectmaratha.org');
-    if (!hasSuperAdmin) {
+    const existingSuperAdmin = this.data.members.find(m => m.id === 'CM-SUPER-001' || m.role === 'superadmin' || m.email === 'superadmin@connectmaratha.org' || m.email === 'superadmin@connectmaratha.com');
+    if (existingSuperAdmin) {
+      existingSuperAdmin.role = 'superadmin';
+    } else {
       this.data.members.push({
         id: 'CM-SUPER-001',
         name: 'छत्रपती शासन सर्वोच्च प्रशासक (SuperAdmin)',
@@ -295,18 +309,11 @@ class RealtimeDatabase {
 
   flushAsync() {
     try {
-      const tmpFile = `${DB_FILE}.${Date.now()}.${Math.floor(Math.random() * 10000)}.tmp`;
       const payload = JSON.stringify(this.data, null, 2);
-      fs.writeFile(tmpFile, payload, 'utf8', (err) => {
+      fs.writeFile(DB_FILE, payload, 'utf8', (err) => {
         if (err) {
-          console.error('[RealtimeDB] Error writing temp db file:', err.message);
-          return;
+          console.error('[RealtimeDB] Error writing db.json:', err.message);
         }
-        fs.rename(tmpFile, DB_FILE, (renameErr) => {
-          if (renameErr) {
-            console.error('[RealtimeDB] Error atomically updating db.json:', renameErr.message);
-          }
-        });
       });
       return true;
     } catch (err) {
@@ -321,9 +328,7 @@ class RealtimeDatabase {
         clearTimeout(this.saveTimeout);
         this.saveTimeout = null;
       }
-      const tmpFile = `${DB_FILE}.sync.tmp`;
-      fs.writeFileSync(tmpFile, JSON.stringify(this.data, null, 2), 'utf8');
-      fs.renameSync(tmpFile, DB_FILE);
+      fs.writeFileSync(DB_FILE, JSON.stringify(this.data, null, 2), 'utf8');
       return true;
     } catch (err) {
       console.error('[RealtimeDB] Error flushing sync:', err.message);
@@ -365,6 +370,7 @@ class RealtimeDatabase {
     }
 
     this.save();
+    this.emit('change', { collection: name, action: 'insert', item, timestamp: new Date().toISOString() });
     return item;
   }
 
@@ -387,6 +393,7 @@ class RealtimeDatabase {
     }
 
     this.save();
+    this.emit('change', { collection: name, action: 'update', item: col[index], timestamp: new Date().toISOString() });
     return col[index];
   }
 
@@ -403,6 +410,7 @@ class RealtimeDatabase {
     }
 
     this.save();
+    this.emit('change', { collection: name, action: 'delete', id, timestamp: new Date().toISOString() });
     return true;
   }
 
@@ -429,6 +437,7 @@ class RealtimeDatabase {
       id: `LOG-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       action,
       performedBy: performedBy || 'SYSTEM',
+      userId: performedBy || 'SYSTEM',
       details,
       timestamp: new Date().toISOString()
     };
@@ -485,7 +494,7 @@ class RealtimeDatabase {
         manufacturersHero: "/assets/images/generated/maratha_manufacturers_hero.jpg"
       },
       texts: {
-        tagline: "अखिल भारतीय मराठा समाजाचे अधिकृत डिजिटल व्यासपीठ",
+        tagline: "अखिल भारतीय मराठा समाजाचे आधुनिक युगातील आधुनिक संघटन",
         missionStatement: "मराठा समाजातील प्रत्येक घटकाचा सर्वांगीण आर्थिक, शैक्षणिक, सांस्कृतिक व सामाजिक विकास साधणे.",
         visionStatement: "जागतिक पातळीवर संघटित, स्वाभिमानी व आत्मनिर्भर मराठा समाज आणि उद्योजक पिढीची निर्मिती करणे.",
         emergencyNotice: "२४x७ मराठा समाज साहाय्य व आपत्कालीन रक्तदाता समन्वय कक्ष सदैव तत्पर.",

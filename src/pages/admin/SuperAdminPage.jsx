@@ -1,6 +1,7 @@
 // src/pages/admin/SuperAdminPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import adminApi from '../../services/adminApi';
 
 /* ============================================================
    SUPER ADMIN COMMAND CENTER - WHITE & SAFFRON ORANGE THEME
@@ -13,7 +14,7 @@ const S = {
   saffron: '#EA580C',     // Primary Saffron Orange
   orange: '#F97316',      // Bright Orange accent
   amber: '#D97706',       // Warm Amber
-  deep: '#431407',        // Deep Maratha Ink
+  deep: '#EA580C',        // Deep Maratha Ink
   text: '#1E293B',        // High contrast slate text
   muted: '#64748B',       // Muted text
   green: '#16A34A',       // Success Green
@@ -126,15 +127,91 @@ export default function SuperAdminPage() {
     setInlineNotice({ msg, time: new Date().toLocaleTimeString() });
   };
 
+  // Live Unified Approvals Command State
+  const [liveApprovals, setLiveApprovals] = useState([]);
+  const [approvalsCount, setApprovalsCount] = useState(0);
+  const [approvalModuleFilter, setApprovalModuleFilter] = useState('all');
+  const [approvalsLoading, setApprovalsLoading] = useState(false);
+  const [approvalActionModal, setApprovalActionModal] = useState(null);
+  const [approvalRemarks, setApprovalRemarks] = useState('');
+  const [approvalSanctionAmount, setApprovalSanctionAmount] = useState('');
+  const [approvalSubmitting, setApprovalSubmitting] = useState(false);
+
+  const fetchLiveApprovals = useCallback(async () => {
+    setApprovalsLoading(true);
+    try {
+      const res = await adminApi.getUnifiedApprovals({
+        module: approvalModuleFilter !== 'all' ? approvalModuleFilter : undefined,
+        district: filters.district !== 'All' ? filters.district : undefined
+      });
+      const list = res?.approvals || [];
+      setLiveApprovals(list);
+      setApprovalsCount(res?.totalPendingCount ?? list.length);
+    } catch (err) {
+      console.warn('SuperAdmin fetch approvals error:', err);
+    } finally {
+      setApprovalsLoading(false);
+    }
+  }, [approvalModuleFilter, filters.district]);
+
+  useEffect(() => {
+    fetchLiveApprovals();
+  }, [fetchLiveApprovals]);
+
+  const handleApprovalActionConfirm = async () => {
+    if (!approvalActionModal) return;
+    setApprovalSubmitting(true);
+    try {
+      const { item, action } = approvalActionModal;
+      await adminApi.actionUnifiedApproval({
+        itemId: item.id,
+        type: item.type,
+        collection: item.collection,
+        action,
+        remarks: approvalRemarks,
+        sanctionedAmount: item.type === 'loan' ? approvalSanctionAmount : undefined
+      });
+      setLiveApprovals(prev => prev.filter(x => x.id !== item.id));
+      setApprovalsCount(prev => Math.max(0, prev - 1));
+      triggerInlineNotice(`नोंद ${item.id} वर "${action === 'approve' || action === 'sanction' ? 'मंजूर (Approved)' : 'फेटाळले (Rejected)'}" कारवाई यशस्वी! ✓`);
+      setApprovalActionModal(null);
+      fetchLiveApprovals();
+    } catch (err) {
+      triggerInlineNotice(`त्रुटी: ${err.message}`);
+    } finally {
+      setApprovalSubmitting(false);
+    }
+  };
+
   /* ============================================================
      REAL-TIME RICH DATASETS FOR ALL 17 SUPER ADMIN MODULES
      ============================================================ */
-  const [users, setUsers] = useState([
-    { id: 'CM-USR-K9X1A2-8412', photo: '👤', name: 'अमोल तुकाराम जाधव', mobile: '+91 98220 11924', email: 'amol.jadhav@connectmaratha.org', role: 'District Coordinator', permissions: '✅ District User CRUD + KYC Review', geography: 'पुणे (हवेली)', status: 'Active', lastLogin: '१० मिनिटांपूर्वी', kyc: 'Verified', date: '2026-09-10', isCreatedByAdmin: true },
-    { id: 'CM-USR-L8B3C4-9105', photo: '👩', name: 'प्रियंका सुरेश शिर्के', mobile: '+91 98221 44589', email: 'priyanka.shirke@connectmaratha.org', role: 'State Secretary', permissions: '👁️ Strategic Read + Regional Approval', geography: 'सातारा (कराड)', status: 'Active', lastLogin: '१ तासापूर्वी', kyc: 'Verified', date: '2026-09-12', isCreatedByAdmin: true },
-    { id: 'CM-MH-7712398451', photo: '👨', name: 'निलेश भगवान देशमुख', mobile: '+91 98901 23456', email: 'nilesh.deshmukh@connectmaratha.org', role: 'Taluka Lead', permissions: '✅ Taluka Scope Access', geography: 'नाशिक (मालेगाव)', status: 'Pending', lastLogin: '३ दिवसांपूर्वी', kyc: 'Pending', date: '2026-09-15', isCreatedByAdmin: false },
-    { id: 'CM-MH-1102938475', photo: '👤', name: 'विक्रम संभाजी शेलार', mobile: '+91 97654 32109', email: 'vikram.shelar@connectmaratha.org', role: 'Chapter Head', permissions: '👁️ Chapter Members View', geography: 'कोल्हापूर (कागल)', status: 'Active', lastLogin: '५ मिनिटांपूर्वी', kyc: 'Verified', date: '2026-09-18', isCreatedByAdmin: false }
-  ]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    apiClient.getAdminUsers()
+      .then(res => {
+        const list = res?.users || res || [];
+        if (Array.isArray(list) && list.length > 0) {
+          setUsers(list.map(u => ({
+            id: u.id,
+            photo: u.avatar || '👤',
+            name: u.name,
+            mobile: u.phone || '',
+            email: u.email || '',
+            role: u.role || 'Member',
+            permissions: u.role === 'admin' ? '✅ Full Admin Access' : u.role === 'ceo' ? '👁️ Strategic Executive' : '✅ Member Scope',
+            geography: u.district ? `${u.district}${u.taluka ? ' (' + u.taluka + ')' : ''}` : 'महाराष्ट्र',
+            status: u.status === 'inactive' ? 'Inactive' : 'Active',
+            lastLogin: u.last_active_at ? 'सक्रिय' : 'नोंदणीकृत',
+            kyc: u.verified ? 'Verified' : 'Pending',
+            date: u.joined || u.created_at || '2026-09-24',
+            isCreatedByAdmin: u.role === 'admin'
+          })));
+        }
+      })
+      .catch(err => console.warn('SuperAdmin fetch users error:', err));
+  }, []);
 
   const [roles, setRoles] = useState([
     { id: 'ROL-01', code: 'SUPER_ADMIN', name: 'सर्वोच्च प्रशासक (Super Admin)', dept: 'Executive Governance', gate1Req: 'Not Applicable', rank: 1, permissions: 'Full System Control (CRUD + Settings + Audit)', system: 'Yes' },
@@ -408,7 +485,7 @@ export default function SuperAdminPage() {
     { id: 'events', label: '📅 Events & Programs', badge: events.length },
     { id: 'cms', label: '📚 Content / CMS Admin', badge: articles.length },
     { id: 'finance', label: '💰 Finance Administration', badge: financeRecords.length },
-    { id: 'workflows', label: '📋 Workflows & Approvals', badge: workflows.length },
+    { id: 'workflows', label: '📋 Workflows & Approvals', badge: approvalsCount || workflows.length },
     { id: 'audit', label: '📝 Audit Logs', badge: auditLogs.length },
     { id: 'settings', label: '⚙️ System Settings', badge: systemSettings.length },
     { id: 'security', label: '🛡️ Security & Compliance', badge: securityLogs.length },
@@ -457,7 +534,7 @@ export default function SuperAdminPage() {
             </button>
 
             <button onClick={() => setActiveTab('workflows')} style={{ background: S.cardSoft, border: `1px solid ${S.border}`, color: S.saffron, padding: '6px 12px', borderRadius: 8, fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>
-              📋 Pending Approvals <span style={{ background: S.saffron, color: '#FFF', padding: '1px 6px', borderRadius: 999, marginLeft: 4 }}>47</span>
+              📋 Pending Approvals <span style={{ background: S.saffron, color: '#FFF', padding: '1px 6px', borderRadius: 999, marginLeft: 4 }}>{approvalsCount}</span>
             </button>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: 8, borderLeft: `1px solid ${S.border}` }}>
@@ -1148,40 +1225,238 @@ export default function SuperAdminPage() {
 
           {/* 13. 📋 WORKFLOWS & APPROVALS */}
           {activeTab === 'workflows' && (
-            <Card>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: S.deep, margin: 0 }}>📋 System Workflows & Approval Rules</h2>
-                <Btn variant="primary" onClick={() => triggerInlineNotice('नवीन नियम वर्कफ्लो जोडला गेला.')}>+ Build Workflow</Btn>
-              </div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
-                <thead>
-                  <tr style={{ background: S.cardSoft, color: S.saffron }}>
-                    <th style={{ padding: 10 }}>Rule ID</th>
-                    <th style={{ padding: 10 }}>वर्कफ्लो नाव</th>
-                    <th style={{ padding: 10 }}>ट्रिगर (Trigger)</th>
-                    <th style={{ padding: 10 }}>मंजुरी साखळी (Approval Chain)</th>
-                    <th style={{ padding: 10 }}>सरासरी वेळ</th>
-                    <th style={{ padding: 10 }}>Status</th>
-                    <th style={{ padding: 10 }}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {workflows.map(w => (
-                    <tr key={w.id} style={{ borderBottom: `1px solid ${S.cardSoft}` }}>
-                      <td style={{ padding: 10, fontWeight: 800 }}>{w.id}</td>
-                      <td style={{ padding: 10, fontWeight: 700, color: S.deep }}>{w.title}</td>
-                      <td style={{ padding: 10, color: S.saffron, fontWeight: 700 }}>{w.trigger}</td>
-                      <td style={{ padding: 10 }}>{w.approvers}</td>
-                      <td style={{ padding: 10, fontWeight: 800 }}>{w.avgTime}</td>
-                      <td style={{ padding: 10 }}><Badge tone="green">{w.status}</Badge></td>
-                      <td style={{ padding: 10, display: 'flex', gap: 6 }}>
-                        <Btn variant="plain" onClick={() => triggerInlineNotice(`वर्कफ्लो ${w.id} कॉन्फिगरेशन उघडले.`)}>⚙️ Configure</Btn>
-                      </td>
-                    </tr>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {/* LIVE UNIFIED APPROVALS SECTION */}
+              <Card>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: S.deep, margin: 0 }}>
+                      ⚡ थेट प्रलंबित मंजुरी आदेश केंद्र (Live Unified Approvals)
+                    </h2>
+                    <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: S.muted, fontWeight: 600 }}>
+                      सर्व ९ मॉड्यूल्स (व्यवसाय नोंद, नोकरी भरती, बँक कर्ज, रक्त मदत, B2B, BMC डेअरी, तक्रारी व KYC)
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <Btn variant="plain" onClick={fetchLiveApprovals}>🔄 रिफ्रेश (Refresh)</Btn>
+                  </div>
+                </div>
+
+                {/* Module Filter Chips */}
+                <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, marginBottom: 14 }}>
+                  {[
+                    { id: 'all', label: 'सर्व प्रलंबित (All)', icon: '⚡' },
+                    { id: 'directory', label: 'व्यवसाय नोंदणी', icon: '🏨' },
+                    { id: 'job', label: 'नोकरी भरती', icon: '💼' },
+                    { id: 'loan', label: 'बँक कर्ज अर्ज', icon: '🏦' },
+                    { id: 'blood', label: 'रक्त मदत स्लिप', icon: '🩸' },
+                    { id: 'lead', label: 'B2B रडार मागणी', icon: '🚀' },
+                    { id: 'dairy_partner', label: 'BMC डेअरी भागीदार', icon: '🥛' },
+                    { id: 'post_report', label: 'मंच तक्रारी अहवाल', icon: '🚨' },
+                    { id: 'member_kyc', label: 'सदस्य KYC', icon: '🪪' }
+                  ].map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setApprovalModuleFilter(tab.id)}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: 20,
+                        fontSize: '0.76rem',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        border: approvalModuleFilter === tab.id ? `2px solid ${S.saffron}` : `1px solid ${S.border}`,
+                        background: approvalModuleFilter === tab.id ? S.cardSoft : S.cardBg,
+                        color: approvalModuleFilter === tab.id ? S.saffron : S.text,
+                        whiteSpace: 'nowrap',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6
+                      }}
+                    >
+                      <span>{tab.icon}</span>
+                      <span>{tab.label}</span>
+                    </button>
                   ))}
-                </tbody>
-              </table>
-            </Card>
+                </div>
+
+                {/* Approvals Table */}
+                {approvalsLoading ? (
+                  <div style={{ padding: 24, textAlign: 'center', color: S.saffron, fontWeight: 800 }}>
+                    ⏳ प्रलंबित मंजुऱ्या लोड होत आहेत...
+                  </div>
+                ) : liveApprovals.length === 0 ? (
+                  <div style={{ padding: 32, textAlign: 'center' }}>
+                    <span style={{ fontSize: '2rem' }}>🎉</span>
+                    <h4 style={{ margin: '8px 0 4px', color: S.deep, fontWeight: 800 }}>सर्व प्रलंबित मंजुऱ्या पूर्ण झाल्या आहेत!</h4>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: S.muted }}>निवडलेल्या विभागात कोणतीही प्रलंबित नोंद शिल्लक नाही.</p>
+                  </div>
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
+                      <thead>
+                        <tr style={{ background: S.cardSoft, color: S.saffron }}>
+                          <th style={{ padding: 10 }}>आयडी</th>
+                          <th style={{ padding: 10 }}>मॉड्यूल</th>
+                          <th style={{ padding: 10 }}>नोंद शीर्षक / अर्जदार</th>
+                          <th style={{ padding: 10 }}>तपशील / मूल्य</th>
+                          <th style={{ padding: 10 }}>स्थान / जिल्हा</th>
+                          <th style={{ padding: 10 }}>प्राधान्य</th>
+                          <th style={{ padding: 10 }}>सुपर ॲडमिन कृती</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {liveApprovals.map(item => (
+                          <tr key={item.id} style={{ borderBottom: `1px solid ${S.border}` }}>
+                            <td style={{ padding: 10, fontFamily: 'monospace', fontWeight: 800, color: S.saffron }}>{item.id}</td>
+                            <td style={{ padding: 10 }}>
+                              <Badge tone="saffron">{item.module}</Badge>
+                              <div style={{ fontSize: '0.7rem', color: S.muted, marginTop: 2 }}>{item.subModule}</div>
+                            </td>
+                            <td style={{ padding: 10 }}>
+                              <div style={{ fontWeight: 800, color: S.deep }}>{item.title}</div>
+                              <div style={{ fontSize: '0.74rem', color: S.muted }}>{item.applicantName}</div>
+                            </td>
+                            <td style={{ padding: 10, fontSize: '0.76rem' }}>{item.valueOrDetails || '—'}</td>
+                            <td style={{ padding: 10, fontSize: '0.76rem' }}>{item.location || item.district}</td>
+                            <td style={{ padding: 10 }}>
+                              <Badge tone={item.priority === 'Critical' ? 'red' : item.priority === 'High' ? 'amber' : 'blue'}>
+                                {item.priority || 'Normal'}
+                              </Badge>
+                            </td>
+                            <td style={{ padding: 10 }}>
+                              <div style={{ display: 'flex', gap: 6 }}>
+                                <Btn
+                                  variant="success"
+                                  style={{ fontSize: '0.7rem', padding: '4px 8px' }}
+                                  onClick={() => {
+                                    setApprovalActionModal({ item, action: item.type === 'loan' ? 'sanction' : 'approve' });
+                                    setApprovalRemarks('सुपर ॲडमिनकडून अधिकृत स्तरावर मंजुरी देण्यात आली.');
+                                    if (item.type === 'loan') {
+                                      const num = String(item.valueOrDetails || '').replace(/\D/g, '');
+                                      setApprovalSanctionAmount(num || '500000');
+                                    }
+                                  }}
+                                >
+                                  {item.type === 'loan' ? '✓ कर्ज मंजूर' : '✓ मंजूर'}
+                                </Btn>
+                                <Btn
+                                  variant="danger"
+                                  style={{ fontSize: '0.7rem', padding: '4px 8px' }}
+                                  onClick={() => {
+                                    setApprovalActionModal({ item, action: 'reject' });
+                                    setApprovalRemarks('पडताळणी निकष पूर्ण न झाल्याने अर्ज नामंजूर करण्यात आला.');
+                                  }}
+                                >
+                                  ✕ फेटाळा
+                                </Btn>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </Card>
+
+              {/* SYSTEM WORKFLOW RULES LIST */}
+              <Card>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: S.deep, margin: 0 }}>📋 System Workflows & Approval Rules Hierarchy</h2>
+                  <Btn variant="primary" onClick={() => triggerInlineNotice('नवीन नियम वर्कफ्लो जोडला गेला.')}>+ Build Workflow</Btn>
+                </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
+                  <thead>
+                    <tr style={{ background: S.cardSoft, color: S.saffron }}>
+                      <th style={{ padding: 10 }}>Rule ID</th>
+                      <th style={{ padding: 10 }}>वर्कफ्लो नाव</th>
+                      <th style={{ padding: 10 }}>ट्रिगर (Trigger)</th>
+                      <th style={{ padding: 10 }}>मंजुरी साखळी (Approval Chain)</th>
+                      <th style={{ padding: 10 }}>सरासरी वेळ</th>
+                      <th style={{ padding: 10 }}>Status</th>
+                      <th style={{ padding: 10 }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {workflows.map(w => (
+                      <tr key={w.id} style={{ borderBottom: `1px solid ${S.cardSoft}` }}>
+                        <td style={{ padding: 10, fontWeight: 800 }}>{w.id}</td>
+                        <td style={{ padding: 10, fontWeight: 700, color: S.deep }}>{w.title}</td>
+                        <td style={{ padding: 10, color: S.saffron, fontWeight: 700 }}>{w.trigger}</td>
+                        <td style={{ padding: 10 }}>{w.approvers}</td>
+                        <td style={{ padding: 10, fontWeight: 800 }}>{w.avgTime}</td>
+                        <td style={{ padding: 10 }}><Badge tone="green">{w.status}</Badge></td>
+                        <td style={{ padding: 10, display: 'flex', gap: 6 }}>
+                          <Btn variant="plain" onClick={() => triggerInlineNotice(`वर्कफ्लो ${w.id} कॉन्फिगरेशन उघडले.`)}>⚙️ Configure</Btn>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card>
+
+              {/* ACTION CONFIRMATION MODAL */}
+              {approvalActionModal && (
+                <Modal
+                  title={approvalActionModal.action === 'reject' ? '⚠️ नोंद नामंजूर करणे' : '✅ अधिकृत मंजुरी आदेश (SuperAdmin)'}
+                  onClose={() => setApprovalActionModal(null)}
+                  width={520}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div style={{ background: S.cardSoft, border: `1px solid ${S.border}`, padding: 12, borderRadius: 8 }}>
+                      <div style={{ fontSize: '0.74rem', color: S.saffron, fontWeight: 800 }}>
+                        {approvalActionModal.item.module} • {approvalActionModal.item.subModule}
+                      </div>
+                      <div style={{ fontSize: '0.96rem', fontWeight: 900, color: S.deep, marginTop: 4 }}>
+                        {approvalActionModal.item.title}
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: S.muted, marginTop: 2 }}>
+                        अर्जदार: {approvalActionModal.item.applicantName} | ठिकाण: {approvalActionModal.item.location}
+                      </div>
+                    </div>
+
+                    {approvalActionModal.item.type === 'loan' && (approvalActionModal.action === 'approve' || approvalActionModal.action === 'sanction') && (
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: S.deep, marginBottom: 4 }}>
+                          मंजूर केलेली कर्ज रक्कम (Sanctioned Loan Amount in ₹):
+                        </label>
+                        <input
+                          type="number"
+                          value={approvalSanctionAmount}
+                          onChange={(e) => setApprovalSanctionAmount(e.target.value)}
+                          placeholder="उदा. 1500000"
+                          style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: `1px solid ${S.border}`, fontSize: '0.85rem' }}
+                        />
+                      </div>
+                    )}
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: S.deep, marginBottom: 4 }}>
+                        सुपर ॲडमिन शेरा व ऑथरायझेशन नोट:
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={approvalRemarks}
+                        onChange={(e) => setApprovalRemarks(e.target.value)}
+                        placeholder="शेरा प्रविष्ट करा..."
+                        style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: `1px solid ${S.border}`, fontSize: '0.82rem', resize: 'vertical' }}
+                      />
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 6 }}>
+                      <Btn variant="plain" onClick={() => setApprovalActionModal(null)}>रद्द करा</Btn>
+                      <Btn
+                        variant={approvalActionModal.action === 'reject' ? 'danger' : 'success'}
+                        onClick={handleApprovalActionConfirm}
+                        disabled={approvalSubmitting}
+                      >
+                        {approvalSubmitting ? 'प्रक्रिया सुरू आहे...' : approvalActionModal.action === 'reject' ? '✕ खात्रीने फेटाळा' : '✓ अंतिम मंजुरी जारी करा'}
+                      </Btn>
+                    </div>
+                  </div>
+                </Modal>
+              )}
+            </div>
           )}
 
           {/* 14. 📝 AUDIT LOGS */}

@@ -9,7 +9,14 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const NUM_WORKERS = process.env.CLUSTER_WORKERS ? parseInt(process.env.CLUSTER_WORKERS, 10) : os.cpus().length;
+// The data layer (backend/db.json + the sql.js SQLite file) lives in each process's memory and is
+// rewritten to disk as a whole. Several workers would each hold their own copy and overwrite one
+// another's writes, so we run exactly one worker until all data lives in PostgreSQL.
+const REQUESTED_WORKERS = process.env.CLUSTER_WORKERS ? parseInt(process.env.CLUSTER_WORKERS, 10) : 1;
+const NUM_WORKERS = 1;
+if (REQUESTED_WORKERS > 1) {
+  console.warn(`[cluster] CLUSTER_WORKERS=${REQUESTED_WORKERS} ignored: file-backed databases are not multi-process safe. Running 1 worker.`);
+}
 
 if (cluster.isPrimary || cluster.isMaster) {
   console.log(`\n======================================================`);

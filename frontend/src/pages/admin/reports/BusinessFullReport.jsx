@@ -6,13 +6,20 @@ export default function BusinessFullReport({ data, toast }) {
   const [filter, setFilter] = useState({ state: 'MH', city: 'all', fromDate: '2026-09-01', toDate: '2026-09-30' });
 
   const bizList = useMemo(() => {
-    return [
-      { id: 'BIZ-101', name: 'सह्याद्री आयटी सोल्युशन्स', owner: 'अमोल तुकाराम जाधव', category: 'IT & Software', city: 'पुणे (Pune)', registeredDate: '2026-09-10', status: 'Verified', chapter: 'पुणे – शिवनेरी चॅप्टर' },
-      { id: 'BIZ-102', name: 'रायगड कन्स्ट्रक्शन व बिल्डर्स', owner: 'विक्रमसिंह मारुती कदम', category: 'Real Estate & Builders', city: 'मुंबई (Mumbai)', registeredDate: '2026-09-14', status: 'Verified', chapter: 'मुंबई – किल्ले रायगड चॅप्टर' },
-      { id: 'BIZ-103', name: 'शिवनेरी टेक्स्टाईल्स व गारमेंट्स', owner: 'प्रियंका सुरेश शिर्के', category: 'Textiles & Fashion', city: 'सातारा (Satara)', registeredDate: '2026-09-18', status: 'Verified', chapter: 'सातारा – प्रतापगड चॅप्टर' },
-      { id: 'BIZ-104', name: 'मराठा ऑटोमोबाईल्स स्पअर्स', owner: 'निलेश भगवान देशमुख', category: 'Manufacturing & Industrial', city: 'नाशिक (Nashik)', registeredDate: '2026-09-22', status: 'Pending Verification', chapter: 'नाशिक – रामशेज चॅप्टर' }
-    ];
-  }, []);
+    if (data?.businesses && Array.isArray(data.businesses) && data.businesses.length > 0) {
+      return data.businesses.map((b, i) => ({
+        id: b.id || `BIZ-${i + 101}`,
+        name: b.name || b.businessName || 'मराठा व्यवसाय',
+        owner: b.owner || b.ownerName || 'उद्योजक बंधू',
+        category: b.cat || b.category || 'उद्योग व सेवा',
+        city: b.district || b.city || 'पुणे',
+        registeredDate: (b.created_at || '2026-10-10').slice(0, 10),
+        status: b.verified ? 'Verified' : 'Active',
+        chapter: `${b.district || 'महाराष्ट्र'} व्यवसाय मंडळ`
+      }));
+    }
+    return [];
+  }, [data?.businesses]);
 
   const filteredBiz = useMemo(() => {
     return bizList.filter(b => {
@@ -50,7 +57,7 @@ export default function BusinessFullReport({ data, toast }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '14px' }}>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
           <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>एकूण नोंदणीकृत व्यवसाय</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#431407', marginTop: '4px' }}>{filteredBiz.length}</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#EA580C', marginTop: '4px' }}>{filteredBiz.length}</div>
         </div>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
           <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>सत्यापित (Verified Businesses)</div>
@@ -69,7 +76,7 @@ export default function BusinessFullReport({ data, toast }) {
       {/* TABLE */}
       <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '14px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(234,88,12,0.05)' }}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid #FED7AA', background: '#FFF7ED', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#431407' }}>
+          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#EA580C' }}>
             💼 नोंदणीकृत व्यवसाय डिरेक्टरी (Businesses Master List)
           </h4>
           <span style={{ fontSize: '0.78rem', color: '#EA580C', fontWeight: 800 }}>एकूण {filteredBiz.length} व्यवसाय</span>
@@ -78,7 +85,7 @@ export default function BusinessFullReport({ data, toast }) {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
             <thead>
-              <tr style={{ background: '#FFFDF9', borderBottom: '1px solid #FED7AA', color: '#431407', fontWeight: 800 }}>
+              <tr style={{ background: '#FFFDF9', borderBottom: '1px solid #FED7AA', color: '#EA580C', fontWeight: 800 }}>
                 <th style={{ padding: '12px 16px' }}>आयडी</th>
                 <th style={{ padding: '12px 16px' }}>व्यवसाय नाव व मालक</th>
                 <th style={{ padding: '12px 16px' }}>वर्गवारी (Category)</th>

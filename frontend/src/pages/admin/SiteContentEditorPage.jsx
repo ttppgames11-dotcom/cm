@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSiteContent } from '../../context/SiteContentContext';
 import { Link } from 'react-router-dom';
+import { SHIVCHARITRA_ARTICLES_DATA } from '../../data/shivcharitraArticlesData';
 
 export default function SiteContentEditorPage() {
   const { content, saveAllContent, resetToDefault, isSaving } = useSiteContent();
@@ -86,8 +87,93 @@ export default function SiteContentEditorPage() {
     }
   };
 
+  // State for Shivcharitra & All Pages CMS Editor
+  const [selectedShivcharitraKey, setSelectedShivcharitraKey] = useState('babasaheb-purandare-shivcharitra-kathan-bhag-1');
+  const [selectedPageKey, setSelectedPageKey] = useState('home');
+
+  // Helper to get active shivcharitra chapter data from formData or base file
+  const getActiveChapterData = () => {
+    return formData?.shivcharitraArticles?.[selectedShivcharitraKey] || SHIVCHARITRA_ARTICLES_DATA[selectedShivcharitraKey] || {
+      num: 1,
+      title: '',
+      eyebrow: '',
+      heroImage: '',
+      cardImage: '',
+      portraitTitle: '',
+      portraitSubtitle: '',
+      tagline: '',
+      warCry: '',
+      period: '',
+      readTime: '',
+      stats: [],
+      sections: [],
+      highlights: []
+    };
+  };
+
+  // Update a specific field inside the currently selected chapter
+  const handleChapterFieldChange = (field, value) => {
+    const currentChapter = getActiveChapterData();
+    const updatedChapter = { ...currentChapter, [field]: value };
+    setFormData((prev) => ({
+      ...prev,
+      shivcharitraArticles: {
+        ...(prev.shivcharitraArticles || {}),
+        [selectedShivcharitraKey]: updatedChapter
+      }
+    }));
+    setSaveSuccess(false);
+  };
+
+  // Update a specific section inside the currently selected chapter
+  const handleChapterSectionChange = (sectionIndex, field, value) => {
+    const currentChapter = getActiveChapterData();
+    const updatedSections = [...(currentChapter.sections || [])];
+    updatedSections[sectionIndex] = {
+      ...updatedSections[sectionIndex],
+      [field]: value
+    };
+    handleChapterFieldChange('sections', updatedSections);
+  };
+
+  // Add a new section to the currently selected chapter
+  const handleAddChapterSection = () => {
+    const currentChapter = getActiveChapterData();
+    const updatedSections = [
+      ...(currentChapter.sections || []),
+      { heading: 'नवीन ऐतिहासिक उपविभाग', content: 'येथे अधिकृत ऐतिहासिक संदर्भ व माहिती प्रविष्ट करा...' }
+    ];
+    handleChapterFieldChange('sections', updatedSections);
+  };
+
+  // Remove a section from the currently selected chapter
+  const handleRemoveChapterSection = (index) => {
+    if (window.confirm('तुम्हाला हा विभाग वगळायचा आहे का?')) {
+      const currentChapter = getActiveChapterData();
+      const updatedSections = currentChapter.sections.filter((_, i) => i !== index);
+      handleChapterFieldChange('sections', updatedSections);
+    }
+  };
+
+  // Update page configuration field (for all-pages tab)
+  const handlePageConfigChange = (pageKey, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      pagesConfig: {
+        ...(prev.pagesConfig || {}),
+        [pageKey]: {
+          ...(prev.pagesConfig?.[pageKey] || {}),
+          [field]: value
+        }
+      }
+    }));
+    setSaveSuccess(false);
+  };
+
   const tabs = [
-    { id: 'texts', label: '📝 मजकूर व शीर्षके (Texts & Headings)', icon: '📝' },
+    { id: 'shivcharitra', label: '📜 शिवचरित्र व इतिहास अध्याय (Shivcharitra Editor)', icon: '📜' },
+    { id: 'pages', label: '📄 सर्व पेजेस व्यवस्थापन (All Pages CMS)', icon: '📄' },
+    { id: 'texts', label: '📝 मुख्य मजकूर व शीर्षके (Texts & Headings)', icon: '📝' },
     { id: 'buttons', label: '🔘 बटणे व क्रिया (Buttons & CTAs)', icon: '🔘' },
     { id: 'images', label: '🖼️ चित्रे व बॅनर (Images & Banners)', icon: '🖼️' },
     { id: 'links', label: '🔗 लिंक्स व मेन्यू (Links & Navigation)', icon: '🔗' },
@@ -228,6 +314,358 @@ export default function SiteContentEditorPage() {
           boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
           border: '1px solid #E2E8F0'
         }}>
+
+          {/* TAB: SHIVCHARITRA & HISTORY CHAPTERS EDITOR */}
+          {activeTab === 'shivcharitra' && (() => {
+            const curChapter = getActiveChapterData();
+            return (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#BF360C', margin: 0 }}>
+                      📜 शिवचरित्र व इतिहास अध्याय संपादक (Shivcharitra Chronicles Editor)
+                    </h2>
+                    <p style={{ margin: '4px 0 0', color: '#6B7280', fontSize: '0.92rem' }}>
+                      शिवशाहीर बाबासाहेब पुरंदरे व्याख्यानमालेचे सर्व १५ अध्याय व ऐतिहासिक संदर्भ थेट संपादित करा.
+                    </p>
+                  </div>
+
+                  <Link
+                    to={`/article/${selectedShivcharitraKey}`}
+                    target="_blank"
+                    style={{
+                      background: '#FFF7ED',
+                      color: '#C2410C',
+                      border: '1.5px solid #FDBA74',
+                      padding: '8px 18px',
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                      fontSize: '0.88rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    👁️ हा अध्याय थेट पहा (Live Preview) ↗
+                  </Link>
+                </div>
+
+                {/* Chapter Selector Dropdown */}
+                <div style={{ background: '#FAF5EE', padding: '18px 20px', borderRadius: '12px', border: '1.5px solid #EADCC8', marginBottom: '28px' }}>
+                  <label style={{ display: 'block', fontWeight: 800, color: '#8C1D18', marginBottom: '8px', fontSize: '0.95rem' }}>
+                    अध्याय निवडा (Select Chapter to Edit):
+                  </label>
+                  <select
+                    value={selectedShivcharitraKey}
+                    onChange={(e) => setSelectedShivcharitraKey(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '2px solid #C73800',
+                      background: '#FFFFFF',
+                      fontSize: '1rem',
+                      fontWeight: 700,
+                      color: '#8C1D18'
+                    }}
+                  >
+                    {Object.keys(SHIVCHARITRA_ARTICLES_DATA).map((key) => {
+                      const item = SHIVCHARITRA_ARTICLES_DATA[key];
+                      return (
+                        <option key={key} value={key}>
+                          भाग {item.num}: {item.title}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+
+                {/* Chapter Meta Details Form */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '20px', marginBottom: '28px' }}>
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <label style={{ display: 'block', fontWeight: 700, marginBottom: '6px' }}>अध्याय शीर्षक (Full Chapter Title)</label>
+                    <input
+                      type="text"
+                      value={curChapter.title || ''}
+                      onChange={(e) => handleChapterFieldChange('title', e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E0', fontSize: '1rem', fontWeight: 600 }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 700, marginBottom: '6px' }}>उपशीर्षक / Eyebrow (उदा. शिवशाहीर व्याख्यानमाला · अध्याय १)</label>
+                    <input
+                      type="text"
+                      value={curChapter.eyebrow || ''}
+                      onChange={(e) => handleChapterFieldChange('eyebrow', e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E0' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 700, marginBottom: '6px' }}>ऐतिहासिक कालपट (Period, उदा. इ.स. १२९४ ते १६२४)</label>
+                    <input
+                      type="text"
+                      value={curChapter.period || ''}
+                      onChange={(e) => handleChapterFieldChange('period', e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E0' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 700, marginBottom: '6px' }}>बॅज मजकूर (Badge Text)</label>
+                    <input
+                      type="text"
+                      value={curChapter.badgeText || ''}
+                      onChange={(e) => handleChapterFieldChange('badgeText', e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E0' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 700, marginBottom: '6px' }}>अपेक्षित वाचन वेळ (Read Time, उदा. ५० मिनिटे)</label>
+                    <input
+                      type="text"
+                      value={curChapter.readTime || ''}
+                      onChange={(e) => handleChapterFieldChange('readTime', e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E0' }}
+                    />
+                  </div>
+
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <label style={{ display: 'block', fontWeight: 700, marginBottom: '6px' }}>रणगर्जना / ब्रीदवाक्य (War Cry / Quote)</label>
+                    <input
+                      type="text"
+                      value={curChapter.warCry || ''}
+                      onChange={(e) => handleChapterFieldChange('warCry', e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E0', color: '#C2410C', fontWeight: 700 }}
+                    />
+                  </div>
+
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <label style={{ display: 'block', fontWeight: 700, marginBottom: '6px' }}>अध्याय सारांश / टॅगलाइन (Tagline Summary)</label>
+                    <textarea
+                      rows="3"
+                      value={curChapter.tagline || ''}
+                      onChange={(e) => handleChapterFieldChange('tagline', e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E0', lineHeight: 1.6 }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 700, marginBottom: '6px' }}>हिरो पार्श्वभूमी चित्र URL (Hero Background Image)</label>
+                    <input
+                      type="text"
+                      value={curChapter.heroImage || ''}
+                      onChange={(e) => handleChapterFieldChange('heroImage', e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E0' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 700, marginBottom: '6px' }}>कार्ड चित्र URL (Card Image URL)</label>
+                    <input
+                      type="text"
+                      value={curChapter.cardImage || ''}
+                      onChange={(e) => handleChapterFieldChange('cardImage', e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E0' }}
+                    />
+                  </div>
+                </div>
+
+                {/* Chapter Sub-sections (In-depth Narrative Paragraphs) */}
+                <div style={{ marginTop: '36px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#8C1D18', margin: 0 }}>
+                      📖 ऐतिहासिक उपविभाग व सखोल इतिहास मजकूर ({curChapter.sections?.length || 0} विभाग)
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={handleAddChapterSection}
+                      style={{
+                        background: '#2E7D32',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        padding: '8px 16px',
+                        borderRadius: '6px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        fontSize: '0.88rem'
+                      }}
+                    >
+                      ➕ नवीन ऐतिहासिक उपविभाग जोडा
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    {(curChapter.sections || []).map((sec, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          background: '#FFFDF9',
+                          border: '1.5px solid #FED7AA',
+                          borderRadius: '12px',
+                          padding: '20px',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                          <span style={{ fontWeight: 800, color: '#C2410C', fontSize: '0.9rem' }}>
+                            उपविभाग क्रमांक #{idx + 1}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveChapterSection(idx)}
+                            style={{
+                              background: '#FFF5F5',
+                              color: '#C53030',
+                              border: '1px solid #FEB2B2',
+                              padding: '4px 10px',
+                              borderRadius: '6px',
+                              fontSize: '0.8rem',
+                              fontWeight: 700,
+                              cursor: 'pointer'
+                            }}
+                          >
+                            🗑️ विभाग हटवा
+                          </button>
+                        </div>
+
+                        <div style={{ marginBottom: '12px' }}>
+                          <label style={{ display: 'block', fontWeight: 700, marginBottom: '4px', fontSize: '0.88rem' }}>
+                            उपविभागाचे शीर्षक (Section Heading):
+                          </label>
+                          <input
+                            type="text"
+                            value={sec.heading || ''}
+                            onChange={(e) => handleChapterSectionChange(idx, 'heading', e.target.value)}
+                            style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1.5px solid #CBD5E0', fontWeight: 600 }}
+                          />
+                        </div>
+
+                        <div>
+                          <label style={{ display: 'block', fontWeight: 700, marginBottom: '4px', fontSize: '0.88rem' }}>
+                            सविस्तर ऐतिहासिक मजकूर (Detailed Historical Content):
+                          </label>
+                          <textarea
+                            rows="6"
+                            value={sec.content || ''}
+                            onChange={(e) => handleChapterSectionChange(idx, 'content', e.target.value)}
+                            style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1.5px solid #CBD5E0', lineHeight: 1.7, fontSize: '0.94rem' }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            );
+          })()}
+
+          {/* TAB: ALL PAGES CMS CONFIG */}
+          {activeTab === 'pages' && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+                <div>
+                  <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#BF360C', margin: 0 }}>
+                    📄 सर्व पेजेस व्यवस्थापन कक्ष (All Pages CMS Manager)
+                  </h2>
+                  <p style={{ margin: '4px 0 0', color: '#6B7280', fontSize: '0.92rem' }}>
+                    Connect Maratha वरील सर्व मुख्य पेजेसचे शीर्षके, बॅज, आणि मेटा माहिती संपादित करा.
+                  </p>
+                </div>
+              </div>
+
+              {/* Page Selector Tabs */}
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
+                {[
+                  { key: 'home', label: '🏠 मुखपृष्ठ (Home)', path: '/' },
+                  { key: 'sangam', label: '🤝 बिझनेस संगम (Sangam)', path: '/sangam' },
+                  { key: 'jobs', label: '💼 रोजगार (Jobs)', path: '/jobs' },
+                  { key: 'forts', label: '🏰 ३५०+ किल्ले (Forts)', path: '/forts' },
+                  { key: 'culture', label: '🚩 संस्कृती (Culture)', path: '/culture' },
+                  { key: 'history', label: '📜 इतिहास (History)', path: '/history' },
+                  { key: 'donation', label: '🙏 देणगी (Donation)', path: '/donation' },
+                  { key: 'about', label: 'ℹ️ आमच्याबद्दल (About)', path: '/about' },
+                  { key: 'contact', label: '📞 संपर्क (Contact)', path: '/contact' }
+                ].map((pg) => (
+                  <button
+                    key={pg.key}
+                    type="button"
+                    onClick={() => setSelectedPageKey(pg.key)}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      border: '1.5px solid',
+                      borderColor: selectedPageKey === pg.key ? '#BF360C' : '#E2E8F0',
+                      background: selectedPageKey === pg.key ? '#FFF7ED' : '#FFFFFF',
+                      color: selectedPageKey === pg.key ? '#BF360C' : '#4A5568',
+                      fontWeight: selectedPageKey === pg.key ? 800 : 600,
+                      cursor: 'pointer',
+                      fontSize: '0.88rem'
+                    }}
+                  >
+                    {pg.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Selected Page Editor Form */}
+              <div style={{ background: '#F8FAFC', padding: '24px', borderRadius: '12px', border: '1.5px solid #E2E8F0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                  <h3 style={{ margin: 0, color: '#1E293B', fontSize: '1.15rem', fontWeight: 800 }}>
+                    ⚙️ पेज सेटिंग्ज: {selectedPageKey.toUpperCase()}
+                  </h3>
+                  <Link
+                    to={selectedPageKey === 'home' ? '/' : `/${selectedPageKey}`}
+                    target="_blank"
+                    style={{
+                      color: '#0284C7',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      textDecoration: 'none'
+                    }}
+                  >
+                    👁️ हे पेज थेट उघडा ↗
+                  </Link>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '20px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 700, marginBottom: '6px' }}>पेज शीर्षक (Page Title)</label>
+                    <input
+                      type="text"
+                      value={formData?.pagesConfig?.[selectedPageKey]?.title || ''}
+                      onChange={(e) => handlePageConfigChange(selectedPageKey, 'title', e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E0' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 700, marginBottom: '6px' }}>बॅज मजकूर (Badge Text)</label>
+                    <input
+                      type="text"
+                      value={formData?.pagesConfig?.[selectedPageKey]?.badge || ''}
+                      onChange={(e) => handlePageConfigChange(selectedPageKey, 'badge', e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E0' }}
+                    />
+                  </div>
+
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <label style={{ display: 'block', fontWeight: 700, marginBottom: '6px' }}>मेटा वर्णन / परिचय (Meta Description & Subtitle)</label>
+                    <textarea
+                      rows="3"
+                      value={formData?.pagesConfig?.[selectedPageKey]?.metaDesc || ''}
+                      onChange={(e) => handlePageConfigChange(selectedPageKey, 'metaDesc', e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #CBD5E0', lineHeight: 1.6 }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* TAB 1: TEXTS & HEADINGS */}
           {activeTab === 'texts' && (

@@ -6,12 +6,20 @@ export default function TicketFullReport({ data, toast }) {
   const [filter, setFilter] = useState({ state: 'MH', city: 'all', fromDate: '2026-09-01', toDate: '2026-09-30' });
 
   const ticketList = useMemo(() => {
-    return [
-      { id: 'TKT-301', user: 'अमोल जाधव', dept: 'Membership & KYC', priority: 'High', city: 'पुणे (Pune)', createdDate: '2026-09-29', slaStatus: 'Within SLA', status: 'In Progress' },
-      { id: 'TKT-302', user: 'प्रियंका शिर्के', dept: 'Business Directory', priority: 'Medium', city: 'सातारा (Satara)', createdDate: '2026-09-25', slaStatus: 'SLA Breached ⚠️', status: 'Open' },
-      { id: 'TKT-303', user: 'निलेश देशमुख', dept: 'Technical & App Support', priority: 'Critical', city: 'नाशिक (Nashik)', createdDate: '2026-09-28', slaStatus: 'Within SLA', status: 'Resolved' }
-    ];
-  }, []);
+    if (data?.tickets && Array.isArray(data.tickets) && data.tickets.length > 0) {
+      return data.tickets.map((t, i) => ({
+        id: t.id || t.ticket_number || `TKT-${i + 301}`,
+        user: t.requester_name || t.userName || 'सदस्य बंधू',
+        dept: t.category || t.department || 'सामान्य साहाय्य',
+        priority: t.priority || 'Medium',
+        city: t.district || 'पुणे',
+        createdDate: (t.created_at || '2026-10-15').slice(0, 10),
+        slaStatus: 'Within SLA',
+        status: (t.status || 'open') === 'resolved' ? 'Resolved' : 'In Progress'
+      }));
+    }
+    return [];
+  }, [data?.tickets]);
 
   const filteredTickets = useMemo(() => {
     return ticketList.filter(t => {
@@ -48,7 +56,7 @@ export default function TicketFullReport({ data, toast }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '14px' }}>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
           <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>एकूण तक्रारी (Total Tickets)</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#431407', marginTop: '4px' }}>{filteredTickets.length}</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#EA580C', marginTop: '4px' }}>{filteredTickets.length}</div>
         </div>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
           <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>SLA उल्लंघन (Breached)</div>
@@ -66,7 +74,7 @@ export default function TicketFullReport({ data, toast }) {
 
       <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '14px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(234,88,12,0.05)' }}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid #FED7AA', background: '#FFF7ED', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#431407' }}>
+          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#EA580C' }}>
             🎟️ हेल्पडेस्क तिकीट लॉग (Helpdesk MIS Table)
           </h4>
           <span style={{ fontSize: '0.78rem', color: '#EA580C', fontWeight: 800 }}>एकूण {filteredTickets.length} तक्रारी</span>
@@ -75,7 +83,7 @@ export default function TicketFullReport({ data, toast }) {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
             <thead>
-              <tr style={{ background: '#FFFDF9', borderBottom: '1px solid #FED7AA', color: '#431407', fontWeight: 800 }}>
+              <tr style={{ background: '#FFFDF9', borderBottom: '1px solid #FED7AA', color: '#EA580C', fontWeight: 800 }}>
                 <th style={{ padding: '12px 16px' }}>तिकीट आयडी</th>
                 <th style={{ padding: '12px 16px' }}>युझर नाव</th>
                 <th style={{ padding: '12px 16px' }}>विभाग (Dept)</th>

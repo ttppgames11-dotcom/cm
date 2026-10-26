@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 import { MAHARASHTRA_DISTRICTS, DISTRICT_TALUKAS } from '../../services/referralService';
 import CRMScopeSwitcher from '../../components/layout/CRMScopeSwitcher';
+import UnitHierarchyPanel from '../../components/crm/UnitHierarchyPanel';
 
 export default function TalukaAdminCRM() {
   const [selectedDistrict, setSelectedDistrict] = useState('पुणे');
@@ -397,6 +398,9 @@ export default function TalukaAdminCRM() {
           </div>
         )}
 
+        <div style={{ marginTop: '32px' }}>
+          <UnitHierarchyPanel defaultTab="overview" />
+        </div>
       </div>
     </div>
   </div>

@@ -72,7 +72,7 @@ export default function GlobalReportFilter({ onApply, onExport, reportTitle = '�
           <span style={{ fontSize: '0.74rem', color: '#EA580C', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             GLOBAL FILTERS & MIS REPORT ENGINE
           </span>
-          <h3 style={{ margin: '2px 0 0', fontSize: '1.15rem', color: '#431407', fontWeight: 900 }}>
+          <h3 style={{ margin: '2px 0 0', fontSize: '1.15rem', color: '#EA580C', fontWeight: 900 }}>
             📊 {reportTitle} — सर्वसमावेशक फिल्टर व निर्यात कन्सोल
           </h3>
         </div>
@@ -106,7 +106,7 @@ export default function GlobalReportFilter({ onApply, onExport, reportTitle = '�
       <form onSubmit={handleApply} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', alignItems: 'end' }}>
         {/* STATE DROPDOWN */}
         <div>
-          <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: '#431407', marginBottom: '4px' }}>
+          <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: '#EA580C', marginBottom: '4px' }}>
             राज्य (State)
           </label>
           <select
@@ -120,7 +120,7 @@ export default function GlobalReportFilter({ onApply, onExport, reportTitle = '�
 
         {/* CITY DROPDOWN (Dynamic based on state) */}
         <div>
-          <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: '#431407', marginBottom: '4px' }}>
+          <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: '#EA580C', marginBottom: '4px' }}>
             शहर / जिल्हा (City / District)
           </label>
           <select
@@ -139,7 +139,7 @@ export default function GlobalReportFilter({ onApply, onExport, reportTitle = '�
 
         {/* FROM DATE */}
         <div>
-          <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: '#431407', marginBottom: '4px' }}>
+          <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: '#EA580C', marginBottom: '4px' }}>
             पासून ची तारीख (From Date)
           </label>
           <input
@@ -152,7 +152,7 @@ export default function GlobalReportFilter({ onApply, onExport, reportTitle = '�
 
         {/* TO DATE */}
         <div>
-          <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: '#431407', marginBottom: '4px' }}>
+          <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: '#EA580C', marginBottom: '4px' }}>
             पर्यंत ची तारीख (To Date)
           </label>
           <input

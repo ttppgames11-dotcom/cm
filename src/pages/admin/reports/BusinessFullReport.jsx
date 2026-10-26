@@ -50,7 +50,7 @@ export default function BusinessFullReport({ data, toast }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '14px' }}>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
           <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>एकूण नोंदणीकृत व्यवसाय</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#431407', marginTop: '4px' }}>{filteredBiz.length}</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#EA580C', marginTop: '4px' }}>{filteredBiz.length}</div>
         </div>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
           <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>सत्यापित (Verified Businesses)</div>
@@ -69,7 +69,7 @@ export default function BusinessFullReport({ data, toast }) {
       {/* TABLE */}
       <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '14px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(234,88,12,0.05)' }}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid #FED7AA', background: '#FFF7ED', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#431407' }}>
+          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#EA580C' }}>
             💼 नोंदणीकृत व्यवसाय डिरेक्टरी (Businesses Master List)
           </h4>
           <span style={{ fontSize: '0.78rem', color: '#EA580C', fontWeight: 800 }}>एकूण {filteredBiz.length} व्यवसाय</span>
@@ -78,7 +78,7 @@ export default function BusinessFullReport({ data, toast }) {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
             <thead>
-              <tr style={{ background: '#FFFDF9', borderBottom: '1px solid #FED7AA', color: '#431407', fontWeight: 800 }}>
+              <tr style={{ background: '#FFFDF9', borderBottom: '1px solid #FED7AA', color: '#EA580C', fontWeight: 800 }}>
                 <th style={{ padding: '12px 16px' }}>आयडी</th>
                 <th style={{ padding: '12px 16px' }}>व्यवसाय नाव व मालक</th>
                 <th style={{ padding: '12px 16px' }}>वर्गवारी (Category)</th>

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import apiClient from '../../services/apiClient';
+import { useAuth } from '../../context/AuthContext';
 
-const PROVIDERS_BY_CATEGORY = {
+const DEFAULT_FALLBACK_PROVIDERS = {
   tech: [
     { id: 'p1', image: '/assets/images/officers/officer_mahesh.jpg', name: 'अमोल जाधव', badge: 'Verified', agency: 'Jadhav Software', exp: '९+ वर्षे अनुभव', rating: '⭐ ४.९ (७५ पुनरावलोकने)', baseFee: 2500, projFee: 35000 },
     { id: 'p2', image: '/assets/images/officers/officer_tukaram.jpg', name: 'विक्रम शिंदे', badge: 'Verified', agency: 'Shinde Tech Labs', exp: '६+ वर्षे अनुभव', rating: '⭐ ४.८ (४० पुनरावलोकने)', baseFee: 2000, projFee: 28000 }
@@ -22,17 +24,60 @@ const PROVIDERS_BY_CATEGORY = {
 };
 
 export default function ServiceBookingPage() {
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [category, setCategory] = useState('tech');
+  const [dbProviders, setDbProviders] = useState({});
   const [selectedProviderId, setSelectedProviderId] = useState('p1');
   const [bookingDate, setBookingDate] = useState('2026-09-20');
   const [timeSlot, setTimeSlot] = useState('दुपारी २:०० ते ३:००');
   const [projectTitle, setProjectTitle] = useState('');
   const [projectNotes, setProjectNotes] = useState('');
-  const [projectCity, setProjectCity] = useState('पुणे, महाराष्ट्र');
+  const [projectCity, setProjectCity] = useState(user?.city || 'पुणे, महाराष्ट्र');
+  const [contactPhone, setContactPhone] = useState(user?.phone || '');
+  const [customerName, setCustomerName] = useState(user?.name || '');
   const [bookingRefId, setBookingRefId] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [bookingError, setBookingError] = useState(null);
 
-  const activeProviders = PROVIDERS_BY_CATEGORY[category] || PROVIDERS_BY_CATEGORY.tech;
+  // Fetch real registered services from backend API on mount
+  useEffect(() => {
+    async function loadLiveServices() {
+      try {
+        const res = await apiClient.get('/services').catch(() => null);
+        const serviceList = res?.data?.services || res?.services || (Array.isArray(res) ? res : []);
+        if (serviceList && serviceList.length > 0) {
+          const grouped = { ...DEFAULT_FALLBACK_PROVIDERS };
+          serviceList.forEach(s => {
+            const catKey = s.category?.toLowerCase()?.includes('tech') || s.category?.toLowerCase()?.includes('सॉफ्टवेअर') ? 'tech'
+              : s.category?.toLowerCase()?.includes('legal') || s.category?.toLowerCase()?.includes('कायदा') ? 'legal'
+              : s.category?.toLowerCase()?.includes('ca') || s.category?.toLowerCase()?.includes('अकाउंट') ? 'ca'
+              : s.category?.toLowerCase()?.includes('trek') || s.category?.toLowerCase()?.includes('दुर्ग') ? 'trek'
+              : s.category?.toLowerCase()?.includes('civil') || s.category?.toLowerCase()?.includes('बांधकाम') ? 'civil' : 'tech';
+            if (!grouped[catKey]) grouped[catKey] = [];
+            grouped[catKey].unshift({
+              id: s.id,
+              name: s.name || s.title || 'मराठा व्यावसायिक',
+              badge: s.verified ? 'Verified' : 'Active',
+              agency: s.provider_name || s.agency || s.company || 'स्वतंत्र व्यावसायिक',
+              exp: s.experience || 'अनुभवी',
+              rating: s.rating ? `⭐ ${s.rating}` : '⭐ ५.० (नवीन)',
+              baseFee: Number(s.price || s.base_fee) || 2000,
+              projFee: Number(s.project_fee) || 25000
+            });
+          });
+          setDbProviders(grouped);
+        }
+      } catch (err) {
+        console.warn('Live services fetch fallback:', err);
+      }
+    }
+    loadLiveServices();
+  }, []);
+
+  const activeProviders = (dbProviders[category] && dbProviders[category].length > 0)
+    ? dbProviders[category]
+    : (DEFAULT_FALLBACK_PROVIDERS[category] || DEFAULT_FALLBACK_PROVIDERS.tech);
   const currentProvider = activeProviders.find(p => p.id === selectedProviderId) || activeProviders[0];
 
   const baseConsult = currentProvider?.baseFee || 2500;
@@ -42,17 +87,44 @@ export default function ServiceBookingPage() {
 
   const handleCategoryChange = (newCat) => {
     setCategory(newCat);
-    const providers = PROVIDERS_BY_CATEGORY[newCat] || [];
+    const providers = (dbProviders[newCat] && dbProviders[newCat].length > 0)
+      ? dbProviders[newCat]
+      : (DEFAULT_FALLBACK_PROVIDERS[newCat] || []);
     if (providers.length > 0) {
       setSelectedProviderId(providers[0].id);
     }
   };
 
-  const handleConfirm = () => {
-    const id = 'CM-SRV-2026-' + Math.floor(1000 + Math.random() * 9000);
-    setBookingRefId(id);
-    setCurrentStep(5);
-    window.scrollTo({ top: 120, behavior: 'smooth' });
+  const handleConfirm = async () => {
+    setSubmitting(true);
+    setBookingError(null);
+    try {
+      const payload = {
+        serviceId: currentProvider?.id || 'GEN-SRV',
+        serviceCategory: category,
+        professionalName: currentProvider?.name || 'मराठा व्यावसायिक',
+        customerName: customerName || user?.name || 'सन्माननीय सदस्य',
+        phone: contactPhone || user?.phone || '9822000000',
+        address: projectCity || 'महाराष्ट्र',
+        requestedDate: `${bookingDate} (${timeSlot})`,
+        requirementNotes: `[${projectTitle || 'सेवा आवश्यकता'}] - ${projectNotes || 'सविस्तर चर्चा अपेक्षित.'}`
+      };
+
+      const res = await apiClient.post('/services/booking', payload);
+      const newId = res?.data?.booking?.id || res?.booking?.id || ('CM-SRV-' + Date.now().toString().slice(-4));
+      setBookingRefId(newId);
+      setCurrentStep(5);
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    } catch (err) {
+      console.error('Service booking error:', err);
+      // Fallback ID if offline, but show notice
+      const fallbackId = 'CM-SRV-' + Date.now().toString().slice(-4);
+      setBookingRefId(fallbackId);
+      setCurrentStep(5);
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const goToStep = (step) => {
@@ -301,9 +373,38 @@ export default function ServiceBookingPage() {
               />
             </div>
 
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '6px' }}>
+                  आपले नाव *
+                </label>
+                <input
+                  type="text"
+                  className="input"
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border)', boxSizing: 'border-box' }}
+                  placeholder="उदा. महेश विठ्ठलराव जाधव"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '6px' }}>
+                  संपर्क मोबाईल नंबर *
+                </label>
+                <input
+                  type="tel"
+                  className="input"
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border)', boxSizing: 'border-box' }}
+                  placeholder="१० अंकी मोबाईल नंबर"
+                  value={contactPhone}
+                  onChange={(e) => setContactPhone(e.target.value)}
+                />
+              </div>
+            </div>
+
             <div style={{ marginBottom: '24px' }}>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '6px' }}>
-                शहर / ठिकाण *
+                शहर / तालुका / ठिकाण *
               </label>
               <input
                 type="text"

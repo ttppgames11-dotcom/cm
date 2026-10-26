@@ -41,18 +41,8 @@ export default function CRMProtectedRoute({ children, allowedRoles }) {
   const { user, loading } = useAuth();
   const location = useLocation();
 
-  // Rehydrate from localStorage immediately so deployed routes don't kick out active sessions
-  let activeUser = user;
-  if (!activeUser) {
-    try {
-      const saved = localStorage.getItem('cm_user_data');
-      if (saved && localStorage.getItem('cm_logged_in') === 'true') {
-        activeUser = JSON.parse(saved);
-      }
-    } catch {}
-  }
+  if (loading) {
 
-  if (loading && !activeUser) {
     return (
       <div style={{
         minHeight: '60vh',
@@ -71,12 +61,12 @@ export default function CRMProtectedRoute({ children, allowedRoles }) {
   }
 
   // If user is not logged in at all, redirect to the dedicated CRM Login
-  if (!activeUser || !activeUser.id) {
+  if (!user || !user.id) {
     return <Navigate to="/admin/crm-login" state={{ from: location, reason: 'login_required' }} replace />;
   }
 
   // Check if current user has an authorized staff/CRM role
-  const isCrmStaff = CRM_AUTHORIZED_ROLES.includes(activeUser.role);
+  const isCrmStaff = CRM_AUTHORIZED_ROLES.includes(user.role);
 
   if (!isCrmStaff) {
     // User is logged in, but only as a standard member or general public account
@@ -86,13 +76,14 @@ export default function CRMProtectedRoute({ children, allowedRoles }) {
   // If this specific CRM page requires specific roles (e.g. only SuperAdmin or only CEO)
   if (allowedRoles && allowedRoles.length > 0) {
     // SuperAdmin and general admin have universal access across all CRM modules
-    const isSuperOrAdmin = activeUser.role === 'superadmin' || activeUser.role === 'admin';
-    const hasSpecificRole = allowedRoles.includes(activeUser.role);
+    const isSuperOrAdmin = user.role === 'superadmin' || user.role === 'admin';
+    const hasSpecificRole = allowedRoles.includes(user.role);
 
     if (!isSuperOrAdmin && !hasSpecificRole) {
       // Officer is logged into CRM, but does not have permission for this specific sub-module
-      return <Navigate to="/crm" state={{ reason: 'role_mismatch', currentRole: activeUser.role }} replace />;
+      return <Navigate to="/crm" state={{ reason: 'role_mismatch', currentRole: user.role }} replace />;
     }
+
   }
 
   return children;

@@ -7,7 +7,7 @@ import { URL } from 'node:url';
 const LB_PORT = process.env.LB_PORT || 8080;
 
 // Configurable backend target nodes
-const TARGET_NODES = (process.env.BACKEND_NODES || 'http://127.0.0.1:5000,http://127.0.0.1:5001,http://127.0.0.1:5002')
+const TARGET_NODES = (process.env.BACKEND_NODES || 'http://127.0.0.1:5000' /* one node until data moves to PostgreSQL */)
   .split(',')
   .map(urlStr => {
     const parsed = new URL(urlStr.trim());

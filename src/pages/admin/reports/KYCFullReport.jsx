@@ -51,7 +51,7 @@ export default function KYCFullReport({ data, toast }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '14px' }}>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
           <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>एकूण अर्ज (Applications)</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#431407', marginTop: '4px' }}>{filteredKyc.length}</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#EA580C', marginTop: '4px' }}>{filteredKyc.length}</div>
         </div>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
           <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>मंजूर KYC (Approved)</div>
@@ -76,7 +76,7 @@ export default function KYCFullReport({ data, toast }) {
       {/* TABLE */}
       <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '14px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(234,88,12,0.05)' }}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid #FED7AA', background: '#FFF7ED', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#431407' }}>
+          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#EA580C' }}>
             📑 KYC अर्ज यादी (KYC Applications Queue)
           </h4>
           <span style={{ fontSize: '0.78rem', color: '#EA580C', fontWeight: 800 }}>एकूण {filteredKyc.length} अर्ज</span>
@@ -85,7 +85,7 @@ export default function KYCFullReport({ data, toast }) {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
             <thead>
-              <tr style={{ background: '#FFFDF9', borderBottom: '1px solid #FED7AA', color: '#431407', fontWeight: 800 }}>
+              <tr style={{ background: '#FFFDF9', borderBottom: '1px solid #FED7AA', color: '#EA580C', fontWeight: 800 }}>
                 <th style={{ padding: '12px 16px' }}>KYC आयडी</th>
                 <th style={{ padding: '12px 16px' }}>अर्जदार नाव</th>
                 <th style={{ padding: '12px 16px' }}>शहर/जिल्हा</th>
@@ -135,7 +135,7 @@ export default function KYCFullReport({ data, toast }) {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'grid', placeItems: 'center', zIndex: 10000, padding: 20 }}>
           <div style={{ background: '#FFF', borderRadius: 16, padding: 24, maxWidth: 520, width: '100%', border: '1.5px solid #FED7AA', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-              <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#431407', fontWeight: 900 }}>🔐 KYC कागदपत्रे पडताळणी</h3>
+              <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#EA580C', fontWeight: 900 }}>🔐 KYC कागदपत्रे पडताळणी</h3>
               <button onClick={() => setSelectedApp(null)} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#EA580C' }}>✕</button>
             </div>
 

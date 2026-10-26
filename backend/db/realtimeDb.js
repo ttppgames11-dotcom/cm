@@ -1,6 +1,24 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { EventEmitter } from 'events';
+import { randomUUID } from 'crypto';
+import bcrypt from 'bcryptjs';
+
+// Fields that must never leave the process via change events
+const PRIVATE_FIELDS = new Set(['password_hash', 'password', 'otp', 'otpCode', 'otp_hash', 'token', 'resetToken', 'salt']);
+
+function publicView(item) {
+  if (!item || typeof item !== 'object') return item;
+  const out = {};
+  for (const [k, v] of Object.entries(item)) {
+    if (!PRIVATE_FIELDS.has(k)) out[k] = v;
+  }
+  return out;
+}
+
+// Only refresh last_active_at (and trigger a full save) at most once per minute per user
+const ACTIVITY_SAVE_INTERVAL_MS = 60 * 1000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,10 +27,12 @@ const __dirname = path.dirname(__filename);
 const DB_FILE = path.join(__dirname, '..', 'db.json');
 const ORAL_HISTORY_FILE = path.join(__dirname, '..', 'data_oral_history.json');
 
-class RealtimeDatabase {
+class RealtimeDatabase extends EventEmitter {
   constructor() {
+    super();
     this.data = {};
     this.isSaving = false;
+    this.pendingSave = false;
     this.saveTimeout = null;
     this.memberIdMap = new Map();
     this.memberEmailMap = new Map();
@@ -81,6 +101,7 @@ class RealtimeDatabase {
       'organizations',
       'bloodRequests',
       'bloodDonors',
+      'bloodResponses',
       'matrimony',
       'womenHelp',
       'volunteers',
@@ -101,15 +122,22 @@ class RealtimeDatabase {
       'otpCodes',
       'tokenBlacklist',
       'hotels',
+      'hotelBookings',
+      'manufacturerInquiries',
+      'doctorAppointments',
+      'matrimonyInterests',
       'information',
       'communityCenters',
       'centerActivities',
+      'unitActivities',
       'territoryOfficers',
       'branches',
       'branchActivities',
       'organizationUnits',
       'staff',
-      'tickets'
+      'tickets',
+      'clientEnquiries',
+      'businessQuotes'
     ];
 
     for (const col of collections) {
@@ -138,7 +166,7 @@ class RealtimeDatabase {
         name: 'अखिल भारतीय मराठा महासंघ मुख्य कार्यालय',
         email: 'admin@connectmaratha.org',
         phone: '+91 98220 96000',
-        password_hash: '$2a$08$91qQjU8XbF44O059O57DseK6yY44oXo7M9r/9lqB0n0yCqD9gq1ee', // 'password123'
+        password_hash: null, // no default password: set SUPERADMIN_BOOTSTRAP_PASSWORD or reset it from the admin console
         avatar: '🏛️',
         city: 'मुंबई',
         district: 'मुंबई शहर',
@@ -157,14 +185,16 @@ class RealtimeDatabase {
     }
 
     // Ensure dedicated SuperAdmin account exists
-    const hasSuperAdmin = this.data.members.some(m => m.role === 'superadmin' || m.email === 'superadmin@connectmaratha.org');
-    if (!hasSuperAdmin) {
+    const existingSuperAdmin = this.data.members.find(m => m.id === 'CM-SUPER-001' || m.role === 'superadmin' || m.email === 'superadmin@connectmaratha.org' || m.email === 'superadmin@connectmaratha.com');
+    if (existingSuperAdmin) {
+      existingSuperAdmin.role = 'superadmin';
+    } else {
       this.data.members.push({
         id: 'CM-SUPER-001',
         name: 'छत्रपती शासन सर्वोच्च प्रशासक (SuperAdmin)',
         email: 'superadmin@connectmaratha.org',
         phone: '+91 98220 99999',
-        password_hash: '$2a$08$91qQjU8XbF44O059O57DseK6yY44oXo7M9r/9lqB0n0yCqD9gq1ee', // 'password123'
+        password_hash: null, // no default password: set SUPERADMIN_BOOTSTRAP_PASSWORD or reset it from the admin console
         avatar: '👑',
         city: 'पुणे',
         district: 'पुणे',
@@ -182,6 +212,35 @@ class RealtimeDatabase {
         last_active_at: new Date().toISOString(),
         created_at: new Date().toISOString()
       });
+    }
+
+    // Privileged accounts: In production, default passwords must be cleared.
+    // In local development or testing, allow the official designated passwords so CRM roles can log in.
+    const isProd = process.env.NODE_ENV === 'production';
+    const allowDevDefaults = process.env.ALLOW_DEFAULT_PASSWORDS === 'true' || !isProd;
+    if (isProd && !allowDevDefaults) {
+      const KNOWN_DEFAULTS = ['password123', 'admin123', 'admin1674', 'superadmin1674', 'ceo1674', 'center1674', 'division1674', 'district1674', 'taluka1674'];
+      for (const m of this.data.members) {
+        if (!m.password_hash || !m.role || m.role === 'member') continue;
+        try {
+          if (KNOWN_DEFAULTS.some(pw => bcrypt.compareSync(pw, m.password_hash))) {
+            m.password_hash = null;
+            console.warn(`[RealtimeDB] ${m.id} (${m.role}) had a known default password: it was cleared. Set a new one from the admin console.`);
+          }
+        } catch (_) { /* malformed hash: leave as is */ }
+      }
+    }
+
+
+    // Optional first-run bootstrap: an operator-supplied password (min 8 chars) for a superadmin that has none yet.
+    // Never overwrites an existing password.
+    const bootstrapPw = process.env.SUPERADMIN_BOOTSTRAP_PASSWORD;
+    if (bootstrapPw && bootstrapPw.length >= 8) {
+      const target = this.data.members.find(m => m.id === 'CM-SUPER-001' && m.role === 'superadmin');
+      if (target && !target.password_hash) {
+        target.password_hash = bcrypt.hashSync(bootstrapPw, 10);
+        console.log('[RealtimeDB] SuperAdmin password set from SUPERADMIN_BOOTSTRAP_PASSWORD');
+      }
     }
 
     // Initialize active timestamps for core leadership accounts if missing
@@ -297,18 +356,31 @@ class RealtimeDatabase {
   }
 
   flushAsync() {
+    // Serialize writes: if one is in flight, queue exactly one follow-up
+    if (this.isSaving) {
+      this.pendingSave = true;
+      return true;
+    }
     try {
-      const tmpFile = `${DB_FILE}.${Date.now()}.${Math.floor(Math.random() * 10000)}.tmp`;
+      this.isSaving = true;
       const payload = JSON.stringify(this.data, null, 2);
+      // Write to a temp file then rename, so a crash mid-write never truncates db.json
+      const tmpFile = `${DB_FILE}.${process.pid}.tmp`;
       fs.writeFile(tmpFile, payload, 'utf8', (err) => {
+        const done = () => {
+          this.isSaving = false;
+          if (this.pendingSave) {
+            this.pendingSave = false;
+            this.flushAsync();
+          }
+        };
         if (err) {
-          console.error('[RealtimeDB] Error writing temp db file:', err.message);
-          return;
+          console.error('[RealtimeDB] Error writing db.json:', err.message);
+          return done();
         }
         fs.rename(tmpFile, DB_FILE, (renameErr) => {
-          if (renameErr) {
-            console.error('[RealtimeDB] Error atomically updating db.json:', renameErr.message);
-          }
+          if (renameErr) console.error('[RealtimeDB] Error replacing db.json:', renameErr.message);
+          done();
         });
       });
       return true;
@@ -324,7 +396,7 @@ class RealtimeDatabase {
         clearTimeout(this.saveTimeout);
         this.saveTimeout = null;
       }
-      const tmpFile = `${DB_FILE}.sync.tmp`;
+      const tmpFile = `${DB_FILE}.${process.pid}.tmp`;
       fs.writeFileSync(tmpFile, JSON.stringify(this.data, null, 2), 'utf8');
       fs.renameSync(tmpFile, DB_FILE);
       return true;
@@ -354,7 +426,8 @@ class RealtimeDatabase {
   insert(name, item) {
     const col = this.getCollection(name);
     if (!item.id) {
-      item.id = `${name.slice(0, 3).toUpperCase()}-${Date.now().toString().slice(-6)}`;
+      // Timestamp + random suffix: the old 6-digit timestamp slice wrapped every ~16 minutes and collided
+      item.id = `${name.slice(0, 3).toUpperCase()}-${Date.now().toString(36)}-${randomUUID().slice(0, 8)}`;
     }
     if (!item.createdAt && !item.created_at) {
       item.createdAt = new Date().toISOString();
@@ -368,6 +441,7 @@ class RealtimeDatabase {
     }
 
     this.save();
+    this.emit('change', { collection: name, action: 'insert', item: publicView(item), timestamp: new Date().toISOString() });
     return item;
   }
 
@@ -390,6 +464,7 @@ class RealtimeDatabase {
     }
 
     this.save();
+    this.emit('change', { collection: name, action: 'update', item: publicView(col[index]), timestamp: new Date().toISOString() });
     return col[index];
   }
 
@@ -406,6 +481,7 @@ class RealtimeDatabase {
     }
 
     this.save();
+    this.emit('change', { collection: name, action: 'delete', id, timestamp: new Date().toISOString() });
     return true;
   }
 
@@ -422,8 +498,12 @@ class RealtimeDatabase {
     if (!userId) return;
     const member = this.memberIdMap.get(String(userId).toLowerCase()) || this.findById('members', userId);
     if (member) {
-      member.last_active_at = new Date().toISOString();
-      this.save();
+      const now = Date.now();
+      const last = member.last_active_at ? Date.parse(member.last_active_at) : 0;
+      if (!last || now - last >= ACTIVITY_SAVE_INTERVAL_MS) {
+        member.last_active_at = new Date(now).toISOString();
+        this.save();
+      }
     }
   }
 
@@ -432,6 +512,7 @@ class RealtimeDatabase {
       id: `LOG-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       action,
       performedBy: performedBy || 'SYSTEM',
+      userId: performedBy || 'SYSTEM',
       details,
       timestamp: new Date().toISOString()
     };
@@ -488,7 +569,7 @@ class RealtimeDatabase {
         manufacturersHero: "/assets/images/generated/maratha_manufacturers_hero.jpg"
       },
       texts: {
-        tagline: "अखिल भारतीय मराठा समाजाचे अधिकृत डिजिटल व्यासपीठ",
+        tagline: "अखिल भारतीय मराठा समाजाचे आधुनिक युगातील आधुनिक संघटन",
         missionStatement: "मराठा समाजातील प्रत्येक घटकाचा सर्वांगीण आर्थिक, शैक्षणिक, सांस्कृतिक व सामाजिक विकास साधणे.",
         visionStatement: "जागतिक पातळीवर संघटित, स्वाभिमानी व आत्मनिर्भर मराठा समाज आणि उद्योजक पिढीची निर्मिती करणे.",
         emergencyNotice: "२४x७ मराठा समाज साहाय्य व आपत्कालीन रक्तदाता समन्वय कक्ष सदैव तत्पर.",

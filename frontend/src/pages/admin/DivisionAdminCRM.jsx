@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 import CRMScopeSwitcher from '../../components/layout/CRMScopeSwitcher';
+import UnitHierarchyPanel from '../../components/crm/UnitHierarchyPanel';
 
 const MAHARASHTRA_DIVISIONS = [
   { id: 'पुणे विभाग', name: 'पुणे विभाग (Pune Division)', head: 'श्री. प्रतापराव पवार', districts: ['पुणे', 'सातारा', 'सांगली', 'सोलापूर', 'कोल्हापूर'], targetProgress: 88 },
@@ -464,6 +465,9 @@ export default function DivisionAdminCRM() {
           </div>
         )}
 
+        <div style={{ marginTop: '32px' }}>
+          <UnitHierarchyPanel defaultTab="overview" />
+        </div>
       </div>
     </div>
   </div>

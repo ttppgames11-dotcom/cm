@@ -15,7 +15,7 @@ const T = {
   saffron: '#EA580C',
   amber: '#D97706',
   deep: '#C2410C',
-  ink: '#431407',
+  ink: '#EA580C',
   text: '#1E293B',
   muted: '#64748B',
   green: '#16A34A',
@@ -533,7 +533,6 @@ function TopBar({ navigate, toast }) {
           + नवीन नोंद
         </Btn>
         <Btn variant="plain" onClick={() => window.location.reload()}>🔄 Refresh</Btn>
-        <Btn variant="ghost" onClick={() => navigate('/ai')}>🤖 AI</Btn>
       </div>
     </header>
   );

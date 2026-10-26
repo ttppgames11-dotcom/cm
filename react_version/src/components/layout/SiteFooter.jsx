@@ -16,7 +16,7 @@ export default function SiteFooter() {
               </div>
             </div>
             <p style={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'rgba(255,255,255,0.85)' }}>
-              मराठा समाजाच्या सामाजिक, शैक्षणिक, आर्थिक व सांस्कृतिक उन्नतीसाठी समर्पित अधिकृत डिजिटल व्यासपीठ.
+              मराठा समाजाच्या सामाजिक, शैक्षणिक, आर्थिक व सांस्कृतिक उन्नतीसाठी समर्पित आधुनिक युगातील आधुनिक संघटन.
             </p>
             <div style={{ marginTop: '14px', fontSize: '0.85rem' }}>
               <p>📍 केंद्रीय कार्यालय: नारायण पेठ, पुणे – ४११०३०</p>
@@ -71,7 +71,7 @@ export default function SiteFooter() {
         {/* Bottom Bar */}
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', fontSize: '0.85rem' }}>
           <div>
-            © २०२६ <strong>कनेक्ट मराठा</strong> — अखिल भारतीय मराठा महासंघ अधिकृत डिजिटल व्यासपीठ. सर्व हक्क सुरक्षित.
+            © २०२६ <strong>कनेक्ट मराठा</strong> — अखिल भारतीय मराठा महासंघ आधुनिक युगातील आधुनिक संघटन. सर्व हक्क सुरक्षित.
           </div>
           <div style={{ display: 'flex', gap: '16px' }}>
             <Link to="/privacy" style={{ color: '#FFFFFF', textDecoration: 'none' }}>गोपनीयता धोरण (DPDP)</Link>

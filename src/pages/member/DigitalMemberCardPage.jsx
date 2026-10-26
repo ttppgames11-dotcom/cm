@@ -15,14 +15,8 @@ export default function DigitalMemberCardPage({ defaultTab }) {
   const [searchParams] = useSearchParams();
   const queryCode = searchParams.get('code') || searchParams.get('id') || '';
 
-  // Determine active member to display on the card (defaults to logged-in user or first verified member)
-  const [selectedMemberId, setSelectedMemberId] = useState(() => {
-    return user?.id || 'CM-MH-PUN-1001';
-  });
-
-  const selectedMember = (user && user.id === selectedMemberId) 
-    ? user 
-    : (VERIFIED_MEMBERS_DIRECTORY.find(m => m.id === selectedMemberId) || VERIFIED_MEMBERS_DIRECTORY[0]);
+  // Strictly display only the logged-in user's profile on their card
+  const selectedMember = user || VERIFIED_MEMBERS_DIRECTORY[0];
 
   // Card Display Mode: 'certificate' (Royal Certificate Style) or 'smartcard' (Executive Metallic Smart Card)
   const [viewMode, setViewMode] = useState('certificate');
@@ -39,12 +33,12 @@ export default function DigitalMemberCardPage({ defaultTab }) {
   const memberName = selectedMember?.name || selectedMember?.fullName || 'अमोल तुकाराम जाधव';
   const [candidateName, setCandidateName] = useState(memberName);
   
-  // When selectedMemberId changes, synchronize candidateName
+  // When selectedMember changes, synchronize candidateName
   useEffect(() => {
     if (selectedMember?.name) {
       setCandidateName(selectedMember.name);
     }
-  }, [selectedMemberId]);
+  }, [selectedMember?.id, selectedMember?.name]);
 
   // Auto-validate if code supplied in URL
   useEffect(() => {
@@ -66,8 +60,36 @@ export default function DigitalMemberCardPage({ defaultTab }) {
   const emergencyPhone = selectedMember?.phone || '+९१ ९८२२० ११९२४';
   const issueDate = selectedMember?.issueDate || '२३ सप्टेंबर २०२४';
 
-  // Professional real photograph or high-res avatar
-  const selectedPhoto = selectedMember?.avatar || '/assets/images/officers/officer_tukaram.jpg';
+  // Professional real photograph resolution (handles base64 data URLs, uploaded photos, and external URLs)
+  const resolvePhotoUrl = (m) => {
+    if (!m) return '/assets/images/officers/officer_tukaram.jpg';
+    const candidates = [
+      m.photo,
+      m.photoUrl,
+      m.photo_url,
+      m.profilePhoto,
+      m.profile_photo,
+      m.profileImage,
+      m.avatar
+    ];
+    for (const val of candidates) {
+      if (typeof val === 'string' && val.trim()) {
+        const clean = val.trim();
+        if (
+          clean.startsWith('data:image/') ||
+          clean.startsWith('http://') ||
+          clean.startsWith('https://') ||
+          clean.startsWith('/') ||
+          clean.startsWith('blob:')
+        ) {
+          return clean;
+        }
+      }
+    }
+    return '/assets/images/officers/officer_tukaram.jpg';
+  };
+
+  const selectedPhoto = resolvePhotoUrl(selectedMember);
 
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
@@ -282,7 +304,7 @@ export default function DigitalMemberCardPage({ defaultTab }) {
       `}</style>
 
       {/* TOP NOTIFICATION STRIP */}
-      <div className="topbar no-print" style={{ background: '#7C1D05', borderBottom: '1px solid #B45309' }}>
+      <div className="card-notification-strip no-print" style={{ background: '#7C1D05', borderBottom: '1px solid #B45309', position: 'relative', zIndex: 1 }}>
         <div className="wrap topbar-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 24px', fontSize: '0.82rem', color: '#FFFFFF' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <span style={{ color: '#FCD34D', fontWeight: 800 }}>🚩 CONNECT MARATHA</span>
@@ -393,95 +415,25 @@ export default function DigitalMemberCardPage({ defaultTab }) {
           gap: '16px',
           boxShadow: '0 4px 16px rgba(0,0,0,0.04)'
         }}>
-          {/* Member Profile Switcher (Non-Repetitive Directory Selector) */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid #F1F5F9', paddingBottom: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-              <span style={{ fontWeight: 800, color: '#7C1D05', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span>👥</span>
-                <span>सभासद प्रोफाइल निवडा (Non-Repetitive Member Profiles):</span>
-              </span>
-              <select
-                value={selectedMemberId}
-                onChange={(e) => {
-                  const targetId = e.target.value;
-                  setSelectedMemberId(targetId);
-                  const mem = VERIFIED_MEMBERS_DIRECTORY.find(x => x.id === targetId);
-                  if (mem) {
-                    setCandidateName(mem.name);
-                  }
-                }}
-                style={{
-                  padding: '8px 14px',
-                  borderRadius: '8px',
-                  border: '1.5px solid #F59E0B',
-                  background: '#FFFBEB',
-                  fontWeight: 700,
-                  fontSize: '0.88rem',
-                  color: '#1F2937',
-                  cursor: 'pointer',
-                  outline: 'none'
-                }}
-              >
-                {user && user.id && (
-                  <option value={user.id}>👤 माझे वैयक्तिक प्रोफाइल ({user.name || 'User'})</option>
-                )}
-                {VERIFIED_MEMBERS_DIRECTORY.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    🚩 {m.name} — {m.district} ({m.profession.split(' ')[0]}) [{m.id}]
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-              {VERIFIED_MEMBERS_DIRECTORY.slice(0, 5).map((m) => (
-                <button
-                  key={m.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedMemberId(m.id);
-                    setCandidateName(m.name);
-                  }}
-                  style={{
-                    padding: '4px 10px',
-                    borderRadius: '12px',
-                    border: selectedMemberId === m.id ? '1.5px solid #C73800' : '1px solid #CBD5E1',
-                    background: selectedMemberId === m.id ? '#FEE2E2' : '#F8FAFC',
-                    color: selectedMemberId === m.id ? '#991B1B' : '#475569',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  {m.district}: {m.name.split(' ')[0]}
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-            {/* Name Customization Field */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-              <label style={{ fontWeight: 800, color: '#1F2937', fontSize: '0.9rem' }}>
+            {/* Static Non-Editable Name Display */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontWeight: 800, color: '#4B5563', fontSize: '0.9rem' }}>
                 ओळखपत्रावरील नाव:
-              </label>
-              <input
-                type="text"
-                value={candidateName}
-              onChange={(e) => setCandidateName(e.target.value)}
-              placeholder="आपले संपूर्ण नाव प्रविष्ट करा"
-              style={{
-                padding: '10px 14px',
+              </span>
+              <span style={{
+                padding: '8px 14px',
+                background: '#F3F4F6',
                 borderRadius: '8px',
-                border: '1.5px solid #CBD5E1',
+                border: '1px solid #E5E7EB',
                 fontSize: '0.95rem',
-                width: '280px',
                 fontWeight: 700,
-                color: '#1F2937',
-                outline: 'none'
-              }}
-            />
-          </div>
+                color: '#111827'
+              }}>
+                {candidateName || memberName}
+              </span>
+            </div>
+
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
@@ -569,6 +521,26 @@ export default function DigitalMemberCardPage({ defaultTab }) {
             >
               <span>📷</span> Scan & Connect
             </button>
+
+            <Link
+              to="/profile"
+              style={{
+                padding: '10px 18px',
+                background: '#FFF7ED',
+                color: '#C2410C',
+                border: '1.5px solid #FDBA74',
+                borderRadius: '8px',
+                fontWeight: 800,
+                fontSize: '0.88rem',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+              title="माझी प्रोफाईल व आवडी-निवडी संपादित करा"
+            >
+              <span>✏️</span> प्रोफाईल संपादन
+            </Link>
           </div>
         </div>
 
@@ -679,17 +651,15 @@ export default function DigitalMemberCardPage({ defaultTab }) {
                     boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
                     position: 'relative'
                   }}>
-                    {selectedPhoto.startsWith('/') || selectedPhoto.startsWith('http') ? (
-                      <img
-                        src={selectedPhoto}
-                        alt={candidateName}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                      />
-                    ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3.2rem', background: '#FEF3C7' }}>
-                        {selectedPhoto}
-                      </div>
-                    )}
+                    <img
+                      src={selectedPhoto}
+                      alt={candidateName}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/assets/images/officers/officer_tukaram.jpg';
+                      }}
+                    />
                   </div>
                   <div style={{
                     marginTop: '6px',
@@ -906,17 +876,15 @@ export default function DigitalMemberCardPage({ defaultTab }) {
                       flexShrink: 0,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
                     }}>
-                      {selectedPhoto.startsWith('/') || selectedPhoto.startsWith('http') ? (
-                        <img
-                          src={selectedPhoto}
-                          alt={candidateName}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                        />
-                      ) : (
-                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', background: '#374151' }}>
-                          {selectedPhoto}
-                        </div>
-                      )}
+                    <img
+                      src={selectedPhoto}
+                      alt={candidateName}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/assets/images/officers/officer_tukaram.jpg';
+                      }}
+                    />
                     </div>
 
                     <div style={{ flex: 1 }}>

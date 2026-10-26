@@ -1,18 +1,36 @@
-# Connect Maratha — Database Layer (SQLite)
+# Connect Maratha — Unified Database Layer (SQLite / Abhay App Database)
 
-This directory contains the self-contained database engine, schema, and seed datasets for Connect Maratha.
+This directory contains the primary relational database engine, schemas, and datasets for **Connect Maratha** (Web Platform & Android Mobile APK / Abhay App).
 
-## 📁 Files & Directories
-- `connect_maratha.db` — Persistent binary SQLite database file.
-- `schema.sql` — Relational schema definition (22 tables including members, businesses, referrals, events, donations, oral history, and quiz questions).
-- `database.js` — SQL.js query abstraction (`runQuery`, `all`, `get`, `saveDatabase`).
-- `seed.js` — Data seeder populating initial members, businesses, campaigns, and metrics.
-- `quiz_meta/` — Question pools and categorization metadata.
+## 📁 Key Database Files
+- `connect_maratha.db` — Primary persistent SQLite database binary (~47 MB).
+- `schema.sql` — Complete SQL relational schema (40+ tables covering all domains).
+- `database.js` — SQL query abstraction supporting both SQLite (`sql.js`) and production PostgreSQL (`DATABASE_URL`).
+- `migrate_json_to_sqlite.js` — Automated sync script ensuring full parity between JSON cache and SQLite database.
+- `seed_locations.js` — LGD 44,810+ Maharashtra village, taluka, and district hierarchy.
+
+## 📊 Core Datasets in `connect_maratha.db`
+- **44,810 Villages**: Complete Maharashtra LGD government village registry.
+- **360 Talukas & 36 Districts**: Complete state administrative divisions.
+- **20,500 History Quiz Questions**: Graded across 9 Maratha history eras and 3 difficulty tiers.
+- **Community Portals & Directories**:
+  - `books` (12 authentic reference volumes)
+  - `movies` (12 historical and cultural Marathi films)
+  - `speakers` (8 verified motivational orators & Shivcharitrakars)
+  - `officers` (8 senior IAS/IPS/IRS administrators)
+  - `organizations` (5 leading Maratha apex social bodies)
+  - `social_workers` (verified grassroots social reformers)
+  - `scholarships` (official government & SARTHI educational schemes)
+  - `doctors` (24 verified healthcare specialists across Maharashtra)
+  - `blood_requests` & `blood_donors` (live emergency response network)
+  - `matrimony_profiles` (verified community matrimonial profiles)
+  - `bank_loans`, `dairy`, `manufacturers`, `volunteers`, `grievances`, `builders`
 
 ## 🚀 Commands
-To re-run database seeding:
+Sync or re-seed database:
 ```bash
-node seed.js
-# or from root
-npm run db:seed
+# Sync all portal tables into connect_maratha.db:
+npm run sync --prefix database
+# or
+node database/migrate_json_to_sqlite.js
 ```

@@ -2,142 +2,42 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { CRM_AUTHORIZED_ROLES } from '../../components/auth/CRMProtectedRoute';
-import { api } from '../../services/api';
 
-const CRM_OFFICIAL_PROFILES = [
-  {
-    role: 'superadmin',
-    name: 'छत्रपती शासन सर्वोच्च प्रशासक',
-    id: 'CM-SUPER-001',
-    phone: '9876500000',
-    passwords: ['superadmin1674', 'admin1674', 'admin123', 'password123'],
-    defaultPassword: 'admin1674',
-    title: '👑 केंद्रीय सुपर ॲडमिन (Super Admin)',
-    desc: 'सर्वोच्च प्रशासकीय व तांत्रिक नियंत्रण कक्ष, ३६ जिल्हे, महा-अहवाल व संपूर्ण मास्टर नियंत्रण',
-    targetRoute: '/superadmin',
-    badge: 'SUPERADMIN ACCESS'
-  },
-  {
-    role: 'admin',
-    name: 'केंद्रीय मुख्य प्रशासक (Admin)',
-    id: 'CM-ADMIN-001',
-    phone: '9876500001',
-    passwords: ['admin1674', 'admin123', 'password123'],
-    defaultPassword: 'admin1674',
-    title: '👑 केंद्रीय ॲडमिन (Admin Console)',
-    desc: 'सर्व ३६ जिल्हे, वापरकर्ते CRUD, रोल मॅट्रिक्स व मास्टर सिस्टीम नियंत्रण',
-    targetRoute: '/admin',
-    badge: 'ADMIN ACCESS'
-  },
-  {
-    role: 'ceo',
-    name: 'राजेश पाटील (CEO)',
-    id: 'CM-CEO-0088',
-    phone: '9876500088',
-    passwords: ['ceo1674', 'admin123', 'password123'],
-    defaultPassword: 'ceo1674',
-    title: '🦅 मुख्य कार्यकारी अधिकारी / राज्य अध्यक्ष (CEO Macro)',
-    desc: 'राज्यस्तरीय व्यवसाय वृद्धी, ६ विभाग, ₹ १८४+ कोटी मॅक्रो आकडेवारी',
-    targetRoute: '/ceo',
-    badge: 'STATE EXECUTIVE'
-  },
-  {
-    role: 'division_admin',
-    name: 'प्रतापराव पवार (विभागीय अध्यक्ष)',
-    id: 'CM-DIV-0011',
-    phone: '9876500011',
-    passwords: ['division1674', 'admin123', 'password123'],
-    defaultPassword: 'division1674',
-    title: '🏛️ विभागीय अध्यक्ष (Division Head)',
-    desc: 'पुणे व नाशिक विभाग, ५-७ जिल्हे, तुलनात्मक कामगिरी व विभागीय कम्युनिटी सेंटर्स',
-    targetRoute: '/crm/division',
-    badge: 'DIVISION HEAD'
-  },
-  {
-    role: 'district_admin',
-    name: 'आनंदराव देशमुख (जिल्हा समन्वयक)',
-    id: 'CM-DIST-0022',
-    phone: '9876500022',
-    passwords: ['district1674', 'admin123', 'password123'],
-    defaultPassword: 'district1674',
-    title: '📍 जिल्हा समन्वयक (District Admin)',
-    desc: 'जिल्हा प्रशासन, तालुका समन्वय, ओळखपत्र छाननी व स्थानिक आकडेवारी',
-    targetRoute: '/crm/district',
-    badge: 'DISTRICT HEAD'
-  },
-  {
-    role: 'taluka_admin',
-    name: 'सागर पाटील (तालुकाध्यक्ष)',
-    id: 'CM-TAL-0077',
-    phone: '9876500077',
-    passwords: ['taluka1674', 'admin123', 'password123'],
-    defaultPassword: 'taluka1674',
-    title: '📍 तालुकाध्यक्ष (Taluka Head)',
-    desc: 'हवेली व कराड तालुका, स्थानिक शाखा, सदस्य पडताळणी व गाव पातळी समन्वय',
-    targetRoute: '/crm/taluka',
-    badge: 'TALUKA HEAD'
-  },
-  {
-    role: 'branch_head',
-    name: 'विजयराव कदम (शाखाध्यक्ष)',
-    id: 'CM-BR-0011',
-    phone: '9876500066',
-    passwords: ['branch1674', 'admin123', 'password123'],
-    defaultPassword: 'branch1674',
-    title: '🏠 शाखाध्यक्ष (Branch Head)',
-    desc: 'स्थानिक गाव/वॉर्ड शाखा, सदस्य जोडणी, स्वयंसेवक फळी व स्थानिक बैठक अहवाल',
-    targetRoute: '/crm/branch',
-    badge: 'BRANCH HEAD'
-  },
-  {
-    role: 'center_manager',
-    name: 'सचिन मोहिते (कम्युनिटी सेंटर व्यवस्थापक)',
-    id: 'CC-MGR-0099',
-    phone: '9876500099',
-    passwords: ['center1674', 'admin123', 'password123'],
-    defaultPassword: 'center1674',
-    title: '🏢 कम्युनिटी सेंटर मॅनेजर (Center Manager)',
-    desc: 'दैनिक अभ्यागत काउंटर, KYC छाननी, १२ सेवा कक्ष व दैनंदिन वर्गणी लेजर',
-    targetRoute: '/crm/center',
-    badge: 'CENTER MANAGER'
-  },
-  {
-    role: 'chapter_president',
-    name: 'राजेंद्र मोहिते (चॅप्टर अध्यक्ष)',
-    id: 'CM-CHAP-0033',
-    phone: '9876500033',
-    passwords: ['chapter1674', 'admin123', 'password123'],
-    defaultPassword: 'chapter1674',
-    title: '💼 चॅप्टर अध्यक्ष (Chapter President)',
-    desc: 'साप्ताहिक व्यवसाय संगम, रेफरल व्यवहार व सदस्य उपस्थिती',
-    targetRoute: '/crm/chapter',
-    badge: 'CHAPTER HEAD'
-  },
-  {
-    role: 'seva_helpdesk',
-    name: 'सुभाषराव मोरे (सेवा समन्वयक)',
-    id: 'CM-SEVA-0044',
-    phone: '9876500044',
-    passwords: ['helpdesk1674', 'admin123', 'password123'],
-    defaultPassword: 'helpdesk1674',
-    title: '🩺 समाज साहाय्यता कक्ष (Seva Helpdesk)',
-    desc: '२४x७ आपत्कालीन रक्त विनंत्या, रुग्णालय साहाय्य व आपत्ती निवारण',
-    targetRoute: '/crm/helpdesk',
-    badge: 'EMERGENCY SEVA'
-  },
-  {
-    role: 'finance_officer',
-    name: 'महेश शिंदे (कोषाध्यक्ष)',
-    id: 'CM-FIN-0055',
-    phone: '9876500055',
-    passwords: ['finance1674', 'admin123', 'password123'],
-    defaultPassword: 'finance1674',
-    title: '💰 वित्त व 80G कोषाध्यक्ष (Finance & Ledger)',
-    desc: 'Section 8 वित्तीय ऑडिट, 80G आयकर पावत्या व वर्गणी लेजर',
-    targetRoute: '/crm/finance',
-    badge: 'TREASURY AUDIT'
+// Where each role lands dynamically after the database has confirmed the login
+function routeForRole(role, member = {}) {
+  // If user is a community center executive, route dynamically to their assigned center tier
+  if (['center_manager', 'center_admin', 'center_staff', 'center_partner'].includes(role)) {
+    const tier = member.center_tier || (member.unit_id && member.unit_id.toLowerCase().includes('mh') ? 'state' : null) || member.tier;
+    if (tier === 'state') return '/crm/center-state';
+    if (tier === 'division') return '/crm/center-division';
+    if (tier === 'district') return '/crm/center-district';
+    if (tier === 'taluka') return '/crm/center-taluka';
+    return '/crm/center';
   }
-];
+
+  switch (role) {
+    case 'superadmin': return '/superadmin';
+    case 'admin': return '/admin';
+    case 'ceo':
+    case 'pradesh_head': return '/ceo';
+    case 'division_admin':
+    case 'division_head': return '/crm/division';
+    case 'district_admin':
+    case 'district_head': return '/crm/district';
+    case 'taluka_admin':
+    case 'taluka_head': return '/crm/taluka';
+    case 'branch_head':
+    case 'branch_admin':
+    case 'branch': return '/crm/branch';
+    case 'state_admin':
+    case 'pradesh_admin': return '/crm/state';
+    case 'chapter_president':
+    case 'chapter_head': return '/crm/chapter';
+    case 'seva_helpdesk': return '/crm/helpdesk';
+    case 'finance_officer': return '/crm/finance';
+    default: return null;
+  }
+}
 
 export default function CRMLoginPage() {
   const { user, login, logout } = useAuth();
@@ -150,7 +50,17 @@ export default function CRMLoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Handle Login: checks ID and password, identifies role, opens role-wise portal
+  // 🚀 If an admin/officer is ALREADY logged in, do not make them login again — auto-route to their dashboard!
+  React.useEffect(() => {
+    if (user && CRM_AUTHORIZED_ROLES.includes(user.role)) {
+      const destination = (location.state && location.state.from && location.state.from.pathname) || routeForRole(user.role, user);
+      if (destination && destination !== '/admin/crm-login' && destination !== '/crm/login') {
+        navigate(destination, { replace: true });
+      }
+    }
+  }, [user, navigate, location]);
+
+  // The database checks the credentials and decides the user's role and access level
   const handleOfficialLogin = async (e) => {
     if (e) e.preventDefault();
     setErrorMsg('');
@@ -159,87 +69,32 @@ export default function CRMLoginPage() {
     const cleanPass = String(password || '').trim();
 
     if (!cleanId) {
-      setErrorMsg('कृपया आपला अधिकृत प्रशासकीय आयडी किंवा मोबाईल नंबर प्रविष्ट करा.');
+      setErrorMsg('कृपया आपला नोंदणीकृत अधिकारी आयडी किंवा मोबाईल नंबर प्रविष्ट करा.');
       return;
     }
     if (!cleanPass) {
-      setErrorMsg('कृपया गोपनीय पासवर्ड प्रविष्ट करा.');
+      setErrorMsg('कृपया संकेतशब्द (Password) प्रविष्ट करा.');
       return;
     }
 
     setLoading(true);
+    const result = await login(cleanId, cleanPass);
+    setLoading(false);
 
-    // 1. Verify against official CRM profiles
-    const idLower = cleanId.toLowerCase();
-    const matchedProfile = CRM_OFFICIAL_PROFILES.find(p => 
-      p.id.toLowerCase() === idLower ||
-      p.phone === cleanId ||
-      p.role.toLowerCase() === idLower ||
-      p.id.replace(/[-_]/g, '').toLowerCase() === cleanId.replace(/[-_]/g, '').toLowerCase()
-    );
-
-    if (matchedProfile) {
-      const validPasswords = matchedProfile.passwords || [matchedProfile.defaultPassword, 'admin1674', 'password123', 'admin123'];
-      const isPassCorrect = validPasswords.includes(cleanPass) || cleanPass === 'admin1674' || cleanPass === 'password123' || cleanPass === 'admin123';
-
-      if (!isPassCorrect) {
-        setLoading(false);
-        setErrorMsg('चुकीचा पासवर्ड! कृपया आपला योग्य प्रशासकीय पासवर्ड प्रविष्ट करा.');
-        return;
-      }
-
-      const officialUser = {
-        id: matchedProfile.id,
-        name: matchedProfile.name,
-        role: matchedProfile.role,
-        tier: 'Royal Patron',
-        district: 'पुणे',
-        city: 'पुणे',
-        profession: matchedProfile.title,
-        isCrmOfficial: true
-      };
-
-      try {
-        await login(cleanId, cleanPass, officialUser);
-      } catch (err) {
-        console.warn('Backend login fallback to local profile:', err);
-      }
-
-      setLoading(false);
-      const destination = (location.state && location.state.from && location.state.from.pathname) || matchedProfile.targetRoute;
-      navigate(destination, { replace: true });
+    if (!result.success) {
+      setErrorMsg('अवैध क्रेडेंशियल्स. कृपया डेटाबेसमध्ये नोंदणीकृत आयडी व पासवर्ड तपासा.');
       return;
     }
 
-    // 2. Fallback to API check for database-registered officers or admins
-    try {
-      const res = await api.auth.login(cleanId, cleanPass);
-      const member = res?.member || res?.data?.member || res?.data?.profile;
-      if (member) {
-        setLoading(false);
-        const role = member.role || 'member';
-        let targetRoute = '/dashboard';
-        if (role === 'superadmin') targetRoute = '/superadmin';
-        else if (role === 'admin') targetRoute = '/admin';
-        else if (role === 'ceo' || role === 'pradesh_head') targetRoute = '/ceo';
-        else if (role === 'division_admin' || role === 'division_head') targetRoute = '/crm/division';
-        else if (role === 'district_admin' || role === 'district_head') targetRoute = '/crm/district';
-        else if (role === 'taluka_admin' || role === 'taluka_head') targetRoute = '/crm/taluka';
-        else if (role === 'branch_head' || role === 'branch_admin' || role === 'branch') targetRoute = '/crm/branch';
-        else if (role === 'center_manager' || role === 'center_admin' || role === 'center_partner') targetRoute = '/crm/center';
-        else if (role === 'chapter_president' || role === 'chapter_head') targetRoute = '/crm/chapter';
-        else if (role === 'seva_helpdesk') targetRoute = '/crm/helpdesk';
-        else if (role === 'finance_officer') targetRoute = '/crm/finance';
-
-        navigate(targetRoute, { replace: true });
-        return;
-      }
-    } catch (err) {
-      // Backend error will show friendly message below
+    const memberData = result.member || result.data?.member || {};
+    const target = routeForRole(memberData.role, memberData);
+    if (!target) {
+      logout();
+      setErrorMsg('या खात्याला प्रशासकीय CRM अधिकार नियुक्त केलेले नाहीत (डेटाबेस Role: ' + (memberData.role || 'member') + ').');
+      return;
     }
-
-    setLoading(false);
-    setErrorMsg('अवैध प्रशासकीय आयडी किंवा पासवर्ड. कृपया नोंदणीकृत अधिकारी क्रेडेंशियल्स प्रविष्ट करा.');
+    const destination = (location.state && location.state.from && location.state.from.pathname) || target;
+    navigate(destination, { replace: true });
   };
 
   const isCurrentStaff = user && CRM_AUTHORIZED_ROLES.includes(user.role);
@@ -291,63 +146,54 @@ export default function CRMLoginPage() {
             lineHeight: 1.6,
             fontWeight: 600
           }}>
-            आपला अधिकृत प्रशासकीय आयडी व पासवर्ड प्रविष्ट करा. सिस्टीम आपल्या पदभारानुसार संबंधित नियंत्रण कक्ष स्वयंचलित उघडेल.
+            आपला आयडी व पासवर्ड प्रविष्ट करा. सिस्टीम आपल्या पदानुसार संबंधित नियंत्रण कक्ष स्वयंचलित उघडेल.
           </p>
         </div>
 
-        {/* If Already Logged In Banner */}
+        {/* If Already Logged In: Give clean choice to proceed or switch account */}
         {isCurrentStaff && (
           <div style={{
             background: '#FFFFFF',
-            border: '2px solid #EA580C',
+            border: '1.5px solid #FED7AA',
             borderRadius: '16px',
-            padding: '18px 24px',
-            marginBottom: '28px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '16px',
-            boxShadow: '0 4px 20px rgba(234, 88, 12, 0.1)'
+            padding: '16px 20px',
+            marginBottom: '24px',
+            maxWidth: '560px',
+            margin: '0 auto 24px',
+            boxShadow: '0 4px 16px rgba(234, 88, 12, 0.06)',
+            textAlign: 'center'
           }}>
-            <div>
-              <div style={{ color: '#EA580C', fontWeight: 900, fontSize: '0.90rem', marginBottom: '4px' }}>
-                ✓ अधिकृत प्रशासकीय सत्र सक्रिय आहे
-              </div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#EA580C' }}>
-                👤 {user.name} ({user.role})
-              </div>
-              <div style={{ color: '#7C2D12', fontSize: '0.86rem', fontWeight: 600 }}>
-                अधिकृत आयडी: {user.id}
-              </div>
+            <div style={{ fontSize: '0.88rem', color: '#7C2D12', marginBottom: '8px', fontWeight: 600 }}>
+              सध्याचे सक्रिय सत्र (Active Session): <strong>{user.name}</strong> ({user.role})
             </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link
-                to={user.role === 'superadmin' ? '/superadmin' : (user.role === 'admin' ? '/admin' : (user.role === 'ceo' ? '/ceo' : '/crm'))}
+                to={routeForRole(user.role, user) || '/crm'}
                 style={{
                   background: 'linear-gradient(135deg, #FF6A00, #EA580C)',
                   color: '#FFFFFF',
-                  fontWeight: 900,
-                  padding: '10px 20px',
-                  borderRadius: '10px',
-                  border: 'none',
-                  textDecoration: 'none',
-                  boxShadow: '0 4px 14px rgba(234, 88, 12, 0.25)'
+                  fontWeight: 800,
+                  fontSize: '0.88rem',
+                  padding: '8px 18px',
+                  borderRadius: '8px',
+                  textDecoration: 'none'
                 }}>
-                डॅशबोर्ड उघडा ➔
+                या खात्यासह डॅशबोर्डवर जा ➔
               </Link>
               <button
+                type="button"
                 onClick={logout}
                 style={{
-                  background: '#FFFFFF',
-                  border: '1.5px solid #FED7AA',
-                  color: '#EA580C',
+                  background: '#FFF7ED',
+                  border: '1px solid #FED7AA',
+                  color: '#C2410C',
                   fontWeight: 800,
-                  padding: '10px 18px',
-                  borderRadius: '10px',
+                  fontSize: '0.88rem',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
                   cursor: 'pointer'
                 }}>
-                बाहेर पडा (Switch User)
+                लॉगआउट करा (दुसऱ्या खात्याने लॉगिन)
               </button>
             </div>
           </div>
@@ -397,7 +243,7 @@ export default function CRMLoginPage() {
                   type="text"
                   value={officerId}
                   onChange={(e) => setOfficerId(e.target.value)}
-                  placeholder="उदा. CM-ADMIN-001 किंवा 9876500001"
+                  placeholder="आपला अधिकृत आयडी किंवा मोबाईल नंबर"
                   required
                   style={{
                     width: '100%',

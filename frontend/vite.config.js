@@ -29,11 +29,16 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 3000,
+    port: 3001,
     open: false,
-    // Proxy forwards /api requests to local backend (port 5000) or configured VITE_API_TARGET
+    // Proxy forwards /api and /media requests to configured VITE_API_TARGET or local backend
     proxy: {
       '/api': {
+        target: process.env.VITE_API_TARGET || 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      },
+      '/media': {
         target: process.env.VITE_API_TARGET || 'http://localhost:5000',
         changeOrigin: true,
         secure: false
@@ -45,6 +50,15 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: false
+    sourcemap: false,
+    chunkSizeWarningLimit: 1200,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-icons': ['lucide-react']
+        }
+      }
+    }
   }
 });

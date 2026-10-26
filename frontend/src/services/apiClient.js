@@ -1,9 +1,17 @@
 // Central API Client connecting React Frontend to Express Backend Server via /api
-function getBaseUrl() {
-  return '/api';
-}
+export const API_SERVER_ORIGIN = (typeof window !== 'undefined' && window.__CM_API_ORIGIN) ||
+  (import.meta.env?.VITE_API_ORIGIN) ||
+  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.port === '3000' || window.location.port === '5173') ? 'http://localhost:5000' : 'https://api.connectmaratha.com');
 
-const BASE_URL = getBaseUrl();
+function getBaseUrl() {
+  if (typeof window !== 'undefined') {
+    if (window.__CM_API_URL) return window.__CM_API_URL;
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.port === '3000' || window.location.port === '5173') {
+      return '/api';
+    }
+  }
+  return (import.meta.env?.VITE_API_URL) || `${API_SERVER_ORIGIN}/api`;
+}
 
 function getAuthHeaders() {
   const token = typeof window !== 'undefined' ? localStorage.getItem('cm_jwt_token') : null;
@@ -11,12 +19,38 @@ function getAuthHeaders() {
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
+  if (typeof window !== 'undefined') {
+    try {
+      const uStr = localStorage.getItem('cm_user_data');
+      if (uStr) {
+        const u = JSON.parse(uStr);
+        if (u?.id) headers['X-User-Id'] = u.id;
+        if (u?.phone) headers['X-User-Phone'] = u.phone;
+      }
+    } catch (_) { }
+  }
   return headers;
 }
 
+function isLocalHost() {
+  if (typeof window === 'undefined') return false;
+  const { hostname, port } = window.location;
+  return hostname === 'localhost' || hostname === '127.0.0.1' || port === '3000' || port === '5173';
+}
+
 async function fetchJson(endpoint, options = {}) {
-  try {
-    let url = `${BASE_URL}${endpoint}`;
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const method = String(options.method || 'GET').toUpperCase();
+
+  // Local development never falls through to the production API, so test data stays local
+  const candidates = [...new Set([
+    `${getBaseUrl()}${cleanEndpoint}`,
+    `/api${cleanEndpoint}`,
+    isLocalHost() ? `http://localhost:5000/api${cleanEndpoint}` : `https://api.connectmaratha.com/api${cleanEndpoint}`
+  ])];
+
+  let lastError = null;
+  for (const url of candidates) {
     let res;
     try {
       res = await fetch(url, {
@@ -26,30 +60,33 @@ async function fetchJson(endpoint, options = {}) {
           ...(options.headers || {})
         }
       });
-    } catch (directErr) {
-      if (url.startsWith('http')) {
-        url = `/api${endpoint}`;
-        res = await fetch(url, {
-          ...options,
-          headers: {
-            ...getAuthHeaders(),
-            ...(options.headers || {})
-          }
-        });
-      } else {
-        throw directErr;
-      }
+    } catch (err) {
+      // Network failure (server unreachable): the request never got an answer, try the next base URL
+      lastError = err;
+      continue;
+    }
+
+    const isJson = (res.headers.get('content-type') || '').includes('application/json');
+    // A GET answered with HTML (e.g. an SPA fallback page) means this base URL has no API; try the next.
+    // Any other answer is final: retrying a POST/PUT/DELETE that the server already handled could apply it twice.
+    if (!isJson && method === 'GET' && candidates.indexOf(url) < candidates.length - 1) {
+      lastError = new Error(`Non-JSON response from ${url} (status ${res.status})`);
+      continue;
     }
 
     const json = await res.json().catch(() => ({}));
     if (!res.ok) {
-      throw new Error(json.message || json.error || `HTTP error! status: ${res.status}`);
+      const httpError = new Error(json.message || json.error || `HTTP error! status: ${res.status}`);
+      httpError.status = res.status;
+      httpError.code = json.code;
+      console.warn(`API Error [${endpoint}]:`, httpError.message);
+      throw httpError;
     }
     return json;
-  } catch (err) {
-    console.warn(`API Error [${endpoint}]:`, err.message);
-    throw err;
   }
+
+  console.warn(`API Error [${endpoint}]:`, lastError?.message);
+  throw lastError;
 }
 
 export const apiClient = {
@@ -75,22 +112,6 @@ export const apiClient = {
     return await fetchJson(endpoint.startsWith('/') ? endpoint : `/${endpoint}`, { method: 'DELETE', ...options });
   },
 
-  // Connect Maratha AI Agent API
-  aiChat: async (message, language = 'mr', history = []) => {
-    return await fetchJson('/ai/chat', {
-      method: 'POST',
-      body: JSON.stringify({ message, language, history })
-    });
-  },
-  aiSupport: async (supportData) => {
-    return await fetchJson('/ai/support', {
-      method: 'POST',
-      body: JSON.stringify(supportData)
-    });
-  },
-  aiHealth: async () => {
-    return await fetchJson('/ai/health');
-  },
 
   // Doctors API
   getDoctors: async (params = {}) => {
@@ -103,12 +124,19 @@ export const apiClient = {
   },
 
   // Blood API
-  getBloodRequests: async () => {
-    const res = await fetchJson('/blood/requests');
+  getBloodRequests: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/blood/requests${qs ? '?' + qs : ''}`);
     return res.data?.requests || res.requests || res.data || [];
   },
   addBloodRequest: async (req) => {
     return await fetchJson('/blood/requests', { method: 'POST', body: JSON.stringify(req) });
+  },
+  respondToBloodRequest: async (id, data) => {
+    return await fetchJson(`/blood/requests/${id}/respond`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  fulfillBloodRequest: async (id, data = {}) => {
+    return await fetchJson(`/blood/requests/${id}/fulfill`, { method: 'PATCH', body: JSON.stringify(data) });
   },
   getDonors: async (params = {}) => {
     const qs = new URLSearchParams(params).toString();
@@ -125,8 +153,32 @@ export const apiClient = {
     const res = await fetchJson(`/matrimony${qs ? '?' + qs : ''}`);
     return res.data?.profiles || res.profiles || res.data || [];
   },
+  getMatrimonyProfileById: async (id) => {
+    const res = await fetchJson(`/matrimony/${id}`);
+    return res.data?.profile || res.profile || null;
+  },
   addMatrimonyProfile: async (profile) => {
     return await fetchJson('/matrimony', { method: 'POST', body: JSON.stringify(profile) });
+  },
+  getMyMatrimony: async () => {
+    const res = await fetchJson('/matrimony/my');
+    return res.data || res;
+  },
+  sendMatrimonyInterest: async (profileId, data) => {
+    return await fetchJson(`/matrimony/${profileId}/interest`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  respondToMatrimonyInterest: async (interestId, action) => {
+    return await fetchJson(`/matrimony/interests/${interestId}`, { method: 'PATCH', body: JSON.stringify({ action }) });
+  },
+  reportMatrimonyProfile: async (profileId, data) => {
+    return await fetchJson(`/matrimony/${profileId}/report`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  getMatrimonyAdminQueue: async () => {
+    const res = await fetchJson('/matrimony/admin/queue');
+    return res.data || res;
+  },
+  verifyMatrimonyProfile: async (data) => {
+    return await fetchJson('/matrimony/admin/verify', { method: 'PATCH', body: JSON.stringify(data) });
   },
 
   // Political Grievances API
@@ -147,13 +199,113 @@ export const apiClient = {
     return await fetchJson('/social/volunteers', { method: 'POST', body: JSON.stringify(data) });
   },
 
-  // Women Help API
+  // Women Empowerment Suite APIs
+  getWomenEntrepreneurs: async (params = {}) => {
+    const q = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/women/entrepreneurs${q ? `?${q}` : ''}`);
+    return res.data?.entrepreneurs || res.entrepreneurs || res.data || [];
+  },
+  addWomenEntrepreneur: async (data) => {
+    return await fetchJson('/women/entrepreneurs', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getWomenPrograms: async (params = {}) => {
+    const q = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/women/programs${q ? `?${q}` : ''}`);
+    return res.data?.programs || res.programs || res.data || [];
+  },
+  getWomenMentors: async (params = {}) => {
+    const q = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/women/mentors${q ? `?${q}` : ''}`);
+    return res.data?.mentors || res.mentors || res.data || [];
+  },
+  bookWomenMentor: async (data) => {
+    return await fetchJson('/women/mentors/book', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getWomenShgs: async (params = {}) => {
+    const q = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/women/shgs${q ? `?${q}` : ''}`);
+    return res.data?.shgs || res.shgs || res.data || [];
+  },
+  addWomenShg: async (data) => {
+    return await fetchJson('/women/shgs', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getWomenProducts: async (params = {}) => {
+    const q = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/women/products${q ? `?${q}` : ''}`);
+    return res.data?.products || res.products || res.data || [];
+  },
+  addWomenProduct: async (data) => {
+    return await fetchJson('/women/products', { method: 'POST', body: JSON.stringify(data) });
+  },
   getWomenHelpRequests: async () => {
     const res = await fetchJson('/women/help');
-    return res.data?.requests || res.requests || res.data || [];
+    return res.data?.cases || res.cases || res.data?.requests || res.requests || res.data || [];
   },
   addWomenHelpRequest: async (data) => {
     return await fetchJson('/women/help', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getWomenAdminStats: async () => {
+    const res = await fetchJson('/women/admin/stats');
+    return res.data || res;
+  },
+  updateWomenCase: async (id, data) => {
+    return await fetchJson(`/women/admin/cases/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+  },
+
+  // Durg Sanvardhan & Donations API
+  getDurgProjects: async (params = {}) => {
+    const q = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/donations/projects${q ? `?${q}` : ''}`);
+    return res.data?.projects || res.projects || res.data || [];
+  },
+  getDurgProjectById: async (id) => {
+    const res = await fetchJson(`/donations/projects/${id}`);
+    return res.data?.project || res.project || res.data || null;
+  },
+  joinFortVolunteer: async (id, data) => {
+    return await fetchJson(`/donations/projects/${id}/volunteer`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  getDonationsCampaigns: async () => {
+    const res = await fetchJson('/donations/campaigns');
+    return res.data?.campaigns || res.campaigns || res.data || [];
+  },
+  donateFund: async (data) => {
+    return await fetchJson('/donations/donate', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getRecentDonations: async () => {
+    const res = await fetchJson('/donations/recent');
+    return res.data?.recentDonations || res.recentDonations || res.data || [];
+  },
+  getDonationAudits: async () => {
+    const res = await fetchJson('/donations/audits');
+    return res.data || res;
+  },
+
+  // Maratha Organizations & Trusts API (सामाजिक संस्था व संघटना)
+  getOrganizations: async (params = {}) => {
+    const q = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/organizations${q ? `?${q}` : ''}`);
+    return res.data?.organizations || res.organizations || res.data || [];
+  },
+  getOrganizationById: async (id) => {
+    const res = await fetchJson(`/organizations/${id}`);
+    return res.data?.organization || res.organization || res.data || null;
+  },
+  addOrganization: async (data) => {
+    return await fetchJson('/organizations', { method: 'POST', body: JSON.stringify(data) });
+  },
+  addOrgEvent: async (orgId, data) => {
+    return await fetchJson(`/organizations/${orgId}/events`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  requestOrgCollaboration: async (orgId, data) => {
+    return await fetchJson(`/organizations/${orgId}/collaborate`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  getOrgCrmStats: async () => {
+    const res = await fetchJson('/organizations/crm/stats');
+    return res.data?.stats || res.stats || res.data || {};
+  },
+  updateOrgStatus: async (orgId, data) => {
+    return await fetchJson(`/organizations/${orgId}/status`, { method: 'PATCH', body: JSON.stringify(data) });
   },
 
   // Builders API
@@ -255,6 +407,70 @@ export const apiClient = {
     return await fetchJson('/sangam/meetings', { method: 'POST', body: JSON.stringify(data) });
   },
 
+  // Member Registration Referrals API (Persistent SQLite)
+  getMemberReferrals: async () => {
+    try {
+      const res = await fetchJson('/members/referrals/my');
+      return res.data || res;
+    } catch (e) {
+      return null;
+    }
+  },
+  getMemberReferralTree: async (memberId) => {
+    try {
+      const res = await fetchJson(`/members/referral-tree/${encodeURIComponent(memberId)}`);
+      return res.data || res;
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  },
+  getAllMemberReferrals: async () => {
+    try {
+      const res = await fetchJson('/crm/member-referrals');
+      return res.data?.referrals || res.referrals || [];
+    } catch (e) {
+      return [];
+    }
+  },
+  verifyMemberReferralCode: async (code) => {
+    try {
+      const res = await fetchJson(`/members/referrals/verify/${encodeURIComponent(code)}`);
+      return res.data || res;
+    } catch (e) {
+      return { valid: false };
+    }
+  },
+  requestMemberReferralPayout: async (data) => {
+    return await fetchJson('/members/referrals/payout', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // Direct Messages & Interconnection API (Persistent SQLite)
+  getConversations: async () => {
+    try {
+      const res = await fetchJson('/messages/conversations');
+      return res.data?.conversations || res.conversations || [];
+    } catch (e) {
+      return [];
+    }
+  },
+  getMessageThread: async (partnerId) => {
+    try {
+      const res = await fetchJson(`/messages/${encodeURIComponent(partnerId)}`);
+      return res.data || res;
+    } catch (e) {
+      return { partner: null, messages: [] };
+    }
+  },
+  sendDirectMessage: async (partnerId, text) => {
+    return await fetchJson(`/messages/${encodeURIComponent(partnerId)}`, {
+      method: 'POST',
+      body: JSON.stringify({ recipientId: partnerId, text })
+    });
+  },
+  deleteDirectMessage: async (id) => {
+    return await fetchJson(`/messages/${id}`, { method: 'DELETE' });
+  },
+
   // Site Content & CMS Management API
   getSiteContent: async () => {
     const res = await fetchJson('/admin/site-content');
@@ -302,7 +518,7 @@ export const apiClient = {
       const qs = new URLSearchParams(params).toString();
       const res = await fetchJson(`/members${qs ? '?' + qs : ''}`);
       const rawList = res?.members || res?.data?.members || (Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []));
-      
+
       // Fetch real details for members to get real phone and email
       const detailedList = await Promise.all(
         rawList.map(async (m) => {
@@ -360,7 +576,7 @@ export const apiClient = {
 
       if (params.search) {
         const q = String(params.search).toLowerCase().trim();
-        filtered = filtered.filter(u => 
+        filtered = filtered.filter(u =>
           (u.name || '').toLowerCase().includes(q) ||
           (u.id || '').toLowerCase().includes(q) ||
           (u.phone || '').toLowerCase().includes(q) ||
@@ -401,66 +617,53 @@ export const apiClient = {
     }
   },
 
+  // Admin user management. These talk to /api/admin/users only: there is no silent fallback to the public
+  // registration or member-edit endpoints, so a refused request (bad password, missing permission) is shown as is.
   createAdminUser: async (data) => {
-    try {
-      const payload = {
-        name: data.name,
-        phone: data.phone,
-        email: data.email || `${data.phone}@connectmaratha.com`,
-        password: data.password || 'password123',
-        district: data.district || 'पुणे',
-        taluka: data.taluka || '',
-        role: data.role || 'member',
-        kul: data.kul || '९६ कुळी मराठा',
-        gotra: data.gotra || '',
-        tier: data.tier || 'Gold',
-        profession: data.profession || 'व्यवसायिक / नोकरी',
-        business: data.business || ''
-      };
-      const res = await fetchJson('/auth/register', { method: 'POST', body: JSON.stringify(payload) });
-      if (res && res.member) {
-        apiClient._memberDetailsCache.set(res.member.id, res.member);
-      }
-      return res;
-    } catch (e) {
-      throw e;
-    }
+    const payload = {
+      name: data.name,
+      phone: data.phone,
+      email: data.email || undefined,
+      password: data.password,
+      district: data.district || undefined,
+      taluka: data.taluka || undefined,
+      role: data.role || 'member',
+      kul: data.kul || undefined,
+      gotra: data.gotra || undefined,
+      tier: data.tier || undefined,
+      profession: data.profession || undefined,
+      business: data.business || undefined,
+      verified: data.verified !== false
+    };
+    return fetchJson('/admin/users', { method: 'POST', body: JSON.stringify(payload) });
   },
   getAdminUser: async (id) => {
-    try {
-      const res = await fetchJson(`/admin/users/${id}`);
-      return res.data?.user || res.user || null;
-    } catch (e) {
-      const res = await fetchJson(`/members/${id}`);
-      return res.data?.member || res.member || res.data || null;
-    }
+    const res = await fetchJson(`/admin/users/${id}`);
+    return res.data?.user || res.user || null;
   },
   updateAdminUser: async (id, data) => {
-    try {
-      return await fetchJson(`/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(data) });
-    } catch (e) {
-      return await fetchJson(`/members/${id}`, { method: 'PUT', body: JSON.stringify(data) });
-    }
+    return fetchJson(`/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+  resetAdminUserPassword: async (id, password) => {
+    return fetchJson(`/admin/users/${id}/reset-password`, { method: 'POST', body: JSON.stringify({ password }) });
+  },
+  setAdminUserStatus: async (id, disabled) => {
+    return fetchJson(`/admin/users/${id}/status`, { method: 'POST', body: JSON.stringify({ disabled }) });
   },
   deleteAdminUser: async (id) => {
-    try {
-      return await fetchJson(`/admin/users/${id}`, { method: 'DELETE' });
-    } catch (e) {
-      return { success: true, message: 'वापरकर्ता काढण्यात आला.' };
-    }
+    return fetchJson(`/admin/users/${id}`, { method: 'DELETE' });
+  },
+  deleteMember: async (id) => {
+    return fetchJson(`/admin/users/${id}`, { method: 'DELETE' });
+  },
+  deleteUser: async (id) => {
+    return fetchJson(`/admin/users/${id}`, { method: 'DELETE' });
   },
   assignAdminRole: async (memberId, newRole, assignedScope, remarks) => {
-    try {
-      return await fetchJson('/admin/assign-role', {
-        method: 'PUT',
-        body: JSON.stringify({ memberId, newRole, assignedScope, remarks })
-      });
-    } catch (e) {
-      return await fetchJson(`/members/${memberId}`, {
-        method: 'PUT',
-        body: JSON.stringify({ role: newRole, assignedScope, remarks })
-      });
-    }
+    return fetchJson('/admin/assign-role', {
+      method: 'PUT',
+      body: JSON.stringify({ memberId, newRole, assignedScope, remarks })
+    });
   },
   getRolesMatrix: async () => {
     try {
@@ -531,6 +734,29 @@ export const apiClient = {
     return await fetchJson(`/admin/information/${id}`, { method: 'DELETE' });
   },
 
+  // Approvals & Workflow Queue
+  getAdminApprovals: async () => {
+    const res = await fetchJson('/admin/approvals');
+    return res.data || res;
+  },
+  actOnAdminApproval: async (id, action, remarks = '') => {
+    return await fetchJson(`/admin/approvals/${id}/action`, {
+      method: 'POST',
+      body: JSON.stringify({ action, remarks })
+    });
+  },
+
+  // Central Portal Reports & CSV Export
+  getAdminReport: async (type = 'members', params = {}) => {
+    const query = new URLSearchParams({ type, ...params }).toString();
+    const res = await fetchJson(`/admin/reports/export?${query}`);
+    return res.data || res;
+  },
+  getReportExportUrl: (type = 'members', params = {}) => {
+    const query = new URLSearchParams({ type, format: 'csv', ...params }).toString();
+    return `/api/admin/reports/export?${query}`;
+  },
+
   // Multi-tier Hierarchy & Community Centers API
   getHierarchyMetrics: async () => {
     const res = await fetchJson('/admin/hierarchy-metrics');
@@ -540,13 +766,41 @@ export const apiClient = {
     const query = new URLSearchParams(params).toString();
     const endpoint = `/admin/community-centers${query ? `?${query}` : ''}`;
     const res = await fetchJson(endpoint);
-    return res.data?.centers || res.centers || [];
+    const list = res.data?.centers || res.centers || [];
+    if (res.data?.realStats) {
+      list.realStats = res.data.realStats;
+    }
+    return list;
   },
   createCommunityCenter: async (data) => {
     return await fetchJson('/admin/community-centers', { method: 'POST', body: JSON.stringify(data) });
   },
+  updateCommunityCenter: async (id, data) => {
+    return await fetchJson(`/admin/community-centers/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+  deleteCommunityCenter: async (id) => {
+    return await fetchJson(`/admin/community-centers/${id}`, { method: 'DELETE' });
+  },
   recordCenterAction: async (data) => {
     return await fetchJson('/admin/center-action', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getMembers: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/members${query ? `?${query}` : ''}`);
+    return res.members || res.data?.members || res.data || [];
+  },
+  getBusinesses: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/businesses${query ? `?${query}` : ''}`);
+    return res.businesses || res.data?.businesses || res.data || [];
+  },
+  getJobs: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/jobs${query ? `?${query}` : ''}`);
+    return res.jobs || res.data?.jobs || res.data || [];
+  },
+  verifyMemberKyc: async (id) => {
+    return await fetchJson(`/admin/members/${id}/verify-kyc`, { method: 'POST' });
   },
 
   // Local Branch (Shakha) APIs
@@ -599,6 +853,503 @@ export const apiClient = {
     const endpoint = `/crm/organization-units${query ? `?${query}` : ''}`;
     const res = await fetchJson(endpoint);
     return res.data?.units || res.units || [];
+  },
+
+  // 🩸 24x7 Emergency Blood & Donor API
+  getBloodRequests: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/blood/requests${query ? `?${query}` : ''}`);
+    return res.data?.requests || res.requests || [];
+  },
+  getMyBloodRequests: async () => {
+    const res = await fetchJson('/blood/requests/my');
+    return res.data?.requests || res.requests || [];
+  },
+  getPendingBloodRequests: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/blood/requests/admin/pending${query ? `?${query}` : ''}`);
+    return res.data?.requests || res.requests || [];
+  },
+  getBloodRequestById: async (id) => {
+    const res = await fetchJson(`/blood/requests/${id}`);
+    return res.data?.request || res.request || null;
+  },
+  postBloodSOS: async (data) => {
+    return await fetchJson('/blood/requests', { method: 'POST', body: JSON.stringify(data) });
+  },
+  createBloodRequest: async (data) => {
+    return await fetchJson('/blood/requests', { method: 'POST', body: JSON.stringify(data) });
+  },
+  addBloodRequest: async (data) => {
+    return await fetchJson('/blood/requests', { method: 'POST', body: JSON.stringify(data) });
+  },
+  verifyBloodRequest: async (id, data = {}) => {
+    return await fetchJson(`/blood/requests/${id}/verify`, { method: 'PATCH', body: JSON.stringify(data) });
+  },
+  fulfillBloodRequest: async (id, data = {}) => {
+    return await fetchJson(`/blood/requests/${id}/fulfill`, { method: 'PATCH', body: JSON.stringify(data) });
+  },
+  respondToBloodRequest: async (id, data) => {
+    return await fetchJson(`/blood/requests/${id}/respond`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  getBloodRequestResponses: async (id) => {
+    const res = await fetchJson(`/blood/requests/${id}/responses`);
+    return res.data?.responses || res.responses || [];
+  },
+  getDonors: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/blood/donors${query ? `?${query}` : ''}`);
+    return res.data?.donors || res.donors || [];
+  },
+  getBloodDonors: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/blood/donors${query ? `?${query}` : ''}`);
+    return res.data?.donors || res.donors || [];
+  },
+  getMyDonorProfile: async () => {
+    const res = await fetchJson('/blood/donors/my');
+    return res.data?.donor || res.donor || null;
+  },
+  registerBloodDonor: async (data) => {
+    return await fetchJson('/blood/donors', { method: 'POST', body: JSON.stringify(data) });
+  },
+  addDonor: async (data) => {
+    return await fetchJson('/blood/donors', { method: 'POST', body: JSON.stringify(data) });
+  },
+  updateDonorAvailability: async (id, data) => {
+    return await fetchJson(`/blood/donors/${id}/availability`, { method: 'PATCH', body: JSON.stringify(data) });
+  },
+
+  // Maratha Bank & Finance
+  getBankLoans: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/bank/loans${qs ? '?' + qs : ''}`);
+    return res.data || res;
+  },
+  applyBankLoan: async (data) => {
+    return await fetchJson('/bank/loans', { method: 'POST', body: JSON.stringify(data) });
+  },
+  updateBankLoanStatus: async (id, data) => {
+    return await fetchJson(`/bank/loans/${id}/status`, { method: 'PATCH', body: JSON.stringify(data) });
+  },
+  applyBankAccount: async (data) => {
+    return await fetchJson('/bank/accounts/apply', { method: 'POST', body: JSON.stringify(data) });
+  },
+  enrollBankCourse: async (data) => {
+    return await fetchJson('/bank/institute/enroll', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // Maratha Dairy & Agro Collection
+  getDairy: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/dairy${qs ? '?' + qs : ''}`);
+    return res.data?.dairy || res.dairy || res.data || [];
+  },
+  getDairyFull: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/dairy${qs ? '?' + qs : ''}`);
+    return res.data || res;
+  },
+  addDairy: async (data) => {
+    return await fetchJson('/dairy', { method: 'POST', body: JSON.stringify(data) });
+  },
+  registerDairyFarmer: async (data) => {
+    return await fetchJson('/dairy/farmers', { method: 'POST', body: JSON.stringify(data) });
+  },
+  createDairyOrder: async (data) => {
+    return await fetchJson('/dairy/orders', { method: 'POST', body: JSON.stringify(data) });
+  },
+  applyDairyPartner: async (data) => {
+    return await fetchJson('/dairy/partner', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // Digital Community & Groups (/api/community)
+  getCommunityPosts: async (params = {}) => {
+    const qs = typeof params === 'string' ? `groupId=${params}` : new URLSearchParams(params).toString();
+    const res = await fetchJson(`/community/posts${qs ? '?' + qs : ''}`);
+    return res.data?.posts || res.posts || res.data || [];
+  },
+  createCommunityPost: async (data) => {
+    return await fetchJson('/community/posts', { method: 'POST', body: JSON.stringify(data) });
+  },
+  likeCommunityPost: async (postId) => {
+    return await fetchJson(`/community/posts/${postId}/like`, { method: 'POST' });
+  },
+  addCommunityComment: async (postId, data) => {
+    return await fetchJson(`/community/posts/${postId}/comments`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  deleteCommunityPost: async (postId) => {
+    return await fetchJson(`/community/posts/${postId}`, { method: 'DELETE' });
+  },
+  reportCommunityPost: async (postId, data) => {
+    return await fetchJson(`/community/posts/${postId}/report`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  getCommunityGroups: async () => {
+    const res = await fetchJson('/community/groups');
+    return res.data?.groups || res.groups || res.data || [];
+  },
+  joinCommunityGroup: async (groupId) => {
+    return await fetchJson(`/community/groups/${groupId}/join`, { method: 'POST' });
+  },
+  getCommunityNews: async () => {
+    const res = await fetchJson('/community/news');
+    return res.data?.news || res.news || res.data || [];
+  },
+
+  // Unified Approvals Command Center (/api/admin)
+  getUnifiedApprovals: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/admin/unified-approvals${qs ? '?' + qs : ''}`);
+    return res.data || res;
+  },
+  actionUnifiedApproval: async (data) => {
+    return await fetchJson('/admin/unified-approvals/action', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
+
+  // 🩸 Blood SOS & Donors Directory API
+  getBloodRequests: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/blood/requests${qs ? '?' + qs : ''}`);
+    return res.data?.requests || res.requests || res.data || [];
+  },
+  getMyBloodRequests: async () => {
+    const res = await fetchJson('/blood/requests/my');
+    return res.data?.requests || res.requests || res.data || [];
+  },
+  getDonors: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/blood/donors${qs ? '?' + qs : ''}`);
+    return res.data?.donors || res.donors || res.data || [];
+  },
+  addBloodRequest: async (data) => {
+    return await fetchJson('/blood/requests', { method: 'POST', body: JSON.stringify(data) });
+  },
+  registerDonor: async (data) => {
+    return await fetchJson('/blood/donors', { method: 'POST', body: JSON.stringify(data) });
+  },
+  respondToBloodRequest: async (id, data) => {
+    return await fetchJson(`/blood/requests/${id}/respond`, { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // 💍 Matrimony Portal API
+  getMatrimonyProfiles: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/matrimony${qs ? '?' + qs : ''}`);
+    return res.data?.profiles || res.profiles || res.data || [];
+  },
+  getMatrimonyProfileById: async (id) => {
+    const res = await fetchJson(`/matrimony/${id}`);
+    return res.data?.profile || res.profile || res.data;
+  },
+  registerMatrimony: async (data) => {
+    return await fetchJson('/matrimony', { method: 'POST', body: JSON.stringify(data) });
+  },
+  sendMatrimonyInterest: async (id, data) => {
+    return await fetchJson(`/matrimony/${id}/connect`, { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // 📚 Books & Literature API
+  getBooks: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/books${qs ? '?' + qs : ''}`);
+    return res.data?.books || res.books || res.data || [];
+  },
+  addBook: async (data) => {
+    return await fetchJson('/books', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // 🎬 Marathi Movies & Cinema API
+  getMovies: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/movies${qs ? '?' + qs : ''}`);
+    return res.data?.movies || res.movies || res.data || [];
+  },
+  addMovie: async (data) => {
+    return await fetchJson('/movies', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // 🤝 Social Workers Directory API
+  getSocialWorkers: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/social-workers${qs ? '?' + qs : ''}`);
+    return res.data?.socialWorkers || res.socialWorkers || res.data || [];
+  },
+  getSocialWorkerById: async (id) => {
+    const res = await fetchJson(`/social-workers/${id}`);
+    return res.data?.socialWorker || res.socialWorker || res.data || null;
+  },
+  addSocialWorker: async (data) => {
+    return await fetchJson('/social-workers', { method: 'POST', body: JSON.stringify(data) });
+  },
+  requestSocialHelp: async (data) => {
+    return await fetchJson('/social-workers/help-requests', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getSocialHelpRequests: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/social-workers/help-requests${qs ? '?' + qs : ''}`);
+    return res.data?.requests || res.requests || res.data || [];
+  },
+  getSocialMissions: async () => {
+    const res = await fetchJson('/social-workers/missions');
+    return res.data?.missions || res.missions || res.data || [];
+  },
+  addSocialTestimonial: async (workerId, data) => {
+    return await fetchJson(`/social-workers/${workerId}/testimonials`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  getSocialWorkerCrmStats: async () => {
+    const res = await fetchJson('/social-workers/crm/stats');
+    return res.data?.stats || res.stats || res.data || {};
+  },
+  updateSocialHelpRequest: async (requestId, data) => {
+    return await fetchJson(`/social-workers/help-requests/${requestId}`, { method: 'PATCH', body: JSON.stringify(data) });
+  },
+
+  // 🎓 Higher Education & Scholarships API
+  getScholarships: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/scholarships${qs ? '?' + qs : ''}`);
+    return res.data?.scholarships || res.scholarships || res.data || [];
+  },
+  getColleges: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/colleges${qs ? '?' + qs : ''}`);
+    return res.data?.colleges || res.colleges || res.data || [];
+  },
+
+  // 🎙️ Speakers & Orators API
+  getSpeakers: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/speakers${qs ? '?' + qs : ''}`);
+    return res.data?.speakers || res.speakers || res.data || [];
+  },
+  addSpeaker: async (data) => {
+    return await fetchJson('/speakers', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // 🏛️ Government Officers API
+  getOfficers: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/officers${qs ? '?' + qs : ''}`);
+    return res.data?.officers || res.officers || res.data || [];
+  },
+  addOfficer: async (data) => {
+    return await fetchJson('/officers', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // 🏢 Organizations Directory API
+  getOrganizations: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/organizations${qs ? '?' + qs : ''}`);
+    return res.data?.organizations || res.organizations || res.data || [];
+  },
+  addOrganization: async (data) => {
+    return await fetchJson('/organizations', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // 🛠️ Local Community Services & Commercial Exchange API
+  getServiceCategories: async () => {
+    const res = await fetchJson('/services/categories');
+    return res.data?.categories || res.categories || res.data || [];
+  },
+  getServices: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/services${qs ? '?' + qs : ''}`);
+    return res.data?.services || res.services || res.data || [];
+  },
+  getServiceById: async (id) => {
+    const res = await fetchJson(`/services/${id}`);
+    return res.data?.service || res.service || res.data;
+  },
+  addService: async (data) => {
+    return await fetchJson('/services', { method: 'POST', body: JSON.stringify(data) });
+  },
+  bookService: async (id, data) => {
+    return await fetchJson(`/services/${id}/booking`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  getServiceBookings: async (id) => {
+    const res = await fetchJson(`/services/${id}/bookings`);
+    return res.data?.bookings || res.bookings || res.data || [];
+  },
+  getServiceReviews: async (id) => {
+    const res = await fetchJson(`/services/${id}/reviews`);
+    return res.data?.reviews || res.reviews || res.data || [];
+  },
+  addServiceReview: async (id, data) => {
+    return await fetchJson(`/services/${id}/reviews`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  postServiceEnquiry: async (data) => {
+    return await fetchJson('/services/enquiries', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getServiceEnquiries: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/services/enquiries${qs ? '?' + qs : ''}`);
+    return res.data?.enquiries || res.enquiries || res.data || [];
+  },
+  submitBusinessQuote: async (data) => {
+    return await fetchJson('/services/quotes', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getBusinessQuotes: async (enquiryId) => {
+    const res = await fetchJson(`/services/quotes/${enquiryId}`);
+    return res.data?.quotes || res.quotes || res.data || [];
+  },
+
+  // 🏨 Hotels & Hospitality Booking API
+  getHotels: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/hotels${qs ? '?' + qs : ''}`);
+    return res.data?.hotels || res.hotels || res.data || [];
+  },
+  addHotel: async (data) => {
+    return await fetchJson('/hotels', { method: 'POST', body: JSON.stringify(data) });
+  },
+  bookHotel: async (hotelId, data) => {
+    return await fetchJson(`/hotels/${hotelId}/booking`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  getHotelBookings: async (hotelId) => {
+    const res = await fetchJson(`/hotels/${hotelId}/bookings`);
+    return res.data?.bookings || res.bookings || res.data || [];
+  },
+
+  // 🩺 Doctor Consultations & Appointments API
+  bookDoctorAppointment: async (doctorId, data) => {
+    return await fetchJson(`/doctors/${doctorId}/appointment`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  getDoctorAppointments: async (doctorId) => {
+    const res = await fetchJson(`/doctors/${doctorId}/appointments`);
+    return res.data?.appointments || res.appointments || res.data || [];
+  },
+
+  // 👥 CRM Field Staff & Operations API
+  getCrmStaff: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/crm/staff${qs ? '?' + qs : ''}`);
+    return res.data?.staff || res.staff || res.data || [];
+  },
+  addCrmStaff: async (data) => {
+    return await fetchJson('/crm/staff', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getCrmBranches: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/crm/branches${qs ? '?' + qs : ''}`);
+    return res.data?.branches || res.branches || res.data || [];
+  },
+  addCrmBranch: async (data) => {
+    return await fetchJson('/crm/branches', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getCrmBranchActivities: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/crm/branch-activities${qs ? '?' + qs : ''}`);
+    return res.data?.activities || res.activities || res.data || [];
+  },
+  addCrmBranchActivity: async (data) => {
+    return await fetchJson('/crm/branch-activities', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getCrmTerritoryOfficers: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/crm/territory-officers${qs ? '?' + qs : ''}`);
+    return res.data?.officers || res.officers || res.data || [];
+  },
+  addCrmTerritoryOfficer: async (data) => {
+    return await fetchJson('/crm/territory-officers', { method: 'POST', body: JSON.stringify(data) });
+  },
+
+  // 🛡️ Legal & Google Play Child Safety Standards API
+  submitChildSafetyReport: async (data) => {
+    return await fetchJson('/legal/child-safety-report', { method: 'POST', body: JSON.stringify(data) });
+  },
+  getChildSafetyStatus: async () => {
+    return await fetchJson('/legal/child-safety-status');
+  },
+  getLegalReports: async () => {
+    return await fetchJson('/legal/reports');
+  },
+
+  changeMemberId: async (id, newId, isVip, vipNumber) => {
+    return await fetchJson(`/admin/members/${id}/change-id`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ newId, isVip, vipNumber })
+    });
+  },
+
+  // 👥 Member Referrals & Viral Growth Network (Central SQLite Sync)
+  getMemberReferrals: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return await fetchJson(`/members/referrals/my${qs ? '?' + qs : ''}`);
+  },
+  verifyReferralCode: async (code) => {
+    return await fetchJson(`/members/referrals/verify/${encodeURIComponent(code)}`);
+  },
+  requestReferralPayout: async (upi_id, amount) => {
+    return await fetchJson('/members/referrals/payout', {
+      method: 'POST',
+      body: JSON.stringify({ upi_id, amount })
+    });
+  },
+
+  // 💬 User-to-User Direct Messaging & Interconnection
+  getConversations: async () => {
+    return await fetchJson('/messages/conversations');
+  },
+  getChatThread: async (partnerId) => {
+    return await fetchJson(`/messages/${encodeURIComponent(partnerId)}`);
+  },
+  sendChatMessage: async (partnerId, text) => {
+    return await fetchJson(`/messages/${encodeURIComponent(partnerId)}`, {
+      method: 'POST',
+      body: JSON.stringify({ recipientId: partnerId, text })
+    });
+  },
+  searchMembersForChat: async (q) => {
+    return await fetchJson(`/messages/search/members${q ? '?q=' + encodeURIComponent(q) : ''}`);
+  },
+
+  // 📡 Realtime Live SSE Stream Subscription (Instant Live Push)
+  subscribeToRealtime: (callback) => {
+    try {
+      if (typeof window === 'undefined' || !window.EventSource) return () => { };
+      const es = new EventSource('/api/realtime/stream?token=' + encodeURIComponent((typeof localStorage !== 'undefined' && localStorage.getItem('cm_jwt_token')) || ''));
+      es.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (callback) callback(data);
+        } catch (e) { }
+      };
+      es.onerror = () => {
+        // Silently close if backend doesn't support SSE stream
+        try { es.close(); } catch (_) { }
+      };
+      return () => {
+        try { es.close(); } catch (_) { }
+      };
+    } catch (err) {
+      return () => { };
+    }
+  },
+
+  // 🎨 CMS & Site Content Management
+  getSiteContent: async () => {
+    return await fetchJson('/admin/site-content');
+  },
+  updateSiteContent: async (content) => {
+    return await fetchJson('/admin/site-content', {
+      method: 'PUT',
+      body: JSON.stringify(content)
+    });
+  },
+  updateSiteSection: async (section, data) => {
+    return await fetchJson(`/admin/site-content/${encodeURIComponent(section)}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  },
+  resetSiteContent: async () => {
+    return await fetchJson('/admin/site-content/reset', {
+      method: 'POST'
+    });
   }
 };
 

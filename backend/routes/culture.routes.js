@@ -53,12 +53,12 @@ router.post('/oral-history', optionalToken, (req, res) => {
 // ==========================================
 router.get('/dialects', (req, res) => {
   const dialects = [
-    { id: 'DIA-01', name: 'अहिराणी (खानदेशी)', region: 'उत्तर महाराष्ट्र (जळगाव, धुळे, नंदुरबार)', speakers: 'सुमारे १ कोटी', samplePhrase: 'कसं शे रे भाऊ? घरचे सगळा खुशाल का?', audioUrl: '/assets/audio/ahirani.mp3' },
-    { id: 'DIA-02', name: 'वऱ्हाडी', region: 'विदर्भ (नागपूर, अमरावती, अकोला)', speakers: 'सुमारे १.५ कोटी', samplePhrase: 'का बे, काय चाललं? आज पोट्टे कुठं गेले?', audioUrl: '/assets/audio/varhadi.mp3' },
-    { id: 'DIA-03', name: 'मालवणी', region: 'दक्षिण कोकण (सिंधुदुर्ग, रत्नागिरी)', speakers: 'सुमारे ५० लाख', samplePhrase: 'काय रे मका सांग, कडेक का जावचा?', audioUrl: '/assets/audio/malvani.mp3' },
-    { id: 'DIA-04', name: 'मराठवाडी (गोदाकाठची बोली)', region: 'मराठवाडा (छत्रपती संभाजीनगर, नांदेड, लातूर)', speakers: 'सुमारे २ कोटी', samplePhrase: 'काय चाललंय मग, बरे हाय का समदे?', audioUrl: '/assets/audio/marathwadi.mp3' },
-    { id: 'DIA-05', name: 'कोल्हापुरी / घाटी बोली', region: 'पश्चिम महाराष्ट्र (कोल्हापूर, सांगली, सातारा)', speakers: 'सुमारे १ कोटी', samplePhrase: 'काय भावा, कसं काय चाललंय? एकदम कडक!', audioUrl: '/assets/audio/kolhapuri.mp3' },
-    { id: 'DIA-06', name: 'आगरी / कोळी बोली', region: 'उत्तर कोकण (ठाणे, रायगड, मुंबई उपनगर)', speakers: 'सुमारे २५ लाख', samplePhrase: 'आमचा पाडा, आमची खाडी! चालला का मासेमारीला?', audioUrl: '/assets/audio/agri.mp3' }
+    { id: 'DIA-01', name: 'अहिराणी (खानदेशी)', region: 'उत्तर महाराष्ट्र (जळगाव, धुळे, नंदुरबार)', speakers: 'सुमारे १ कोटी', samplePhrase: 'कसं शे रे भाऊ? घरचे सगळा खुशाल का?' },
+    { id: 'DIA-02', name: 'वऱ्हाडी', region: 'विदर्भ (नागपूर, अमरावती, अकोला)', speakers: 'सुमारे १.५ कोटी', samplePhrase: 'का बे, काय चाललं? आज पोट्टे कुठं गेले?' },
+    { id: 'DIA-03', name: 'मालवणी', region: 'दक्षिण कोकण (सिंधुदुर्ग, रत्नागिरी)', speakers: 'सुमारे ५० लाख', samplePhrase: 'काय रे मका सांग, कडेक का जावचा?' },
+    { id: 'DIA-04', name: 'मराठवाडी (गोदाकाठची बोली)', region: 'मराठवाडा (छत्रपती संभाजीनगर, नांदेड, लातूर)', speakers: 'सुमारे २ कोटी', samplePhrase: 'काय चाललंय मग, बरे हाय का समदे?' },
+    { id: 'DIA-05', name: 'कोल्हापुरी / घाटी बोली', region: 'पश्चिम महाराष्ट्र (कोल्हापूर, सांगली, सातारा)', speakers: 'सुमारे १ कोटी', samplePhrase: 'काय भावा, कसं काय चाललंय? एकदम कडक!' },
+    { id: 'DIA-06', name: 'आगरी / कोळी बोली', region: 'उत्तर कोकण (ठाणे, रायगड, मुंबई उपनगर)', speakers: 'सुमारे २५ लाख', samplePhrase: 'आमचा पाडा, आमची खाडी! चालला का मासेमारीला?' }
   ];
 
   return sendSuccess(res, 'मराठी बोलीभाषा ध्वनीसंग्रह व शब्दकोश', { dialects });

@@ -7,11 +7,17 @@ export default function BusinessLeadsPortalPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const isModerator = user && ['superadmin', 'admin', 'ceo', 'center_manager', 'center_admin', 'district_admin', 'taluka_admin'].includes(user.role);
+
+  const [activeTab, setActiveTab] = useState('all'); // 'all' or 'my'
   const [enquiries, setEnquiries] = useState([]);
+  const [myEnquiries, setMyEnquiries] = useState([]);
+  const [mySubmittedQuotes, setMySubmittedQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDistrict, setSelectedDistrict] = useState('सर्व');
   const [selectedCategory, setSelectedCategory] = useState('सर्व');
   const [search, setSearch] = useState('');
+  const [statusBanner, setStatusBanner] = useState(null);
 
   // Quote Submission Modal
   const [quotingEnquiry, setQuotingEnquiry] = useState(null);
@@ -38,9 +44,19 @@ export default function BusinessLeadsPortalPage() {
   });
   const [submittingEnquiry, setSubmittingEnquiry] = useState(false);
 
+  // Received Quotes Expansion
+  const [quotesMap, setQuotesMap] = useState({});
+  const [loadingQuotesFor, setLoadingQuotesFor] = useState(null);
+
   useEffect(() => {
     loadEnquiries();
   }, [selectedDistrict, selectedCategory]);
+
+  useEffect(() => {
+    if (activeTab === 'my' && user) {
+      loadMyEnquiries();
+    }
+  }, [activeTab, user]);
 
   const loadEnquiries = async () => {
     setLoading(true);
@@ -56,6 +72,20 @@ export default function BusinessLeadsPortalPage() {
       console.error('Error fetching enquiries:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMyEnquiries = async () => {
+    try {
+      const res = await api.enquiries.getMy();
+      if (res?.enquiries) {
+        setMyEnquiries(res.enquiries);
+      }
+      if (res?.myQuotes) {
+        setMySubmittedQuotes(res.myQuotes);
+      }
+    } catch (err) {
+      console.error('Error fetching my enquiries:', err);
     }
   };
 
@@ -75,6 +105,7 @@ export default function BusinessLeadsPortalPage() {
         setQuoteSuccess(false);
         setQuotingEnquiry(null);
         loadEnquiries();
+        if (activeTab === 'my') loadMyEnquiries();
       }, 1800);
     } catch (err) {
       alert('कोटेशन सादर करताना त्रुटी: ' + (err.message || 'काहीतरी चूक झाली'));
@@ -86,7 +117,7 @@ export default function BusinessLeadsPortalPage() {
     setSubmittingEnquiry(true);
     try {
       await api.enquiries.create(newEnquiryForm);
-      alert('नवीन ग्राहक Enquiry यशस्वीरीत्या प्रसिद्ध झाली! 🚩');
+      setStatusBanner('नवीन ग्राहक Enquiry यशस्वीरीत्या प्रसिद्ध झाली! 🚩');
       setShowNewEnquiryModal(false);
       setNewEnquiryForm({
         title: '',
@@ -99,10 +130,81 @@ export default function BusinessLeadsPortalPage() {
         description: ''
       });
       loadEnquiries();
+      if (activeTab === 'my') loadMyEnquiries();
+      setTimeout(() => setStatusBanner(null), 3500);
     } catch (err) {
       alert('Enquiry प्रसिद्ध करताना त्रुटी: ' + (err.message || 'काहीतरी चूक झाली'));
     } finally {
       setSubmittingEnquiry(false);
+    }
+  };
+
+  // Feature 26: Coordinator Requirement Verification
+  const handleVerifyEnquiry = async (enqId) => {
+    try {
+      const res = await api.enquiries.verify(enqId, { isValid: true });
+      setStatusBanner('🟢 ' + (res.message || 'व्यावसायिक मागणी चॅप्टर पडताळणी यशस्वी!'));
+      setEnquiries(prev => prev.map(e => e.id === enqId ? { ...e, verified: true, verificationBadge: '🟢 पडताळणीकृत मागणी (Verified Demand)' } : e));
+      setTimeout(() => setStatusBanner(null), 3000);
+    } catch (err) {
+      alert(err.message || 'पडताळणी करताना त्रुटी आली.');
+    }
+  };
+
+  // Toggle View Received Quotes for an enquiry
+  const toggleViewQuotes = async (enqId) => {
+    if (quotesMap[enqId]) {
+      setQuotesMap(prev => {
+        const next = { ...prev };
+        delete next[enqId];
+        return next;
+      });
+      return;
+    }
+
+    setLoadingQuotesFor(enqId);
+    try {
+      const res = await api.enquiries.getQuotes(enqId);
+      const list = res?.quotes || [];
+      setQuotesMap(prev => ({ ...prev, [enqId]: list }));
+    } catch {
+      setQuotesMap(prev => ({ ...prev, [enqId]: [] }));
+    } finally {
+      setLoadingQuotesFor(null);
+    }
+  };
+
+  // Accept a Proposal Quote
+  const handleAcceptQuote = async (enqId, quoteId) => {
+    try {
+      const res = await api.enquiries.acceptQuote(enqId, quoteId);
+      setStatusBanner('✅ ' + (res.message || 'कोटेशन स्वीकारण्यात आले! संबंधित उद्योजकांशी थेट संपर्क साधा.'));
+      loadMyEnquiries();
+      loadEnquiries();
+      // Update local state in quotesMap
+      setQuotesMap(prev => ({
+        ...prev,
+        [enqId]: (prev[enqId] || []).map(q => q.id === quoteId ? { ...q, status: 'स्वीकृत (Accepted)' } : q)
+      }));
+      setTimeout(() => setStatusBanner(null), 4000);
+    } catch (err) {
+      alert(err.message || 'कोटेशन स्वीकारताना त्रुटी आली.');
+    }
+  };
+
+  // Close Deal / Mark Won
+  const handleCloseDeal = async (enqId) => {
+    const conf = window.confirm('सौदा यशस्वीरीत्या पूर्ण झाला आहे का? ही मागणी बंद करण्यात येईल.');
+    if (!conf) return;
+
+    try {
+      const res = await api.enquiries.updateStatus(enqId, { status: 'यशस्वी सौदा पूर्ण (Deal Closed / Won)' });
+      setStatusBanner('🎉 ' + (res.message || 'व्यवहार यशस्वी पूर्ण झाला! सर्व सहभागींचे अभिनंदन.'));
+      loadMyEnquiries();
+      loadEnquiries();
+      setTimeout(() => setStatusBanner(null), 3500);
+    } catch (err) {
+      alert(err.message || 'स्थिती बदलताना त्रुटी आली.');
     }
   };
 
@@ -113,7 +215,8 @@ export default function BusinessLeadsPortalPage() {
       (item.title && item.title.toLowerCase().includes(q)) ||
       (item.description && item.description.toLowerCase().includes(q)) ||
       (item.category && item.category.toLowerCase().includes(q)) ||
-      (item.city && item.city.toLowerCase().includes(q))
+      (item.city && item.city.toLowerCase().includes(q)) ||
+      (item.district && item.district.toLowerCase().includes(q))
     );
   });
 
@@ -126,9 +229,9 @@ export default function BusinessLeadsPortalPage() {
           position: 'relative',
           borderRadius: '24px',
           overflow: 'hidden',
-          marginBottom: '32px',
+          marginBottom: '28px',
           boxShadow: '0 12px 30px rgba(67, 20, 7, 0.15)',
-          background: '#431407'
+          background: '#EA580C'
         }}>
           <img
             src="/assets/images/business-growth-banner.jpg"
@@ -150,12 +253,15 @@ export default function BusinessLeadsPortalPage() {
             padding: '24px 36px',
             color: '#FFFFFF'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
               <span style={{ background: '#EA580C', padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 900 }}>
                 ● LIVE COMMERCIAL RADAR
               </span>
               <span style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 800 }}>
                 महाराष्ट्र B2B व्यवसाय दालन
+              </span>
+              <span style={{ background: '#166534', padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 800 }}>
+                Feature 26: सप्रमाण चॅप्टर पडताळणी
               </span>
             </div>
             <h1 style={{ margin: '0 0 10px', fontSize: 'clamp(1.8rem, 3.2vw, 2.5rem)', fontFamily: 'Baloo 2', fontWeight: 900 }}>
@@ -167,227 +273,565 @@ export default function BusinessLeadsPortalPage() {
           </div>
         </div>
 
-        {/* 2. Top Bar & Actions */}
+        {/* Status Notification Banner */}
+        {statusBanner && (
+          <div style={{
+            background: '#ECFDF5',
+            border: '2px solid #10B981',
+            borderRadius: '12px',
+            padding: '12px 20px',
+            color: '#065F46',
+            fontWeight: 800,
+            fontSize: '0.95rem',
+            marginBottom: '20px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <span>{statusBanner}</span>
+            <button onClick={() => setStatusBanner(null)} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#065F46' }}>✕</button>
+          </div>
+        )}
+
+        {/* 2. Navigation Tabs */}
         <div style={{
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '16px',
-          marginBottom: '28px',
-          background: '#FFFFFF',
-          padding: '18px 24px',
-          borderRadius: '16px',
-          border: '1.5px solid #FED7AA',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.03)'
+          gap: '10px',
+          borderBottom: '2px solid #FED7AA',
+          marginBottom: '24px',
+          overflowX: 'auto',
+          paddingBottom: '2px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: '280px' }}>
-            <span style={{ fontSize: '1.2rem' }}>🔍</span>
-            <input
-              type="text"
-              placeholder="शहर, उद्योग किंवा कामाचे स्वरूप शोधा..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '10px 14px',
-                borderRadius: '10px',
-                border: '1px solid #CBD5E1',
-                fontSize: '0.92rem',
-                outline: 'none'
-              }}
-            />
-          </div>
-
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => setShowNewEnquiryModal(true)}
-              style={{
-                background: 'linear-gradient(135deg, #EA580C, #C2410C)',
-                color: '#FFFFFF',
-                border: 'none',
-                padding: '11px 20px',
-                borderRadius: '10px',
-                fontWeight: 900,
-                fontSize: '0.92rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)'
-              }}
-            >
-              <span>➕</span>
-              <span>नवीन Enquiry नोंदवा</span>
-            </button>
-            <Link
-              to="/business/directory"
-              style={{
-                background: '#FFF7ED',
-                color: '#C2410C',
-                border: '1.5px solid #FED7AA',
-                padding: '10px 18px',
-                borderRadius: '10px',
-                fontWeight: 800,
-                fontSize: '0.9rem',
-                textDecoration: 'none'
-              }}
-            >
-              🏢 सर्व व्यवसायांची डिरेक्टरी
-            </Link>
-          </div>
+          <button
+            onClick={() => setActiveTab('all')}
+            style={{
+              padding: '10px 20px',
+              fontWeight: 900,
+              fontSize: '0.95rem',
+              borderRadius: '10px 10px 0 0',
+              border: 'none',
+              cursor: 'pointer',
+              background: activeTab === 'all' ? '#FFFFFF' : 'transparent',
+              color: activeTab === 'all' ? '#EA580C' : '#64748B',
+              borderBottom: activeTab === 'all' ? '3px solid #EA580C' : '3px solid transparent',
+              boxShadow: activeTab === 'all' ? '0 -2px 6px rgba(0,0,0,0.03)' : 'none',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            🏢 सर्व थेट व्यावसायिक मागण्या ({enquiries.length})
+          </button>
+          <button
+            onClick={() => {
+              if (!user) {
+                navigate(`/login?redirect=${encodeURIComponent('/leads')}`);
+                return;
+              }
+              setActiveTab('my');
+              loadMyEnquiries();
+            }}
+            style={{
+              padding: '10px 20px',
+              fontWeight: 900,
+              fontSize: '0.95rem',
+              borderRadius: '10px 10px 0 0',
+              border: 'none',
+              cursor: 'pointer',
+              background: activeTab === 'my' ? '#FFFFFF' : 'transparent',
+              color: activeTab === 'my' ? '#0F172A' : '#64748B',
+              borderBottom: activeTab === 'my' ? '3px solid #0F172A' : '3px solid transparent',
+              boxShadow: activeTab === 'my' ? '0 -2px 6px rgba(0,0,0,0.03)' : 'none',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            📋 माझ्या नोंदवलेल्या मागण्या व प्राप्त कोट्स {myEnquiries.length > 0 ? `(${myEnquiries.length})` : ''}
+          </button>
         </div>
 
-        {/* 3. Filters */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '24px' }}>
-          <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#78350F', alignSelf: 'center', marginRight: '6px' }}>
-            📍 जिल्हा निवडा:
-          </span>
-          {['सर्व', 'पुणे', 'मुंबई', 'नाशिक', 'कोल्हापूर', 'छत्रपती संभाजीनगर', 'सातारा', 'नागपूर'].map((d) => (
-            <button
-              key={d}
-              onClick={() => setSelectedDistrict(d)}
-              style={{
-                background: selectedDistrict === d ? '#EA580C' : '#FFFFFF',
-                color: selectedDistrict === d ? '#FFFFFF' : '#475569',
-                border: selectedDistrict === d ? '1px solid #EA580C' : '1px solid #E2E8F0',
-                padding: '6px 14px',
-                borderRadius: '20px',
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                cursor: 'pointer'
-              }}
-            >
-              {d}
-            </button>
-          ))}
-        </div>
+        {/* TAB 1: ALL ENQUIRIES */}
+        {activeTab === 'all' && (
+          <>
+            {/* Top Bar & Actions */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '16px',
+              marginBottom: '24px',
+              background: '#FFFFFF',
+              padding: '18px 24px',
+              borderRadius: '16px',
+              border: '1.5px solid #FED7AA',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.03)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: '280px' }}>
+                <span style={{ fontSize: '1.2rem' }}>🔍</span>
+                <input
+                  type="text"
+                  placeholder="शहर, उद्योग किंवा कामाचे स्वरूप शोधा..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    borderRadius: '10px',
+                    border: '1px solid #CBD5E1',
+                    fontSize: '0.92rem',
+                    outline: 'none'
+                  }}
+                />
+              </div>
 
-        {/* 4. Enquiries Grid */}
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B' }}>
-            <div style={{ fontSize: '2rem', marginBottom: '12px' }}>⏳</div>
-            <p style={{ fontWeight: 800 }}>ग्राहक Enquiries लोड होत आहेत...</p>
-          </div>
-        ) : filteredEnquiries.length === 0 ? (
-          <div style={{
-            background: '#FFFFFF',
-            borderRadius: '16px',
-            padding: '50px 20px',
-            textAlign: 'center',
-            border: '1.5px dashed #CBD5E1'
-          }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🔍</div>
-            <h3 style={{ margin: '0 0 8px', color: '#334155', fontFamily: 'Baloo 2' }}>कोणतीही Enquiry उपलब्ध नाही</h3>
-            <p style={{ color: '#64748B', fontSize: '0.92rem', marginBottom: '16px' }}>
-              आपण निवडलेल्या फिल्टर्सनुसार सध्या कोणतीही ग्राहक विचारणा नाही.
-            </p>
-            <button
-              onClick={() => { setSelectedDistrict('सर्व'); setSelectedCategory('सर्व'); setSearch(''); }}
-              style={{ background: '#EA580C', color: '#FFFFFF', border: 'none', padding: '8px 18px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}
-            >
-              सर्व Enquiries पहा
-            </button>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '22px' }}>
-            {filteredEnquiries.map((enq) => (
-              <div
-                key={enq.id}
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => setShowNewEnquiryModal(true)}
+                  style={{
+                    background: 'linear-gradient(135deg, #EA580C, #C2410C)',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '11px 20px',
+                    borderRadius: '10px',
+                    fontWeight: 900,
+                    fontSize: '0.92rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)'
+                  }}
+                >
+                  <span>➕</span>
+                  <span>नवीन Enquiry नोंदवा</span>
+                </button>
+                <Link
+                  to="/business/directory"
+                  style={{
+                    background: '#FFF7ED',
+                    color: '#C2410C',
+                    border: '1.5px solid #FED7AA',
+                    padding: '10px 18px',
+                    borderRadius: '10px',
+                    fontWeight: 800,
+                    fontSize: '0.9rem',
+                    textDecoration: 'none'
+                  }}
+                >
+                  🏢 सर्व व्यवसायांची डिरेक्टरी
+                </Link>
+              </div>
+            </div>
+
+            {/* Filters */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '24px' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#78350F', alignSelf: 'center', marginRight: '6px' }}>
+                📍 जिल्हा निवडा:
+              </span>
+              {['सर्व', 'पुणे', 'मुंबई', 'नाशिक', 'कोल्हापूर', 'छत्रपती संभाजीनगर', 'सातारा', 'नागपूर'].map((d) => (
+                <button
+                  key={d}
+                  onClick={() => setSelectedDistrict(d)}
+                  style={{
+                    background: selectedDistrict === d ? '#EA580C' : '#FFFFFF',
+                    color: selectedDistrict === d ? '#FFFFFF' : '#475569',
+                    border: selectedDistrict === d ? '1px solid #EA580C' : '1px solid #E2E8F0',
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  {d}
+                </button>
+              ))}
+            </div>
+
+            {/* Enquiries Grid */}
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B' }}>
+                <div style={{ fontSize: '2rem', marginBottom: '12px' }}>⏳</div>
+                <p style={{ fontWeight: 800 }}>ग्राहक Enquiries लोड होत आहेत...</p>
+              </div>
+            ) : filteredEnquiries.length === 0 ? (
+              <div style={{
+                background: '#FFFFFF',
+                borderRadius: '16px',
+                padding: '50px 20px',
+                textAlign: 'center',
+                border: '1.5px dashed #CBD5E1'
+              }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🔍</div>
+                <h3 style={{ margin: '0 0 8px', color: '#334155', fontFamily: 'Baloo 2' }}>कोणतीही Enquiry उपलब्ध नाही</h3>
+                <p style={{ color: '#64748B', fontSize: '0.92rem', marginBottom: '16px' }}>
+                  आपण निवडलेल्या फिल्टर्सनुसार सध्या कोणतीही ग्राहक विचारणा नाही.
+                </p>
+                <button
+                  onClick={() => { setSelectedDistrict('सर्व'); setSelectedCategory('सर्व'); setSearch(''); }}
+                  style={{ background: '#EA580C', color: '#FFFFFF', border: 'none', padding: '8px 18px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}
+                >
+                  सर्व Enquiries पहा
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '22px' }}>
+                {filteredEnquiries.map((enq) => {
+                  const isClosed = enq.status && (enq.status.includes('पूर्ण') || enq.status.includes('Closed'));
+                  const badge = enq.verificationBadge || (enq.verified ? '🟢 पडताळणीकृत मागणी (Verified Demand)' : '🟡 समुदाय नोंद (Community Posted)');
+
+                  return (
+                    <div
+                      key={enq.id}
+                      style={{
+                        background: '#FFFFFF',
+                        borderRadius: '18px',
+                        border: '1.5px solid #FFEDD5',
+                        padding: '24px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
+                        opacity: isClosed ? 0.8 : 1
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px', flexWrap: 'wrap', gap: '6px' }}>
+                        <span style={{
+                          background: '#FEF3C7',
+                          color: '#92400E',
+                          padding: '3px 10px',
+                          borderRadius: '6px',
+                          fontSize: '0.76rem',
+                          fontWeight: 800
+                        }}>
+                          {enq.category || 'व्यावसायिक लीड'}
+                        </span>
+                        <span style={{
+                          background: enq.verified ? '#DCFCE7' : '#FEF9C3',
+                          color: enq.verified ? '#15803D' : '#854D0E',
+                          padding: '3px 10px',
+                          borderRadius: '6px',
+                          fontSize: '0.74rem',
+                          fontWeight: 800
+                        }}>
+                          {badge}
+                        </span>
+                      </div>
+
+                      <h3 style={{ fontSize: '1.25rem', fontFamily: 'Baloo 2', color: '#1E293B', margin: '0 0 10px', lineHeight: 1.4 }}>
+                        {enq.title}
+                      </h3>
+
+                      <p style={{ color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '16px', flex: 1 }}>
+                        {enq.description}
+                      </p>
+
+                      <div style={{ background: '#FFF7ED', padding: '12px 14px', borderRadius: '12px', border: '1px solid #FED7AA', marginBottom: '18px', fontSize: '0.84rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                          <span style={{ color: '#78350F', fontWeight: 700 }}>📍 ठिकाण:</span>
+                          <strong style={{ color: '#1E293B' }}>{enq.city || enq.district}</strong>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                          <span style={{ color: '#78350F', fontWeight: 700 }}>💰 अंदाजे बजेट:</span>
+                          <strong style={{ color: '#C2410C' }}>{enq.budget || 'चर्चेनुसार'}</strong>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ color: '#78350F', fontWeight: 700 }}>👤 ग्राहक / संपर्क:</span>
+                          <span style={{ color: '#475569' }}>{enq.postedBy || enq.clientName || 'सत्यापित सभासद'}</span>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '0.78rem', color: '#64748B' }}>
+                          कोटेशन्स: <strong>{enq.quotesCount || 0}</strong> | स्थिती: <strong>{enq.status}</strong>
+                        </span>
+
+                        {!isClosed ? (
+                          <div style={{ display: 'flex', gap: '6px' }}>
+                            {isModerator && !enq.verified && (
+                              <button
+                                onClick={() => handleVerifyEnquiry(enq.id)}
+                                style={{
+                                  background: '#FEF3C7',
+                                  color: '#92400E',
+                                  border: '1px solid #FDE68A',
+                                  padding: '8px 12px',
+                                  borderRadius: '8px',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 800,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                ✓ पडताळणी करा
+                              </button>
+                            )}
+                            <button
+                              onClick={() => {
+                                if (!user) {
+                                  sessionStorage.setItem('cm_login_redirect', '/leads');
+                                  navigate(`/login?redirect=${encodeURIComponent('/leads')}`);
+                                  return;
+                                }
+                                setQuotingEnquiry(enq);
+                                setQuoteForm({
+                                  businessName: user?.business || '',
+                                  ownerName: user?.name || '',
+                                  phone: user?.phone || '',
+                                  quoteAmount: '',
+                                  proposalNotes: ''
+                                });
+                              }}
+                              style={{
+                                background: 'linear-gradient(135deg, #EA580C, #C2410C)',
+                                color: '#FFFFFF',
+                                border: 'none',
+                                padding: '9px 18px',
+                                borderRadius: '10px',
+                                fontSize: '0.88rem',
+                                fontWeight: 800,
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 8px rgba(234, 88, 12, 0.2)'
+                              }}
+                            >
+                              कोटेशन / प्रतिसाद द्या ➔
+                            </button>
+                          </div>
+                        ) : (
+                          <span style={{ background: '#DCFCE7', color: '#166534', padding: '6px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 800 }}>
+                            ✅ सौदा पूर्ण
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* TAB 2: MY POSTED LEADS & RECEIVED QUOTES */}
+        {activeTab === 'my' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+              <div>
+                <h2 style={{ fontSize: '1.4rem', fontFamily: 'Baloo 2', color: '#1E293B', margin: 0 }}>
+                  माझ्या व्यावसायिक मागण्या व आलेले कोट्स
+                </h2>
+                <p style={{ color: '#64748B', fontSize: '0.88rem', margin: '4px 0 0' }}>
+                  आपण नोंदवलेल्या आवश्यकतांवर मराठा उद्योजकांनी सादर केलेली कोटेशन्स पहा व स्वीकारा.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowNewEnquiryModal(true)}
                 style={{
-                  background: '#FFFFFF',
-                  borderRadius: '18px',
-                  border: '1.5px solid #FFEDD5',
-                  padding: '24px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
-                  transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                  background: '#EA580C',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  padding: '10px 18px',
+                  borderRadius: '10px',
+                  fontWeight: 800,
+                  fontSize: '0.88rem',
+                  cursor: 'pointer'
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                  <span style={{
-                    background: '#FEF3C7',
-                    color: '#92400E',
-                    padding: '3px 10px',
-                    borderRadius: '6px',
-                    fontSize: '0.76rem',
-                    fontWeight: 800
-                  }}>
-                    {enq.category || 'व्यावसायिक लीड'}
-                  </span>
-                  <span style={{
-                    background: enq.status === 'पूर्ण (Closed)' ? '#F1F5F9' : '#DCFCE7',
-                    color: enq.status === 'पूर्ण (Closed)' ? '#64748B' : '#15803D',
-                    padding: '3px 10px',
-                    borderRadius: '6px',
-                    fontSize: '0.74rem',
-                    fontWeight: 800
-                  }}>
-                    ● {enq.status || 'सक्रिय (Open)'}
-                  </span>
-                </div>
+                + नवीन मागणी जोडा
+              </button>
+            </div>
 
-                <h3 style={{ fontSize: '1.25rem', fontFamily: 'Baloo 2', color: '#1E293B', margin: '0 0 10px', lineHeight: 1.4 }}>
-                  {enq.title}
+            {myEnquiries.length === 0 ? (
+              <div style={{ background: '#FFFFFF', borderRadius: '16px', padding: '40px 20px', textAlign: 'center', border: '1px solid #FED7AA', marginBottom: '30px' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>📋</div>
+                <h4>आपण अद्याप कोणतीही व्यावसायिक मागणी नोंदवलेली नाही.</h4>
+                <p style={{ color: '#64748B', fontSize: '0.9rem' }}>सामग्री, सेवा किंवा कंत्राट हवे असल्यास वरील बटणावर क्लिक करा.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', marginBottom: '32px' }}>
+                {myEnquiries.map(enq => {
+                  const quotes = quotesMap[enq.id];
+                  const isLoadingQuotes = loadingQuotesFor === enq.id;
+                  const isClosed = enq.status && (enq.status.includes('पूर्ण') || enq.status.includes('Closed'));
+
+                  return (
+                    <div key={enq.id} style={{
+                      background: '#FFFFFF',
+                      borderRadius: '16px',
+                      border: '1.5px solid #FED7AA',
+                      padding: '20px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                            <span style={{ background: '#FFEDD5', color: '#9A3412', padding: '2px 8px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 800 }}>
+                              {enq.category}
+                            </span>
+                            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: enq.verified ? '#15803D' : '#854D0E' }}>
+                              {enq.verificationBadge || '🟡 समुदाय नोंद'}
+                            </span>
+                            <span style={{ background: isClosed ? '#DCFCE7' : '#FEF3C7', color: isClosed ? '#166534' : '#92400E', padding: '2px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800 }}>
+                              {enq.status}
+                            </span>
+                          </div>
+                          <h3 style={{ fontSize: '1.2rem', fontFamily: 'Baloo 2', color: '#1E293B', margin: '0 0 4px' }}>
+                            {enq.title}
+                          </h3>
+                          <div style={{ fontSize: '0.85rem', color: '#64748B' }}>
+                            📍 {enq.city} | 💰 बजेट: <strong>{enq.budget}</strong> | संपर्क: <strong>{enq.phone}</strong>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                          <button
+                            onClick={() => toggleViewQuotes(enq.id)}
+                            style={{
+                              background: '#F1F5F9',
+                              color: '#0F172A',
+                              border: '1px solid #CBD5E1',
+                              padding: '8px 14px',
+                              borderRadius: '8px',
+                              fontWeight: 800,
+                              fontSize: '0.85rem',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            {isLoadingQuotes ? 'लोड होत आहे...' : (quotes ? 'कोट्स लपवा' : `प्राप्त कोटेशन्स (${enq.quotesCount || 0})`)}
+                          </button>
+
+                          {!isClosed && (
+                            <button
+                              onClick={() => handleCloseDeal(enq.id)}
+                              style={{
+                                background: '#16A34A',
+                                color: '#FFFFFF',
+                                border: 'none',
+                                padding: '8px 14px',
+                                borderRadius: '8px',
+                                fontWeight: 800,
+                                fontSize: '0.85rem',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              ✅ सौदा पूर्ण झाला (Close Deal)
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Expanded Quotes List */}
+                      {quotes && (
+                        <div style={{
+                          marginTop: '16px',
+                          paddingTop: '16px',
+                          borderTop: '1px solid #FED7AA',
+                          background: '#FFF7ED',
+                          padding: '14px',
+                          borderRadius: '12px'
+                        }}>
+                          <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1F2937', margin: '0 0 10px' }}>
+                            उद्योजकांनी सादर केलेली कोटेशन्स ({quotes.length}):
+                          </h4>
+
+                          {quotes.length === 0 ? (
+                            <div style={{ fontSize: '0.85rem', color: '#64748B' }}>
+                              अद्याप कोणत्याही उद्योजकाने या मागणीसाठी कोटेशन सादर केलेले नाही.
+                            </div>
+                          ) : (
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '10px' }}>
+                              {quotes.map(q => {
+                                const isAccepted = q.status && q.status.includes('स्वीकृत');
+
+                                return (
+                                  <div key={q.id} style={{
+                                    background: '#FFFFFF',
+                                    borderRadius: '10px',
+                                    border: isAccepted ? '2px solid #16A34A' : '1px solid #CBD5E1',
+                                    padding: '12px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between'
+                                  }}>
+                                    <div>
+                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                                        <strong style={{ fontSize: '0.95rem', color: '#1E293B' }}>{q.businessName}</strong>
+                                        <span style={{ fontSize: '0.75rem', background: isAccepted ? '#DCFCE7' : '#F1F5F9', color: isAccepted ? '#166534' : '#475569', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>
+                                          {q.status}
+                                        </span>
+                                      </div>
+                                      <div style={{ fontSize: '0.85rem', color: '#C2410C', fontWeight: 800, marginBottom: '4px' }}>
+                                        दर: {q.quotedPrice}
+                                      </div>
+                                      <div style={{ fontSize: '0.82rem', color: '#475569', marginBottom: '6px' }}>
+                                        📞 फोन: <a href={`tel:${q.phone}`} style={{ color: '#0284C7', fontWeight: 800 }}>{q.phone}</a>
+                                      </div>
+                                      {q.proposalNote && (
+                                        <div style={{ fontSize: '0.78rem', color: '#64748B', fontStyle: 'italic', marginBottom: '8px' }}>
+                                          "{q.proposalNote}"
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {!isAccepted && !isClosed && (
+                                      <button
+                                        onClick={() => handleAcceptQuote(enq.id, q.id)}
+                                        style={{
+                                          background: '#EA580C',
+                                          color: '#FFFFFF',
+                                          border: 'none',
+                                          padding: '6px 12px',
+                                          borderRadius: '6px',
+                                          fontSize: '0.8rem',
+                                          fontWeight: 800,
+                                          cursor: 'pointer'
+                                        }}
+                                      >
+                                        ✓ हे कोटेशन स्वीकारा
+                                      </button>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* My Submitted Quotes on other leads */}
+            {mySubmittedQuotes.length > 0 && (
+              <div style={{
+                background: '#FFFFFF',
+                borderRadius: '16px',
+                border: '1.5px solid #FED7AA',
+                padding: '24px',
+                marginBottom: '32px'
+              }}>
+                <h3 style={{ fontSize: '1.2rem', fontFamily: 'Baloo 2', color: '#1E293B', margin: '0 0 14px' }}>
+                  मी इतर मागण्यांसाठी सादर केलेली कोटेशन्स ({mySubmittedQuotes.length})
                 </h3>
-
-                <p style={{ color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '16px', flex: 1 }}>
-                  {enq.description}
-                </p>
-
-                <div style={{ background: '#FFF7ED', padding: '12px 14px', borderRadius: '12px', border: '1px solid #FED7AA', marginBottom: '18px', fontSize: '0.84rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ color: '#78350F', fontWeight: 700 }}>📍 ठिकाण:</span>
-                    <strong style={{ color: '#1E293B' }}>{enq.city || enq.district}</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ color: '#78350F', fontWeight: 700 }}>💰 अंदाजे बजेट:</span>
-                    <strong style={{ color: '#C2410C' }}>{enq.budget || 'चर्चेनुसार'}</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#78350F', fontWeight: 700 }}>👤 ग्राहक / संपर्क:</span>
-                    <span style={{ color: '#475569' }}>{enq.clientName || 'सत्यापित सभासद'}</span>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                  <span style={{ fontSize: '0.78rem', color: '#64748B' }}>
-                    कोटेशन्स: <strong>{enq.quotesCount || (enq.quotes ? enq.quotes.length : 0)}</strong>
-                  </span>
-                  <button
-                    onClick={() => {
-                      if (!user) {
-                        sessionStorage.setItem('cm_login_redirect', '/leads');
-                        navigate(`/login?redirect=${encodeURIComponent('/leads')}`);
-                        return;
-                      }
-                      setQuotingEnquiry(enq);
-                      setQuoteForm({
-                        businessName: user?.business || '',
-                        ownerName: user?.name || '',
-                        phone: user?.phone || '',
-                        quoteAmount: '',
-                        proposalNotes: ''
-                      });
-                    }}
-                    style={{
-                      background: 'linear-gradient(135deg, #EA580C, #C2410C)',
-                      color: '#FFFFFF',
-                      border: 'none',
-                      padding: '9px 18px',
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
+                  {mySubmittedQuotes.map(q => (
+                    <div key={q.id} style={{
+                      background: '#FFF7ED',
                       borderRadius: '10px',
-                      fontSize: '0.88rem',
-                      fontWeight: 800,
-                      cursor: 'pointer',
-                      boxShadow: '0 2px 8px rgba(234, 88, 12, 0.2)'
-                    }}
-                  >
-                    कोटेशन / प्रतिसाद द्या ➔
-                  </button>
+                      border: '1px solid #FED7AA',
+                      padding: '12px'
+                    }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#1E293B', marginBottom: '4px' }}>
+                        {q.enquiryTitle}
+                      </div>
+                      <div style={{ fontSize: '0.85rem', color: '#C2410C', fontWeight: 700, marginBottom: '2px' }}>
+                        माझा प्रस्तावित दर: {q.quotedPrice}
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: '#64748B' }}>
+                        स्थिती: <strong>{q.status}</strong>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
+            )}
           </div>
         )}
 
@@ -449,7 +893,7 @@ export default function BusinessLeadsPortalPage() {
                 <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#EA580C', marginBottom: '4px' }}>
                   COMMERCIAL PROPOSAL
                 </div>
-                <h3 style={{ margin: '0 0 6px', fontSize: '1.3rem', fontFamily: 'Baloo 2', color: '#431407' }}>
+                <h3 style={{ margin: '0 0 6px', fontSize: '1.3rem', fontFamily: 'Baloo 2', color: '#EA580C' }}>
                   कोटेशन सादर करा
                 </h3>
                 <div style={{ fontSize: '0.86rem', color: '#64748B', marginBottom: '16px' }}>
@@ -595,7 +1039,7 @@ export default function BusinessLeadsPortalPage() {
               <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#EA580C', marginBottom: '4px' }}>
                 POST BUSINESS LEAD
               </div>
-              <h3 style={{ margin: '0 0 16px', fontSize: '1.35rem', fontFamily: 'Baloo 2', color: '#431407' }}>
+              <h3 style={{ margin: '0 0 16px', fontSize: '1.35rem', fontFamily: 'Baloo 2', color: '#EA580C' }}>
                 नवीन व्यावसायिक Enquiry नोंदवा
               </h3>
 

@@ -1,0 +1,1592 @@
+/* =========================================================
+   CONNECT MARATHA AI AGENT
+   Orange + White Theme
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #222222;
+}
+
+/* =========================================================
+   MAIN APP
+   ========================================================= */
+
+.app {
+  min-height: 100vh;
+  width: 100%;
+  background: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+}
+
+/* =========================================================
+   CHAT CONTAINER
+   ========================================================= */
+
+.chat-container {
+  width: 100%;
+  max-width: 430px;
+  height: 650px;
+
+  background: #ffffff;
+
+  border-radius: 18px;
+  overflow: hidden;
+
+  border: 1px solid #eeeeee;
+
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.chat-header {
+  min-height: 82px;
+
+  background: #f57c00;
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px 16px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* =========================================================
+   HEADER AVATAR
+   ========================================================= */
+/* ==================================================
+   HEADER LOGO IMAGE
+   ================================================== */
+
+.ai-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+
+.ai-avatar {
+  width: 48px;
+  height: 48px;
+
+  background: #ffffff;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 25px;
+
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.header-left h2 {
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.header-left span {
+  font-size: 13px;
+  opacity: 0.95;
+}
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
+
+.close-button {
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #222222;
+  color: #ffffff;
+
+  font-size: 25px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: #000000;
+  transform: scale(1.05);
+}
+
+/* =========================================================
+   CHAT MESSAGES
+   ========================================================= */
+
+.chat-messages {
+  flex: 1;
+
+  padding: 20px 16px;
+
+  overflow-y: auto;
+
+  background: #ffffff;
+}
+
+/* Scrollbar */
+
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #f57c00;
+  border-radius: 10px;
+}
+
+/* =========================================================
+   MESSAGE ROW
+   ========================================================= */
+
+.message-row {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+
+  margin-bottom: 18px;
+
+  gap: 9px;
+}
+
+.message-row.ai {
+  justify-content: flex-start;
+}
+
+.message-row.user {
+  justify-content: flex-end;
+}
+
+/* =========================================================
+   MESSAGE AVATAR
+   ========================================================= */
+
+.message-avatar {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  /* Same light background for AI and User */
+  background: #fff3e0;
+
+  border: 1px solid #f57c00;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+}
+
+/* User avatar - same light color as AI avatar */
+.user-avatar {
+  background: #fff3e0;
+  border-color: #f57c00;
+}
+
+/* =========================================================
+   MESSAGE CONTENT
+   ========================================================= */
+
+.message-content {
+  max-width: 78%;
+}
+
+/* =========================================================
+   MESSAGE BUBBLE
+   ========================================================= */
+
+.message-bubble {
+  padding: 11px 14px;
+
+  border-radius: 15px;
+
+  font-size: 14px;
+  line-height: 1.55;
+
+  word-wrap: break-word;
+}
+
+/* AI */
+
+.message-row.ai .message-bubble {
+  background: #fff8f0;
+
+  color: #222222;
+
+  border: 1px solid #f6c28b;
+
+  border-top-left-radius: 4px;
+}
+
+/* USER */
+
+.message-row.user .message-bubble {
+  background: #f57c00;
+
+  color: #ffffff;
+
+  border-top-right-radius: 4px;
+}
+
+/* =========================================================
+   SOURCES
+   ========================================================= */
+
+.sources-box {
+  margin-top: 8px;
+
+  background: #ffffff;
+
+  border: 1px solid #f6c28b;
+
+  border-radius: 10px;
+
+  padding: 10px;
+}
+
+.sources-title {
+  color: #f57c00;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  margin-bottom: 8px;
+}
+
+.source-item {
+  display: flex;
+  flex-direction: column;
+
+  padding: 7px 0;
+
+  border-bottom: 1px solid #eeeeee;
+}
+
+.source-item:last-child {
+  border-bottom: none;
+}
+
+.source-item strong {
+  color: #333333;
+
+  font-size: 12px;
+
+  line-height: 1.4;
+}
+
+.source-item span {
+  color: #777777;
+
+  font-size: 11px;
+
+  margin-top: 2px;
+}
+
+/* =========================================================
+   LOADING MESSAGE
+   ========================================================= */
+
+.message-row.ai .message-bubble {
+  animation: messageFade 0.25s ease-in;
+}
+
+@keyframes messageFade {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   ATTRACTIVE CHAT FOOTER
+   ========================================================= */
+
+.chat-input-area {
+  width: 100%;
+
+  padding: 12px 14px 14px;
+
+  /* Soft orange footer */
+  background: linear-gradient(180deg,
+      #fff8f0 0%,
+      #fff0dd 100%);
+
+  border-top: 1px solid #f6c28b;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  box-shadow: 0 -4px 15px rgba(245, 124, 0, 0.08);
+}
+
+/* =========================================================
+   INPUT WRAPPER EFFECT
+   ========================================================= */
+
+.chat-input-area input {
+  flex: 1;
+
+  height: 48px;
+
+  padding: 0 16px;
+
+  border: 1px solid #f0c28c;
+
+  border-radius: 14px;
+
+  outline: none;
+
+  font-size: 14px;
+
+  color: #222222;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.chat-input-area input::placeholder {
+  color: #999999;
+}
+
+.chat-input-area input:focus {
+  border-color: #f57c00;
+
+  box-shadow:
+    0 0 0 3px rgba(245, 124, 0, 0.12),
+    0 3px 10px rgba(0, 0, 0, 0.07);
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   ATTRACTIVE DARK SEND BUTTON
+   ========================================================= */
+
+.send-button {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  border: none;
+
+  border-radius: 14px;
+
+  background: #222222;
+
+  color: #ffffff;
+
+  font-size: 20px;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.18);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.send-button:hover {
+  background: #111111;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.22);
+}
+
+.send-button:active {
+  transform: scale(0.94);
+}
+
+.send-button:disabled {
+  background: #999999;
+
+  cursor: not-allowed;
+
+  box-shadow: none;
+
+  transform: none;
+}
+
+/* =========================================================
+   MOBILE RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .app {
+    padding: 0;
+  }
+
+  .chat-container {
+    width: 100%;
+    height: 100vh;
+
+    max-width: none;
+
+    border-radius: 0;
+
+    border: none;
+
+    box-shadow: none;
+  }
+
+  .chat-header {
+    min-height: 75px;
+
+    padding: 12px 14px;
+  }
+
+  .chat-messages {
+    padding: 16px 12px;
+  }
+
+  .message-content {
+    max-width: 80%;
+  }
+
+  .chat-input-area {
+    padding: 10px;
+  }
+
+  .close-button {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE DEVICES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .header-left h2 {
+    font-size: 17px;
+  }
+
+  .header-left span {
+    font-size: 12px;
+  }
+
+  .ai-avatar {
+    width: 42px;
+    height: 42px;
+    font-size: 22px;
+  }
+
+  .message-content {
+    max-width: 76%;
+  }
+
+  .message-bubble {
+    font-size: 13px;
+  }
+}
+/* ==================================================
+   NEW CHAT BUTTON
+   ================================================== */
+
+.new-chat-button {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: 0.2s ease;
+}
+
+.new-chat-button:hover {
+  background: rgba(144, 238, 144, 0.25);
+}
+
+.new-chat-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==================================================
+   HEADER ACTIONS
+   ================================================== */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+
+/* ==================================================
+   NEW CHAT / CLEAR BUTTON
+   ================================================== */
+
+.new-chat-button {
+  border: none;
+  background: transparent;
+  font-size: 19px;
+  cursor: pointer;
+  padding: 7px;
+  border-radius: 8px;
+  transition: 0.2s ease;
+}
+
+.new-chat-button:hover {
+  background: rgba(10, 10, 10, 0.25);
+}
+
+.new-chat-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* ==================================================
+   CLOSE BUTTON
+   ================================================== */
+
+.close-button {
+  border: none;
+  background: rgba(11, 11, 11, 0.25);;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 5px 9px;
+  border-radius: 8px;
+  transition: 0.2s ease;
+}
+
+.close-button:hover {
+  background: rgba(11, 11, 11, 0.25);
+}
+
+
+/* ==================================================
+   OPEN CHAT BUTTON
+   ================================================== */
+
+.open-chat-button {
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
+
+  width: 60px;
+  height: 60px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: inherit;
+
+  font-size: 26px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.20);
+
+  z-index: 1000;
+}
+
+.open-chat-button:hover {
+  transform: scale(1.05);
+}
+
+/* ==========================================
+   ANSWER FEEDBACK
+========================================== */
+
+.feedback-container {
+  margin: 4px 14px 16px 48px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #dce9de;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+}
+
+.feedback-question {
+  font-size: 13px;
+  color: #285d32;
+  font-weight: 600;
+  margin-bottom: 9px;
+}
+
+.feedback-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.feedback-buttons button {
+  border: none;
+  border-radius: 9px;
+  padding: 7px 13px;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.feedback-buttons button:hover {
+  transform: translateY(-1px);
+}
+
+.feedback-yes {
+  background: #dff5e1;
+  color: #173b20;
+}
+
+.feedback-yes:hover {
+  background: #c8ebcc;
+}
+
+.feedback-no {
+  background: #f1f3f1;
+  color: #444;
+}
+
+.feedback-no:hover {
+  background: #e4e8e4;
+}
+
+
+/* ==========================================
+   THANK YOU / WEBSITE MESSAGE
+========================================== */
+
+.website-message {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #47704e;
+}
+
+.website-link {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 11px;
+  background: #dff5e1;
+  color: #285d32;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: bold;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.website-link:hover {
+  background: #c8ebcc;
+  transform: translateY(-1px);
+}
+
+/* ==========================================
+   LANGUAGE SELECTOR
+========================================== */
+
+.language-selector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.language-label {
+  font-size: 11px !important;
+  color: #47704e !important;
+  margin: 0 !important;
+  white-space: nowrap;
+}
+
+.language-selector select {
+  height: 32px;
+  border: 1px solid #c8e8cc;
+  border-radius: 8px;
+  background: #fff3e0;
+  color: #173b20;
+  font-size: 11px;
+  padding: 0 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+.language-selector select:focus {
+  border-color: #8bc992;
+  box-shadow: 0 0 0 2px rgba(139, 201, 146, 0.15);
+}
+
+.language-selector select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================
+   FEEDBACK
+========================================== */
+
+.feedback-container {
+  margin: 4px 14px 16px 48px;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #dce9de;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+}
+
+.feedback-question {
+  font-size: 13px;
+  color: #ef880a;
+  font-weight: 600;
+  margin-bottom: 9px;
+}
+
+.feedback-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.feedback-buttons button {
+  border: none;
+  border-radius: 9px;
+  padding: 7px 13px;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.feedback-buttons button:hover {
+  transform: translateY(-1px);
+}
+
+.feedback-yes {
+  background: #dff5e1;
+  color: #173b20;
+}
+
+.feedback-yes:hover {
+  background: #c8ebcc;
+}
+
+.feedback-no {
+  background: #f1f3f1;
+  color: #444;
+}
+
+.feedback-no:hover {
+  background: #e4e8e4;
+}
+
+
+/* ==========================================
+   THANK YOU / WEBSITE
+========================================== */
+
+.website-message {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #ef880a;
+}
+
+.website-link {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 11px;
+  background: #dff5e1;
+  color: #f95605;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: bold;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.website-link:hover {
+  background: #c8ebcc;
+  transform: translateY(-1px);
+}
+
+/* ==================================================
+   ATTRACTIVE TECHNICAL SUPPORT FORM
+================================================== */
+
+.support-form {
+  margin: 14px 16px 18px;
+  padding: 20px;
+  border: 2px solid #f3d2ad;
+  border-radius: 18px;
+  background: linear-gradient(
+    145deg,
+    #ffffff 0%,
+    #fffaf5 100%
+  );
+  box-shadow:
+    0 6px 20px rgba(245, 124, 0, 0.10),
+    0 2px 6px rgba(0, 0, 0, 0.05);
+  animation: supportFormAppear 0.3s ease;
+}
+
+/* Form appearance animation */
+
+@keyframes supportFormAppear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================================================
+   SUPPORT TITLE
+================================================== */
+
+.support-title {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  font-size: 18px;
+  font-weight: 700;
+  color: #6b090b;
+
+  margin-bottom: 7px;
+}
+
+.support-title::before {
+  content: "🛠️";
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fff3e0;
+  border: 1px solid #f6c28b;
+  border-radius: 10px;
+
+  font-size: 17px;
+}
+
+/* ==================================================
+   SUPPORT DESCRIPTION
+================================================== */
+
+.support-description {
+  font-size: 13px;
+  color: #f70808;
+
+  line-height: 1.55;
+
+  margin-bottom: 16px;
+
+  padding-bottom: 12px;
+
+  border-bottom: 2px solid #f1e2d2;
+}
+
+/* ==================================================
+   FORM LABELS
+================================================== */
+
+.support-form label {
+  display: block;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  color: #444444;
+
+  margin: 5px 0 3px;
+}
+
+/* ==================================================
+   INPUTS + TEXTAREA
+================================================== */
+
+.support-form input,
+.support-form textarea {
+  width: 90%;
+
+  box-sizing: border-box;
+
+  padding: 10px 12px;
+
+  border: 1px solid #e2d5c8;
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  color: #090909;
+
+  font-size: 13px;
+  font-family: inherit;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+/* Placeholder */
+
+.support-form input::placeholder,
+.support-form textarea::placeholder {
+  color: #aaaaaa;
+}
+
+/* Focus effect */
+
+.support-form input:focus,
+.support-form textarea:focus {
+  border-color: #f57c00;
+
+  background: #fffdf9;
+
+  box-shadow:
+    0 0 0 3px rgba(245, 124, 0, 0.10),
+    0 3px 8px rgba(0, 0, 0, 0.05);
+
+  transform: translateY(-1px);
+}
+
+/* ==================================================
+   TEXTAREA
+================================================== */
+
+.support-form textarea {
+  min-height: 60px;
+
+  resize: vertical;
+
+  line-height: 1.5;
+}
+
+/* ==================================================
+   SUBMIT BUTTON
+================================================== */
+
+.support-submit-button {
+  width: 80%;
+
+  margin-top: 18px;
+
+  padding: 12px 16px;
+
+  border: none;
+  border-radius: 11px;
+
+  background: linear-gradient(
+    135deg,
+    #f57c00 0%,
+    #ff9800 100%
+  );
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 10px rgba(245, 124, 0, 0.22);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+/* Hover */
+
+.support-submit-button:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 7px 16px rgba(245, 124, 0, 0.28);
+
+  filter: brightness(1.03);
+}
+
+/* Click */
+
+.support-submit-button:active {
+  transform: scale(0.98);
+
+  box-shadow:
+    0 3px 7px rgba(245, 124, 0, 0.20);
+}
+
+/* Disabled */
+
+.support-submit-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+/* ==================================================
+   MOBILE SUPPORT FORM
+================================================== */
+
+@media (max-width: 600px) {
+
+  .support-form {
+    margin: 12px 12px 16px;
+    padding: 17px;
+
+    border-radius: 16px;
+  }
+
+  .support-title {
+    font-size: 17px;
+  }
+
+  .support-description {
+    font-size: 12px;
+  }
+
+  .support-form input,
+  .support-form textarea {
+    font-size: 13px;
+  }
+
+  .support-submit-button {
+    padding: 12px;
+  }
+}
+/* ==================================================
+   ATTRACTIVE WELCOME MESSAGE
+================================================== */
+
+.welcome-greeting {
+  font-size: 18px;
+  font-weight: 800;
+  color: #f57c00;
+  margin-bottom: 10px;
+}
+
+.welcome-title {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: #333333;
+}
+
+.welcome-title strong {
+  color: #e66f00;
+  font-weight: 700;
+}
+
+.welcome-line {
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 5px 0;
+  color: #444444;
+}
+
+.welcome-line strong {
+  color: #e66f00;
+  font-weight: 700;
+}
+
+.welcome-divider {
+  text-align: center;
+  color: #f57c00;
+  font-size: 12px;
+  letter-spacing: 4px;
+  margin: 13px 0;
+}
+
+.welcome-question {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333333;
+  margin-bottom: 9px;
+}
+
+.welcome-question strong {
+  color: #e66f00;
+  font-weight: 700;
+}
+
+.welcome-final {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #555555;
+  margin-top: 6px;
+}
+
+.welcome-final strong {
+  color: #d95f00;
+  font-weight: 700;
+}
+
+.welcome-jai {
+  margin-top: 14px;
+  padding-top: 10px;
+
+  border-top: 1px solid #f6c28b;
+
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+
+  color: #e66f00;
+}
+/* =========================================================
+   VOICE INPUT BUTTON
+   ========================================================= */
+
+.voice-button {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #fff3e0;
+  color: #222222;
+
+  font-size: 19px;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.voice-button:hover {
+  transform: scale(1.05);
+
+  background: #ffe0b2;
+
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.voice-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   LISTENING STATE
+   ========================================================= */
+
+.voice-button.listening {
+  background: #222222;
+
+  color: #ffffff;
+
+  animation: voicePulse 1.2s infinite;
+}
+
+@keyframes voicePulse {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(245, 124, 0, 0.45);
+  }
+
+  70% {
+    box-shadow:
+      0 0 0 10px rgba(245, 124, 0, 0);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(245, 124, 0, 0);
+  }
+}
+
+
+/* =========================================================
+   SPEAKER BUTTON
+   ========================================================= */
+
+.speaker-button {
+  width: 30px;
+  height: 30px;
+
+  margin-top: 8px;
+
+  border: 1px solid #f6c28b;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  color: #222222;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.speaker-button:hover {
+  transform: scale(1.08);
+
+  background: #fff3e0;
+}
+
+.speaker-button.speaking {
+  background: #222222;
+
+  color: #ffffff;
+
+  border-color: #222222;
+}
+
+
+/* =========================================================
+   AI MESSAGE TEXT
+   ========================================================= */
+
+.message-text {
+  line-height: 1.55;
+
+  white-space: pre-wrap;
+}
+
+/* =========================================================
+   CONNECT MARATHA FLOATING AI LOGO
+   ADD THIS AT THE VERY BOTTOM OF App.css
+   ========================================================= */
+
+.floating-ai-wrapper {
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+/* =========================================================
+   BLINKING GREETING MESSAGE
+   ========================================================= */
+
+.floating-greeting {
+  position: relative;
+
+  margin-bottom: 10px;
+  padding: 9px 15px;
+
+  border: none;
+  border-radius: 18px;
+
+  background: #f57c00;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+
+  animation: floatingGreetingBlink 1.8s ease-in-out infinite;
+}
+
+/* Small arrow under greeting */
+
+.floating-greeting::after {
+  content: "";
+
+  position: absolute;
+
+  right: 18px;
+  bottom: -6px;
+
+  width: 12px;
+  height: 12px;
+
+  background: #f57c00;
+
+  transform: rotate(45deg);
+}
+
+/* Greeting blinking animation */
+
+@keyframes floatingGreetingBlink {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 0.55;
+    transform: translateY(-3px);
+  }
+}
+
+/* =========================================================
+   FLOATING CONNECT MARATHA LOGO
+   ========================================================= */
+
+.open-chat-button {
+  position: relative;
+
+  width: 68px;
+  height: 68px;
+
+  padding: 3px;
+
+  border: 3px solid #f57c00;
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  cursor: pointer;
+
+  overflow: visible;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.22);
+
+  animation: floatingLogoPulse 2.4s ease-in-out infinite;
+
+  transition: transform 0.2s ease;
+}
+
+/* Logo image */
+
+.open-chat-button img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+}
+
+/* Hover */
+
+.open-chat-button:hover {
+  transform: scale(1.08);
+}
+
+/* =========================================================
+   LOGO PULSE
+   ========================================================= */
+
+@keyframes floatingLogoPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 5px 20px rgba(0, 0, 0, 0.22),
+      0 0 0 0 rgba(245, 124, 0, 0.35);
+  }
+
+  50% {
+    box-shadow:
+      0 7px 24px rgba(0, 0, 0, 0.25),
+      0 0 0 8px rgba(245, 124, 0, 0.08);
+  }
+}
+
+/* =========================================================
+   ONLINE STATUS DOT
+   ========================================================= */
+
+.floating-status-dot {
+  position: absolute;
+
+  right: 1px;
+  bottom: 2px;
+
+  width: 15px;
+  height: 15px;
+
+  background: #22c55e;
+
+  border: 3px solid #ffffff;
+
+  border-radius: 50%;
+
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .floating-ai-wrapper {
+    right: 18px;
+    bottom: 18px;
+  }
+
+  .floating-greeting {
+    font-size: 13px;
+    padding: 8px 13px;
+  }
+
+  .open-chat-button {
+    width: 62px;
+    height: 62px;
+  }
+}
+
+/* =========================================================
+   NEW AI AGENT FLOATING LOGO
+   Does NOT affect connect_maratha.jpeg
+   ========================================================= */
+
+.floating-ai-logo {
+  width: 70px;
+  height: 70px;
+
+  margin-bottom: 8px;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  border: 3px solid #f57c00;
+
+  padding: 3px;
+
+  box-shadow:
+    0 5px 18px rgba(0, 0, 0, 0.20),
+    0 0 0 5px rgba(245, 124, 0, 0.08);
+
+  animation: newAiLogoPulse 2s ease-in-out infinite;
+
+  cursor: pointer;
+
+  overflow: hidden;
+}
+
+.floating-ai-logo img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+
+  display: block;
+}
+
+@keyframes newAiLogoPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.06);
+  }
+}

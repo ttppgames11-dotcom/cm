@@ -6,13 +6,20 @@ export default function BloodHelpFullReport({ data, toast }) {
   const [filter, setFilter] = useState({ state: 'MH', city: 'all', fromDate: '2026-09-01', toDate: '2026-09-30' });
 
   const sevaList = useMemo(() => {
-    return [
-      { id: 'SEVA-501', requester: 'गणेश तुकाराम मोहिते', category: 'Blood (AB -ve Emergency)', city: 'पुणे (Pune)', hospital: 'दीनानाथ मंगेशकर रुग्णालय', priority: 'Emergency', date: '2026-09-30', status: 'Resolved' },
-      { id: 'SEVA-502', requester: 'स्वाती प्रकाश थोरात', category: 'Hospital Assistance (Mahatma Phule Scheme)', city: 'सातारा (Satara)', hospital: 'सिव्हिल हॉस्पिटल सातारा', priority: 'High', date: '2026-09-29', status: 'In Progress' },
-      { id: 'SEVA-503', requester: 'अक्षय संभाजी गायकवाड', category: 'Rare Blood (O -ve)', city: 'नाशिक (Nashik)', hospital: 'सह्याद्री सुपर स्पेशालिटी', priority: 'Emergency', date: '2026-09-28', status: 'Resolved' },
-      { id: 'SEVA-504', requester: 'ज्ञानेश्वर मारुती पाटील', category: 'Scholarship Assistance', city: 'कोल्हापूर (Kolhapur)', hospital: 'N/A', priority: 'Medium', date: '2026-09-25', status: 'Open' }
-    ];
-  }, []);
+    if (data?.blood && Array.isArray(data.blood) && data.blood.length > 0) {
+      return data.blood.map((b, i) => ({
+        id: b.id || `SEVA-${i + 501}`,
+        requester: b.patient || b.patientName || 'मराठा बांधव',
+        category: `Blood (${b.bloodGroup || 'सर्व गट'})`,
+        city: b.city || b.district || 'पुणे',
+        hospital: b.hospital || 'जिल्हा सामान्य रुग्णालय',
+        priority: b.urgency || 'Emergency',
+        date: (b.createdAt || b.time || '2026-10-10').slice(0, 10),
+        status: (b.status || 'Active').includes('Fulfilled') ? 'Resolved' : 'Open'
+      }));
+    }
+    return [];
+  }, [data?.blood]);
 
   const filteredSeva = useMemo(() => {
     return sevaList.filter(s => {
@@ -50,7 +57,7 @@ export default function BloodHelpFullReport({ data, toast }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '14px' }}>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
           <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>एकूण सेवा विनंत्या (Total Seva)</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#431407', marginTop: '4px' }}>{filteredSeva.length}</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#EA580C', marginTop: '4px' }}>{filteredSeva.length}</div>
         </div>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
           <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>आपत्कालीन (Emergency Requests)</div>
@@ -69,7 +76,7 @@ export default function BloodHelpFullReport({ data, toast }) {
       {/* TABLE */}
       <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '14px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(234,88,12,0.05)' }}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid #FED7AA', background: '#FFF7ED', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#431407' }}>
+          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#EA580C' }}>
             🩺 आपत्कालीन रक्तदाता व सेवा विनंती नोंदणी (Seva Log Table)
           </h4>
           <span style={{ fontSize: '0.78rem', color: '#EA580C', fontWeight: 800 }}>एकूण {filteredSeva.length} विनंत्या</span>
@@ -78,7 +85,7 @@ export default function BloodHelpFullReport({ data, toast }) {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
             <thead>
-              <tr style={{ background: '#FFFDF9', borderBottom: '1px solid #FED7AA', color: '#431407', fontWeight: 800 }}>
+              <tr style={{ background: '#FFFDF9', borderBottom: '1px solid #FED7AA', color: '#EA580C', fontWeight: 800 }}>
                 <th style={{ padding: '12px 16px' }}>विनंती आयडी</th>
                 <th style={{ padding: '12px 16px' }}>अर्जदार नाव</th>
                 <th style={{ padding: '12px 16px' }}>सेवा वर्गवारी (Category)</th>

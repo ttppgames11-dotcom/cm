@@ -107,7 +107,7 @@ export default function PrivacyPolicyPage() {
                 गोपनीयता धोरण | Privacy Policy
               </h1>
               <p style={{ margin: 0, opacity: 0.95, fontSize: '1.05rem', lineHeight: 1.6, maxWidth: '780px' }}>
-                Connect Maratha (अखिल भारतीय मराठा महासंघ अधिकृत डिजिटल व्यासपीठ) — Android Package: <code style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.9em' }}>com.connectmaratha.app</code>
+                Connect Maratha (अखिल भारतीय मराठा महासंघ आधुनिक युगातील आधुनिक संघटन) — Android Package: <code style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.9em' }}>com.connectmaratha.app</code>
               </p>
             </div>
             <div style={{
@@ -454,13 +454,27 @@ export default function PrivacyPolicyPage() {
           {/* Section 7 */}
           <section id="section7" style={{ marginBottom: '36px' }}>
             <h2 style={{ color: '#7a1c1c', fontSize: '1.45rem', fontFamily: 'Baloo 2, sans-serif', borderBottom: '2px solid #fed7aa', paddingBottom: '8px', marginBottom: '14px' }}>
-              ७. बालकांची गोपनीयता व वय धोरण (Children's Privacy & Age Policy)
+              ७. बालकांची सुरक्षा, गोपनीयता व CSAE बंदी धोरण (Child Safety Standards & CSAE Policy)
             </h2>
             <p>
-              Connect Maratha हे १८ वर्षे पूर्ण केलेल्या प्रौढ नागरिकांसाठी तयार केलेले सामाजिक व व्यावसायिक नेटवर्क आहे. आम्ही १८ वर्षांखालील मुलांचा वैयक्तिक डेटा जाणीवपूर्वक गोळा करत नाही किंवा त्यांच्या वर्तनावर (Behavioral profiling) कोणतीही प्रक्रिया करत नाही.
+              <strong>Connect Maratha</strong> हे १८ वर्षे पूर्ण केलेल्या व्यक्तींसाठी समर्पित व्यासपीठ आहे. आमचे ॲप कोणत्याही प्रकारच्या बाल लैंगिक शोषण आणि गैरवर्तन (<strong>Child Sexual Abuse and Exploitation - CSAE</strong>) तसेच बाल लैंगिक शोषण साहित्य (<strong>Child Sexual Abuse Material - CSAM</strong>) विरोधात कठोर शून्य-सहनशीलता (Zero-Tolerance) धोरण राबवते.
             </p>
+            <div style={{ background: '#FEF2F2', border: '1.5px solid #FCA5A5', borderRadius: '10px', padding: '16px 20px', margin: '14px 0' }}>
+              <div style={{ fontWeight: 800, color: '#991B1B', marginBottom: '6px' }}>🚨 बाल सुरक्षा अधिकृत मार्गदर्शक तत्त्वे (Child Safety Standards):</div>
+              <div style={{ fontSize: '0.92rem', lineHeight: 1.6 }}>
+                बाल लैंगिक गैरवर्तन, ग्रूमिंग, ब्लॅकमेलिंग किंवा अश्लील साहित्याशी संबंधित कोणतीही कृती तत्काळ खाते बंदी आणि NCMEC व भारतीय सायबर क्राईम समन्वय केंद्र (I4C / POCSO कायदा) कडे तक्रार नोंदवण्यासाठी पात्र ठरते.
+              </div>
+              <div style={{ marginTop: '10px' }}>
+                👉 <Link to="/child-safety" style={{ color: '#DC2626', fontWeight: 800, textDecoration: 'underline' }}>
+                  आमचे संपूर्ण बाल सुरक्षा मानक धोरण येथे वाचा (Child Safety Standards Page) →
+                </Link>
+              </div>
+              <div style={{ marginTop: '8px', fontSize: '0.86rem', color: '#4B5563' }}>
+                बाल सुरक्षा तक्रार कक्ष ईमेल: <a href="mailto:child-safety@connectmaratha.com" style={{ color: '#991B1B', fontWeight: 700 }}>child-safety@connectmaratha.com</a> | राष्ट्रीय चाईल्डलाईन: <strong>१०९८</strong>
+              </div>
+            </div>
             <p>
-              पालकांच्या पूर्वपरवानगीशिवाय कोणत्याही अल्पवयीन व्यक्तीची नोंदणी झाल्याचे निदर्शनास आल्यास, आम्ही त्वरित तो डेटा आमच्या सर्व्हरवरून नष्ट करतो.
+              पालकांच्या पूर्वपरवानगीशिवाय कोणत्याही अल्पवयीन व्यक्तीची नोंदणी झाल्याचे निदर्शनास आल्यास, आम्ही त्वरित तो डेटा सर्व्हरवरून नष्ट करतो.
             </p>
           </section>
 

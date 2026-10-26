@@ -198,8 +198,9 @@ export default function MarathaQuizPage() {
     fetch('/api/quiz/stats')
       .then(res => res.json())
       .then(data => {
-        if (data && data.total_questions) {
-          setDbStats(data);
+        const stats = data.data || data;
+        if (stats && stats.total_questions) {
+          setDbStats(stats);
         }
       })
       .catch(err => console.log('Stats fallback active:', err));
@@ -242,8 +243,9 @@ export default function MarathaQuizPage() {
       const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
-        if (data.questions && data.questions.length > 0) {
-          const formatted = data.questions.map(q => ({
+        const questions = data.data?.questions || data.questions || [];
+        if (questions && questions.length > 0) {
+          const formatted = questions.map(q => ({
             id: q.question_id,
             category: q.category,
             level: q.difficulty === 'easy' ? 'प्राथमिक' : q.difficulty === 'hard' ? 'प्रगत' : 'मध्यम',

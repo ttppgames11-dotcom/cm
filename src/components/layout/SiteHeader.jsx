@@ -84,6 +84,17 @@ export default function SiteHeader({ onOpenSearch }) {
               src={getContent('images.brandLogo', '/assets/images/logo.png')}
               alt="Connect Maratha Logo"
               className="brand-logo"
+              style={{
+                width: '36px',
+                height: '36px',
+                maxWidth: '36px',
+                maxHeight: '36px',
+                minWidth: '36px',
+                minHeight: '36px',
+                objectFit: 'contain',
+                flexShrink: 0,
+                display: 'inline-block'
+              }}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = '/assets/images/logo.png';
@@ -93,8 +104,8 @@ export default function SiteHeader({ onOpenSearch }) {
               <div className="brand-main">
                 <span className="en">CONNECT</span> <span className="mr">मराठा</span>
               </div>
-              <div className="brand-sub" style={{ color: '#7C2D12', fontWeight: '800', fontSize: '0.74rem', letterSpacing: '0.3px', opacity: 1 }}>
-                अखिल भारतीय डिजिटल व्यासपीठ
+              <div className="brand-sub">
+                {getContent('texts.brandSubtitle', 'आधुनिक युगातील आधुनिक संघटन')}
               </div>
             </div>
           </Link>
@@ -103,20 +114,29 @@ export default function SiteHeader({ onOpenSearch }) {
           <nav className="desktop-nav">
             {!isLoggedIn ? (
               <>
-                <NavLink to="/about" onClick={handleLinkClick}>
-                  🏛️ आमच्याबद्दल
+                <NavLink to="/referrals" onClick={handleLinkClick} style={{ color: '#EA580C', fontWeight: 800 }}>
+                  🔗 रेफरल्स (Referrals)
                 </NavLink>
-                <NavLink to="/vision" onClick={handleLinkClick}>
-                  🎯 व्हिजन
+                <NavLink to="/business" onClick={handleLinkClick}>
+                  💼 व्यवसाय
                 </NavLink>
-                <NavLink to="/goals" onClick={handleLinkClick}>
-                  🏆 उद्दिष्टे
+                <NavLink to="/jobs" onClick={handleLinkClick}>
+                  💼 रोजगार
+                </NavLink>
+                <NavLink to="/forts" onClick={handleLinkClick}>
+                  🏰 गड-किल्ले
+                </NavLink>
+                <NavLink to="/history" onClick={handleLinkClick}>
+                  ⚔️ इतिहास
+                </NavLink>
+                <NavLink to="/community/centers" onClick={handleLinkClick}>
+                  🏢 कम्युनिटी सेंटर्स
                 </NavLink>
                 <NavLink to="/why-join" onClick={handleLinkClick} style={{ color: '#C2410C', fontWeight: 800 }}>
                   ⭐ सहभागी का व्हावे?
                 </NavLink>
-                <NavLink to="/contact" onClick={handleLinkClick}>
-                  ☎️ संपर्क
+                <NavLink to="/emergency" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800 }}>
+                  🚨 सेवा
                 </NavLink>
               </>
             ) : (
@@ -129,6 +149,7 @@ export default function SiteHeader({ onOpenSearch }) {
                       <div className="mega-col">
                         <div className="mega-col-title">🚩 मंच व सामाजिक कल्याण</div>
                         <Link to="/community" onClick={handleLinkClick}>💬 डिजिटल कम्युनिटी मंच</Link>
+                        <Link to="/community/centers" onClick={handleLinkClick} style={{ color: '#EA580C', fontWeight: 800 }}>🏢 कम्युनिटी सेंटर्स (Community Centers)</Link>
                         <Link to="/blood" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800 }}>🩸 २४×७ आपत्कालीन रक्त मदत</Link>
                         <Link to="/matrimony" onClick={handleLinkClick}>💍 मराठा वधू-वर सूचक केंद्र</Link>
                         <Link to="/women" onClick={handleLinkClick}>🌸 महिला सक्षमीकरण कक्ष</Link>
@@ -136,6 +157,7 @@ export default function SiteHeader({ onOpenSearch }) {
                       </div>
                       <div className="mega-col">
                         <div className="mega-col-title">🤝 संघटना व नेतृत्व</div>
+                        <Link to="/community/centers" onClick={handleLinkClick}>🏛️ ४-स्तरीय कम्युनिटी सेंटर्स</Link>
                         <Link to="/organizations" onClick={handleLinkClick}>🤝 मराठा सामाजिक संघटना</Link>
                         <Link to="/political" onClick={handleLinkClick}>🏛️ राजकीय नेतृत्व व पक्ष</Link>
                         <Link to="/social-workers" onClick={handleLinkClick}>🤝 निष्ठावंत समाजसेवक</Link>
@@ -284,6 +306,41 @@ export default function SiteHeader({ onOpenSearch }) {
                     </div>
                   </div>
                 </div>
+
+                {/* 8. Seva & Emergency (सेवा व आपत्कालीन मदत) */}
+                <div className="nav-item-has-mega">
+                  <Link to="/emergency" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800 }}>
+                    🚩 सेवा ▾
+                  </Link>
+                  <div className="mega-menu">
+                    <div className="mega-menu-grid">
+                      <div className="mega-col">
+                        <div className="mega-col-title">🚨 आपत्कालीन प्रतिसाद व मदत</div>
+                        <Link to="/emergency" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800 }}>
+                          🚨 आपत्कालीन अलर्ट नेटवर्क
+                        </Link>
+                        <Link to="/blood" onClick={handleLinkClick} style={{ color: '#B91C1C', fontWeight: 700 }}>
+                          🩸 २४×७ रक्त मदत व दाता समन्वय
+                        </Link>
+                        <Link to="/seva/help-requests" onClick={handleLinkClick}>
+                          🤝 कम्युनिटी मदत याचना (Help Requests)
+                        </Link>
+                      </div>
+                      <div className="mega-col">
+                        <div className="mega-col-title">🛠️ सेवा एक्सचेंज व नियंत्रण</div>
+                        <Link to="/community/services" onClick={handleLinkClick}>
+                          🛠️ सेवा देवाणघेवाण एक्सचेंज (Services Exchange)
+                        </Link>
+                        <Link to="/crm/seva/emergency" onClick={handleLinkClick} style={{ color: '#D97706', fontWeight: 800 }}>
+                          🛡️ सेवा कमांड सेंटर CRM (Operations)
+                        </Link>
+                        <a href="tel:112" style={{ color: '#64748B', fontSize: '0.8rem', marginTop: '6px', display: 'block' }}>
+                          ⚠️ तात्काळ धोका असल्यास <strong>११२ / १०८</strong> डायल करा
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
           </nav>
@@ -296,20 +353,6 @@ export default function SiteHeader({ onOpenSearch }) {
               onClick={handleSearchClick}
               title="शोध / Search (Ctrl+K)"
               aria-label="शोध / Search"
-              style={{
-                background: '#FFF8F0',
-                border: '1.5px solid #FFCC80',
-                borderRadius: '10px',
-                width: '38px',
-                height: '38px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '1rem',
-                cursor: 'pointer',
-                color: '#C2410C',
-                flexShrink: 0
-              }}
             >
               🔍
             </button>
@@ -327,6 +370,29 @@ export default function SiteHeader({ onOpenSearch }) {
 
             {isLoggedIn ? (
               <div className="cm-user-menu-wrap" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <Link
+                  to="/referrals"
+                  onClick={handleLinkClick}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    padding: '6px 12px',
+                    borderRadius: '20px',
+                    background: '#FFF7ED',
+                    color: '#EA580C',
+                    fontWeight: '800',
+                    fontSize: '0.84rem',
+                    textDecoration: 'none',
+                    border: '1.5px solid #FDBA74',
+                    boxShadow: '0 2px 8px rgba(234, 88, 12, 0.08)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  title="माझे रेफरल्स व मानधन (My Referrals)"
+                >
+                  <span style={{ fontSize: '0.95rem' }}>🔗</span>
+                  <span>रेफरल्स</span>
+                </Link>
                 <Link
                   to="/dashboard"
                   onClick={handleLinkClick}
@@ -354,6 +420,29 @@ export default function SiteHeader({ onOpenSearch }) {
                   <span style={{ maxWidth: '90px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {user.name?.split(' ')[0] || 'डॅशबोर्ड'}
                   </span>
+                </Link>
+                <Link
+                  to="/profile"
+                  onClick={handleLinkClick}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '6px 14px',
+                    borderRadius: '24px',
+                    background: '#FFF7ED',
+                    color: '#C2410C',
+                    fontWeight: '800',
+                    fontSize: '0.86rem',
+                    textDecoration: 'none',
+                    border: '1.5px solid #FDBA74',
+                    boxShadow: '0 2px 8px rgba(194, 65, 12, 0.08)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  title="माझी प्रोफाईल व आवडी-निवडी (Edit Profile & Interests)"
+                >
+                  <span style={{ fontSize: '1.05rem' }}>{user.avatar || '👤'}</span>
+                  <span>माझी प्रोफाईल</span>
                 </Link>
                 <Link
                   to="/card"
@@ -446,24 +535,36 @@ export default function SiteHeader({ onOpenSearch }) {
             </NavLink>
             {!isLoggedIn ? (
               <>
-                <NavLink to="/about" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-                  <span className="subnav-pill-icon">🏛️</span> आमच्याबद्दल
+                <NavLink to="/referrals" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-gold ${isActive ? 'active' : ''}`} style={{ color: '#EA580C', fontWeight: 800 }}>
+                  <span className="subnav-pill-icon">🔗</span> रेफरल्स
                 </NavLink>
-                <NavLink to="/vision" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-                  <span className="subnav-pill-icon">🎯</span> व्हिजन
+                <NavLink to="/business" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">💼</span> व्यवसाय
                 </NavLink>
-                <NavLink to="/goals" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-                  <span className="subnav-pill-icon">🏆</span> उद्दिष्टे
+                <NavLink to="/jobs" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">💼</span> रोजगार
                 </NavLink>
-                <NavLink to="/why-join" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-gold ${isActive ? 'active' : ''}`}>
+                <NavLink to="/forts" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🏰</span> गड-किल्ले
+                </NavLink>
+                <NavLink to="/history" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">⚔️</span> इतिहास
+                </NavLink>
+                <NavLink to="/community/centers" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🏢</span> कम्युनिटी सेंटर्स
+                </NavLink>
+                <NavLink to="/why-join" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">⭐</span> सहभागी व्हा
                 </NavLink>
-                <NavLink to="/contact" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
-                  <span className="subnav-pill-icon">☎️</span> संपर्क
+                <NavLink to="/about" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🏛️</span> आमच्याबद्दल
                 </NavLink>
               </>
             ) : (
               <>
+                <NavLink to="/referrals" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-gold ${isActive ? 'active' : ''}`} style={{ color: '#EA580C', fontWeight: 800 }}>
+                  <span className="subnav-pill-icon">🔗</span> रेफरल्स
+                </NavLink>
                 <NavLink to="/history" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">⚔️</span> इतिहास
                 </NavLink>
@@ -479,6 +580,9 @@ export default function SiteHeader({ onOpenSearch }) {
                 <NavLink to="/community" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">👥</span> समाज
                 </NavLink>
+                <NavLink to="/community/centers" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
+                  <span className="subnav-pill-icon">🏢</span> कम्युनिटी सेंटर्स
+                </NavLink>
                 <NavLink to="/universe" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill highlight-universe ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">🌌</span> महाविश्व
                 </NavLink>
@@ -493,6 +597,9 @@ export default function SiteHeader({ onOpenSearch }) {
                 </NavLink>
                 <NavLink to="/gallery" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`}>
                   <span className="subnav-pill-icon">🖼️</span> दालने
+                </NavLink>
+                <NavLink to="/emergency" onClick={handleLinkClick} className={({ isActive }) => `subnav-pill ${isActive ? 'active' : ''}`} style={{ color: '#DC2626', fontWeight: 800 }}>
+                  <span className="subnav-pill-icon">🚨</span> सेवा
                 </NavLink>
               </>
             )}
@@ -527,6 +634,17 @@ export default function SiteHeader({ onOpenSearch }) {
             <img
               src={getContent('images.brandLogo', '/assets/images/logo.png')}
               alt="Connect Maratha"
+              style={{
+                width: '38px',
+                height: '38px',
+                maxWidth: '38px',
+                maxHeight: '38px',
+                objectFit: 'contain',
+                borderRadius: '50%',
+                background: '#FFFFFF',
+                padding: '2px',
+                flexShrink: 0
+              }}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = '/assets/images/logo.png';
@@ -534,7 +652,7 @@ export default function SiteHeader({ onOpenSearch }) {
             />
             <div>
               <div className="cm-drawer-brand-title">CONNECT मराठा</div>
-              <div className="cm-drawer-brand-sub">अखिल भारतीय डिजिटल व्यासपीठ</div>
+              <div className="cm-drawer-brand-sub">आधुनिक युगातील आधुनिक संघटन</div>
             </div>
           </Link>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -571,6 +689,10 @@ export default function SiteHeader({ onOpenSearch }) {
                       <circle cx="12" cy="7" r="4" />
                     </svg>
                     <span>डॅशबोर्ड</span>
+                  </Link>
+                  <Link to="/profile" onClick={handleLinkClick} className="btn btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#FFF7ED', borderColor: '#FDBA74', color: '#C2410C', fontWeight: 800 }}>
+                    <span style={{ fontSize: '1.1rem' }}>{user.avatar || '👤'}</span>
+                    <span>माझी प्रोफाईल</span>
                   </Link>
                   <Link to="/card" onClick={handleLinkClick} className="btn btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -706,27 +828,43 @@ export default function SiteHeader({ onOpenSearch }) {
           {!user ? (
             /* Guest Navigation Items */
             <div className="cm-drawer-guest-menu" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '10px' }}>
+              <Link to="/referrals" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)', color: '#EA580C', textDecoration: 'none', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px', border: '1.5px solid #FDBA74' }}>
+                <span style={{ fontSize: '1.3rem' }}>🔗</span>
+                <div>
+                  <div style={{ color: '#C2410C', fontWeight: 900, fontSize: '0.98rem' }}>रेफरल व मानधन केंद्र (Referrals)</div>
+                  <small style={{ color: '#9A3412', fontWeight: 700 }}>वैयक्तिक रेफरल लिंक, ₹ मानधन व बक्षीस ट्रॅकर</small>
+                </div>
+              </Link>
+
+              <Link to="/business" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '1.2rem' }}>💼</span>
+                <div>
+                  <div style={{ color: '#0F172A', fontWeight: 800 }}>अखिल मराठा व्यवसाय निर्देशिका</div>
+                  <small style={{ color: '#64748B' }}>उद्योग, व्यावसायिक व B2B सौदे</small>
+                </div>
+              </Link>
+
+              <Link to="/jobs" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '1.2rem' }}>👔</span>
+                <div>
+                  <div style={{ color: '#0F172A', fontWeight: 800 }}>मराठा रोजगार केंद्र (Jobs Portal)</div>
+                  <small style={{ color: '#64748B' }}>१२८+ नोकऱ्या व करिअर संधी</small>
+                </div>
+              </Link>
+
+              <Link to="/forts" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '1.2rem' }}>🏰</span>
+                <div>
+                  <div style={{ color: '#0F172A', fontWeight: 800 }}>गड-किल्ले व दुर्ग संवर्धन दालन</div>
+                  <small style={{ color: '#64748B' }}>महाराष्ट्रातील ३५०+ गड-किल्ल्यांची माहिती</small>
+                </div>
+              </Link>
+
               <Link to="/about" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
                 <span style={{ fontSize: '1.2rem' }}>🏛️</span>
                 <div>
                   <div style={{ color: '#0F172A', fontWeight: 800 }}>आमच्याबद्दल व संस्था परिचय</div>
                   <small style={{ color: '#64748B' }}>संस्थेची पार्श्वभूमी व उद्दिष्टे</small>
-                </div>
-              </Link>
-
-              <Link to="/vision" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#FFF8F0', color: '#EA580C', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #FED7AA' }}>
-                <span style={{ fontSize: '1.2rem' }}>🎯</span>
-                <div>
-                  <div style={{ color: '#EA580C', fontWeight: 800 }}>व्हिजन (Vision 2030)</div>
-                  <small style={{ color: '#C2410C' }}>दीर्घकालीन संकल्पना</small>
-                </div>
-              </Link>
-
-              <Link to="/goals" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#FFF8F0', color: '#EA580C', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #FED7AA' }}>
-                <span style={{ fontSize: '1.2rem' }}>🏆</span>
-                <div>
-                  <div style={{ color: '#EA580C', fontWeight: 800 }}>उद्दिष्टे व संकल्प (Goals)</div>
-                  <small style={{ color: '#C2410C' }}>१० प्रमुख रणनीतिक उद्दिष्टे</small>
                 </div>
               </Link>
 
@@ -738,11 +876,27 @@ export default function SiteHeader({ onOpenSearch }) {
                 </div>
               </Link>
 
+              <Link to="/community/centers" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#FFF7ED', color: '#EA580C', textDecoration: 'none', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px', border: '1.5px solid #FED7AA' }}>
+                <span style={{ fontSize: '1.2rem' }}>🏢</span>
+                <div>
+                  <div style={{ color: '#EA580C', fontWeight: 800 }}>कम्युनिटी सेंटर्स (Community Centers)</div>
+                  <small style={{ color: '#C2410C' }}>४-स्तरीय प्रत्यक्ष सेवा व व्यवसाय संकुल</small>
+                </div>
+              </Link>
+
               <Link to="/contact" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#F8FAFC', color: '#1E293B', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #E2E8F0' }}>
                 <span style={{ fontSize: '1.2rem' }}>☎️</span>
                 <div>
                   <div style={{ color: '#0F172A', fontWeight: 800 }}>संपर्क व मदत केंद्र</div>
                   <small style={{ color: '#64748B' }}>हेल्पलाईन व समन्वय अधिकारी</small>
+                </div>
+              </Link>
+
+              <Link to="/emergency" onClick={handleLinkClick} style={{ padding: '12px 14px', borderRadius: '10px', background: '#FEF2F2', color: '#DC2626', textDecoration: 'none', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px', border: '1.5px solid #FECACA' }}>
+                <span style={{ fontSize: '1.2rem' }}>🚨</span>
+                <div>
+                  <div style={{ color: '#DC2626', fontWeight: 900 }}>आपत्कालीन सेवा नेटवर्क</div>
+                  <small style={{ color: '#991B1B' }}>तातडीची मदत, अलर्ट व रक्त साहाय्य</small>
                 </div>
               </Link>
             </div>
@@ -761,6 +915,7 @@ export default function SiteHeader({ onOpenSearch }) {
                 {expandedPillar === 'community' && (
                   <div className="cm-drawer-accordion-panel">
                     <Link to="/community" onClick={handleLinkClick}>💬 डिजिटल कम्युनिटी मंच</Link>
+                    <Link to="/community/centers" onClick={handleLinkClick} style={{ color: '#EA580C', fontWeight: 800 }}>🏢 कम्युनिटी सेंटर्स (Community Centers)</Link>
                     <Link to="/blood" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800 }}>🩸 २४×७ आपत्कालीन रक्त मदत</Link>
                     <Link to="/matrimony" onClick={handleLinkClick}>💍 मराठा वधू-वर सूचक केंद्र</Link>
                     <Link to="/women" onClick={handleLinkClick}>🌸 महिला सक्षमीकरण कक्ष</Link>
@@ -914,6 +1069,37 @@ export default function SiteHeader({ onOpenSearch }) {
                         🛡️ अधिकारी CRM पोर्टल →
                       </Link>
                     )}
+                  </div>
+                )}
+              </div>
+
+              {/* 8. Seva & Emergency (सेवा व आपत्कालीन मदत) */}
+              <div className="cm-drawer-accordion-item">
+                <button
+                  type="button"
+                  className={`cm-drawer-accordion-btn ${expandedPillar === 'seva' ? 'expanded' : ''}`}
+                  onClick={() => togglePillar('seva')}
+                  style={{ color: '#DC2626', fontWeight: 800 }}>
+                  <span>🚨 सेवा व आपत्कालीन मदत (Seva)</span>
+                  <span className="cm-drawer-accordion-chevron">{expandedPillar === 'seva' ? '▲' : '▼'}</span>
+                </button>
+                {expandedPillar === 'seva' && (
+                  <div className="cm-drawer-accordion-panel">
+                    <Link to="/emergency" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800 }}>
+                      🚨 आपत्कालीन अलर्ट नेटवर्क (/emergency)
+                    </Link>
+                    <Link to="/blood" onClick={handleLinkClick} style={{ color: '#B91C1C', fontWeight: 700 }}>
+                      🩸 २४×७ आपत्कालीन रक्त मदत (/seva/medical)
+                    </Link>
+                    <Link to="/seva/help-requests" onClick={handleLinkClick}>
+                      🤝 कम्युनिटी मदत याचना (Help Requests)
+                    </Link>
+                    <Link to="/community/services" onClick={handleLinkClick}>
+                      🛠️ सेवा देवाणघेवाण एक्सचेंज (Services Exchange)
+                    </Link>
+                    <Link to="/crm/seva/emergency" onClick={handleLinkClick} style={{ color: '#D97706', fontWeight: 800 }}>
+                      🛡️ सेवा कमांड सेंटर CRM (Command Center)
+                    </Link>
                   </div>
                 )}
               </div>

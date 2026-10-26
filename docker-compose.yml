@@ -10,6 +10,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=5000
+      - JWT_SECRET=${JWT_SECRET:?Set JWT_SECRET before running docker compose up}
     volumes:
       - ./database:/app/database
 

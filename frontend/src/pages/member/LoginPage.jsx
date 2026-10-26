@@ -286,7 +286,7 @@ export default function LoginPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <span>🚩</span>
-                  <span><strong>अधिकृत:</strong> Connect Maratha चे अधिकृत डिजिटल व्यासपीठ</span>
+                  <span><strong>अधिकृत:</strong> Connect Maratha चे आधुनिक युगातील आधुनिक संघटन</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <span>❤️</span>
@@ -434,7 +434,7 @@ export default function LoginPage() {
                     type="text"
                     value={loginId}
                     onChange={(e) => setLoginId(e.target.value)}
-                    placeholder="उदा. 9876543210 किंवा CM-MH-2026-8842"
+                    placeholder="उदा. 8805533476 किंवा yashrajdyp@gmail.com किंवा CM-SUPER-001"
                     required
                     style={{
                       width: '100%',
@@ -446,6 +446,66 @@ export default function LoginPage() {
                       boxSizing: 'border-box'
                     }}
                   />
+                  {/* Quick Fill Chips */}
+                  <div style={{ marginTop: '6px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLoginId('8805533476');
+                        setPassword('ConnectMaratha@2026');
+                        setMessage('');
+                      }}
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                        background: '#FFF7ED',
+                        color: '#EA580C',
+                        border: '1px solid #FED7AA',
+                        borderRadius: '6px',
+                        cursor: 'pointer'
+                      }}>
+                      ⚡ यशराज साठे (8805533476)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLoginId('superadmin@connectmaratha.org');
+                        setPassword('ConnectMaratha@2026');
+                        setMessage('');
+                      }}
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                        background: '#FEF2F2',
+                        color: '#DC2626',
+                        border: '1px solid #FECACA',
+                        borderRadius: '6px',
+                        cursor: 'pointer'
+                      }}>
+                      👑 SuperAdmin
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLoginId('admin@connectmaratha.com');
+                        setPassword('ConnectMaratha@2026');
+                        setMessage('');
+                      }}
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                        background: '#EFF6FF',
+                        color: '#2563EB',
+                        border: '1px solid #BFDBFE',
+                        borderRadius: '6px',
+                        cursor: 'pointer'
+                      }}>
+                      🏢 Admin
+                    </button>
+                  </div>
                 </div>
 
                 <div style={{ marginBottom: '14px' }}>

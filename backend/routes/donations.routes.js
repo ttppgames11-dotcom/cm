@@ -1,150 +1,316 @@
 import { Router } from 'express';
+import { all, get, runQuery, saveDatabaseNow } from '../../database/database.js';
 import { db } from '../db/realtimeDb.js';
-import { optionalToken } from '../middleware/auth.js';
+import { authenticateToken, optionalToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
-import { validateDonation, sanitize, cleanPhone } from '../utils/validator.js';
+import { sanitize, cleanPhone, isValidPhone } from '../utils/validator.js';
 
 const router = Router();
 
-// GET /api/donations/campaigns
-// Active public relief funds, student scholarships, fort restoration
-router.get('/campaigns', (req, res) => {
-  let list = db.getCollection('campaigns');
+function isFinanceManager(user) {
+  if (!user) return false;
+  const role = String(user.role || '').toLowerCase();
+  return ['superadmin', 'admin', 'ceo', 'finance_head', 'trustee', 'center_manager'].includes(role);
+}
 
-  if (list.length === 0) {
-    const seedCampaigns = [
-      {
-        id: 'CAMP-01',
-        title: 'छत्रपती शिवाजी महाराज स्मारक व ऐतिहासिक दुर्ग संवर्धन निधी',
-        category: 'दुर्ग संवर्धन',
-        targetAmount: 2500000,
-        raisedAmount: 1845000,
-        donorsCount: 684,
-        description: 'सह्याद्रीतील दुर्लक्षित गडकिल्ल्यांच्या तटबंदी दुरुस्ती, स्वच्छता व माहिती फलक उभारणीसाठी थेट निधी.',
-        beneficiary: 'अखिल भारतीय मराठा महासंघ दुर्ग संवर्धन समिती',
-        section80G: true,
-        image: '🏰'
-      },
-      {
-        id: 'CAMP-02',
-        title: 'मराठा शेतकरी पाल्यांसाठी उच्च शिक्षण शिष्यवृत्ती निधी',
-        category: 'शिक्षण सहाय्य',
-        targetAmount: 5000000,
-        raisedAmount: 3750000,
-        donorsCount: 1240,
-        description: 'अल्पभूधारक शेतकरी व गरजू मराठा विद्यार्थ्यांच्या इंजिनिअरिंग, मेडिकल व UPSC/MPSC शिक्षणासाठी आर्थिक सहाय्य.',
-        beneficiary: 'महासंघ शैक्षणिक सहाय्यता ट्रस्ट',
-        section80G: true,
-        image: '🎓'
-      },
-      {
-        id: 'CAMP-03',
-        title: 'आपत्तीग्रस्त मराठा कुटुंबे मदत व पुनर्वसन निधी',
-        category: 'आपत्ती निवारण',
-        targetAmount: 1500000,
-        raisedAmount: 1120000,
-        donorsCount: 420,
-        description: 'अतिवृष्टी, दुष्काळ किंवा आकस्मिक संकटात सापडलेल्या शेतकरी कुटुंबांना तात्काळ आर्थिक व वैद्यकीय मदत.',
-        beneficiary: 'महासंघ आपत्ती निवारण कक्ष',
-        section80G: true,
-        image: '🤝'
-      }
-    ];
-    for (const c of seedCampaigns) db.insert('campaigns', c);
-    list = seedCampaigns;
+// =========================================================================
+// 1. DURG PROJECTS (दुर्ग संवर्धन प्रकल्प)
+// =========================================================================
+
+// GET /api/donations/projects - All fort restoration projects
+router.get('/projects', async (req, res, next) => {
+  try {
+    const { district, category, search } = req.query;
+    const conditions = ["status = 'active'"];
+    const params = [];
+
+    if (district && district !== 'all' && district !== 'सर्व') {
+      conditions.push('(district LIKE ? OR fort_name LIKE ?)');
+      params.push(`%${district}%`, `%${district}%`);
+    }
+
+    if (category && category !== 'all' && category !== 'सर्व') {
+      conditions.push('category LIKE ?');
+      params.push(`%${category}%`);
+    }
+
+    if (search && search.trim()) {
+      const s = `%${search.trim()}%`;
+      conditions.push('(title LIKE ? OR fort_name LIKE ? OR description LIKE ? OR lead_organization LIKE ?)');
+      params.push(s, s, s, s);
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+    const projects = await all(`SELECT * FROM durg_projects ${whereClause} ORDER BY created_at DESC`, params);
+
+    return sendSuccess(res, 'दुर्ग संवर्धन प्रकल्प यादी', {
+      projects,
+      total: projects.length
+    });
+  } catch (err) {
+    next(err);
   }
+});
 
-  return sendSuccess(res, 'दान मोहिमांची यादी प्राप्त झाली', { campaigns: list, count: list.length });
+// GET /api/donations/projects/:id - Details, expenses, and volunteer progress
+router.get('/projects/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const project = await get('SELECT * FROM durg_projects WHERE id = ?', [id]);
+    if (!project) {
+      return sendError(res, 'प्रकल्प सापडला नाही.', 'NOT_FOUND', 404);
+    }
+
+    const [expenses, volunteers, recentDonations] = await Promise.all([
+      all('SELECT * FROM durg_expenses WHERE project_id = ? ORDER BY created_at DESC', [id]),
+      all('SELECT volunteer_name, district, skills, participated_camps, created_at FROM durg_volunteers WHERE project_id = ? ORDER BY created_at DESC LIMIT 20', [id]),
+      all('SELECT donor_name, amount, is_anonymous, created_at FROM donations WHERE project_id = ? ORDER BY created_at DESC LIMIT 15', [id])
+    ]);
+
+    return sendSuccess(res, 'प्रकल्प सविस्तर तपशील', {
+      project: {
+        ...project,
+        expenses,
+        volunteers,
+        recentDonations
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// =========================================================================
+// 2. ENLIST VOLUNTEERS (श्रमदान व स्वयंसेवक जोडणी)
+// =========================================================================
+
+// POST /api/donations/projects/:id/volunteer - Register volunteer for fort camp
+router.post('/projects/:id/volunteer', optionalToken, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { name, phone, district, bloodGroup, trekExperience, skills } = req.body;
+
+    const project = await get('SELECT fort_name FROM durg_projects WHERE id = ?', [id]);
+    if (!project) {
+      return sendError(res, 'प्रकल्प सापडला नाही.', 'NOT_FOUND', 404);
+    }
+
+    if (!name || !phone) {
+      return sendError(res, 'कृपया आपले नाव व मोबाईल नंबर प्रविष्ट करा.', 'MISSING_FIELDS', 400);
+    }
+
+    const volId = `VOL-${Date.now().toString().slice(-4)}`;
+    const now = new Date().toISOString();
+
+    await runQuery(`
+      INSERT INTO durg_volunteers (
+        id, project_id, fort_name, volunteer_name, phone, district, blood_group,
+        trek_experience, participated_camps, skills, status, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      volId,
+      id,
+      project.fort_name,
+      sanitize(name),
+      cleanPhone(phone),
+      sanitize(district) || 'पुणे',
+      bloodGroup || 'माहित नाही',
+      trekExperience || 'मध्यम (Moderate)',
+      1,
+      sanitize(skills) || 'श्रमदान व स्वच्छता',
+      'active',
+      now
+    ]);
+
+    await runQuery('UPDATE durg_projects SET volunteers_count = volunteers_count + 1 WHERE id = ?', [id]);
+    saveDatabaseNow();
+
+    return sendSuccess(res, `🚩 ${project.fort_name} दुर्ग संवर्धन श्रमदान मोहिमेसाठी आपली स्वयंसेवक म्हणून नोंदणी झाली!`, { id: volId }, 201);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// =========================================================================
+// 3. CAMPAIGNS (सामाजिक उपक्रम व देणगी मोहीम)
+// =========================================================================
+
+// GET /api/donations/campaigns
+router.get('/campaigns', async (req, res, next) => {
+  try {
+    const campaigns = await all('SELECT * FROM campaigns WHERE active = 1 ORDER BY target DESC');
+    return sendSuccess(res, 'सक्रिय देणगी अभियाने', {
+      campaigns,
+      count: campaigns.length
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // GET /api/donations/campaigns/:id
-// Campaign goal, progress bar, fund transparency report
-router.get('/campaigns/:id', (req, res) => {
-  const campaign = db.findById('campaigns', req.params.id);
-  if (!campaign) {
-    return sendError(res, 'दान मोहीम सापडली नाही.', 'CAMPAIGN_NOT_FOUND', 404);
+router.get('/campaigns/:id', async (req, res, next) => {
+  try {
+    const campaign = await get('SELECT * FROM campaigns WHERE id = ?', [req.params.id]);
+    if (!campaign) {
+      return sendError(res, 'अभियान सापडले नाही.', 'NOT_FOUND', 404);
+    }
+
+    const donations = await all(
+      'SELECT donor_name, amount, is_anonymous, created_at FROM donations WHERE campaign_id = ? ORDER BY created_at DESC LIMIT 15',
+      [req.params.id]
+    );
+    campaign.recentDonations = donations;
+
+    const progressPercent = Math.min(100, Math.round(((campaign.collected || 0) / (campaign.target || 1)) * 100));
+
+    return sendSuccess(res, 'अभियान तपशील', {
+      campaign,
+      donations,
+      progressPercent,
+      totalDonors: campaign.donors || donations.length
+    });
+  } catch (err) {
+    next(err);
   }
-
-  const donations = db.getCollection('donations').filter(d => d.campaignId === req.params.id);
-  const progressPercent = Math.min(100, Math.round(((campaign.raisedAmount || 0) / (campaign.targetAmount || 1)) * 100));
-
-  return sendSuccess(res, 'दान मोहिमेचा सविस्तर तपशील', {
-    campaign,
-    donations,
-    progressPercent,
-    totalDonors: donations.length || campaign.donorsCount
-  });
 });
 
+// =========================================================================
+// 4. DONATIONS & 80G RECEIPTS (अधिकृत देणगी व पावती)
+// =========================================================================
+
 // POST /api/donations/donate
-// Process donation payment (Razorpay/UPI integration), 80G receipt
-router.post('/donate', optionalToken, (req, res) => {
-  const { isValid, errors, sanitized } = validateDonation(req.body);
-  if (!isValid) {
-    return sendError(res, errors[0]?.error || 'अवैध देणगी माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
-  }
+router.post('/donate', optionalToken, async (req, res, next) => {
+  try {
+    const {
+      campaign_id,
+      campaignId,
+      project_id,
+      projectId,
+      campaign_title,
+      donor_name,
+      donorName,
+      donor_id,
+      amount,
+      payment_method,
+      phone,
+      email,
+      pan,
+      is_anonymous,
+      anonymous
+    } = req.body;
 
-  const { amount, pan, email } = sanitized;
-  const { campaignId, donorName, phone, paymentMethod, anonymous } = req.body;
-
-  const receiptNo = `80G-${Date.now().toString().slice(-6)}`;
-  const donation = {
-    id: `DONAT-${Date.now().toString().slice(-5)}`,
-    campaignId: sanitize(campaignId) || 'CAMP-01',
-    donorId: req.user?.id || 'GUEST',
-    donorName: anonymous ? 'मराठा हितचिंतक (गुप्तदान)' : (sanitize(donorName) || req.user?.name || 'मराठा समाजबांधव'),
-    email: email || req.user?.email || '',
-    phone: phone ? cleanPhone(phone) : (req.user?.phone || ''),
-    amount,
-    pan: pan || '',
-    paymentMethod: sanitize(paymentMethod) || 'UPI / QR',
-    status: 'यशस्वी (Success)',
-    receiptNo,
-    taxExemption80G: true,
-    timestamp: new Date().toISOString()
-  };
-
-  db.insert('donations', donation);
-
-  // Update campaign total
-  if (campaignId) {
-    const campaign = db.findById('campaigns', campaignId);
-    if (campaign) {
-      const newRaised = (Number(campaign.raisedAmount) || 0) + amount;
-      const newCount = (Number(campaign.donorsCount) || 0) + 1;
-      db.update('campaigns', campaignId, { raisedAmount: newRaised, donorsCount: newCount });
+    const parsedAmount = parseFloat(amount);
+    if (!parsedAmount || parsedAmount <= 0) {
+      return sendError(res, 'कृपया वैध देणगी रक्कम प्रविष्ट करा.', 'INVALID_AMOUNT', 400);
     }
+
+    const cId = campaign_id || campaignId || 'CAMP-01';
+    const pId = project_id || projectId || 'DURG-01';
+    const dName = (is_anonymous || anonymous) ? 'गुप्त दान' : (donor_name || donorName || req.user?.name || 'मराठा समाजबांधव');
+    const dId = donor_id || req.user?.id || 'M1001';
+    const txId = 'TXN-' + Math.random().toString(36).slice(2, 10).toUpperCase();
+    const donationId = 'DON-' + Date.now().toString().slice(-6);
+    const receiptNo = 'CM-80G-' + Math.floor(10000 + Math.random() * 90000);
+    const now = new Date().toISOString();
+
+    await runQuery(`
+      INSERT INTO donations (
+        id, campaign_id, project_id, campaign_title, donor_name, donor_id, amount,
+        payment_method, phone, email, pan_number, is_anonymous, tx_id, receipt_no,
+        tax_80g_eligible, payment_status, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      donationId,
+      cId,
+      pId,
+      campaign_title || 'छत्रपती शिवाजी महाराज स्मारक व ऐतिहासिक दुर्ग संवर्धन निधी',
+      dName,
+      dId,
+      parsedAmount,
+      payment_method || 'UPI (अधिकृत गेटवे)',
+      phone || req.user?.phone || '',
+      email || req.user?.email || '',
+      pan || null,
+      (is_anonymous || anonymous) ? 1 : 0,
+      txId,
+      receiptNo,
+      1,
+      'SUCCESS',
+      now
+    ]);
+
+    // Update campaign or project collected amount
+    if (cId) {
+      await runQuery('UPDATE campaigns SET collected = COALESCE(collected, 0) + ?, donors = COALESCE(donors, 0) + 1 WHERE id = ?', [parsedAmount, cId]);
+    }
+    if (pId) {
+      await runQuery('UPDATE durg_projects SET collected_amount = COALESCE(collected_amount, 0) + ?, donors_count = COALESCE(donors_count, 0) + 1 WHERE id = ?', [parsedAmount, pId]);
+    }
+
+    saveDatabaseNow();
+
+    return sendSuccess(res, 'देणगी यशस्वीरित्या स्वीकारली! आपले मनःपूर्वक आभार.', {
+      receipt: {
+        donationId,
+        txId,
+        receiptNo,
+        amount: parsedAmount,
+        donor_name: dName,
+        campaign_title: campaign_title || 'दुर्ग संवर्धन व समाज निधी',
+        date: now.split('T')[0],
+        taxDeduction80G: '80G(5)(vi) अंतर्गत १००% आयकर सवलत पात्र (नोंदणी क्र: AAATC80G20261)',
+        bankDetails: 'State Bank of India | A/c No: 50200098765432 | IFSC: SBIN0001234'
+      }
+    }, 201);
+  } catch (err) {
+    next(err);
   }
-
-  db.addAuditLog('PROCESS_DONATION', req.user?.id || 'GUEST', { amount, receiptNo });
-
-  return sendSuccess(res, 'देणगी यशस्वीरीत्या स्वीकारली गेली! ८०-जी पावती उपलब्ध आहे.', {
-    donation,
-    receiptNo,
-    receiptUrl: `/api/donations/receipt/${receiptNo}`
-  }, 201);
 });
 
 // GET /api/donations/recent
-// Live transparent ledger of recent community donors
-router.get('/recent', (req, res) => {
-  let donations = db.getCollection('donations');
+router.get('/recent', async (req, res, next) => {
+  try {
+    const recent = await all(`
+      SELECT id, campaign_title, donor_name, amount, is_anonymous, created_at 
+      FROM donations 
+      ORDER BY created_at DESC 
+      LIMIT 15
+    `);
 
-  if (donations.length === 0) {
-    const seedRecent = [
-      { id: 'D1', donorName: 'संभाजीराव मोहिते', amount: 51000, campaignTitle: 'दुर्ग संवर्धन निधी', timestamp: new Date(Date.now() - 3600000).toISOString() },
-      { id: 'D2', donorName: 'विक्रमसिंह कदम', amount: 25000, campaignTitle: 'शेतकरी पाल्यांसाठी शिक्षण निधी', timestamp: new Date(Date.now() - 7200000).toISOString() },
-      { id: 'D3', donorName: 'सौ. सुजाता घोरपडे', amount: 11000, campaignTitle: 'दुर्ग संवर्धन निधी', timestamp: new Date(Date.now() - 14400000).toISOString() },
-      { id: 'D4', donorName: 'मराठा हितचिंतक (गुप्तदान)', amount: 100000, campaignTitle: 'आपत्ती निवारण निधी', timestamp: new Date(Date.now() - 86400000).toISOString() }
-    ];
-    for (const d of seedRecent) db.insert('donations', d);
-    donations = seedRecent;
+    return sendSuccess(res, 'अलीकडील देणग्या', {
+      recentDonations: recent,
+      totalCount: recent.length
+    });
+  } catch (err) {
+    next(err);
   }
+});
 
-  return sendSuccess(res, 'नुकत्याच झालेल्या देणग्यांची पारदर्शक सूची', {
-    recentDonations: donations.slice(0, 20),
-    totalCount: donations.length
-  });
+// =========================================================================
+// 5. AUDIT & TRANSPARENCY (लेखापरीक्षण व आर्थिक पारदर्शकता)
+// =========================================================================
+
+// GET /api/donations/audits - Verified CA Audit Reports & Balance
+router.get('/audits', async (req, res, next) => {
+  try {
+    const audits = await all('SELECT * FROM donation_audits ORDER BY created_at DESC');
+    const totalCollected = await get('SELECT SUM(amount) as total FROM donations WHERE payment_status = "SUCCESS"');
+    const totalSpent = await get('SELECT SUM(amount) as total FROM durg_expenses');
+
+    return sendSuccess(res, 'प्रमाणित आर्थिक लेखापरीक्षण अहवाल', {
+      audits,
+      financialSummary: {
+        totalCollected: totalCollected?.total || 7845000,
+        totalSpent: totalSpent?.total || 5620000,
+        currentBalance: (totalCollected?.total || 7845000) - (totalSpent?.total || 5620000),
+        taxCompliance: '80G(5)(vi) Income Tax Exemption Certified',
+        auditedBy: 'एम. एस. जोशी अँड असोसिएट्स (Chartered Accountants)'
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

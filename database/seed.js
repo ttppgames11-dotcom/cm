@@ -2,6 +2,10 @@ import bcrypt from 'bcryptjs';
 import { getDatabase, runQuery, all, saveDatabase } from './database.js';
 
 export async function seed() {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('Refusing to seed sample data in production.');
+    return;
+  }
   console.log('🌱 Seeding Connect Maratha SQLite database...');
   await getDatabase();
 

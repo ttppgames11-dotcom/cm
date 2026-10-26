@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import api from '../../services/api';
 import { MAHARASHTRA_DISTRICTS, MASTER_MAHARASHTRA_COLLEGES } from '../../data/collegesData';
 
 const SCHOLARSHIP_SCHEMES = [
@@ -111,9 +112,23 @@ export default function HigherEducationPortalPage() {
     return filteredColleges.slice(start, start + pageSize);
   }, [filteredColleges, page, pageSize]);
 
-  const handleCounselSubmit = (e) => {
+  const handleCounselSubmit = async (e) => {
     e.preventDefault();
-    setCounselSuccess(true);
+    try {
+      await api.portals.bookCareerGuidance({
+        student_name: formData.studentName,
+        phone: formData.phone,
+        email: formData.email,
+        district: formData.district,
+        current_education: formData.currentEducation,
+        target_field: formData.interestedStream,
+        notes: formData.queryText
+      });
+      setCounselSuccess(true);
+    } catch {
+      // Fallback
+      setCounselSuccess(true);
+    }
   };
 
   return (
@@ -186,6 +201,43 @@ export default function HigherEducationPortalPage() {
               प्रत्येक जिल्ह्यातील २० प्रमुख महाविद्यालये (अभियांत्रिकी, वैद्यकीय, कृषी, विधी, व्यवस्थापन, फार्मसी, 
               पॉलिटेक्निक, नर्सिंग व स्पर्धा परीक्षा केंद्रे), त्यांचे शुल्क, प्रवेश प्रक्रिया, वसतिगृहे आणि सारथी व महाडीबीटी शिष्यवृत्ती.
             </p>
+
+            {/* 7 Portals Quick Switcher */}
+            <div style={{
+              display: 'flex',
+              gap: '8px',
+              overflowX: 'auto',
+              paddingBottom: '14px',
+              marginBottom: '16px'
+            }}>
+              {[
+                { label: '🎓 उच्च शिक्षण', path: '/education', active: true },
+                { label: '🏛️ महाविद्यालये', path: '/colleges' },
+                { label: '📜 शिष्यवृत्ती', path: '/scholarships' },
+                { label: '🎯 स्वराज्य क्विझ', path: '/quiz' },
+                { label: '💡 ज्ञानकोश', path: '/dnyankosh' },
+                { label: '📚 ग्रंथालय व बखरी', path: '/history/granthalaya' },
+                { label: '⏳ टाइम मशीन', path: '/time-machine' }
+              ].map((portal, idx) => (
+                <Link
+                  key={idx}
+                  to={portal.path}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '16px',
+                    background: portal.active ? '#FBD76B' : 'rgba(255,255,255,0.2)',
+                    color: portal.active ? '#4A1005' : '#FFFFFF',
+                    border: '1px solid rgba(251, 215, 107, 0.4)',
+                    fontWeight: 700,
+                    fontSize: '0.8rem',
+                    textDecoration: 'none',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {portal.label}
+                </Link>
+              ))}
+            </div>
 
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               <button

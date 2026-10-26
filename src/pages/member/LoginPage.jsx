@@ -286,7 +286,7 @@ export default function LoginPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <span>🚩</span>
-                  <span><strong>अधिकृत:</strong> Connect Maratha चे अधिकृत डिजिटल व्यासपीठ</span>
+                  <span><strong>अधिकृत:</strong> Connect Maratha चे आधुनिक युगातील आधुनिक संघटन</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <span>❤️</span>

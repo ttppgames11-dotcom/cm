@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Outlet, useLocation, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import SiteHeader from './SiteHeader';
 import SiteFooter from './SiteFooter';
 import CommandPalette from './CommandPalette';
-import AIAssistantWidget from '../common/AIAssistantWidget';
+import AiAssistantWidget from '../common/AiAssistantWidget';
 
 const isUserLoggedIn = (user) => {
   if (!user) return false;
@@ -14,6 +14,14 @@ const isUserLoggedIn = (user) => {
   }
   return true;
 };
+
+const PUBLIC_LEGAL_PATHS = new Set([
+  '/contact', '/contact-us', '/helpdesk-contact',
+  '/privacy', '/privacy-policy', '/legal/privacy',
+  '/terms', '/terms-and-conditions', '/terms-of-service', '/legal/terms',
+  '/delete-account', '/account-deletion', '/delete-data', '/legal/delete-account',
+  '/child-safety', '/child-safety-standards', '/legal/child-safety'
+]);
 
 export default function AppLayout({ children }) {
   const { user } = useAuth();
@@ -44,6 +52,9 @@ export default function AppLayout({ children }) {
     if (pathname === '/login' || pathname.startsWith('/login')) return true;
     if (pathname === '/register' || pathname.startsWith('/register')) return true;
     if (pathname === '/crm/login' || pathname.startsWith('/crm/login')) return true;
+    if (pathname === '/ai-assistant' || pathname === '/ai') return true;
+    // Legal and contact pages must be reachable without an account (Google Play policy + DPDP)
+    if (PUBLIC_LEGAL_PATHS.has(pathname.replace(/\/+$/, '') || '/')) return true;
     return false;
   };
 
@@ -68,11 +79,13 @@ export default function AppLayout({ children }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  const isCrmPath = location.pathname.startsWith('/crm') || location.pathname.startsWith('/admin') || location.pathname.startsWith('/superadmin') || location.pathname === '/ceo';
+
   return (
-    <div className="app-shell" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <SiteHeader onOpenSearch={() => setSearchOpen(true)} />
+    <div className={`app-shell ${isCrmPath ? 'crm-standalone-mode' : ''}`} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {!isCrmPath && <SiteHeader onOpenSearch={() => setSearchOpen(true)} />}
       
-      <main style={{ flex: 1 }}>
+      <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {showLoginGate ? (
           <div 
             className="login-required-gate" 
@@ -98,7 +111,7 @@ export default function AppLayout({ children }) {
               }}
             >
               <div style={{ fontSize: '3rem', marginBottom: '12px' }}>🔐 🚩</div>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#431407', margin: '0 0 8px' }}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#EA580C', margin: '0 0 8px' }}>
                 Connect Maratha — सभासद लॉगिन आवश्यक
               </h2>
               <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#EA580C', marginBottom: '16px' }}>
@@ -169,15 +182,20 @@ export default function AppLayout({ children }) {
             </div>
           </div>
         ) : (
-          children || <Outlet />
+          children || (
+            // Keep header and footer on screen while a lazily loaded page downloads
+            <Suspense fallback={<div role="status" aria-live="polite" style={{ minHeight: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#B85018', fontWeight: 600 }}>लोड होत आहे…</div>}>
+              <Outlet />
+            </Suspense>
+          )
         )}
       </main>
 
-      <SiteFooter />
+      {!isCrmPath && <SiteFooter />}
       
       <CommandPalette isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       
-      {user?.role === 'superadmin' && location.pathname !== '/superadmin' && (
+      {!isCrmPath && user?.role === 'superadmin' && location.pathname !== '/superadmin' && (
         <Link
           to="/superadmin"
           className="cm-superadmin-fab"
@@ -237,10 +255,9 @@ export default function AppLayout({ children }) {
         </Link>
       )}
 
-      {/* Global Floating Connect Maratha AI Assistant Widget */}
-      {location.pathname !== '/ai' && location.pathname !== '/ai-agent' && (
-        <AIAssistantWidget />
-      )}
+
+      {/* Connect Maratha AI Assistant Floating Widget */}
+      <AiAssistantWidget />
 
       {/* 🔐 GLOBAL AUTHENTICATION REQUIRED PROMPT DIALOG */}
       {authRequiredPrompt && (
@@ -301,7 +318,7 @@ export default function AppLayout({ children }) {
 
             {/* Icon & Title */}
             <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🔐 🚩</div>
-            <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#431407', margin: '0 0 6px' }}>
+            <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#EA580C', margin: '0 0 6px' }}>
               Connect Maratha — सभासद लॉगिन आवश्यक
             </h3>
             <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', marginBottom: '14px' }}>

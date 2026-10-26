@@ -1,102 +1,36 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
 import { useSiteContent } from '../../context/SiteContentContext';
 
-const isUserLoggedIn = (user) => {
-  if (!user) return false;
-  if (!user.id && !user._id && !user.phone) return false;
-  if (typeof window !== 'undefined') {
-    if (localStorage.getItem('cm_logged_in') !== 'true') return false;
-  }
-  return true;
-};
-
 export default function SiteFooter() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
   const { getContent } = useSiteContent();
-
-  const loggedIn = isUserLoggedIn(user);
-
-  const handleFooterClickCapture = (e) => {
-    if (loggedIn) return;
-
-    const anchor = e.target.closest('a');
-    if (!anchor) return;
-
-    const href = anchor.getAttribute('href');
-    if (!href) return;
-
-    // Allow auth pages and direct protocols
-    if (
-      href === '/login' ||
-      href.startsWith('/login?') ||
-      href.startsWith('/login/') ||
-      href === '/register' ||
-      href.startsWith('/register?') ||
-      href.startsWith('/register/') ||
-      href.startsWith('mailto:') ||
-      href.startsWith('tel:') ||
-      href.startsWith('http')
-    ) {
-      return;
-    }
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    const title = (anchor.textContent || anchor.getAttribute('title') || 'सुविधा').trim().replace(/\s+/g, ' ').slice(0, 50);
-    sessionStorage.setItem('cm_login_redirect', href);
-
-    if (typeof window !== 'undefined' && typeof window.__cmOpenLoginPrompt === 'function') {
-      window.__cmOpenLoginPrompt(href, title);
-    } else {
-      navigate(`/login?redirect=${encodeURIComponent(href)}`);
-    }
-  };
 
   return (
     <>
       {/* ========== QUOTE BANNER ========== */}
-      <div style={{
-        position: 'relative',
-        background: 'url("/assets/images/foot2.jpeg") center/cover no-repeat',
-        color: '#431407',
-        textAlign: 'center',
-        padding: '50px 24px',
-        borderTop: '2px solid rgba(254, 215, 170, 0.35)'
-      }}>
-        <div style={{
-          position: 'relative',
-          zIndex: 2,
-          maxWidth: '860px',
-          margin: '0 auto'
-        }}>
-          <div className="quote-banner-text" style={{ fontSize: 'clamp(1.15rem, 3.8vw, 1.55rem)', fontWeight: 900, color: '#431407', fontFamily: 'Baloo 2, sans-serif', letterSpacing: '0.5px', textShadow: '0 1px 3px rgba(255, 255, 255, 0.9)', wordBreak: 'break-word', padding: '0 10px', lineHeight: 1.35 }}>
-            " मराठा तितुका मेळवावा । महाराष्ट्र धर्म वाढवावा ॥ "
-          </div>
-          <span style={{ display: 'block', margin: '8px 0 0', fontSize: 'clamp(0.82rem, 2.6vw, 1rem)', color: '#7C2D12', fontWeight: 800, textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)', padding: '0 10px' }}>
-            — समर्थ रामदास स्वामी · शिवकालीन ऐतिहासिक संदेश
-          </span>
+      <div style={{ background: 'linear-gradient(135deg, var(--maroon-900, #D84315), var(--maroon-800, #E65100))', color: '#FFFFFF', textAlign: 'center', padding: '44px 24px', borderTop: '1px solid rgba(255,255,255,0.15)' }}>
+        <div style={{ fontSize: '1.35rem', fontWeight: 700, color: '#FFE082', maxWidth: '800px', margin: '0 auto' }}>
+          " मराठा तितुका मेळवावा । महाराष्ट्र धर्म वाढवावा ॥ "
         </div>
+        <span style={{ display: 'block', margin: '10px 0 0', fontSize: '0.88rem', color: 'rgba(255,255,255,0.92)' }}>
+          — समर्थ रामदास स्वामी · शिवकालीन ऐतिहासिक संदेश
+        </span>
       </div>
 
       {/* ========== FOOTER (Streamlined, Non-repetitive, High-Trust) ========== */}
-      <footer className="website-footer" onClickCapture={handleFooterClickCapture}>
+      <footer className="website-footer">
         <div className="footer-grid">
           {/* Column 1: Brand & Mission */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-              <img src={getContent('images.brandLogo', '/assets/images/logo.png')} alt="Connect Maratha" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+              <img src={getContent('images.brandLogo', '/assets/images/logo.png')} alt="Connect Maratha" style={{ width: '44px', height: '44px', objectFit: 'contain', borderRadius: '50%' }} />
               <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#FFFFFF' }}>{getContent('header.brandTitle', 'CONNECT मराठा')}</span>
             </div>
             <p className="footer-brand-copy" style={{ fontSize: '0.86rem', lineHeight: 1.6, marginBottom: '14px', color: '#FFFFFF', opacity: 0.95 }}>
-              {getContent('texts.footerAbout', 'Connect Maratha (कनेक्ट मराठा) हे जागतिक मराठा समाजाचे अधिकृत डिजिटल व्यासपीठ आहे — रोजगार संधी, बिझनेस संगम, ऐतिहासिक वारसा आणि समाज सक्षमीकरण.')}
+              {getContent('texts.footerAbout', 'भूतकाळातून प्रेरणा • वर्तमानात जोडणी • भविष्यासाठी उभारणी. अखंड मराठा इतिहास, संस्कृती, व्यवसाय आणि सामाजिक एकतेचे अधिकृत डिजिटल व्यासपीठ.')}
             </p>
             <div style={{ background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,204,128,0.3)', borderRadius: '8px', padding: '10px 12px', fontSize: '0.8rem', color: '#FFF3E0' }}>
               📞 समाज हेल्पलाईन: <strong>{getContent('forms.contactSupport.emergencyHelpline', '१८००-१२३-१६७४')}</strong><br />
-              ✉️ अधिकृत ईमेल: <a href="mailto:support@connectmaratha.com" style={{ color: '#FDE047', fontWeight: 700, textDecoration: 'none' }}>support@connectmaratha.com</a><br />
               🔒 <strong>DPDP Act, 2023 सुसंगत:</strong> डेटा गोपनीयता व एन्क्रिप्शन.
             </div>
           </div>
@@ -107,8 +41,6 @@ export default function SiteFooter() {
               इतिहास व वारसा
             </h3>
             <ul style={{ listStyle: 'none', padding: 0 }}>
-              <li style={{ marginBottom: '8px' }}><Link to="/article/babasaheb-purandare-shivcharitra-kathan-bhag-1" style={{ color: '#FDE047', fontWeight: 700, textDecoration: 'none' }}>🚩 शिवचरित्र कथन (१० भाग)</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/history/granthalaya" style={{ color: '#FFFFFF', textDecoration: 'none' }}>📚 मराठा महाग्रंथालय व बखरी</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/history" style={{ color: '#FFFFFF', textDecoration: 'none' }}>📜 मराठा इतिहास कालपट</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/culture" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🌍 ८ प्रादेशिक सांस्कृतिक प्रोफाइल</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/culture/dialects" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🗣️ महाराष्ट्राच्या बोली व उच्चार</Link></li>
@@ -131,7 +63,7 @@ export default function SiteFooter() {
               <li style={{ marginBottom: '8px' }}><Link to="/sangam" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🤝 व्यवसाय संगम (Chapters)</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/jobs" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🛠️ व्यावसायिक सेवा बुकिंग</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/jobs" style={{ color: '#FFFFFF', textDecoration: 'none' }}>💼 रोजगार व करिअर केंद्र</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/jobs" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🎓 उच्च शिक्षण व शिष्यवृत्ती</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/education" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🎓 उच्च शिक्षण व शिष्यवृत्ती</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/about" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🌟 राष्ट्रीय मराठा गौरव</Link></li>
             </ul>
           </div>
@@ -142,15 +74,12 @@ export default function SiteFooter() {
               संस्था व प्रशासन
             </h3>
             <ul style={{ listStyle: 'none', padding: 0 }}>
-              <li style={{ marginBottom: '8px' }}><Link to="/roles-matrix" style={{ color: '#FFE082', fontWeight: 800, textDecoration: 'none' }}>⚖️ ५६ पदे व पात्रता मॅट्रिक्स (Roles Matrix)</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/about" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🏛️ संस्था परिचय व सल्लागार मंडळ</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/governance" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🎯 व्हिजन, मिशन व धोरण</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/privacy" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🔒 गोपनीयता धोरण (Privacy Policy)</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/terms" style={{ color: '#FFFFFF', textDecoration: 'none' }}>📜 नियम व अटी (Terms & Conditions)</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/delete-account" style={{ color: '#FCA5A5', fontWeight: 700, textDecoration: 'none' }}>🗑️ खाते व डेटा हटवा (Delete Account)</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/governance" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🔒 DPDP २०२३ गोपनीयता धोरण</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/profile" style={{ color: '#FFFFFF', textDecoration: 'none' }}>⚙️ खाते व वैयक्तिक सेटिंग्ज</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/community" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🔔 एकात्मिक सूचना केंद्र</Link></li>
-              <li style={{ marginBottom: '8px' }}><Link to="/goals" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🏆 प्रमुख उद्दिष्टे व संकल्प</Link></li>
+              <li style={{ marginBottom: '8px' }}><Link to="/governance" style={{ color: '#FFFFFF', textDecoration: 'none' }}>🧭 मास्टर ब्लूप्रिंट (५० विभाग)</Link></li>
               <li style={{ marginBottom: '8px' }}><Link to="/contact" style={{ color: '#FFFFFF', textDecoration: 'none' }}>☎️ संपर्क व तक्रार निवारण</Link></li>
             </ul>
           </div>
@@ -164,7 +93,7 @@ export default function SiteFooter() {
             ॥ जय भवानी, जय शिवाजी ॥ प्रौढ प्रताप पुरंधर क्षत्रियकुलावतंस सिंहासनाधीश्वर छत्रपती शिवाजी महाराज की जय!
           </p>
           <p className="footer-admin" style={{ fontSize: '0.75rem', marginTop: '8px' }}>
-            <Link to="/governance" style={{ color: '#FFF3E0', opacity: 0.9 }}>DPDP धोरण व सनद</Link> | <Link to="/goals" style={{ color: '#FFF3E0', opacity: 0.9 }}>उद्दिष्टे व संकल्प</Link> | <Link to="/contact" style={{ color: '#FFF3E0', opacity: 0.9 }}>मदत व संपर्क</Link> | <Link to="/login" style={{ color: '#FFF3E0', opacity: 0.9 }}>सभासद लॉगिन</Link>
+            <Link to="/admin" style={{ color: '#FFF3E0', opacity: 0.9 }}>CRM Console</Link> | <Link to="/admin/cms" style={{ color: '#FFE082', fontWeight: 700 }}>🎨 CMS डेटा संपादन</Link> | <Link to="/governance" style={{ color: '#FFF3E0', opacity: 0.9 }}>Master Blueprint</Link> | <Link to="/login" style={{ color: '#FFF3E0', opacity: 0.9 }}>लॉगिन</Link>
           </p>
         </div>
       </footer>

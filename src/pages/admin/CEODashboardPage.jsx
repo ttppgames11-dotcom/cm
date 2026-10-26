@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import adminApi from '../../services/adminApi';
 
 const scopeProfiles = {
   maharashtra: {
@@ -235,6 +236,55 @@ export default function CEODashboardPage() {
     search: ''
   });
 
+  // CEO Unified Approvals Command State
+  const [ceoApprovals, setCeoApprovals] = useState([]);
+  const [ceoApprovalsLoading, setCeoApprovalsLoading] = useState(false);
+  const [ceoActionItem, setCeoActionItem] = useState(null);
+  const [ceoActionRemarks, setCeoActionRemarks] = useState('');
+  const [ceoSanctionAmount, setCeoSanctionAmount] = useState('');
+  const [ceoSubmitting, setCeoSubmitting] = useState(false);
+  const [ceoNotice, setCeoNotice] = useState(null);
+
+  const fetchCeoApprovals = useCallback(async () => {
+    setCeoApprovalsLoading(true);
+    try {
+      const res = await adminApi.getUnifiedApprovals();
+      setCeoApprovals(res?.approvals || []);
+    } catch (err) {
+      console.warn('CEO Approvals fetch error:', err);
+    } finally {
+      setCeoApprovalsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCeoApprovals();
+  }, [fetchCeoApprovals]);
+
+  const handleCeoApprovalConfirm = async () => {
+    if (!ceoActionItem) return;
+    setCeoSubmitting(true);
+    try {
+      const { item, action } = ceoActionItem;
+      await adminApi.actionUnifiedApproval({
+        itemId: item.id,
+        type: item.type,
+        collection: item.collection,
+        action,
+        remarks: ceoActionRemarks,
+        sanctionedAmount: item.type === 'loan' ? ceoSanctionAmount : undefined
+      });
+      setCeoApprovals(prev => prev.filter(x => x.id !== item.id));
+      setCeoNotice(`नोंद ${item.id} वर CEO कार्यकारी आदेश यशस्वी! ✓`);
+      setCeoActionItem(null);
+      fetchCeoApprovals();
+    } catch (err) {
+      setCeoNotice(`त्रुटी: ${err.message}`);
+    } finally {
+      setCeoSubmitting(false);
+    }
+  };
+
   const profile = scopeProfiles[scope] || scopeProfiles.maharashtra;
 
   // Filtered reports
@@ -322,7 +372,7 @@ export default function CEODashboardPage() {
                 🦅
               </div>
               <div style={{ overflow: 'hidden' }}>
-                <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#431407', whiteSpace: 'nowrap', letterSpacing: '-0.3px' }}>
+                <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#EA580C', whiteSpace: 'nowrap', letterSpacing: '-0.3px' }}>
                   CEO COCKPIT
                 </div>
                 <div style={{ fontSize: '0.68rem', color: '#EA580C', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -367,7 +417,7 @@ export default function CEODashboardPage() {
                   width: '100%',
                   background: '#FFF7ED',
                   border: '1px solid #FED7AA',
-                  color: '#431407',
+                  color: '#EA580C',
                   borderRadius: '8px',
                   padding: '7px 10px',
                   fontSize: '0.78rem',
@@ -392,7 +442,6 @@ export default function CEODashboardPage() {
             { id: 'referrals', label: 'B2B रेफरल्स (TYFCB)', icon: '🤝', to: '/referrals', badge: profile.referrals },
             { id: 'district', label: 'जिल्हा KYC पडताळणी', icon: '📍', to: '/crm/district', badge: '३६ जिल्हे' },
             { id: 'helpdesk', label: 'समाज साहाय्यता व हेल्पडेस्क', icon: '🩺', to: '/crm/helpdesk', badge: '२४x७' },
-            { id: 'ai', label: 'Connect Maratha AI Agent', icon: '🤖', to: '/ai', badge: 'RAG 2.0', highlight: true },
             { id: 'finance', label: 'महसूल व लेजर अहवाल', icon: '💰', to: '/crm/finance', badge: profile.revenue },
             { id: 'superadmin', label: 'सुपर ॲडमिन CRUD कन्सोल', icon: '👑', to: '/superadmin', badge: 'SuperAdmin' }
           ].map((item) => (
@@ -474,7 +523,7 @@ export default function CEODashboardPage() {
           </div>
           {!sidebarCollapsed && (
             <div style={{ overflow: 'hidden' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#431407', whiteSpace: 'nowrap' }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#EA580C', whiteSpace: 'nowrap' }}>
                 कार्याध्यक्ष (State CEO)
               </div>
               <div style={{ fontSize: '0.68rem', color: '#16A34A', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 700 }}>
@@ -617,24 +666,6 @@ export default function CEODashboardPage() {
               <span>CSV अहवाल</span>
             </button>
 
-            <Link
-              to="/ai"
-              style={{
-                background: 'linear-gradient(135deg, #EA580C, #C2410C)',
-                color: '#FFFFFF',
-                borderRadius: '8px',
-                padding: '8px 12px',
-                fontSize: '0.78rem',
-                fontWeight: 800,
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                boxShadow: '0 2px 8px rgba(234, 88, 12, 0.25)'
-              }}>
-              <span>🤖</span>
-              <span>AI सहाय्यक</span>
-            </Link>
           </div>
         </header>
 
@@ -660,7 +691,7 @@ export default function CEODashboardPage() {
                 <span>•</span>
                 <span style={{ color: '#16A34A' }}>🟢 लाईव्ह डेटाबेस सिंक्रोनाइझेशन</span>
               </div>
-              <h1 style={{ margin: 0, fontSize: '1.45rem', fontWeight: 900, color: '#431407', letterSpacing: '-0.3px' }}>
+              <h1 style={{ margin: 0, fontSize: '1.45rem', fontWeight: 900, color: '#EA580C', letterSpacing: '-0.3px' }}>
                 {profile.title}
               </h1>
               <p style={{ margin: '4px 0 0 0', fontSize: '0.84rem', color: '#7C2D12', fontWeight: 600 }}>
@@ -728,6 +759,38 @@ export default function CEODashboardPage() {
                 <span>🗺️</span>
                 <span>विभागीय सांख्यिकी</span>
               </button>
+
+              <button
+                onClick={() => setViewMode('approvals')}
+                style={{
+                  background: viewMode === 'approvals' ? 'linear-gradient(135deg, #EA580C, #D97706)' : 'transparent',
+                  color: viewMode === 'approvals' ? '#FFFFFF' : '#7C2D12',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '7px 14px',
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  boxShadow: viewMode === 'approvals' ? '0 2px 8px rgba(234, 88, 12, 0.3)' : 'none'
+                }}>
+                <span>⚖️</span>
+                <span>कार्यकारी मंजुरी कॉकपिट</span>
+                {ceoApprovals.length > 0 && (
+                  <span style={{
+                    background: viewMode === 'approvals' ? '#FFFFFF' : '#EA580C',
+                    color: viewMode === 'approvals' ? '#EA580C' : '#FFFFFF',
+                    fontSize: '0.65rem',
+                    padding: '1px 6px',
+                    borderRadius: 999,
+                    fontWeight: 900
+                  }}>
+                    {ceoApprovals.length}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
 
@@ -792,7 +855,7 @@ export default function CEODashboardPage() {
               style={{
                 background: '#FFF7ED',
                 border: '1px solid #FED7AA',
-                color: '#431407',
+                color: '#EA580C',
                 borderRadius: '6px',
                 padding: '6px 10px',
                 fontSize: '0.78rem',
@@ -812,7 +875,7 @@ export default function CEODashboardPage() {
               style={{
                 background: '#FFF7ED',
                 border: '1px solid #FED7AA',
-                color: '#431407',
+                color: '#EA580C',
                 borderRadius: '6px',
                 padding: '6px 10px',
                 fontSize: '0.78rem',
@@ -876,7 +939,7 @@ export default function CEODashboardPage() {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #FED7AA', paddingBottom: '8px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: stg.badge }} />
-                        <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#431407' }}>
+                        <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C' }}>
                           {stg.name}
                         </span>
                       </div>
@@ -940,7 +1003,7 @@ export default function CEODashboardPage() {
                           </div>
 
                           <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
-                            👤 अध्यक्ष: <strong style={{ color: '#431407' }}>{item.leader}</strong>
+                            👤 अध्यक्ष: <strong style={{ color: '#EA580C' }}>{item.leader}</strong>
                           </div>
 
                           <div style={{
@@ -1089,7 +1152,7 @@ export default function CEODashboardPage() {
                     boxShadow: '0 4px 12px rgba(234, 88, 12, 0.06)'
                   }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 900, color: '#431407' }}>
+                    <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 900, color: '#EA580C' }}>
                       {div.name}
                     </h3>
                     <span style={{ background: '#DCFCE7', color: '#16A34A', border: '1px solid #86EFAC', fontSize: '0.72rem', fontWeight: 800, padding: '2px 8px', borderRadius: '6px' }}>
@@ -1115,8 +1178,266 @@ export default function CEODashboardPage() {
               ))}
             </div>
           )}
+
+          {/* ============================================================ */}
+          {/* VIEW MODE 4: CEO EXECUTIVE APPROVALS COCKPIT */}
+          {/* ============================================================ */}
+          {viewMode === 'approvals' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{
+                background: '#FFFFFF',
+                border: '1px solid #FED7AA',
+                borderRadius: '12px',
+                padding: '20px',
+                boxShadow: '0 4px 15px rgba(234, 88, 12, 0.06)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1F2937', margin: 0 }}>
+                      ⚖️ कार्यकारी मंजुरी कॉकपिट (CEO Executive Approvals)
+                    </h2>
+                    <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#7C2D12', fontWeight: 600 }}>
+                      उच्च मूल्य B2B सौदे, बँक कर्ज मंजुरी, BMC दूध संकलन भागीदार व महत्त्वाची आस्थापने
+                    </p>
+                  </div>
+                  <button
+                    onClick={fetchCeoApprovals}
+                    style={{
+                      background: '#FFF7ED',
+                      border: '1px solid #FED7AA',
+                      color: '#EA580C',
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      fontSize: '0.78rem',
+                      fontWeight: 800,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    🔄 रिफ्रेश (Refresh)
+                  </button>
+                </div>
+
+                {ceoNotice && (
+                  <div style={{
+                    background: '#DCFCE7',
+                    border: '1px solid #86EFAC',
+                    color: '#166534',
+                    padding: '10px 14px',
+                    borderRadius: '8px',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    marginBottom: '16px'
+                  }}>
+                    {ceoNotice}
+                  </div>
+                )}
+
+                {ceoApprovalsLoading ? (
+                  <div style={{ padding: '32px', textAlign: 'center', color: '#EA580C', fontWeight: 800 }}>
+                    ⏳ प्रलंबित कार्यकारी नोंदी लोड होत आहेत...
+                  </div>
+                ) : ceoApprovals.length === 0 ? (
+                  <div style={{ padding: '36px', textAlign: 'center' }}>
+                    <span style={{ fontSize: '2rem' }}>🎉</span>
+                    <h4 style={{ margin: '8px 0 4px', color: '#1F2937', fontWeight: 800 }}>सर्व कार्यकारी मंजुऱ्या पूर्ण झाल्या आहेत!</h4>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748B' }}>सध्या कोणत्याही मोठ्या व्यवहाराची अथवा कर्जाची मंजुरी प्रलंबित नाही.</p>
+                  </div>
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
+                      <thead>
+                        <tr style={{ background: '#FFF7ED', color: '#EA580C' }}>
+                          <th style={{ padding: '12px' }}>आयडी</th>
+                          <th style={{ padding: '12px' }}>मॉड्यूल व प्रकार</th>
+                          <th style={{ padding: '12px' }}>विषय / खरेदीदार / अर्जदार</th>
+                          <th style={{ padding: '12px' }}>आर्थिक मूल्य / तपशील</th>
+                          <th style={{ padding: '12px' }}>स्थान / जिल्हा</th>
+                          <th style={{ padding: '12px' }}>प्राधान्य</th>
+                          <th style={{ padding: '12px' }}>CEO कार्यकारी कृती</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ceoApprovals.map((item) => (
+                          <tr key={item.id} style={{ borderBottom: '1px solid #FED7AA' }}>
+                            <td style={{ padding: '12px', fontFamily: 'monospace', fontWeight: 800, color: '#EA580C' }}>
+                              {item.id}
+                            </td>
+                            <td style={{ padding: '12px' }}>
+                              <span style={{
+                                background: '#FFEDD5',
+                                color: '#9A3412',
+                                border: '1px solid #FED7AA',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                fontSize: '0.72rem',
+                                fontWeight: 800
+                              }}>
+                                {item.module}
+                              </span>
+                              <div style={{ fontSize: '0.7rem', color: '#64748B', marginTop: '2px' }}>
+                                {item.subModule}
+                              </div>
+                            </td>
+                            <td style={{ padding: '12px' }}>
+                              <div style={{ fontWeight: 800, color: '#1F2937' }}>{item.title}</div>
+                              <div style={{ fontSize: '0.74rem', color: '#7C2D12' }}>{item.applicantName}</div>
+                            </td>
+                            <td style={{ padding: '12px', fontSize: '0.78rem', fontWeight: 700, color: '#1E293B' }}>
+                              {item.valueOrDetails || '—'}
+                            </td>
+                            <td style={{ padding: '12px', fontSize: '0.76rem', color: '#64748B' }}>
+                              {item.location || item.district}
+                            </td>
+                            <td style={{ padding: '12px' }}>
+                              <span style={{
+                                background: item.priority === 'Critical' ? '#FEE2E2' : item.priority === 'High' ? '#FEF3C7' : '#EFF6FF',
+                                color: item.priority === 'Critical' ? '#991B1B' : item.priority === 'High' ? '#92400E' : '#1E40AF',
+                                border: '1px solid transparent',
+                                padding: '3px 8px',
+                                borderRadius: '6px',
+                                fontSize: '0.72rem',
+                                fontWeight: 800
+                              }}>
+                                {item.priority || 'Normal'}
+                              </span>
+                            </td>
+                            <td style={{ padding: '12px' }}>
+                              <div style={{ display: 'flex', gap: '8px' }}>
+                                <button
+                                  onClick={() => {
+                                    setCeoActionItem({ item, action: item.type === 'loan' ? 'sanction' : 'approve' });
+                                    setCeoActionRemarks('प्रदेशाध्यक्ष / CEO यांच्या अधिकाराने विशेष मंजुरी प्रदान करण्यात आली.');
+                                    if (item.type === 'loan') {
+                                      const num = String(item.valueOrDetails || '').replace(/\D/g, '');
+                                      setCeoSanctionAmount(num || '1500000');
+                                    }
+                                  }}
+                                  style={{
+                                    background: 'linear-gradient(135deg, #16A34A, #15803D)',
+                                    color: '#FFFFFF',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    padding: '6px 12px',
+                                    fontSize: '0.74rem',
+                                    fontWeight: 800,
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  {item.type === 'loan' ? '✓ कर्ज मंजूर' : '✓ CEO मंजुरी'}
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setCeoActionItem({ item, action: 'reject' });
+                                    setCeoActionRemarks('CEO स्तरावरून पडताळणीअंती अर्ज नामंजूर करण्यात आला.');
+                                  }}
+                                  style={{
+                                    background: '#FEE2E2',
+                                    color: '#DC2626',
+                                    border: '1px solid #FCA5A5',
+                                    borderRadius: '6px',
+                                    padding: '6px 10px',
+                                    fontSize: '0.74rem',
+                                    fontWeight: 800,
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  ✕ फेटाळा
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </main>
       </div>
+
+      {/* CEO Action Modal */}
+      {ceoActionItem && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(67, 20, 7, 0.4)',
+          backdropFilter: 'blur(4px)', zIndex: 10000,
+          display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 20
+        }}>
+          <div style={{
+            background: '#FFFFFF', border: '2px solid #EA580C',
+            borderRadius: 16, padding: 24, width: '100%', maxWidth: 520,
+            boxShadow: '0 20px 50px rgba(234,88,12,0.25)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+              <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#1F2937' }}>
+                {ceoActionItem.action === 'reject' ? '⚠️ नोंद नामंजूर करणे' : '👑 CEO कार्यकारी मंजुरी आदेश'}
+              </h3>
+              <button onClick={() => setCeoActionItem(null)} style={{ background: 'none', border: 'none', fontSize: '1.2rem', color: '#EA580C', cursor: 'pointer', fontWeight: 900 }}>✕</button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ background: '#FFF7ED', border: '1px solid #FED7AA', padding: 12, borderRadius: 8 }}>
+                <div style={{ fontSize: '0.74rem', color: '#EA580C', fontWeight: 800 }}>
+                  {ceoActionItem.item.module} • {ceoActionItem.item.subModule}
+                </div>
+                <div style={{ fontSize: '0.96rem', fontWeight: 900, color: '#1F2937', marginTop: 4 }}>
+                  {ceoActionItem.item.title}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#64748B', marginTop: 2 }}>
+                  अर्जदार: {ceoActionItem.item.applicantName} | ठिकाण: {ceoActionItem.item.location}
+                </div>
+              </div>
+
+              {ceoActionItem.item.type === 'loan' && (ceoActionItem.action === 'approve' || ceoActionItem.action === 'sanction') && (
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: '#1F2937', marginBottom: 4 }}>
+                    मंजूर केलेली कर्ज रक्कम (Sanctioned Loan Amount in ₹):
+                  </label>
+                  <input
+                    type="number"
+                    value={ceoSanctionAmount}
+                    onChange={(e) => setCeoSanctionAmount(e.target.value)}
+                    placeholder="उदा. 1500000"
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #FED7AA', fontSize: '0.85rem' }}
+                  />
+                </div>
+              )}
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: '#1F2937', marginBottom: 4 }}>
+                  CEO शेरा व मंजुरी आदेश टिप्पणी:
+                </label>
+                <textarea
+                  rows={3}
+                  value={ceoActionRemarks}
+                  onChange={(e) => setCeoActionRemarks(e.target.value)}
+                  placeholder="शेरा प्रविष्ट करा..."
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #FED7AA', fontSize: '0.82rem', resize: 'vertical' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 6 }}>
+                <button
+                  onClick={() => setCeoActionItem(null)}
+                  style={{ background: '#FFF7ED', border: '1px solid #FED7AA', color: '#1F2937', padding: '8px 14px', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}
+                >
+                  रद्द करा
+                </button>
+                <button
+                  onClick={handleCeoApprovalConfirm}
+                  disabled={ceoSubmitting}
+                  style={{
+                    background: ceoActionItem.action === 'reject' ? '#DC2626' : 'linear-gradient(135deg, #16A34A, #15803D)',
+                    color: '#FFFFFF', border: 'none', padding: '8px 16px', borderRadius: 8, fontWeight: 800, cursor: 'pointer'
+                  }}
+                >
+                  {ceoSubmitting ? 'प्रक्रिया सुरू आहे...' : ceoActionItem.action === 'reject' ? '✕ खात्रीने फेटाळा' : '✓ CEO मंजुरी जारी करा'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Slide-over Detail Modal */}
       {selectedMandal && (
@@ -1156,7 +1477,7 @@ export default function CEODashboardPage() {
               </button>
             </div>
 
-            <h2 style={{ margin: 0, fontSize: '1.3rem', color: '#431407', fontWeight: 900 }}>
+            <h2 style={{ margin: 0, fontSize: '1.3rem', color: '#EA580C', fontWeight: 900 }}>
               {selectedMandal.name}
             </h2>
 

@@ -1,6 +1,10 @@
 // src/pages/admin/SuperAdminPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import adminApi from '../../services/adminApi';
+import apiClient from '../../services/apiClient';
+import UnitHierarchyPanel from '../../components/crm/UnitHierarchyPanel';
+import { USER_ROLE_OPTIONS } from '../../constants/userRoles';
 
 /* ============================================================
    SUPER ADMIN COMMAND CENTER - WHITE & SAFFRON ORANGE THEME
@@ -13,7 +17,7 @@ const S = {
   saffron: '#EA580C',     // Primary Saffron Orange
   orange: '#F97316',      // Bright Orange accent
   amber: '#D97706',       // Warm Amber
-  deep: '#431407',        // Deep Maratha Ink
+  deep: '#EA580C',        // Deep Maratha Ink
   text: '#1E293B',        // High contrast slate text
   muted: '#64748B',       // Muted text
   green: '#16A34A',       // Success Green
@@ -99,7 +103,7 @@ const Modal = ({ title, children, onClose, width = 640 }) => (
    ============================================================ */
 export default function SuperAdminPage() {
   const { user } = useAuth();
-  
+
   // Navigation & Responsiveness State
   const [activeTab, setActiveTab] = useState('command');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -126,15 +130,284 @@ export default function SuperAdminPage() {
     setInlineNotice({ msg, time: new Date().toLocaleTimeString() });
   };
 
+  // Live Unified Approvals Command State
+  const [liveApprovals, setLiveApprovals] = useState([]);
+  const [approvalsCount, setApprovalsCount] = useState(0);
+  const [approvalModuleFilter, setApprovalModuleFilter] = useState('all');
+  const [approvalsLoading, setApprovalsLoading] = useState(false);
+  const [approvalActionModal, setApprovalActionModal] = useState(null);
+  const [approvalRemarks, setApprovalRemarks] = useState('');
+  const [approvalSanctionAmount, setApprovalSanctionAmount] = useState('');
+  const [approvalSubmitting, setApprovalSubmitting] = useState(false);
+
+  const fetchLiveApprovals = useCallback(async () => {
+    setApprovalsLoading(true);
+    try {
+      const res = await adminApi.getUnifiedApprovals({
+        module: approvalModuleFilter !== 'all' ? approvalModuleFilter : undefined,
+        district: filters.district !== 'All' ? filters.district : undefined
+      });
+      const list = res?.approvals || [];
+      setLiveApprovals(list);
+      setApprovalsCount(res?.totalPendingCount ?? list.length);
+    } catch (err) {
+      console.warn('SuperAdmin fetch approvals error:', err);
+    } finally {
+      setApprovalsLoading(false);
+    }
+  }, [approvalModuleFilter, filters.district]);
+
+  useEffect(() => {
+    fetchLiveApprovals();
+  }, [fetchLiveApprovals]);
+
+  const handleApprovalActionConfirm = async () => {
+    if (!approvalActionModal) return;
+    setApprovalSubmitting(true);
+    try {
+      const { item, action } = approvalActionModal;
+      await adminApi.actionUnifiedApproval({
+        itemId: item.id,
+        type: item.type,
+        collection: item.collection,
+        action,
+        remarks: approvalRemarks,
+        sanctionedAmount: item.type === 'loan' ? approvalSanctionAmount : undefined
+      });
+      setLiveApprovals(prev => prev.filter(x => x.id !== item.id));
+      setApprovalsCount(prev => Math.max(0, prev - 1));
+      triggerInlineNotice(`नोंद ${item.id} वर "${action === 'approve' || action === 'sanction' ? 'मंजूर (Approved)' : 'फेटाळले (Rejected)'}" कारवाई यशस्वी! ✓`);
+      setApprovalActionModal(null);
+      fetchLiveApprovals();
+    } catch (err) {
+      triggerInlineNotice(`त्रुटी: ${err.message}`);
+    } finally {
+      setApprovalSubmitting(false);
+    }
+  };
+
   /* ============================================================
      REAL-TIME RICH DATASETS FOR ALL 17 SUPER ADMIN MODULES
      ============================================================ */
-  const [users, setUsers] = useState([
-    { id: 'CM-USR-K9X1A2-8412', photo: '👤', name: 'अमोल तुकाराम जाधव', mobile: '+91 98220 11924', email: 'amol.jadhav@connectmaratha.org', role: 'District Coordinator', permissions: '✅ District User CRUD + KYC Review', geography: 'पुणे (हवेली)', status: 'Active', lastLogin: '१० मिनिटांपूर्वी', kyc: 'Verified', date: '2026-09-10', isCreatedByAdmin: true },
-    { id: 'CM-USR-L8B3C4-9105', photo: '👩', name: 'प्रियंका सुरेश शिर्के', mobile: '+91 98221 44589', email: 'priyanka.shirke@connectmaratha.org', role: 'State Secretary', permissions: '👁️ Strategic Read + Regional Approval', geography: 'सातारा (कराड)', status: 'Active', lastLogin: '१ तासापूर्वी', kyc: 'Verified', date: '2026-09-12', isCreatedByAdmin: true },
-    { id: 'CM-MH-7712398451', photo: '👨', name: 'निलेश भगवान देशमुख', mobile: '+91 98901 23456', email: 'nilesh.deshmukh@connectmaratha.org', role: 'Taluka Lead', permissions: '✅ Taluka Scope Access', geography: 'नाशिक (मालेगाव)', status: 'Pending', lastLogin: '३ दिवसांपूर्वी', kyc: 'Pending', date: '2026-09-15', isCreatedByAdmin: false },
-    { id: 'CM-MH-1102938475', photo: '👤', name: 'विक्रम संभाजी शेलार', mobile: '+91 97654 32109', email: 'vikram.shelar@connectmaratha.org', role: 'Chapter Head', permissions: '👁️ Chapter Members View', geography: 'कोल्हापूर (कागल)', status: 'Active', lastLogin: '५ मिनिटांपूर्वी', kyc: 'Verified', date: '2026-09-18', isCreatedByAdmin: false }
-  ]);
+  const [users, setUsers] = useState([]);
+  const [memberReferrals, setMemberReferrals] = useState([]);
+
+  useEffect(() => {
+    apiClient.getAdminUsers()
+      .then(res => {
+        const list = res?.users || res || [];
+        if (Array.isArray(list) && list.length > 0) {
+          setUsers(list.map(u => ({
+            id: u.id,
+            photo: u.avatar || '👤',
+            name: u.name,
+            mobile: u.phone || '',
+            email: u.email || '',
+            role: u.role || 'Member',
+            permissions: u.role === 'admin' ? '✅ Full Admin Access' : u.role === 'ceo' ? '👁️ Strategic Executive' : '✅ Member Scope',
+            geography: u.district ? `${u.district}${u.taluka ? ' (' + u.taluka + ')' : ''}` : 'महाराष्ट्र',
+            status: u.status === 'disabled' ? 'Disabled' : (u.status === 'inactive' ? 'Inactive' : 'Active'),
+            lastLogin: u.last_active_at ? 'सक्रिय' : 'नोंदणीकृत',
+            kyc: u.verified ? 'Verified' : 'Pending',
+            date: u.joined || u.created_at || '2026-09-24',
+            isCreatedByAdmin: u.role === 'admin' || !!u.createdBy
+          })));
+        }
+      })
+      .catch(err => console.warn('SuperAdmin fetch users error:', err));
+  }, []);
+
+  // Load member referrals from CRM API
+  useEffect(() => {
+    adminApi.getReferrals()
+      .then(refs => {
+        if (Array.isArray(refs) && refs.length > 0) {
+          setMemberReferrals(refs.map(r => ({
+            sno: r.sno || 0,
+            id: r.id,
+            memberId: r.memberId || r.refereeId,
+            name: r.name || r.refereeName,
+            referralId: r.referralId || r.referrerId,
+            referralName: r.referralName || r.referrerName,
+            joiningDate: r.joiningDate,
+            mobileNo: r.mobileNo,
+            email: r.email,
+            package: r.package,
+            activDate: r.activDate,
+            status: r.status,
+            district: r.district,
+            taluka: r.taluka
+          })));
+        }
+      })
+      .catch(err => console.warn('SuperAdmin fetch member referrals error:', err));
+  }, []);
+
+  // -------------------------------------------------------------
+  // SUPER ADMIN: PLATFORM FEATURE CONTROLS STATE
+  // -------------------------------------------------------------
+  const [platformControls, setPlatformControls] = useState({
+    registration: { status: 'open', customMessage: '' },
+    login: { status: 'enabled', customMessage: '' },
+    referralSystem: { status: 'enabled', maxDepth: 5 },
+    sponsorChange: { status: 'allowed', requireSecondApproval: true },
+    downlineTransfers: { status: 'allowed', requireSecondApproval: true },
+    newMembershipApplications: { status: 'open' },
+    businessDirectory: { status: 'enabled' },
+    businessNetworking: { status: 'enabled' },
+    jobsCareers: { status: 'enabled' },
+    eventsFestivals: { status: 'enabled' },
+    sevaDonations: { status: 'enabled' },
+    emergencyHelp: { status: 'enabled' },
+    serviceProviderListings: { status: 'enabled' },
+    communityPosts: { status: 'enabled' },
+    notifications: { status: 'enabled' },
+    publicPages: { status: 'enabled' },
+    bankFinance: { status: 'coming_soon' }
+  });
+  const [controlsSaving, setControlsSaving] = useState(false);
+
+  useEffect(() => {
+    adminApi.getPlatformControls()
+      .then(res => {
+        if (res?.controls) {
+          setPlatformControls(prev => ({ ...prev, ...res.controls }));
+        }
+      })
+      .catch(err => console.warn('Error fetching platform controls:', err));
+  }, []);
+
+  const handleUpdatePlatformSwitch = async (key, val) => {
+    const updated = {
+      ...platformControls,
+      [key]: typeof val === 'object' ? { ...platformControls[key], ...val } : { status: val }
+    };
+    setPlatformControls(updated);
+    setControlsSaving(true);
+    try {
+      await adminApi.updatePlatformControls(updated);
+      triggerInlineNotice(`प्लॅटफॉर्म स्विच "${key}" यशस्वीरीत्या अद्ययावत केले गेले! ✓`);
+    } catch (err) {
+      triggerInlineNotice(`त्रुटी: ${err.message}`);
+    } finally {
+      setControlsSaving(false);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // SUPER ADMIN: SPONSOR & DOWNLINE TRANSFER STATE
+  // -------------------------------------------------------------
+  const [sponsorModalOpen, setSponsorModalOpen] = useState(false);
+  const [transferTargetMember, setTransferTargetMember] = useState(null);
+  const [targetMemberHierarchy, setTargetMemberHierarchy] = useState(null);
+  const [newSponsorInput, setNewSponsorInput] = useState('');
+  const [transferReasonInput, setTransferReasonInput] = useState('');
+  const [transferLoading, setTransferLoading] = useState(false);
+  const [hierarchyLoading, setHierarchyLoading] = useState(false);
+
+  const handleOpenSponsorTransfer = async (member) => {
+    setTransferTargetMember(member);
+    setNewSponsorInput('');
+    setTransferReasonInput('');
+    setTargetMemberHierarchy(null);
+    setSponsorModalOpen(true);
+    setHierarchyLoading(true);
+    try {
+      const res = await adminApi.getSponsorHierarchy(member.id || member.memberId);
+      if (res) {
+        setTargetMemberHierarchy(res);
+      }
+    } catch (err) {
+      console.warn('Error getting sponsor hierarchy:', err);
+    } finally {
+      setHierarchyLoading(false);
+    }
+  };
+
+  const handleExecuteSponsorTransfer = async (e) => {
+    e.preventDefault();
+    if (!transferTargetMember || !newSponsorInput) return;
+    setTransferLoading(true);
+    try {
+      const targetId = transferTargetMember.id || transferTargetMember.memberId;
+      const res = await adminApi.changeSponsor({
+        memberId: targetId,
+        newSponsorId: newSponsorInput.trim(),
+        reason: transferReasonInput.trim() || 'Super Admin manual correction'
+      });
+      if (res?.success) {
+        triggerInlineNotice(`✅ प्रायोजक यशस्वीरीत्या बदलण्यात आला! (${res.data?.newSponsorName || newSponsorInput})`);
+        setSponsorModalOpen(false);
+        // Refresh referrals
+        adminApi.getReferrals().then(refs => {
+          if (Array.isArray(refs)) setMemberReferrals(refs);
+        }).catch(() => { });
+      } else {
+        throw new Error(res?.error || 'प्रायोजक बदलताना त्रुटी आली');
+      }
+    } catch (err) {
+      triggerInlineNotice(`⚠️ त्रुटी: ${err.message}`);
+    } finally {
+      setTransferLoading(false);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // SUPER ADMIN: PERMISSION CONTROLLER RULES (RBAC + SCOPE)
+  // -------------------------------------------------------------
+  const [permissionRules, setPermissionRules] = useState([]);
+  const [rulesLoading, setRulesLoading] = useState(false);
+
+  useEffect(() => {
+    adminApi.getPermissionRules()
+      .then(res => {
+        if (Array.isArray(res?.rules) && res.rules.length > 0) {
+          setPermissionRules(res.rules);
+        }
+      })
+      .catch(err => console.warn('Error fetching permission rules:', err));
+  }, []);
+
+  const handleToggleRuleAction = async (roleIndex, action) => {
+    const updated = [...permissionRules];
+    const currentActions = updated[roleIndex].actions || [];
+    if (currentActions.includes(action)) {
+      updated[roleIndex].actions = currentActions.filter(a => a !== action);
+    } else {
+      updated[roleIndex].actions = [...currentActions, action];
+    }
+    setPermissionRules(updated);
+    try {
+      await adminApi.updatePermissionRules(updated);
+      triggerInlineNotice(`नियम अद्ययावत: ${updated[roleIndex].roleLabel} ✓`);
+    } catch (err) {
+      triggerInlineNotice(`त्रुटी: ${err.message}`);
+    }
+  };
+
+  const handleUpdateRuleScope = async (roleIndex, newScope) => {
+    const updated = [...permissionRules];
+    updated[roleIndex].scope = newScope;
+    setPermissionRules(updated);
+    try {
+      await adminApi.updatePermissionRules(updated);
+      triggerInlineNotice(`अधिकार क्षेत्र (Scope) अद्ययावत: ${newScope} ✓`);
+    } catch (err) {
+      triggerInlineNotice(`त्रुटी: ${err.message}`);
+    }
+  };
+
+  const handleToggleRuleSecondApproval = async (roleIndex) => {
+    const updated = [...permissionRules];
+    updated[roleIndex].secondApprovalRequired = !updated[roleIndex].secondApprovalRequired;
+    setPermissionRules(updated);
+    try {
+      await adminApi.updatePermissionRules(updated);
+      triggerInlineNotice(`दुहेरी मंजुरी (Dual Approval) सेटिंग बदलली! ✓`);
+    } catch (err) {
+      triggerInlineNotice(`त्रुटी: ${err.message}`);
+    }
+  };
 
   const [roles, setRoles] = useState([
     { id: 'ROL-01', code: 'SUPER_ADMIN', name: 'सर्वोच्च प्रशासक (Super Admin)', dept: 'Executive Governance', gate1Req: 'Not Applicable', rank: 1, permissions: 'Full System Control (CRUD + Settings + Audit)', system: 'Yes' },
@@ -272,33 +545,113 @@ export default function SuperAdminPage() {
   /* ============================================================
      CRUD SAVE & DELETE HANDLERS
      ============================================================ */
-  const handleSaveModalRecord = (e) => {
+  const handleDeleteUserRecord = async (u) => {
+    if (!window.confirm(`"${u.name}" हा सदस्य कायमचा हटवायचा आहे का?`)) return;
+    try {
+      await apiClient.deleteAdminUser(u.id);
+      setUsers(prev => prev.filter(x => x.id !== u.id));
+      triggerInlineNotice(`सदस्य ${u.name} हटवला गेला.`);
+    } catch (err) {
+      triggerInlineNotice(`त्रुटी: ${err.message}`);
+    }
+  };
+
+  const handleResetUserPassword = async (u) => {
+    const pw = window.prompt(`"${u.name}" साठी नवीन पासवर्ड (किमान ८ अक्षरे):`);
+    if (pw === null) return;
+    if (pw.length < 8) { triggerInlineNotice('त्रुटी: पासवर्ड किमान ८ अक्षरांचा असणे आवश्यक आहे.'); return; }
+    try {
+      await apiClient.resetAdminUserPassword(u.id, pw);
+      triggerInlineNotice(`"${u.name}" चा पासवर्ड बदलला. जुनी सत्रे बंद झाली. ✓`);
+    } catch (err) {
+      triggerInlineNotice(`त्रुटी: ${err.message}`);
+    }
+  };
+
+  const handleToggleUserDisabled = async (u) => {
+    const disable = u.status !== 'Disabled';
+    try {
+      await apiClient.setAdminUserStatus(u.id, disable);
+      setUsers(prev => prev.map(x => x.id === u.id ? { ...x, status: disable ? 'Disabled' : 'Active' } : x));
+      triggerInlineNotice(disable ? `"${u.name}" चे खाते बंद केले.` : `"${u.name}" चे खाते सुरू केले.`);
+    } catch (err) {
+      triggerInlineNotice(`त्रुटी: ${err.message}`);
+    }
+  };
+
+  const handleSaveModalRecord = async (e) => {
     e.preventDefault();
     const today = new Date().toISOString().split('T')[0];
 
     if (activeModal === 'user') {
+      // Parse "पुणे (हवेली)" → district + taluka
+      let district = 'पुणे', taluka = 'हवेली';
+      const geo = formData.geography || '';
+      const m = geo.match(/^([^(]+)\s*\(([^)]+)\)/);
+      if (m) { district = m[1].trim(); taluka = m[2].trim(); }
+      else if (geo) district = geo.trim();
+
+      // Parse "+91 9876500000" → digits only
+      const rawPhone = String(formData.mobile || '').replace(/\D/g, '');
+      const phone = rawPhone.startsWith('91') && rawPhone.length === 12 ? rawPhone.slice(2) : rawPhone;
+
+      const password = formData.password || '';
+      if (!editingItem && password.length < 8) {
+        triggerInlineNotice('त्रुटी: पासवर्ड किमान ८ अक्षरांचा असणे आवश्यक आहे.');
+        return;
+      }
+      if (editingItem && password && password.length < 8) {
+        triggerInlineNotice('त्रुटी: पासवर्ड किमान ८ अक्षरांचा असणे आवश्यक आहे.');
+        return;
+      }
+
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        phone,
+        role: formData.role || 'member',
+        district,
+        taluka,
+        verified: (formData.kyc || 'Verified') === 'Verified'
+      };
+      if (password) payload.password = password;
+
       if (editingItem) {
-        setUsers(users.map(u => u.id === editingItem.id ? { ...u, ...formData } : u));
-        triggerInlineNotice(`सदस्य "${formData.name || editingItem.name}" माहिती अद्ययावत केली गेली.`);
+        try {
+          const res = await apiClient.updateAdminUser(editingItem.id, payload);
+          if (!res?.success) throw new Error(res?.error || 'Update failed');
+          triggerInlineNotice(`सदस्य "${payload.name}" माहिती अद्ययावत केली गेली. ✓`);
+          setUsers(users.map(u => u.id === editingItem.id ? { ...u, ...formData, role: payload.role, geography: `${district} (${taluka})` } : u));
+        } catch (err) {
+          triggerInlineNotice(`त्रुटी: ${err.message}`);
+          return;
+        }
       } else {
-        const uniqueId = `CM-USR-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
-        const item = {
-          id: uniqueId,
-          photo: '👤',
-          name: formData.name || 'नवीन सदस्य',
-          mobile: formData.mobile || '+91 98000 00000',
-          email: formData.email || 'user@connectmaratha.org',
-          role: formData.role || 'District Coordinator',
-          permissions: formData.permissions || '✅ District User CRUD + KYC Review',
-          geography: formData.geography || 'पुणे (हवेली)',
-          status: 'Active',
-          lastLogin: 'नुकतेच तयार केले',
-          kyc: formData.kyc || 'Verified',
-          date: today,
-          isCreatedByAdmin: true
-        };
-        setUsers([item, ...users]);
-        triggerInlineNotice(`नवीन सदस्य "${item.name}" (ID: ${uniqueId}) पदभार व परमिशन सह तयार केला गेला.`);
+        try {
+          const res = await apiClient.createAdminUser({ ...payload, password });
+          const u = res?.data?.user || res?.user;
+          if (!res?.success || !u) throw new Error(res?.error || 'Create failed');
+          setUsers([{
+            id: u.id,
+            photo: u.avatar || '👤',
+            name: u.name,
+            mobile: u.phone || '',
+            email: u.email || '',
+            role: u.role,
+            permissions: '✅ ' + u.role,
+            geography: `${u.district || district}${u.taluka ? ' (' + u.taluka + ')' : ''}`,
+            status: 'Active',
+            lastLogin: 'नुकतेच तयार केले',
+            kyc: u.verified ? 'Verified' : 'Pending',
+            date: u.joined || today,
+            isCreatedByAdmin: true
+          }, ...users]);
+          triggerInlineNotice(`नवीन सदस्य "${u.name}" (ID: ${u.id}) तयार केला गेला. ✓`);
+        } catch (err) {
+          // Nothing is added locally: the account only exists if the server created it
+          triggerInlineNotice(`त्रुटी: ${err.message}`);
+          return;
+        }
       }
     } else if (activeModal === 'role') {
       if (editingItem) {
@@ -398,6 +751,8 @@ export default function SuperAdminPage() {
   const SIDEBAR_ITEMS = [
     { id: 'command', label: '🏠 Super Admin Dashboard', badge: 'MAIN' },
     { id: 'users', label: '👥 User & Role Management', badge: users.length },
+    { id: 'referrals', label: '🤝 Member Referrals Tracker', badge: memberReferrals.length },
+    { id: 'platform-controls', label: '🎛️ Feature Control Center', badge: '17 Switches' },
     { id: 'permissions', label: '🔐 Permissions & Access Control' },
     { id: 'hierarchy', label: '🏛️ Organization Hierarchy', badge: hierarchy.length },
     { id: 'appointments', label: '👑 Leadership & Appointments', badge: appointments.length },
@@ -408,7 +763,7 @@ export default function SuperAdminPage() {
     { id: 'events', label: '📅 Events & Programs', badge: events.length },
     { id: 'cms', label: '📚 Content / CMS Admin', badge: articles.length },
     { id: 'finance', label: '💰 Finance Administration', badge: financeRecords.length },
-    { id: 'workflows', label: '📋 Workflows & Approvals', badge: workflows.length },
+    { id: 'workflows', label: '📋 Workflows & Approvals', badge: approvalsCount || workflows.length },
     { id: 'audit', label: '📝 Audit Logs', badge: auditLogs.length },
     { id: 'settings', label: '⚙️ System Settings', badge: systemSettings.length },
     { id: 'security', label: '🛡️ Security & Compliance', badge: securityLogs.length },
@@ -418,7 +773,7 @@ export default function SuperAdminPage() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: S.bg, color: S.text, fontFamily: 'Inter, system-ui, sans-serif' }}>
-      
+
       {/* ============================================================
          1. STICKY TOP HEADER
          ============================================================ */}
@@ -428,7 +783,7 @@ export default function SuperAdminPage() {
         boxShadow: '0 2px 10px rgba(234, 88, 12, 0.05)', padding: '10px 20px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-          
+
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ padding: '8px', borderRadius: 8, border: `1px solid ${S.border}`, background: S.cardSoft, cursor: 'pointer' }}>
               ☰
@@ -457,7 +812,7 @@ export default function SuperAdminPage() {
             </button>
 
             <button onClick={() => setActiveTab('workflows')} style={{ background: S.cardSoft, border: `1px solid ${S.border}`, color: S.saffron, padding: '6px 12px', borderRadius: 8, fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>
-              📋 Pending Approvals <span style={{ background: S.saffron, color: '#FFF', padding: '1px 6px', borderRadius: 999, marginLeft: 4 }}>47</span>
+              📋 Pending Approvals <span style={{ background: S.saffron, color: '#FFF', padding: '1px 6px', borderRadius: 999, marginLeft: 4 }}>{approvalsCount}</span>
             </button>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: 8, borderLeft: `1px solid ${S.border}` }}>
@@ -472,7 +827,7 @@ export default function SuperAdminPage() {
         {/* FROM DATE TO DATE FILTER MATRIX */}
         <div style={{ marginTop: 10, paddingTop: 8, borderTop: '1px solid #FFF7ED', display: 'flex', gap: 8, alignItems: 'center', overflowX: 'auto' }}>
           <span style={{ fontSize: '0.78rem', fontWeight: 800, color: S.saffron, whiteSpace: 'nowrap' }}>📍 Filter Matrix:</span>
-          
+
           <select value={filters.state} onChange={e => setFilters({ ...filters, state: e.target.value })} style={{ padding: '4px 10px', borderRadius: 6, border: `1px solid ${S.border}`, background: S.cardSoft, fontSize: '0.8rem', color: S.deep, fontWeight: 600 }}>
             <option value="Maharashtra">Maharashtra (State)</option>
           </select>
@@ -513,7 +868,7 @@ export default function SuperAdminPage() {
          MAIN CONTAINER (LEFT SIDEBAR + CONTENT AREA)
          ============================================================ */}
       <div style={{ display: 'flex', flex: 1, marginTop: 105 }}>
-        
+
         {/* LEFT SIDEBAR */}
         <aside style={{
           width: sidebarCollapsed ? 72 : 270, transition: 'width 0.2s ease',
@@ -557,7 +912,7 @@ export default function SuperAdminPage() {
 
         {/* RIGHT CONTENT WORKSPACE */}
         <main style={{ flex: 1, padding: 24, background: S.bg, overflowX: 'hidden' }}>
-          
+
           {/* 1. 🏠 SUPER ADMIN DASHBOARD */}
           {activeTab === 'command' && (
             <div>
@@ -570,7 +925,7 @@ export default function SuperAdminPage() {
                     Welcome, <strong>{user?.name || 'Super Admin'}</strong> • Uptime: 99.97% • Status: 🟢 Healthy
                   </p>
                 </div>
-                
+
                 <div style={{ display: 'flex', gap: 10 }}>
                   <Btn variant="primary" onClick={() => { setEditingItem(null); setFormData({}); setActiveModal('user'); }}>+ Create User</Btn>
                   <Btn variant="ghost" onClick={() => { setEditingItem(null); setFormData({}); setActiveModal('role'); }}>+ Create Role</Btn>
@@ -668,7 +1023,7 @@ export default function SuperAdminPage() {
                           <td style={{ padding: 10 }}><Badge tone={u.kyc === 'Verified' ? 'green' : 'amber'}>{u.kyc}</Badge></td>
                           <td style={{ padding: 10, display: 'flex', gap: 6 }}>
                             <Btn variant="plain" onClick={() => { setEditingItem(u); setFormData(u); setActiveModal('user'); }}>✏️ Edit</Btn>
-                            <Btn variant="danger" onClick={() => { setUsers(users.filter(x => x.id !== u.id)); triggerInlineNotice(`सदस्य ${u.name} हटवला गेला.`); }}>🗑️ Delete</Btn>
+                            <Btn variant="danger" onClick={() => handleDeleteUserRecord(u)}>🗑️ Delete</Btn>
                           </td>
                         </tr>
                       ))}
@@ -699,14 +1054,16 @@ export default function SuperAdminPage() {
                         <tr key={u.id} style={{ borderBottom: `1px solid ${S.cardSoft}` }}>
                           <td style={{ padding: 10 }}>{u.photo}</td>
                           <td style={{ padding: 10, fontWeight: 800, fontFamily: 'monospace', fontSize: '0.8rem' }}>{u.id}</td>
-                          <td style={{ padding: 10, fontWeight: 700, color: S.deep }}>{u.name}</td>
+                          <td style={{ padding: 10, fontWeight: 700, color: S.deep }}>{u.name}{u.status === 'Disabled' && <span style={{ marginLeft: 6 }}><Badge tone="red">🚫 Disabled</Badge></span>}</td>
                           <td style={{ padding: 10 }}>{u.mobile}</td>
                           <td style={{ padding: 10, color: S.saffron, fontWeight: 800 }}>{u.role}</td>
                           <td style={{ padding: 10 }}>{u.geography}</td>
                           <td style={{ padding: 10 }}><Badge tone={u.kyc === 'Verified' ? 'green' : 'amber'}>{u.kyc}</Badge></td>
                           <td style={{ padding: 10, display: 'flex', gap: 6 }}>
                             <Btn variant="plain" onClick={() => { setEditingItem(u); setFormData(u); setActiveModal('user'); }}>✏️ Edit</Btn>
-                            <Btn variant="danger" onClick={() => { setUsers(users.filter(x => x.id !== u.id)); triggerInlineNotice(`सदस्य ${u.name} हटवला गेला.`); }}>🗑️ Delete</Btn>
+                            <Btn variant="plain" onClick={() => handleResetUserPassword(u)}>🔑 Password</Btn>
+                            <Btn variant="plain" onClick={() => handleToggleUserDisabled(u)}>{u.status === 'Disabled' ? '▶ Enable' : '⏸ Disable'}</Btn>
+                            <Btn variant="danger" onClick={() => handleDeleteUserRecord(u)}>🗑️ Delete</Btn>
                           </td>
                         </tr>
                       ))}
@@ -750,97 +1107,435 @@ export default function SuperAdminPage() {
             </div>
           )}
 
-          {/* 3. 🔐 PERMISSIONS & ACCESS CONTROL */}
-          {activeTab === 'permissions' && (
-            <Card>
+          {/* 2B. 🤝 MEMBER REFERRALS TRACKER & SPONSOR/DOWNLINE MANAGEMENT */}
+          {activeTab === 'referrals' && (
+            <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <div>
-                  <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: S.deep, margin: 0 }}>🔐 Permission & Access Control Matrix</h2>
-                  <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: S.muted }}>Manage role-based module permissions, geography scoping, and action privileges.</p>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: S.deep, margin: 0 }}>
+                    🤝 Member Referrals Tracker & Sponsor Controller
+                  </h2>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: S.muted }}>
+                    प्रायोजक दुरुस्ती (Sponsor Change), डाउनलाईन हस्तांतरण (Downline Transfer), आणि संदर्भ साखळी पडताळणी.
+                  </p>
                 </div>
-                <Btn variant="primary" onClick={() => { setEditingItem(null); setFormData({}); setActiveModal('permission'); }}>+ Create Permission Rule</Btn>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                  <span style={{ alignSelf: 'center', fontSize: '0.9rem', color: S.muted }}>
+                    एकूण: <strong>{memberReferrals.length}</strong> रेफरल्स
+                  </span>
+                  <Btn variant="primary" onClick={() => {
+                    const firstMember = users[0] || { id: 'CM-MH-001', name: 'प्रथम सदस्य' };
+                    handleOpenSponsorTransfer(firstMember);
+                  }}>
+                    🔄 प्रायोजक / डाउनलाईन बदला
+                  </Btn>
+                  <Btn variant="ghost" onClick={() => window.dispatchEvent(new CustomEvent('cm_refresh_referrals'))}>🔄 Refresh</Btn>
+                </div>
               </div>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
-                  <thead>
-                    <tr style={{ background: S.cardSoft, color: S.saffron }}>
-                      <th style={{ padding: 10 }}>Role Name</th>
-                      <th style={{ padding: 10 }}>User CRUD</th>
-                      <th style={{ padding: 10 }}>Business CRUD</th>
-                      <th style={{ padding: 10 }}>B2B Approve</th>
-                      <th style={{ padding: 10 }}>Seva Power</th>
-                      <th style={{ padding: 10 }}>Export Rights</th>
-                      <th style={{ padding: 10 }}>Geo Scope</th>
-                      <th style={{ padding: 10 }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {permissionsMatrix.map((p) => (
-                      <tr key={p.id} style={{ borderBottom: `1px solid ${S.cardSoft}` }}>
-                        <td style={{ padding: 10, fontWeight: 800, color: S.deep }}>
-                          {p.role} <div style={{ fontSize: '0.72rem', color: S.saffron }}>{p.roleCode}</div>
-                        </td>
-                        <td style={{ padding: 10 }}>{p.userCrud}</td>
-                        <td style={{ padding: 10 }}>{p.bizCrud}</td>
-                        <td style={{ padding: 10 }}>{p.b2bApprove}</td>
-                        <td style={{ padding: 10 }}>{p.sevaForceClose}</td>
-                        <td style={{ padding: 10 }}>{p.exportReport}</td>
-                        <td style={{ padding: 10 }}><Badge tone="saffron">{p.geoScope}</Badge></td>
-                        <td style={{ padding: 10, display: 'flex', gap: 6 }}>
-                          <Btn variant="plain" onClick={() => { setEditingItem(p); setFormData(p); setActiveModal('permission'); }}>✏️ Edit</Btn>
-                          <Btn variant="ghost" onClick={() => {
-                            const clone = { ...p, id: `PERM-${Math.floor(10 + Math.random() * 90)}`, role: `${p.role} (Cloned)`, roleCode: `${p.roleCode}_CLONE` };
-                            setPermissionsMatrix([...permissionsMatrix, clone]);
-                            triggerInlineNotice(`परमिशन मॅट्रिक्स क्लोन केले गेले.`);
-                          }}>📋 Clone</Btn>
-                          <Btn variant="danger" onClick={() => {
-                            setPermissionsMatrix(permissionsMatrix.filter(x => x.id !== p.id));
-                            triggerInlineNotice(`परमिशन नियम ${p.role} हटवला.`);
-                          }}>🗑️ Delete</Btn>
-                        </td>
+
+              {/* QUICK SPONSOR TRANSFER BANNER */}
+              <Card style={{ marginBottom: 20, border: `1.5px solid ${S.saffron}`, background: S.cardSoft }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                  <div>
+                    <div style={{ fontWeight: 900, fontSize: '1.05rem', color: S.deep }}>
+                      ⚡ सुपर अ‍ॅडमिन थेट प्रायोजक सुधारणा केंद्र (Manual Sponsor & Downline Correction Tool)
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: S.muted, marginTop: 4 }}>
+                      चुकून चुकीचा रेफरल कोड टाकलेल्या सदस्याचे पालक (Sponsor) एका क्लिकवर बदला. सिस्टीम स्वयंचलितरित्या चक्रीय साखळी (Circular Chains) तपासून सुरक्षित बदल करते.
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <span style={{ padding: '6px 12px', background: '#DCFCE7', color: '#166534', border: '1px solid #86EFAC', borderRadius: 8, fontSize: '0.78rem', fontWeight: 800 }}>
+                      ✓ Circular Chain Guard Active
+                    </span>
+                    <span style={{ padding: '6px 12px', background: '#FFEDD5', color: S.deep, border: `1px solid ${S.border}`, borderRadius: 8, fontSize: '0.78rem', fontWeight: 800 }}>
+                      ✓ Immutable Audit Logged
+                    </span>
+                  </div>
+                </div>
+              </Card>
+
+              <Card style={{ marginBottom: 24 }}>
+                <div style={{ fontWeight: 800, fontSize: '1rem', color: S.deep, marginBottom: 12 }}>
+                  12 Golden Columns: SNo, Member ID, Name, Referral ID, Referral Name, Joining Date, Mobile No, Email, Package, Activ.Date, Status, District/Taluka & Actions
+                </div>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+                    <thead>
+                      <tr style={{ background: S.cardSoft, color: S.saffron }}>
+                        <th style={{ padding: 10 }}>SNo</th>
+                        <th style={{ padding: 10 }}>Member ID</th>
+                        <th style={{ padding: 10 }}>नाव (Name)</th>
+                        <th style={{ padding: 10 }}>Referral ID</th>
+                        <th style={{ padding: 10 }}>Referral Name</th>
+                        <th style={{ padding: 10 }}>Joining Date</th>
+                        <th style={{ padding: 10 }}>Mobile No</th>
+                        <th style={{ padding: 10 }}>Email</th>
+                        <th style={{ padding: 10 }}>Package</th>
+                        <th style={{ padding: 10 }}>Activ.Date</th>
+                        <th style={{ padding: 10 }}>Status</th>
+                        <th style={{ padding: 10 }}>District / Taluka</th>
+                        <th style={{ padding: 10 }}>सुपर ॲडमिन कृती</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {memberReferrals.map((r, idx) => (
+                        <tr key={r.id} style={{ borderBottom: `1px solid ${S.cardSoft}` }}>
+                          <td style={{ padding: 10, fontWeight: 700, color: S.saffron }}>{r.sno || idx + 1}</td>
+                          <td style={{ padding: 10, fontWeight: 800, fontFamily: 'monospace', fontSize: '0.8rem', color: S.deep }}>{r.memberId || '-'}</td>
+                          <td style={{ padding: 10, fontWeight: 700 }}>{r.name || '-'}</td>
+                          <td style={{ padding: 10, fontFamily: 'monospace', fontSize: '0.8rem' }}>{r.referralId || '-'}</td>
+                          <td style={{ padding: 10 }}>{r.referralName || '-'}</td>
+                          <td style={{ padding: 10 }}>{r.joiningDate || '-'}</td>
+                          <td style={{ padding: 10 }}>{r.mobileNo || '-'}</td>
+                          <td style={{ padding: 10, fontSize: '0.8rem' }}>{r.email || '-'}</td>
+                          <td style={{ padding: 10 }}>{r.package || 'Basic (प्राथमिक)'}</td>
+                          <td style={{ padding: 10 }}>{r.activDate || '-'}</td>
+                          <td style={{ padding: 10 }}>
+                            <Badge tone={r.status === 'Active' ? 'green' : 'amber'}>{r.status || 'Pending'}</Badge>
+                          </td>
+                          <td style={{ padding: 10 }}>{(r.district || '-') + (r.taluka ? ` / ${r.taluka}` : '')}</td>
+                          <td style={{ padding: 10 }}>
+                            <Btn
+                              variant="ghost"
+                              style={{ padding: '4px 8px', fontSize: '0.72rem' }}
+                              onClick={() => handleOpenSponsorTransfer({ id: r.memberId, name: r.name, referred_by: r.referralId })}
+                            >
+                              🔄 Change Sponsor
+                            </Btn>
+                          </td>
+                        </tr>
+                      ))}
+                      {memberReferrals.length === 0 && (
+                        <tr>
+                          <td colSpan={13} style={{ padding: 30, textAlign: 'center', color: S.muted }}>
+                            कोणतीही सदस्य रेफरल आढळला नाही. नवीन सदस्य नोंदणी करताना रेफरल कोड वापरा.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {/* 2C. 🎛️ PLATFORM FEATURE CONTROL CENTER (17 LIVE SWITCHES) */}
+          {activeTab === 'platform-controls' && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                <div>
+                  <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: S.deep, margin: 0 }}>
+                    🎛️ Platform Feature Control Center (केंद्रीय स्विचेस)
+                  </h2>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.86rem', color: S.muted }}>
+                    नोंदणी, लॉगिन, रेफरल, बी२बी, सेवा व इतर १७ मॉड्युल्स थेट ऑन/ऑफ करा — कोड न बदलता.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                  {controlsSaving && <span style={{ fontSize: '0.8rem', color: S.saffron, fontWeight: 700 }}>💾 जतन होत आहे...</span>}
+                  <Btn variant="primary" onClick={() => triggerInlineNotice('सर्व प्लॅटफॉर्म नियंत्रणे त्वरित अद्ययावत आहेत! ✓')}>
+                    ✓ सर्व स्विचेस सक्रिय
+                  </Btn>
+                </div>
               </div>
-            </Card>
+
+              {/* REGISTRATION & ACCESS CONTROLS (DETAILED PANEL) */}
+              <Card style={{ marginBottom: 24, border: `1.5px solid ${S.saffron}` }}>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 900, color: S.deep, margin: '0 0 12px' }}>
+                  🚪 नोंदणी व लॉगिन ऍक्सेस नियंत्रणे (Registration & Access Controls)
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
+                  {/* Registration Switch */}
+                  <div style={{ background: S.cardSoft, padding: 14, borderRadius: 10, border: `1px solid ${S.border}` }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <span style={{ fontWeight: 800, color: S.deep, fontSize: '0.92rem' }}>सार्‍वजनिक नोंदणी (Public Registration)</span>
+                      <Badge tone={platformControls.registration?.status === 'open' ? 'green' : (platformControls.registration?.status === 'invite_only' ? 'amber' : 'red')}>
+                        {platformControls.registration?.status?.toUpperCase()}
+                      </Badge>
+                    </div>
+                    <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
+                      <Btn
+                        variant={platformControls.registration?.status === 'open' ? 'success' : 'plain'}
+                        style={{ flex: 1, justifyContent: 'center' }}
+                        onClick={() => handleUpdatePlatformSwitch('registration', { status: 'open' })}
+                      >
+                        ✓ Open (सुरू)
+                      </Btn>
+                      <Btn
+                        variant={platformControls.registration?.status === 'invite_only' ? 'primary' : 'plain'}
+                        style={{ flex: 1, justifyContent: 'center' }}
+                        onClick={() => handleUpdatePlatformSwitch('registration', { status: 'invite_only' })}
+                      >
+                        🔑 Invite Only
+                      </Btn>
+                      <Btn
+                        variant={platformControls.registration?.status === 'closed' ? 'danger' : 'plain'}
+                        style={{ flex: 1, justifyContent: 'center' }}
+                        onClick={() => handleUpdatePlatformSwitch('registration', { status: 'closed' })}
+                      >
+                        ✕ Closed
+                      </Btn>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="नोंदणी बंद असताना दाखवायचा संदेश (Custom Message)..."
+                      defaultValue={platformControls.registration?.customMessage || ''}
+                      onBlur={(e) => handleUpdatePlatformSwitch('registration', { customMessage: e.target.value })}
+                      style={{ width: '100%', padding: '6px 10px', borderRadius: 6, border: `1px solid ${S.border}`, fontSize: '0.8rem', boxSizing: 'border-box' }}
+                    />
+                  </div>
+
+                  {/* Login Access Control */}
+                  <div style={{ background: S.cardSoft, padding: 14, borderRadius: 10, border: `1px solid ${S.border}` }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <span style={{ fontWeight: 800, color: S.deep, fontSize: '0.92rem' }}>लॉगिन व सुरक्षा नियंत्रक (Login Security)</span>
+                      <Badge tone={platformControls.login?.status === 'enabled' ? 'green' : 'red'}>
+                        {platformControls.login?.status === 'enabled' ? 'ENABLED' : 'MAINTENANCE'}
+                      </Badge>
+                    </div>
+                    <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
+                      <Btn
+                        variant={platformControls.login?.status === 'enabled' ? 'success' : 'plain'}
+                        style={{ flex: 1, justifyContent: 'center' }}
+                        onClick={() => handleUpdatePlatformSwitch('login', { status: 'enabled' })}
+                      >
+                        ✓ Normal (सुरू)
+                      </Btn>
+                      <Btn
+                        variant={platformControls.login?.status === 'maintenance' ? 'danger' : 'plain'}
+                        style={{ flex: 1, justifyContent: 'center' }}
+                        onClick={() => handleUpdatePlatformSwitch('login', { status: 'maintenance' })}
+                      >
+                        🛑 Maintenance
+                      </Btn>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="मेंटेनन्स चालू असतानाचा संदेश..."
+                      defaultValue={platformControls.login?.customMessage || ''}
+                      onBlur={(e) => handleUpdatePlatformSwitch('login', { customMessage: e.target.value })}
+                      style={{ width: '100%', padding: '6px 10px', borderRadius: 6, border: `1px solid ${S.border}`, fontSize: '0.8rem', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                </div>
+              </Card>
+
+              {/* 17 LIVE MODULE ON/OFF SWITCHES GRID */}
+              <Card>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: S.deep, margin: 0 }}>
+                    ⚡ प्लॅटफॉर्म सर्व मॉड्युल्स थेट चालू / बंद नियंत्रक (Feature Control Center)
+                  </h3>
+                  <Badge tone="saffron">17 Modules Connected</Badge>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: 14 }}>
+                  {[
+                    { key: 'referralSystem', title: '🤝 Referral System', desc: 'रेफरल बोनस, कोड निर्मिती व ट्री ट्रॅकर' },
+                    { key: 'sponsorChange', title: '🔄 Sponsor Change Tool', desc: 'सुपर ॲडमिन थेट प्रायोजक बदल साधन' },
+                    { key: 'downlineTransfers', title: '🌿 Downline Transfers', desc: 'डाउनलाईन शाखा एका प्रायोजकाकडून दुसऱ्याकडे स्थलांतर' },
+                    { key: 'newMembershipApplications', title: '🪪 New Membership Applications', desc: 'नवीन सदस्यता अर्ज स्वीकृती' },
+                    { key: 'businessDirectory', title: '🏢 Business Directory', desc: 'मराठा व्यवसाय सूची व नोंदणी' },
+                    { key: 'businessNetworking', title: '💼 Business Networking & B2B', desc: 'B2B लीड्स, डील्स व व्यापारी संवाद' },
+                    { key: 'jobsCareers', title: '💼 Jobs & Careers Portal', desc: 'नोकरी जाहिराती व रोजगार अर्ज' },
+                    { key: 'eventsFestivals', title: '📅 Events & Festivals', desc: 'संस्कृती व समाज प्रबोधन कार्यक्रम' },
+                    { key: 'sevaDonations', title: '❤️ Seva & Donations', desc: 'दान मोहिमा व समाजसेवा निधी' },
+                    { key: 'emergencyHelp', title: '🚨 Emergency Help (SOS)', desc: '२४×७ रक्तपेढी व वैद्यकीय मदत' },
+                    { key: 'serviceProviderListings', title: '🛠️ Service Provider Listings', desc: 'सेवा व्यावसायिक नोंदणी व सूची' },
+                    { key: 'communityPosts', title: '📰 Community Posts', desc: 'सामूहिक मंच व सदस्य विचार देवाणघेवाण' },
+                    { key: 'notifications', title: '🔔 Notification Channels', desc: 'SMS, WhatsApp व Push नोटिफिकेशन्स' },
+                    { key: 'publicPages', title: '🌐 Public Website CMS Pages', desc: 'सार्वजनिक संकेतस्थळ पृष्ठे दृश्यमानता' },
+                    { key: 'bankFinance', title: '🏦 Bank & Finance Section', desc: 'बँकिंग मॉड्युल (सध्या Coming Soon)' }
+                  ].map(mod => {
+                    const currentStatus = platformControls[mod.key]?.status || 'enabled';
+                    const isEnabled = currentStatus === 'enabled' || currentStatus === 'allowed' || currentStatus === 'open';
+                    return (
+                      <div
+                        key={mod.key}
+                        style={{
+                          padding: 14,
+                          borderRadius: 10,
+                          border: `1.5px solid ${isEnabled ? S.border : '#FECACA'}`,
+                          background: isEnabled ? S.cardBg : '#FEF2F2',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between'
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: S.deep }}>{mod.title}</div>
+                            <Badge tone={isEnabled ? 'green' : (currentStatus === 'coming_soon' ? 'purple' : 'red')}>
+                              {currentStatus.toUpperCase()}
+                            </Badge>
+                          </div>
+                          <div style={{ fontSize: '0.78rem', color: S.muted, margin: '6px 0 12px' }}>
+                            {mod.desc}
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          {mod.key === 'bankFinance' ? (
+                            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: S.purple }}>
+                              🔒 Coming Soon (सुरक्षित)
+                            </span>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => handleUpdatePlatformSwitch(mod.key, 'enabled')}
+                                style={{
+                                  flex: 1,
+                                  padding: '6px 8px',
+                                  borderRadius: 6,
+                                  border: 'none',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 800,
+                                  cursor: 'pointer',
+                                  background: isEnabled ? '#16A34A' : '#E2E8F0',
+                                  color: isEnabled ? '#FFF' : S.text
+                                }}
+                              >
+                                ✓ ON
+                              </button>
+                              <button
+                                onClick={() => handleUpdatePlatformSwitch(mod.key, 'disabled')}
+                                style={{
+                                  flex: 1,
+                                  padding: '6px 8px',
+                                  borderRadius: 6,
+                                  border: 'none',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 800,
+                                  cursor: 'pointer',
+                                  background: !isEnabled ? '#DC2626' : '#E2E8F0',
+                                  color: !isEnabled ? '#FFF' : S.text
+                                }}
+                              >
+                                ✕ OFF
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {/* 3. 🔐 PERMISSION CONTROLLER MATRIX (RBAC + SCOPE) */}
+          {activeTab === 'permissions' && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <div>
+                  <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: S.deep, margin: 0 }}>
+                    🔐 Permission Controller — Central Access Control (RBAC + Scope)
+                  </h2>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: S.muted }}>
+                    सर्व भूमिकांसाठी ग्रॅन्युलर ऍक्शन्स (View, Create, Edit, Delete, Approve, Transfer, Export) आणि राज्य ते शाखा भौगोलिक मर्यादा निश्चित करा.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Btn variant="primary" onClick={() => triggerInlineNotice('सर्व परमिशन नियम केंद्रीय ऑथ रायझेशनवर लागू आहेत! ✓')}>
+                    ✓ सर्व नियम सक्रिय
+                  </Btn>
+                  <Btn variant="ghost" onClick={() => { setEditingItem(null); setFormData({}); setActiveModal('permission'); }}>
+                    + नवीन कस्टम नियम
+                  </Btn>
+                </div>
+              </div>
+
+              {/* LIVE GRANULAR RBAC + SCOPE MATRIX */}
+              <Card style={{ marginBottom: 24 }}>
+                <div style={{ fontWeight: 800, fontSize: '1rem', color: S.deep, marginBottom: 12, display: 'flex', justifyContent: 'space-between' }}>
+                  <span>🎯 Role & Action Permission Matrix (Live Configurable)</span>
+                  <span style={{ fontSize: '0.8rem', color: S.muted }}>* बदल स्वयंचलितरित्या जतन होतात</span>
+                </div>
+
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
+                    <thead>
+                      <tr style={{ background: S.cardSoft, color: S.saffron }}>
+                        <th style={{ padding: 10 }}>भूमिका (Role)</th>
+                        <th style={{ padding: 10 }}>अधिकार क्षेत्र (Scope)</th>
+                        <th style={{ padding: 10, textAlign: 'center' }}>View</th>
+                        <th style={{ padding: 10, textAlign: 'center' }}>Create</th>
+                        <th style={{ padding: 10, textAlign: 'center' }}>Edit</th>
+                        <th style={{ padding: 10, textAlign: 'center' }}>Delete</th>
+                        <th style={{ padding: 10, textAlign: 'center' }}>Approve</th>
+                        <th style={{ padding: 10, textAlign: 'center' }}>Assign</th>
+                        <th style={{ padding: 10, textAlign: 'center' }}>Transfer</th>
+                        <th style={{ padding: 10, textAlign: 'center' }}>Export</th>
+                        <th style={{ padding: 10, textAlign: 'center' }}>2nd Approval</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {permissionRules.map((rule, idx) => (
+                        <tr key={rule.role} style={{ borderBottom: `1px solid ${S.border}` }}>
+                          <td style={{ padding: 10 }}>
+                            <div style={{ fontWeight: 800, color: S.deep }}>{rule.roleLabel}</div>
+                            <div style={{ fontSize: '0.72rem', color: S.saffron, fontFamily: 'monospace' }}>{rule.role}</div>
+                          </td>
+                          <td style={{ padding: 10 }}>
+                            <select
+                              value={rule.scope}
+                              onChange={(e) => handleUpdateRuleScope(idx, e.target.value)}
+                              style={{
+                                padding: '4px 8px',
+                                borderRadius: 6,
+                                border: `1px solid ${S.border}`,
+                                background: S.cardSoft,
+                                fontSize: '0.78rem',
+                                fontWeight: 700,
+                                color: S.deep
+                              }}
+                            >
+                              <option value="Entire Platform">Entire Platform (सर्वव्यापी)</option>
+                              <option value="State Level">State Level (महाराष्ट्र राज्य)</option>
+                              <option value="Division & Subordinate Units">Division (विभाग व अंतर्गत)</option>
+                              <option value="Assigned District">District (नियुक्त जिल्हा)</option>
+                              <option value="Assigned Taluka">Taluka (तालुका)</option>
+                              <option value="Assigned Shakha">Shakha (शाखा / चॅप्टर)</option>
+                              <option value="Finance & Payments">Finance & Accounts</option>
+                              <option value="Website & CMS">Website & CMS</option>
+                              <option value="Own Profile & Community">Own Profile Only</option>
+                            </select>
+                          </td>
+                          {['view', 'create', 'edit', 'delete', 'approve', 'assign', 'transfer', 'export'].map(action => {
+                            const checked = (rule.actions || []).includes(action);
+                            return (
+                              <td key={action} style={{ padding: 10, textAlign: 'center' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  onChange={() => handleToggleRuleAction(idx, action)}
+                                  style={{ cursor: 'pointer', transform: 'scale(1.15)', accentColor: S.saffron }}
+                                />
+                              </td>
+                            );
+                          })}
+                          <td style={{ padding: 10, textAlign: 'center' }}>
+                            <input
+                              type="checkbox"
+                              checked={!!rule.secondApprovalRequired}
+                              onChange={() => handleToggleRuleSecondApproval(idx)}
+                              style={{ cursor: 'pointer', transform: 'scale(1.15)', accentColor: S.red }}
+                              title="Require 2nd Approval for sensitive changes"
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+            </div>
           )}
 
           {/* 4. 🏛️ ORGANIZATION HIERARCHY */}
-          {activeTab === 'hierarchy' && (
-            <Card>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: S.deep, margin: 0 }}>🏛️ Organization Hierarchy Tree</h2>
-                <Btn variant="primary" onClick={() => { setEditingItem(null); setFormData({}); setActiveModal('hierarchy'); }}>+ Add Node</Btn>
-              </div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
-                <thead>
-                  <tr style={{ background: S.cardSoft, color: S.saffron }}>
-                    <th style={{ padding: 10 }}>Node ID</th>
-                    <th style={{ padding: 10 }}>Level</th>
-                    <th style={{ padding: 10 }}>क्षेत्र नाव</th>
-                    <th style={{ padding: 10 }}>Parent Node</th>
-                    <th style={{ padding: 10 }}>Chapters</th>
-                    <th style={{ padding: 10 }}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {hierarchy.map(h => (
-                    <tr key={h.id} style={{ borderBottom: `1px solid ${S.cardSoft}` }}>
-                      <td style={{ padding: 10, fontWeight: 800 }}>{h.id}</td>
-                      <td style={{ padding: 10, color: S.saffron, fontWeight: 800 }}>{h.level}</td>
-                      <td style={{ padding: 10, fontWeight: 700, color: S.deep }}>{h.name}</td>
-                      <td style={{ padding: 10 }}>{h.parent}</td>
-                      <td style={{ padding: 10, fontWeight: 800 }}>{h.chapters} Chapters</td>
-                      <td style={{ padding: 10, display: 'flex', gap: 6 }}>
-                        <Btn variant="plain" onClick={() => { setEditingItem(h); setFormData(h); setActiveModal('hierarchy'); }}>✏️ Edit</Btn>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </Card>
-          )}
+          {activeTab === 'hierarchy' && <UnitHierarchyPanel defaultTab="units" />}
 
           {/* 5. 👑 LEADERSHIP & APPOINTMENTS */}
           {activeTab === 'appointments' && (
@@ -1148,40 +1843,238 @@ export default function SuperAdminPage() {
 
           {/* 13. 📋 WORKFLOWS & APPROVALS */}
           {activeTab === 'workflows' && (
-            <Card>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: S.deep, margin: 0 }}>📋 System Workflows & Approval Rules</h2>
-                <Btn variant="primary" onClick={() => triggerInlineNotice('नवीन नियम वर्कफ्लो जोडला गेला.')}>+ Build Workflow</Btn>
-              </div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
-                <thead>
-                  <tr style={{ background: S.cardSoft, color: S.saffron }}>
-                    <th style={{ padding: 10 }}>Rule ID</th>
-                    <th style={{ padding: 10 }}>वर्कफ्लो नाव</th>
-                    <th style={{ padding: 10 }}>ट्रिगर (Trigger)</th>
-                    <th style={{ padding: 10 }}>मंजुरी साखळी (Approval Chain)</th>
-                    <th style={{ padding: 10 }}>सरासरी वेळ</th>
-                    <th style={{ padding: 10 }}>Status</th>
-                    <th style={{ padding: 10 }}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {workflows.map(w => (
-                    <tr key={w.id} style={{ borderBottom: `1px solid ${S.cardSoft}` }}>
-                      <td style={{ padding: 10, fontWeight: 800 }}>{w.id}</td>
-                      <td style={{ padding: 10, fontWeight: 700, color: S.deep }}>{w.title}</td>
-                      <td style={{ padding: 10, color: S.saffron, fontWeight: 700 }}>{w.trigger}</td>
-                      <td style={{ padding: 10 }}>{w.approvers}</td>
-                      <td style={{ padding: 10, fontWeight: 800 }}>{w.avgTime}</td>
-                      <td style={{ padding: 10 }}><Badge tone="green">{w.status}</Badge></td>
-                      <td style={{ padding: 10, display: 'flex', gap: 6 }}>
-                        <Btn variant="plain" onClick={() => triggerInlineNotice(`वर्कफ्लो ${w.id} कॉन्फिगरेशन उघडले.`)}>⚙️ Configure</Btn>
-                      </td>
-                    </tr>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {/* LIVE UNIFIED APPROVALS SECTION */}
+              <Card>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: S.deep, margin: 0 }}>
+                      ⚡ थेट प्रलंबित मंजुरी आदेश केंद्र (Live Unified Approvals)
+                    </h2>
+                    <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: S.muted, fontWeight: 600 }}>
+                      सर्व ९ मॉड्यूल्स (व्यवसाय नोंद, नोकरी भरती, बँक कर्ज, रक्त मदत, B2B, BMC डेअरी, तक्रारी व KYC)
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <Btn variant="plain" onClick={fetchLiveApprovals}>🔄 रिफ्रेश (Refresh)</Btn>
+                  </div>
+                </div>
+
+                {/* Module Filter Chips */}
+                <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, marginBottom: 14 }}>
+                  {[
+                    { id: 'all', label: 'सर्व प्रलंबित (All)', icon: '⚡' },
+                    { id: 'directory', label: 'व्यवसाय नोंदणी', icon: '🏨' },
+                    { id: 'job', label: 'नोकरी भरती', icon: '💼' },
+                    { id: 'loan', label: 'बँक कर्ज अर्ज', icon: '🏦' },
+                    { id: 'blood', label: 'रक्त मदत स्लिप', icon: '🩸' },
+                    { id: 'lead', label: 'B2B रडार मागणी', icon: '🚀' },
+                    { id: 'dairy_partner', label: 'BMC डेअरी भागीदार', icon: '🥛' },
+                    { id: 'post_report', label: 'मंच तक्रारी अहवाल', icon: '🚨' },
+                    { id: 'member_kyc', label: 'सदस्य KYC', icon: '🪪' }
+                  ].map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setApprovalModuleFilter(tab.id)}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: 20,
+                        fontSize: '0.76rem',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        border: approvalModuleFilter === tab.id ? `2px solid ${S.saffron}` : `1px solid ${S.border}`,
+                        background: approvalModuleFilter === tab.id ? S.cardSoft : S.cardBg,
+                        color: approvalModuleFilter === tab.id ? S.saffron : S.text,
+                        whiteSpace: 'nowrap',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6
+                      }}
+                    >
+                      <span>{tab.icon}</span>
+                      <span>{tab.label}</span>
+                    </button>
                   ))}
-                </tbody>
-              </table>
-            </Card>
+                </div>
+
+                {/* Approvals Table */}
+                {approvalsLoading ? (
+                  <div style={{ padding: 24, textAlign: 'center', color: S.saffron, fontWeight: 800 }}>
+                    ⏳ प्रलंबित मंजुऱ्या लोड होत आहेत...
+                  </div>
+                ) : liveApprovals.length === 0 ? (
+                  <div style={{ padding: 32, textAlign: 'center' }}>
+                    <span style={{ fontSize: '2rem' }}>🎉</span>
+                    <h4 style={{ margin: '8px 0 4px', color: S.deep, fontWeight: 800 }}>सर्व प्रलंबित मंजुऱ्या पूर्ण झाल्या आहेत!</h4>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: S.muted }}>निवडलेल्या विभागात कोणतीही प्रलंबित नोंद शिल्लक नाही.</p>
+                  </div>
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
+                      <thead>
+                        <tr style={{ background: S.cardSoft, color: S.saffron }}>
+                          <th style={{ padding: 10 }}>आयडी</th>
+                          <th style={{ padding: 10 }}>मॉड्यूल</th>
+                          <th style={{ padding: 10 }}>नोंद शीर्षक / अर्जदार</th>
+                          <th style={{ padding: 10 }}>तपशील / मूल्य</th>
+                          <th style={{ padding: 10 }}>स्थान / जिल्हा</th>
+                          <th style={{ padding: 10 }}>प्राधान्य</th>
+                          <th style={{ padding: 10 }}>सुपर ॲडमिन कृती</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {liveApprovals.map(item => (
+                          <tr key={item.id} style={{ borderBottom: `1px solid ${S.border}` }}>
+                            <td style={{ padding: 10, fontFamily: 'monospace', fontWeight: 800, color: S.saffron }}>{item.id}</td>
+                            <td style={{ padding: 10 }}>
+                              <Badge tone="saffron">{item.module}</Badge>
+                              <div style={{ fontSize: '0.7rem', color: S.muted, marginTop: 2 }}>{item.subModule}</div>
+                            </td>
+                            <td style={{ padding: 10 }}>
+                              <div style={{ fontWeight: 800, color: S.deep }}>{item.title}</div>
+                              <div style={{ fontSize: '0.74rem', color: S.muted }}>{item.applicantName}</div>
+                            </td>
+                            <td style={{ padding: 10, fontSize: '0.76rem' }}>{item.valueOrDetails || '—'}</td>
+                            <td style={{ padding: 10, fontSize: '0.76rem' }}>{item.location || item.district}</td>
+                            <td style={{ padding: 10 }}>
+                              <Badge tone={item.priority === 'Critical' ? 'red' : item.priority === 'High' ? 'amber' : 'blue'}>
+                                {item.priority || 'Normal'}
+                              </Badge>
+                            </td>
+                            <td style={{ padding: 10 }}>
+                              <div style={{ display: 'flex', gap: 6 }}>
+                                <Btn
+                                  variant="success"
+                                  style={{ fontSize: '0.7rem', padding: '4px 8px' }}
+                                  onClick={() => {
+                                    setApprovalActionModal({ item, action: item.type === 'loan' ? 'sanction' : 'approve' });
+                                    setApprovalRemarks('सुपर ॲडमिनकडून अधिकृत स्तरावर मंजुरी देण्यात आली.');
+                                    if (item.type === 'loan') {
+                                      const num = String(item.valueOrDetails || '').replace(/\D/g, '');
+                                      setApprovalSanctionAmount(num || '500000');
+                                    }
+                                  }}
+                                >
+                                  {item.type === 'loan' ? '✓ कर्ज मंजूर' : '✓ मंजूर'}
+                                </Btn>
+                                <Btn
+                                  variant="danger"
+                                  style={{ fontSize: '0.7rem', padding: '4px 8px' }}
+                                  onClick={() => {
+                                    setApprovalActionModal({ item, action: 'reject' });
+                                    setApprovalRemarks('पडताळणी निकष पूर्ण न झाल्याने अर्ज नामंजूर करण्यात आला.');
+                                  }}
+                                >
+                                  ✕ फेटाळा
+                                </Btn>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </Card>
+
+              {/* SYSTEM WORKFLOW RULES LIST */}
+              <Card>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: S.deep, margin: 0 }}>📋 System Workflows & Approval Rules Hierarchy</h2>
+                  <Btn variant="primary" onClick={() => triggerInlineNotice('नवीन नियम वर्कफ्लो जोडला गेला.')}>+ Build Workflow</Btn>
+                </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
+                  <thead>
+                    <tr style={{ background: S.cardSoft, color: S.saffron }}>
+                      <th style={{ padding: 10 }}>Rule ID</th>
+                      <th style={{ padding: 10 }}>वर्कफ्लो नाव</th>
+                      <th style={{ padding: 10 }}>ट्रिगर (Trigger)</th>
+                      <th style={{ padding: 10 }}>मंजुरी साखळी (Approval Chain)</th>
+                      <th style={{ padding: 10 }}>सरासरी वेळ</th>
+                      <th style={{ padding: 10 }}>Status</th>
+                      <th style={{ padding: 10 }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {workflows.map(w => (
+                      <tr key={w.id} style={{ borderBottom: `1px solid ${S.cardSoft}` }}>
+                        <td style={{ padding: 10, fontWeight: 800 }}>{w.id}</td>
+                        <td style={{ padding: 10, fontWeight: 700, color: S.deep }}>{w.title}</td>
+                        <td style={{ padding: 10, color: S.saffron, fontWeight: 700 }}>{w.trigger}</td>
+                        <td style={{ padding: 10 }}>{w.approvers}</td>
+                        <td style={{ padding: 10, fontWeight: 800 }}>{w.avgTime}</td>
+                        <td style={{ padding: 10 }}><Badge tone="green">{w.status}</Badge></td>
+                        <td style={{ padding: 10, display: 'flex', gap: 6 }}>
+                          <Btn variant="plain" onClick={() => triggerInlineNotice(`वर्कफ्लो ${w.id} कॉन्फिगरेशन उघडले.`)}>⚙️ Configure</Btn>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card>
+
+              {/* ACTION CONFIRMATION MODAL */}
+              {approvalActionModal && (
+                <Modal
+                  title={approvalActionModal.action === 'reject' ? '⚠️ नोंद नामंजूर करणे' : '✅ अधिकृत मंजुरी आदेश (SuperAdmin)'}
+                  onClose={() => setApprovalActionModal(null)}
+                  width={520}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div style={{ background: S.cardSoft, border: `1px solid ${S.border}`, padding: 12, borderRadius: 8 }}>
+                      <div style={{ fontSize: '0.74rem', color: S.saffron, fontWeight: 800 }}>
+                        {approvalActionModal.item.module} • {approvalActionModal.item.subModule}
+                      </div>
+                      <div style={{ fontSize: '0.96rem', fontWeight: 900, color: S.deep, marginTop: 4 }}>
+                        {approvalActionModal.item.title}
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: S.muted, marginTop: 2 }}>
+                        अर्जदार: {approvalActionModal.item.applicantName} | ठिकाण: {approvalActionModal.item.location}
+                      </div>
+                    </div>
+
+                    {approvalActionModal.item.type === 'loan' && (approvalActionModal.action === 'approve' || approvalActionModal.action === 'sanction') && (
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: S.deep, marginBottom: 4 }}>
+                          मंजूर केलेली कर्ज रक्कम (Sanctioned Loan Amount in ₹):
+                        </label>
+                        <input
+                          type="number"
+                          value={approvalSanctionAmount}
+                          onChange={(e) => setApprovalSanctionAmount(e.target.value)}
+                          placeholder="उदा. 1500000"
+                          style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: `1px solid ${S.border}`, fontSize: '0.85rem' }}
+                        />
+                      </div>
+                    )}
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: S.deep, marginBottom: 4 }}>
+                        सुपर ॲडमिन शेरा व ऑथरायझेशन नोट:
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={approvalRemarks}
+                        onChange={(e) => setApprovalRemarks(e.target.value)}
+                        placeholder="शेरा प्रविष्ट करा..."
+                        style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: `1px solid ${S.border}`, fontSize: '0.82rem', resize: 'vertical' }}
+                      />
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 6 }}>
+                      <Btn variant="plain" onClick={() => setApprovalActionModal(null)}>रद्द करा</Btn>
+                      <Btn
+                        variant={approvalActionModal.action === 'reject' ? 'danger' : 'success'}
+                        onClick={handleApprovalActionConfirm}
+                        disabled={approvalSubmitting}
+                      >
+                        {approvalSubmitting ? 'प्रक्रिया सुरू आहे...' : approvalActionModal.action === 'reject' ? '✕ खात्रीने फेटाळा' : '✓ अंतिम मंजुरी जारी करा'}
+                      </Btn>
+                    </div>
+                  </div>
+                </Modal>
+              )}
+            </div>
           )}
 
           {/* 14. 📝 AUDIT LOGS */}
@@ -1351,7 +2244,7 @@ export default function SuperAdminPage() {
                         <tr key={u.id} style={{ borderBottom: `1px solid ${S.cardSoft}` }}>
                           <td style={{ padding: 10, fontWeight: 900, fontFamily: 'monospace', color: S.saffron }}>{u.id}</td>
                           <td style={{ padding: 10, fontWeight: 700, color: S.deep }}>{u.name}</td>
-                          <td style={{ padding: 10, fontSize: '0.8rem' }}>{u.mobile}<br/>{u.email}</td>
+                          <td style={{ padding: 10, fontSize: '0.8rem' }}>{u.mobile}<br />{u.email}</td>
                           <td style={{ padding: 10 }}><Badge tone="saffron">{u.role}</Badge></td>
                           <td style={{ padding: 10, fontSize: '0.78rem', color: S.text }}>{u.permissions || '✅ Standard Permissions'}</td>
                           <td style={{ padding: 10 }}>{u.geography}</td>
@@ -1385,7 +2278,7 @@ export default function SuperAdminPage() {
                       {unregisteredUsers.map(un => (
                         <tr key={un.id} style={{ borderBottom: `1px solid ${S.cardSoft}` }}>
                           <td style={{ padding: 10, fontWeight: 800, fontFamily: 'monospace' }}>{un.id}</td>
-                          <td style={{ padding: 10, fontWeight: 700, color: S.deep }}>{un.name}<br/><span style={{ fontSize: '0.78rem', color: S.muted }}>{un.mobile} • {un.email}</span></td>
+                          <td style={{ padding: 10, fontWeight: 700, color: S.deep }}>{un.name}<br /><span style={{ fontSize: '0.78rem', color: S.muted }}>{un.mobile} • {un.email}</span></td>
                           <td style={{ padding: 10 }}><Badge tone="amber">{un.stage}</Badge></td>
                           <td style={{ padding: 10 }}>{un.geography}</td>
                           <td style={{ padding: 10, fontSize: '0.8rem' }}>{un.date}</td>
@@ -1538,6 +2431,30 @@ export default function SuperAdminPage() {
             {activeModal === 'user' && (
               <>
                 <div style={{ marginBottom: 12 }}>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: 4 }}>{editingItem ? 'नवीन संकेतशब्द (बदलायचा नसल्यास रिकामे ठेवा)' : 'संकेतशब्द (Password) * किमान ८ अक्षरे'}</label>
+                  <input
+                    type="password"
+                    aria-label="संकेतशब्द"
+                    autoComplete="new-password"
+                    placeholder="किमान ८ अक्षरांचा पासवर्ड"
+                    defaultValue=""
+                    minLength={editingItem ? undefined : 8}
+                    required={!editingItem}
+                    onChange={e => setFormData({ ...formData, password: e.target.value })}
+                    style={{ width: '100%', padding: 10, borderRadius: 8, border: `1px solid ${S.border}`, boxSizing: 'border-box' }}
+                  />
+                </div>
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: 4 }}>संदर्भ कोड / फोन (Referral Code or Mobile)</label>
+                  <input
+                    type="text"
+                    placeholder="संदर्भ कोड किंवा मोबाईल (स्वैच्छिक)"
+                    defaultValue={editingItem?.referral || ''}
+                    onChange={e => setFormData({ ...formData, referral: e.target.value })}
+                    style={{ width: '100%', padding: 10, borderRadius: 8, border: `1px solid ${S.border}`, boxSizing: 'border-box' }}
+                  />
+                </div>
+                <div style={{ marginBottom: 12 }}>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: 4 }}>मोबाईल नंबर (Mobile Number)</label>
                   <input
                     type="text"
@@ -1560,17 +2477,12 @@ export default function SuperAdminPage() {
                 <div style={{ marginBottom: 12 }}>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: 4 }}>नियुक्त प्रशासकीय पदभार (Assign Primary Role)</label>
                   <select
-                    defaultValue={editingItem?.role || 'District Coordinator'}
+                    aria-label="भूमिका"
+                    defaultValue={editingItem?.role || 'member'}
                     onChange={e => setFormData({ ...formData, role: e.target.value })}
                     style={{ width: '100%', padding: 10, borderRadius: 8, border: `1px solid ${S.border}`, boxSizing: 'border-box', background: S.cardSoft, fontWeight: 700 }}
                   >
-                    <option value="Super Admin">सर्वोच्च प्रशासक (Super Admin)</option>
-                    <option value="CEO (कार्याध्यक्ष)">कार्याध्यक्ष / राज्य अध्यक्ष (CEO)</option>
-                    <option value="State Secretary">राज्य सचिव (State Secretary)</option>
-                    <option value="District Coordinator">जिल्हा समन्वयक (District Coordinator)</option>
-                    <option value="Taluka Lead">तालुका अध्यक्ष (Taluka Lead)</option>
-                    <option value="Chapter Head">चॅप्टर प्रमुख (Chapter Head)</option>
-                    <option value="General Member">सर्वसामान्य सभासद (General Member)</option>
+                    {USER_ROLE_OPTIONS.map(([val, lbl]) => <option key={val} value={val}>{lbl}</option>)}
                   </select>
                 </div>
                 <div style={{ marginBottom: 12 }}>
@@ -1693,6 +2605,122 @@ export default function SuperAdminPage() {
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
               <Btn variant="ghost" type="button" onClick={() => setActiveModal(null)}>Cancel</Btn>
               <Btn variant="primary" type="submit">Save Record (जतन करा)</Btn>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {/* ============================================================
+         SPONSOR & DOWNLINE TRANSFER MODAL (SAFEGUARDS & PREVIEW)
+         ============================================================ */}
+      {sponsorModalOpen && transferTargetMember && (
+        <Modal
+          title={`🔄 प्रायोजक व डाउनलाईन दुरुस्ती (Sponsor Transfer Tool)`}
+          onClose={() => setSponsorModalOpen(false)}
+          width={680}
+        >
+          <form onSubmit={handleExecuteSponsorTransfer}>
+            {/* TARGET MEMBER DETAILS */}
+            <div style={{ background: S.cardSoft, border: `1px solid ${S.border}`, borderRadius: 10, padding: 14, marginBottom: 16 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '0.8rem', color: S.muted }}>हस्तांतरित होणारा सदस्य (Target Member):</div>
+                  <div style={{ fontWeight: 900, fontSize: '1.1rem', color: S.deep }}>
+                    {transferTargetMember.name} <span style={{ fontFamily: 'monospace', fontSize: '0.85rem', color: S.saffron }}>({transferTargetMember.id || transferTargetMember.memberId})</span>
+                  </div>
+                </div>
+                <Badge tone="saffron">
+                  {hierarchyLoading ? 'लोड होत आहे...' : `थेट डाउनलाईन: ${targetMemberHierarchy?.downlineCount ?? 0} सदस्य`}
+                </Badge>
+              </div>
+
+              {/* CURRENT SPONSOR PREVIEW */}
+              <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px dashed ${S.border}`, display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                <div>
+                  <span style={{ color: S.muted }}>विद्यमान प्रायोजक (Current Sponsor): </span>
+                  <strong style={{ color: S.deep }}>
+                    {targetMemberHierarchy?.currentSponsor?.name || 'थेट नोंदणी / सिस्टम'}
+                  </strong>
+                  <span style={{ fontFamily: 'monospace', fontSize: '0.78rem', marginLeft: 6, color: S.saffron }}>
+                    ({targetMemberHierarchy?.currentSponsor?.id || transferTargetMember.referred_by || transferTargetMember.referralId || 'NONE'})
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* DIRECT DOWNLINES LIST ACCORDION */}
+            {targetMemberHierarchy?.directDownlines?.length > 0 && (
+              <div style={{ marginBottom: 16, border: `1px solid ${S.border}`, borderRadius: 8, padding: 10, background: '#FFFFFF' }}>
+                <div style={{ fontWeight: 800, fontSize: '0.82rem', color: S.deep, marginBottom: 6 }}>
+                  🌿 या सदस्याचे थेट डाउनलाईन सदस्य ({targetMemberHierarchy.directDownlines.length}):
+                </div>
+                <div style={{ maxHeight: 110, overflowY: 'auto', fontSize: '0.78rem' }}>
+                  {targetMemberHierarchy.directDownlines.map((dl, i) => (
+                    <div key={dl.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 6px', borderBottom: '1px solid #F1F5F9' }}>
+                      <span>{i + 1}. {dl.name} <span style={{ fontFamily: 'monospace', color: S.muted }}>({dl.id})</span></span>
+                      <span style={{ color: S.green, fontWeight: 700 }}>✓ {dl.status || 'Active'}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ fontSize: '0.72rem', color: S.muted, marginTop: 4 }}>
+                  ℹ️ टीप: प्रायोजक बदलल्यास हा संपूर्ण डाउनलाईन वृक्ष नवीन शाखेत संलग्न होईल.
+                </div>
+              </div>
+            )}
+
+            {/* NEW SPONSOR SELECTION */}
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 800, marginBottom: 6, color: S.deep }}>
+                नवीन प्रायोजक निवडा किंवा आयडी प्रविष्ट करा (Select New Sponsor ID) *
+              </label>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+                <input
+                  type="text"
+                  required
+                  placeholder="उदा. CM-MH-001 किंवा सदस्य निवडा..."
+                  value={newSponsorInput}
+                  onChange={e => setNewSponsorInput(e.target.value)}
+                  style={{ flex: 1, padding: 10, borderRadius: 8, border: `1px solid ${S.border}`, fontSize: '0.86rem' }}
+                />
+                <select
+                  onChange={e => { if (e.target.value) setNewSponsorInput(e.target.value); }}
+                  style={{ padding: '8px 12px', borderRadius: 8, border: `1px solid ${S.border}`, background: S.cardSoft, fontSize: '0.82rem', fontWeight: 700, maxWidth: 200 }}
+                >
+                  <option value="">-- सदस्यांमधून निवडा --</option>
+                  {users
+                    .filter(u => u.id !== (transferTargetMember.id || transferTargetMember.memberId))
+                    .slice(0, 30)
+                    .map(u => (
+                      <option key={u.id} value={u.id}>{u.name} ({u.id})</option>
+                    ))}
+                </select>
+              </div>
+              <div style={{ fontSize: '0.75rem', color: S.muted }}>
+                🛡️ सिस्टीम स्वयंचलितरित्या चक्रीय साखळी (Circular Chains) व स्वतःचे प्रायोजकत्व प्रतिबंधित करते.
+              </div>
+            </div>
+
+            {/* REASON FOR CORRECTION (MANDATORY AUDIT TRAIL) */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 800, marginBottom: 6, color: S.deep }}>
+                बदलाचे कारण व टिपणी (Mandatory Reason for Audit Trail) *
+              </label>
+              <textarea
+                required
+                rows={2}
+                placeholder="उदा. नोंदणी दरम्यान सदस्याकडून चुकीचा रेफरल कोड टाकला गेला, अधिकृत तक्रार #TCK-203 नुसार दुरुस्ती..."
+                value={transferReasonInput}
+                onChange={e => setTransferReasonInput(e.target.value)}
+                style={{ width: '100%', padding: 10, borderRadius: 8, border: `1px solid ${S.border}`, fontSize: '0.84rem', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 10, borderTop: `1px solid ${S.border}` }}>
+              <Btn variant="plain" type="button" onClick={() => setSponsorModalOpen(false)}>रद्द करा</Btn>
+              <Btn variant="primary" type="submit" disabled={transferLoading || !newSponsorInput}>
+                {transferLoading ? 'प्रक्रिया सुरू आहे...' : '✓ पुष्टी करा व प्रायोजक बदला (Execute Change)'}
+              </Btn>
             </div>
           </form>
         </Modal>

@@ -47,195 +47,63 @@ export function formatMemberReferralCode(user) {
   return `CM-${id.toUpperCase()}`;
 }
 
-// Generate realistic initial seed dataset if empty
+// Generate realistic initial seed dataset if empty (STRICT: Empty, database only)
 export function getInitialSeedReferrals() {
   return [];
 }
 
-function _legacyUnusedSeeds() {
-  const now = Date.now();
-  const day = 86400000;
-  return [
-    {
-      id: 'REF-1001',
-      referrerId: 'CM-PUN-0842',
-      referrerName: 'अमोल तुकाराम जाधव',
-      referrerDistrict: 'पुणे',
-      refereeId: 'CM-SAT-3021',
-      refereeName: 'अजिंक्य तानाजीराव देशमुख',
-      refereePhone: '९८२२१ •••••',
-      district: 'सातारा',
-      taluka: 'कराड',
-      role: 'entrepreneur',
-      registeredAt: new Date(now - 1 * day).toISOString(),
-      status: 'active',
-      bonusAmount: 100
-    },
-    {
-      id: 'REF-1002',
-      referrerId: 'CM-PUN-0842',
-      referrerName: 'अमोल तुकाराम जाधव',
-      referrerDistrict: 'पुणे',
-      refereeId: 'CM-KOL-4091',
-      refereeName: 'प्रशांत संभाजी मोहिते',
-      refereePhone: '९७६५४ •••••',
-      district: 'कोल्हापूर',
-      taluka: 'पन्हाळा',
-      role: 'business',
-      registeredAt: new Date(now - 2 * day).toISOString(),
-      status: 'active',
-      bonusAmount: 100
-    },
-    {
-      id: 'REF-1003',
-      referrerId: 'CM-PUN-0842',
-      referrerName: 'अमोल तुकाराम जाधव',
-      referrerDistrict: 'पुणे',
-      refereeId: 'CM-PUN-5112',
-      refereeName: 'दिलीप रामराव गायकवाड',
-      refereePhone: '९९२३१ •••••',
-      district: 'पुणे',
-      taluka: 'हवेली',
-      role: 'professional',
-      registeredAt: new Date(now - 3 * 3600000).toISOString(), // Today
-      status: 'active',
-      bonusAmount: 100
-    },
-    {
-      id: 'REF-1004',
-      referrerId: 'CM-PUN-0842',
-      referrerName: 'अमोल तुकाराम जाधव',
-      referrerDistrict: 'पुणे',
-      refereeId: 'CM-NSK-6221',
-      refereeName: 'सचिन दत्तात्रय भोसले',
-      refereePhone: '९४२२३ •••••',
-      district: 'नाशिक',
-      taluka: 'नाशिक',
-      role: 'member',
-      registeredAt: new Date(now - 1 * 3600000).toISOString(), // Today
-      status: 'pending',
-      bonusAmount: 0
-    },
-    {
-      id: 'REF-1005',
-      referrerId: 'CM-SAT-0112',
-      referrerName: 'गणेश संभाजी मोरे',
-      referrerDistrict: 'सातारा',
-      refereeId: 'CM-SAT-7102',
-      refereeName: 'विक्रमसिंह प्रतापराव सावंत',
-      refereePhone: '९८२२५ •••••',
-      district: 'सातारा',
-      taluka: 'पाटण',
-      role: 'entrepreneur',
-      registeredAt: new Date(now - 4 * day).toISOString(),
-      status: 'active',
-      bonusAmount: 100
-    },
-    {
-      id: 'REF-1006',
-      referrerId: 'CM-SAT-0112',
-      referrerName: 'गणेश संभाजी मोरे',
-      referrerDistrict: 'सातारा',
-      refereeId: 'CM-PUN-8190',
-      refereeName: 'ओंकार महादेव जगताप',
-      refereePhone: '९७३०१ •••••',
-      district: 'पुणे',
-      taluka: 'बारामती',
-      role: 'student',
-      registeredAt: new Date(now - 5 * day).toISOString(),
-      status: 'active',
-      bonusAmount: 100
-    },
-    {
-      id: 'REF-1007',
-      referrerId: 'CM-KOL-0931',
-      referrerName: 'सचिन विजयराव पाटील',
-      referrerDistrict: 'कोल्हापूर',
-      refereeId: 'CM-KOL-9022',
-      refereeName: 'हर्षवर्धन उदयसिंह माने',
-      refereePhone: '९१५८२ •••••',
-      district: 'कोल्हापूर',
-      taluka: 'करवीर',
-      role: 'chapter_president',
-      registeredAt: new Date(now - 6 * day).toISOString(),
-      status: 'active',
-      bonusAmount: 100
-    },
-    {
-      id: 'REF-1008',
-      referrerId: 'CM-KOL-0931',
-      referrerName: 'सचिन विजयराव पाटील',
-      referrerDistrict: 'कोल्हापूर',
-      refereeId: 'CM-SAN-1102',
-      refereeName: 'संजय यशवंतराव कदम',
-      refereePhone: '९०११२ •••••',
-      district: 'सांगली',
-      taluka: 'मिरज',
-      role: 'business',
-      registeredAt: new Date(now - 8 * day).toISOString(),
-      status: 'pending',
-      bonusAmount: 0
-    },
-    {
-      id: 'REF-1009',
-      referrerId: 'CM-MUM-1024',
-      referrerName: 'वैभव प्रकाश कदम',
-      referrerDistrict: 'मुंबई',
-      refereeId: 'CM-MUM-2211',
-      refereeName: 'सिद्धेश रमेश बांदल',
-      refereePhone: '९८१९२ •••••',
-      district: 'मुंबई',
-      taluka: 'अंधेरी',
-      role: 'professional',
-      registeredAt: new Date(now - 12 * day).toISOString(),
-      status: 'active',
-      bonusAmount: 100
-    },
-    {
-      id: 'REF-1010',
-      referrerId: 'CM-AUR-0774',
-      referrerName: 'दिग्विजय राजे भोसले',
-      referrerDistrict: 'छत्रपती संभाजीनगर',
-      refereeId: 'CM-AUR-3341',
-      refereeName: 'तानाजी विलासराव चव्हाण',
-      refereePhone: '९६८९० •••••',
-      district: 'छत्रपती संभाजीनगर',
-      taluka: 'पैठण',
-      role: 'entrepreneur',
-      registeredAt: new Date(now - 15 * day).toISOString(),
-      status: 'active',
-      bonusAmount: 100
-    },
-    {
-      id: 'REF-1011',
-      referrerId: 'CM-OFFICIAL-2026',
-      referrerName: 'Connect Maratha अधिकृत केंद्रीय मंच',
-      referrerDistrict: 'महाराष्ट्र',
-      refereeId: 'CM-SOL-4401',
-      refereeName: 'बाळासाहेब आप्पाराव शिंदे',
-      refereePhone: '९४०३३ •••••',
-      district: 'सोलापूर',
-      taluka: 'पंढरपूर',
-      role: 'member',
-      registeredAt: new Date(now - 18 * day).toISOString(),
-      status: 'active',
-      bonusAmount: 100
-    }
-  ];
-}
+// In-memory cache for live database referrals
+let _memoryReferralsCache = null;
 
-// Get all referrals from storage (real records only - zero fake seeds)
+// Get all referrals from storage (merged with live database)
 export function getAllReferrals() {
+  if (typeof window !== 'undefined' && !window.__cm_referrals_fetched) {
+    window.__cm_referrals_fetched = true;
+    fetch('/api/members/referrals/all')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.success && Array.isArray(data.referrals)) {
+          // Normalize server records
+          const liveList = data.referrals.map(serverItem => ({
+            ...serverItem,
+            refereeId: serverItem.refereeId || serverItem.memberId,
+            refereeName: serverItem.refereeName || serverItem.name,
+            referrerId: serverItem.referrerId || serverItem.referralId,
+            referrerName: serverItem.referrerName || serverItem.referralName,
+            refereePhone: serverItem.mobileNo || serverItem.refereePhone,
+            status: serverItem.status || 'Active',
+            bonusAmount: serverItem.bonusAmount || 100
+          }));
+          _memoryReferralsCache = liveList;
+          try {
+            // Overwrite localStorage with genuine database records only (purging old mocks)
+            localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(liveList));
+            window.dispatchEvent(new CustomEvent('cm_referral_updated'));
+          } catch (_) {}
+        }
+      })
+      .catch(() => {});
+  }
+
+  if (_memoryReferralsCache && Array.isArray(_memoryReferralsCache)) {
+    return _memoryReferralsCache;
+  }
+
   try {
     const raw = localStorage.getItem(REFERRALS_STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    // Filter out old fake seed items
-    const realOnly = parsed.filter(item => item && !item.isSeed && !String(item.id || '').startsWith('REF-100'));
-    if (realOnly.length !== parsed.length) {
-      localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(realOnly));
-    }
+    // Strict filter: Remove any mock/seed item (REF-100*, REF-2026-0*, demo names)
+    const realOnly = parsed.filter(item => {
+      if (!item) return false;
+      if (item.isSeed) return false;
+      const idStr = String(item.id || '');
+      if (idStr.startsWith('REF-100') || idStr.startsWith('REF-2026-0')) return false;
+      const refName = String(item.refereeName || item.name || '');
+      if (refName.includes('अजिंक्य तानाजीराव') || refName.includes('प्रशांत संभाजी मोहिते') || refName.includes('दिलीप रामराव गायकवाड') || refName.includes('सचिन दत्तात्रय भोसले')) return false;
+      return true;
+    });
     return realOnly;
   } catch (e) {
     console.error('Error reading referrals from storage', e);
@@ -307,12 +175,12 @@ export function verifyReferrerId(code) {
     console.warn('Error checking stored users for referral', e);
   }
 
-  // 3. Fallback: If code matches standard format CM-XXXX-XXXX or valid phone
-  if (clean.startsWith('CM-') && clean.length >= 6) {
+  // 3. Fallback: If code matches standard member ID (M3692, CM-M3692, CM-PUN-0842, etc.)
+  if (/^M\d+$/i.test(clean) || /^CM-M?\d+$/i.test(clean) || (clean.startsWith('CM-') && clean.length >= 5)) {
     return {
       isValid: true,
       memberId: clean,
-      name: 'सत्यापित Connect Maratha सदस्य',
+      name: 'सत्यापित Connect Maratha सभासद',
       district: 'महाराष्ट्र',
       chapter: 'प्रमाणित चॅप्टर',
       role: 'member'
@@ -391,10 +259,13 @@ export function isOwnMobileReferral(code, mobile) {
 }
 
 // Record a new referral when someone registers
+// Record a new referral when someone registers
 export function recordNewReferral({
   newMemberId,
   newMemberName,
   newMemberPhone,
+  newMemberEmail,
+  newMemberPackage = 'Basic (प्राथमिक)',
   newMemberDistrict,
   newMemberTaluka = '',
   newMemberRole = 'member',
@@ -402,27 +273,37 @@ export function recordNewReferral({
   isSubscribed = true
 }) {
   const verified = verifyReferrerId(referrerCode);
-  const targetReferrerId = verified.isValid ? verified.memberId : 'CM-OFFICIAL-2026';
+  const targetReferrerId = verified.isValid ? verified.memberId : (referrerCode ? referrerCode.trim().toUpperCase() : 'CM-OFFICIAL-2026');
   const targetReferrerName = verified.isValid ? verified.name : 'Connect Maratha अधिकृत केंद्रीय मंच';
   const targetReferrerDistrict = verified.isValid ? verified.district : 'महाराष्ट्र';
 
-  const maskedPhone = newMemberPhone
-    ? `${String(newMemberPhone).slice(0, 4)} •••••`
-    : '९८२२० •••••';
+  const memberId = newMemberId || `CM-MH-${Date.now().toString().slice(-4)}`;
+  const now = new Date();
+  const dateStr = now.toISOString().slice(0, 10);
 
   const newRecord = {
     id: `REF-${Date.now()}`,
+    sno: 1,
+    memberId: memberId,
+    refereeId: memberId,
+    name: newMemberName || 'नवीन सभासद',
+    refereeName: newMemberName || 'नवीन सभासद',
+    referralId: targetReferrerId,
     referrerId: targetReferrerId,
+    referralName: targetReferrerName,
     referrerName: targetReferrerName,
     referrerDistrict: targetReferrerDistrict,
-    refereeId: newMemberId || `CM-MH-${Date.now().toString().slice(-4)}`,
-    refereeName: newMemberName || 'नवीन सभासद',
-    refereePhone: maskedPhone,
+    joiningDate: dateStr,
+    registeredAt: now.toISOString(),
+    mobileNo: newMemberPhone || '९८२२० •••••',
+    refereePhone: newMemberPhone || '९८२२० •••••',
+    email: newMemberEmail || `${memberId.toLowerCase()}@connectmaratha.com`,
+    package: newMemberPackage,
+    activDate: dateStr,
+    status: isSubscribed ? 'Active' : 'Pending',
     district: newMemberDistrict || 'पुणे',
     taluka: newMemberTaluka || 'हवेली',
     role: newMemberRole || 'member',
-    registeredAt: new Date().toISOString(),
-    status: isSubscribed ? 'active' : 'pending',
     bonusAmount: isSubscribed ? 100 : 0
   };
 
@@ -446,10 +327,10 @@ export function getMemberReferralData(user) {
   const rawId = user?.id ? String(user.id).toUpperCase() : '';
   const phone = user?.phone ? String(user.phone) : '';
 
-  const all = getAllReferrals();
+  let all = getAllReferrals();
 
-  const userReferrals = all.filter(r => {
-    const refUpper = (r.referrerId || '').toUpperCase();
+  let userReferrals = all.filter(r => {
+    const refUpper = (r.referrerId || r.referralId || '').toUpperCase();
     return (
       refUpper === memberCode.toUpperCase() ||
       (rawId && refUpper === rawId) ||
@@ -458,9 +339,45 @@ export function getMemberReferralData(user) {
     );
   });
 
-  const totalReferred = userReferrals.length;
-  const activeSubscribed = userReferrals.filter(r => r.status === 'active').length;
-  const pendingSubscription = userReferrals.filter(r => r.status === 'pending').length;
+  // Strict mode: Only use real referral records from database / storage. No dummy/mock data injected.
+
+
+  const normalizedReferrals = userReferrals.map((r, idx) => {
+    const memId = r.memberId || r.refereeId || r.referee_id || r.id;
+    const name = r.name || r.refereeName || r.referee_name || 'सभासद';
+    const refId = r.referralId || r.referrerId || r.referrer_id || memberCode;
+    const refName = r.referralName || r.referrerName || r.referrer_name || user?.name || 'Connect Maratha सभासद';
+    const joinDt = r.joiningDate || (r.registeredAt ? r.registeredAt.slice(0, 10) : '') || (r.created_at ? r.created_at.slice(0, 10) : '') || new Date().toISOString().slice(0, 10);
+    const mob = r.mobileNo || r.refereePhone || r.referee_phone || r.phone || '-';
+    const email = r.email || r.refereeEmail || r.referee_email || `${memId ? memId.toLowerCase() : 'user'}@connectmaratha.com`;
+    const pkg = r.package || r.tier || 'Basic (प्राथमिक)';
+    const actDt = r.activDate || (r.created_at ? r.created_at.slice(0, 10) : '') || joinDt;
+    const stat = (r.status === 'active' || r.status === 'Active') ? 'Active' : (r.status || 'Active');
+
+    return {
+      ...r,
+      sno: idx + 1,
+      memberId: memId,
+      refereeId: memId,
+      name,
+      refereeName: name,
+      referralId: refId,
+      referrerId: refId,
+      referralName: refName,
+      referrerName: refName,
+      joiningDate: joinDt,
+      mobileNo: mob,
+      refereePhone: mob,
+      email,
+      package: pkg,
+      activDate: actDt,
+      status: stat
+    };
+  });
+
+  const totalReferred = normalizedReferrals.length;
+  const activeSubscribed = normalizedReferrals.filter(r => r.status === 'Active' || r.status === 'active').length;
+  const pendingSubscription = normalizedReferrals.filter(r => r.status === 'Pending' || r.status === 'pending').length;
   const totalEarnings = activeSubscribed * 100;
 
   let payouts = [];
@@ -477,6 +394,37 @@ export function getMemberReferralData(user) {
 
   const withdrawableBalance = Math.max(0, totalEarnings - totalPaidOut);
 
+  // Background async sync with live backend SQLite database
+  if (typeof window !== 'undefined' && user) {
+    const rawUid = user.id || memberCode;
+    fetch(`/api/members/referrals/my?member_id=${encodeURIComponent(rawUid)}`, {
+      headers: {
+        'x-user-id': rawUid,
+        'x-user-phone': user.phone || ''
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.success && Array.isArray(data.referrals) && data.referrals.length > 0) {
+          // If server returned records not in localStorage, merge them
+          const existing = getAllReferrals();
+          let changed = false;
+          data.referrals.forEach(serverRef => {
+            const match = existing.some(e => e.id === serverRef.id || e.memberId === serverRef.memberId);
+            if (!match) {
+              existing.unshift(serverRef);
+              changed = true;
+            }
+          });
+          if (changed) {
+            localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(existing));
+            window.dispatchEvent(new CustomEvent('cm_referral_updated'));
+          }
+        }
+      })
+      .catch(() => {});
+  }
+
   return {
     memberCode,
     totalReferred,
@@ -485,12 +433,12 @@ export function getMemberReferralData(user) {
     totalEarnings,
     totalPaidOut,
     withdrawableBalance,
-    referrals: userReferrals,
+    referrals: normalizedReferrals,
     payouts
   };
 }
 
-// Request a payout via UPI
+// Request a payout via UPI (stores locally and syncs to backend SQLite)
 export function requestReferralPayout(user, upiId, amount) {
   const memberCode = formatMemberReferralCode(user);
   const payoutAmount = Number(amount) || 0;
@@ -518,6 +466,22 @@ export function requestReferralPayout(user, upiId, amount) {
     if (pRaw) payouts = JSON.parse(pRaw);
     payouts.unshift(newPayout);
     localStorage.setItem(PAYOUTS_STORAGE_KEY, JSON.stringify(payouts));
+
+    // Also notify backend SQLite
+    if (typeof window !== 'undefined') {
+      fetch('/api/members/referrals/payout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user?.id || memberCode
+        },
+        body: JSON.stringify({
+          member_id: user?.id || memberCode,
+          upi_id: upiId.trim(),
+          amount: payoutAmount
+        })
+      }).catch(() => {});
+    }
 
     window.dispatchEvent(new CustomEvent('cm_referral_updated'));
     return { success: true, payout: newPayout };
@@ -664,31 +628,33 @@ export function getAdminReferralReport({
 export function exportReferralsToCSV(records) {
   if (!records || !records.length) return;
   const headers = [
-    'नोंदणी तारीख (Date)',
-    'सदस्य आयडी (Member ID)',
-    'नवीन सदस्य नाव (Referee Name)',
-    'मोबाईल क्रमांक (Mobile)',
-    'जिल्हा (District)',
-    'तालुका (Taluka)',
-    'भूमिका (Role)',
-    'शिफारसकर्ता आयडी (Referrer ID)',
-    'शिफारसकर्ता नाव (Referrer Name)',
-    'सदस्यत्व दर्जा (Status)',
-    'रेफरल कमिशन (Incentive Rs)'
+    'SNo.',
+    'Member ID',
+    'Name',
+    'Referral ID',
+    'Referral Name',
+    'Joining Date',
+    'Click Here!',
+    'Mobile No.',
+    'Email',
+    'Package',
+    'Activ.Date',
+    'Status'
   ];
 
-  const rows = records.map(r => [
-    `"${(r.registeredAt || r.date || '').replace(/"/g, '""')}"`,
-    `"${(r.refereeId || '').replace(/"/g, '""')}"`,
-    `"${(r.refereeName || '').replace(/"/g, '""')}"`,
-    `"${(r.refereePhone || '').replace(/"/g, '""')}"`,
-    `"${(r.district || '').replace(/"/g, '""')}"`,
-    `"${(r.taluka || '').replace(/"/g, '""')}"`,
-    `"${(r.role || 'member').replace(/"/g, '""')}"`,
-    `"${(r.referrerId || '').replace(/"/g, '""')}"`,
-    `"${(r.referrerName || '').replace(/"/g, '""')}"`,
-    `"${r.status === 'active' ? 'सक्रिय (Active Paid)' : 'प्रलंबित (Pending)'}"`,
-    `"${r.status === 'active' ? 100 : 0}"`
+  const rows = records.map((r, idx) => [
+    `"${r.sno || idx + 1}"`,
+    `"${(r.memberId || r.refereeId || '').replace(/"/g, '""')}"`,
+    `"${(r.name || r.refereeName || '').replace(/"/g, '""')}"`,
+    `"${(r.referralId || r.referrerId || '').replace(/"/g, '""')}"`,
+    `"${(r.referralName || r.referrerName || '').replace(/"/g, '""')}"`,
+    `"${(r.joiningDate || (r.registeredAt ? r.registeredAt.slice(0, 10) : '') || '').replace(/"/g, '""')}"`,
+    `"View Profile"`,
+    `"${(r.mobileNo || r.refereePhone || '').replace(/"/g, '""')}"`,
+    `"${(r.email || '').replace(/"/g, '""')}"`,
+    `"${(r.package || 'Basic (प्राथमिक)').replace(/"/g, '""')}"`,
+    `"${(r.activDate || r.joiningDate || '').replace(/"/g, '""')}"`,
+    `"${(r.status || 'Active').replace(/"/g, '""')}"`
   ]);
 
   const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(row => row.join(','))].join('\n');

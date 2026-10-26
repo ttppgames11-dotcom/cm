@@ -18,3 +18,12 @@ UsersYashraj*
 Thumbs.db
 **/__pycache__/
 *.pyc
+
+# Live databases and runtime data: contain member PII, password hashes and OTPs
+backend/db.json
+backend/db.json.*
+backend/data/
+server/db.json
+server/db/*.db
+database/*.db
+*.db.*.tmp

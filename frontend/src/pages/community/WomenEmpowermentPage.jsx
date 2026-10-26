@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useToast } from '../../context/ToastContext';
 import apiClient from '../../services/apiClient';
@@ -42,69 +42,6 @@ const INSPIRATIONAL_FIGURES = [
   }
 ];
 
-const FOCUS_AREAS = [
-  {
-    id: 'finance',
-    title: 'आर्थिक स्वावलंबन व बचत गट',
-    en: 'Financial Independence & SHGs',
-    image: '/assets/images/women-shg-finance.jpg',
-    icon: '💰',
-    desc: 'महिला बचत गटांना बिनव्याजी कर्ज, वित्तीय साक्षरता, मायक्रो फायनान्स आणि लघुउद्योग मार्गदर्शन. ग्रामीण व शहरी महिलांचे स्वबळावर सक्षमीकरण.',
-    stats: '१२,५००+ सक्रिय बचत गट',
-    actionText: 'कर्ज व योजना माहिती ➔'
-  },
-  {
-    id: 'education',
-    title: 'उच्च शिक्षण व कौशल्य प्रशिक्षण',
-    en: 'Higher Education & Skill Tech',
-    image: '/assets/images/women-higher-education.jpg',
-    icon: '🎓',
-    desc: 'मोफत स्पर्धा परीक्षा (MPSC/UPSC) मार्गदर्शन, IT व कोडिंग स्किल्स, व्यावसायिक प्रशिक्षण आणि मराठा विद्यार्थिनींसाठी शिष्यवृत्ती साहाय्य.',
-    stats: '४५,०००+ विद्यार्थिनी लाभार्थ्या',
-    actionText: 'शिष्यवृत्ती अर्ज ➔'
-  },
-  {
-    id: 'health',
-    title: 'महिला आरोग्य व सुरक्षितता',
-    en: 'Health, Wellness & Safety',
-    image: '/assets/images/women-health-wellness.jpg',
-    icon: '🏥',
-    desc: 'कॅन्सर स्क्रिनिंग, सुदृढ माता-बाल संगोपन शिबिरे, मोफत सॅनिटरी पॅड्स आणि मुलींसाठी स्वसंरक्षण (लाठी-काठी, ज्युडो-कराटे) विशेष प्रशिक्षण.',
-    stats: '२५०+ मोफत आरोग्य शिबिरे',
-    actionText: 'शिबिर वेळापत्रक ➔'
-  },
-  {
-    id: 'legal',
-    title: 'कायदेशीर सल्ला व हक्क संरक्षण',
-    en: 'Free Legal Aid & Rights',
-    image: '/assets/images/women-legal-counseling.jpg',
-    icon: '⚖️',
-    desc: 'अनुभवी मराठा महिला वकिलांचे मोफत मार्गदर्शन, कौटुंबिक न्यायालय साहाय्य, मालमत्ता व वारसा हक्क संरक्षण आणि गोपनीय कायदेशीर सल्ला.',
-    stats: '३,२००+ सोडवलेले प्रश्न',
-    actionText: 'वकिलांशी संपर्क ➔'
-  },
-  {
-    id: 'leadership',
-    title: 'राजकीय व सामाजिक नेतृत्व',
-    en: 'Leadership & Governance',
-    image: '/assets/images/women-leadership-summit.jpg',
-    icon: '🏛️',
-    desc: 'ग्रामपंचायत, पंचायत समिती, जिल्हा परिषद व सहकार क्षेत्रात महिलांना सक्रिय सहभागासाठी नेतृत्व विकास कार्यशाळा व प्रशासकीय मार्गदर्शन.',
-    stats: '१,८००+ महिला लोकप्रतिनिधी',
-    actionText: 'नेतृत्व कार्यशाळा ➔'
-  },
-  {
-    id: 'entrepreneurship',
-    title: 'महिला उद्योजकता विकास',
-    en: 'Women Entrepreneurship Hub',
-    image: '/assets/images/women-entrepreneur-hub.jpg',
-    icon: '🚀',
-    desc: 'गृहउद्योग, फूड प्रोसेसिंग, ऑरगॅनिक शेती, टेक्सटाईल आणि ई-कॉमर्सद्वारे मराठा महिलांच्या स्थानिक उत्पादनांना राष्ट्रीय व जागतिक बाजारपेठ.',
-    stats: '५,०००+ महिला उद्योजक',
-    actionText: 'उद्योजक नोंदणी ➔'
-  }
-];
-
 const SUCCESS_STORIES = [
   {
     name: 'पद्मश्री राहीबाई सोमा पोपेरे (बीजमाता)',
@@ -142,50 +79,238 @@ const SUCCESS_STORIES = [
 
 export default function WomenEmpowermentPage() {
   const { showToast } = useToast();
-  const [activeTab, setActiveTab] = useState('all');
-  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
-  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
-  const [helpForm, setHelpForm] = useState({ name: '', phone: '', city: '', needType: 'आर्थिक', description: '' });
-  const [joinForm, setJoinForm] = useState({ name: '', phone: '', email: '', city: '', occupation: '', interest: 'मार्गदर्शक / मेंटॉर' });
-  const [submitted, setSubmitted] = useState(false);
 
+  // Navigation Tabs: 'directory', 'marketplace', 'shgs', 'schemes', 'mentors', 'my_cases'
+  const [activeTab, setActiveTab] = useState('directory');
+
+  // Live Data States
+  const [entrepreneurs, setEntrepreneurs] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [shgs, setShgs] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [mentors, setMentors] = useState([]);
+  const [myHelpCases, setMyHelpCases] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Filter States
+  const [entCategory, setEntCategory] = useState('all');
+  const [entDistrict, setEntDistrict] = useState('all');
+  const [entSearch, setEntSearch] = useState('');
+  const [onlyShg, setOnlyShg] = useState(false);
+
+  const [productCat, setProductCat] = useState('all');
+  const [productSearch, setProductSearch] = useState('');
+  const [shgDistrict, setShgDistrict] = useState('all');
+  const [prgType, setPrgType] = useState('all');
+  const [mentorField, setMentorField] = useState('all');
+
+  // Modals
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+  const [isRegisterEntModalOpen, setIsRegisterEntModalOpen] = useState(false);
+  const [isRegisterShgModalOpen, setIsRegisterShgModalOpen] = useState(false);
+  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+  const [bookingMentorModal, setBookingMentorModal] = useState(null);
+
+  // Forms
+  const [helpForm, setHelpForm] = useState({
+    name: '',
+    phone: '',
+    district: 'पुणे',
+    category: 'कौटुंबिक व कायदेशीर सल्ला',
+    urgency: 'सामान्य',
+    description: '',
+    preferredTime: 'सकाळी ११ ते दुपारी २'
+  });
+
+  const [entForm, setEntForm] = useState({
+    name: '',
+    businessName: '',
+    category: 'खाद्यपदार्थ व कृषी प्रक्रिया',
+    subCategory: '',
+    district: 'पुणे',
+    city: '',
+    description: '',
+    productsServices: '',
+    contactPhone: '',
+    whatsapp: '',
+    email: '',
+    shgName: '',
+    isShg: false,
+    employeesCount: 1,
+    annualTurnover: ''
+  });
+
+  const [shgForm, setShgForm] = useState({
+    shgName: '',
+    presidentName: '',
+    secretaryName: '',
+    phone: '',
+    district: 'पुणे',
+    taluka: '',
+    village: '',
+    membersCount: 10,
+    bankName: 'बँक ऑफ महाराष्ट्र',
+    bankBranch: '',
+    monthlySavings: '₹५०० / महिना',
+    activityType: 'खाद्यपदार्थ व कृषी प्रक्रिया'
+  });
+
+  const [productForm, setProductForm] = useState({
+    sellerName: '',
+    productName: '',
+    category: 'कृषी व खाद्यपदार्थ',
+    price: '',
+    unit: 'प्रति किलो',
+    district: 'पुणे',
+    photo: '',
+    description: '',
+    contactPhone: '',
+    whatsapp: ''
+  });
+
+  const [mentorBookingForm, setMentorBookingForm] = useState({
+    applicantName: '',
+    phone: '',
+    district: 'पुणे',
+    topic: 'उद्योग उभारणी व बँकिंग कर्ज मार्गदर्शन',
+    preferredDate: '',
+    preferredTime: 'दुपारी २ ते ५',
+    notes: ''
+  });
+
+  // Load Data
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [ents, prds, shgList, prgs, mnts] = await Promise.all([
+        apiClient.getWomenEntrepreneurs({
+          category: entCategory,
+          district: entDistrict,
+          search: entSearch,
+          isShg: onlyShg ? '1' : ''
+        }),
+        apiClient.getWomenProducts({ category: productCat, search: productSearch }),
+        apiClient.getWomenShgs({ district: shgDistrict }),
+        apiClient.getWomenPrograms({ type: prgType }),
+        apiClient.getWomenMentors({ field: mentorField })
+      ]);
+      setEntrepreneurs(ents || []);
+      setProducts(prds || []);
+      setShgs(shgList || []);
+      setPrograms(prgs || []);
+      setMentors(mnts || []);
+
+      apiClient.getWomenHelpRequests()
+        .then(res => setMyHelpCases(Array.isArray(res) ? res : []))
+        .catch(() => setMyHelpCases([]));
+    } catch (err) {
+      console.error('Error fetching women data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [entCategory, entDistrict, onlyShg, productCat, shgDistrict, prgType, mentorField]);
+
+  // Submit Confidential Help Request
   const handleHelpSubmit = async (e) => {
     e.preventDefault();
     try {
       await apiClient.addWomenHelpRequest({
         name: helpForm.name,
-        subject: `${helpForm.name} (${helpForm.needType}) - ${helpForm.city}`,
-        category: helpForm.needType,
+        contactPhone: helpForm.phone,
+        district: helpForm.district,
+        category: helpForm.category,
+        urgency: helpForm.urgency,
         description: helpForm.description,
-        phone: helpForm.phone
+        preferredTime: helpForm.preferredTime
       });
-      setSubmitted(true);
-      showToast('🚨 मदत व मार्गदर्शनाची विनंती यशस्वीरीत्या नोंदवली गेली!', 'success');
-      setTimeout(() => {
-        setSubmitted(false);
-        setIsHelpModalOpen(false);
-        setHelpForm({ name: '', phone: '', city: '', needType: 'आर्थिक', description: '' });
-      }, 1500);
+
+      showToast('🌸 आपली मदत विनंती सुरक्षितरीत्या दाखल झाली! समन्वयकांकडून लवकरच संपर्क केला जाईल.', 'success');
+      setIsHelpModalOpen(false);
+      setHelpForm({
+        name: '',
+        phone: '',
+        district: 'पुणे',
+        category: 'कौटुंबिक व कायदेशीर सल्ला',
+        urgency: 'सामान्य',
+        description: '',
+        preferredTime: 'सकाळी ११ ते दुपारी २'
+      });
+      loadData();
     } catch (err) {
-      showToast(err.message || 'विनंती अयशस्वी', 'error');
+      showToast('त्रुटी: ' + (err.message || 'विनंती अयशस्वी'), 'error');
     }
   };
 
-  const handleJoinSubmit = (e) => {
+  // Submit Entrepreneur Registration
+  const handleEntSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    showToast('🌸 सक्षमीकरण चळवळीत सहभागाबद्दल धन्यवाद!', 'success');
-    setTimeout(() => {
-      setSubmitted(false);
-      setIsJoinModalOpen(false);
-      setJoinForm({ name: '', phone: '', email: '', city: '', occupation: '', interest: 'मार्गदर्शक / मेंटॉर' });
-    }, 1500);
+    try {
+      await apiClient.addWomenEntrepreneur(entForm);
+      showToast('🎉 महिला उद्योजक नोंदणी यशस्वीरीत्या पूर्ण झाली!', 'success');
+      setIsRegisterEntModalOpen(false);
+      loadData();
+    } catch (err) {
+      showToast('त्रुटी: ' + (err.message || 'नोंदणी अयशस्वी'), 'error');
+    }
+  };
+
+  // Submit SHG Registration
+  const handleShgSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await apiClient.addWomenShg(shgForm);
+      showToast('🎉 महिला बचत गट महासंघात यशस्वीरीत्या नोंदवला गेला!', 'success');
+      setIsRegisterShgModalOpen(false);
+      loadData();
+    } catch (err) {
+      showToast('त्रुटी: ' + (err.message || 'नोंदणी अयशस्वी'), 'error');
+    }
+  };
+
+  // Submit Product Marketplace Listing
+  const handleProductSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await apiClient.addWomenProduct(productForm);
+      showToast('🎉 उत्पादन यशस्वीरित्या महिला बाजारात सूचीबद्ध झाले!', 'success');
+      setIsAddProductModalOpen(false);
+      loadData();
+    } catch (err) {
+      showToast('त्रुटी: ' + (err.message || 'नोंदणी अयशस्वी'), 'error');
+    }
+  };
+
+  // Submit Mentor Session Booking
+  const handleMentorBookingSubmit = async (e) => {
+    e.preventDefault();
+    if (!bookingMentorModal) return;
+    try {
+      await apiClient.bookWomenMentor({
+        mentorId: bookingMentorModal.id,
+        mentorName: bookingMentorModal.name,
+        applicantName: mentorBookingForm.applicantName,
+        phone: mentorBookingForm.phone,
+        district: mentorBookingForm.district,
+        topic: mentorBookingForm.topic,
+        preferredDate: mentorBookingForm.preferredDate,
+        preferredTime: mentorBookingForm.preferredTime,
+        notes: mentorBookingForm.notes
+      });
+      showToast(`✓ मेंटॉर ${bookingMentorModal.name} यांच्यासोबत मार्गदर्शन सत्र निश्चित झाले!`, 'success');
+      setBookingMentorModal(null);
+    } catch (err) {
+      showToast('त्रुटी: ' + (err.message || 'सत्र बुकिंग अयशस्वी'), 'error');
+    }
   };
 
   return (
-    <div style={{ background: '#FBF5EC', minHeight: '100vh', paddingBottom: '5rem' }}>
+    <div style={{ background: '#FAF5EE', minHeight: '100vh', paddingBottom: '6rem' }}>
       
-      {/* Premium Hero Banner Displaying the Beautiful Historical & Empowerment Artwork */}
+      {/* 1. HERO BANNER */}
       <div style={{
         position: 'relative',
         width: '100%',
@@ -195,16 +320,16 @@ export default function WomenEmpowermentPage() {
       }}>
         <div style={{
           width: '100%',
-          height: 'clamp(260px, 36vw, 420px)',
+          height: 'clamp(240px, 32vw, 380px)',
           borderRadius: '24px',
           overflow: 'hidden',
           boxShadow: '0 16px 36px -10px rgba(0,0,0,0.18)',
-          border: '2px solid rgba(251, 207, 232, 0.6)',
+          border: '2px solid rgba(251, 207, 232, 0.7)',
           position: 'relative'
         }}>
           <img
             src="/assets/images/women-empowerment-hero.jpg"
-            alt="मराठा सक्षमीकरण: कर्तृत्व, शौर्य आणि सन्मान"
+            alt="मराठा महिला सक्षमीकरण: कर्तृत्व, शौर्य आणि सन्मान"
             style={{
               width: '100%',
               height: '100%',
@@ -216,8 +341,8 @@ export default function WomenEmpowermentPage() {
         </div>
       </div>
 
-      {/* 24/7 Helpline & Empowerment Bar - Positioned cleanly below the banner */}
-      <div style={{ maxWidth: '1100px', margin: '2rem auto 2.5rem', padding: '0 1rem', textAlign: 'center' }}>
+      {/* 2. EMERGENCY HELPLINE & QUICK ACTION BUTTONS */}
+      <div style={{ maxWidth: '1100px', margin: '2rem auto 2.5rem', padding: '0 1rem' }}>
         <div style={{
           background: '#ffffff',
           color: '#1e293b',
@@ -249,655 +374,1292 @@ export default function WomenEmpowermentPage() {
 
             <div>
               <div style={{ fontSize: '0.85rem', color: '#be185d', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                २४×७ मराठा महिला आणीबाणी हेल्पलाइन
+                २४×७ मराठा महिला आणीबाणी हेल्पलाइन व समुपदेशन
               </div>
               <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#9f1239', letterSpacing: '1px', lineHeight: 1.15 }}>
                 9090 112 112
               </div>
               <div style={{ fontSize: '0.88rem', color: '#64748b', marginTop: '3px' }}>
-                कायदेशीर संरक्षण • सुरक्षितता साहाय्य • मोफत समुपदेशन कक्ष
+                गोपनीय कायदेशीर संरक्षण • सुरक्षितता साहाय्य • समुपदेशन व जिल्हा समन्वयक कक्ष
               </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             <button
               onClick={() => setIsHelpModalOpen(true)}
               style={{
                 background: 'linear-gradient(135deg, #be185d 0%, #9f1239 100%)',
                 color: '#fff',
                 border: 'none',
-                padding: '0.95rem 2rem',
-                borderRadius: '14px',
+                padding: '0.9rem 1.6rem',
+                borderRadius: '12px',
                 fontWeight: 800,
                 cursor: 'pointer',
-                fontSize: '1.05rem',
+                fontSize: '0.95rem',
                 boxShadow: '0 8px 18px rgba(190, 24, 93, 0.35)',
-                transition: 'transform 0.2s'
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
               }}
             >
-              तातडीची मदत मागा ➔
+              🔒 गोपनीय मदत मागा ➔
             </button>
 
             <button
-              onClick={() => setIsJoinModalOpen(true)}
+              onClick={() => setIsRegisterEntModalOpen(true)}
               style={{
                 background: '#FFF1F2',
                 color: '#be185d',
                 border: '1.5px solid #F43F5E',
-                padding: '0.95rem 1.8rem',
-                borderRadius: '14px',
-                fontWeight: 800,
-                cursor: 'pointer',
-                fontSize: '1rem',
-                transition: 'all 0.2s'
-              }}
-            >
-              चळवळीत सहभागी व्हा 🌸
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Inspirational Historical Maratha Women Section with Real Portraits */}
-      <div style={{ maxWidth: '1240px', margin: '0 auto 3.5rem', padding: '0 1rem', position: 'relative', zIndex: 10 }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '1.5rem'
-        }}>
-          {INSPIRATIONAL_FIGURES.map((fig, idx) => (
-            <div key={idx} style={{
-              background: '#fff',
-              borderRadius: '20px',
-              overflow: 'hidden',
-              boxShadow: '0 12px 24px -4px rgba(0,0,0,0.08)',
-              border: '1px solid #FBCFE8',
-              display: 'flex',
-              flexDirection: 'column',
-              transition: 'transform 0.2s, box-shadow 0.2s'
-            }}>
-              {/* Historical Figure Portrait Image */}
-              <div style={{ position: 'relative', height: '220px', background: '#FDF2F8', overflow: 'hidden' }}>
-                <img
-                  src={fig.image}
-                  alt={fig.name}
-                  onError={(e) => {
-                    if (fig.fallbackImg && e.target.src !== fig.fallbackImg) {
-                      e.target.src = fig.fallbackImg;
-                    }
-                  }}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'top center',
-                    transition: 'transform 0.3s'
-                  }}
-                />
-                <div style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)'
-                }} />
-
-                <span style={{
-                  position: 'absolute',
-                  top: '12px',
-                  right: '12px',
-                  fontSize: '0.75rem',
-                  background: 'rgba(255,255,255,0.92)',
-                  color: '#9d174d',
-                  padding: '0.25rem 0.75rem',
-                  borderRadius: '999px',
-                  fontWeight: 800,
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
-                }}>
-                  {fig.tag}
-                </span>
-
-                <div style={{
-                  position: 'absolute',
-                  bottom: '12px',
-                  left: '14px',
-                  right: '14px',
-                  color: '#fff'
-                }}>
-                  <div style={{ fontSize: '0.78rem', color: '#FCE7F3', fontWeight: 600 }}>
-                    {fig.period}
-                  </div>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '2px 0 0', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
-                    {fig.name}
-                  </h3>
-                </div>
-              </div>
-
-              {/* Content Box */}
-              <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div>
-                  <div style={{ fontSize: '0.88rem', color: '#be185d', fontWeight: 700, marginBottom: '0.5rem', lineHeight: 1.35 }}>
-                    {fig.title}
-                  </div>
-                  <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.55, margin: 0 }}>
-                    {fig.desc}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 1rem' }}>
-        
-        {/* Six Core Pillars with Rich Real Photos */}
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <span style={{
-            background: '#FCE7F3',
-            color: '#BE185D',
-            padding: '4px 14px',
-            borderRadius: '20px',
-            fontSize: '0.85rem',
-            fontWeight: 700
-          }}>
-            सामूहिक प्रगतीची ६ दालने
-          </span>
-          <h2 style={{ fontSize: '2.1rem', fontWeight: 900, color: '#1e293b', margin: '0.5rem 0 0.5rem', fontFamily: 'Baloo 2' }}>
-            सक्षमीकरणाचे ६ मुख्य स्तंभ (Core Pillars)
-          </h2>
-          <p style={{ color: '#64748b', fontSize: '1.05rem', maxWidth: '700px', margin: '0 auto', lineHeight: 1.6 }}>
-            मराठा महिलांना स्वावलंबी बनवण्यासाठी आर्थिक, शैक्षणिक, आरोग्य, नेतृत्व, कायदेशीर आणि औद्योगिक आघाड्यांवर एकात्मिक कार्यप्रणाली.
-          </p>
-        </div>
-
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-          gap: '1.75rem',
-          marginBottom: '4.5rem'
-        }}>
-          {FOCUS_AREAS.map((area) => (
-            <div key={area.id} style={{
-              background: '#fff',
-              borderRadius: '20px',
-              overflow: 'hidden',
-              boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
-              border: '1px solid #E2E8F0',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              transition: 'transform 0.25s, box-shadow 0.25s'
-            }}>
-              <div>
-                {/* Pillar Card Image with Stats Overlay */}
-                <div style={{ position: 'relative', height: '190px', overflow: 'hidden' }}>
-                  <img
-                    src={area.image}
-                    alt={area.title}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover'
-                    }}
-                  />
-                  <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(to top, rgba(15, 23, 42, 0.75) 0%, transparent 60%)'
-                  }} />
-
-                  <span style={{
-                    position: 'absolute',
-                    bottom: '12px',
-                    left: '14px',
-                    fontSize: '0.82rem',
-                    background: '#BE185D',
-                    color: '#fff',
-                    padding: '0.3rem 0.85rem',
-                    borderRadius: '999px',
-                    fontWeight: 800,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-                  }}>
-                    {area.stats}
-                  </span>
-
-                  <div style={{
-                    position: 'absolute',
-                    top: '12px',
-                    right: '12px',
-                    width: '42px',
-                    height: '42px',
-                    borderRadius: '10px',
-                    background: 'rgba(255, 255, 255, 0.95)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '1.4rem',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
-                  }}>
-                    {area.icon}
-                  </div>
-                </div>
-
-                {/* Pillar Card Details */}
-                <div style={{ padding: '1.5rem' }}>
-                  <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem' }}>
-                    {area.title}
-                  </h3>
-                  <div style={{ fontSize: '0.85rem', color: '#94a3b8', fontWeight: 600, marginBottom: '0.85rem' }}>
-                    {area.en}
-                  </div>
-                  <p style={{ color: '#475569', fontSize: '0.92rem', lineHeight: 1.65, margin: 0 }}>
-                    {area.desc}
-                  </p>
-                </div>
-              </div>
-
-              {/* Card Footer Button */}
-              <div style={{ padding: '0 1.5rem 1.5rem' }}>
-                <button
-                  onClick={() => setIsHelpModalOpen(true)}
-                  style={{
-                    width: '100%',
-                    background: '#FDF2F8',
-                    color: '#be185d',
-                    border: '1.5px solid #FBCFE8',
-                    padding: '0.75rem 1rem',
-                    borderRadius: '10px',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    fontSize: '0.92rem',
-                    textAlign: 'center',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  {area.actionText}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Success Stories with Real Portraits & District Highlights */}
-        <div style={{
-          background: '#fff',
-          borderRadius: '24px',
-          padding: '2.75rem 2rem',
-          boxShadow: '0 12px 28px rgba(0,0,0,0.06)',
-          border: '1px solid #E2E8F0',
-          marginBottom: '4.5rem'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.25rem' }}>
-            <div>
-              <span style={{ fontSize: '0.85rem', color: '#be185d', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                🌟 प्रेरणादायी प्रवास
-              </span>
-              <h2 style={{ fontSize: '2rem', fontWeight: 900, color: '#0f172a', margin: '0.3rem 0 0', fontFamily: 'Baloo 2' }}>
-                मराठा कर्तृत्ववान महिलांच्या यशोगाथा
-              </h2>
-            </div>
-            <button
-              onClick={() => setIsJoinModalOpen(true)}
-              style={{
-                background: 'linear-gradient(135deg, #be185d 0%, #e11d48 100%)',
-                color: '#fff',
-                border: 'none',
-                padding: '0.85rem 1.6rem',
+                padding: '0.9rem 1.4rem',
                 borderRadius: '12px',
                 fontWeight: 800,
                 cursor: 'pointer',
-                boxShadow: '0 6px 14px rgba(190, 24, 93, 0.3)'
+                fontSize: '0.9rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
               }}
             >
-              + आपली यशोगाथा पाठवा
+              + उद्योजक नोंदणी 🌸
+            </button>
+
+            <button
+              onClick={() => setIsRegisterShgModalOpen(true)}
+              style={{
+                background: '#f0fdf4',
+                color: '#15803d',
+                border: '1.5px solid #86efac',
+                padding: '0.9rem 1.4rem',
+                borderRadius: '12px',
+                fontWeight: 800,
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              + बचत गट नोंदणी 🤝
             </button>
           </div>
+        </div>
+      </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '1.5rem'
-          }}>
-            {SUCCESS_STORIES.map((story, idx) => (
-              <div key={idx} style={{
-                background: '#FDFCFB',
-                borderRadius: '18px',
-                overflow: 'hidden',
-                border: '1px solid #E8E5E0',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+      {/* 3. MAIN PORTAL INTERACTIVE SUITE */}
+      <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 1rem' }}>
+        
+        {/* Navigation Tabs (All 6 Concepts) */}
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          borderBottom: '2px solid #E2E8F0',
+          marginBottom: '2rem',
+          overflowX: 'auto',
+          paddingBottom: '4px'
+        }}>
+          {[
+            { id: 'directory', label: '👩‍💼 महिला उद्योजक निर्देशिका', count: entrepreneurs.length },
+            { id: 'marketplace', label: '🛍️ महिला बाजारपेठ व उत्पादने', count: products.length },
+            { id: 'shgs', label: '🤝 महिला बचत गट (SHGs)', count: shgs.length },
+            { id: 'schemes', label: '📜 कौशल्य प्रशिक्षण व सरकारी योजना', count: programs.length },
+            { id: 'mentors', label: '🎓 अनुभवी मेंटॉर व मार्गदर्शक', count: mentors.length },
+            { id: 'my_cases', label: '📁 माझी दाखल मदत प्रकरणे', count: myHelpCases.length }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                padding: '12px 18px',
+                border: 'none',
+                background: activeTab === tab.id ? '#be185d' : 'transparent',
+                color: activeTab === tab.id ? '#fff' : '#475569',
+                borderRadius: '10px 10px 0 0',
+                fontWeight: 700,
+                fontSize: '0.92rem',
+                cursor: 'pointer',
                 display: 'flex',
-                flexDirection: 'column'
+                alignItems: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.2s'
+              }}
+            >
+              <span>{tab.label}</span>
+              <span style={{
+                background: activeTab === tab.id ? 'rgba(255,255,255,0.25)' : '#E2E8F0',
+                color: activeTab === tab.id ? '#fff' : '#0f172a',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                fontSize: '0.74rem'
               }}>
-                {/* Story Image */}
-                <div style={{ height: '210px', position: 'relative', overflow: 'hidden', background: '#F1F5F9' }}>
-                  <img
-                    src={story.image}
-                    alt={story.name}
+                {tab.count}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* ── TAB 1: ENTREPRENEURS DIRECTORY ────────────────────────── */}
+        {activeTab === 'directory' && (
+          <div>
+            <div style={{
+              background: '#fff',
+              borderRadius: '16px',
+              padding: '18px 24px',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.04)',
+              border: '1px solid #E2E8F0',
+              marginBottom: '24px',
+              display: 'flex',
+              gap: '16px',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <form onSubmit={e => { e.preventDefault(); loadData(); }} style={{ display: 'flex', gap: '12px', flex: 1, minWidth: '280px' }}>
+                <input
+                  type="text"
+                  placeholder="उद्योजक, व्यवसायाचे नाव किंवा उत्पादन शोधा..."
+                  value={entSearch}
+                  onChange={e => setEntSearch(e.target.value)}
+                  style={{ flex: 1, padding: '10px 14px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }}
+                />
+                <button
+                  type="submit"
+                  style={{ background: '#be185d', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+                >
+                  शोधा
+                </button>
+              </form>
+
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+                <select
+                  value={entCategory}
+                  onChange={e => setEntCategory(e.target.value)}
+                  style={{ padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.86rem', fontWeight: 600 }}
+                >
+                  <option value="all">सर्व व्यवसाय श्रेणी</option>
+                  <option value="खाद्यपदार्थ">खाद्यपदार्थ व कृषी प्रक्रिया</option>
+                  <option value="वस्त्रोद्योग">वस्त्रोद्योग व फॅशन</option>
+                  <option value="IT">IT व व्यावसायिक सेवा</option>
+                  <option value="आरोग्य">आरोग्य व निसर्गोपचार</option>
+                  <option value="गृहउद्योग">गृहउद्योग व हस्तकला</option>
+                </select>
+
+                <select
+                  value={entDistrict}
+                  onChange={e => setEntDistrict(e.target.value)}
+                  style={{ padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.86rem', fontWeight: 600 }}
+                >
+                  <option value="all">सर्व जिल्हे (महाराष्ट्र)</option>
+                  <option value="पुणे">पुणे</option>
+                  <option value="सातारा">सातारा</option>
+                  <option value="कोल्हापूर">कोल्हापूर</option>
+                  <option value="नाशिक">नाशिक</option>
+                  <option value="छत्रपती संभाजीनगर">छत्रपती संभाजीनगर</option>
+                  <option value="मुंबई">मुंबई</option>
+                </select>
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.86rem', fontWeight: 700, color: '#be185d', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={onlyShg} onChange={e => setOnlyShg(e.target.checked)} />
+                  केवळ बचत गट (SHG)
+                </label>
+              </div>
+            </div>
+
+            {loading ? (
+              <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>माहिती लोड होत आहे...</div>
+            ) : entrepreneurs.length === 0 ? (
+              <div style={{ background: '#fff', borderRadius: '16px', padding: '40px', textAlign: 'center', color: '#64748b' }}>
+                सध्या कोणताही महिला उद्योजक आढळला नाही.
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '20px' }}>
+                {entrepreneurs.map(ent => (
+                  <div
+                    key={ent.id}
                     style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      objectPosition: 'center 20%'
+                      background: '#fff',
+                      borderRadius: '16px',
+                      overflow: 'hidden',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
+                      border: '1px solid #E2E8F0',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between'
                     }}
-                  />
-                  <div style={{
-                    position: 'absolute',
-                    top: '12px',
-                    left: '12px',
-                    background: '#FCE7F3',
-                    color: '#9D174D',
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
-                    padding: '0.25rem 0.65rem',
-                    borderRadius: '6px',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
-                  }}>
+                  >
+                    <div>
+                      <div style={{ height: '180px', position: 'relative', overflow: 'hidden', background: '#FDF2F8' }}>
+                        <img
+                          src={ent.photo || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80'}
+                          alt={ent.business_name}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                        <div style={{ position: 'absolute', top: '12px', left: '12px', display: 'flex', gap: '6px' }}>
+                          <span style={{ background: 'rgba(255,255,255,0.95)', color: '#9f1239', fontSize: '0.72rem', fontWeight: 800, padding: '3px 8px', borderRadius: '6px' }}>
+                            {ent.category}
+                          </span>
+                          {ent.is_shg === 1 && (
+                            <span style={{ background: '#16a34a', color: '#fff', fontSize: '0.72rem', fontWeight: 800, padding: '3px 8px', borderRadius: '6px' }}>
+                              🤝 बचत गट
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '18px' }}>
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', margin: '0 0 4px', fontFamily: 'Baloo 2' }}>
+                          {ent.business_name}
+                        </h3>
+                        <div style={{ fontSize: '0.85rem', color: '#be185d', fontWeight: 700, marginBottom: '6px' }}>
+                          उद्योजिका: {ent.name}
+                        </div>
+                        <div style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>
+                          📍 {ent.taluka ? `${ent.taluka}, ` : ''}{ent.district}
+                          {ent.annual_turnover && ` • टर्नओव्हर: ${ent.annual_turnover}`}
+                        </div>
+                        <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.5, margin: 0 }}>
+                          {ent.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div style={{ padding: '12px 18px', background: '#F8FAFC', borderTop: '1px solid #F1F5F9', display: 'flex', gap: '10px' }}>
+                      <a
+                        href={`tel:${ent.contact_phone}`}
+                        style={{ flex: 1, background: '#be185d', color: '#fff', textAlign: 'center', padding: '8px 12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 700, fontSize: '0.85rem' }}
+                      >
+                        📞 संपर्क ({ent.contact_phone})
+                      </a>
+                      {ent.whatsapp && (
+                        <a
+                          href={`https://wa.me/91${ent.whatsapp}?text=नमस्कार, मी कनेक्ट मराठा महिला कक्षातून संपर्क करत आहे.`}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ background: '#25D366', color: '#fff', padding: '8px 12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 700, fontSize: '0.85rem' }}
+                        >
+                          💬 WhatsApp
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── TAB 2: WOMEN MARKETPLACE & PRODUCTS ───────────────────── */}
+        {activeTab === 'marketplace' && (
+          <div>
+            <div style={{
+              background: '#fff',
+              borderRadius: '16px',
+              padding: '18px 24px',
+              border: '1px solid #E2E8F0',
+              marginBottom: '24px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '12px'
+            }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#0f172a', fontFamily: 'Baloo 2' }}>
+                  🛍️ मराठा महिला उत्पादने थेट ग्राहक बाजारपेठ (Direct B2C / B2B)
+                </h3>
+                <div style={{ fontSize: '0.84rem', color: '#64748b' }}>
+                  शुद्ध सेंद्रिय हळद, अस्सल रेशमी येवला पैठणी, गावरान मसाले व गृहउद्योग उत्पादने थेट उत्पादक भगिनींकडून खरेदी करा.
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsAddProductModalOpen(true)}
+                style={{
+                  background: '#be185d',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '9px 18px',
+                  borderRadius: '10px',
+                  fontWeight: 800,
+                  fontSize: '0.88rem',
+                  cursor: 'pointer'
+                }}
+              >
+                + माझे उत्पादन विका (List Product)
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+              {products.map(prd => (
+                <div
+                  key={prd.id}
+                  style={{
+                    background: '#fff',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    border: '1px solid #E2E8F0',
+                    boxShadow: '0 4px 14px rgba(0,0,0,0.04)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <div>
+                    <div style={{ height: '200px', overflow: 'hidden', position: 'relative' }}>
+                      <img src={prd.photo} alt={prd.product_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <span style={{
+                        position: 'absolute',
+                        bottom: '10px',
+                        left: '10px',
+                        background: '#be185d',
+                        color: '#fff',
+                        fontWeight: 900,
+                        padding: '4px 12px',
+                        borderRadius: '8px',
+                        fontSize: '0.95rem'
+                      }}>
+                        {prd.price} <span style={{ fontSize: '0.75rem', fontWeight: 500 }}>({prd.unit})</span>
+                      </span>
+                    </div>
+
+                    <div style={{ padding: '16px' }}>
+                      <span style={{ background: '#FCE7F3', color: '#9F1239', padding: '2px 8px', borderRadius: '4px', fontSize: '0.74rem', fontWeight: 800 }}>
+                        {prd.category}
+                      </span>
+                      <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '8px 0 4px', fontFamily: 'Baloo 2' }}>
+                        {prd.product_name}
+                      </h4>
+                      <div style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '8px' }}>
+                        विक्रेता: <strong>{prd.seller_name}</strong> • 📍 {prd.district}
+                      </div>
+                      <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.5, margin: 0 }}>
+                        {prd.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{ padding: '12px 16px', background: '#F8FAFC', borderTop: '1px solid #F1F5F9', display: 'flex', gap: '8px' }}>
+                    <a
+                      href={`tel:${prd.contact_phone}`}
+                      style={{
+                        flex: 1,
+                        background: '#be185d',
+                        color: '#fff',
+                        textAlign: 'center',
+                        padding: '8px',
+                        borderRadius: '8px',
+                        textDecoration: 'none',
+                        fontWeight: 700,
+                        fontSize: '0.84rem'
+                      }}
+                    >
+                      📞 ऑर्डर करा ({prd.contact_phone})
+                    </a>
+                    <a
+                      href={`https://wa.me/91${prd.whatsapp || prd.contact_phone}?text=मी ${prd.product_name} बद्दल चौकशी करत आहे.`}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{
+                        background: '#25D366',
+                        color: '#fff',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        textDecoration: 'none',
+                        fontWeight: 700,
+                        fontSize: '0.84rem'
+                      }}
+                    >
+                      💬 WhatsApp
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 3: SELF-HELP GROUPS (SHGs) FEDERATION ─────────────── */}
+        {activeTab === 'shgs' && (
+          <div>
+            <div style={{
+              background: '#fff',
+              borderRadius: '16px',
+              padding: '18px 24px',
+              border: '1px solid #E2E8F0',
+              marginBottom: '24px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '12px'
+            }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#15803d', fontFamily: 'Baloo 2' }}>
+                  🤝 मराठा महिला बचत गट महासंघ (SHG Federation & Banking)
+                </h3>
+                <div style={{ fontSize: '0.84rem', color: '#64748b' }}>
+                  गावोगावी कार्यरत असणाऱ्या महिला बचत गटांचे संघटन, बँक लिंकेज, खेळते भांडवल व शासकीय अनुदान साहाय्य.
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsRegisterShgModalOpen(true)}
+                style={{
+                  background: '#15803d',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '9px 18px',
+                  borderRadius: '10px',
+                  fontWeight: 800,
+                  fontSize: '0.88rem',
+                  cursor: 'pointer'
+                }}
+              >
+                + नवीन बचत गट नोंदणी
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '20px' }}>
+              {shgs.map(s => (
+                <div
+                  key={s.id}
+                  style={{
+                    background: '#fff',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid #E2E8F0',
+                    boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                      <span style={{ background: '#f0fdf4', color: '#16a34a', padding: '3px 8px', borderRadius: '4px', fontSize: '0.76rem', fontWeight: 800 }}>
+                        {s.id} • {s.members_count || 10} महिला सदस्य
+                      </span>
+                      <span style={{ background: '#FEF3C7', color: '#92400E', padding: '2px 8px', borderRadius: '4px', fontSize: '0.74rem', fontWeight: 700 }}>
+                        {s.loan_status}
+                      </span>
+                    </div>
+
+                    <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '4px 0 6px', fontFamily: 'Baloo 2' }}>
+                      {s.shg_name}
+                    </h4>
+
+                    <div style={{ fontSize: '0.85rem', color: '#15803d', fontWeight: 700, marginBottom: '8px' }}>
+                      अध्यक्ष: {s.president_name} {s.secretary_name ? `• सचिव: ${s.secretary_name}` : ''}
+                    </div>
+
+                    <div style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '10px' }}>
+                      📍 {s.village ? `${s.village}, ` : ''}{s.taluka}, {s.district}
+                    </div>
+
+                    <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', fontSize: '0.82rem', color: '#334155' }}>
+                      🏭 <strong>उद्योग:</strong> {s.activity_type}<br />
+                      🏦 <strong>बँक:</strong> {s.bank_name} ({s.bank_branch})<br />
+                      💰 <strong>बचत:</strong> {s.monthly_savings}
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: '14px' }}>
+                    <a
+                      href={`tel:${s.phone}`}
+                      style={{
+                        display: 'block',
+                        background: '#15803d',
+                        color: '#fff',
+                        textAlign: 'center',
+                        padding: '8px',
+                        borderRadius: '8px',
+                        textDecoration: 'none',
+                        fontWeight: 700,
+                        fontSize: '0.85rem'
+                      }}
+                    >
+                      📞 अध्यक्ष संपर्क ({s.phone})
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 4: TRAINING & SCHEMES ─────────────────────────────── */}
+        {activeTab === 'schemes' && (
+          <div>
+            <div style={{ marginBottom: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {['all', 'scheme', 'training', 'workshop'].map(type => (
+                <button
+                  key={type}
+                  onClick={() => setPrgType(type)}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    border: '1px solid #CBD5E1',
+                    background: prgType === type ? '#be185d' : '#fff',
+                    color: prgType === type ? '#fff' : '#475569',
+                    fontWeight: 700,
+                    fontSize: '0.86rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {type === 'all' ? 'सर्व योजना व प्रशिक्षणे' : type === 'scheme' ? '🏛️ सरकारी योजना व अनुदान' : type === 'training' ? '💻 कौशल्य व IT प्रशिक्षण' : '🎯 कार्यशाळा व मेळावे'}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+              {programs.map(prg => (
+                <div
+                  key={prg.id}
+                  style={{
+                    background: '#fff',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid #E2E8F0',
+                    boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+                    <div>
+                      <span style={{
+                        background: prg.type === 'scheme' ? '#FEF3C7' : '#FCE7F3',
+                        color: prg.type === 'scheme' ? '#92400E' : '#9F1239',
+                        padding: '3px 10px',
+                        borderRadius: '6px',
+                        fontWeight: 800,
+                        fontSize: '0.78rem'
+                      }}>
+                        {prg.type === 'scheme' ? '🏛️ शासकीय योजना' : '💻 प्रशिक्षण कार्यक्रम'} • {prg.category || 'कौशल्य विकास'}
+                      </span>
+                      <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a', margin: '8px 0 4px', fontFamily: 'Baloo 2' }}>
+                        {prg.title}
+                      </h3>
+                      <div style={{ fontSize: '0.86rem', color: '#64748b' }}>
+                        प्रदाता: <strong>{prg.provider}</strong> | कार्यक्षेत्र: {prg.district}
+                      </div>
+                    </div>
+
+                    {prg.deadline && (
+                      <span style={{ background: '#F1F5F9', color: '#475569', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700 }}>
+                        ⏳ मुदत: {prg.deadline}
+                      </span>
+                    )}
+                  </div>
+
+                  <p style={{ fontSize: '0.92rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
+                    {prg.description}
+                  </p>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px', background: '#F8FAFC', padding: '14px', borderRadius: '10px' }}>
+                    {prg.eligibility && (
+                      <div style={{ fontSize: '0.84rem' }}>
+                        <strong style={{ color: '#0f172a' }}>📋 पात्रता निकष:</strong><br />
+                        <span style={{ color: '#475569' }}>{prg.eligibility}</span>
+                      </div>
+                    )}
+                    {prg.benefits && (
+                      <div style={{ fontSize: '0.84rem' }}>
+                        <strong style={{ color: '#16a34a' }}>🎁 मिळणारे लाभ:</strong><br />
+                        <span style={{ color: '#475569' }}>{prg.benefits}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginTop: '6px' }}>
+                    <div style={{ fontSize: '0.86rem', color: '#64748b' }}>
+                      📞 हेल्पलाइन: <strong>{prg.contact_phone || '1800-120-8040'}</strong>
+                    </div>
+
+                    <a
+                      href={prg.apply_url || '#'}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{
+                        background: '#be185d',
+                        color: '#fff',
+                        padding: '8px 18px',
+                        borderRadius: '8px',
+                        textDecoration: 'none',
+                        fontWeight: 700,
+                        fontSize: '0.88rem'
+                      }}
+                    >
+                      अधिक माहिती व अर्ज करा ➔
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 5: MENTORS & DIRECTORY ────────────────────────────── */}
+        {activeTab === 'mentors' && (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '20px' }}>
+              {mentors.map(m => (
+                <div
+                  key={m.id}
+                  style={{
+                    background: '#fff',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid #E2E8F0',
+                    boxShadow: '0 4px 14px rgba(0,0,0,0.04)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '14px' }}>
+                      <img
+                        src={m.photo}
+                        alt={m.name}
+                        style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #FBCFE8' }}
+                      />
+                      <div>
+                        <h4 style={{ margin: 0, fontSize: '1.15rem', color: '#0f172a', fontWeight: 800 }}>
+                          {m.name}
+                        </h4>
+                        <div style={{ fontSize: '0.82rem', color: '#be185d', fontWeight: 700, marginTop: '2px' }}>
+                          {m.title}
+                        </div>
+                        <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
+                          अनुभव: {m.experience}
+                        </div>
+                      </div>
+                    </div>
+
+                    <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.55, margin: '0 0 14px' }}>
+                      {m.about}
+                    </p>
+
+                    <div style={{ background: '#F8FAFC', padding: '10px 14px', borderRadius: '8px', fontSize: '0.8rem', color: '#334155', marginBottom: '16px' }}>
+                      🕒 उपलब्ध वेळ: <strong>{m.available_modes}</strong>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setBookingMentorModal(m)}
+                      style={{
+                        flex: 1,
+                        background: '#be185d',
+                        color: '#fff',
+                        border: 'none',
+                        padding: '10px',
+                        borderRadius: '8px',
+                        fontWeight: 700,
+                        fontSize: '0.86rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      🗓️ १-ऑन-१ मार्गदर्शन सत्र बुक करा
+                    </button>
+                    <a
+                      href={`tel:${m.contact_phone}`}
+                      style={{
+                        background: '#FDF2F8',
+                        color: '#be185d',
+                        border: '1px solid #FBCFE8',
+                        padding: '10px 14px',
+                        borderRadius: '8px',
+                        textDecoration: 'none',
+                        fontWeight: 700,
+                        fontSize: '0.86rem'
+                      }}
+                    >
+                      📞 कॉल
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 6: MY CONFIDENTIAL HELP CASES ─────────────────────── */}
+        {activeTab === 'my_cases' && (
+          <div style={{ background: '#fff', borderRadius: '16px', padding: '24px', border: '1px solid #E2E8F0', boxShadow: '0 4px 14px rgba(0,0,0,0.03)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a', fontFamily: 'Baloo 2' }}>
+                  📁 माझी दाखल मदत प्रकरणे (Confidential Cases)
+                </h3>
+                <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>
+                  आपण महिला समन्वय कक्षाकडे नोंदवलेल्या अर्जांची सद्यस्थिती व नियुक्त अधिकारी तपशील.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setIsHelpModalOpen(true)}
+                style={{ background: '#be185d', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 700, fontSize: '0.86rem', cursor: 'pointer' }}
+              >
+                + नवीन प्रकरण दाखल करा
+              </button>
+            </div>
+
+            {myHelpCases.length === 0 ? (
+              <div style={{ padding: '36px', textAlign: 'center', background: '#F8FAFC', borderRadius: '12px', color: '#64748b' }}>
+                आपण अद्याप कोणतीही मदत विनंती दाखल केलेली नाही.
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {myHelpCases.map(c => (
+                  <div key={c.id} style={{ border: '1px solid #E2E8F0', borderRadius: '12px', padding: '18px', background: '#FDFCFB' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <span style={{ fontWeight: 800, color: '#be185d' }}>#{c.case_number || c.id}</span>
+                          <span style={{ background: '#FCE7F3', color: '#9F1239', padding: '2px 8px', borderRadius: '4px', fontSize: '0.76rem', fontWeight: 700 }}>
+                            {c.category}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '0.9rem', color: '#1e293b', fontWeight: 700, marginTop: '6px' }}>
+                          {c.description}
+                        </div>
+                      </div>
+
+                      <span style={{
+                        background: c.status?.includes('सोडवले') ? '#DCFCE7' : '#FEF3C7',
+                        color: c.status?.includes('सोडवले') ? '#15803D' : '#92400E',
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        fontSize: '0.8rem',
+                        fontWeight: 700
+                      }}>
+                        {c.status}
+                      </span>
+                    </div>
+
+                    <div style={{ marginTop: '12px', background: '#fff', padding: '12px', borderRadius: '8px', border: '1px solid #F1F5F9', fontSize: '0.84rem' }}>
+                      📍 <strong>समन्वयक:</strong> {c.assigned_coordinator || 'महिला समन्वय कक्ष (प्रतीक्षेत)'} • 📞 {c.coordinator_phone || '1800-120-9900'}<br />
+                      📝 <strong>सद्य प्रगती:</strong> {c.counselor_notes || 'प्रकरण प्राथमिक पडताळणी अंतर्गत आहे.'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+      </div>
+
+      {/* 4. HISTORICAL INSPIRATIONS & REAL STORIES */}
+      <div style={{ maxWidth: '1240px', margin: '4rem auto 0', padding: '0 1rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+          <span style={{ background: '#FCE7F3', color: '#BE185D', padding: '4px 14px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 700 }}>
+            प्रेरणास्थान
+          </span>
+          <h2 style={{ fontSize: '2.1rem', fontWeight: 900, color: '#1e293b', margin: '0.5rem 0 0.5rem', fontFamily: 'Baloo 2' }}>
+            ऐतिहासिक मराठा कर्तृत्ववान स्त्रिया
+          </h2>
+          <p style={{ color: '#64748b', fontSize: '1rem', maxWidth: '680px', margin: '0 auto' }}>
+            स्वराज्य, प्रशासन आणि समाजसुधारणेमध्ये युगप्रवर्तक योगदान देणाऱ्या मराठा वीरांगना.
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '3.5rem' }}>
+          {INSPIRATIONAL_FIGURES.map((fig, idx) => (
+            <div key={idx} style={{ background: '#fff', borderRadius: '20px', overflow: 'hidden', boxShadow: '0 12px 24px -4px rgba(0,0,0,0.08)', border: '1px solid #FBCFE8', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ position: 'relative', height: '220px', background: '#FDF2F8', overflow: 'hidden' }}>
+                <img src={fig.image} alt={fig.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 70%)' }} />
+                <span style={{ position: 'absolute', top: '12px', right: '12px', fontSize: '0.75rem', background: 'rgba(255,255,255,0.92)', color: '#9d174d', padding: '0.25rem 0.75rem', borderRadius: '999px', fontWeight: 800 }}>
+                  {fig.tag}
+                </span>
+                <div style={{ position: 'absolute', bottom: '12px', left: '14px', right: '14px', color: '#fff' }}>
+                  <div style={{ fontSize: '0.78rem', color: '#FCE7F3', fontWeight: 600 }}>{fig.period}</div>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '2px 0 0' }}>{fig.name}</h3>
+                </div>
+              </div>
+              <div style={{ padding: '1.25rem', flex: 1 }}>
+                <div style={{ fontSize: '0.88rem', color: '#be185d', fontWeight: 700, marginBottom: '0.5rem' }}>{fig.title}</div>
+                <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.55, margin: 0 }}>{fig.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Success Stories */}
+        <div style={{ background: '#fff', borderRadius: '24px', padding: '2.5rem 2rem', boxShadow: '0 12px 28px rgba(0,0,0,0.06)', border: '1px solid #E2E8F0', marginBottom: '3.5rem' }}>
+          <h2 style={{ fontSize: '1.9rem', fontWeight: 900, color: '#0f172a', margin: '0 0 1.5rem', fontFamily: 'Baloo 2', textAlign: 'center' }}>
+            🌟 समकालीन मराठा कर्तृत्ववान महिलांच्या यशोगाथा
+          </h2>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+            {SUCCESS_STORIES.map((story, idx) => (
+              <div key={idx} style={{ background: '#FDFCFB', borderRadius: '18px', overflow: 'hidden', border: '1px solid #E8E5E0', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ height: '210px', position: 'relative', overflow: 'hidden', background: '#F1F5F9' }}>
+                  <img src={story.image} alt={story.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div style={{ position: 'absolute', top: '12px', left: '12px', background: '#FCE7F3', color: '#9D174D', fontSize: '0.75rem', fontWeight: 800, padding: '0.25rem 0.65rem', borderRadius: '6px' }}>
                     {story.badge}
                   </div>
                 </div>
-
-                {/* Story Content */}
-                <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1e293b', margin: '0 0 0.25rem' }}>
-                      {story.name}
-                    </h4>
-                    <div style={{ fontSize: '0.84rem', color: '#64748b', marginBottom: '0.75rem', fontWeight: 600 }}>
-                      📍 {story.location} | {story.field}
-                    </div>
-                    <p style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.6, margin: 0, fontStyle: 'italic' }}>
-                      "{story.achievement}"
-                    </p>
-                  </div>
+                <div style={{ padding: '1.25rem', flex: 1 }}>
+                  <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1e293b', margin: '0 0 0.25rem' }}>{story.name}</h4>
+                  <div style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '0.5rem' }}>📍 {story.location} | {story.field}</div>
+                  <p style={{ fontSize: '0.86rem', color: '#334155', lineHeight: 1.55, margin: 0, fontStyle: 'italic' }}>"{story.achievement}"</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-
-        {/* Action Callout with Modern Layout */}
-        <div style={{
-          background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-          color: '#fff',
-          borderRadius: '24px',
-          padding: '3.5rem 2rem',
-          textAlign: 'center',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
-          <h2 style={{
-            fontSize: '2.2rem',
-            fontWeight: 900,
-            marginBottom: '1rem',
-            fontFamily: 'Baloo 2',
-            color: '#ffffff',
-            textShadow: '0 2px 10px rgba(0,0,0,0.5)'
-          }}>
-            तुम्हीही मराठा स्त्रीशक्तीच्या चळवळीत सहभागी व्हा!
-          </h2>
-          <p style={{ fontSize: '1.15rem', color: '#cbd5e1', maxWidth: '720px', margin: '0 auto 2.25rem', lineHeight: 1.65 }}>
-            मार्गदर्शक (मेंटॉर) म्हणून मराठा तरुणींना करिअर मार्गदर्शन करा, महिला बचत गटांना व्यवसाय सहकार्य द्या किंवा गरजू भगिनींना कायदेशीर व वैद्यकीय साहाय्य देण्यासाठी नोंदणी करा.
-          </p>
-          <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => setIsJoinModalOpen(true)}
-              style={{
-                background: 'linear-gradient(135deg, #be185d 0%, #e11d48 100%)',
-                color: '#fff',
-                border: 'none',
-                padding: '1rem 2.2rem',
-                borderRadius: '12px',
-                fontWeight: 800,
-                fontSize: '1.05rem',
-                cursor: 'pointer',
-                boxShadow: '0 8px 20px rgba(190, 24, 93, 0.4)'
-              }}
-            >
-              सहभागी व्हा / मेंटॉर व्हा ➔
-            </button>
-            <Link
-              to="/community"
-              style={{
-                background: 'rgba(255,255,255,0.12)',
-                border: '1px solid rgba(255,255,255,0.25)',
-                color: '#fff',
-                textDecoration: 'none',
-                padding: '1rem 2.2rem',
-                borderRadius: '12px',
-                fontWeight: 800,
-                fontSize: '1.05rem',
-                display: 'inline-block'
-              }}
-            >
-              कम्युनिटी फोरम पहा
-            </Link>
-          </div>
-        </div>
       </div>
 
-      {/* Help Modal */}
+      {/* ── MODAL 1: CONFIDENTIAL HELP REQUEST ──────────────────────────── */}
       {isHelpModalOpen && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0,0,0,0.65)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '1rem',
-          zIndex: 9999
-        }}>
-          <div style={{
-            background: '#fff',
-            borderRadius: '20px',
-            maxWidth: '520px',
-            width: '100%',
-            padding: '2rem',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            boxShadow: '0 25px 50px rgba(0,0,0,0.25)'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #F3F4F6', paddingBottom: '12px' }}>
-              <h3 style={{ fontSize: '1.35rem', fontWeight: 900, margin: 0, color: '#be185d' }}>
-                मदत व मार्गदर्शन विनंती अर्ज
-              </h3>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 9999 }}>
+          <div style={{ background: '#fff', borderRadius: '20px', maxWidth: '520px', width: '100%', padding: '2rem', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', borderBottom: '1px solid #F3F4F6', paddingBottom: '12px' }}>
+              <div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 900, margin: 0, color: '#be185d', fontFamily: 'Baloo 2' }}>
+                  🔒 गोपनीय महिला साहाय्य व समुपदेशन अर्ज
+                </h3>
+                <div style={{ fontSize: '0.78rem', color: '#64748b' }}>आपली माहिती पूर्णपणे सुरक्षित व गोपनीय ठेवली जाते.</div>
+              </div>
               <button onClick={() => setIsHelpModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#64748b' }}>✕</button>
             </div>
 
-            {submitted ? (
-              <div style={{ textAlign: 'center', padding: '2.5rem 0', color: '#16a34a' }}>
-                <div style={{ fontSize: '3.5rem', marginBottom: '0.5rem' }}>✅</div>
-                <h4 style={{ fontSize: '1.3rem', fontWeight: 800 }}>आपली विनंती यशस्वीरित्या नोंदवली गेली!</h4>
-                <p style={{ color: '#64748b', fontSize: '0.95rem' }}>आमची महिला हेल्पलाइन टीम २४ तासांत आपल्याशी संपर्क करेल.</p>
+            <form onSubmit={handleHelpSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, marginBottom: '0.3rem' }}>आपले नाव *</label>
+                <input
+                  type="text"
+                  required
+                  value={helpForm.name}
+                  onChange={e => setHelpForm({ ...helpForm, name: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
+                  placeholder="उदा. सौ. स्नेहल संभाजी भोसले"
+                />
               </div>
-            ) : (
-              <form onSubmit={handleHelpSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, marginBottom: '0.35rem' }}>पूर्ण नाव *</label>
-                  <input
-                    type="text"
-                    required
-                    value={helpForm.name}
-                    onChange={e => setHelpForm({ ...helpForm, name: e.target.value })}
-                    style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
-                    placeholder="उदा. स्नेहा संभाजी देशमुख"
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, marginBottom: '0.35rem' }}>मोबाईल नंबर *</label>
+                  <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, marginBottom: '0.3rem' }}>मोबाईल नंबर *</label>
                   <input
                     type="tel"
                     required
                     value={helpForm.phone}
                     onChange={e => setHelpForm({ ...helpForm, phone: e.target.value })}
-                    style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
                     placeholder="उदा. 9822XXXXXX"
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, marginBottom: '0.35rem' }}>जिल्हा / शहर *</label>
-                  <input
-                    type="text"
-                    required
-                    value={helpForm.city}
-                    onChange={e => setHelpForm({ ...helpForm, city: e.target.value })}
-                    style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
-                    placeholder="उदा. पुणे / सातारा / कोल्हापूर"
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, marginBottom: '0.35rem' }}>मदतीचे स्वरूप *</label>
+                  <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, marginBottom: '0.3rem' }}>जिल्हा *</label>
                   <select
-                    value={helpForm.needType}
-                    onChange={e => setHelpForm({ ...helpForm, needType: e.target.value })}
-                    style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
+                    value={helpForm.district}
+                    onChange={e => setHelpForm({ ...helpForm, district: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
                   >
-                    <option value="आर्थिक">आर्थिक साहाय्य / बचत गट कर्ज</option>
-                    <option value="कायदेशीर">कायदेशीर सल्ला व हक्क संरक्षण</option>
-                    <option value="आरोग्य">आरोग्य / वैद्यकीय मदत</option>
-                    <option value="शिक्षण">उच्च शिक्षण / शिष्यवृत्ती</option>
-                    <option value="उद्योजकता">नवीन उद्योग / व्यवसाय मार्गदर्शन</option>
-                    <option value="सुरक्षितता">कौटुंबिक समस्या / सुरक्षा कक्ष</option>
+                    {['पुणे', 'सातारा', 'कोल्हापूर', 'सांगली', 'सोलापूर', 'नाशिक', 'छत्रपती संभाजीनगर', 'मुंबई', 'ठाणे'].map(d => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
                   </select>
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, marginBottom: '0.35rem' }}>तपशील</label>
-                  <textarea
-                    rows={3}
-                    value={helpForm.description}
-                    onChange={e => setHelpForm({ ...helpForm, description: e.target.value })}
-                    style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
-                    placeholder="आपली अडचण किंवा प्रश्न थोडक्यात लिहा..."
-                  />
-                </div>
-                <button
-                  type="submit"
-                  style={{
-                    background: '#be185d',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '0.95rem',
-                    borderRadius: '10px',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    marginTop: '0.5rem'
-                  }}
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, marginBottom: '0.3rem' }}>मदतीचे स्वरूप *</label>
+                <select
+                  value={helpForm.category}
+                  onChange={e => setHelpForm({ ...helpForm, category: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
                 >
-                  अर्ज सादर करा (Submit Request)
-                </button>
-              </form>
-            )}
+                  <option value="कौटुंबिक व कायदेशीर सल्ला">कौटुंबिक व कायदेशीर सल्ला (Legal Aid)</option>
+                  <option value="आर्थिक साहाय्य व उद्योग कर्ज">आर्थिक साहाय्य व उद्योग कर्ज (Bank / SHG Loan)</option>
+                  <option value="बचत गट समस्या व अनुदान">बचत गट समस्या व अनुदान (SHG Help)</option>
+                  <option value="मानसिक समुपदेशन व आरोग्य">मानसिक समुपदेशन व आरोग्य (Counseling)</option>
+                  <option value="रोजगार व कौशल्य प्रशिक्षण">रोजगार व कौशल्य प्रशिक्षण (Jobs & Skills)</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, marginBottom: '0.3rem' }}>अडचणीचा तपशील *</label>
+                <textarea
+                  rows={3}
+                  required
+                  value={helpForm.description}
+                  onChange={e => setHelpForm({ ...helpForm, description: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
+                  placeholder="आपली अडचण किंवा आवश्यक मार्गदर्शन सविस्तर लिहा..."
+                />
+              </div>
+
+              <button
+                type="submit"
+                style={{ background: '#be185d', color: '#fff', border: 'none', padding: '0.9rem', borderRadius: '10px', fontWeight: 800, cursor: 'pointer', fontSize: '1rem', marginTop: '0.5rem' }}
+              >
+                गोपनीय अर्ज सादर करा (Submit Securely)
+              </button>
+            </form>
           </div>
         </div>
       )}
 
-      {/* Join Modal */}
-      {isJoinModalOpen && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0,0,0,0.65)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '1rem',
-          zIndex: 9999
-        }}>
-          <div style={{
-            background: '#fff',
-            borderRadius: '20px',
-            maxWidth: '520px',
-            width: '100%',
-            padding: '2rem',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            boxShadow: '0 25px 50px rgba(0,0,0,0.25)'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #F3F4F6', paddingBottom: '12px' }}>
-              <h3 style={{ fontSize: '1.35rem', fontWeight: 900, margin: 0, color: '#be185d' }}>
-                सक्षमीकरण चळवळीत सहभागी व्हा
+      {/* ── MODAL 2: REGISTER ENTREPRENEUR ───────────────────────── */}
+      {isRegisterEntModalOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 9999 }}>
+          <div style={{ background: '#fff', borderRadius: '20px', maxWidth: '540px', width: '100%', padding: '2rem', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', borderBottom: '1px solid #F3F4F6', paddingBottom: '12px' }}>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 900, margin: 0, color: '#be185d', fontFamily: 'Baloo 2' }}>
+                🌸 महिला उद्योजक नोंदणी
               </h3>
-              <button onClick={() => setIsJoinModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#64748b' }}>✕</button>
+              <button onClick={() => setIsRegisterEntModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
             </div>
 
-            {submitted ? (
-              <div style={{ textAlign: 'center', padding: '2.5rem 0', color: '#16a34a' }}>
-                <div style={{ fontSize: '3.5rem', marginBottom: '0.5rem' }}>🎉</div>
-                <h4 style={{ fontSize: '1.3rem', fontWeight: 800 }}>नोंदणीबद्दल मनःपूर्वक धन्यवाद!</h4>
-                <p style={{ color: '#64748b', fontSize: '0.95rem' }}>आपल्या सहभागामुळे समाजात सकारात्मक बदल घडून येईल.</p>
+            <form onSubmit={handleEntSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>उद्योजिकेचे नाव *</label>
+                <input
+                  type="text"
+                  required
+                  value={entForm.name}
+                  onChange={e => setEntForm({ ...entForm, name: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  placeholder="उदा. सौ. रोहिणी मोरे"
+                />
               </div>
-            ) : (
-              <form onSubmit={handleJoinSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>व्यवसायाचे नाव *</label>
+                <input
+                  type="text"
+                  required
+                  value={entForm.businessName}
+                  onChange={e => setEntForm({ ...entForm, businessName: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  placeholder="उदा. शिवमुद्रा फूड्स"
+                />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, marginBottom: '0.35rem' }}>नाव *</label>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>श्रेणी *</label>
+                  <select
+                    value={entForm.category}
+                    onChange={e => setEntForm({ ...entForm, category: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  >
+                    <option value="खाद्यपदार्थ व कृषी प्रक्रिया">खाद्यपदार्थ व कृषी प्रक्रिया</option>
+                    <option value="वस्त्रोद्योग व फॅशन">वस्त्रोद्योग व फॅशन</option>
+                    <option value="IT व व्यावसायिक सेवा">IT व व्यावसायिक सेवा</option>
+                    <option value="आरोग्य व निसर्गोपचार">आरोग्य व निसर्गोपचार</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>जिल्हा *</label>
                   <input
                     type="text"
                     required
-                    value={joinForm.name}
-                    onChange={e => setJoinForm({ ...joinForm, name: e.target.value })}
-                    style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
-                    placeholder="उदा. प्रियांका कदम"
+                    value={entForm.district}
+                    onChange={e => setEntForm({ ...entForm, district: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                    placeholder="उदा. पुणे"
+                  />
+                </div>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>मोबाईल नंबर *</label>
+                <input
+                  type="tel"
+                  required
+                  value={entForm.contactPhone}
+                  onChange={e => setEntForm({ ...entForm, contactPhone: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  placeholder="उदा. 9822XXXXXX"
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>व्यवसायाचे वर्णन *</label>
+                <textarea
+                  rows={2}
+                  required
+                  value={entForm.description}
+                  onChange={e => setEntForm({ ...entForm, description: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                />
+              </div>
+              <button
+                type="submit"
+                style={{ background: '#be185d', color: '#fff', border: 'none', padding: '0.9rem', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }}
+              >
+                नोंदणी पूर्ण करा
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL 3: REGISTER SHG ─────────────────────────────────── */}
+      {isRegisterShgModalOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 9999 }}>
+          <div style={{ background: '#fff', borderRadius: '20px', maxWidth: '540px', width: '100%', padding: '2rem', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', borderBottom: '1px solid #F3F4F6', paddingBottom: '12px' }}>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 900, margin: 0, color: '#15803d', fontFamily: 'Baloo 2' }}>
+                🤝 महिला बचत गट नोंदणी
+              </h3>
+              <button onClick={() => setIsRegisterShgModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+            </div>
+
+            <form onSubmit={handleShgSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>बचत गटाचे नाव *</label>
+                <input
+                  type="text"
+                  required
+                  value={shgForm.shgName}
+                  onChange={e => setShgForm({ ...shgForm, shgName: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  placeholder="उदा. जिजाऊ महिला स्वावलंबन बचत गट"
+                />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>अध्यक्ष नाव *</label>
+                  <input
+                    type="text"
+                    required
+                    value={shgForm.presidentName}
+                    onChange={e => setShgForm({ ...shgForm, presidentName: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, marginBottom: '0.35rem' }}>मोबाईल नंबर *</label>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>मोबाईल नंबर *</label>
                   <input
                     type="tel"
                     required
-                    value={joinForm.phone}
-                    onChange={e => setJoinForm({ ...joinForm, phone: e.target.value })}
-                    style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
-                    placeholder="उदा. 9822XXXXXX"
+                    value={shgForm.phone}
+                    onChange={e => setShgForm({ ...shgForm, phone: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
                   />
                 </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, marginBottom: '0.35rem' }}>शहर / जिल्हा *</label>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>जिल्हा *</label>
                   <input
                     type="text"
                     required
-                    value={joinForm.city}
-                    onChange={e => setJoinForm({ ...joinForm, city: e.target.value })}
-                    style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
-                    placeholder="उदा. पुणे / मुंबई / नाशिक"
+                    value={shgForm.district}
+                    onChange={e => setShgForm({ ...shgForm, district: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, marginBottom: '0.35rem' }}>सहभागाची भूमिका *</label>
-                  <select
-                    value={joinForm.interest}
-                    onChange={e => setJoinForm({ ...joinForm, interest: e.target.value })}
-                    style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
-                  >
-                    <option value="मार्गदर्शक / मेंटॉर">मार्गदर्शक / मेंटॉर (Career / Business Guide)</option>
-                    <option value="कायदेशीर सल्लागार">मोफत कायदेशीर सल्लागार (Legal Aid Advocate)</option>
-                    <option value="डॉक्टर / आरोग्य सहाय्यक">डॉक्टर / आरोग्य सहाय्यक (Medical Expert)</option>
-                    <option value="बचत गट संघटक">बचत गट संघटक (SHG Organizer)</option>
-                    <option value="स्वयंसेवक">सक्रिय स्वयंसेवक (Active Volunteer)</option>
-                  </select>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>तालुका *</label>
+                  <input
+                    type="text"
+                    required
+                    value={shgForm.taluka}
+                    onChange={e => setShgForm({ ...shgForm, taluka: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  />
                 </div>
-                <button
-                  type="submit"
-                  style={{
-                    background: '#be185d',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '0.95rem',
-                    borderRadius: '10px',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    marginTop: '0.5rem'
-                  }}
-                >
-                  नोंदणी निश्चित करा
-                </button>
-              </form>
-            )}
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>उद्योग / व्यवसाय प्रकार *</label>
+                <input
+                  type="text"
+                  required
+                  value={shgForm.activityType}
+                  onChange={e => setShgForm({ ...shgForm, activityType: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  placeholder="उदा. गावरान हळद प्रक्रिया व मसाले निर्मिती"
+                />
+              </div>
+              <button
+                type="submit"
+                style={{ background: '#15803d', color: '#fff', border: 'none', padding: '0.9rem', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }}
+              >
+                बचत गट नोंदणी करा
+              </button>
+            </form>
           </div>
         </div>
       )}
+
+      {/* ── MODAL 4: ADD PRODUCT MARKETPLACE ──────────────────────── */}
+      {isAddProductModalOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 9999 }}>
+          <div style={{ background: '#fff', borderRadius: '20px', maxWidth: '520px', width: '100%', padding: '2rem', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', borderBottom: '1px solid #F3F4F6', paddingBottom: '12px' }}>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 900, margin: 0, color: '#be185d', fontFamily: 'Baloo 2' }}>
+                🛍️ महिला बाजारात उत्पादन जोडा
+              </h3>
+              <button onClick={() => setIsAddProductModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+            </div>
+
+            <form onSubmit={handleProductSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>उत्पादनाचे नाव *</label>
+                <input
+                  type="text"
+                  required
+                  value={productForm.productName}
+                  onChange={e => setProductForm({ ...productForm, productName: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  placeholder="उदा. अस्सल येवला पैठणी साडी"
+                />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>किंमत (₹) *</label>
+                  <input
+                    type="text"
+                    required
+                    value={productForm.price}
+                    onChange={e => setProductForm({ ...productForm, price: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                    placeholder="उदा. ₹५५०"
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>युनिट *</label>
+                  <input
+                    type="text"
+                    required
+                    value={productForm.unit}
+                    onChange={e => setProductForm({ ...productForm, unit: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                    placeholder="प्रति नग / किलो"
+                  />
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>विक्रेता / ब्रँड नाव *</label>
+                  <input
+                    type="text"
+                    required
+                    value={productForm.sellerName}
+                    onChange={e => setProductForm({ ...productForm, sellerName: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>मोबाईल नंबर *</label>
+                  <input
+                    type="tel"
+                    required
+                    value={productForm.contactPhone}
+                    onChange={e => setProductForm({ ...productForm, contactPhone: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>उत्पादनाचे वर्णन</label>
+                <textarea
+                  rows={2}
+                  value={productForm.description}
+                  onChange={e => setProductForm({ ...productForm, description: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                />
+              </div>
+              <button
+                type="submit"
+                style={{ background: '#be185d', color: '#fff', border: 'none', padding: '0.9rem', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }}
+              >
+                उत्पादन बाजारात जोडा
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL 5: BOOK MENTOR SESSION ──────────────────────────── */}
+      {bookingMentorModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 9999 }}>
+          <div style={{ background: '#fff', borderRadius: '20px', maxWidth: '480px', width: '100%', padding: '2rem', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', borderBottom: '1px solid #F3F4F6', paddingBottom: '12px' }}>
+              <div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 900, margin: 0, color: '#be185d', fontFamily: 'Baloo 2' }}>
+                  🗓️ मार्गदर्शन सत्र निश्चित करा
+                </h3>
+                <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
+                  मार्गदर्शक: <strong>{bookingMentorModal.name}</strong> ({bookingMentorModal.title})
+                </div>
+              </div>
+              <button onClick={() => setBookingMentorModal(null)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+            </div>
+
+            <form onSubmit={handleMentorBookingSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>आपले पूर्ण नाव *</label>
+                <input
+                  type="text"
+                  required
+                  value={mentorBookingForm.applicantName}
+                  onChange={e => setMentorBookingForm({ ...mentorBookingForm, applicantName: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  placeholder="उदा. प्रियांका मोहिते"
+                />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>मोबाईल नंबर *</label>
+                  <input
+                    type="tel"
+                    required
+                    value={mentorBookingForm.phone}
+                    onChange={e => setMentorBookingForm({ ...mentorBookingForm, phone: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>जिल्हा *</label>
+                  <input
+                    type="text"
+                    required
+                    value={mentorBookingForm.district}
+                    onChange={e => setMentorBookingForm({ ...mentorBookingForm, district: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>मार्गदर्शनाचा मुख्य विषय *</label>
+                <input
+                  type="text"
+                  required
+                  value={mentorBookingForm.topic}
+                  onChange={e => setMentorBookingForm({ ...mentorBookingForm, topic: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, marginBottom: '0.3rem' }}>थोडक्यात पार्श्वभूमी व प्रश्न</label>
+                <textarea
+                  rows={2}
+                  value={mentorBookingForm.notes}
+                  onChange={e => setMentorBookingForm({ ...mentorBookingForm, notes: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  placeholder="आपल्याला मेंटॉर्कडून कोणत्या मुद्द्यांवर सल्ला हवा आहे?"
+                />
+              </div>
+              <button
+                type="submit"
+                style={{ background: '#be185d', color: '#fff', border: 'none', padding: '0.9rem', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }}
+              >
+                सत्र नोंदणी निश्चित करा
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

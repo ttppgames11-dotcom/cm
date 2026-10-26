@@ -184,15 +184,15 @@ export default function BusinessSangamPage() {
       </div>
 
       {/* COMPACT HERO BANNER (Balanced width, authentic Maharashtrian business summit photo) */}
-      <div style={{ position: 'relative', overflow: 'hidden', background: '#0e1118' }}>
-        <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '32px 20px', position: 'relative', zIndex: 2 }}>
+      <div style={{ position: 'relative', overflow: 'hidden', background: '#FAF7F2' }}>
+        <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '24px 20px', position: 'relative', zIndex: 2 }}>
           <div
             style={{
               position: 'relative',
               borderRadius: '20px',
               overflow: 'hidden',
-              boxShadow: '0 20px 45px rgba(0,0,0,0.35)',
-              border: '1px solid rgba(246, 184, 0, 0.25)'
+              boxShadow: '0 16px 40px rgba(122, 28, 8, 0.14)',
+              border: '1.5px solid rgba(246, 184, 0, 0.40)'
             }}
           >
             {/* Background: Authentic Maratha Business Summit / Council */}
@@ -201,10 +201,10 @@ export default function BusinessSangamPage() {
               alt="Connect Maratha व्यवसाय संगम परिषद"
               style={{
                 width: '100%',
-                height: '340px',
+                height: '350px',
                 objectFit: 'cover',
                 display: 'block',
-                filter: 'brightness(0.35) contrast(1.15)'
+                filter: 'brightness(0.88)'
               }}
             />
 
@@ -213,7 +213,7 @@ export default function BusinessSangamPage() {
               style={{
                 position: 'absolute',
                 inset: 0,
-                background: 'linear-gradient(90deg, rgba(20,8,4,0.92) 0%, rgba(30,12,5,0.78) 55%, rgba(15,6,3,0.45) 100%)'
+                background: 'linear-gradient(90deg, rgba(40, 10, 5, 0.82) 0%, rgba(40, 10, 5, 0.55) 50%, rgba(15, 5, 2, 0.15) 100%)'
               }}
             />
 

@@ -443,7 +443,7 @@ export default function ShivkalFestivalsPage() {
   const activeScenario = COMPARATIVE_SCENARIOS.find(s => s.id === activeScenarioId) || COMPARATIVE_SCENARIOS[0];
 
   return (
-    <div style={{ minHeight: '100vh', background: '#FFFDF9', color: '#431407' }}>
+    <div style={{ minHeight: '100vh', background: '#FFFDF9', color: '#EA580C' }}>
       
       {/* ================= HERO HEADER ================= */}
       <section style={{
@@ -658,7 +658,7 @@ export default function ShivkalFestivalsPage() {
                       <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#C2410C', textTransform: 'uppercase' }}>
                         {item.aspect}
                       </span>
-                      <p style={{ margin: '4px 0 0', fontSize: '0.88rem', color: '#431407', lineHeight: 1.45 }}>
+                      <p style={{ margin: '4px 0 0', fontSize: '0.88rem', color: '#EA580C', lineHeight: 1.45 }}>
                         {item.shivkal}
                       </p>
                     </div>
@@ -746,7 +746,7 @@ export default function ShivkalFestivalsPage() {
                 cursor: 'pointer',
                 border: selectedFilter === 'ALL' ? '2px solid #7C1D05' : '1px solid #E5E7EB',
                 background: selectedFilter === 'ALL' ? '#7C1D05' : '#FFFFFF',
-                color: selectedFilter === 'ALL' ? '#FFFFFF' : '#431407'
+                color: selectedFilter === 'ALL' ? '#FFFFFF' : '#EA580C'
               }}
             >
               सर्व १३ उत्सव ({SHIVKAL_FESTIVALS.length})
@@ -860,7 +860,7 @@ export default function ShivkalFestivalsPage() {
                     <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#9A3412', textTransform: 'uppercase', marginBottom: '6px' }}>
                       📜 ऐतिहासिक संदर्भ व पुरावे:
                     </div>
-                    <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '0.84rem', color: '#431407', lineHeight: 1.5 }}>
+                    <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '0.84rem', color: '#EA580C', lineHeight: 1.5 }}>
                       {festival.documentedFacts.slice(0, 2).map((fact, idx) => (
                         <li key={idx} style={{ marginBottom: '4px' }}>{fact}</li>
                       ))}
@@ -931,7 +931,7 @@ export default function ShivkalFestivalsPage() {
             <div style={{ marginBottom: '24px', position: 'relative' }}>
               <div style={{ position: 'absolute', left: '-35px', top: '2px', width: '14px', height: '14px', borderRadius: '50%', background: '#7C1D05', border: '3px solid #FFFDF9' }} />
               <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#7C1D05' }}>इ.स. १६३० — छत्रपती शिवाजी महाराजांचा जन्म (शिवनेरी)</div>
-              <p style={{ fontSize: '0.88rem', color: '#431407', margin: '4px 0 0', lineHeight: 1.5 }}>
+              <p style={{ fontSize: '0.88rem', color: '#EA580C', margin: '4px 0 0', lineHeight: 1.5 }}>
                 जिजाऊ मॉंसाहेब व शहाजीराजे भोसले यांच्या पोटी जन्म; बालवयात पारंपरिक धार्मिक व सैनिकी संस्कार.
               </p>
             </div>
@@ -939,7 +939,7 @@ export default function ShivkalFestivalsPage() {
             <div style={{ marginBottom: '24px', position: 'relative' }}>
               <div style={{ position: 'absolute', left: '-35px', top: '2px', width: '14px', height: '14px', borderRadius: '50%', background: '#C2410C', border: '3px solid #FFFDF9' }} />
               <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#C2410C' }}>इ.स. १६४०–१६५० चे दशक — रोहिडेश्वरावर स्वराज्य शपथ व कसबा गणपती प्रतिष्ठापना</div>
-              <p style={{ fontSize: '0.88rem', color: '#431407', margin: '4px 0 0', lineHeight: 1.5 }}>
+              <p style={{ fontSize: '0.88rem', color: '#EA580C', margin: '4px 0 0', lineHeight: 1.5 }}>
                 पुण्यात कसबा गणपती मंदिराचा जिर्णोद्धार; स्थानिक ग्रामदेवता व विठ्ठलभक्तीचा सामाजिक प्रभाव; मावळ खोऱ्यातील सलोखा.
               </p>
             </div>
@@ -947,7 +947,7 @@ export default function ShivkalFestivalsPage() {
             <div style={{ marginBottom: '24px', position: 'relative' }}>
               <div style={{ position: 'absolute', left: '-35px', top: '2px', width: '14px', height: '14px', borderRadius: '50%', background: '#D97706', border: '3px solid #FFFDF9' }} />
               <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#D97706' }}>इ.स. १६६० चे दशक — किल्ले, आरमार, प्रतापगड भवानी मंदिर व दसरा सज्जता</div>
-              <p style={{ fontSize: '0.88rem', color: '#431407', margin: '4px 0 0', lineHeight: 1.5 }}>
+              <p style={{ fontSize: '0.88rem', color: '#EA580C', margin: '4px 0 0', lineHeight: 1.5 }}>
                 अफझलखान वधानंतर प्रतापगडावर श्री भवानी देवीची स्थापना; सिंधुदुर्ग व आरमारी बंदरांची उभारणी; नारळी पौर्णिमा व दसरा शस्त्रपूजेचे महत्त्व वाढले.
               </p>
             </div>
@@ -955,7 +955,7 @@ export default function ShivkalFestivalsPage() {
             <div style={{ marginBottom: '24px', position: 'relative' }}>
               <div style={{ position: 'absolute', left: '-35px', top: '2px', width: '14px', height: '14px', borderRadius: '50%', background: '#15803D', border: '3px solid #FFFDF9' }} />
               <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#15803D' }}>इ.स. १६७१ — रायगडावर शिमग्याची (होळी) समकालीन नोंद</div>
-              <p style={{ fontSize: '0.88rem', color: '#431407', margin: '4px 0 0', lineHeight: 1.5 }}>
+              <p style={{ fontSize: '0.88rem', color: '#EA580C', margin: '4px 0 0', lineHeight: 1.5 }}>
                 शिमग्यामध्ये होळीच्या मैदानात दांडपट्टा, तलवारबाजी, मल्लविद्या व विविध सोंगे घेऊन मावळ्यांचे शौर्यप्रदर्शन. थेट समकालीन कागदपत्रातील उल्लेख.
               </p>
             </div>
@@ -963,7 +963,7 @@ export default function ShivkalFestivalsPage() {
             <div style={{ marginBottom: '24px', position: 'relative' }}>
               <div style={{ position: 'absolute', left: '-35px', top: '2px', width: '14px', height: '14px', borderRadius: '50%', background: '#7C1D05', border: '3px solid #FFFDF9' }} />
               <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#7C1D05' }}>इ.स. १६७४ — रायगड गुढीपाडवा व ६ जून महान शिवराज्याभिषेक सोहळा</div>
-              <p style={{ fontSize: '0.88rem', color: '#431407', margin: '4px 0 0', lineHeight: 1.5 }}>
+              <p style={{ fontSize: '0.88rem', color: '#EA580C', margin: '4px 0 0', lineHeight: 1.5 }}>
                 चैत्रात रायगडावर गुढीपाडवा साजरा झाल्याचा पत्रसंग्रह संदर्भ; २९ मे ते ६ जून दरम्यान गागाभट्ट यांच्या उपस्थितीत वेदोक्त राज्याभिषेक; सर्व किल्ल्यांवर तोफांची सलामी व साखर वाटप.
               </p>
             </div>
@@ -971,7 +971,7 @@ export default function ShivkalFestivalsPage() {
             <div style={{ position: 'relative' }}>
               <div style={{ position: 'absolute', left: '-35px', top: '2px', width: '14px', height: '14px', borderRadius: '50%', background: '#4B5563', border: '3px solid #FFFDF9' }} />
               <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#4B5563' }}>इ.स. १६८० — छत्रपतींचे महाप्रयाण (किल्ले रायगड)</div>
-              <p style={{ fontSize: '0.88rem', color: '#431407', margin: '4px 0 0', lineHeight: 1.5 }}>
+              <p style={{ fontSize: '0.88rem', color: '#EA580C', margin: '4px 0 0', lineHeight: 1.5 }}>
                 हनुमान जयंतीच्या सुमारास (चैत्र पौर्णिमा) छत्रपती शिवाजी महाराजांचे रायगडावर निधन; स्वराज्याच्या सणांना व मूल्यांना अमर वारसा लाभला.
               </p>
             </div>

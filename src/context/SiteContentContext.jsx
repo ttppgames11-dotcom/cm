@@ -50,11 +50,11 @@ export const defaultSiteContent = {
     manufacturersHero: "/assets/images/generated/maratha_manufacturers_hero.jpg"
   },
   texts: {
-    tagline: "Connect Maratha — जागतिक मराठा समाजाचे अधिकृत डिजिटल व्यासपीठ",
+    tagline: "Connect Maratha — जागतिक मराठा समाजाचे आधुनिक युगातील आधुनिक संघटन",
     missionStatement: "मराठा समाजातील प्रत्येक घटकाचा सर्वांगीण आर्थिक, शैक्षणिक, सांस्कृतिक व सामाजिक विकास साधणे.",
     visionStatement: "जागतिक पातळीवर संघटित, स्वाभिमानी व आत्मनिर्भर मराठा समाज आणि उद्योजक पिढीची निर्मिती करणे.",
     emergencyNotice: "२४x७ मराठा समाज साहाय्य व आपत्कालीन रक्तदाता समन्वय कक्ष सदैव तत्पर.",
-    footerAbout: "Connect Maratha (कनेक्ट मराठा) हे जागतिक मराठा समाजाचे अधिकृत डिजिटल व्यासपीठ आहे — रोजगार संधी, बिझनेस संगम, ऐतिहासिक वारसा आणि समाज सक्षमीकरण."
+    footerAbout: "Connect Maratha (कनेक्ट मराठा) हे जागतिक मराठा समाजाचे आधुनिक युगातील आधुनिक संघटन आहे — रोजगार संधी, बिझनेस संगम, ऐतिहासिक वारसा आणि समाज सक्षमीकरण."
   },
   links: {
     navigation: [

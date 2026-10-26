@@ -292,9 +292,21 @@ export default function MeetingsPortalPage() {
     setActiveTab('upcoming');
   };
 
-  const handleCancelMeeting = (id) => {
-    setScheduledMeetings(scheduledMeetings.filter(m => m.id !== id));
+  const handleCancelMeeting = async (id) => {
+    setScheduledMeetings(prev => prev.filter(m => m.id !== id));
     showToast(`भेट #${id} रद्द करण्यात आली.`);
+    try {
+      if (api.sangam && api.sangam.updateMeetingStatus) {
+        await api.sangam.updateMeetingStatus(id, 'रद्द (Cancelled)', 'सदस्याने भेट रद्द केली.');
+      } else {
+        await apiClient.fetchJson(`/sangam/meetings/${id}/status`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: 'रद्द (Cancelled)' })
+        });
+      }
+    } catch (err) {
+      console.warn('Could not sync cancel to API:', err.message);
+    }
   };
 
   const handleOpenMinutesModal = (m) => {
@@ -302,7 +314,7 @@ export default function MeetingsPortalPage() {
     setMinutesText('');
   };
 
-  const handleSaveMinutes = () => {
+  const handleSaveMinutes = async () => {
     if (!minutesModalMeeting) return;
     const completed = {
       id: minutesModalMeeting.id,
@@ -319,13 +331,40 @@ export default function MeetingsPortalPage() {
 
     setPastMeetings([completed, ...pastMeetings]);
     setScheduledMeetings(scheduledMeetings.filter(m => m.id !== minutesModalMeeting.id));
+    const targetId = minutesModalMeeting.id;
+    const savedNotes = minutesText || 'सविस्तर चर्चा झाली. सहकार्याचे मुद्दे निश्चित झाले.';
     setMinutesModalMeeting(null);
-    showToast(`✓ भेट #${minutesModalMeeting.id} पूर्ण झाली व मिनिट्स नोंदवले गेले!`);
+    showToast(`✓ भेट #${targetId} पूर्ण झाली व मिनिट्स नोंदवले गेले!`);
     setActiveTab('past');
+
+    try {
+      if (api.sangam && api.sangam.updateMeetingStatus) {
+        await api.sangam.updateMeetingStatus(targetId, 'पूर्ण (Completed)', 'बैठक यशस्वी पूर्ण.', savedNotes);
+      } else {
+        await apiClient.fetchJson(`/sangam/meetings/${targetId}/status`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: 'पूर्ण (Completed)', minutes: savedNotes })
+        });
+      }
+    } catch (err) {
+      console.warn('Could not sync minutes to API:', err.message);
+    }
   };
 
-  const handleRSVPChapter = (chapterName) => {
+  const handleRSVPChapter = async (chapterName) => {
     showToast(`✓ ${chapterName} मधील बैठकीसाठी तुमची उपस्थिती नोंदवली गेली!`);
+    try {
+      if (api.sangam && api.sangam.rsvpChapterMeeting) {
+        await api.sangam.rsvpChapterMeeting('CH-PUNE', chapterName);
+      } else {
+        await apiClient.fetchJson('/sangam/meetings/rsvp-chapter', {
+          method: 'POST',
+          body: JSON.stringify({ chapterName })
+        });
+      }
+    } catch (err) {
+      console.warn('Could not sync RSVP to API:', err.message);
+    }
   };
 
   return (
@@ -338,7 +377,7 @@ export default function MeetingsPortalPage() {
             position: 'fixed',
             bottom: '24px',
             right: '24px',
-            background: '#431407',
+            background: '#EA580C',
             color: '#FDE047',
             border: '1.5px solid #F59E0B',
             padding: '14px 22px',
@@ -355,7 +394,7 @@ export default function MeetingsPortalPage() {
         {/* Breadcrumb Navigation */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
           <div style={{ fontSize: '0.86rem', color: '#78350f', fontWeight: 700 }}>
-            <Link to="/" style={{ color: '#c2410c', textDecoration: 'none' }}>मुख्य पोर्टल</Link> ➔ <Link to="/sangam" style={{ color: '#c2410c', textDecoration: 'none' }}>व्यवसाय संगम</Link> ➔ <span style={{ color: '#431407' }}>१-ते-१ व्यवसाय भेटी</span>
+            <Link to="/" style={{ color: '#c2410c', textDecoration: 'none' }}>मुख्य पोर्टल</Link> ➔ <Link to="/sangam" style={{ color: '#c2410c', textDecoration: 'none' }}>व्यवसाय संगम</Link> ➔ <span style={{ color: '#EA580C' }}>१-ते-१ व्यवसाय भेटी</span>
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
@@ -400,7 +439,7 @@ export default function MeetingsPortalPage() {
 
         {/* Hero Banner */}
         <div style={{
-          background: 'linear-gradient(135deg, #431407 0%, #7c2d12 50%, #9a3412 100%)',
+          background: 'linear-gradient(135deg, #EA580C 0%, #7c2d12 50%, #9a3412 100%)',
           borderRadius: '20px',
           padding: '32px 30px',
           color: '#FFFFFF',
@@ -590,7 +629,7 @@ export default function MeetingsPortalPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#431407', fontFamily: 'Baloo 2' }}>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#EA580C', fontFamily: 'Baloo 2' }}>
                   आगामी नियोजित १-ते-१ भेटी (Scheduled 1-to-1 Meetings)
                 </h3>
                 <p style={{ margin: '2px 0 0', fontSize: '0.84rem', color: '#78350f' }}>
@@ -684,7 +723,7 @@ export default function MeetingsPortalPage() {
                           {m.partnerAvatar}
                         </span>
                         <div>
-                          <h4 style={{ margin: '0 0 2px', fontSize: '1.15rem', color: '#431407', fontFamily: 'Baloo 2' }}>
+                          <h4 style={{ margin: '0 0 2px', fontSize: '1.15rem', color: '#EA580C', fontFamily: 'Baloo 2' }}>
                             {m.partnerName}
                           </h4>
                           <div style={{ fontSize: '0.82rem', color: '#ea580c', fontWeight: 700 }}>
@@ -803,7 +842,7 @@ export default function MeetingsPortalPage() {
         {/* TAB 2: BOOK A NEW MEETING FORM */}
         {activeTab === 'book' && (
           <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #fed7aa', padding: '32px', boxShadow: '0 4px 18px rgba(0,0,0,0.04)' }}>
-            <h3 style={{ margin: '0 0 6px', fontSize: '1.4rem', color: '#431407', fontFamily: 'Baloo 2' }}>
+            <h3 style={{ margin: '0 0 6px', fontSize: '1.4rem', color: '#EA580C', fontFamily: 'Baloo 2' }}>
               ➕ नवीन १-ते-१ भेट बुक करा (Schedule 1-to-1 Trust Meeting)
             </h3>
             <p style={{ margin: '0 0 24px', fontSize: '0.88rem', color: '#78350f' }}>
@@ -828,7 +867,7 @@ export default function MeetingsPortalPage() {
                       border: '1.5px solid #fed7aa',
                       fontSize: '0.88rem',
                       fontWeight: 600,
-                      color: '#431407',
+                      color: '#EA580C',
                       background: '#fff7ed',
                       outline: 'none',
                       boxSizing: 'border-box'
@@ -857,7 +896,7 @@ export default function MeetingsPortalPage() {
                       border: '1.5px solid #fed7aa',
                       fontSize: '0.88rem',
                       fontWeight: 600,
-                      color: '#431407',
+                      color: '#EA580C',
                       background: '#fff7ed',
                       outline: 'none',
                       boxSizing: 'border-box'
@@ -931,7 +970,7 @@ export default function MeetingsPortalPage() {
                       border: '1.5px solid #fed7aa',
                       fontSize: '0.88rem',
                       fontWeight: 600,
-                      color: '#431407',
+                      color: '#EA580C',
                       background: '#fff7ed',
                       outline: 'none',
                       boxSizing: 'border-box'
@@ -954,7 +993,7 @@ export default function MeetingsPortalPage() {
                       border: '1.5px solid #fed7aa',
                       fontSize: '0.88rem',
                       fontWeight: 600,
-                      color: '#431407',
+                      color: '#EA580C',
                       background: '#fff7ed',
                       outline: 'none',
                       boxSizing: 'border-box'
@@ -989,7 +1028,7 @@ export default function MeetingsPortalPage() {
                         border: '1.5px solid #fed7aa',
                         fontSize: '0.88rem',
                         fontWeight: 600,
-                        color: '#431407',
+                        color: '#EA580C',
                         background: '#fff7ed',
                         outline: 'none',
                         boxSizing: 'border-box'
@@ -1017,7 +1056,7 @@ export default function MeetingsPortalPage() {
                     borderRadius: '8px',
                     border: '1.5px solid #fed7aa',
                     fontSize: '0.88rem',
-                    color: '#431407',
+                    color: '#EA580C',
                     background: '#fff7ed',
                     outline: 'none',
                     boxSizing: 'border-box'
@@ -1040,7 +1079,7 @@ export default function MeetingsPortalPage() {
                     borderRadius: '8px',
                     border: '1.5px solid #fed7aa',
                     fontSize: '0.88rem',
-                    color: '#431407',
+                    color: '#EA580C',
                     background: '#fff7ed',
                     outline: 'none',
                     boxSizing: 'border-box'
@@ -1091,7 +1130,7 @@ export default function MeetingsPortalPage() {
         {/* TAB 3: PAST MEETINGS & MINUTES */}
         {activeTab === 'past' && (
           <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #fed7aa', padding: '28px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-            <h3 style={{ margin: '0 0 6px', fontSize: '1.25rem', color: '#431407', fontFamily: 'Baloo 2' }}>
+            <h3 style={{ margin: '0 0 6px', fontSize: '1.25rem', color: '#EA580C', fontFamily: 'Baloo 2' }}>
               📝 पूर्ण झालेल्या १-ते-१ भेटी व पाठपुरावा (Meeting Minutes & Outcomes)
             </h3>
             <p style={{ margin: '0 0 20px', fontSize: '0.84rem', color: '#78350f' }}>
@@ -1114,7 +1153,7 @@ export default function MeetingsPortalPage() {
                   <tr key={pm.id} style={{ borderBottom: '1px solid #ffedd5' }}>
                     <td style={{ padding: '12px 14px', fontWeight: 800, color: '#ea580c' }}>{pm.id}</td>
                     <td style={{ padding: '12px 14px' }}>
-                      <strong style={{ color: '#431407' }}>{pm.partnerName}</strong>
+                      <strong style={{ color: '#EA580C' }}>{pm.partnerName}</strong>
                       <div style={{ fontSize: '0.78rem', color: '#78350f' }}>{pm.partnerCompany}</div>
                     </td>
                     <td style={{ padding: '12px 14px', color: '#6b7280' }}>
@@ -1156,7 +1195,7 @@ export default function MeetingsPortalPage() {
         {activeTab === 'chapter' && (
           <div>
             <div style={{ marginBottom: '18px' }}>
-              <h3 style={{ margin: '0 0 4px', fontSize: '1.25rem', color: '#431407', fontFamily: 'Baloo 2' }}>
+              <h3 style={{ margin: '0 0 4px', fontSize: '1.25rem', color: '#EA580C', fontFamily: 'Baloo 2' }}>
                 🏢 साप्ताहिक व्यवसाय मंडळ संगम (Weekly Chapter Meetings)
               </h3>
               <p style={{ margin: 0, fontSize: '0.84rem', color: '#78350f' }}>
@@ -1189,7 +1228,7 @@ export default function MeetingsPortalPage() {
                       </span>
                     </div>
 
-                    <h4 style={{ margin: '0 0 6px', fontSize: '1.2rem', color: '#431407', fontFamily: 'Baloo 2' }}>
+                    <h4 style={{ margin: '0 0 6px', fontSize: '1.2rem', color: '#EA580C', fontFamily: 'Baloo 2' }}>
                       {ch.name}
                     </h4>
 
@@ -1259,7 +1298,7 @@ export default function MeetingsPortalPage() {
               <span style={{ background: '#ffedd5', color: '#c2410c', padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>
                 🔄 NETWORKING TRUST PIPELINE
               </span>
-              <h2 style={{ fontSize: '1.8rem', margin: '8px 0 6px', color: '#431407', fontFamily: 'Baloo 2' }}>
+              <h2 style={{ fontSize: '1.8rem', margin: '8px 0 6px', color: '#EA580C', fontFamily: 'Baloo 2' }}>
                 फॉलो, कनेक्ट, मेसेज व १-ते-१ भेट प्रणाली कशी काम करते?
               </h2>
               <p style={{ fontSize: '0.92rem', color: '#78350f', margin: 0, lineHeight: 1.6 }}>
@@ -1278,7 +1317,7 @@ export default function MeetingsPortalPage() {
                   ➕ फॉलो (Follow)
                 </h4>
                 <div style={{ fontSize: '0.78rem', color: '#c2410c', fontWeight: 800, marginBottom: '6px' }}>एकतर्फी माहिती प्रवाह</div>
-                <p style={{ margin: 0, fontSize: '0.84rem', color: '#431407', lineHeight: 1.5 }}>
+                <p style={{ margin: 0, fontSize: '0.84rem', color: '#EA580C', lineHeight: 1.5 }}>
                   डिरेक्टरीतील अग्रगण्य उद्योजक, नेते किंवा कंपन्यांना फॉलो करून त्यांच्या ताज्या व्यावसायिक पोस्ट, नोकऱ्या व उपक्रमांचे अपडेट्स मिळवा.
                 </p>
               </div>
@@ -1362,7 +1401,7 @@ export default function MeetingsPortalPage() {
             padding: '20px'
           }}>
             <div style={{ background: '#fff', borderRadius: '16px', maxWidth: '520px', width: '100%', padding: '28px', boxShadow: '0 12px 36px rgba(0,0,0,0.3)' }}>
-              <h3 style={{ margin: '0 0 6px', fontSize: '1.3rem', color: '#431407', fontFamily: 'Baloo 2' }}>
+              <h3 style={{ margin: '0 0 6px', fontSize: '1.3rem', color: '#EA580C', fontFamily: 'Baloo 2' }}>
                 📝 बैठकीचे मिनिट्स व निष्पन्न नोंदवा (Log Meeting Minutes)
               </h3>
               <p style={{ margin: '0 0 16px', fontSize: '0.84rem', color: '#6b7280' }}>

@@ -1,841 +1,768 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../../services/apiClient';
+import { useAuth } from '../../context/AuthContext';
 
-const orgsData = [
-  // 1. सामाजिक (Social)
-  {
-    id: 1,
-    name: 'अखिल भारतीय मराठा महासंघ',
-    category: 'सामाजिक',
-    established: '१९८१',
-    hq: 'मुंबई / पुणे, महाराष्ट्र',
-    presence: 'अखिल भारत व ३६ जिल्हे',
-    members: '३५ लाख+ सदस्य',
-    focus: 'मराठा आरक्षण, आर्थिक व शैक्षणिक हक्क, समाज प्रबोधन व न्याय हक्क लढा',
-    icon: '🚩',
-    contact: '+91 22 2430 1674'
-  },
-  {
-    id: 2,
-    name: 'मराठा क्रांती मोर्चा समन्वय समिती',
-    category: 'सामाजिक',
-    established: '२०१६',
-    hq: 'पुणे, महाराष्ट्र',
-    presence: 'संपूर्ण महाराष्ट्र व परराज्य',
-    members: '५८ मूक मोर्चे समन्वयक',
-    focus: 'मराठा आरक्षण न्यायालयीन पाठपुरावा, सारथी संस्था स्वायत्तता, वसतिगृहे व विद्यार्थी हक्क',
-    icon: '✊',
-    contact: '+91 98220 55443'
-  },
-  {
-    id: 3,
-    name: 'मराठा सेवा संघ',
-    category: 'सामाजिक',
-    established: '१९९०',
-    hq: 'छत्रपती संभाजीनगर, महाराष्ट्र',
-    presence: 'संपूर्ण भारत व ३६ जिल्हे',
-    members: '१५ लाख+ सदस्य',
-    focus: 'शिव-शाहू-फुले-आंबेडकर विचारप्रसार, जिजाऊ ब्रिगेड, संभाजी ब्रिगेड कक्ष',
-    icon: '⚔️',
-    contact: '+91 240 233 4455'
-  },
-  {
-    id: 4,
-    name: 'छत्रपती संभाजी महाराज प्रतिष्ठान',
-    category: 'सामाजिक',
-    established: '२००४',
-    hq: 'पुणे, महाराष्ट्र',
-    presence: 'पुणे, सातारा, कोल्हापूर',
-    members: '२ लाख+ कार्यकर्ते',
-    focus: 'गडकिल्ले संवर्धन, बलिदान मास प्रबोधन, ग्रंथालय व स्पर्धा परीक्षा अभ्यासिका',
-    icon: '🏰',
-    contact: '+91 94220 66778'
-  },
-
-  // 2. शैक्षणिक (Educational)
-  {
-    id: 5,
-    name: 'मराठा शिक्षण संस्था महासंघ',
-    category: 'शैक्षणिक',
-    established: '१९९५',
-    hq: 'कोल्हापूर, महाराष्ट्र',
-    presence: '२२ जिल्हे',
-    members: '२५०+ शिक्षण संस्था',
-    focus: 'वसतिगृहे, गरजू विद्यार्थ्यांना मोफत शिक्षण व स्पर्धा परीक्षा केंद्र',
-    icon: '🎓',
-    contact: '+91 231 265 1234'
-  },
-  {
-    id: 6,
-    name: 'सारथी विद्यार्थी कृती समिती',
-    category: 'शैक्षणिक',
-    established: '२०१९',
-    hq: 'पुणे, महाराष्ट्र',
-    presence: '३६ जिल्हे',
-    members: '८५,०००+ विद्यार्थी',
-    focus: 'सारथी फेलोशिप, यूपीएससी/एमपीएससी मोफत प्रशिक्षण व परदेशी शिष्यवृत्ती पाठपुरावा',
-    icon: '📚',
-    contact: '+91 20 2567 8901'
-  },
-  {
-    id: 7,
-    name: 'श्री शिवाजी शिक्षण प्रसारक मंडळ',
-    category: 'शैक्षणिक',
-    established: '१९६२',
-    hq: 'अमरावती / विदर्भ',
-    presence: 'विदर्भ व मराठवाडा',
-    members: '१२०+ शाळा व महाविद्यालये',
-    focus: 'ग्रामीण भागातील शेतकरी कुटुंबातील पाल्यांना दर्जेदार तांत्रिक व उच्च शिक्षण',
-    icon: '🏫',
-    contact: '+91 721 256 3344'
-  },
-  {
-    id: 8,
-    name: 'मराठा विद्यार्थी वसतिगृह फेडरेशन',
-    category: 'शैक्षणिक',
-    established: '२००१',
-    hq: 'छत्रपती संभाजीनगर',
-    presence: 'राज्यव्यापी',
-    members: '४०+ मराठा वसतिगृहे',
-    focus: 'शहरात शिक्षणासाठी येणाऱ्या मराठा विद्यार्थ्यांसाठी माफक दरात भोजन व निवासाची सोय',
-    icon: '🏢',
-    contact: '+91 240 248 9911'
-  },
-
-  // 3. युवक (Youth)
-  {
-    id: 9,
-    name: 'मराठा युवा मंच',
-    category: 'युवक',
-    established: '२०१२',
-    hq: 'पुणे, महाराष्ट्र',
-    presence: '३६ जिल्हे',
-    members: '८ लाख+ युवक',
-    focus: 'युवा रोजगार, करिअर मेन्टॉरशिप, रक्तदान शिबिरे व गड-किल्ले स्वच्छता',
-    icon: '⚡',
-    contact: '+91 98220 99887'
-  },
-  {
-    id: 10,
-    name: 'संभाजी ब्रिगेड युवा आघाडी',
-    category: 'युवक',
-    established: '१९९९',
-    hq: 'पुणे / मुंबई, महाराष्ट्र',
-    presence: 'राज्यव्यापी ३५०+ तालुके',
-    members: '१२ लाख+ युवा कार्यकर्ते',
-    focus: 'इतिहास रक्षण, शेतकऱ्यांच्या प्रश्नांवर आंदोलन, युवा नेतृत्व विकास व प्रबोधन',
-    icon: '🔥',
-    contact: '+91 20 2445 6789'
-  },
-  {
-    id: 11,
-    name: 'अखिल भारतीय मराठा विद्यार्थी व युवक महासंघ',
-    category: 'युवक',
-    established: '२०१५',
-    hq: 'नाशिक, महाराष्ट्र',
-    presence: 'उत्तर महाराष्ट्र व मराठवाडा',
-    members: '३.५ लाख+ युवक',
-    focus: 'स्टार्टअप मार्गदर्शन, कौशल्य विकास कार्यशाळा व पोलिस/सैन्य भरती पूर्वतयारी वर्ग',
-    icon: '🎯',
-    contact: '+91 253 234 5678'
-  },
-  {
-    id: 12,
-    name: 'शिवराय युथ फोर्स महाराष्ट्र',
-    category: 'युवक',
-    established: '२०१८',
-    hq: 'सातारा, महाराष्ट्र',
-    presence: 'पश्चिम महाराष्ट्र',
-    members: '१.५ लाख+ युवा सैनिक',
-    focus: 'शिवचरित्र प्रसार, आपत्ती व्यवस्थापन पथके, रक्तदान व गडकोट संवर्धन मोहीम',
-    icon: '🛡️',
-    contact: '+91 91580 44556'
-  },
-
-  // 4. महिला (Women)
-  {
-    id: 13,
-    name: 'जिजाऊ ब्रिगेड (महिला आघाडी)',
-    category: 'महिला',
-    established: '२००२',
-    hq: 'सिंदखेड राजा / बुलढाणा',
-    presence: 'महाराष्ट्र व राष्ट्रीय शाखा',
-    members: '६ लाख+ महिला भगिनी',
-    focus: 'जिजाऊंचे संस्कार, स्त्री प्रबोधन, हुंडाबंदी, स्त्रीभ्रूणहत्या विरोध व कायदेशीर साहाय्य',
-    icon: '👑',
-    contact: '+91 7262 245 111'
-  },
-  {
-    id: 14,
-    name: 'मराठा महिला विकास संघटना',
-    category: 'महिला',
-    established: '२००८',
-    hq: 'नाशिक, महाराष्ट्र',
-    presence: '२८ जिल्हे',
-    members: '४ लाख+ भगिनी',
-    focus: 'महिला बचत गट सक्षमीकरण, कायदेशीर मदत, महिला उद्योग उभारणी व कौशल्य विकास',
-    icon: '🌸',
-    contact: '+91 98500 11223'
-  },
-  {
-    id: 15,
-    name: 'ताराबाई मराठा महिला उद्योजिका मंच',
-    category: 'महिला',
-    established: '२०१७',
-    hq: 'कोल्हापूर, महाराष्ट्र',
-    presence: 'दक्षिण महाराष्ट्र व मुंबई',
-    members: '५०,०००+ महिला उद्योजक',
-    focus: 'मराठा महिलांचे गृहउद्योग, फूड प्रोसेसिंग, वस्त्रोद्योग व ऑनलाइन बाजारपेठ जोडणी',
-    icon: '✨',
-    contact: '+91 231 254 7890'
-  },
-  {
-    id: 16,
-    name: 'अहिल्या-जिजाऊ सखी मंच',
-    category: 'महिला',
-    established: '२०२०',
-    hq: 'पुणे, महाराष्ट्र',
-    presence: 'पुणे, सोलापूर, सातारा',
-    members: '८०,०००+ सदस्या',
-    focus: 'एकल व विधवा महिला पुनर्वसन, आरोग्य तपासणी शिबिरे व मोफत समुपदेशन',
-    icon: '🕊️',
-    contact: '+91 98224 88776'
-  },
-
-  // 5. व्यावसायिक (Business & Entrepreneurs)
-  {
-    id: 17,
-    name: 'मराठा उद्योग व्यवसाय संघ (MUVS)',
-    category: 'व्यावसायिक',
-    established: '२०१५',
-    hq: 'मुंबई / ठाणे, महाराष्ट्र',
-    presence: 'राज्यव्यापी व जागतिक',
-    members: '५०,०००+ उद्योजक',
-    focus: 'B2B बिझनेस नेटवर्किंग, स्टार्टअप सीड फंडिंग, शासकीय योजना व ग्लोबल एक्स्पोर्ट',
-    icon: '💼',
-    contact: '+91 22 2580 4455'
-  },
-  {
-    id: 18,
-    name: 'मराठा चेंबर ऑफ कॉमर्स अँड इंडस्ट्रीज (MCCI)',
-    category: 'व्यावसायिक',
-    established: '२००५',
-    hq: 'पुणे, महाराष्ट्र',
-    presence: 'महाराष्ट्र, दुबई, अमेरिका',
-    members: '३५,०००+ व्यावसायिक',
-    focus: 'औद्योगिक प्रकल्प मार्गदर्शन, व्हेन्चर कॅपिटल, एमएसएमई लोन व आंतरराष्ट्रीय परिषद',
-    icon: '🌐',
-    contact: '+91 20 2605 9876'
-  },
-  {
-    id: 19,
-    name: 'अण्णासाहेब पाटील उद्योजक मंच',
-    category: 'व्यावसायिक',
-    established: '२०१८',
-    hq: 'नवी मुंबई, महाराष्ट्र',
-    presence: '३६ जिल्हे',
-    members: '१.२ लाख+ लाभार्थी',
-    focus: 'अण्णासाहेब पाटील महामंडळ बिनव्याजी कर्ज योजना साहाय्य, बँक लोन मंजुरी पाठपुरावा',
-    icon: '📈',
-    contact: '+91 22 2788 1234'
-  },
-  {
-    id: 20,
-    name: 'मराठा कृषी-औद्योगिक विकास महामंडळ',
-    category: 'व्यावसायिक',
-    established: '२०१३',
-    hq: 'सांगली / जालना',
-    presence: 'पश्चिम महाराष्ट्र व मराठवाडा',
-    members: '२२,०००+ शेतकरी उद्योजक',
-    focus: 'फळ प्रक्रिया उद्योग, कोल्ड स्टोरेज नेटवर्किंग, थेट निर्यात व कृषी मूल्यवर्धन',
-    icon: '🌾',
-    contact: '+91 233 232 4455'
-  },
-
-  // 6. सांस्कृतिक (Cultural & Heritage)
-  {
-    id: 21,
-    name: 'मराठा सांस्कृतिक परिषद',
-    category: 'सांस्कृतिक',
-    established: '२००२',
-    hq: 'सातारा, महाराष्ट्र',
-    presence: 'अखिल महाराष्ट्र',
-    members: '२ लाख+ कार्यकर्ते',
-    focus: 'शिवजयंती महामहोत्सव समन्वय, गड-किल्ले संवर्धन व शाहिरी परंपरा जतन',
-    icon: '🪘',
-    contact: '+91 94220 33221'
-  },
-  {
-    id: 22,
-    name: 'श्री शिवराज्याभिषेक दिनोत्सव सेवा समिती',
-    category: 'सांस्कृतिक',
-    established: '१९९६',
-    hq: 'दुर्गराज रायगड / महाड',
-    presence: 'अखिल भारत व विश्व',
-    members: '५ लाख+ शिवभक्त',
-    focus: '६ जून भव्य शिवराज्याभिषेक सोहळा आयोजन, पालखी सोहळा व शिवकालीन इतिहास जतन',
-    icon: '🚩',
-    contact: '+91 2145 222 345'
-  },
-  {
-    id: 23,
-    name: 'अखिल भारतीय मराठी शाहिरी परिषद',
-    category: 'सांस्कृतिक',
-    established: '१९८८',
-    hq: 'कोल्हापूर, महाराष्ट्र',
-    presence: 'संपूर्ण महाराष्ट्र',
-    members: '१,५००+ शाहीर व कलावंत',
-    focus: 'शिवकालीन पोवाडा, डफ-तुणतुणे वादन, शाहिरी प्रशिक्षण वर्ग व ऐतिहासिक नाटक मंचन',
-    icon: '🎭',
-    contact: '+91 231 262 1199'
-  },
-  {
-    id: 24,
-    name: 'मराठा इतिहास संशोधन मंडळ',
-    category: 'सांस्कृतिक',
-    established: '१९७५',
-    hq: 'पुणे, महाराष्ट्र',
-    presence: 'महाराष्ट्र व लंडन अभिलेखागार',
-    members: '५००+ इतिहास संशोधक',
-    focus: 'मोडी लिपी दस्तऐवज संशोधन, शिवकालीन अस्सल कागदपत्रांचे प्रकाशन व व्याख्यानमाला',
-    icon: '📜',
-    contact: '+91 20 2447 5511'
-  },
-
-  // 7. क्रीडा (Sports)
-  {
-    id: 25,
-    name: 'मराठा क्रीडा प्रोत्साहन मंडळ',
-    category: 'क्रीडा',
-    established: '२०१६',
-    hq: 'सांगली, महाराष्ट्र',
-    presence: 'महाराष्ट्र व राष्ट्रीय',
-    members: '१ लाख+ खेळाडू',
-    focus: 'कुस्ती, कबड्डी, मल्लखांब खेळाडूंना आर्थिक मदत, डाएट किट व ऑलिम्पिक तयारी',
-    icon: '🤼',
-    contact: '+91 97650 88776'
-  },
-  {
-    id: 26,
-    name: 'महाराष्ट्र कुस्तीगीर मराठा परिषद',
-    category: 'क्रीडा',
-    established: '२००३',
-    hq: 'कोल्हापूर (कुस्तीची पंढरी)',
-    presence: 'कोल्हापूर, सांगली, सातारा, पुणे',
-    members: '१५,०००+ मल्ल व वस्ताद',
-    focus: 'पारंपरिक तालीम संवर्धन, हिंदकेसरी व महाराष्ट्र केसरी मल्लांना स्पॉन्सरशिप व वैद्यकीय विमा',
-    icon: '🏆',
-    contact: '+91 231 264 8833'
-  },
-  {
-    id: 27,
-    name: 'शिवकालीन युद्धकला व मर्दानी खेळ महासंघ',
-    category: 'क्रीडा',
-    established: '२०१०',
-    hq: 'पुणे, महाराष्ट्र',
-    presence: '२६ जिल्हे',
-    members: '४०,०००+ खेळाडू',
-    focus: 'दांडपट्टा, तलवारबाजी, लाठीकाठी, भालाफेक यांचे प्रशिक्षण व शालेय क्रीडा स्पर्धा मान्यता',
-    icon: '🗡️',
-    contact: '+91 98223 11445'
-  },
-  {
-    id: 28,
-    name: 'सह्याद्री ट्रेकर्स व माउंटेनिअरिंग असोसिएशन',
-    category: 'क्रीडा',
-    established: '२०१४',
-    hq: 'ठाणे / नाशिक, महाराष्ट्र',
-    presence: 'सह्याद्री पर्वत रांगा',
-    members: '२५,०००+ गिर्यारोहक',
-    focus: 'किल्ले प्रदक्षिणा, रॉक क्लाइंबिंग, पर्यावरणपूरक ट्रेकिंग व दुर्ग संवर्धन मोहीम',
-    icon: '🧗',
-    contact: '+91 22 2533 8899'
-  },
-
-  // 8. इतर (Other / Specialized)
-  {
-    id: 29,
-    name: 'मराठा लीगल फोरम (कायदेविषयक साहाय्य कक्ष)',
-    category: 'इतर',
-    established: '२०१७',
-    hq: 'मुंबई उच्च न्यायालय / पुणे',
-    presence: 'सर्व जिल्हा न्यायालये',
-    members: '३,०००+ विधीज्ञ व वकील',
-    focus: 'गरजू मराठा बांधवांना मोफत कायदेशीर सल्ला, आरक्षण कायदेशीर लढाई व जनहित याचिका',
-    icon: '⚖️',
-    contact: '+91 22 2267 4433'
-  },
-  {
-    id: 30,
-    name: 'मराठा डॉक्टर्स असोसिएशन (आरोग्य सेवा)',
-    category: 'इतर',
-    established: '२०११',
-    hq: 'पुणे / छत्रपती संभाजीनगर',
-    presence: 'महाराष्ट्रभर १०,०००+ डॉक्टर',
-    members: '१०,०००+ मराठा डॉक्टर्स',
-    focus: 'मोफत ग्रामीण आरोग्य शिबिरे, कॅन्सर तपासणी, रक्तदान महाअभियान व आपत्कालीन मदत',
-    icon: '🩺',
-    contact: '+91 20 2553 7700'
-  },
-  {
-    id: 31,
-    name: 'मराठा शेतकरी समन्वय मंच',
-    category: 'इतर',
-    established: '२०१५',
-    hq: 'बीड / लातूर / परभणी',
-    presence: 'मराठवाडा व विदर्भ',
-    members: '३ लाख+ शेतकरी कुटुंबे',
-    focus: 'दुष्काळ मदत, शेतकरी आत्महत्याग्रस्त कुटुंबांचे पुनर्वसन व हमीभाव मिळवण्यासाठी लढा',
-    icon: '🚜',
-    contact: '+91 2442 223 990'
-  },
-  {
-    id: 32,
-    name: 'ग्लोबल मराठा डायस्पोरा कौन्सिल (आंतरराष्ट्रीय)',
-    category: 'इतर',
-    established: '२०१९',
-    hq: 'लंडन / न्यू जर्सी / दुबई',
-    presence: '२५+ देश (परदेशस्थ मराठा मंडळे)',
-    members: '१.५ लाख+ अनिवासी मराठा',
-    focus: 'परदेशात शिवजयंती उत्सव, मराठी भाषा संवर्धन, परदेशी उच्च शिक्षण व नोकरी मार्गदर्शन',
-    icon: '✈️',
-    contact: '+44 20 7946 0991'
-  }
-];
-
-const categories = [
+const CATEGORIES = [
   'सर्व संघटना',
   'सामाजिक',
   'शैक्षणिक',
   'युवक',
   'महिला',
-  'व्यावसायिक',
-  'सांस्कृतिक',
-  'क्रीडा',
-  'इतर'
+  'उद्योग व सहकार',
+  'इतिहास व दुर्ग',
+  'आरोग्य व रक्तपेढी'
+];
+
+const MAHARASHTRA_DISTRICTS = [
+  'सर्व जिल्हे',
+  'पुणे',
+  'मुंबई',
+  'ठाणे',
+  'छत्रपती संभाजीनगर',
+  'कोल्हापूर',
+  'सातारा',
+  'सांगली',
+  'नाशिक',
+  'सोलापूर',
+  'अमरावती',
+  'नागपूर',
+  'जळगाव',
+  'अहमदनगर',
+  'नांदेड',
+  'लातूर',
+  'बीड',
+  'रायगड',
+  'रत्नागिरी',
+  'सिंधुदुर्ग'
 ];
 
 export default function MarathaOrganizationsPage() {
-  const [orgs, setOrgs] = useState(orgsData);
+  const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState('directory'); // 'directory' | 'events' | 'collaborations' | 'crm'
+  const [orgs, setOrgs] = useState([]);
   const [selectedCat, setSelectedCat] = useState('सर्व संघटना');
+  const [selectedDistrict, setSelectedDistrict] = useState('सर्व जिल्हे');
+  const [selectedType, setSelectedType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  // Modals
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [showCollabModal, setShowCollabModal] = useState(null); // org object
+  const [showEventModal, setShowEventModal] = useState(null);  // org object
+  const [orgDetails, setOrgDetails] = useState(null);
+
+  // CRM State
+  const [crmStats, setCrmStats] = useState(null);
+
+  // Forms State
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successToast, setSuccessToast] = useState(null);
 
   useEffect(() => {
-    apiClient.getOrganizations().then((liveData) => {
-      if (liveData && liveData.length > 0) {
-        const mapped = liveData.map((o) => ({
-          id: o.id,
-          name: o.name,
-          category: o.category || 'सामाजिक',
-          established: o.regNo || o.established || 'नोंदणीकृत',
-          hq: o.city ? `${o.city}, महाराष्ट्र` : (o.hq || 'महाराष्ट्र'),
-          presence: o.district ? `${o.district} व इतर जिल्हे` : (o.presence || 'महाराष्ट्र'),
-          members: o.president ? `अध्यक्ष: ${o.president}` : (o.members || 'सक्रिय सदस्य'),
-          focus: o.workScope || o.focus || 'सामाजिक, शैक्षणिक व सांस्कृतिक कार्य',
-          icon: o.logo || o.icon || '🚩',
-          contact: o.contact || '+91 98220 99887'
-        }));
-        // Merge registered live organizations at top without removing categorized defaults
-        setOrgs((prev) => {
-          const liveIds = new Set(mapped.map((m) => m.id));
-          const unmanaged = prev.filter((p) => !liveIds.has(p.id));
-          return [...mapped, ...unmanaged];
-        });
-      }
-    }).catch(() => {});
-  }, []);
+    loadOrganizations();
+    loadCrmStats();
+  }, [selectedCat, selectedDistrict, selectedType]);
 
-  const handleAddOrg = async (e) => {
+  const showNotification = (msg) => {
+    setSuccessToast(msg);
+    setTimeout(() => setSuccessToast(null), 4000);
+  };
+
+  const loadOrganizations = async () => {
+    setLoading(true);
+    try {
+      const params = {};
+      if (selectedCat !== 'सर्व संघटना') params.category = selectedCat;
+      if (selectedDistrict !== 'सर्व जिल्हे') params.district = selectedDistrict;
+      if (selectedType !== 'all') params.type = selectedType;
+      if (searchQuery.trim()) params.search = searchQuery.trim();
+
+      const data = await apiClient.getOrganizations(params);
+      if (data && Array.isArray(data)) {
+        setOrgs(data);
+      }
+    } catch (err) {
+      console.error('Failed to load organizations:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadCrmStats = async () => {
+    try {
+      const stats = await apiClient.getOrgCrmStats();
+      if (stats) setCrmStats(stats);
+    } catch {}
+  };
+
+  const handleOpenOrgDetails = async (org) => {
+    setSelectedOrg(org);
+    try {
+      const res = await apiClient.getOrganizationById(org.id);
+      if (res) {
+        setOrgDetails(res);
+      } else {
+        setOrgDetails(org);
+      }
+    } catch {
+      setOrgDetails(org);
+    }
+  };
+
+  const handleAddOrgSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const form = e.target;
-    const name = form.elements['name'].value;
-    const cat = form.elements['category'].value;
-    const city = form.elements['city'].value;
-    const est = form.elements['est']?.value;
-    const phone = form.elements['phone'].value;
-    const scope = form.elements['scope']?.value;
+    const fd = new FormData(e.target);
 
     try {
-      const res = await apiClient.addOrganization({
-        name,
-        regNo: est || 'संस्था क्र. MH-2026',
-        president: 'संस्थापक अध्यक्ष',
-        city,
-        district: city,
-        contact: phone.replace(/\D/g, '').slice(-10) || '9822011223',
-        workScope: scope || cat
-      });
-      const created = res.data?.organization || res.organization || {
-        id: `ORG-${Date.now().toString().slice(-4)}`,
-        name,
-        category: cat,
-        established: est || '२०२६',
-        hq: `${city}, महाराष्ट्र`,
-        presence: 'महाराष्ट्र',
-        members: 'सक्रिय सभासद',
-        focus: scope || 'सामाजिक व शैक्षणिक कार्य',
-        icon: '🚩',
-        contact: phone
+      const payload = {
+        name: fd.get('name'),
+        category: fd.get('category'),
+        type: fd.get('type'),
+        reg_no: fd.get('reg_no'),
+        pan_number: fd.get('pan_number'),
+        tax_80g_12a: fd.get('tax_80g_12a'),
+        established: fd.get('established'),
+        city: fd.get('city'),
+        district: fd.get('district'),
+        taluka: fd.get('taluka'),
+        presence: fd.get('presence'),
+        members: fd.get('members'),
+        contact: fd.get('contact'),
+        email: fd.get('email'),
+        website: fd.get('website'),
+        president_name: fd.get('president_name'),
+        president_phone: fd.get('president_phone'),
+        secretary_name: fd.get('secretary_name'),
+        focus: fd.get('focus'),
+        description: fd.get('description'),
+        regDoc: fd.get('regDoc') || 'CHARITY_CERT_UPLOADED.pdf'
       };
-      setOrgs((prev) => [created, ...prev]);
-      setSubmitted(true);
+
+      const res = await apiClient.addOrganization(payload);
+      setShowAddModal(false);
+      showNotification('🚩 आपली संस्था यशस्वीरित्या नोंदवली गेली! पडताळणीनंतर अधिकृत बॅज सक्रिय होईल.');
+      loadOrganizations();
+      loadCrmStats();
     } catch (err) {
-      alert(err.message || 'नोंदणी करताना त्रुटी आली.');
+      alert('नोंदणी करताना त्रुटी: ' + (err.message || 'सर्व्हर संपर्क अयशस्वी'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const filtered = orgs.filter((org) => {
-    const matchCat = selectedCat === 'सर्व संघटना' || org.category === selectedCat;
-    const matchSearch =
-      (org.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (org.hq || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (org.focus || '').toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCat && matchSearch;
+  const handleCollabSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const fd = new FormData(e.target);
+
+    try {
+      await apiClient.requestOrgCollaboration(showCollabModal.id, {
+        requestingOrgName: fd.get('requestingOrgName'),
+        initiativeTitle: fd.get('initiativeTitle'),
+        proposalSummary: fd.get('proposalSummary'),
+        district: fd.get('district'),
+        contactPerson: fd.get('contactPerson'),
+        contactPhone: fd.get('contactPhone')
+      });
+
+      setShowCollabModal(null);
+      showNotification(`🚩 ${showCollabModal.name} कडे सहकार्य विनंती यशस्वी पाठवली!`);
+      loadCrmStats();
+    } catch (err) {
+      alert('सहकार्य विनंती त्रुटी: ' + err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEventSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const fd = new FormData(e.target);
+
+    try {
+      await apiClient.addOrgEvent(showEventModal.id, {
+        title: fd.get('title'),
+        category: fd.get('category'),
+        date: fd.get('date'),
+        venue: fd.get('venue'),
+        district: fd.get('district'),
+        attendees: fd.get('attendees'),
+        description: fd.get('description'),
+        coordinatorName: fd.get('coordinatorName'),
+        coordinatorPhone: fd.get('coordinatorPhone')
+      });
+
+      setShowEventModal(null);
+      showNotification('🚩 संस्थेचा अधिकृत कार्यक्रम प्रसिद्ध करण्यात आला!');
+      loadOrganizations();
+      loadCrmStats();
+    } catch (err) {
+      alert('कार्यक्रम नोंदणी त्रुटी: ' + err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleVerifyStatus = async (orgId, newStatus) => {
+    try {
+      await apiClient.updateOrgStatus(orgId, {
+        verificationStatus: newStatus,
+        isVerified: newStatus.includes('सत्यापित') ? 1 : 0
+      });
+      showNotification(`संस्था स्थिती अद्ययावत: ${newStatus}`);
+      loadOrganizations();
+      loadCrmStats();
+      if (selectedOrg && selectedOrg.id === orgId) {
+        setSelectedOrg(prev => ({ ...prev, verification_status: newStatus, is_verified: newStatus.includes('सत्यापित') ? 1 : 0 }));
+      }
+    } catch (err) {
+      alert('स्थिती बदलताना त्रुटी: ' + err.message);
+    }
+  };
+
+  // Filter in-memory for instant search
+  const filteredOrgs = orgs.filter((org) => {
+    const q = searchQuery.toLowerCase();
+    return (
+      (org.name || '').toLowerCase().includes(q) ||
+      (org.hq || '').toLowerCase().includes(q) ||
+      (org.district || '').toLowerCase().includes(q) ||
+      (org.focus || '').toLowerCase().includes(q) ||
+      (org.president_name || '').toLowerCase().includes(q)
+    );
   });
 
   return (
-    <div className="organizations-page" style={{ background: '#FAF7F2', minHeight: '100vh', paddingBottom: '60px' }}>
-      {/* Hero Banner */}
+    <div style={{ background: '#FAF7F2', minHeight: '100vh', paddingBottom: '60px', color: '#1E293B', fontFamily: 'inherit' }}>
+      
+      {/* SUCCESS TOAST */}
+      {successToast && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          background: '#065F46',
+          color: '#fff',
+          padding: '14px 22px',
+          borderRadius: '12px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+          zIndex: 9999,
+          fontWeight: 700,
+          fontSize: '0.95rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          <span>✓</span> {successToast}
+        </div>
+      )}
+
+      {/* HERO SECTION */}
       <section style={{
-        background: 'linear-gradient(180deg, rgba(30, 15, 10, 0.45) 0%, rgba(139, 20, 20, 0.62) 60%, rgba(20, 10, 10, 0.78) 100%), url("/assets/images/maratha-kranti-morcha.jpg") center 35%/cover no-repeat',
+        background: 'linear-gradient(135deg, #4A0E0E 0%, #8B1414 50%, #B71C1C 100%)',
         color: '#FFFFFF',
-        padding: '64px 20px 56px',
+        padding: '52px 20px 48px',
         textAlign: 'center',
         position: 'relative',
-        boxShadow: 'inset 0 0 100px rgba(0,0,0,0.45)'
+        boxShadow: '0 12px 30px rgba(74,14,14,0.25)',
+        overflow: 'hidden'
       }}>
+        <div style={{ position: 'absolute', right: '-20px', top: '-30px', opacity: 0.08, fontSize: '18rem', pointerEvents: 'none' }}>
+          🚩
+        </div>
+
         <div style={{ maxWidth: '980px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-          <div style={{
-            display: 'inline-block',
-            background: 'rgba(0, 0, 0, 0.45)',
-            backdropFilter: 'blur(6px)',
-            border: '1px solid rgba(255, 213, 79, 0.4)',
-            padding: '6px 18px',
-            borderRadius: '24px',
-            fontSize: '0.88rem',
-            fontWeight: 700,
-            marginBottom: '14px',
-            color: '#FFD54F',
-            letterSpacing: '0.5px'
-          }}>
-            🚩 CONNECT मराठा — एक लढा! एक संघर्ष! एक समाज! | सर्वधर्म समभाव
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '14px', flexWrap: 'wrap' }}>
+            <span style={{
+              background: 'rgba(255, 213, 79, 0.2)',
+              border: '1px solid #FFD54F',
+              padding: '4px 16px',
+              borderRadius: '24px',
+              fontSize: '0.85rem',
+              fontWeight: 800,
+              color: '#FFD54F'
+            }}>
+              🚩 CONNECT MARATHA — मराठा सामाजिक संस्था व महासंघ निर्देशिका
+            </span>
+            <span style={{ background: '#10B981', color: '#fff', padding: '4px 14px', borderRadius: '24px', fontSize: '0.82rem', fontWeight: 700 }}>
+              ✓ धर्मादाय आयुक्त नोंदणी पडताळणी
+            </span>
           </div>
-          <p style={{
-            fontSize: '1.25rem',
-            color: '#FFE082',
-            fontWeight: 700,
-            margin: '0 0 8px',
-            textShadow: '0 2px 8px rgba(0,0,0,0.8)'
-          }}>
-            संघटित मराठा ! सशक्त मराठा !!
-          </p>
-          <h1 style={{
-            fontSize: 'clamp(2rem, 3.8vw, 2.85rem)',
-            fontWeight: 900,
-            margin: '0 0 12px',
-            color: '#FFFFFF',
-            textShadow: '0 3px 12px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9)'
-          }}>
-            मराठा संघटना – एकत्र येऊ, प्रगती करू !
+
+          <h1 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)', fontWeight: 900, margin: '0 0 12px', lineHeight: 1.25 }}>
+            महाराष्ट्रभरातील मराठा संस्था, मंडळे व ट्रस्ट एकाच व्यासपीठावर
           </h1>
-          <p style={{
-            fontSize: '1.12rem',
-            color: '#F8FAFC',
-            margin: '0 auto 24px',
-            maxWidth: '720px',
-            lineHeight: 1.6,
-            textShadow: '0 2px 8px rgba(0,0,0,0.85)'
-          }}>
-            सन्मान, स्वाभिमान आणि हक्कासाठी मराठा समाज एकत्र आहे. महाराष्ट्रातील सर्व अधिकृत संघटनांची सूची.
+          <p style={{ fontSize: '1.08rem', color: '#F8FAFC', margin: '0 auto 24px', maxWidth: '780px', lineHeight: 1.6, opacity: 0.95 }}>
+            सामाजिक न्याय, आरक्षण पाठपुरावा, शैक्षणिक वसतिगृहे, गडकोट संवर्धन व उद्योजक नेटवर्कसाठी कार्यरत 
+            महाराष्ट्रातील अधिकृत नोंदणीकृत शिखर संस्थांची माहिती, पदाधिकारी व संयुक्त उपक्रम.
           </p>
+
           <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
             <button
               onClick={() => setShowAddModal(true)}
               style={{
                 background: 'linear-gradient(135deg, #FFD54F 0%, #FFB300 100%)',
-                color: '#8B1414',
+                color: '#78350F',
                 border: 'none',
-                padding: '13px 28px',
+                padding: '12px 26px',
                 borderRadius: '10px',
                 fontWeight: 800,
-                fontSize: '1rem',
+                fontSize: '0.98rem',
                 cursor: 'pointer',
-                boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              ＋ आपली संघटना नोंदवा
+                boxShadow: '0 6px 16px rgba(0,0,0,0.25)'
+              }}>
+              ＋ नवीन संस्था नोंदणी व कागदपत्र सादर करा
             </button>
-            <a
-              href="#orgs-list"
+            <button
+              onClick={() => setActiveTab('crm')}
               style={{
-                background: 'rgba(0, 0, 0, 0.45)',
+                background: 'rgba(255,255,255,0.15)',
                 color: '#fff',
-                border: '1px solid rgba(255,255,255,0.6)',
+                border: '1px solid rgba(255,255,255,0.5)',
                 backdropFilter: 'blur(4px)',
-                padding: '13px 26px',
+                padding: '12px 24px',
                 borderRadius: '10px',
                 fontWeight: 700,
-                textDecoration: 'none',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.25)'
-              }}
-            >
-              नोंदणीकृत संघटना पहा ({orgsData.length}+)
-            </a>
+                fontSize: '0.95rem',
+                cursor: 'pointer'
+              }}>
+              📊 CRM संस्था ऑडिट व सक्रियता डॅशबोर्ड
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Search & Categories */}
-      <div id="orgs-list" style={{ maxWidth: '1180px', margin: '24px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
+      {/* STATS STRIP */}
+      <div style={{ maxWidth: '1240px', margin: '-22px auto 24px', padding: '0 16px', position: 'relative', zIndex: 5 }}>
         <div style={{
-          background: '#FFFFFF',
-          borderRadius: '14px',
-          padding: '20px',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.07)',
-          border: '1px solid #EADBCE'
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: '14px'
         }}>
-          <input
-            type="text"
-            placeholder="संघटना नाव, कार्यक्षेत्र किंवा मुख्यालय शोधा..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '12px 18px',
-              borderRadius: '8px',
-              border: '1.5px solid #D7CCC8',
-              fontSize: '1rem',
-              outline: 'none',
-              boxSizing: 'border-box',
-              marginBottom: '14px'
-            }}
-          />
-          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
-            {categories.map((cat) => {
-              const count = cat === 'सर्व संघटना' 
-                ? orgs.length 
-                : orgs.filter((o) => o.category === cat).length;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCat(cat)}
-                  style={{
-                    padding: '8px 18px',
-                    borderRadius: '24px',
-                    border: selectedCat === cat ? '2px solid #B71C1C' : '1.5px solid #E2D9D2',
-                    background: selectedCat === cat ? 'linear-gradient(135deg, #B71C1C 0%, #880E4F 100%)' : '#FFFFFF',
-                    color: selectedCat === cat ? '#FFFFFF' : '#333333',
-                    fontSize: '0.9rem',
-                    fontWeight: selectedCat === cat ? 800 : 600,
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    boxShadow: selectedCat === cat ? '0 4px 12px rgba(183,28,28,0.25)' : 'none',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  <span>{cat}</span>
-                  <span style={{
-                    fontSize: '0.75rem',
-                    background: selectedCat === cat ? 'rgba(255,255,255,0.25)' : '#F0EAE1',
-                    color: selectedCat === cat ? '#FFFFFF' : '#8B1414',
-                    padding: '2px 8px',
-                    borderRadius: '12px',
-                    fontWeight: 700
-                  }}>
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
+          <div style={{ background: '#fff', padding: '16px 20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 10px rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600 }}>नोंदणीकृत संस्था व ट्रस्ट</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#B71C1C', marginTop: '2px' }}>
+              {crmStats?.totalOrganizations || orgs.length || 6}+
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#16A34A', fontWeight: 600 }}>धर्मादाय आयुक्त नोंदणीकृत</div>
+          </div>
+
+          <div style={{ background: '#fff', padding: '16px 20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 10px rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600 }}>सत्यापित अधिकृत संस्था (Verified)</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#0F766E', marginTop: '2px' }}>
+              {crmStats?.verifiedOrganizations || 6}
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#64748B' }}>कागदपत्रे तपासणी पूर्ण</div>
+          </div>
+
+          <div style={{ background: '#fff', padding: '16px 20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 10px rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600 }}>आगामी राज्यव्यापी कार्यक्रम</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#D97706', marginTop: '2px' }}>
+              {crmStats?.totalEvents || 3}+
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#64748B' }}>परिषदा, मेळावे व श्रमदान</div>
+          </div>
+
+          <div style={{ background: '#fff', padding: '16px 20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 10px rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600 }}>संयुक्त उपक्रम (Collaborations)</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#1E293B', marginTop: '2px' }}>
+              {crmStats?.totalCollabs || 2}+
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#10B981', fontWeight: 600 }}>संस्थांमधील परस्पर सहकार्य</div>
           </div>
         </div>
       </div>
 
-      {/* Organizations Grid */}
-      <section style={{ maxWidth: '1180px', margin: '36px auto', padding: '0 16px' }}>
-        {filtered.length === 0 ? (
-          <div style={{
-            background: '#FFFFFF',
-            borderRadius: '16px',
-            padding: '48px 24px',
-            textAlign: 'center',
-            border: '1px dashed #D7CCC8',
-            maxWidth: '600px',
-            margin: '0 auto'
-          }}>
-            <div style={{ fontSize: '3rem', marginBottom: '12px' }}>🚩</div>
-            <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#B71C1C', margin: '0 0 8px' }}>
-              या वर्गवारीत सध्या संघटना आढळली नाही
-            </h4>
-            <p style={{ color: '#666', fontSize: '0.95rem', marginBottom: '20px' }}>
-              आपण आपल्या अधिकृत मराठा संघटनेची येथे विनामूल्य नोंदणी करू शकता.
-            </p>
+      {/* NAVIGATION TABS */}
+      <div style={{ maxWidth: '1240px', margin: '0 auto 20px', padding: '0 16px' }}>
+        <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #E2E8F0', overflowX: 'auto', paddingBottom: '2px' }}>
+          {[
+            { id: 'directory', label: '🏛️ संस्था व मंडळे निर्देशिका', count: orgs.length },
+            { id: 'events', label: '📅 आगामी कार्यक्रम व मेळावे' },
+            { id: 'crm', label: '📊 CRM संस्था पडताळणी व सक्रियता' }
+          ].map(t => (
             <button
-              onClick={() => setShowAddModal(true)}
+              key={t.id}
+              onClick={() => setActiveTab(t.id)}
               style={{
-                background: '#B71C1C',
-                color: '#fff',
+                background: 'none',
                 border: 'none',
-                padding: '10px 22px',
-                borderRadius: '8px',
-                fontWeight: 700,
-                cursor: 'pointer'
-              }}
-            >
-              ＋ संघटना नोंदणी करा
-            </button>
-          </div>
-        ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '22px' }}>
-          {filtered.map((org) => (
-            <div
-              key={org.id}
-              style={{
-                background: '#FFFFFF',
-                borderRadius: '16px',
-                border: '1px solid #E8DFD8',
-                overflow: 'hidden',
-                boxShadow: '0 6px 16px rgba(0,0,0,0.04)',
-                display: 'flex',
-                flexDirection: 'column'
-              }}
-            >
-              <div style={{
-                background: 'linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%)',
-                padding: '24px 20px',
-                borderBottom: '1px solid #EF9A9A',
+                borderBottom: activeTab === t.id ? '3px solid #B71C1C' : '3px solid transparent',
+                color: activeTab === t.id ? '#B71C1C' : '#64748B',
+                fontWeight: activeTab === t.id ? 800 : 600,
+                fontSize: '1rem',
+                padding: '10px 18px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '14px'
+                gap: '8px'
               }}>
-                <div style={{
-                  width: '56px',
-                  height: '56px',
+              {t.label}
+              {t.count !== undefined && (
+                <span style={{
+                  background: activeTab === t.id ? '#B71C1C' : '#E2E8F0',
+                  color: activeTab === t.id ? '#fff' : '#64748B',
+                  fontSize: '0.75rem',
+                  padding: '2px 8px',
                   borderRadius: '12px',
-                  background: '#B71C1C',
-                  color: '#FFD54F',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.8rem',
-                  boxShadow: '0 4px 10px rgba(183,28,28,0.2)'
+                  fontWeight: 700
                 }}>
-                  {org.icon}
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#B71C1C', margin: '0 0 4px' }}>
-                    {org.name}
-                  </h3>
-                  <span style={{ fontSize: '0.8rem', background: '#D32F2F', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontWeight: 700 }}>
-                    {org.category} • स्था: {org.established}
-                  </span>
-                </div>
-              </div>
-
-              <div style={{ padding: '18px 20px', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.88rem' }}>
-                <div>
-                  <strong>📍 मुख्यालय:</strong> {org.hq}
-                </div>
-                <div>
-                  <strong>🌍 विस्तार:</strong> {org.presence}
-                </div>
-                <div>
-                  <strong>👥 सदस्य संख्या:</strong> <span style={{ color: '#2E7D32', fontWeight: 700 }}>{org.members}</span>
-                </div>
-                <div style={{ color: '#666', fontSize: '0.82rem', marginTop: '4px' }}>
-                  <strong>उद्दिष्ट:</strong> {org.focus}
-                </div>
-              </div>
-
-              <div style={{ padding: '14px 20px', background: '#FAFAFA', borderTop: '1px solid #EEEEEE', display: 'flex', gap: '10px' }}>
-                <button
-                  onClick={() => setSelectedOrg(org)}
-                  style={{
-                    flex: 1,
-                    background: '#B71C1C',
-                    color: '#FFFFFF',
-                    border: 'none',
-                    padding: '10px',
-                    borderRadius: '8px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    fontSize: '0.9rem'
-                  }}
-                >
-                  संघटना माहिती
-                </button>
-                <button
-                  onClick={() => alert(`${org.name} संपर्क: ${org.contact}`)}
-                  style={{
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    border: '1px solid #B71C1C',
-                    background: '#FFFFFF',
-                    color: '#B71C1C',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  📞 संपर्क
-                </button>
-              </div>
-            </div>
+                  {t.count}
+                </span>
+              )}
+            </button>
           ))}
         </div>
-        )}
-      </section>
+      </div>
 
-      {/* Statistics Banner */}
-      <section style={{ maxWidth: '1180px', margin: '48px auto 0', padding: '0 16px' }}>
-        <div style={{
-          background: 'linear-gradient(135deg, #B71C1C 0%, #7F0000 100%)',
-          borderRadius: '16px',
-          padding: '40px 24px',
-          color: '#FFFFFF',
-          textAlign: 'center'
-        }}>
-          <h3 style={{ fontSize: '1.6rem', fontWeight: 800, margin: '0 0 20px', color: '#FFD54F' }}>
-            संघटित मराठा, सक्षम मराठा, समृद्ध मराठा
-          </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '20px' }}>
-            <div>
-              <div style={{ fontSize: '2.5rem', fontWeight: 900 }}>५००+</div>
-              <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>नोंदणीकृत संघटना</div>
+      {/* TAB 1: ORGANIZATIONS DIRECTORY */}
+      {activeTab === 'directory' && (
+        <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 16px' }}>
+          {/* Filters Bar */}
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '14px',
+            padding: '18px 20px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+            border: '1px solid #E2E8F0',
+            marginBottom: '24px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '14px'
+          }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+              <input
+                type="text"
+                placeholder="संस्थेचे नाव, पदाधिकारी, उद्दिष्ट किंवा शहर शोधा..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }}
+              />
+
+              <select
+                value={selectedDistrict}
+                onChange={(e) => setSelectedDistrict(e.target.value)}
+                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.9rem', background: '#fff' }}>
+                {MAHARASHTRA_DISTRICTS.map(d => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.9rem', background: '#fff' }}>
+                <option value="all">सर्व प्रकार (All Types)</option>
+                <option value="महासंघ">महासंघ (Federation)</option>
+                <option value="ट्रस्ट">नोंदणीकृत ट्रस्ट (Trust)</option>
+                <option value="प्रतिष्ठान">मंडळ / प्रतिष्ठान</option>
+                <option value="सोसायटी">सोसायटी (Society)</option>
+              </select>
             </div>
-            <div>
-              <div style={{ fontSize: '2.5rem', fontWeight: 900 }}>१ लाख+</div>
-              <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>सक्रिय पदाधिकारी</div>
+
+            {/* Category Pills */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCat(cat)}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    border: selectedCat === cat ? '1px solid #B71C1C' : '1px solid #E2E8F0',
+                    background: selectedCat === cat ? '#B71C1C' : '#F8FAFC',
+                    color: selectedCat === cat ? '#fff' : '#475569',
+                    fontSize: '0.84rem',
+                    fontWeight: selectedCat === cat ? 700 : 500,
+                    cursor: 'pointer'
+                  }}>
+                  {cat}
+                </button>
+              ))}
             </div>
-            <div>
-              <div style={{ fontSize: '2.5rem', fontWeight: 900 }}>३६</div>
-              <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>जिल्ह्यांमध्ये प्रत्यक्ष उपस्थिती</div>
+          </div>
+
+          {/* Organizations Grid */}
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '60px 0', color: '#64748B' }}>संघटना यादी लोड होत आहे...</div>
+          ) : filteredOrgs.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 0', background: '#fff', borderRadius: '16px', border: '1px solid #E2E8F0' }}>
+              <div style={{ fontSize: '3rem', marginBottom: '8px' }}>🏛️</div>
+              <h3 style={{ margin: '0 0 6px 0', color: '#1E293B' }}>कोणतीही संस्था सापडली नाही</h3>
+              <p style={{ color: '#64748B', fontSize: '0.9rem', margin: 0 }}>कृपया शोध संज्ञा किंवा फिल्टर्स बदलून पुन्हा प्रयत्न करा.</p>
             </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '22px' }}>
+              {filteredOrgs.map(org => (
+                <div
+                  key={org.id}
+                  style={{
+                    background: '#FFFFFF',
+                    borderRadius: '16px',
+                    border: '1px solid #E2E8F0',
+                    padding: '22px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                  }}>
+                  <div>
+                    {/* Top Row: Category & Badges */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <span style={{
+                        background: '#FFEBEE',
+                        color: '#B71C1C',
+                        padding: '4px 10px',
+                        borderRadius: '8px',
+                        fontSize: '0.78rem',
+                        fontWeight: 700
+                      }}>
+                        {org.category} • {org.type}
+                      </span>
+                      <span style={{
+                        background: org.is_verified ? '#DCFCE7' : '#FEF3C7',
+                        color: org.is_verified ? '#166534' : '#92400E',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        fontSize: '0.75rem',
+                        fontWeight: 700
+                      }}>
+                        {org.verification_status || 'सत्यापित (Verified)'}
+                      </span>
+                    </div>
+
+                    {/* Org Title & Icon */}
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', marginBottom: '10px' }}>
+                      <div style={{ fontSize: '2rem', lineHeight: 1 }}>{org.icon || '🚩'}</div>
+                      <div>
+                        <h3 style={{ margin: '0 0 4px 0', fontSize: '1.2rem', fontWeight: 800, color: '#0F172A', lineHeight: 1.35 }}>
+                          {org.name}
+                        </h3>
+                        <div style={{ fontSize: '0.8rem', color: '#64748B' }}>
+                          धर्मादाय नोंदणी: <strong>{org.reg_no || 'नोंदणीकृत'}</strong> • स्था: {org.established}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Focus Description */}
+                    <p style={{ fontSize: '0.88rem', color: '#475569', margin: '0 0 16px 0', lineHeight: 1.5 }}>
+                      {org.focus}
+                    </p>
+
+                    {/* Metadata details */}
+                    <div style={{ background: '#F8FAFC', padding: '12px 14px', borderRadius: '10px', fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
+                      <div><strong>मुख्यालय / शहर:</strong> {org.hq || org.district}</div>
+                      <div><strong>कार्यक्षेत्र:</strong> {org.presence || 'महाराष्ट्र राज्य'}</div>
+                      <div><strong>अध्यक्ष / नेतृत्व:</strong> {org.president_name || 'मा. अध्यक्ष'}</div>
+                      <div><strong>सक्रियता गुण:</strong> <span style={{ color: '#B71C1C', fontWeight: 800 }}>{org.activity_score || 85}/100</span> (उच्च सक्रिय)</div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', paddingTop: '10px', borderTop: '1px solid #F1F5F9' }}>
+                    <button
+                      onClick={() => handleOpenOrgDetails(org)}
+                      style={{
+                        background: '#F1F5F9',
+                        color: '#334155',
+                        border: '1px solid #CBD5E1',
+                        padding: '9px',
+                        borderRadius: '8px',
+                        fontWeight: 700,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer'
+                      }}>
+                      🔍 पदाधिकारी व अहवाल
+                    </button>
+                    <button
+                      onClick={() => setShowCollabModal(org)}
+                      style={{
+                        background: '#B71C1C',
+                        color: '#fff',
+                        border: 'none',
+                        padding: '9px',
+                        borderRadius: '8px',
+                        fontWeight: 700,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer'
+                      }}>
+                      🤝 संयुक्त उपक्रम विनंती
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 2: EVENTS & GATHERINGS */}
+      {activeTab === 'events' && (
+        <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <div>
-              <div style={{ fontSize: '2.5rem', fontWeight: 900 }}>१</div>
-              <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>एकच ध्येय — समाजहित व प्रगती</div>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0 0 4px 0', color: '#0F172A' }}>
+                🚩 आगामी सामाजिक परिषदा, मेळावे व गड संवर्धन उपक्रम
+              </h2>
+              <p style={{ margin: 0, fontSize: '0.88rem', color: '#64748B' }}>
+                विविध मराठा संघटना व मंडळांद्वारे आयोजित राज्यस्तरीय जाहीर कार्यक्रम.
+              </p>
+            </div>
+            {orgs.length > 0 && (
+              <button
+                onClick={() => setShowEventModal(orgs[0])}
+                style={{
+                  background: '#B71C1C',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '10px 18px',
+                  borderRadius: '8px',
+                  fontWeight: 700,
+                  fontSize: '0.9rem',
+                  cursor: 'pointer'
+                }}>
+                ＋ नवीन कार्यक्रम जोडा
+              </button>
+            )}
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '20px' }}>
+            {[
+              {
+                title: 'राज्यव्यापी मराठा विचारमंथन परिषद २०२६',
+                org_name: 'अखिल भारतीय मराठा महासंघ',
+                category: 'सामाजिक परिषद',
+                date: '२०२६-११-१५',
+                venue: 'यशवंतराव चव्हाण प्रतिष्ठान सभागृह, नरिमन पॉईंट, मुंबई',
+                attendees: '१,५००+ प्रतिनिधी',
+                desc: 'उच्च शिक्षण, व्यावसायिक आरक्षण आणि उद्योजकता विकासासाठी राज्यभरातील प्रतिनिधींची शिखर परिषद.',
+                coordinator: 'राजेंद्र कोंढरे (9822055667)'
+              },
+              {
+                title: 'दुर्गराज रायगड महादरवाजा श्रमदान व स्वच्छता मोहीम',
+                org_name: 'सह्याद्री प्रतिष्ठान',
+                category: 'दुर्ग संवर्धन',
+                date: '२०२६-१०-२६',
+                venue: 'किल्ले रायगड महादरवाजा परिसर',
+                attendees: '५००+ मावळे',
+                desc: 'तटबंदी स्वच्छता, ऐतिहासिक पायऱ्यांची डागडूजी आणि प्लास्टिक मुक्ती अभियान.',
+                coordinator: 'गणेश कदम (9822044556)'
+              },
+              {
+                title: 'मराठा नवउद्योजक B2B एक्सपो व निधी सहाय्य परिषद',
+                org_name: 'मराठा चेंबर ऑफ कॉमर्स (MCCIA)',
+                category: 'मेळावा',
+                date: '२०२६-१२-०५',
+                venue: 'ऑटो क्लस्टर एक्झिबिशन सेंटर, चिंचवड, पुणे',
+                attendees: '३,०००+ उद्योजक',
+                desc: 'कृषी प्रक्रिया उद्योग, आयटी स्टार्टअप्स आणि मॅन्युफॅक्चरिंग उद्योगांसाठी व्हेंचर कॅपिटल गुंतवणूकदार परिषद.',
+                coordinator: 'विक्रमसिंह शिंदे (9822090001)'
+              }
+            ].map((evt, idx) => (
+              <div key={idx} style={{ background: '#fff', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '22px', boxShadow: '0 4px 10px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ background: '#FEF3C7', color: '#92400E', padding: '3px 8px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 700 }}>
+                    {evt.category}
+                  </span>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#B71C1C' }}>
+                    📅 {evt.date}
+                  </span>
+                </div>
+
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 6px 0', color: '#0F172A' }}>{evt.title}</h3>
+                <div style={{ fontSize: '0.82rem', color: '#B71C1C', fontWeight: 600, marginBottom: '10px' }}>
+                  आयोजक: {evt.org_name}
+                </div>
+                <p style={{ fontSize: '0.88rem', color: '#475569', margin: '0 0 14px 0', lineHeight: 1.5 }}>
+                  {evt.desc}
+                </p>
+
+                <div style={{ background: '#F8FAFC', padding: '10px 12px', borderRadius: '8px', fontSize: '0.82rem', color: '#334155' }}>
+                  <div><strong>स्थळ:</strong> {evt.venue}</div>
+                  <div><strong>अपेक्षित उपस्थिती:</strong> {evt.attendees}</div>
+                  <div><strong>समन्वयक:</strong> {evt.coordinator}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: CRM AUDIT & GOVERNANCE */}
+      {activeTab === 'crm' && (
+        <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 16px' }}>
+          <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '24px', marginBottom: '24px' }}>
+            <h2 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '0 0 16px 0', color: '#0F172A' }}>
+              📊 CRM संस्था सनियंत्रण, पडताळणी व सक्रियता तालिका
+            </h2>
+
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+                <thead>
+                  <tr style={{ background: '#F8FAFC', borderBottom: '2px solid #E2E8F0', textAlign: 'left' }}>
+                    <th style={{ padding: '12px' }}>संस्थेचे नाव</th>
+                    <th style={{ padding: '12px' }}>जिल्हा / प्रकार</th>
+                    <th style={{ padding: '12px' }}>धर्मादाय नोंदणी क्र.</th>
+                    <th style={{ padding: '12px' }}>सक्रियता गुण</th>
+                    <th style={{ padding: '12px' }}>पडताळणी स्थिती</th>
+                    <th style={{ padding: '12px' }}>प्रशासकीय कृती (Admin Action)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orgs.map((o) => (
+                    <tr key={o.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: '12px', fontWeight: 700, color: '#0F172A' }}>{o.name}</td>
+                      <td style={{ padding: '12px', color: '#475569' }}>{o.district} • {o.category}</td>
+                      <td style={{ padding: '12px', color: '#64748B' }}>{o.reg_no || 'नोंदणीकृत'}</td>
+                      <td style={{ padding: '12px', fontWeight: 800, color: '#B71C1C' }}>{o.activity_score || 85}%</td>
+                      <td style={{ padding: '12px' }}>
+                        <span style={{
+                          background: o.is_verified ? '#DCFCE7' : '#FEF3C7',
+                          color: o.is_verified ? '#166534' : '#92400E',
+                          padding: '3px 8px',
+                          borderRadius: '6px',
+                          fontSize: '0.78rem',
+                          fontWeight: 700
+                        }}>
+                          {o.verification_status || 'सत्यापित (Verified)'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '12px' }}>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <button
+                            onClick={() => handleVerifyStatus(o.id, 'सत्यापित (Verified)')}
+                            style={{ background: '#DCFCE7', color: '#166534', border: '1px solid #86EFAC', padding: '4px 8px', borderRadius: '6px', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 700 }}>
+                            ✓ मान्यता द्या
+                          </button>
+                          <button
+                            onClick={() => handleVerifyStatus(o.id, 'कागदपत्रे अपूर्ण')}
+                            style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FCD34D', padding: '4px 8px', borderRadius: '6px', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 600 }}>
+                            ⚠️ अपूर्ण
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-      </section>
+      )}
 
-      {/* Modal: Org Detail */}
+      {/* MODAL 1: ORG DETAILS (Office Bearers, Events, Reports) */}
       {selectedOrg && (
         <div style={{
           position: 'fixed',
           inset: 0,
           background: 'rgba(0,0,0,0.65)',
-          backdropFilter: 'blur(5px)',
+          backdropFilter: 'blur(4px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -845,50 +772,101 @@ export default function MarathaOrganizationsPage() {
           <div style={{
             background: '#FFFFFF',
             borderRadius: '16px',
-            maxWidth: '520px',
+            maxWidth: '720px',
             width: '100%',
-            padding: '28px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            padding: '26px',
             position: 'relative'
           }}>
             <button
               onClick={() => setSelectedOrg(null)}
-              style={{ position: 'absolute', right: '16px', top: '16px', background: '#eee', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 700 }}
-            >
+              style={{ position: 'absolute', right: '16px', top: '16px', background: '#F1F5F9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 700 }}>
               ✕
             </button>
+
             <div style={{ display: 'flex', gap: '14px', alignItems: 'center', marginBottom: '16px' }}>
-              <span style={{ fontSize: '2.5rem' }}>{selectedOrg.icon}</span>
+              <span style={{ fontSize: '2.5rem' }}>{selectedOrg.icon || '🚩'}</span>
               <div>
-                <h2 style={{ color: '#B71C1C', margin: '0 0 4px', fontSize: '1.4rem' }}>{selectedOrg.name}</h2>
-                <span style={{ background: '#FFEBEE', color: '#B71C1C', padding: '3px 10px', borderRadius: '10px', fontWeight: 700, fontSize: '0.84rem' }}>
-                  {selectedOrg.category} • स्थापना: {selectedOrg.established}
-                </span>
+                <h2 style={{ color: '#B71C1C', margin: '0 0 4px', fontSize: '1.35rem', fontWeight: 800 }}>{selectedOrg.name}</h2>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <span style={{ background: '#FFEBEE', color: '#B71C1C', padding: '2px 8px', borderRadius: '6px', fontWeight: 700, fontSize: '0.78rem' }}>
+                    {selectedOrg.category} • {selectedOrg.type}
+                  </span>
+                  <span style={{ background: '#DCFCE7', color: '#166534', padding: '2px 8px', borderRadius: '6px', fontWeight: 700, fontSize: '0.78rem' }}>
+                    धर्मादाय क्र: {selectedOrg.reg_no || 'MAH/PUN/F-1234'}
+                  </span>
+                </div>
               </div>
             </div>
-            <div style={{ fontSize: '0.92rem', color: '#444', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div><strong>मुख्यालय:</strong> {selectedOrg.hq}</div>
-              <div><strong>विस्तार:</strong> {selectedOrg.presence}</div>
-              <div><strong>सदस्य:</strong> {selectedOrg.members}</div>
-              <div><strong>ध्येय व उपक्रम:</strong> {selectedOrg.focus}</div>
-              <div><strong>अधिकृत संपर्क:</strong> {selectedOrg.contact}</div>
+
+            <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.6, marginBottom: '18px' }}>
+              {selectedOrg.description || selectedOrg.focus}
+            </p>
+
+            {/* Office Bearers Table */}
+            <h4 style={{ margin: '0 0 10px 0', fontSize: '1rem', fontWeight: 800, color: '#0F172A' }}>
+              👥 अधिकृत पदाधिकारी व कार्यकारिणी (Office Bearers)
+            </h4>
+            <div style={{ background: '#F8FAFC', borderRadius: '10px', padding: '12px', marginBottom: '18px' }}>
+              {orgDetails?.office_bearers && orgDetails.office_bearers.length > 0 ? (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
+                  {orgDetails.office_bearers.map((b, i) => (
+                    <div key={i} style={{ background: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '0.84rem' }}>
+                      <div style={{ fontWeight: 800, color: '#0F172A' }}>{b.name}</div>
+                      <div style={{ color: '#B71C1C', fontWeight: 700, fontSize: '0.78rem' }}>{b.designation}</div>
+                      <div style={{ color: '#64748B', fontSize: '0.78rem' }}>📞 {b.phone}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ fontSize: '0.85rem', color: '#64748B' }}>
+                  अध्यक्ष: <strong>{selectedOrg.president_name}</strong> • संपर्क: {selectedOrg.contact}
+                </div>
+              )}
             </div>
-            <button
-              onClick={() => setSelectedOrg(null)}
-              style={{ width: '100%', marginTop: '20px', background: '#B71C1C', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
-            >
-              बंद करा
-            </button>
+
+            {/* Work Reports */}
+            {orgDetails?.work_reports && orgDetails.work_reports.length > 0 && (
+              <div style={{ marginBottom: '18px' }}>
+                <h4 style={{ margin: '0 0 8px 0', fontSize: '1rem', fontWeight: 800, color: '#0F172A' }}>
+                  📜 वार्षिक कार्य अहवाल (Annual Work Report)
+                </h4>
+                {orgDetails.work_reports.map((r, i) => (
+                  <div key={i} style={{ background: '#F1F5F9', padding: '10px 14px', borderRadius: '8px', fontSize: '0.82rem', marginBottom: '6px' }}>
+                    <div style={{ fontWeight: 700, color: '#0F172A' }}>वर्ष {r.report_year}: {r.title}</div>
+                    <div style={{ color: '#475569', marginTop: '2px' }}>{r.summary}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px' }}>
+              <button
+                onClick={() => setSelectedOrg(null)}
+                style={{ background: '#F1F5F9', border: 'none', padding: '10px 18px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
+                बंद करा
+              </button>
+              <button
+                onClick={() => {
+                  setShowCollabModal(selectedOrg);
+                  setSelectedOrg(null);
+                }}
+                style={{ background: '#B71C1C', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
+                🤝 संयुक्त उपक्रम प्रस्ताव पाठवा
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Modal: Add Organization */}
+      {/* MODAL 2: ADD NEW ORGANIZATION */}
       {showAddModal && (
         <div style={{
           position: 'fixed',
           inset: 0,
           background: 'rgba(0,0,0,0.65)',
-          backdropFilter: 'blur(5px)',
+          backdropFilter: 'blur(4px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -898,60 +876,301 @@ export default function MarathaOrganizationsPage() {
           <div style={{
             background: '#FFFFFF',
             borderRadius: '16px',
-            maxWidth: '520px',
+            maxWidth: '680px',
             width: '100%',
+            maxHeight: '92vh',
+            overflowY: 'auto',
             padding: '28px',
             position: 'relative'
           }}>
             <button
-              onClick={() => { setShowAddModal(false); setSubmitted(false); }}
-              style={{ position: 'absolute', right: '16px', top: '16px', background: '#eee', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 700 }}
-            >
+              onClick={() => setShowAddModal(false)}
+              style={{ position: 'absolute', right: '16px', top: '16px', background: '#F1F5F9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 700 }}>
               ✕
             </button>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#B71C1C', margin: '0 0 6px' }}>
-              🚩 आपली संघटना नोंदवा
+
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#B71C1C', margin: '0 0 6px' }}>
+              🚩 नवीन मराठा संस्था / मंडळ नोंदणी अर्ज
             </h2>
-            <p style={{ fontSize: '0.88rem', color: '#666', margin: '0 0 16px' }}>
-              Connect Maratha व्यासपीठावर आपल्या संघटनेचा अधिकृत समावेश करा.
+            <p style={{ fontSize: '0.85rem', color: '#64748B', margin: '0 0 18px' }}>
+              आपल्या संस्थेचा अधिकृत धर्मादाय नोंदणी क्रमांक व कागदपत्रांसह माहिती सादर करा.
             </p>
 
-            {submitted ? (
-              <div style={{ textAlign: 'center', padding: '24px 0' }}>
-                <span style={{ fontSize: '3rem' }}>🎉</span>
-                <h3 style={{ color: '#2E7D32', margin: '10px 0' }}>संघटना नोंदणी प्राप्त झाली!</h3>
-                <p style={{ color: '#555', fontSize: '0.9rem' }}>पडताळणी समितीकडून तपासणीनंतर अधिकृत मान्यता दिली जाईल.</p>
+            <form onSubmit={handleAddOrgSubmit}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>संस्थेचे पूर्ण नाव *</label>
+                  <input name="name" required placeholder="उदा. सह्याद्री मित्र गड संवर्धन प्रतिष्ठान" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>कार्यक्षेत्र प्रकार *</label>
+                    <select name="category" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#fff' }}>
+                      {CATEGORIES.filter(c => c !== 'सर्व संघटना').map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>संस्था स्वरूप *</label>
+                    <select name="type" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#fff' }}>
+                      <option value="नोंदणीकृत ट्रस्ट (Trust)">नोंदणीकृत ट्रस्ट (Trust)</option>
+                      <option value="सोसायटी (Society)">सोसायटी (Society)</option>
+                      <option value="मंडळ / प्रतिष्ठान (Foundation)">मंडळ / प्रतिष्ठान (Foundation)</option>
+                      <option value="महासंघ (Federation)">महासंघ (Federation)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>धर्मादाय नोंदणी क्र. (Charity Reg No)</label>
+                    <input name="reg_no" placeholder="MAH/PUN/F-1234/2026" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>स्थापना वर्ष</label>
+                    <input name="established" placeholder="उदा. २०१०" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>जिल्हा *</label>
+                    <select name="district" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#fff' }}>
+                      {MAHARASHTRA_DISTRICTS.filter(d => d !== 'सर्व जिल्हे').map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>तालुका / शहर</label>
+                    <input name="taluka" placeholder="उदा. हवेली / महाड" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>अध्यक्षांचे नाव *</label>
+                    <input name="president_name" required placeholder="उदा. संभाजीराव कदम" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>अधिकृत मोबाईल नंबर *</label>
+                    <input name="contact" required type="tel" placeholder="9822000000" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>मुख्य उद्दिष्ट व कार्यक्षेत्र *</label>
+                  <textarea name="focus" required placeholder="संस्थेचे मुख्य उद्दिष्ट, समाजोपयोगी उपक्रम..." rows="2" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }}></textarea>
+                </div>
+
+                <div style={{ background: '#FFFBEB', padding: '12px', borderRadius: '8px', border: '1px solid #FCD34D', fontSize: '0.8rem', color: '#92400E' }}>
+                  📎 <strong>कागदपत्र पडताळणी:</strong> नोंदणीनंतर धर्मादाय आयुक्त प्रमाणपत्र (Trust Registration Certificate) व कार्यकारिणी यादी अपलोड करणे अनिवार्य राहील.
+                </div>
+
                 <button
-                  onClick={() => { setShowAddModal(false); setSubmitted(false); }}
-                  style={{ background: '#B71C1C', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '6px', fontWeight: 700, cursor: 'pointer', marginTop: '12px' }}
-                >
-                  ठीक आहे
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{
+                    width: '100%',
+                    background: '#B71C1C',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    fontWeight: 800,
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    marginTop: '8px'
+                  }}>
+                  {isSubmitting ? 'नोंदणी होत आहे...' : '🚩 संस्था नोंदणी सादर करा'}
                 </button>
               </div>
-            ) : (
-              <form onSubmit={handleAddOrg}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <input name="name" required placeholder="संघटनेचे पूर्ण नाव *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <select name="category" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}>
-                      {categories.filter(c => c !== 'सर्व संघटना').map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                    <input name="city" required placeholder="मुख्यालय / शहर *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <input name="est" placeholder="स्थापना वर्ष" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                    <input name="phone" required type="tel" placeholder="अध्यक्ष / सचिव मोबाईल *" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-                  </div>
-                  <textarea name="scope" placeholder="संघटनेची मुख्य ध्येये व कार्यक्षेत्र" rows="3" style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}></textarea>
-                  <button type="submit" disabled={isSubmitting} style={{ background: '#B71C1C', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', opacity: isSubmitting ? 0.7 : 1 }}>
-                    {isSubmitting ? 'नोंदणी सादर करत आहे...' : 'संघटना नोंदणी सादर करा'}
-                  </button>
-                </div>
-              </form>
-            )}
+            </form>
           </div>
         </div>
       )}
+
+      {/* MODAL 3: COLLABORATION REQUEST */}
+      {showCollabModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.65)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '16px'
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            maxWidth: '560px',
+            width: '100%',
+            padding: '26px',
+            position: 'relative'
+          }}>
+            <button
+              onClick={() => setShowCollabModal(null)}
+              style={{ position: 'absolute', right: '16px', top: '16px', background: '#F1F5F9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 700 }}>
+              ✕
+            </button>
+
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#B71C1C', margin: '0 0 6px' }}>
+              🤝 संयुक्त उपक्रम प्रस्ताव (Collaboration Request)
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: '#64748B', margin: '0 0 16px' }}>
+              लक्ष्य संस्था: <strong>{showCollabModal.name}</strong>
+            </p>
+
+            <form onSubmit={handleCollabSubmit}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>आपल्या संस्थेचे नाव *</label>
+                  <input name="requestingOrgName" required placeholder="उदा. मराठा युवा मंच" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>संयुक्त उपक्रमाचे नाव / शीर्षक *</label>
+                  <input name="initiativeTitle" required placeholder="उदा. राज्यस्तरीय मराठा करिअर मार्गदर्शन व रोजगार मेळावा" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>प्रस्ताव सारांश व अपेक्षित सहकार्य *</label>
+                  <textarea name="proposalSummary" required placeholder="दोन्ही संस्था मिळून काय साध्य करणार? तारीख व जागा..." rows="3" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }}></textarea>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>समन्वयक नाव *</label>
+                    <input name="contactPerson" required placeholder="आपले नाव" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>मोबाईल नंबर *</label>
+                    <input name="contactPhone" required type="tel" placeholder="9822000000" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
+                </div>
+
+                <input type="hidden" name="district" value={showCollabModal.district || 'पुणे'} />
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{
+                    background: '#B71C1C',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '11px',
+                    borderRadius: '8px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    marginTop: '8px'
+                  }}>
+                  {isSubmitting ? 'पाठवत आहे...' : '🤝 अधिकृत प्रस्ताव सादर करा'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 4: ADD EVENT MODAL */}
+      {showEventModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.65)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '16px'
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            maxWidth: '560px',
+            width: '100%',
+            padding: '26px',
+            position: 'relative'
+          }}>
+            <button
+              onClick={() => setShowEventModal(null)}
+              style={{ position: 'absolute', right: '16px', top: '16px', background: '#F1F5F9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 700 }}>
+              ✕
+            </button>
+
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#B71C1C', margin: '0 0 6px' }}>
+              📅 संस्थेचा नवीन कार्यक्रम प्रसिद्ध करा
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: '#64748B', margin: '0 0 16px' }}>
+              संस्था: <strong>{showEventModal.name}</strong>
+            </p>
+
+            <form onSubmit={handleEventSubmit}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>कार्यक्रमाचे नाव *</label>
+                  <input name="title" required placeholder="उदा. राज्यस्तरीय मराठा विचारमंथन परिषद" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>कार्यक्रम प्रकार</label>
+                    <select name="category" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#fff' }}>
+                      <option value="सामाजिक परिषद">सामाजिक परिषद</option>
+                      <option value="मेळावा">मेळावा</option>
+                      <option value="रक्तदान शिबिर">रक्तदान शिबिर</option>
+                      <option value="दुर्ग संवर्धन">दुर्ग संवर्धन</option>
+                      <option value="व्याख्यानमाला">व्याख्यानमाला</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>दिनांक *</label>
+                    <input name="date" required type="date" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>स्थळ व पत्ता *</label>
+                  <input name="venue" required placeholder="सभागृह, शहर किंवा किल्ला परिसर" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>समन्वयक नाव</label>
+                    <input name="coordinatorName" placeholder="नाव" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>मोबाईल नंबर</label>
+                    <input name="coordinatorPhone" type="tel" placeholder="9822000000" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
+                </div>
+
+                <input type="hidden" name="district" value={showEventModal.district || 'पुणे'} />
+                <input type="hidden" name="attendees" value="500" />
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{
+                    background: '#B71C1C',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '11px',
+                    borderRadius: '8px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    marginTop: '8px'
+                  }}>
+                  {isSubmitting ? 'नोंद होत आहे...' : '🚩 कार्यक्रम प्रसिद्ध करा'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

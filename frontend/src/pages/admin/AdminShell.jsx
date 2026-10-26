@@ -10,6 +10,10 @@ import {
   MASTER_ROLES,
   evaluateCandidateEligibility
 } from '../../data/rolesMatrixData';
+import {
+  MAHARASHTRA_DISTRICTS,
+  DISTRICT_TALUKAS
+} from '../../services/referralService';
 
 // Import Non-Reusable Full Module Reports
 import UsersFullReport from './reports/UsersFullReport';
@@ -20,6 +24,7 @@ import BloodHelpFullReport from './reports/BloodHelpFullReport';
 import TicketFullReport from './reports/TicketFullReport';
 import EventsFullReport from './reports/EventsFullReport';
 import ContentFullReport from './reports/ContentFullReport';
+import { exportTableToPdf } from '../../utils/tablePdfExporter';
 
 /* ============================================================
    STYLE TOKENS
@@ -32,7 +37,7 @@ const T = {
   saffron: '#EA580C',
   amber: '#D97706',
   deep: '#C2410C',
-  ink: '#431407',
+  ink: '#EA580C',
   text: '#1E293B',
   muted: '#64748B',
   green: '#16A34A',
@@ -256,6 +261,25 @@ export default function AdminShell() {
   });
   const [toast, setToast] = useState(null);
 
+  // Universal Advanced Report Filters (Matching Referral Intelligence)
+  const [shellFilterSearch, setShellFilterSearch] = useState('');
+  const [shellFilterDistrict, setShellFilterDistrict] = useState('all');
+  const [shellFilterTaluka, setShellFilterTaluka] = useState('all');
+  const [shellFilterStatus, setShellFilterStatus] = useState('all');
+  const [shellFilterTimeframe, setShellFilterTimeframe] = useState('all');
+  const [shellFilterStartDate, setShellFilterStartDate] = useState('');
+  const [shellFilterEndDate, setShellFilterEndDate] = useState('');
+
+  const handleResetShellFilters = () => {
+    setShellFilterSearch('');
+    setShellFilterDistrict('all');
+    setShellFilterTaluka('all');
+    setShellFilterStatus('all');
+    setShellFilterTimeframe('all');
+    setShellFilterStartDate('');
+    setShellFilterEndDate('');
+  };
+
   // Global data (shared across views with robust fallback datasets)
   const defaultUsers = [
     { id: 'CM-MH-9876543210', name: 'अमोल तुकाराम जाधव', phone: '+91 98220 11924', district: 'पुणे (हवेली)', profession: 'उद्योगपती (IT)', verified: true, referralCount: 12450 },
@@ -465,6 +489,117 @@ export default function AdminShell() {
     })();
   }, []);
 
+  // Helper to check date range against items
+  const matchesDateRange = (itemDate) => {
+    if (!itemDate) return true;
+    const d = String(itemDate).split('T')[0];
+    const today = new Date().toISOString().split('T')[0];
+    if (shellFilterTimeframe === 'today') return d === today;
+    if (shellFilterTimeframe === 'week') {
+      const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+      return d >= weekAgo;
+    }
+    if (shellFilterTimeframe === 'month') {
+      const monthAgo = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];
+      return d >= monthAgo;
+    }
+    if (shellFilterStartDate && d < shellFilterStartDate) return false;
+    if (shellFilterEndDate && d > shellFilterEndDate) return false;
+    return true;
+  };
+
+  // Memoized filtered collections for AdminShell modules
+  const filteredData = useMemo(() => {
+    const q = shellFilterSearch.trim().toLowerCase();
+
+    const filteredUsers = (data.users || []).filter(u => {
+      if (q) {
+        const match = (u.name || '').toLowerCase().includes(q) ||
+                      (u.phone || '').includes(q) ||
+                      (u.email || '').toLowerCase().includes(q) ||
+                      (u.id || u._id || '').toLowerCase().includes(q) ||
+                      (u.profession || '').toLowerCase().includes(q);
+        if (!match) return false;
+      }
+      if (shellFilterDistrict !== 'all' && (u.district || '').toLowerCase().indexOf(shellFilterDistrict.toLowerCase()) === -1) return false;
+      if (shellFilterTaluka !== 'all' && (u.district || u.taluka || '').toLowerCase().indexOf(shellFilterTaluka.toLowerCase()) === -1) return false;
+      if (shellFilterStatus === 'verified' && !u.verified) return false;
+      if (shellFilterStatus === 'unverified' && u.verified) return false;
+      if (!matchesDateRange(u.joined || u.created_at)) return false;
+      return true;
+    });
+
+    const filteredBusinesses = (data.businesses || []).filter(b => {
+      if (q) {
+        const match = (b.name || b.businessName || '').toLowerCase().includes(q) ||
+                      (b.owner || b.ownerName || '').toLowerCase().includes(q) ||
+                      (b.category || '').toLowerCase().includes(q);
+        if (!match) return false;
+      }
+      if (shellFilterDistrict !== 'all' && (b.district || '').toLowerCase().indexOf(shellFilterDistrict.toLowerCase()) === -1) return false;
+      if (shellFilterStatus === 'verified' && !b.verified) return false;
+      if (shellFilterStatus === 'unverified' && b.verified) return false;
+      if (!matchesDateRange(b.created_at)) return false;
+      return true;
+    });
+
+    const filteredReferrals = (data.referrals || []).filter(r => {
+      if (q) {
+        const match = (r.title || '').toLowerCase().includes(q) ||
+                      (r.id || '').toLowerCase().includes(q) ||
+                      (r.giverName || '').toLowerCase().includes(q) ||
+                      (r.receiverName || '').toLowerCase().includes(q);
+        if (!match) return false;
+      }
+      if (shellFilterDistrict !== 'all' && ((r.giverName || '') + (r.receiverName || '')).toLowerCase().indexOf(shellFilterDistrict.toLowerCase()) === -1) return false;
+      if (!matchesDateRange(r.createdAt || r.created_at)) return false;
+      return true;
+    });
+
+    const filteredLeads = (data.leads || []).filter(l => {
+      if (q) {
+        const match = (l.name || '').toLowerCase().includes(q) ||
+                      (l.phone || '').includes(q) ||
+                      (l.id || '').toLowerCase().includes(q);
+        if (!match) return false;
+      }
+      return true;
+    });
+
+    const filteredBlood = (data.blood || []).filter(b => {
+      if (q) {
+        const match = (b.patientName || '').toLowerCase().includes(q) ||
+                      (b.hospital || '').toLowerCase().includes(q) ||
+                      (b.bloodGroup || '').toLowerCase().includes(q) ||
+                      (b.contactNumber || '').includes(q);
+        if (!match) return false;
+      }
+      if (shellFilterDistrict !== 'all' && (b.city || b.district || '').toLowerCase().indexOf(shellFilterDistrict.toLowerCase()) === -1) return false;
+      return true;
+    });
+
+    const filteredTickets = (data.tickets || []).filter(t => {
+      if (q) {
+        const match = (t.subject || '').toLowerCase().includes(q) ||
+                      (t.id || '').toLowerCase().includes(q);
+        if (!match) return false;
+      }
+      if (shellFilterStatus === 'active' && t.status === 'resolved') return false;
+      if (shellFilterStatus === 'resolved' && t.status !== 'resolved') return false;
+      return true;
+    });
+
+    return {
+      ...data,
+      users: filteredUsers,
+      businesses: filteredBusinesses,
+      referrals: filteredReferrals,
+      leads: filteredLeads,
+      blood: filteredBlood,
+      tickets: filteredTickets
+    };
+  }, [data, shellFilterSearch, shellFilterDistrict, shellFilterTaluka, shellFilterStatus, shellFilterTimeframe, shellFilterStartDate, shellFilterEndDate]);
+
   const toggleGroup = (id) =>
     setOpenGroups(p => ({ ...p, [id]: !p[id] }));
 
@@ -618,6 +753,259 @@ export default function AdminShell() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <TopBar navigate={navigate} toast={toast$} />
         <main style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20, flex: 1 }}>
+          {/* =========================================================================
+              🎯 UNIVERSAL ADVANCED REPORT FILTERS PANEL (लागू: सर्व मॉड्यूल्ससाठी)
+          ========================================================================= */}
+          <div style={{
+            background: T.panel,
+            borderRadius: 14,
+            border: `1.5px solid ${T.border}`,
+            padding: '18px 20px',
+            boxShadow: '0 4px 15px rgba(234,88,12,0.04)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: T.deep, fontWeight: 900, fontSize: '0.98rem' }}>
+                <span>🎯</span>
+                <span>अहवाल डेटा फिल्टर्स (Advanced Report Filters — केंद्रीय ॲडमिन कन्सोल)</span>
+                <span style={{ fontSize: '0.8rem', color: T.muted, fontWeight: 700, marginLeft: 6 }}>
+                  (फिल्टर नोंदी: <strong style={{ color: T.saffron }}>{filteredData.users.length} सभासद • {filteredData.businesses.length} व्यवसाय • {filteredData.referrals.length} रेफरल्स</strong>)
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={handleResetShellFilters}
+                style={{
+                  background: T.softBg,
+                  border: `1px solid ${T.border}`,
+                  color: T.deep,
+                  padding: '6px 14px',
+                  borderRadius: 8,
+                  fontSize: '0.8rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6
+                }}>
+                <span>🔄</span>
+                <span>रिसेट (Reset)</span>
+              </button>
+            </div>
+
+            {/* 7-Point Filter Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, alignItems: 'flex-end' }}>
+              
+              {/* 1. Free Search */}
+              <div style={{ minWidth: 160 }}>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: T.deep, marginBottom: 4 }}>
+                  🔍 मोफत शोध (नाव / फोन / आयडी)
+                </label>
+                <input
+                  type="text"
+                  placeholder="शोधण्यासाठी टाईप करा..."
+                  value={shellFilterSearch}
+                  onChange={(e) => setShellFilterSearch(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '8px 10px',
+                    borderRadius: 8,
+                    border: `1.5px solid ${T.border}`,
+                    background: T.softBg,
+                    fontSize: '0.82rem',
+                    color: T.text,
+                    fontWeight: 600,
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+
+              {/* 2. District Filter */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: T.deep, marginBottom: 4 }}>
+                  🏙️ जिल्हा / शहर (District)
+                </label>
+                <select
+                  value={shellFilterDistrict}
+                  onChange={(e) => {
+                    setShellFilterDistrict(e.target.value);
+                    setShellFilterTaluka('all');
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '8px 10px',
+                    borderRadius: 8,
+                    border: `1.5px solid ${T.border}`,
+                    background: T.softBg,
+                    fontSize: '0.82rem',
+                    color: T.text,
+                    fontWeight: 700,
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}>
+                  <option value="all">सर्व ३६ जिल्हे (All Maharashtra)</option>
+                  {(MAHARASHTRA_DISTRICTS || []).map(d => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 3. Taluka Filter */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: T.deep, marginBottom: 4 }}>
+                  📍 तालुका (Taluka)
+                </label>
+                <select
+                  value={shellFilterTaluka}
+                  onChange={(e) => setShellFilterTaluka(e.target.value)}
+                  disabled={shellFilterDistrict === 'all'}
+                  style={{
+                    width: '100%',
+                    padding: '8px 10px',
+                    borderRadius: 8,
+                    border: `1.5px solid ${T.border}`,
+                    background: shellFilterDistrict === 'all' ? '#F8FAFC' : T.softBg,
+                    fontSize: '0.82rem',
+                    color: shellFilterDistrict === 'all' ? '#94A3B8' : T.text,
+                    fontWeight: 700,
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}>
+                  <option value="all">{shellFilterDistrict === 'all' ? 'सर्व तालुके (प्रथम जिल्हा निवडा)' : 'सर्व तालुके (All Talukas)'}</option>
+                  {shellFilterDistrict !== 'all' && (DISTRICT_TALUKAS[shellFilterDistrict] || []).map(t => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 4. Status Filter */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: T.deep, marginBottom: 4 }}>
+                  ⚡ स्थिती (Status)
+                </label>
+                <select
+                  value={shellFilterStatus}
+                  onChange={(e) => setShellFilterStatus(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '8px 10px',
+                    borderRadius: 8,
+                    border: `1.5px solid ${T.border}`,
+                    background: T.softBg,
+                    fontSize: '0.82rem',
+                    color: T.text,
+                    fontWeight: 700,
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}>
+                  <option value="all">सर्व स्थिती (All Status)</option>
+                  <option value="verified">✓ प्रमाणित / सक्रिय (Verified)</option>
+                  <option value="unverified">⏳ प्रलंबित (Pending Review)</option>
+                  <option value="resolved">🎯 निराकरण झालेले (Resolved)</option>
+                </select>
+              </div>
+
+              {/* 5. Timeframe Filter */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: T.deep, marginBottom: 4 }}>
+                  📅 कालावधी (Timeframe)
+                </label>
+                <select
+                  value={shellFilterTimeframe}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setShellFilterTimeframe(val);
+                    if (val === 'all') {
+                      setShellFilterStartDate('');
+                      setShellFilterEndDate('');
+                    } else if (val === 'today') {
+                      const t = new Date().toISOString().split('T')[0];
+                      setShellFilterStartDate(t);
+                      setShellFilterEndDate(t);
+                    } else if (val === 'week') {
+                      const end = new Date().toISOString().split('T')[0];
+                      const start = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+                      setShellFilterStartDate(start);
+                      setShellFilterEndDate(end);
+                    } else if (val === 'month') {
+                      const end = new Date().toISOString().split('T')[0];
+                      const start = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];
+                      setShellFilterStartDate(start);
+                      setShellFilterEndDate(end);
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '8px 10px',
+                    borderRadius: 8,
+                    border: `1.5px solid ${T.border}`,
+                    background: T.softBg,
+                    fontSize: '0.82rem',
+                    color: T.text,
+                    fontWeight: 700,
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}>
+                  <option value="all">सर्व काळ (All Time)</option>
+                  <option value="today">आजचे (Today)</option>
+                  <option value="week">या आठवड्यातील (Last 7 Days)</option>
+                  <option value="month">या महिन्यातील (Last 30 Days)</option>
+                  <option value="custom">सानुकूल तारीख (Custom Range)</option>
+                </select>
+              </div>
+
+              {/* 6. From Date */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: T.deep, marginBottom: 4 }}>
+                  🗓️ तारीख पासून (From Date)
+                </label>
+                <input
+                  type="date"
+                  value={shellFilterStartDate}
+                  onChange={(e) => {
+                    setShellFilterStartDate(e.target.value);
+                    if (shellFilterTimeframe !== 'custom') setShellFilterTimeframe('custom');
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '7px 8px',
+                    borderRadius: 8,
+                    border: `1.5px solid ${T.border}`,
+                    background: T.softBg,
+                    fontSize: '0.8rem',
+                    color: T.text,
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+
+              {/* 7. To Date */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: T.deep, marginBottom: 4 }}>
+                  🗓️ तारीख पर्यंत (To Date)
+                </label>
+                <input
+                  type="date"
+                  value={shellFilterEndDate}
+                  onChange={(e) => {
+                    setShellFilterEndDate(e.target.value);
+                    if (shellFilterTimeframe !== 'custom') setShellFilterTimeframe('custom');
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '7px 8px',
+                    borderRadius: 8,
+                    border: `1.5px solid ${T.border}`,
+                    background: T.softBg,
+                    fontSize: '0.8rem',
+                    color: T.text,
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
           {loading ? (
             <Card style={{ textAlign: 'center', padding: 60 }}>
               <div style={{ fontSize: '1rem', fontWeight: 800, color: T.saffron }}>
@@ -626,47 +1014,47 @@ export default function AdminShell() {
             </Card>
           ) : (
             <Routes>
-              <Route path="/" element={<Dashboard data={data} navigate={navigate} />} />
+              <Route path="/" element={<Dashboard data={filteredData} navigate={navigate} />} />
 
               {/* Full Module Reports */}
-              <Route path="/users/report" element={<UsersFullReport />} />
-              <Route path="/kyc/report" element={<KYCFullReport />} />
-              <Route path="/business/report" element={<BusinessFullReport />} />
-              <Route path="/b2b/referrals/report" element={<B2BReferralFullReport />} />
-              <Route path="/seva/report" element={<BloodHelpFullReport />} />
-              <Route path="/tickets/report" element={<TicketFullReport />} />
-              <Route path="/events/report" element={<EventsFullReport />} />
-              <Route path="/content/report" element={<ContentFullReport />} />
+              <Route path="/users/report" element={<UsersFullReport data={filteredData} toast={toast$} />} />
+              <Route path="/kyc/report" element={<KYCFullReport data={filteredData} toast={toast$} />} />
+              <Route path="/business/report" element={<BusinessFullReport data={filteredData} toast={toast$} />} />
+              <Route path="/b2b/referrals/report" element={<B2BReferralFullReport data={filteredData} toast={toast$} />} />
+              <Route path="/seva/report" element={<BloodHelpFullReport data={filteredData} toast={toast$} />} />
+              <Route path="/tickets/report" element={<TicketFullReport data={filteredData} toast={toast$} />} />
+              <Route path="/events/report" element={<EventsFullReport data={filteredData} toast={toast$} />} />
+              <Route path="/content/report" element={<ContentFullReport data={filteredData} toast={toast$} />} />
 
-              <Route path="/members" element={<MembersView data={data} setData={setData} toast={toast$} />} />
-              <Route path="/leads" element={<LeadsView data={data} toast={toast$} />} />
-              <Route path="/businesses" element={<BusinessesView data={data} />} />
-              <Route path="/referrals" element={<ReferralsView data={data} setData={setData} toast={toast$} />} />
+              <Route path="/members" element={<MembersView data={filteredData} setData={setData} toast={toast$} />} />
+              <Route path="/leads" element={<LeadsView data={filteredData} toast={toast$} />} />
+              <Route path="/businesses" element={<BusinessesView data={filteredData} />} />
+              <Route path="/referrals" element={<ReferralsView data={filteredData} setData={setData} toast={toast$} />} />
               <Route path="/chapters" element={<ChaptersView toast={toast$} />} />
               <Route path="/admins" element={<AdminUsersView toast={toast$} />} />
 
-              <Route path="/articles" element={<ContentView type="articles" data={data} toast={toast$} />} />
-              <Route path="/history" element={<ContentView type="history" data={data} toast={toast$} />} />
-              <Route path="/forts" element={<ContentView type="forts" data={data} toast={toast$} />} />
-              <Route path="/temples" element={<ContentView type="temples" data={data} toast={toast$} />} />
-              <Route path="/personalities" element={<ContentView type="personalities" data={data} toast={toast$} />} />
-              <Route path="/media" element={<MediaView data={data} toast={toast$} />} />
+              <Route path="/articles" element={<ContentView type="articles" data={filteredData} toast={toast$} />} />
+              <Route path="/history" element={<ContentView type="history" data={filteredData} toast={toast$} />} />
+              <Route path="/forts" element={<ContentView type="forts" data={filteredData} toast={toast$} />} />
+              <Route path="/temples" element={<ContentView type="temples" data={filteredData} toast={toast$} />} />
+              <Route path="/personalities" element={<ContentView type="personalities" data={filteredData} toast={toast$} />} />
+              <Route path="/media" element={<MediaView data={filteredData} toast={toast$} />} />
 
-              <Route path="/events" element={<EventsView data={data} toast={toast$} />} />
-              <Route path="/campaigns" element={<CampaignsView data={data} toast={toast$} />} />
-              <Route path="/communication" element={<CommunicationView data={data} toast={toast$} />} />
+              <Route path="/events" element={<EventsView data={filteredData} toast={toast$} />} />
+              <Route path="/campaigns" element={<CampaignsView data={filteredData} toast={toast$} />} />
+              <Route path="/communication" element={<CommunicationView data={filteredData} toast={toast$} />} />
 
-              <Route path="/workflows" element={<WorkflowsView data={data} />} />
-              <Route path="/tickets" element={<TicketsView data={data} toast={toast$} />} />
-              <Route path="/seva" element={<BloodView data={data} />} />
-              <Route path="/reports" element={<ReportsView data={data} />} />
-              <Route path="/analytics" element={<ReportsView data={data} />} />
-              <Route path="/approvals" element={<ApprovalsView data={data} />} />
+              <Route path="/workflows" element={<WorkflowsView data={filteredData} />} />
+              <Route path="/tickets" element={<TicketsView data={filteredData} toast={toast$} />} />
+              <Route path="/seva" element={<BloodView data={filteredData} />} />
+              <Route path="/reports" element={<ReportsView data={filteredData} />} />
+              <Route path="/analytics" element={<ReportsView data={filteredData} />} />
+              <Route path="/approvals" element={<ApprovalsView data={filteredData} toast={toast$} />} />
 
               <Route path="/master-data" element={<MasterDataView toast={toast$} />} />
-              <Route path="/roles-matrix" element={<RolesMatrixPipelineView data={data} toast={toast$} />} />
-              <Route path="/roles" element={<RolesView data={data} toast={toast$} />} />
-              <Route path="/audit" element={<AuditView data={data} />} />
+              <Route path="/roles-matrix" element={<RolesMatrixPipelineView data={filteredData} toast={toast$} />} />
+              <Route path="/roles" element={<RolesView data={filteredData} toast={toast$} />} />
+              <Route path="/audit" element={<AuditView data={filteredData} />} />
               <Route path="/settings" element={<SettingsView toast={toast$} />} />
 
               <Route path="*" element={<Navigate to="/admin" replace />} />
@@ -712,7 +1100,6 @@ function TopBar({ navigate, toast }) {
           + नवीन नोंद
         </Btn>
         <Btn variant="plain" onClick={() => window.location.reload()}>🔄 Refresh</Btn>
-        <Btn variant="ghost" onClick={() => navigate('/ai')}>🤖 AI</Btn>
       </div>
     </header>
   );
@@ -735,29 +1122,35 @@ function Dashboard({ data, navigate }) {
   const pendingKyc = users.filter(u => !u.verified).length;
   const activeUsers = users.filter(u => u.status === 'Active' || u.verified).length;
 
+  const verifiedBusinesses = businesses.filter(b => b.verified).length;
+  const pendingBusinesses = businesses.length - verifiedBusinesses;
+  const activeReferrals = referrals.filter(r => (r.status || '').toLowerCase() === 'active').length;
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const newUsersToday = users.filter(u => (u.joined || u.created_at || '').slice(0, 10) === todayStr).length;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Header Banner */}
       <div style={{
-        background: 'linear-gradient(135deg, #431407 0%, #7C2D12 50%, #C2410C 100%)',
+        background: 'linear-gradient(135deg, #EA580C 0%, #7C2D12 50%, #C2410C 100%)',
         borderRadius: 16, padding: '24px 30px', color: '#FFF',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16,
         boxShadow: '0 10px 30px rgba(194,65,12,0.25)'
       }}>
         <div>
           <span style={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', color: '#FDBA74' }}>
-            CONNECT MARATHA ADMIN COMMAND CENTER
+            CONNECT MARATHA ADMIN COMMAND CENTER (LIVE SQLITE)
           </span>
           <h1 style={{ margin: '4px 0 0', fontSize: '1.6rem', fontWeight: 900 }}>
             Welcome, Super Admin 👑
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: '#FED7AA' }}>
-            महाराष्ट्र राज्य संघटनात्मक व सेवासंबंधी सर्व ३६ जिल्हे, २८८ विधानसभा व ३५८ तालुक्यांचे केंद्रीय नियंत्रण केंद्र
+            महाराष्ट्र राज्य संघटनात्मक व सेवासंबंधी सर्व ३६ जिल्हे, २८८ विधानसभा व ३५८ तालुक्यांचे थेट रिअल-टाइम नियंत्रण केंद्र
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <span style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(6px)', padding: '6px 14px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 700 }}>
-            ⏱️ Last Updated: Today, 03:15 PM
+            ⏱️ रिअल-टाइम लाइव्ह डेटा
           </span>
           <Btn variant="primary" style={{ background: '#FFF', color: T.saffron, fontWeight: 900 }} onClick={() => navigate('/admin/users/report')}>
             📊 Full MIS Reports →
@@ -768,7 +1161,7 @@ function Dashboard({ data, navigate }) {
       {/* 2. Executive KPI Cards */}
       <div>
         <div style={{ fontSize: '1rem', fontWeight: 900, color: T.ink, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span>📊</span> Executive KPIs (कार्यकारी निर्देशांक)
+          <span>📊</span> Executive KPIs (थेट डेटाबेस आकडेवारी)
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
           {/* Card 1: Users */}
@@ -778,12 +1171,12 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>👥</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.saffron, margin: '6px 0' }}>
-              {(m.totalMembers || users.length || 2540).toLocaleString()}
+              {users.length.toLocaleString()}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>{certifiedUsers || 1850}</strong> प्रमाणित</div>
-              <div>• <strong>{pendingKyc || 690}</strong> प्रलंबित KYC</div>
-              <div>• <strong>12</strong> नवीन सदस्य आज</div>
+              <div>• <strong>{certifiedUsers}</strong> प्रमाणित (Verified)</div>
+              <div>• <strong>{pendingKyc}</strong> प्रलंबित KYC</div>
+              <div>• <strong>{newUsersToday}</strong> आज नोंदणी झालेले</div>
             </div>
             <button onClick={() => navigate('/admin/users/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.saffron, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               View Details →
@@ -797,12 +1190,12 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>🔐</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.amber, margin: '6px 0' }}>
-              {pendingKyc || 690}
+              {pendingKyc}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>140</strong> पडताळणी आवश्यक</div>
-              <div>• <strong>85</strong> Documents Missing</div>
-              <div>• <strong>Avg Time:</strong> 4.2 hrs</div>
+              <div>• <strong>{pendingKyc}</strong> पडताळणी आवश्यक</div>
+              <div>• <strong>{certifiedUsers}</strong> पडताळणी पूर्ण</div>
+              <div>• <strong>प्रमाण:</strong> {users.length > 0 ? Math.round((certifiedUsers / users.length) * 100) : 0}%</div>
             </div>
             <button onClick={() => navigate('/admin/kyc/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.amber, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               Open KYC Queue →
@@ -816,12 +1209,12 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>🏢</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.deep, margin: '6px 0' }}>
-              {businesses.length || 420}
+              {businesses.length}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>380</strong> Verified</div>
-              <div>• <strong>40</strong> Pending</div>
-              <div>• <strong>18</strong> New This Month</div>
+              <div>• <strong>{verifiedBusinesses}</strong> प्रमाणित (Verified)</div>
+              <div>• <strong>{pendingBusinesses}</strong> प्रलंबित पुनरावलोकन</div>
+              <div>• <strong>सक्रिय नोंदी:</strong> {businesses.length}</div>
             </div>
             <button onClick={() => navigate('/admin/business/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.deep, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               Business Directory →
@@ -831,19 +1224,19 @@ function Dashboard({ data, navigate }) {
           {/* Card 4: B2B CRM */}
           <Card style={{ borderTop: `4px solid ${T.green}` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 800, color: T.ink }}>🤝 B2B Referrals</span>
+              <span style={{ fontSize: '0.8rem', fontWeight: 800, color: T.ink }}>🤝 सदस्य संदर्भ (Referrals)</span>
               <span style={{ fontSize: '1.2rem' }}>🤝</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.green, margin: '6px 0' }}>
-              {referrals.length || 185}
+              {referrals.length}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>45</strong> Converted</div>
-              <div>• <strong>₹12,40,000</strong> Business Value</div>
-              <div>• <strong>82%</strong> Success Rate</div>
+              <div>• <strong>{activeReferrals}</strong> सक्रिय रेफरल्स</div>
+              <div>• <strong>₹{(referrals.length * 100).toLocaleString()}</strong> प्रोत्साहन मूल्य</div>
+              <div>• <strong>यशोदर:</strong> {referrals.length > 0 ? Math.round((activeReferrals / referrals.length) * 100) : 100}%</div>
             </div>
             <button onClick={() => navigate('/admin/b2b/referrals/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.green, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
-              Open B2B CRM →
+              Open Referrals CRM →
             </button>
           </Card>
 
@@ -854,12 +1247,12 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>🩸</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.red, margin: '6px 0' }}>
-              {blood.length || 94}
+              {blood.length}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>12</strong> Emergency Open</div>
-              <div>• <strong>78</strong> Resolved Today</div>
-              <div>• <strong>Donor Match:</strong> 96%</div>
+              <div>• <strong>{blood.filter(b => (b.status || '').toLowerCase().includes('active') || (b.status || '').toLowerCase().includes('urgent')).length}</strong> तातडीच्या विनंत्या</div>
+              <div>• <strong>{blood.filter(b => (b.status || '').toLowerCase().includes('fulfilled') || (b.status || '').toLowerCase().includes('resolved')).length}</strong> पूर्ण झालेल्या</div>
+              <div>• <strong>एकूण विनंत्या:</strong> {blood.length}</div>
             </div>
             <button onClick={() => navigate('/admin/seva/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.red, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               24×7 Seva Center →
@@ -873,12 +1266,12 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>🎫</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.amber, margin: '6px 0' }}>
-              {tickets.length || 42}
+              {tickets.length}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>5</strong> High Priority</div>
-              <div>• <strong>2</strong> SLA Breached</div>
-              <div>• <strong>35</strong> Resolved</div>
+              <div>• <strong>{tickets.filter(t => t.priority === 'high' || t.priority === 'Critical').length}</strong> उच्च प्राथमिकता</div>
+              <div>• <strong>{tickets.filter(t => t.status === 'open' || t.status === 'in-progress').length}</strong> प्रलंबित तक्रारी</div>
+              <div>• <strong>{tickets.filter(t => t.status === 'resolved' || t.status === 'closed').length}</strong> सोडवलेल्या तक्रारी</div>
             </div>
             <button onClick={() => navigate('/admin/tickets/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.amber, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               Ticket Management →
@@ -892,12 +1285,12 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>📅</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: T.saffron, margin: '6px 0' }}>
-              {events.length || 28}
+              {events.length}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>3</strong> Today</div>
-              <div>• <strong>8</strong> Upcoming</div>
-              <div>• <strong>1,450</strong> Total Registrations</div>
+              <div>• <strong>{events.length}</strong> नियोजित कार्यक्रम</div>
+              <div>• <strong>जिल्हास्तरीय:</strong> सर्व ३६ जिल्हे</div>
+              <div>• <strong>स्थिती:</strong> अधिकृत नोंदणीकृत</div>
             </div>
             <button onClick={() => navigate('/admin/events/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: T.saffron, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               Event Calendar →
@@ -911,12 +1304,12 @@ function Dashboard({ data, navigate }) {
               <span style={{ fontSize: '1.2rem' }}>📚</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#8B5CF6', margin: '6px 0' }}>
-              {contentTotal || 156}
+              {contentTotal}
             </div>
             <div style={{ fontSize: '0.72rem', color: T.muted, lineHeight: 1.6 }}>
-              <div>• <strong>120</strong> Published</div>
-              <div>• <strong>24</strong> Under Review</div>
-              <div>• <strong>12</strong> Draft</div>
+              <div>• <strong>{contentTotal}</strong> प्रकाशित ऐतिहासिक लेख</div>
+              <div>• <strong>गडकोट, मंदिरे व चरित्रे</strong> समाविष्ट</div>
+              <div>• <strong>सत्यापित सामग्री</strong></div>
             </div>
             <button onClick={() => navigate('/admin/content/report')} style={{ marginTop: 10, background: 'none', border: 'none', color: '#8B5CF6', fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}>
               CMS Report →
@@ -1037,14 +1430,14 @@ function Dashboard({ data, navigate }) {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {[
-              { label: 'KYC Applications', count: pendingKyc || 690, route: '/admin/kyc/report' },
-              { label: 'Business Verifications', count: 40, route: '/admin/business/report' },
-              { label: 'Event Approvals', count: 5, route: '/admin/events/report' },
-              { label: 'Content Review (CMS)', count: 24, route: '/admin/content/report' },
-              { label: 'Seva Requests', count: 12, route: '/admin/seva/report' },
-              { label: 'Finance Approvals', count: 3, route: '/admin/reports' },
-              { label: 'Role Appointments', count: 8, route: '/admin/roles-matrix' },
-              { label: 'Chapter Applications', count: 14, route: '/admin/chapters' },
+              { label: 'KYC Applications', count: pendingKyc, route: '/admin/kyc/report' },
+              { label: 'Business Verifications', count: (businesses || []).filter(b => !b.verified).length, route: '/admin/business/report' },
+              { label: 'Event Approvals', count: (events || []).length, route: '/admin/events/report' },
+              { label: 'Content Review (CMS)', count: contentTotal, route: '/admin/content/report' },
+              { label: 'Seva Requests', count: (blood || []).length, route: '/admin/seva/report' },
+              { label: 'Tickets / Grievances', count: (tickets || []).length, route: '/admin/tickets/report' },
+              { label: 'B2B Referrals', count: (referrals || []).length, route: '/admin/b2b/referrals/report' },
+              { label: 'Chapter Applications', count: 0, route: '/admin/chapters' },
             ].map((app, i) => (
               <div key={i} onClick={() => navigate(app.route)} style={{
                 background: T.softBg, border: `1px solid ${T.border}`, borderRadius: 8,
@@ -1134,22 +1527,65 @@ function Dashboard({ data, navigate }) {
 function MembersView({ data, setData, toast }) {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
+  const [dateFilter, setDateFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('newest');
   const [selected, setSelected] = useState(null);
+  const [idChangeTarget, setIdChangeTarget] = useState(null);
+  const [newIdInput, setNewIdInput] = useState('');
+  const [isVipCheckbox, setIsVipCheckbox] = useState(false);
+  const [savingId, setSavingId] = useState(false);
+
+  const todayStr = new Date().toISOString().slice(0, 10);
 
   const filtered = useMemo(() => {
-    return data.users.filter(u => {
+    let list = data.users.filter(u => {
       const q = search.toLowerCase();
       const matchSearch = !q
         || u.name?.toLowerCase().includes(q)
         || u.phone?.includes(search)
-        || (u.id || u._id)?.toLowerCase().includes(q);
+        || (u.id || u._id)?.toLowerCase().includes(q)
+        || u.district?.toLowerCase().includes(q);
+      
       const matchFilter =
         filter === 'all'
         || (filter === 'verified' && u.verified)
-        || (filter === 'unverified' && !u.verified);
-      return matchSearch && matchFilter;
+        || (filter === 'unverified' && !u.verified)
+        || (filter === 'vip' && (u.is_vip || u.vip_number));
+
+      // Date filtering
+      const regDate = (u.joined || u.created_at || '').slice(0, 10);
+      let matchDate = true;
+      if (dateFilter === 'today') {
+        matchDate = regDate === todayStr;
+      } else if (dateFilter === 'this_week') {
+        const d = new Date(regDate || 0);
+        const diff = (Date.now() - d.getTime()) / (1000 * 3600 * 24);
+        matchDate = diff <= 7;
+      } else if (dateFilter === 'this_month') {
+        const d = new Date(regDate || 0);
+        const diff = (Date.now() - d.getTime()) / (1000 * 3600 * 24);
+        matchDate = diff <= 30;
+      }
+
+      return matchSearch && matchFilter && matchDate;
     });
-  }, [data.users, search, filter]);
+
+    // Sorting
+    list = [...list].sort((a, b) => {
+      if (sortBy === 'newest') {
+        return (b.created_at || b.joined || '').localeCompare(a.created_at || a.joined || '');
+      } else if (sortBy === 'oldest') {
+        return (a.created_at || a.joined || '').localeCompare(b.created_at || b.joined || '');
+      } else if (sortBy === 'name_asc') {
+        return (a.name || '').localeCompare(b.name || '');
+      } else if (sortBy === 'id_asc') {
+        return (a.id || a._id || '').localeCompare(b.id || b._id || '');
+      }
+      return 0;
+    });
+
+    return list;
+  }, [data.users, search, filter, dateFilter, sortBy, todayStr]);
 
   const toggleVerify = async (u) => {
     const id = u.id || u._id;
@@ -1164,12 +1600,120 @@ function MembersView({ data, setData, toast }) {
     toast(`${u.name} यांची पडताळणी ${newStatus ? 'मंजूर' : 'रद्द'}`, 'success');
   };
 
+  const deleteMember = async (u) => {
+    const id = u.id || u._id;
+    if (!window.confirm(`⚠️ सावधान: तुम्हाला नक्की सदस्य "${u.name}" (ID: ${id}) डेटाबेसमधून कायमचा काढून टाकायचा आहे का?`)) return;
+    try {
+      const res = await adminApi.deleteMember(id);
+      if (res && (res.success || res.ok)) {
+        setData(prev => ({
+          ...prev,
+          users: prev.users.filter(x => (x.id || x._id) !== id)
+        }));
+        toast(`वापरकर्ता "${u.name}" डेटाबेसमधून यशस्वीरीत्या हटवला!`, 'success');
+      } else {
+        toast('वापरकर्ता हटवता आला नाही.', 'error');
+      }
+    } catch (err) {
+      toast(err.message || 'त्रुटी आली.', 'error');
+    }
+  };
+
+  const handleOpenChangeId = (u) => {
+    const curId = u.id || u._id;
+    setIdChangeTarget(u);
+    setNewIdInput(curId);
+    setIsVipCheckbox(Boolean(u.is_vip || u.vip_number));
+  };
+
+  const handleSaveNewId = async () => {
+    if (!idChangeTarget || !newIdInput.trim()) return;
+    const oldId = idChangeTarget.id || idChangeTarget._id;
+    let cleanNewId = newIdInput.trim();
+    if (/^\d{6}$/.test(cleanNewId) && !cleanNewId.startsWith('M')) {
+      cleanNewId = `M${cleanNewId}`;
+    }
+
+    setSavingId(true);
+    try {
+      const res = await adminApi.changeMemberId(oldId, cleanNewId, isVipCheckbox, isVipCheckbox ? cleanNewId : null);
+      if (res && (res.success || res.ok)) {
+        setData(prev => ({
+          ...prev,
+          users: prev.users.map(x => (x.id || x._id) === oldId ? { ...x, id: cleanNewId, _id: cleanNewId, is_vip: isVipCheckbox ? 1 : 0, vip_number: isVipCheckbox ? cleanNewId : null } : x)
+        }));
+        toast(`सदस्य "${idChangeTarget.name}" यांचा आयडी ${cleanNewId} असा बदलला गेला!`, 'success');
+        setIdChangeTarget(null);
+        if (selected && (selected.id || selected._id) === oldId) {
+          setSelected(prev => ({ ...prev, id: cleanNewId, _id: cleanNewId }));
+        }
+      } else {
+        toast(res?.error || res?.message || 'आयडी बदलता आला नाही.', 'error');
+      }
+    } catch (err) {
+      toast(err.message || 'आयडी बदलताना त्रुटी आली.', 'error');
+    } finally {
+      setSavingId(false);
+    }
+  };
+
+  const handleExportPdf = () => {
+    const dateLabelMap = {
+      all: 'सर्व नोंदी',
+      today: 'आज नोंदणी झालेले (Today)',
+      this_week: 'या आठवड्यातील',
+      this_month: 'या महिन्यातील'
+    };
+    exportTableToPdf({
+      title: 'सदस्य व केवायसी अधिकृत महासंघ अहवाल (Members & KYC Master Report)',
+      subtitle: `फिल्टर कालावधी: ${dateLabelMap[dateFilter] || dateFilter} • क्रमवारी: ${sortBy} • एकूण ${filtered.length} सदस्य`,
+      columns: ['सदस्य आयडी', 'नाव', 'फोन क्रमांक', 'जिल्हा / शहर', 'नोंदणी दिनांक', 'KYC स्थिती', 'VIP स्टेटस'],
+      rows: filtered.map(u => [
+        u.id || u._id,
+        u.name,
+        u.phone || '—',
+        u.district || u.city || '—',
+        (u.joined || u.created_at || '—').slice(0, 10),
+        u.verified ? '✓ प्रमाणित (Verified)' : '⏳ प्रलंबित (Pending)',
+        (u.is_vip || u.vip_number) ? `⭐ VIP (${u.vip_number || u.id})` : 'नियमित'
+      ]),
+      summary: {
+        'एकूण सदस्य संख्या': filtered.length,
+        'प्रमाणित सदस्य': filtered.filter(u => u.verified).length,
+        'प्रलंबित केवायसी': filtered.filter(u => !u.verified).length,
+        'आज नोंदणी झालेले': filtered.filter(u => (u.joined || u.created_at || '').slice(0, 10) === todayStr).length,
+        'व्हीआयपी सदस्य': filtered.filter(u => u.is_vip || u.vip_number).length
+      }
+    });
+  };
+
   return (
     <>
-      <SectionTitle subtitle={`एकूण ${data.users.length} सदस्य`}>👤 Members & KYC</SectionTitle>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, flexWrap: 'wrap', gap: 10 }}>
+        <SectionTitle subtitle={`एकूण ${data.users.length} सदस्य • फिल्टर केलेले: ${filtered.length}`}>👤 Members & KYC Master Directory</SectionTitle>
+        <button
+          onClick={handleExportPdf}
+          style={{
+            background: 'linear-gradient(135deg, #EA580C, #C2410C)',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: 8,
+            padding: '10px 18px',
+            fontSize: '0.85rem',
+            fontWeight: 800,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            boxShadow: '0 4px 12px rgba(234,88,12,0.25)'
+          }}>
+          📄 अहवाल PDF एक्सपोर्ट करा (Export PDF)
+        </button>
+      </div>
 
       <Card style={{ padding: 0 }}>
-        <div style={{ padding: 12, background: T.softBg, borderBottom: `1px solid ${T.border}`, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        {/* Controls Bar */}
+        <div style={{ padding: 12, background: T.softBg, borderBottom: `1px solid ${T.border}`, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
           <input
             placeholder="नाव, फोन किंवा ID शोधा..."
             value={search} onChange={e => setSearch(e.target.value)}
@@ -1178,49 +1722,208 @@ function MembersView({ data, setData, toast }) {
               background: T.panel, border: `1px solid ${T.border}`,
               borderRadius: 6, fontSize: '0.8rem', fontWeight: 600, outline: 'none'
             }} />
-          <Select
-            value={filter} onChange={e => setFilter(e.target.value)}
-            options={[
-              { value: 'all', label: 'सर्व' },
-              { value: 'verified', label: 'प्रमाणित' },
-              { value: 'unverified', label: 'प्रलंबित' }
-            ]} />
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: T.muted }}>कालावधी:</span>
+            <Select
+              value={dateFilter} onChange={e => setDateFilter(e.target.value)}
+              options={[
+                { value: 'all', label: 'सर्व नोंदी' },
+                { value: 'today', label: '📅 आज नोंदणी झालेले (Today)' },
+                { value: 'this_week', label: 'या आठवड्यातील' },
+                { value: 'this_month', label: 'या महिन्यातील' }
+              ]} />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: T.muted }}>स्थिती:</span>
+            <Select
+              value={filter} onChange={e => setFilter(e.target.value)}
+              options={[
+                { value: 'all', label: 'सर्व' },
+                { value: 'verified', label: '✓ प्रमाणित' },
+                { value: 'unverified', label: '⏳ प्रलंबित' },
+                { value: 'vip', label: '⭐ VIP सदस्य' }
+              ]} />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: T.muted }}>क्रम:</span>
+            <Select
+              value={sortBy} onChange={e => setSortBy(e.target.value)}
+              options={[
+                { value: 'newest', label: 'नवीनतम आधी (Newest)' },
+                { value: 'oldest', label: 'जुने आधी (Oldest)' },
+                { value: 'name_asc', label: 'नावाप्रमाणे (A-Z)' },
+                { value: 'id_asc', label: 'ID प्रमाणे' }
+              ]} />
+          </div>
+        </div>
+
+        {/* Count Bar */}
+        <div style={{ padding: '6px 14px', background: '#F8FAFC', borderBottom: `1px solid ${T.border}`, display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: T.muted, fontWeight: 700 }}>
+          <span>दाखवत आहे: <strong style={{ color: T.deep }}>{filtered.length}</strong> / {data.users.length} सदस्य</span>
+          {dateFilter === 'today' && <span style={{ color: '#EA580C' }}>🔴 आज नोंदणी झालेल्या सदस्यांचा फिल्टर सक्रिय आहे</span>}
         </div>
 
         <Table
-          headers={['ID', 'नाव', 'फोन', 'जिल्हा', 'KYC', 'कृती']}
+          headers={['ID', 'नाव', 'फोन', 'जिल्हा', 'नोंदणी तारीख', 'KYC स्थिती', 'कृती']}
           onRowClick={setSelected}
           rows={filtered.map(u => [
-            <span style={{ fontFamily: 'monospace', color: T.saffron, fontWeight: 800 }}>{u.id || u._id}</span>,
-            <strong>{u.name}</strong>,
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontFamily: 'monospace', color: T.saffron, fontWeight: 800 }}>{u.id || u._id}</span>
+              {(u.is_vip || u.vip_number) && <span title="VIP सदस्य" style={{ fontSize: '0.75rem' }}>⭐</span>}
+            </div>,
+            <div>
+              <strong>{u.name}</strong>
+              {(u.joined || u.created_at || '').slice(0, 10) === todayStr && (
+                <span style={{ marginLeft: 6, fontSize: '0.65rem', background: '#FEF3C7', color: '#B45309', padding: '1px 5px', borderRadius: 4, fontWeight: 800 }}>नवीन आज</span>
+              )}
+            </div>,
             u.phone || '—',
             u.district || '—',
+            <span style={{ fontSize: '0.75rem', color: T.muted }}>{(u.joined || u.created_at || '—').slice(0, 10)}</span>,
             <Badge tone={u.verified ? 'green' : 'saffron'}>
               {u.verified ? '✓ प्रमाणित' : '⏳ प्रलंबित'}
             </Badge>,
-            <Btn
-              variant={u.verified ? 'danger' : 'success'}
-              onClick={(e) => { e.stopPropagation(); toggleVerify(u); }}>
-              {u.verified ? 'रद्द करा' : 'मंजूर करा'}
-            </Btn>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }} onClick={e => e.stopPropagation()}>
+              <Btn
+                variant={u.verified ? 'danger' : 'success'}
+                onClick={() => toggleVerify(u)}>
+                {u.verified ? 'रद्द' : 'मंजूर'}
+              </Btn>
+              <Btn
+                variant="plain"
+                style={{ background: '#EEF2FF', color: '#4F46E5', border: '1px solid #C7D2FE', fontWeight: 800 }}
+                onClick={() => handleOpenChangeId(u)}
+                title="६-अंकी किंवा VIP सदस्य ID बदला">
+                ✏️ ID बदला
+              </Btn>
+              <Btn
+                variant="plain"
+                style={{ background: '#FEE2E2', color: '#DC2626', border: '1px solid #FCA5A5', fontWeight: 800 }}
+                onClick={() => deleteMember(u)}>
+                🗑️
+              </Btn>
+            </div>
           ])}
         />
       </Card>
+
+      {/* ID Change Modal */}
+      {idChangeTarget && (
+        <Modal title="✏️ सदस्य आयडी बदला (Change User ID / VIP Number)" onClose={() => setIdChangeTarget(null)}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, fontSize: '0.85rem' }}>
+            <div style={{ background: '#FFF7ED', padding: 12, borderRadius: 8, border: '1px solid #FED7AA' }}>
+              <div>सदस्य: <strong>{idChangeTarget.name}</strong></div>
+              <div>सध्याचा आयडी: <span style={{ fontFamily: 'monospace', color: '#EA580C', fontWeight: 900 }}>{idChangeTarget.id || idChangeTarget._id}</span></div>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontWeight: 800, marginBottom: 6, color: T.deep }}>
+                नवीन ६-अंकी किंवा व्हीआयपी सदस्य आयडी (New ID):
+              </label>
+              <input
+                type="text"
+                value={newIdInput}
+                onChange={e => setNewIdInput(e.target.value.toUpperCase())}
+                placeholder="उदा. M777777 किंवा 123456"
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  borderRadius: 6,
+                  border: '2px solid #EA580C',
+                  fontSize: '1rem',
+                  fontWeight: 900,
+                  fontFamily: 'monospace',
+                  outline: 'none',
+                  letterSpacing: '1px'
+                }}
+              />
+              <span style={{ fontSize: '0.72rem', color: T.muted, marginTop: 4, display: 'block' }}>
+                💡 टीप: ६-अंकी नंबर (उदा. 777777, 999999, 105432) किंवा M प्रेफिक्स असलेला नंबर टाका. सर्व रेकॉर्ड्स आणि डेटाबेसमध्ये आपोआप अपडेट होईल.
+              </span>
+            </div>
+
+            {/* Quick VIP Suggestions */}
+            <div>
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#C2410C', display: 'block', marginBottom: 6 }}>
+                ⭐ जलद VIP / प्रीमियम नंबर पर्याय निवडा:
+              </span>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {['M777777', 'M999999', 'M111111', 'M100000', 'M123456', 'M999000', 'M000007', 'M888888'].map(preset => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => { setNewIdInput(preset); setIsVipCheckbox(true); }}
+                    style={{
+                      background: newIdInput === preset ? '#EA580C' : '#FFF7ED',
+                      color: newIdInput === preset ? '#FFFFFF' : '#C2410C',
+                      border: '1px solid #FDBA74',
+                      padding: '4px 8px',
+                      borderRadius: 6,
+                      fontSize: '0.75rem',
+                      fontFamily: 'monospace',
+                      fontWeight: 800,
+                      cursor: 'pointer'
+                    }}>
+                    {preset}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+              <input
+                type="checkbox"
+                id="isVipCheckbox"
+                checked={isVipCheckbox}
+                onChange={e => setIsVipCheckbox(e.target.checked)}
+                style={{ width: 16, height: 16, cursor: 'pointer' }}
+              />
+              <label htmlFor="isVipCheckbox" style={{ fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}>
+                ⭐ या सदस्याला 'VIP / प्रीमियम नंबर' दर्जा प्रदान करा
+              </label>
+            </div>
+
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
+              <Btn variant="plain" onClick={() => setIdChangeTarget(null)}>रद्द करा</Btn>
+              <Btn variant="primary" disabled={savingId} onClick={handleSaveNewId}>
+                {savingId ? 'जतन करत आहे...' : '✓ आयडी बदला व अपडेट करा'}
+              </Btn>
+            </div>
+          </div>
+        </Modal>
+      )}
 
       {selected && (
         <Modal title="👤 सदस्य डॉसियर" onClose={() => setSelected(null)}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: '0.85rem' }}>
             <div><strong style={{ color: T.deep }}>नाव:</strong> {selected.name}</div>
-            <div><strong style={{ color: T.deep }}>ID:</strong> <span style={{ fontFamily: 'monospace', color: T.saffron }}>{selected.id || selected._id}</span></div>
+            <div><strong style={{ color: T.deep }}>ID:</strong> <span style={{ fontFamily: 'monospace', color: T.saffron, fontWeight: 900 }}>{selected.id || selected._id}</span></div>
             <div><strong style={{ color: T.deep }}>फोन:</strong> {selected.phone || '—'}</div>
             <div><strong style={{ color: T.deep }}>ईमेल:</strong> {selected.email || '—'}</div>
             <div><strong style={{ color: T.deep }}>जिल्हा:</strong> {selected.district || '—'}</div>
+            <div><strong style={{ color: T.deep }}>नोंदणी तारीख:</strong> {selected.joined || selected.created_at || '—'}</div>
             <div><strong style={{ color: T.deep }}>व्यवसाय:</strong> {selected.profession || '—'}</div>
             <div><strong style={{ color: T.deep }}>KYC:</strong> <Badge tone={selected.verified ? 'green' : 'saffron'}>{selected.verified ? 'प्रमाणित' : 'प्रलंबित'}</Badge></div>
+            <div><strong style={{ color: T.deep }}>VIP दर्जा:</strong> {(selected.is_vip || selected.vip_number) ? <span style={{ color: '#D97706', fontWeight: 800 }}>⭐ VIP ({selected.vip_number || selected.id})</span> : 'नियमित सदस्य'}</div>
           </div>
-          <div style={{ marginTop: 20, display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+          <div style={{ marginTop: 20, display: 'flex', gap: 10, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+            <Btn
+              variant="plain"
+              style={{ background: '#EEF2FF', color: '#4F46E5', border: '1px solid #C7D2FE', fontWeight: 800 }}
+              onClick={() => { const target = selected; setSelected(null); handleOpenChangeId(target); }}>
+              ✏️ सदस्य ID बदला
+            </Btn>
             <Btn variant="primary" onClick={() => { toggleVerify(selected); setSelected(null); }}>
               {selected.verified ? 'रद्द करा' : 'प्रमाणित करा'}
+            </Btn>
+            <Btn
+              variant="plain"
+              style={{ background: '#FEE2E2', color: '#DC2626', border: '1px solid #FCA5A5', fontWeight: 800 }}
+              onClick={() => { const target = selected; setSelected(null); deleteMember(target); }}>
+              🗑️ डेटाबेसमधून हटवा
             </Btn>
             <Btn variant="plain" onClick={() => setSelected(null)}>बंद करा</Btn>
           </div>
@@ -1905,12 +2608,12 @@ function BloodView({ data }) {
    ============================================================ */
 function ReportsView({ data }) {
   const stats = [
-    { label: 'एकूण सदस्य', value: data.users.length || 2540, color: T.saffron },
-    { label: 'प्रमाणित KYC', value: data.users.filter(u => u.verified).length || 1850, color: T.green },
-    { label: 'व्यवसाय', value: data.businesses.length || 420, color: T.amber },
-    { label: 'B2B रेफरल्स', value: data.referrals.length || 185, color: T.deep },
-    { label: '२४x७ सेवारक्त विनंत्या', value: data.blood.length || 94, color: T.red },
-    { label: 'कार्यक्रम नोंदणी', value: data.events.length || 28, color: T.saffron }
+    { label: 'एकूण सदस्य', value: (data.users || []).length, color: T.saffron },
+    { label: 'प्रमाणित KYC', value: (data.users || []).filter(u => u.verified).length, color: T.green },
+    { label: 'व्यवसाय', value: (data.businesses || []).length, color: T.amber },
+    { label: 'B2B रेफरल्स', value: (data.referrals || []).length, color: T.deep },
+    { label: '२४x७ सेवारक्त विनंत्या', value: (data.blood || []).length, color: T.red },
+    { label: 'कार्यक्रम नोंदणी', value: (data.events || []).length, color: T.saffron }
   ];
   return (
     <>
@@ -1954,45 +2657,285 @@ function ReportsView({ data }) {
    15. APPROVALS
    ============================================================ */
 function ApprovalsView({ data, toast }) {
-  const [approvalsList, setApprovalsList] = useState([
-    { id: 'APP-01', module: 'KYC Verification', applicant: 'अमोल तुकाराम जाधव', location: 'Pune', submitted: '15:10 Today', status: 'Pending' },
-    { id: 'APP-02', module: 'Business Verification', applicant: 'शिवनेरी टेक्स्टाईल्स (राजेश निंबाळकर)', location: 'Satara', submitted: '14:58 Today', status: 'Pending' },
-    { id: 'APP-03', module: 'Content Review', applicant: 'रायगड रोपवे पर्यटन लेख (प्रणाली देसाई)', location: 'Raigad', submitted: '14:20 Today', status: 'Pending' },
-    { id: 'APP-04', module: 'Event Approval', applicant: 'मराठा उद्योजक परिषद 2026 (विक्रम शेलार)', location: 'Mumbai', submitted: '13:45 Today', status: 'Pending' },
-    { id: 'APP-05', module: 'Role Appointment', applicant: 'तालुका महिला अध्यक्ष (प्रियंका शिर्के)', location: 'Karad', submitted: 'Yesterday', status: 'Pending' },
-    { id: 'APP-06', module: 'Chapter Application', applicant: 'सोलापूर सिद्धेश्वर शाखा (रुपेश पाटील)', location: 'Solapur', submitted: 'Yesterday', status: 'Pending' }
-  ]);
+  const [approvalsList, setApprovalsList] = useState([]);
+  const [countsByModule, setCountsByModule] = useState({});
+  const [selectedModule, setSelectedModule] = useState('all');
+  const [selectedDistrict, setSelectedDistrict] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [actionItem, setActionItem] = useState(null);
+  const [actionRemarks, setActionRemarks] = useState('');
+  const [sanctionedAmount, setSanctionedAmount] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleApprove = (id, name) => {
-    setApprovalsList(prev => prev.filter(x => x.id !== id));
-    toast ? toast(`"${name}" मंजूर केले! ✓`, 'success') : alert(`Approved ${name}`);
+  const fetchApprovals = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await adminApi.getUnifiedApprovals({
+        module: selectedModule !== 'all' ? selectedModule : undefined,
+        district: selectedDistrict !== 'all' ? selectedDistrict : undefined,
+        search: searchQuery || undefined
+      });
+      const list = res?.approvals || [];
+      setApprovalsList(list);
+      if (res?.countsByModule) {
+        setCountsByModule(res.countsByModule);
+      }
+    } catch (err) {
+      console.warn('Error fetching unified approvals:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedModule, selectedDistrict, searchQuery]);
+
+  useEffect(() => {
+    fetchApprovals();
+  }, [fetchApprovals]);
+
+  const openActionModal = (item, action) => {
+    setActionItem({ item, action });
+    setActionRemarks(action === 'approve' || action === 'sanction' 
+      ? 'सर्व कागदपत्रे व निकष पडताळून मंजुरी देण्यात येत आहे.' 
+      : 'पडताळणी निकष पूर्ण न झाल्यामुळे अर्ज फेटाळण्यात येत आहे.');
+    if (item.type === 'loan') {
+      const numericVal = String(item.valueOrDetails || '').replace(/\D/g, '');
+      setSanctionedAmount(numericVal || '500000');
+    } else {
+      setSanctionedAmount('');
+    }
   };
 
-  const handleReject = (id, name) => {
-    setApprovalsList(prev => prev.filter(x => x.id !== id));
-    toast ? toast(`"${name}" फेटाळले. ✕`, 'error') : alert(`Rejected ${name}`);
+  const handleConfirmAction = async () => {
+    if (!actionItem) return;
+    setSubmitting(true);
+    try {
+      const { item, action } = actionItem;
+      await adminApi.actionUnifiedApproval({
+        itemId: item.id,
+        type: item.type,
+        collection: item.collection,
+        action,
+        remarks: actionRemarks,
+        sanctionedAmount: item.type === 'loan' ? sanctionedAmount : undefined
+      });
+
+      setApprovalsList(prev => prev.filter(x => x.id !== item.id));
+      const actionName = action === 'approve' || action === 'sanction' ? 'मंजूर' : 'फेटाळले';
+      toast ? toast(`"${item.title || item.applicantName}" यशस्वीरीत्या ${actionName}! ✓`, 'success')
+            : alert(`Item ${actionName}`);
+      setActionItem(null);
+      fetchApprovals();
+    } catch (err) {
+      toast ? toast(`त्रुटी: ${err.message}`, 'error') : alert(`Error: ${err.message}`);
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  const moduleTabs = [
+    { id: 'all', label: 'सर्व प्रलंबित', icon: '⚡', count: countsByModule.all || approvalsList.length },
+    { id: 'directory', label: 'व्यवसाय नोंदणी', icon: '🏨', count: countsByModule.directory || 0 },
+    { id: 'job', label: 'नोकरी भरती', icon: '💼', count: countsByModule.job || 0 },
+    { id: 'loan', label: 'बँक कर्ज अर्ज', icon: '🏦', count: countsByModule.loan || 0 },
+    { id: 'blood', label: 'रक्त मदत स्लिप', icon: '🩸', count: countsByModule.blood || 0 },
+    { id: 'lead', label: 'B2B रडार मागणी', icon: '🚀', count: countsByModule.lead || 0 },
+    { id: 'dairy_partner', label: 'दूध संकलन BMC', icon: '🥛', count: countsByModule.dairy_partner || 0 },
+    { id: 'post_report', label: 'मंच तक्रारी', icon: '🚨', count: countsByModule.post_report || 0 },
+    { id: 'member_kyc', label: 'सदस्य KYC', icon: '🪪', count: countsByModule.member_kyc || 0 }
+  ];
 
   return (
     <>
-      <SectionTitle subtitle={`एकूण ${approvalsList.length} प्रलंबित मंजुऱ्या`}>✅ Unified Approval Command Center</SectionTitle>
-      <Card style={{ padding: 0 }}>
-        <Table
-          headers={['आयडी', 'मॉड्यूल (Module)', 'अर्जदार / नोंद', 'स्थान', 'सादर वेळ', 'स्थिती', 'कृती']}
-          rows={approvalsList.map(a => [
-            <span style={{ fontFamily: 'monospace', color: T.saffron, fontWeight: 800 }}>{a.id}</span>,
-            <Badge tone="saffron">{a.module}</Badge>,
-            <strong>{a.applicant}</strong>,
-            a.location,
-            a.submitted,
-            <Badge tone="saffron">⏳ {a.status}</Badge>,
-            <div style={{ display: 'flex', gap: 6 }}>
-              <Btn variant="success" style={{ fontSize: '0.7rem', padding: '4px 8px' }} onClick={() => handleApprove(a.id, a.applicant)}>✓ मंजूर (Approve)</Btn>
-              <Btn variant="danger" style={{ fontSize: '0.7rem', padding: '4px 8px' }} onClick={() => handleReject(a.id, a.applicant)}>✕ फेटाळा</Btn>
-            </div>
-          ])}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+        <SectionTitle subtitle={`सर्व ९ बिझनेस, आर्थिक व समुदाय मॉड्यूल्सचे एकत्रित मंजुरी आदेश केंद्र`}>
+          ⚖️ एकत्रित प्रशासकीय मंजुरी केंद्र (Unified Approvals Command Center)
+        </SectionTitle>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Btn variant="plain" onClick={fetchApprovals} style={{ fontSize: '0.8rem' }}>🔄 रिफ्रेश (Refresh)</Btn>
+        </div>
+      </div>
+
+      {/* Module Filter Chips */}
+      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, marginBottom: 16 }}>
+        {moduleTabs.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setSelectedModule(tab.id)}
+            style={{
+              padding: '7px 12px',
+              borderRadius: 20,
+              fontSize: '0.78rem',
+              fontWeight: 800,
+              cursor: 'pointer',
+              border: selectedModule === tab.id ? `2px solid ${T.saffron}` : `1px solid ${T.border}`,
+              background: selectedModule === tab.id ? T.softBg : T.panel,
+              color: selectedModule === tab.id ? T.saffron : T.text,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              whiteSpace: 'nowrap',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <span>{tab.icon}</span>
+            <span>{tab.label}</span>
+            <span style={{
+              background: selectedModule === tab.id ? T.saffron : T.border,
+              color: selectedModule === tab.id ? '#FFF' : T.text,
+              fontSize: '0.68rem',
+              padding: '1px 6px',
+              borderRadius: 999,
+              fontWeight: 900
+            }}>
+              {tab.count}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Search & District Filter */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
+        <input
+          type="text"
+          placeholder="अर्जदार, शीर्षक, जिल्हा किंवा आयडी शोधा..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            flex: 1, minWidth: 220, padding: '8px 14px', borderRadius: 8,
+            border: `1px solid ${T.border}`, fontSize: '0.82rem', outline: 'none'
+          }}
         />
+        <select
+          value={selectedDistrict}
+          onChange={(e) => setSelectedDistrict(e.target.value)}
+          style={{
+            padding: '8px 12px', borderRadius: 8, border: `1px solid ${T.border}`,
+            background: T.panel, fontSize: '0.82rem', outline: 'none', cursor: 'pointer'
+          }}
+        >
+          <option value="all">सर्व जिल्हे (All Districts)</option>
+          <option value="पुणे">पुणे</option>
+          <option value="मुंबई">मुंबई</option>
+          <option value="सातारा">सातारा</option>
+          <option value="कोल्हापूर">कोल्हापूर</option>
+          <option value="नाशिक">नाशिक</option>
+          <option value="छत्रपती संभाजीनगर">छत्रपती संभाजीनगर</option>
+          <option value="सोलापूर">सोलापूर</option>
+          <option value="नागपूर">नागपूर</option>
+          <option value="सांगली">सांगली</option>
+        </select>
+      </div>
+
+      {/* Main Table */}
+      <Card style={{ padding: 0 }}>
+        {loading ? (
+          <div style={{ padding: 32, textAlign: 'center', color: T.saffron, fontWeight: 700 }}>
+            ⏳ प्रलंबित मंजुऱ्या लोड होत आहेत...
+          </div>
+        ) : approvalsList.length === 0 ? (
+          <div style={{ padding: 40, textAlign: 'center' }}>
+            <span style={{ fontSize: '2rem' }}>🎉</span>
+            <h4 style={{ margin: '8px 0 4px', color: T.ink, fontWeight: 800 }}>सर्व प्रलंबित मंजुऱ्या पूर्ण झाल्या आहेत!</h4>
+            <p style={{ margin: 0, fontSize: '0.82rem', color: T.muted }}>सध्या या फिल्टर अंतर्गत कोणतीही प्रलंबित नोंद शिल्लक नाही.</p>
+          </div>
+        ) : (
+          <Table
+            headers={['आयडी', 'मॉड्यूल (Module)', 'विषय / नोंद शीर्षक', 'अर्जदार / संस्था', 'तपशील / मूल्य', 'स्थान व जिल्हा', 'प्राधान्य', 'कृती']}
+            rows={approvalsList.map(a => [
+              <span key="id" style={{ fontFamily: 'monospace', color: T.saffron, fontWeight: 800 }}>{a.id}</span>,
+              <div key="mod">
+                <Badge tone="saffron">{a.module}</Badge>
+                <div style={{ fontSize: '0.7rem', color: T.muted, marginTop: 2 }}>{a.subModule}</div>
+              </div>,
+              <strong key="title" style={{ color: T.ink }}>{a.title}</strong>,
+              <div key="app">
+                <div style={{ fontWeight: 700 }}>{a.applicantName}</div>
+                <div style={{ fontSize: '0.68rem', color: T.muted }}>{new Date(a.submittedAt).toLocaleDateString('mr-IN')}</div>
+              </div>,
+              <div key="val" style={{ fontSize: '0.76rem', color: T.text }}>{a.valueOrDetails || '—'}</div>,
+              <div key="loc" style={{ fontSize: '0.76rem' }}>{a.location || a.district || 'महाराष्ट्र'}</div>,
+              <Badge key="prio" tone={a.priority === 'Critical' ? 'red' : a.priority === 'High' ? 'amber' : 'blue'}>
+                {a.priority || 'Normal'}
+              </Badge>,
+              <div key="act" style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                <Btn
+                  variant="success"
+                  style={{ fontSize: '0.72rem', padding: '5px 10px' }}
+                  onClick={() => openActionModal(a, a.type === 'loan' ? 'sanction' : 'approve')}
+                >
+                  {a.type === 'loan' ? '✓ कर्ज मंजूर करा' : '✓ मंजूर (Approve)'}
+                </Btn>
+                <Btn
+                  variant="danger"
+                  style={{ fontSize: '0.72rem', padding: '5px 10px' }}
+                  onClick={() => openActionModal(a, 'reject')}
+                >
+                  ✕ फेटाळा
+                </Btn>
+              </div>
+            ])}
+          />
+        )}
       </Card>
+
+      {/* Action Confirmation & Remarks Modal */}
+      {actionItem && (
+        <Modal
+          title={actionItem.action === 'reject' ? '⚠️ नोंद नामंजूर / फेटाळणी' : '✅ अधिकृत मंजुरी आदेश व प्रमाणीकरण'}
+          onClose={() => setActionItem(null)}
+          width={540}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ background: T.softBg, border: `1px solid ${T.border}`, borderRadius: 10, padding: 14 }}>
+              <div style={{ fontSize: '0.74rem', color: T.saffron, fontWeight: 800 }}>{actionItem.item.module} • {actionItem.item.subModule}</div>
+              <div style={{ fontSize: '0.98rem', fontWeight: 900, color: T.ink, marginTop: 4 }}>{actionItem.item.title}</div>
+              <div style={{ fontSize: '0.8rem', color: T.muted, marginTop: 2 }}>अर्जदार: {actionItem.item.applicantName} | ठिकाण: {actionItem.item.location}</div>
+              {actionItem.item.valueOrDetails && (
+                <div style={{ fontSize: '0.78rem', color: T.text, marginTop: 4, fontWeight: 700 }}>{actionItem.item.valueOrDetails}</div>
+              )}
+            </div>
+
+            {actionItem.item.type === 'loan' && (actionItem.action === 'approve' || actionItem.action === 'sanction') && (
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: T.ink, marginBottom: 4 }}>
+                  मंजूर केलेली कर्ज रक्कम (Sanctioned Loan Amount in ₹):
+                </label>
+                <input
+                  type="number"
+                  value={sanctionedAmount}
+                  onChange={(e) => setSanctionedAmount(e.target.value)}
+                  placeholder="उदा. 1500000"
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: `1px solid ${T.border}`, fontSize: '0.85rem' }}
+                />
+              </div>
+            )}
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: T.ink, marginBottom: 4 }}>
+                प्रशासकीय शेरा व टिप्पणी (Administrative Remarks / Audit Note):
+              </label>
+              <textarea
+                rows={3}
+                value={actionRemarks}
+                onChange={(e) => setActionRemarks(e.target.value)}
+                placeholder="शेरा प्रविष्ट करा..."
+                style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: `1px solid ${T.border}`, fontSize: '0.82rem', resize: 'vertical' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 8 }}>
+              <Btn variant="plain" onClick={() => setActionItem(null)}>रद्द करा (Cancel)</Btn>
+              <Btn
+                variant={actionItem.action === 'reject' ? 'danger' : 'success'}
+                onClick={handleConfirmAction}
+                disabled={submitting}
+              >
+                {submitting ? 'प्रक्रिया सुरू आहे...' : actionItem.action === 'reject' ? '✕ खात्रीने फेटाळा' : '✓ अंतिम मंजुरी जारी करा'}
+              </Btn>
+            </div>
+          </div>
+        </Modal>
+      )}
     </>
   );
 }
@@ -2065,45 +3008,9 @@ function RolesMatrixPipelineView({ data, toast }) {
   const [nominatedUser, setNominatedUser] = useState('');
   const [appointmentNotes, setAppointmentNotes] = useState('');
 
-  // Applications List from localStorage + initial mock
+  // Applications List from localStorage (clean live data, no demo mocks)
   const [applicationsList, setApplicationsList] = useState(() => {
-    const saved = JSON.parse(localStorage.getItem('cm_role_applications') || '[]');
-    if (saved.length > 0) return saved;
-    return [
-      {
-        id: 'app_demo_1',
-        userId: 'CM-MH-9876543210',
-        userName: 'अमोल तुकाराम जाधव',
-        userDistrict: 'पुणे (हवेली)',
-        roleId: 'adm-01',
-        roleTitleMr: 'ग्रामाध्यक्ष (ग्राम अध्यक्ष)',
-        referrals: 12450,
-        status: 'Pending',
-        appliedAt: new Date(Date.now() - 3600000 * 4).toISOString()
-      },
-      {
-        id: 'app_demo_2',
-        userId: 'CM-MH-4458129012',
-        userName: 'प्रियंका सुरेश शिर्के',
-        userDistrict: 'सातारा (कराड)',
-        roleId: 'wmn-02',
-        roleTitleMr: 'तालुका महिला अध्यक्ष',
-        referrals: 18200,
-        status: 'Pending',
-        appliedAt: new Date(Date.now() - 3600000 * 24).toISOString()
-      },
-      {
-        id: 'app_demo_3',
-        userId: 'CM-MH-7712398451',
-        userName: 'निलेश भगवान देशमुख',
-        userDistrict: 'नाशिक (मालेगाव)',
-        roleId: 'tech-03',
-        roleTitleMr: 'तालुका डिजिटल प्रमुख (IT Head)',
-        referrals: 15600,
-        status: 'Pending',
-        appliedAt: new Date(Date.now() - 3600000 * 48).toISOString()
-      }
-    ];
+    return JSON.parse(localStorage.getItem('cm_role_applications') || '[]');
   });
 
   const handleApproveApp = (app) => {

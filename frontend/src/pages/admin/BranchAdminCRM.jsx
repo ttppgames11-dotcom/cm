@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 import CRMScopeSwitcher from '../../components/layout/CRMScopeSwitcher';
+import UnitHierarchyPanel from '../../components/crm/UnitHierarchyPanel';
 
 export default function BranchAdminCRM() {
   const [branches, setBranches] = useState([]);
@@ -40,23 +41,7 @@ export default function BranchAdminCRM() {
     }
   };
 
-  const currentBranch = branches.find(b => b.id === selectedBranchId) || branches[0] || {
-    id: 'BR-HAV-001',
-    name: 'शिवनेरी मध्यवर्ती शाखा, हवेली',
-    district: 'पुणे',
-    taluka: 'हवेली',
-    area: 'शिवाजीनगर व फर्ग्युसन रोड परिसर',
-    headName: 'श्री. विजय कदम (शाखाध्यक्ष)',
-    secretaryName: 'श्री. महेश भोसले (शाखा सचिव)',
-    membersCount: 420,
-    activeCount: 382,
-    newThisMonth: 48,
-    referralsCount: 96,
-    businessesCount: 82,
-    volunteersCount: 64,
-    sevaCasesCount: 12,
-    status: 'सक्रिय (Active)'
-  };
+  const currentBranch = branches.find(b => b.id === selectedBranchId) || branches[0] || null;
 
   // Record meeting in database
   const handleRecordMeeting = async (e) => {
@@ -127,10 +112,14 @@ export default function BranchAdminCRM() {
               🏠 GRASSROOTS BRANCH / SHAKHA COMMAND CRM
             </div>
             <h1 style={{ fontSize: '1.9rem', fontWeight: 900, margin: '4px 0 8px' }}>
-              {currentBranch.name}
+              {currentBranch ? currentBranch.name : 'शाखा निवडलेली नाही'}
             </h1>
             <p style={{ margin: 0, opacity: 0.9, fontSize: '0.95rem' }}>
-              शाखाध्यक्ष: <strong>{currentBranch.headName}</strong> | कार्यक्षेत्र: {currentBranch.area} ({currentBranch.district} - {currentBranch.taluka})
+              {currentBranch ? (
+                <>शाखाध्यक्ष: <strong>{currentBranch.headName}</strong> | कार्यक्षेत्र: {currentBranch.area} ({currentBranch.district} - {currentBranch.taluka})</>
+              ) : (
+                'कृपया खालील यादीतून शाखा निवडा किंवा नवीन शाखा नोंदवा.'
+              )}
             </p>
           </div>
 
@@ -149,6 +138,7 @@ export default function BranchAdminCRM() {
                 cursor: 'pointer'
               }}
             >
+              {branches.length === 0 && <option value="">कोणतीही शाखा उपलब्ध नाही</option>}
               {branches.map(b => (
                 <option key={b.id} value={b.id}>{b.name}</option>
               ))}
@@ -181,27 +171,27 @@ export default function BranchAdminCRM() {
           <div style={{ background: '#FFF', padding: '20px', borderRadius: '16px', border: '1px solid #F0ABFC' }}>
             <div style={{ fontSize: '0.85rem', color: '#701A75', fontWeight: 700 }}>शाखेतील एकूण सदस्य</div>
             <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#A21CAF', marginTop: '4px' }}>
-              {currentBranch.membersCount || 420}
+              {currentBranch?.membersCount || 0}
             </div>
             <div style={{ fontSize: '0.8rem', color: '#16A34A', fontWeight: 700, marginTop: '4px' }}>
-              ✓ सक्रिय: {currentBranch.activeCount || 382} | नवीन: +{currentBranch.newThisMonth || 48}
+              ✓ सक्रिय: {currentBranch?.activeCount || 0} | नवीन: +{currentBranch?.newThisMonth || 0}
             </div>
           </div>
 
           <div style={{ background: '#FFF', padding: '20px', borderRadius: '16px', border: '1px solid #FED7AA' }}>
             <div style={{ fontSize: '0.85rem', color: '#9A3412', fontWeight: 700 }}>रेफरल व B2B जोडणी</div>
             <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#EA580C', marginTop: '4px' }}>
-              {currentBranch.referralsCount || 96}
+              {currentBranch?.referralsCount || 0}
             </div>
             <div style={{ fontSize: '0.8rem', color: '#65A30D', fontWeight: 700, marginTop: '4px' }}>
-              🤝 {currentBranch.businessesCount || 82} स्थानिक व्यापारी
+              🤝 {currentBranch?.businessesCount || 0} स्थानिक व्यापारी
             </div>
           </div>
 
           <div style={{ background: '#FFF', padding: '20px', borderRadius: '16px', border: '1px solid #BFDBFE' }}>
             <div style={{ fontSize: '0.85rem', color: '#1E3A8A', fontWeight: 700 }}>सक्रिय स्वयंसेवक (Volunteers)</div>
             <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#2563EB', marginTop: '4px' }}>
-              {currentBranch.volunteersCount || 64}
+              {currentBranch?.volunteersCount || 0}
             </div>
             <div style={{ fontSize: '0.8rem', color: '#2563EB', fontWeight: 700, marginTop: '4px' }}>
               🙋 गाव/वॉर्ड पातळीवरील युवक
@@ -211,7 +201,7 @@ export default function BranchAdminCRM() {
           <div style={{ background: '#FFF', padding: '20px', borderRadius: '16px', border: '1px solid #FECACA' }}>
             <div style={{ fontSize: '0.85rem', color: '#991B1B', fontWeight: 700 }}>स्थानिक सेवा व मदत केसेस</div>
             <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#DC2626', marginTop: '4px' }}>
-              {currentBranch.sevaCasesCount || 12}
+              {currentBranch?.sevaCasesCount || 0}
             </div>
             <div style={{ fontSize: '0.8rem', color: '#16A34A', fontWeight: 700, marginTop: '4px' }}>
               🩸 सर्व केसेस समन्वित
@@ -401,6 +391,9 @@ export default function BranchAdminCRM() {
           </div>
         )}
 
+        <div style={{ marginTop: '32px' }}>
+          <UnitHierarchyPanel defaultTab="overview" />
+        </div>
       </div>
     </div>
   </div>

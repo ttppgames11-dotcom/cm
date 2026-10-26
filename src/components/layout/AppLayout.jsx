@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import SiteHeader from './SiteHeader';
 import SiteFooter from './SiteFooter';
 import CommandPalette from './CommandPalette';
-import AIAssistantWidget from '../common/AIAssistantWidget';
+import AiAssistantWidget from '../common/AIAssistantWidget';
 
 const isUserLoggedIn = (user) => {
   if (!user) return false;
@@ -98,7 +98,7 @@ export default function AppLayout({ children }) {
               }}
             >
               <div style={{ fontSize: '3rem', marginBottom: '12px' }}>🔐 🚩</div>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#431407', margin: '0 0 8px' }}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#EA580C', margin: '0 0 8px' }}>
                 Connect Maratha — सभासद लॉगिन आवश्यक
               </h2>
               <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#EA580C', marginBottom: '16px' }}>
@@ -237,10 +237,9 @@ export default function AppLayout({ children }) {
         </Link>
       )}
 
-      {/* Global Floating Connect Maratha AI Assistant Widget */}
-      {location.pathname !== '/ai' && location.pathname !== '/ai-agent' && (
-        <AIAssistantWidget />
-      )}
+
+      {/* Connect Maratha AI Assistant Floating Widget */}
+      <AiAssistantWidget />
 
       {/* 🔐 GLOBAL AUTHENTICATION REQUIRED PROMPT DIALOG */}
       {authRequiredPrompt && (
@@ -301,7 +300,7 @@ export default function AppLayout({ children }) {
 
             {/* Icon & Title */}
             <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🔐 🚩</div>
-            <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#431407', margin: '0 0 6px' }}>
+            <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#EA580C', margin: '0 0 6px' }}>
               Connect Maratha — सभासद लॉगिन आवश्यक
             </h3>
             <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', marginBottom: '14px' }}>

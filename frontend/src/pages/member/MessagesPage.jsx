@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import api from '../../services/api';
 
 const DEFAULT_CONVERSATIONS = [
   {
@@ -93,7 +94,33 @@ export default function MessagesPage() {
     return conversations[0]?.id || 'c1';
   });
 
-  // Handle incoming query params (?to=...&name=...) from Directory or Meeting booker
+  // Fetch real conversation threads from backend SQLite
+  useEffect(() => {
+    let isMounted = true;
+    const loadRemoteConversations = async () => {
+      try {
+        const res = await api.messages.getConversations();
+        const serverConvs = res?.data?.conversations || res?.conversations;
+        if (isMounted && Array.isArray(serverConvs) && serverConvs.length > 0) {
+          setConversations(prev => {
+            const merged = [...serverConvs];
+            for (const p of prev) {
+              if (!merged.some(m => m.id === p.id)) {
+                merged.push(p);
+              }
+            }
+            return merged;
+          });
+        }
+      } catch (err) {
+        console.warn('Could not load server conversations:', err);
+      }
+    };
+    loadRemoteConversations();
+    return () => { isMounted = false; };
+  }, []);
+
+  // Handle incoming query params (?to=...&name=...) from Directory, Community Feed or Meeting booker
   useEffect(() => {
     if (!toParam && !nameParam) return;
 
@@ -109,7 +136,7 @@ export default function MessagesPage() {
       const newConv = {
         id: newConvId,
         name: nameParam || 'मराठा सदस्य',
-        role: 'मराठा सदस्य · व्यावसायिक नेटवर्क',
+        role: 'मराठा सदस्य · व्यावसायिक व सामाजिक नेटवर्क',
         avatar: '👤',
         online: true,
         lastMsg: 'संभाषण सुरू करा...',
@@ -121,6 +148,36 @@ export default function MessagesPage() {
       return [newConv, ...prev];
     });
   }, [toParam, nameParam]);
+
+  // Fetch real message thread for active chat
+  useEffect(() => {
+    let isMounted = true;
+    if (!activeChatId || activeChatId.startsWith('c1') || activeChatId.startsWith('c2') || activeChatId.startsWith('c3') || activeChatId.startsWith('c4') || activeChatId.startsWith('c5')) {
+      return;
+    }
+    const loadThread = async () => {
+      try {
+        const res = await api.messages.getThread(activeChatId);
+        const serverMsgs = res?.data?.messages || res?.messages;
+        if (isMounted && Array.isArray(serverMsgs)) {
+          setConversations(prev => prev.map(c => {
+            if (c.id === activeChatId) {
+              return {
+                ...c,
+                messages: serverMsgs,
+                lastMsg: serverMsgs[serverMsgs.length - 1]?.text || c.lastMsg
+              };
+            }
+            return c;
+          }));
+        }
+      } catch (err) {
+        console.warn('Could not load chat thread:', err);
+      }
+    };
+    loadThread();
+    return () => { isMounted = false; };
+  }, [activeChatId]);
 
   const [inputMsg, setInputMsg] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -145,15 +202,18 @@ export default function MessagesPage() {
 
   const activeChat = conversations.find(c => c.id === activeChatId) || conversations[0];
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!inputMsg.trim() || !activeChat) return;
 
+    const textToSend = inputMsg.trim();
+    setInputMsg('');
     const timeStr = new Date().toLocaleTimeString('mr-IN', { hour: '2-digit', minute: '2-digit' });
+    const tempMsgId = 'm_' + Date.now();
     const newMsg = {
-      id: 'm_' + Date.now(),
+      id: tempMsgId,
       sender: 'me',
-      text: inputMsg.trim(),
+      text: textToSend,
       time: timeStr
     };
 
@@ -161,7 +221,7 @@ export default function MessagesPage() {
       if (c.id === activeChat.id) {
         return {
           ...c,
-          lastMsg: inputMsg.trim(),
+          lastMsg: textToSend,
           time: timeStr,
           messages: [...(c.messages || []), newMsg]
         };
@@ -169,7 +229,26 @@ export default function MessagesPage() {
       return c;
     }));
 
-    setInputMsg('');
+    // If chat is with a real user, send to backend API
+    if (!activeChat.id.startsWith('c1') && !activeChat.id.startsWith('c2') && !activeChat.id.startsWith('c3') && !activeChat.id.startsWith('c4') && !activeChat.id.startsWith('c5')) {
+      try {
+        const res = await api.messages.sendMessage(activeChat.id, textToSend);
+        if (res && res.data && res.data.message) {
+          const savedMsg = res.data.message;
+          setConversations(prev => prev.map(c => {
+            if (c.id === activeChat.id) {
+              return {
+                ...c,
+                messages: (c.messages || []).map(m => m.id === tempMsgId ? savedMsg : m)
+              };
+            }
+            return c;
+          }));
+        }
+      } catch (err) {
+        console.warn('Failed to send message to backend:', err);
+      }
+    }
   };
 
   const handleStartEdit = (msg) => {
@@ -177,12 +256,13 @@ export default function MessagesPage() {
     setEditingText(msg.text);
   };
 
-  const handleSaveEdit = (msgId) => {
+  const handleSaveEdit = async (msgId) => {
     if (!editingText.trim()) return;
+    const newText = editingText.trim();
     setConversations(prev => prev.map(c => {
       if (c.id === activeChat.id) {
         const updatedMsgs = (c.messages || []).map(m =>
-          m.id === msgId ? { ...m, text: editingText.trim(), edited: true } : m
+          m.id === msgId ? { ...m, text: newText, edited: true } : m
         );
         return {
           ...c,
@@ -193,9 +273,17 @@ export default function MessagesPage() {
       return c;
     }));
     setEditingMsgId(null);
+
+    if (String(msgId).startsWith('MSG-')) {
+      try {
+        await api.messages.editMessage(msgId, newText);
+      } catch (e) {
+        console.warn('Failed to edit on server:', e);
+      }
+    }
   };
 
-  const handleDeleteMsg = (msgId) => {
+  const handleDeleteMsg = async (msgId) => {
     if (window.confirm('हा संदेश हटवायचा आहे का?')) {
       setConversations(prev => prev.map(c => {
         if (c.id === activeChat.id) {
@@ -208,6 +296,14 @@ export default function MessagesPage() {
         }
         return c;
       }));
+
+      if (String(msgId).startsWith('MSG-')) {
+        try {
+          await api.messages.deleteMessage(msgId);
+        } catch (e) {
+          console.warn('Failed to delete on server:', e);
+        }
+      }
     }
   };
 

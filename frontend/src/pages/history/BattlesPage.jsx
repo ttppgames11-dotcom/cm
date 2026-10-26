@@ -113,6 +113,8 @@ export default function BattlesPage() {
       title: 'गनिमी कावा (Guerrilla Warfare)',
       subtitle: 'आकस्मिक हल्ले व अचूक नियोजन',
       accent: '#F4511E',
+      image: '/assets/images/battle-action-pavankhind.jpg',
+      imageCaption: '🚩 सह्याद्रीच्या डोंगर-खिंडीत गनिमी कावा: मूठभर मावळ्यांचा अफाट फौजेवर अभेद्य गनिमी हल्ला',
       quote: '"शत्रूवर संकट कोसळण्याआधी मराठ्यांचे अस्त्र पोहोचले पाहिजे."',
       keyPoints: [
         'भौगोलिक परिस्थितीचा आणि दुर्गम डोंगराळ भागाचा रणनीतिक वापर',
@@ -127,6 +129,8 @@ export default function BattlesPage() {
       title: 'वेगवान अश्वदल (Light Cavalry)',
       subtitle: 'झंझावाती वेग व हालचाल',
       accent: '#D84315',
+      image: '/assets/images/bhavya-maratha-army.jpg',
+      imageCaption: '🐎 मराठा वेगवान घोडदळ: भीमथडी तट्टांवर स्वार होऊन झंझावाती वेगाने मुसंडी मारणारे अश्वदल',
       quote: '"दिवसभरात ५०-६० मैल मजल मारणारे जगातील सर्वांत चपळ घोडदळ."',
       keyPoints: [
         'थोरले बाजीराव पेशवे व धनाजी-संताजी यांच्या काळात जागतिक ख्याती',
@@ -141,9 +145,11 @@ export default function BattlesPage() {
       title: 'तोफखाना व दारुगोळा',
       subtitle: 'सुरूंग, बंदुका व तोफांचे तंत्रज्ञान',
       accent: '#C73800',
+      image: '/assets/images/real-maratha-artillery-cannon.jpg',
+      imageCaption: '💣 ऐतिहासिक मराठा तोफ व दारुगोळा तोफखाना तंत्रज्ञान',
       quote: '"पुरंदर व वसईच्या वेढ्यात मराठा तंत्रज्ञानाने युरोपीय सत्तांना अचंबित केले."',
       keyPoints: [
-        'स्वदेशी कारागिरांनी ओतलेल्या ' + 'तोफा व फिरते हलके तोफखाने (सुतरनाळ/जंबुरा)',
+        'स्वदेशी कारागिरांनी ओतलेल्या तोफा व फिरते हलके तोफखाने (सुतरनाळ/जंबुरा)',
         'इब्राहिम खान गारदी यांच्या फ्रेंच धर्तीवरील प्रशिक्षित तोफखाना ब्रिगेड',
         'वसईच्या किल्ल्यात पोर्तुगीज तटबंदी भुईसपाट करणारे अचूक भुयारी सुरूंग तंत्र',
         'किल्ले व घाटांच्या संरक्षणासाठी तोफांची सामरिक मोर्चेबांधणी'
@@ -155,6 +161,8 @@ export default function BattlesPage() {
       title: 'मराठा आरमार व सागरी वेढा',
       subtitle: 'भारतीय नौदलाचे जनकत्व',
       accent: '#1565C0',
+      image: '/assets/images/navy/maratha_navy_hero.jpg',
+      imageCaption: '⚓ मराठा आरमार: छत्रपती शिवाजी महाराज व कान्होजी आंग्रे यांची सागरी फळी',
       quote: '"ज्यांचे आरमार त्यांचा समुद्र — छत्रपती शिवाजी महाराज."',
       keyPoints: [
         'छत्रपती शिवाजी महाराजांनी सिंधुदुर्ग, विजयदुर्ग, पद्मदुर्ग उभारून रचलेला पाया',
@@ -169,6 +177,8 @@ export default function BattlesPage() {
       title: 'दुर्ग संरक्षण व रसद साखळी',
       subtitle: '३५०+ किल्ल्यांचे अभेद्य जाळे',
       accent: '#6A1B9A',
+      image: '/assets/images/forts/raigad-fort.jpg',
+      imageCaption: '🏰 सह्याद्रीचे दुर्गवैभव: ३५०+ गडकोटांचे अभेद्य संरक्षण जाळे व तटबंदी (किल्ले रायगड)',
       quote: '"किल्ला म्हणजे केवळ दगड-धोंडे नव्हे, तर स्वराज्याचे अभेद्य कवच."',
       keyPoints: [
         'डोंगरी, भुईकोट व जलदुर्गांचे परस्परपूरक संरक्षण जाळे',
@@ -191,32 +201,51 @@ export default function BattlesPage() {
           src="/assets/images/maratha-battles-palkhed.jpg"
           alt="मराठा युद्धे व रणव्यूह"
           className="hero-bg-img"
-          style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.35)' }}
+          style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover' }}
         />
         <div
           className="hero-overlay"
-          style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 70% 30%, rgba(20,4,6,0.6), rgba(12,2,4,0.95) 85%)' }}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(90deg, rgba(14, 4, 6, 0.85) 0%, rgba(14, 4, 6, 0.60) 38%, rgba(14, 4, 6, 0.25) 70%, rgba(14, 4, 6, 0.05) 100%)'
+          }}
         />
         <div className="wrap hero-content" style={{ position: 'relative', zIndex: 2, maxWidth: '1200px', padding: '56px 20px', color: '#fff' }}>
-          <div className="eyebrow" style={{ color: '#FFD54F', textTransform: 'uppercase', fontSize: '0.82rem', letterSpacing: '1.5px', fontWeight: 700 }}>
+          <div className="eyebrow" style={{ color: '#FFD54F', textTransform: 'uppercase', fontSize: '0.82rem', letterSpacing: '1.5px', fontWeight: 800 }}>
             लष्करी रणनीती व युद्ध इतिहास
           </div>
-          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3.4rem)', lineHeight: 1.15, color: '#fff', margin: '8px 0 14px', fontFamily: 'Baloo 2' }}>
+          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3.4rem)', lineHeight: 1.15, color: '#fff', margin: '8px 0 14px', fontFamily: 'Baloo 2', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
             मराठा युद्धे, लढाया व{' '}
             <span style={{ color: '#FF8A65' }}>
               रणव्यूह दालन
             </span>
           </h1>
-          <div style={{ background: '#FF8A65', width: '70px', height: '3px', marginBottom: '14px' }} />
-          <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.05rem', maxWidth: '64ch', lineHeight: 1.55 }}>
+          <div style={{ background: '#FF8A65', width: '70px', height: '3px', marginBottom: '16px' }} />
+          <p style={{
+            color: '#FFF8E7',
+            fontSize: '1.10rem',
+            fontWeight: 600,
+            maxWidth: '64ch',
+            lineHeight: 1.65,
+            background: 'rgba(15, 3, 5, 0.42)',
+            backdropFilter: 'blur(6px)',
+            WebkitBackdropFilter: 'blur(6px)',
+            padding: '12px 18px',
+            borderRadius: '8px',
+            borderLeft: '4px solid #FF8A65',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+            textShadow: '0 2px 6px rgba(0,0,0,0.9), 0 1px 2px rgba(0,0,0,0.9)',
+            margin: '0 0 8px'
+          }}>
             गनिमी कावा, वेगवान अश्वदल, जलदुर्ग वेढा व डोंगररांगांमधील अजोड रणनीती • पावनखिंड ते पालखेड, वसई ते पानिपत — मराठा लष्करी इतिहासाची सत्य व संदर्भयुक्त शौर्यगाथा.
           </p>
 
           <div style={{ display: 'flex', gap: '14px', marginTop: '24px', flexWrap: 'wrap' }}>
-            <a href="#battlesList" className="btn btn-primary" style={{ padding: '10px 22px', fontWeight: 700, background: '#F4511E', color: '#fff', borderRadius: '8px', border: 'none' }}>
+            <a href="#battlesList" className="btn btn-primary" style={{ padding: '10px 22px', fontWeight: 700, background: '#F4511E', color: '#fff', borderRadius: '8px', border: 'none', boxShadow: '0 4px 14px rgba(244,81,30,0.4)' }}>
               ⚔️ प्रमुख लढाया पहा
             </a>
-            <Link to="/forts" className="btn btn-outline" style={{ padding: '10px 22px', color: '#fff', borderColor: '#FFD54F', borderRadius: '8px' }}>
+            <Link to="/forts" className="btn btn-outline" style={{ padding: '10px 22px', color: '#fff', borderColor: '#FFD54F', background: 'rgba(0,0,0,0.30)', borderRadius: '8px', fontWeight: 600 }}>
               🗺️ युद्धस्थळांचा नकाशा
             </Link>
           </div>
@@ -281,11 +310,12 @@ export default function BattlesPage() {
               boxShadow: '0 10px 30px rgba(43, 24, 16, 0.08)',
               padding: '28px 32px',
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
               gap: '28px',
               alignItems: 'center'
             }}
           >
+            {/* Left Column: Details & Key Points */}
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
                 <span style={{ fontSize: '2.2rem', background: '#FFF3E0', padding: '8px 12px', borderRadius: '12px' }}>
@@ -300,29 +330,88 @@ export default function BattlesPage() {
                   </span>
                 </div>
               </div>
+
               <p
                 style={{
                   fontStyle: 'italic',
                   color: '#665C54',
                   borderLeft: `3px solid ${STRATEGY_PILLARS[activePillar].accent}`,
                   paddingLeft: '14px',
-                  margin: '16px 0',
-                  fontSize: '0.94rem'
+                  margin: '14px 0 16px',
+                  fontSize: '0.94rem',
+                  lineHeight: 1.5
                 }}
               >
                 {STRATEGY_PILLARS[activePillar].quote}
               </p>
+
+              <div style={{ background: '#FAF7F2', padding: '16px 20px', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.06)' }}>
+                <h4 style={{ margin: '0 0 10px', fontSize: '0.92rem', color: '#2B1810', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  लष्करी वैशिष्ट्ये व सामर्थ्य:
+                </h4>
+                <ul style={{ margin: 0, paddingLeft: '18px', color: '#4A3B32', fontSize: '0.88rem', lineHeight: 1.6 }}>
+                  {STRATEGY_PILLARS[activePillar].keyPoints.map((pt, i) => (
+                    <li key={i} style={{ marginBottom: '5px' }}>{pt}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
-            <div style={{ background: '#FAF7F2', padding: '20px', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.06)' }}>
-              <h4 style={{ margin: '0 0 12px', fontSize: '0.95rem', color: '#2B1810', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                लष्करी वैशिष्ट्ये व सामर्थ्य:
-              </h4>
-              <ul style={{ margin: 0, paddingLeft: '18px', color: '#4A3B32', fontSize: '0.88rem', lineHeight: 1.6 }}>
-                {STRATEGY_PILLARS[activePillar].keyPoints.map((pt, i) => (
-                  <li key={i} style={{ marginBottom: '6px' }}>{pt}</li>
-                ))}
-              </ul>
+            {/* Right Column: Uncropped Authentic Image Display */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+              <div style={{
+                width: '100%',
+                height: '280px',
+                background: 'linear-gradient(135deg, #1C0A04 0%, #2D1408 50%, #150602 100%)',
+                borderRadius: '14px',
+                overflow: 'hidden',
+                border: '1.5px solid rgba(0,0,0,0.12)',
+                boxShadow: '0 8px 24px rgba(43, 24, 16, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative'
+              }}>
+                <img
+                  src={STRATEGY_PILLARS[activePillar].image}
+                  alt={STRATEGY_PILLARS[activePillar].title}
+                  loading="lazy"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    width: 'auto',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    padding: '8px',
+                    display: 'block'
+                  }}
+                />
+                <span style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '10px',
+                  background: 'rgba(0, 0, 0, 0.75)',
+                  backdropFilter: 'blur(4px)',
+                  color: '#FED7AA',
+                  fontSize: '0.70rem',
+                  fontWeight: 700,
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(254, 215, 170, 0.25)'
+                }}>
+                  📜 अस्सल ऐतिहासिक संदर्भ
+                </span>
+              </div>
+              <div style={{
+                marginTop: '10px',
+                fontSize: '0.82rem',
+                color: '#78350F',
+                fontWeight: 700,
+                textAlign: 'center',
+                lineHeight: 1.4
+              }}>
+                {STRATEGY_PILLARS[activePillar].imageCaption}
+              </div>
             </div>
           </div>
         </div>

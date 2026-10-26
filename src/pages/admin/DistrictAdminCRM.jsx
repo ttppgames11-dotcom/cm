@@ -143,7 +143,7 @@ export default function DistrictAdminCRM() {
           position: 'fixed',
           bottom: '24px',
           right: '24px',
-          background: '#431407',
+          background: '#EA580C',
           color: '#FED7AA',
           border: '1px solid #EA580C',
           padding: '12px 20px',
@@ -162,7 +162,7 @@ export default function DistrictAdminCRM() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <span style={{ fontSize: '1.4rem' }}>📍</span>
             <div>
-              <strong style={{ fontSize: '1.05rem', color: '#431407', fontFamily: 'Baloo 2' }}>
+              <strong style={{ fontSize: '1.05rem', color: '#EA580C', fontFamily: 'Baloo 2' }}>
                 CONNECT MARATHA — जिल्हा समन्वयक CRM (Live Database)
               </strong>
               <div style={{ fontSize: '0.75rem', color: '#7C2D12' }}>
@@ -472,7 +472,7 @@ export default function DistrictAdminCRM() {
         {/* TAB 2: TALUKA STATS (LIVE DATABASE AGGREGATION) */}
         {activeTab === 'stats' && (
           <div style={{ background: '#fff', borderRadius: '14px', border: '1.5px solid #FED7AA', padding: '24px' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '1.2rem', color: '#431407', fontWeight: 900 }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '1.2rem', color: '#EA580C', fontWeight: 900 }}>
               📊 {selectedDistrict} जिल्ह्यातील थेट तालुकानिहाय सदस्य सांख्यिकी
             </h3>
             <div style={{ overflowX: 'auto' }}>
@@ -508,7 +508,7 @@ export default function DistrictAdminCRM() {
             <div style={{ background: '#fff', borderRadius: '14px', border: '1.5px solid #FED7AA', padding: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#431407', fontFamily: 'Baloo 2', fontWeight: 900 }}>
+                  <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#EA580C', fontFamily: 'Baloo 2', fontWeight: 900 }}>
                     💼 {selectedDistrict} जिल्ह्यातील नोकरी अर्ज (Job Candidate Applications)
                   </h3>
                   <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#64748B' }}>
@@ -559,7 +559,7 @@ export default function DistrictAdminCRM() {
                         <tr key={app.id} style={{ borderBottom: '1px solid #FED7AA' }}>
                           <td style={{ padding: '10px 12px', fontWeight: 800, color: '#C2410C' }}>{app.id}</td>
                           <td style={{ padding: '10px 12px', fontWeight: 700, color: '#1E293B' }}>{app.applicantName}</td>
-                          <td style={{ padding: '10px 12px', color: '#431407', fontWeight: 800 }}>{app.jobTitle}</td>
+                          <td style={{ padding: '10px 12px', color: '#EA580C', fontWeight: 800 }}>{app.jobTitle}</td>
                           <td style={{ padding: '10px 12px', color: '#475569' }}>{app.company}</td>
                           <td style={{ padding: '10px 12px', color: '#1E293B', fontFamily: 'monospace' }}>{app.applicantPhone || '-'}</td>
                           <td style={{ padding: '10px 12px', color: '#64748B' }}>{app.resumeUrl}</td>
@@ -590,7 +590,7 @@ export default function DistrictAdminCRM() {
             <div style={{ background: '#fff', borderRadius: '14px', border: '1.5px solid #FED7AA', padding: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#431407', fontFamily: 'Baloo 2', fontWeight: 900 }}>
+                  <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#EA580C', fontFamily: 'Baloo 2', fontWeight: 900 }}>
                     🏢 {selectedDistrict} जिल्ह्यातील ग्राहक Enquiries व B2B व्यावसायिक Leads
                   </h3>
                   <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#64748B' }}>

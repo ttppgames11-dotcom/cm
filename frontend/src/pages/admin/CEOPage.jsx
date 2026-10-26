@@ -490,7 +490,7 @@ export default function CEOPage() {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <span style={{ fontSize: '1.4rem' }}>🚩</span>
-                <span style={{ fontWeight: 900, fontSize: '1.25rem', color: '#431407', letterSpacing: '-0.3px' }}>
+                <span style={{ fontWeight: 900, fontSize: '1.25rem', color: '#EA580C', letterSpacing: '-0.3px' }}>
                   CONNECT MARATHA
                 </span>
                 <span style={{
@@ -536,7 +536,7 @@ export default function CEOPage() {
                   borderRadius: '10px',
                   border: '1.5px solid #FED7AA',
                   background: '#FFF7ED',
-                  color: '#431407',
+                  color: '#EA580C',
                   fontSize: '0.85rem',
                   outline: 'none',
                   boxSizing: 'border-box'
@@ -671,7 +671,7 @@ export default function CEOPage() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          color: '#431407',
+          color: '#EA580C',
           fontWeight: 800,
           fontSize: '0.88rem'
         }}>
@@ -770,7 +770,7 @@ export default function CEOPage() {
                   ------------------------------------------------------------- */}
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                  <h2 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#431407', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <h2 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#EA580C', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span>🚩</span> 1. Executive KPI Cards & Macro Health
                   </h2>
                   <span style={{ fontSize: '0.82rem', color: '#78350F', fontWeight: 700 }}>
@@ -787,7 +787,7 @@ export default function CEOPage() {
                       <span>👥 Total Members</span>
                       <span style={{ color: '#16A34A', fontWeight: 900 }}>+18.6%</span>
                     </div>
-                    <div style={{ fontSize: '2rem', fontWeight: 900, color: '#431407', margin: '6px 0' }}>
+                    <div style={{ fontSize: '2rem', fontWeight: 900, color: '#EA580C', margin: '6px 0' }}>
                       {totalMembers.toLocaleString('en-IN')}
                     </div>
                     <div style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>
@@ -844,7 +844,7 @@ export default function CEOPage() {
                   {/* Total Referrals */}
                   <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '16px', padding: '18px' }}>
                     <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#64748B' }}>🤝 Total Referrals</div>
-                    <div style={{ fontSize: '2rem', fontWeight: 900, color: '#431407', margin: '6px 0' }}>
+                    <div style={{ fontSize: '2rem', fontWeight: 900, color: '#EA580C', margin: '6px 0' }}>
                       {totalReferrals.toLocaleString('en-IN')}
                     </div>
                     <div style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>
@@ -920,7 +920,7 @@ export default function CEOPage() {
                     <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#FFF7ED', padding: '6px 12px', borderRadius: '8px', border: '1px solid #FFEDD5' }}>
                       <span>{m.icon}</span>
                       <span style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>{m.label}:</span>
-                      <span style={{ fontSize: '0.85rem', color: '#431407', fontWeight: 900 }}>{m.val}</span>
+                      <span style={{ fontSize: '0.85rem', color: '#EA580C', fontWeight: 900 }}>{m.val}</span>
                     </div>
                   ))}
                 </div>
@@ -938,7 +938,7 @@ export default function CEOPage() {
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
                   <span style={{ fontSize: '1.3rem' }}>🧠</span>
-                  <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#431407' }}>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#EA580C' }}>
                     11. CEO Intelligence — "Why?" (त्वरित धोरणात्मक निर्णय)
                   </h3>
                   <span style={{ background: '#EA580C', color: '#FFF', fontSize: '0.7rem', padding: '2px 8px', borderRadius: '999px', fontWeight: 800 }}>
@@ -993,7 +993,7 @@ export default function CEOPage() {
                 {/* 2. MEMBERSHIP GROWTH */}
                 <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                    <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#EA580C', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span>📈</span> 2. Membership Growth (मासिक वाढ)
                     </h3>
                     <span style={{ fontSize: '0.78rem', background: '#DCFCE7', color: '#15803D', fontWeight: 800, padding: '3px 8px', borderRadius: '6px' }}>
@@ -1024,7 +1024,7 @@ export default function CEOPage() {
                             transition: 'width 0.5s ease'
                           }} />
                         </div>
-                        <span style={{ width: '65px', textAlign: 'right', fontSize: '0.82rem', fontWeight: 900, color: '#431407' }}>
+                        <span style={{ width: '65px', textAlign: 'right', fontSize: '0.82rem', fontWeight: 900, color: '#EA580C' }}>
                           {item.count.toLocaleString('en-IN')}
                         </span>
                       </div>
@@ -1039,7 +1039,7 @@ export default function CEOPage() {
                 {/* 3. REFERRAL PERFORMANCE FUNNEL */}
                 <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                    <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#EA580C', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span>🤝</span> 3. Referral Performance Funnel
                     </h3>
                     <span style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>Conversion Stages</span>
@@ -1064,7 +1064,7 @@ export default function CEOPage() {
                         alignItems: 'center'
                       }}>
                         <div>
-                          <div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#431407' }}>{fn.step}</div>
+                          <div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#EA580C' }}>{fn.step}</div>
                           <div style={{ fontSize: '0.72rem', color: '#15803D', fontWeight: 800 }}> रूपांतरण दर: {fn.conv}</div>
                         </div>
                         <div style={{ fontSize: '1.2rem', fontWeight: 900, color: fn.color }}>
@@ -1087,7 +1087,7 @@ export default function CEOPage() {
               <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '22px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
                   <div>
-                    <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#EA580C', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span>🗺️</span> 4. Maharashtra Referral Heatmap & Interactive Drill-Down
                     </h3>
                     <div style={{ fontSize: '0.8rem', color: '#78350F', marginTop: '2px' }}>
@@ -1128,7 +1128,7 @@ export default function CEOPage() {
                     {drillDown.chapter && (
                       <>
                         <span style={{ color: '#94A3B8' }}>/</span>
-                        <span style={{ color: '#431407', fontWeight: 900 }}>👥 {drillDown.chapter}</span>
+                        <span style={{ color: '#EA580C', fontWeight: 900 }}>👥 {drillDown.chapter}</span>
                       </>
                     )}
                   </div>
@@ -1159,7 +1159,7 @@ export default function CEOPage() {
                               background: idx % 2 === 0 ? '#FFFFFF' : '#FFFCF8'
                             }}
                           >
-                            <td style={{ padding: '12px 14px', fontWeight: 900, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <td style={{ padding: '12px 14px', fontWeight: 900, color: '#EA580C', display: 'flex', alignItems: 'center', gap: '8px' }}>
                               <span>📍</span> {d.name}
                               {d.dbMembers.length > 0 && (
                                 <span style={{ background: '#DCFCE7', color: '#166534', fontSize: '0.7rem', padding: '1px 6px', borderRadius: '4px' }}>
@@ -1211,7 +1211,7 @@ export default function CEOPage() {
                             cursor: 'pointer'
                           }}
                         >
-                          <div style={{ fontSize: '1rem', fontWeight: 900, color: '#431407' }}>🏛️ {tal}</div>
+                          <div style={{ fontSize: '1rem', fontWeight: 900, color: '#EA580C' }}>🏛️ {tal}</div>
                           <div style={{ fontSize: '0.78rem', color: '#64748B', marginTop: '4px' }}>
                             सभासद: ~{Math.round((8420 / 8) + (tIdx * 45))} • रेफरल्स: ~{Math.round((3820 / 8) + (tIdx * 20))}
                           </div>
@@ -1256,7 +1256,7 @@ export default function CEOPage() {
                             cursor: 'pointer'
                           }}
                         >
-                          <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#431407' }}>🚩 {ch.name}</div>
+                          <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#EA580C' }}>🚩 {ch.name}</div>
                           <div style={{ fontSize: '0.8rem', color: '#64748B', margin: '4px 0' }}>चॅप्टर प्रमुख: {ch.head}</div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', marginTop: '8px' }}>
                             <span>एकूण सभासद: <strong>{ch.members}</strong></span>
@@ -1275,7 +1275,7 @@ export default function CEOPage() {
                 {drillDown.level === 'member' && (
                   <div>
                     <div style={{ marginBottom: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#431407' }}>
+                      <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#EA580C' }}>
                         👥 {drillDown.chapter} — नोंदणीकृत सभासद (Live Database Records)
                       </span>
                       <button
@@ -1307,7 +1307,7 @@ export default function CEOPage() {
                           ]).map((m, mIdx) => (
                             <tr key={mIdx} style={{ borderBottom: '1px solid #FFF7ED' }}>
                               <td style={{ padding: '10px', fontWeight: 900, color: '#EA580C' }}>{m.id}</td>
-                              <td style={{ padding: '10px', fontWeight: 800, color: '#431407' }}>{m.name}</td>
+                              <td style={{ padding: '10px', fontWeight: 800, color: '#EA580C' }}>{m.name}</td>
                               <td style={{ padding: '10px' }}>{m.phone}</td>
                               <td style={{ padding: '10px' }}>{m.profession || m.business || 'व्यवसाय'}</td>
                               <td style={{ padding: '10px' }}>
@@ -1361,7 +1361,7 @@ export default function CEOPage() {
               <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '22px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
                   <div>
-                    <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#EA580C', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span>🏛️</span> 5. Organizational Leadership Performance (संघटनात्मक नेतृत्व)
                     </h3>
                     <div style={{ fontSize: '0.8rem', color: '#78350F', marginTop: '2px' }}>
@@ -1408,7 +1408,7 @@ export default function CEOPage() {
                     <tbody>
                       {leadershipHierarchy.map((lh, lIdx) => (
                         <tr key={lIdx} style={{ borderBottom: '1px solid #FFF7ED', background: lIdx === 0 ? '#FFFBF5' : '#FFFFFF' }}>
-                          <td style={{ padding: '12px 14px', fontWeight: 900, color: '#431407' }}>
+                          <td style={{ padding: '12px 14px', fontWeight: 900, color: '#EA580C' }}>
                             <div style={{ fontSize: '0.75rem', color: '#9A3412', fontWeight: 800 }}>{lh.level}</div>
                             {lh.region}
                           </td>
@@ -1447,7 +1447,7 @@ export default function CEOPage() {
                 <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#EA580C', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span>🏆</span> 6. Top Referrers & Quality Score
                       </h3>
                       <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
@@ -1487,7 +1487,7 @@ export default function CEOPage() {
                             {idx + 1}
                           </span>
                           <div>
-                            <div style={{ fontWeight: 900, fontSize: '0.92rem', color: '#431407' }}>
+                            <div style={{ fontWeight: 900, fontSize: '0.92rem', color: '#EA580C' }}>
                               {p.name}
                             </div>
                             <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
@@ -1522,7 +1522,7 @@ export default function CEOPage() {
                 <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#EA580C', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span>🏅</span> 7. Chapter Performance (चॅप्टर कामगिरी)
                       </h3>
                       <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
@@ -1535,7 +1535,7 @@ export default function CEOPage() {
                     {chapterPerformance.map((ch, idx) => (
                       <div key={idx}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 800, marginBottom: '4px' }}>
-                          <span style={{ color: '#431407' }}>🚩 {ch.name}</span>
+                          <span style={{ color: '#EA580C' }}>🚩 {ch.name}</span>
                           <span style={{ color: '#EA580C', fontWeight: 900 }}>{ch.percentage}% ({ch.status})</span>
                         </div>
                         <div style={{ background: '#FFF7ED', height: '14px', borderRadius: '999px', overflow: 'hidden', border: '1px solid #FED7AA' }}>
@@ -1568,7 +1568,7 @@ export default function CEOPage() {
                 
                 {/* 8. FINANCIAL OVERVIEW & NET ACQUISITION ECONOMICS */}
                 <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '20px' }}>
-                  <h3 style={{ margin: '0 0 14px', fontSize: '1.2rem', fontWeight: 900, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <h3 style={{ margin: '0 0 14px', fontSize: '1.2rem', fontWeight: 900, color: '#EA580C', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span>💰</span> 8. Financial Overview & Acquisition Economics
                   </h3>
 
@@ -1597,7 +1597,7 @@ export default function CEOPage() {
                       <strong style={{ color: '#DC2626' }}>- ₹12.45 L</strong>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem', padding: '8px 0 0', fontWeight: 900 }}>
-                      <span style={{ color: '#431407' }}>= Net Membership Contribution:</span>
+                      <span style={{ color: '#EA580C' }}>= Net Membership Contribution:</span>
                       <span style={{ color: '#15803D' }}>₹48.75 L (+79.6%)</span>
                     </div>
                   </div>
@@ -1610,7 +1610,7 @@ export default function CEOPage() {
                 {/* 10. PAYOUT MONITORING */}
                 <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                    <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#EA580C', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span>💸</span> 10. Payout Monitoring (पेआउट व्यवस्थापन)
                     </h3>
                     <span style={{ fontSize: '0.75rem', background: '#FEF3C7', color: '#92400E', padding: '3px 8px', borderRadius: '6px', fontWeight: 800 }}>
@@ -1671,7 +1671,7 @@ export default function CEOPage() {
               <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '22px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
                   <div>
-                    <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#EA580C', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span>🚨</span> 9. CEO Risk & Fraud Center (सुरक्षा व गैरप्रकार नियंत्रण)
                     </h3>
                     <div style={{ fontSize: '0.8rem', color: '#78350F', marginTop: '2px' }}>
@@ -1699,7 +1699,7 @@ export default function CEOPage() {
                     <tbody>
                       {riskAlerts.map((ra) => (
                         <tr key={ra.id} style={{ borderBottom: '1px solid #FFF7ED' }}>
-                          <td style={{ padding: '12px 14px', fontWeight: 900, color: '#431407' }}>
+                          <td style={{ padding: '12px 14px', fontWeight: 900, color: '#EA580C' }}>
                             <div style={{ color: '#EA580C', fontSize: '0.75rem' }}>{ra.id}</div>
                             {ra.type}
                           </td>
@@ -1778,7 +1778,7 @@ export default function CEOPage() {
                 
                 {/* 12. TARGETS VS ACTUAL */}
                 <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '20px' }}>
-                  <h3 style={{ margin: '0 0 14px', fontSize: '1.2rem', fontWeight: 900, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <h3 style={{ margin: '0 0 14px', fontSize: '1.2rem', fontWeight: 900, color: '#EA580C', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span>🎯</span> 12. Targets vs Actual (उद्दिष्ट विरुद्ध साध्य)
                   </h3>
 
@@ -1831,7 +1831,7 @@ export default function CEOPage() {
 
                 {/* 13. CEO MONTHLY REVIEW */}
                 <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '20px' }}>
-                  <h3 style={{ margin: '0 0 14px', fontSize: '1.2rem', fontWeight: 900, color: '#431407', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <h3 style={{ margin: '0 0 14px', fontSize: '1.2rem', fontWeight: 900, color: '#EA580C', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span>📅</span> 13. CEO Monthly Review (कार्यकारी मासिक आढावा)
                   </h3>
 
@@ -1870,7 +1870,7 @@ export default function CEOPage() {
           {/* VIEW: 4. GEOGRAPHY DRILLDOWN DEDICATED TAB */}
           {activeView === 'geo_drilldown' && (
             <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '24px' }}>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#431407', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#EA580C', marginBottom: '16px' }}>
                 🗺️ Maharashtra Referral Heatmap & Drill-Down
               </h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
@@ -1889,7 +1889,7 @@ export default function CEOPage() {
                       cursor: 'pointer'
                     }}
                   >
-                    <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#431407' }}>📍 {d.name}</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#EA580C' }}>📍 {d.name}</div>
                     <div style={{ fontSize: '0.85rem', color: '#64748B', marginTop: '6px' }}>
                       सदस्य: <strong>{d.members}</strong> • रेफरल्स: <strong>{d.referrals}</strong>
                     </div>
@@ -1908,7 +1908,7 @@ export default function CEOPage() {
           {/* VIEW: 2 & 3. FUNNEL & GROWTH DEDICATED TAB */}
           {activeView === 'funnel_growth' && (
             <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '24px' }}>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#431407', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#EA580C', marginBottom: '16px' }}>
                 📈 सभासद वाढ व रेफरल फनेल विश्लेषण
               </h2>
               <div style={{ fontSize: '0.9rem', color: '#64748B', marginBottom: '16px' }}>
@@ -1924,7 +1924,7 @@ export default function CEOPage() {
                 ].map((s, idx) => (
                   <div key={idx} style={{ background: '#FFF7ED', border: '1.5px solid #FED7AA', borderRadius: '14px', padding: '16px' }}>
                     <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#EA580C' }}>{s.title}</div>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#431407', margin: '4px 0' }}>{s.val}</div>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#EA580C', margin: '4px 0' }}>{s.val}</div>
                     <div style={{ fontSize: '0.78rem', color: '#64748B' }}>{s.sub}</div>
                     <div style={{ fontSize: '0.82rem', color: '#16A34A', fontWeight: 800, marginTop: '8px' }}>
                       रूपांतरण: {s.pct}
@@ -1938,7 +1938,7 @@ export default function CEOPage() {
           {/* VIEW: 5. LEADERSHIP HIERARCHY DEDICATED TAB */}
           {activeView === 'leadership_hierarchy' && (
             <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '24px' }}>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#431407', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#EA580C', marginBottom: '16px' }}>
                 🏛️ संघटनात्मक नेतृत्व अहवाल (Statewide Leadership Performance)
               </h2>
               <div style={{ overflowX: 'auto' }}>
@@ -1956,7 +1956,7 @@ export default function CEOPage() {
                   <tbody>
                     {leadershipHierarchy.map((l, idx) => (
                       <tr key={idx} style={{ borderBottom: '1px solid #FFF7ED' }}>
-                        <td style={{ padding: '12px', fontWeight: 900, color: '#431407' }}>{l.level} - {l.region}</td>
+                        <td style={{ padding: '12px', fontWeight: 900, color: '#EA580C' }}>{l.level} - {l.region}</td>
                         <td style={{ padding: '12px', fontWeight: 800 }}>{l.leader}</td>
                         <td style={{ padding: '12px', textAlign: 'right', fontWeight: 800 }}>{l.members.toLocaleString('en-IN')}</td>
                         <td style={{ padding: '12px', textAlign: 'right', fontWeight: 800, color: '#EA580C' }}>{l.referrals.toLocaleString('en-IN')}</td>
@@ -1977,7 +1977,7 @@ export default function CEOPage() {
           {/* VIEW: 6. TOP PERFORMERS DEDICATED TAB */}
           {activeView === 'top_performers' && (
             <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '24px' }}>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#431407', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#EA580C', marginBottom: '16px' }}>
                 🏆 अव्वल रेफरर्स व क्वॉलिटी स्कोअर (Top Performers CRM)
               </h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
@@ -1994,7 +1994,7 @@ export default function CEOPage() {
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 900, fontSize: '1.1rem', color: '#431407' }}>
+                      <span style={{ fontWeight: 900, fontSize: '1.1rem', color: '#EA580C' }}>
                         #{idx + 1} {p.name}
                       </span>
                       <span style={{ background: '#DCFCE7', color: '#15803D', padding: '2px 8px', borderRadius: '6px', fontWeight: 900, fontSize: '0.8rem' }}>
@@ -2024,13 +2024,13 @@ export default function CEOPage() {
           {/* VIEW: 7. CHAPTER PERFORMANCE DEDICATED TAB */}
           {activeView === 'chapter_perf' && (
             <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '24px' }}>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#431407', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#EA580C', marginBottom: '16px' }}>
                 🏅 चॅप्टर कामगिरी (Chapter Performance)
               </h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
                 {chapterPerformance.map((ch, idx) => (
                   <div key={idx} style={{ background: '#FFF7ED', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '18px' }}>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#431407' }}>🚩 {ch.name}</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#EA580C' }}>🚩 {ch.name}</div>
                     <div style={{ fontSize: '0.82rem', color: '#64748B', margin: '4px 0' }}>{ch.district}</div>
                     <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#EA580C', margin: '8px 0' }}>{ch.percentage}%</div>
                     <div style={{ fontSize: '0.8rem', color: '#334155' }}>
@@ -2045,17 +2045,17 @@ export default function CEOPage() {
           {/* VIEW: 8 & 10. FINANCIALS & PAYOUTS DEDICATED TAB */}
           {activeView === 'financial_economics' && (
             <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '24px' }}>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#431407', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#EA580C', marginBottom: '16px' }}>
                 💰 आर्थिक विहंगावलोकन व पेआउट्स (Financial Overview & Payouts)
               </h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
                 <div style={{ background: '#FFF7ED', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
-                  <div style={{ fontSize: '1rem', fontWeight: 900, color: '#431407' }}>एकूण सभासद महसूल</div>
+                  <div style={{ fontSize: '1rem', fontWeight: 900, color: '#EA580C' }}>एकूण सभासद महसूल</div>
                   <div style={{ fontSize: '2rem', fontWeight: 900, color: '#15803D', margin: '8px 0' }}>₹61.20 L</div>
                   <div style={{ fontSize: '0.8rem', color: '#64748B' }}>वार्षिक (₹42.80 L) + आजीवन (₹18.40 L)</div>
                 </div>
                 <div style={{ background: '#FFF7ED', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
-                  <div style={{ fontSize: '1rem', fontWeight: 900, color: '#431407' }}>रेफरल प्रोत्साहन खर्च</div>
+                  <div style={{ fontSize: '1rem', fontWeight: 900, color: '#EA580C' }}>रेफरल प्रोत्साहन खर्च</div>
                   <div style={{ fontSize: '2rem', fontWeight: 900, color: '#EA580C', margin: '8px 0' }}>₹12.45 L</div>
                   <div style={{ fontSize: '0.8rem', color: '#64748B' }}>वितरित: ₹10.61 L • प्रलंबित: ₹1.84 L</div>
                 </div>
@@ -2071,14 +2071,14 @@ export default function CEOPage() {
           {/* VIEW: 9. RISK & FRAUD CENTER DEDICATED TAB */}
           {activeView === 'risk_fraud_center' && (
             <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '18px', padding: '24px' }}>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#431407', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#EA580C', marginBottom: '16px' }}>
                 🚨 रिस्क व फ्रॉड सेंटर (Risk Alerts Management)
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {riskAlerts.map(r => (
                   <div key={r.id} style={{ background: '#FFF7ED', border: '1.5px solid #FED7AA', borderRadius: '14px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                      <div style={{ fontSize: '1rem', fontWeight: 900, color: '#431407' }}>{r.type}</div>
+                      <div style={{ fontSize: '1rem', fontWeight: 900, color: '#EA580C' }}>{r.type}</div>
                       <div style={{ fontSize: '0.82rem', color: '#64748B', marginTop: '2px' }}>{r.desc} • केसेस: <strong>{r.count}</strong></div>
                     </div>
                     <div style={{ display: 'flex', gap: '8px' }}>
@@ -2095,7 +2095,7 @@ export default function CEOPage() {
           {activeView === 'business' && (
             <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#431407' }}>🏢 Business Network CRUD</h3>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#EA580C' }}>🏢 Business Network CRUD</h3>
                 <button onClick={() => { setEditingRecord(null); setFormData({}); setActiveModal('business'); }} style={{ background: '#EA580C', color: '#FFF', border: 'none', padding: '8px 14px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>+ Add Business</button>
               </div>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
@@ -2106,7 +2106,7 @@ export default function CEOPage() {
                   {businesses.map(b => (
                     <tr key={b.id} style={{ borderBottom: '1px solid #FFF7ED' }}>
                       <td style={{ padding: '10px', fontWeight: 800 }}>{b.id}</td>
-                      <td style={{ padding: '10px', fontWeight: 700, color: '#431407' }}>{b.name}</td>
+                      <td style={{ padding: '10px', fontWeight: 700, color: '#EA580C' }}>{b.name}</td>
                       <td style={{ padding: '10px' }}>{b.owner}</td>
                       <td style={{ padding: '10px', color: '#EA580C', fontWeight: 700 }}>{b.category}</td>
                       <td style={{ padding: '10px', display: 'flex', gap: '6px' }}>
@@ -2124,7 +2124,7 @@ export default function CEOPage() {
           {activeView === 'b2b' && (
             <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#431407' }}>🤝 B2B Opportunities CRUD</h3>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#EA580C' }}>🤝 B2B Opportunities CRUD</h3>
                 <button onClick={() => { setEditingRecord(null); setFormData({}); setActiveModal('b2b'); }} style={{ background: '#EA580C', color: '#FFF', border: 'none', padding: '8px 14px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>+ Add B2B Deal</button>
               </div>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
@@ -2135,7 +2135,7 @@ export default function CEOPage() {
                   {b2bDeals.map(d => (
                     <tr key={d.id} style={{ borderBottom: '1px solid #FFF7ED' }}>
                       <td style={{ padding: '10px', fontWeight: 800 }}>{d.id}</td>
-                      <td style={{ padding: '10px', fontWeight: 700, color: '#431407' }}>{d.title}</td>
+                      <td style={{ padding: '10px', fontWeight: 700, color: '#EA580C' }}>{d.title}</td>
                       <td style={{ padding: '10px', fontWeight: 800, color: '#16A34A' }}>₹ {d.valueCr} Cr</td>
                       <td style={{ padding: '10px' }}>{d.stage}</td>
                       <td style={{ padding: '10px', display: 'flex', gap: '6px' }}>
@@ -2152,7 +2152,7 @@ export default function CEOPage() {
           {/* VIEW: SEVA PERFORMANCE CRUD */}
           {activeView === 'seva' && (
             <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
-              <h3 style={{ margin: '0 0 16px', fontSize: '1.2rem', fontWeight: 900, color: '#431407' }}>🩸 Seva Performance Desk CRUD</h3>
+              <h3 style={{ margin: '0 0 16px', fontSize: '1.2rem', fontWeight: 900, color: '#EA580C' }}>🩸 Seva Performance Desk CRUD</h3>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
                 <thead>
                   <tr style={{ background: '#FFF7ED', color: '#EA580C' }}><th style={{ padding: '10px' }}>Case ID</th><th style={{ padding: '10px' }}>लाभार्थी</th><th style={{ padding: '10px' }}>प्रकार</th><th style={{ padding: '10px' }}>स्थिती</th></tr>
@@ -2178,7 +2178,7 @@ export default function CEOPage() {
           {activeView === 'events' && (
             <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#431407' }}>📅 Events & Programs CRUD</h3>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#EA580C' }}>📅 Events & Programs CRUD</h3>
                 <button onClick={() => { setEditingRecord(null); setFormData({}); setActiveModal('event'); }} style={{ background: '#EA580C', color: '#FFF', border: 'none', padding: '8px 14px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>+ Add Event</button>
               </div>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
@@ -2203,7 +2203,7 @@ export default function CEOPage() {
           {activeView === 'tickets' && (
             <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#431407' }}>🎫 Complaints & Tickets CRUD</h3>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#EA580C' }}>🎫 Complaints & Tickets CRUD</h3>
                 <button onClick={() => { setEditingRecord(null); setFormData({}); setActiveModal('ticket'); }} style={{ background: '#EA580C', color: '#FFF', border: 'none', padding: '8px 14px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>+ Add Ticket</button>
               </div>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
@@ -2228,13 +2228,13 @@ export default function CEOPage() {
           {activeView === 'goals' && (
             <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#431407' }}>🎯 Strategic Goals & KPIs</h3>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#EA580C' }}>🎯 Strategic Goals & KPIs</h3>
                 <button onClick={() => { setEditingRecord(null); setFormData({}); setActiveModal('goal'); }} style={{ background: '#EA580C', color: '#FFF', border: 'none', padding: '8px 14px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>+ Create Goal</button>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
                 {goals.map(g => (
                   <div key={g.id} style={{ background: '#FFF7ED', border: '1.5px solid #FED7AA', borderRadius: '14px', padding: '16px' }}>
-                    <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#431407' }}>{g.title}</div>
+                    <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#EA580C' }}>{g.title}</div>
                     <div style={{ fontSize: '0.85rem', color: '#64748B', margin: '6px 0' }}>लक्ष्य: {g.target} • प्रमुख: {g.owner}</div>
                     <div style={{ display: 'flex', gap: '6px', marginTop: '10px' }}>
                       <button onClick={() => { setEditingRecord(g); setFormData(g); setActiveModal('goal'); }} style={{ background: '#FFFFFF', border: '1px solid #FED7AA', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>✏️ Edit</button>
@@ -2250,7 +2250,7 @@ export default function CEOPage() {
           {activeView === 'decisions' && (
             <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#431407' }}>📝 Decisions Register</h3>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#EA580C' }}>📝 Decisions Register</h3>
                 <button onClick={() => { setEditingRecord(null); setFormData({}); setActiveModal('decision'); }} style={{ background: '#EA580C', color: '#FFF', border: 'none', padding: '8px 14px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}>+ Add Decision</button>
               </div>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
@@ -2276,7 +2276,7 @@ export default function CEOPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
               {/* Header Strip */}
               <div style={{
-                background: 'linear-gradient(135deg, #431407 0%, #7C2D12 100%)',
+                background: 'linear-gradient(135deg, #EA580C 0%, #7C2D12 100%)',
                 color: '#FFFFFF',
                 padding: '24px',
                 borderRadius: '20px',
@@ -2303,7 +2303,7 @@ export default function CEOPage() {
                   <Link
                     to="/jobs"
                     target="_blank"
-                    style={{ background: '#FFFFFF', color: '#431407', padding: '10px 16px', borderRadius: '12px', fontWeight: 800, fontSize: '0.84rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    style={{ background: '#FFFFFF', color: '#EA580C', padding: '10px 16px', borderRadius: '12px', fontWeight: 800, fontSize: '0.84rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}
                   >
                     👔 नोकऱ्या पोर्टल ↗
                   </Link>
@@ -2328,7 +2328,7 @@ export default function CEOPage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
                 <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '18px' }}>
                   <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 800 }}>👔 एकूण नोकरी अर्ज (Job Applicants)</div>
-                  <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#431407', margin: '6px 0' }}>{jobApps.length}</div>
+                  <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#EA580C', margin: '6px 0' }}>{jobApps.length}</div>
                   <div style={{ fontSize: '0.78rem', color: '#16A34A', fontWeight: 700 }}>● थेट डेटाबेसवरून लाइव्ह अर्ज</div>
                 </div>
 
@@ -2356,7 +2356,7 @@ export default function CEOPage() {
                 <div style={{ background: '#FFFFFF', borderRadius: '16px', overflow: 'hidden', border: '1.5px solid #FED7AA', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
                   <img src="/assets/images/job-opportunities-banner.jpg" alt="Jobs" style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
                   <div style={{ padding: '14px' }}>
-                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', fontWeight: 900, color: '#431407' }}>१. रोजगार व करिअर संधी</h4>
+                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', fontWeight: 900, color: '#EA580C' }}>१. रोजगार व करिअर संधी</h4>
                     <p style={{ margin: '0 0 10px 0', fontSize: '0.8rem', color: '#64748B', lineHeight: '1.4' }}>पुणे, मुंबई व जिल्हास्तरीय नामांकित मराठा व्यावसायिकांकडील नोकऱ्या.</p>
                     <Link to="/jobs" style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', textDecoration: 'none' }}>थेट पोर्टल पहा →</Link>
                   </div>
@@ -2365,7 +2365,7 @@ export default function CEOPage() {
                 <div style={{ background: '#FFFFFF', borderRadius: '16px', overflow: 'hidden', border: '1.5px solid #FED7AA', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
                   <img src="/assets/images/business-growth-banner.jpg" alt="Business Growth" style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
                   <div style={{ padding: '14px' }}>
-                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', fontWeight: 900, color: '#431407' }}>२. ग्राहक व B2B ऑर्डर्स</h4>
+                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', fontWeight: 900, color: '#EA580C' }}>२. ग्राहक व B2B ऑर्डर्स</h4>
                     <p style={{ margin: '0 0 10px 0', fontSize: '0.8rem', color: '#64748B', lineHeight: '1.4' }}>स्थानिक ग्राहकांच्या थेट मागण्या व कोटेशन्स सबमिट करण्याचे व्यासपीठ.</p>
                     <Link to="/leads" style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', textDecoration: 'none' }}>थेट पोर्टल पहा →</Link>
                   </div>
@@ -2374,7 +2374,7 @@ export default function CEOPage() {
                 <div style={{ background: '#FFFFFF', borderRadius: '16px', overflow: 'hidden', border: '1.5px solid #FED7AA', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
                   <img src="/assets/images/referral-rewards-banner.jpg" alt="Referral Rewards" style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
                   <div style={{ padding: '14px' }}>
-                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', fontWeight: 900, color: '#431407' }}>३. रेफरल रिवॉर्ड्स व सन्मान</h4>
+                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', fontWeight: 900, color: '#EA580C' }}>३. रेफरल रिवॉर्ड्स व सन्मान</h4>
                     <p style={{ margin: '0 0 10px 0', fontSize: '0.8rem', color: '#64748B', lineHeight: '1.4' }}>बांधवांना जोडण्याबद्दल ९ Bands मधील सन्मान व मानधन कमाई.</p>
                     <Link to="/referrals" style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', textDecoration: 'none' }}>थेट पोर्टल पहा →</Link>
                   </div>
@@ -2392,7 +2392,7 @@ export default function CEOPage() {
                     fontSize: '0.88rem',
                     cursor: 'pointer',
                     background: opportunitiesTab === 'all' ? '#EA580C' : '#FFFFFF',
-                    color: opportunitiesTab === 'all' ? '#FFFFFF' : '#431407',
+                    color: opportunitiesTab === 'all' ? '#FFFFFF' : '#EA580C',
                     border: '1.5px solid #FED7AA'
                   }}
                 >
@@ -2407,7 +2407,7 @@ export default function CEOPage() {
                     fontSize: '0.88rem',
                     cursor: 'pointer',
                     background: opportunitiesTab === 'jobs' ? '#EA580C' : '#FFFFFF',
-                    color: opportunitiesTab === 'jobs' ? '#FFFFFF' : '#431407',
+                    color: opportunitiesTab === 'jobs' ? '#FFFFFF' : '#EA580C',
                     border: '1.5px solid #FED7AA'
                   }}
                 >
@@ -2422,7 +2422,7 @@ export default function CEOPage() {
                     fontSize: '0.88rem',
                     cursor: 'pointer',
                     background: opportunitiesTab === 'enquiries' ? '#EA580C' : '#FFFFFF',
-                    color: opportunitiesTab === 'enquiries' ? '#FFFFFF' : '#431407',
+                    color: opportunitiesTab === 'enquiries' ? '#FFFFFF' : '#EA580C',
                     border: '1.5px solid #FED7AA'
                   }}
                 >
@@ -2434,7 +2434,7 @@ export default function CEOPage() {
               {(opportunitiesTab === 'all' || opportunitiesTab === 'jobs') && (
                 <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                    <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#431407' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#EA580C' }}>
                       👔 नोकरी अर्जदार (Job Applications)
                     </h3>
                     <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 700 }}>
@@ -2463,7 +2463,7 @@ export default function CEOPage() {
                         <tbody>
                           {jobApps.map((app, idx) => (
                             <tr key={app.id || idx} style={{ borderBottom: '1px solid #FFF7ED' }}>
-                              <td style={{ padding: '10px 12px', fontWeight: 800, color: '#431407' }}>
+                              <td style={{ padding: '10px 12px', fontWeight: 800, color: '#EA580C' }}>
                                 {app.candidateName || app.name || 'सभासद'}
                               </td>
                               <td style={{ padding: '10px 12px', fontWeight: 700, color: '#EA580C' }}>
@@ -2497,7 +2497,7 @@ export default function CEOPage() {
               {(opportunitiesTab === 'all' || opportunitiesTab === 'enquiries') && (
                 <div style={{ background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadius: '16px', padding: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                    <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#431407' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#EA580C' }}>
                       💼 ग्राहक चौकशी व व्यवसाय लीड्स (Client Enquiries & B2B Leads)
                     </h3>
                     <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 700 }}>
@@ -2526,7 +2526,7 @@ export default function CEOPage() {
                         <tbody>
                           {enquiries.map((enq, idx) => (
                             <tr key={enq.id || idx} style={{ borderBottom: '1px solid #FFF7ED' }}>
-                              <td style={{ padding: '10px 12px', fontWeight: 800, color: '#431407' }}>
+                              <td style={{ padding: '10px 12px', fontWeight: 800, color: '#EA580C' }}>
                                 {enq.title || enq.requirement}
                               </td>
                               <td style={{ padding: '10px 12px' }}>
@@ -2571,7 +2571,7 @@ export default function CEOPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1.5px solid #FED7AA', paddingBottom: '14px', marginBottom: '16px' }}>
               <div>
                 <div style={{ fontSize: '0.78rem', fontWeight: 900, color: '#EA580C' }}>👤 14. CEO INDIVIDUAL MEMBER DRILL-DOWN (360° PROFILE)</div>
-                <h3 style={{ margin: '4px 0 0', fontSize: '1.4rem', fontWeight: 900, color: '#431407' }}>
+                <h3 style={{ margin: '4px 0 0', fontSize: '1.4rem', fontWeight: 900, color: '#EA580C' }}>
                   {selectedMember.name}
                 </h3>
                 <div style={{ fontSize: '0.82rem', color: '#64748B', marginTop: '2px' }}>
@@ -2606,7 +2606,7 @@ export default function CEOPage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', textAlign: 'center' }}>
                 <div style={{ background: '#FFFFFF', padding: '10px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
                   <div style={{ fontSize: '0.7rem', color: '#64748B', fontWeight: 700 }}>Direct Referrals</div>
-                  <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#431407' }}>{selectedMember.directReferrals || 182}</div>
+                  <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#EA580C' }}>{selectedMember.directReferrals || 182}</div>
                 </div>
                 <div style={{ background: '#FFFFFF', padding: '10px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
                   <div style={{ fontSize: '0.7rem', color: '#64748B', fontWeight: 700 }}>Paid Referrals</div>
@@ -2667,7 +2667,7 @@ export default function CEOPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1.5px solid #FED7AA', paddingBottom: '12px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontSize: '1.3rem' }}>🔐</span>
-                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#431407' }}>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#EA580C' }}>
                   15. CEO Permissions & Governance Scope (प्रशासकीय अधिकार)
                 </h3>
               </div>
@@ -2731,7 +2731,7 @@ export default function CEOPage() {
       {activeModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(67, 20, 7, 0.4)', backdropFilter: 'blur(4px)', display: 'grid', placeItems: 'center', zIndex: 1000 }}>
           <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '20px', padding: '24px', width: '90%', maxWidth: '500px' }}>
-            <h3 style={{ margin: '0 0 16px', fontSize: '1.2rem', fontWeight: 900, color: '#431407' }}>
+            <h3 style={{ margin: '0 0 16px', fontSize: '1.2rem', fontWeight: 900, color: '#EA580C' }}>
               {editingRecord ? `✏️ Edit ${activeModal.toUpperCase()}` : `➕ Add ${activeModal.toUpperCase()}`}
             </h3>
             <form onSubmit={handleSaveGeneric}>

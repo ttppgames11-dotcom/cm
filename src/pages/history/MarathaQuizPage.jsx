@@ -198,8 +198,9 @@ export default function MarathaQuizPage() {
     fetch('/api/quiz/stats')
       .then(res => res.json())
       .then(data => {
-        if (data && data.total_questions) {
-          setDbStats(data);
+        const stats = data.data || data;
+        if (stats && stats.total_questions) {
+          setDbStats(stats);
         }
       })
       .catch(err => console.log('Stats fallback active:', err));
@@ -242,8 +243,9 @@ export default function MarathaQuizPage() {
       const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
-        if (data.questions && data.questions.length > 0) {
-          const formatted = data.questions.map(q => ({
+        const questions = data.data?.questions || data.questions || [];
+        if (questions && questions.length > 0) {
+          const formatted = questions.map(q => ({
             id: q.question_id,
             category: q.category,
             level: q.difficulty === 'easy' ? 'प्राथमिक' : q.difficulty === 'hard' ? 'प्रगत' : 'मध्यम',
@@ -558,9 +560,42 @@ export default function MarathaQuizPage() {
             छत्रपती शिवराय व स्वराज्य इतिहास महाक्विझ
           </h1>
 
-          <p style={{ fontSize: '1.15rem', maxWidth: '75ch', color: '#FFF8F2', lineHeight: 1.6, marginBottom: '28px' }}>
-            अखंड मराठा साम्राज्य, ३५०+ अभेद्य दुर्ग, जागतिक दर्जाची गनिमी कावा युद्धनीती, पेशवे कालखंड आणि धर्मवीरांच्या बलिदानाचा सप्रमाण इतिहास. <strong>२०,०००+ सप्रमाण प्रश्न बँक</strong> मधून आपली ऐतिहासिक जाण तपासा आणि <strong>"स्वराज्य इतिहास भूषण"</strong> अधिकृत डिजिटल प्रमाणपत्र संपादन करा!
-          </p>
+          {/* 7 Portals Quick Switcher */}
+          <div style={{
+            display: 'flex',
+            gap: '8px',
+            overflowX: 'auto',
+            paddingBottom: '14px',
+            marginBottom: '20px'
+          }}>
+            {[
+              { label: '🎓 उच्च शिक्षण', path: '/education' },
+              { label: '🏛️ महाविद्यालये', path: '/colleges' },
+              { label: '📜 शिष्यवृत्ती', path: '/scholarships' },
+              { label: '🎯 स्वराज्य क्विझ (सक्रिय)', path: '/quiz', active: true },
+              { label: '💡 ज्ञानकोश', path: '/dnyankosh' },
+              { label: '📚 ग्रंथालय व बखरी', path: '/history/granthalaya' },
+              { label: '⏳ टाइम मशीन', path: '/time-machine' }
+            ].map((portal, idx) => (
+              <Link
+                key={idx}
+                to={portal.path}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '16px',
+                  background: portal.active ? '#FFD8A8' : 'rgba(255,255,255,0.15)',
+                  color: portal.active ? '#2B1810' : '#FFFFFF',
+                  border: '1px solid rgba(255, 216, 168, 0.4)',
+                  fontWeight: 700,
+                  fontSize: '0.8rem',
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {portal.label}
+              </Link>
+            ))}
+          </div>
 
           {/* Quick Stats Grid with dynamic SQLite counts */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', maxWidth: '960px' }}>

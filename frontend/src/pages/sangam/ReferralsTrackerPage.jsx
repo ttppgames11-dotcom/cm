@@ -244,35 +244,40 @@ export default function ReferralsTrackerPage() {
   });
 
   useEffect(() => {
-    apiClient.getReferrals()
+    apiClient.getAllMemberReferrals()
       .then(liveRefs => {
         if (Array.isArray(liveRefs) && liveRefs.length > 0) {
           const normalized = liveRefs.map(r => {
-            const dateObj = r.date ? new Date(r.date) : (r.createdAt ? new Date(r.createdAt) : new Date());
+            const joinDt = r.joiningDate || r.registeredAt || r.created_at || new Date().toISOString().slice(0, 10);
+            const dateObj = new Date(joinDt);
+            const sLower = (r.status || '').toLowerCase();
+            const isActive = sLower.includes('active') || sLower === 'active';
             return {
               id: r.id,
-              year: r.year || String(dateObj.getFullYear()),
-              month: r.month || String(dateObj.getMonth() + 1).padStart(2, '0'),
-              week: r.week || `Week ${Math.ceil(dateObj.getDate() / 7)}`,
-              day: r.day || String(dateObj.getDate()).padStart(2, '0'),
-              userId: r.userId || r.giverId || 'CM-10291',
-              userName: r.userName || r.giverName || 'सदस्य',
-              state: r.state || 'महाराष्ट्र',
-              city: r.city || 'पुणे',
-              prospect: r.prospect || r.clientName || 'ग्राहक',
-              category: r.category || 'व्यवसाय',
-              requirement: r.requirement || r.title || 'व्यवसाय लीड',
-              estimatedValue: Number(r.estimatedValue || r.value || 0),
-              actualValue: Number(r.actualValue || (r.status === 'Won' ? r.estimatedValue || r.value : 0) || 0),
-              status: r.status || 'Won',
-              recipient: r.recipient || r.recipientName || 'सहकारी सदस्य',
-              date: r.date || dateObj.toISOString().slice(0, 10)
+              year: String(dateObj.getFullYear()),
+              month: String(dateObj.getMonth() + 1).padStart(2, '0'),
+              week: `Week ${Math.ceil(dateObj.getDate() / 7)}`,
+              day: String(dateObj.getDate()).padStart(2, '0'),
+              userId: r.referrerId || r.referralId || 'CM-OFFICIAL-2026',
+              userName: r.referrerName || r.referralName || 'संदर्भदाता',
+              state: r.district || 'महाराष्ट्र',
+              city: r.taluka || r.district || 'पुणे',
+              prospect: r.name || r.refereeName || 'नवीन सभासद',
+              category: 'सदस्य नोंदणी',
+              requirement: `रेफरल: ${r.referralId || r.referrerId || 'N/A'}`,
+              estimatedValue: 100,
+              actualValue: isActive ? 100 : 0,
+              status: isActive ? 'Active' : 'Pending',
+              recipient: r.name || r.refereeName || 'सभासद',
+              date: joinDt
             };
           });
-          setReferrals(normalized);
+          const existingIds = new Set(normalized.map(n => n.id));
+          const merged = [...normalized, ...INITIAL_REFERRALS.filter(i => !existingIds.has(i.id))];
+          setReferrals(merged);
         }
       })
-      .catch(err => console.warn('Could not load live referrals from API:', err.message));
+      .catch(err => console.warn('Could not load live member referrals from API:', err.message));
   }, []);
 
   const [viewMode, setViewMode] = useState('table'); // 'table' or 'cards'
@@ -406,7 +411,7 @@ export default function ReferralsTrackerPage() {
   const activeFiltersCount = Object.entries(filters).filter(([k, v]) => k !== 'search' && v !== 'all').length + (filters.search ? 1 : 0);
 
   return (
-    <div style={{ background: '#FFFDF9', minHeight: 'calc(100vh - 100px)', padding: '32px 20px', fontFamily: "'Segoe UI', Roboto, sans-serif", color: '#431407' }}>
+    <div style={{ background: '#FFFDF9', minHeight: 'calc(100vh - 100px)', padding: '32px 20px', fontFamily: "'Segoe UI', Roboto, sans-serif", color: '#EA580C' }}>
       <div style={{ maxWidth: '1440px', margin: '0 auto' }}>
         
         {/* Header Bar */}
@@ -593,7 +598,7 @@ export default function ReferralsTrackerPage() {
               <select
                 value={filters.year}
                 onChange={e => handleFilterChange('year', e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#431407', fontSize: '0.88rem', fontWeight: 600 }}>
+                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#EA580C', fontSize: '0.88rem', fontWeight: 600 }}>
                 <option value="all">सर्व वर्षे (All)</option>
                 {filterOptions.years.map(y => (
                   <option key={y} value={y}>{y}</option>
@@ -609,7 +614,7 @@ export default function ReferralsTrackerPage() {
               <select
                 value={filters.month}
                 onChange={e => handleFilterChange('month', e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#431407', fontSize: '0.88rem', fontWeight: 600 }}>
+                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#EA580C', fontSize: '0.88rem', fontWeight: 600 }}>
                 <option value="all">सर्व महिने (All)</option>
                 {filterOptions.months.map(m => (
                   <option key={m} value={m}>{m}</option>
@@ -625,7 +630,7 @@ export default function ReferralsTrackerPage() {
               <select
                 value={filters.week}
                 onChange={e => handleFilterChange('week', e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#431407', fontSize: '0.88rem', fontWeight: 600 }}>
+                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#EA580C', fontSize: '0.88rem', fontWeight: 600 }}>
                 <option value="all">सर्व आठवडे (All)</option>
                 {filterOptions.weeks.map(w => (
                   <option key={w} value={w}>{w}</option>
@@ -641,7 +646,7 @@ export default function ReferralsTrackerPage() {
               <select
                 value={filters.day}
                 onChange={e => handleFilterChange('day', e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#431407', fontSize: '0.88rem', fontWeight: 600 }}>
+                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#EA580C', fontSize: '0.88rem', fontWeight: 600 }}>
                 <option value="all">सर्व दिवस (All)</option>
                 {filterOptions.days.map(d => (
                   <option key={d} value={d}>{d}</option>
@@ -657,7 +662,7 @@ export default function ReferralsTrackerPage() {
               <select
                 value={filters.userId}
                 onChange={e => handleFilterChange('userId', e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#431407', fontSize: '0.88rem', fontWeight: 600 }}>
+                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#EA580C', fontSize: '0.88rem', fontWeight: 600 }}>
                 <option value="all">सर्व सदस्य (All)</option>
                 {filterOptions.userIds.map(uid => (
                   <option key={uid} value={uid}>{uid}</option>
@@ -673,7 +678,7 @@ export default function ReferralsTrackerPage() {
               <select
                 value={filters.state}
                 onChange={e => handleFilterChange('state', e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#431407', fontSize: '0.88rem', fontWeight: 600 }}>
+                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#EA580C', fontSize: '0.88rem', fontWeight: 600 }}>
                 <option value="all">सर्व राज्ये (All)</option>
                 {filterOptions.states.map(s => (
                   <option key={s} value={s}>{s}</option>
@@ -689,7 +694,7 @@ export default function ReferralsTrackerPage() {
               <select
                 value={filters.city}
                 onChange={e => handleFilterChange('city', e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#431407', fontSize: '0.88rem', fontWeight: 600 }}>
+                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#EA580C', fontSize: '0.88rem', fontWeight: 600 }}>
                 <option value="all">सर्व शहरे (All)</option>
                 {filterOptions.cities.map(c => (
                   <option key={c} value={c}>{c}</option>
@@ -705,7 +710,7 @@ export default function ReferralsTrackerPage() {
               <select
                 value={filters.status}
                 onChange={e => handleFilterChange('status', e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#431407', fontSize: '0.88rem', fontWeight: 600 }}>
+                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#EA580C', fontSize: '0.88rem', fontWeight: 600 }}>
                 <option value="all">सर्व स्थिती (All)</option>
                 <option value="New">New (नवीन)</option>
                 <option value="Contacted">Contacted (संपर्क)</option>
@@ -725,7 +730,7 @@ export default function ReferralsTrackerPage() {
                 placeholder="ग्राहक नाव, श्रेणी, आवश्यकता किंवा युझर शोधा..."
                 value={filters.search}
                 onChange={e => handleFilterChange('search', e.target.value)}
-                style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#431407', fontSize: '0.88rem' }}
+                style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#EA580C', fontSize: '0.88rem' }}
               />
             </div>
           </div>
@@ -794,8 +799,8 @@ export default function ReferralsTrackerPage() {
                           </span>
                           <div style={{ fontSize: '0.74rem', color: '#9A3412', marginTop: '2px' }}>{r.userName}</div>
                         </td>
-                        <td style={{ padding: '12px', color: '#431407', fontWeight: 600 }}>{r.state}</td>
-                        <td style={{ padding: '12px', color: '#431407', fontWeight: 600 }}>{r.city}</td>
+                        <td style={{ padding: '12px', color: '#1F2937', fontWeight: 600 }}>{r.state}</td>
+                        <td style={{ padding: '12px', color: '#1F2937', fontWeight: 600 }}>{r.city}</td>
                         <td style={{ padding: '12px 14px' }}>
                           <div style={{ fontWeight: 700, color: '#7C2D12' }}>{r.prospect}</div>
                           <div style={{ fontSize: '0.75rem', color: '#EA580C', fontWeight: 600 }}>{r.id}</div>
@@ -803,7 +808,7 @@ export default function ReferralsTrackerPage() {
                             {r.requirement}
                           </div>
                         </td>
-                        <td style={{ padding: '12px', color: '#431407' }}>{r.category}</td>
+                        <td style={{ padding: '12px', color: '#EA580C' }}>{r.category}</td>
                         <td style={{ padding: '12px', textAlign: 'right', fontWeight: 800, color: '#7C2D12' }}>
                           ₹{Number(r.estimatedValue || 0).toLocaleString('en-IN')}
                         </td>

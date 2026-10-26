@@ -20,20 +20,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // If user is already loaded as an official from localStorage, keep session active immediately
-    const saved = localStorage.getItem('cm_user_data');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed && (parsed.isCrmOfficial || ['superadmin', 'admin', 'ceo', 'district_admin', 'chapter_president', 'seva_helpdesk', 'finance_officer'].includes(parsed.role))) {
-          setUser(parsed);
-          setLoading(false);
-          return;
-        }
-      } catch {}
-    }
-
-    // Attempt to load current user from API if token exists
+    // Attempt to verify session against server with stored token
     const token = localStorage.getItem('cm_jwt_token');
     if (token) {
       api.auth.getMe()
@@ -41,8 +28,9 @@ export function AuthProvider({ children }) {
           if (res && res.member) {
             setUser(res.member);
             localStorage.setItem('cm_user_data', JSON.stringify(res.member));
+            localStorage.setItem('cm_logged_in', 'true');
           } else {
-            // User was not found or deleted from database
+            // User was not found or session invalid
             setUser(null);
             localStorage.removeItem('cm_logged_in');
             localStorage.removeItem('cm_user_data');
@@ -50,16 +38,15 @@ export function AuthProvider({ children }) {
           }
         })
         .catch(err => {
-          // If user deleted from DB (404) or token invalid (401/403), immediately log them out
+          // If token invalid, expired, or account disabled, clear session
+          const status = err?.status || err?.response?.status;
           const msg = (err?.message || '').toLowerCase();
-          if (msg.includes('404') || msg.includes('401') || msg.includes('403') || msg.includes('not found') || msg.includes('invalid') || msg.includes('expired')) {
+          if (status === 401 || status === 403 || status === 404 || msg.includes('401') || msg.includes('403') || msg.includes('disabled') || msg.includes('invalid') || msg.includes('expired')) {
             setUser(null);
             localStorage.removeItem('cm_logged_in');
             localStorage.removeItem('cm_user_data');
             localStorage.removeItem('cm_jwt_token');
             localStorage.removeItem('cm_user_mobile');
-          } else {
-            console.log('Session token check error:', err.message);
           }
         })
         .finally(() => setLoading(false));
@@ -67,6 +54,7 @@ export function AuthProvider({ children }) {
       setLoading(false);
     }
   }, []);
+
 
   const login = async (identifier, password, customProfile = null) => {
     // Helper to generate official local token
@@ -162,6 +150,10 @@ export function AuthProvider({ children }) {
     try {
       const res = await api.auth.register(formData);
       const member = res?.member || res?.data?.member || res?.data?.profile;
+      const token = res?.token || res?.data?.token;
+      if (token) {
+        localStorage.setItem('cm_jwt_token', token);
+      }
       if (member) {
         setUser(member);
         localStorage.setItem('cm_logged_in', 'true');

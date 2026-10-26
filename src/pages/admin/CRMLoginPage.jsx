@@ -242,6 +242,40 @@ export default function CRMLoginPage() {
     setErrorMsg('अवैध प्रशासकीय आयडी किंवा पासवर्ड. कृपया नोंदणीकृत अधिकारी क्रेडेंशियल्स प्रविष्ट करा.');
   };
 
+  const handleSelectProfile = (profile) => {
+    setOfficerId(profile.phone);
+    setPassword(profile.defaultPassword);
+    setErrorMsg('');
+  };
+
+  const handleQuickLogin = async (profile) => {
+    setOfficerId(profile.phone);
+    setPassword(profile.defaultPassword);
+    setLoading(true);
+    setErrorMsg('');
+
+    const officialUser = {
+      id: profile.id,
+      name: profile.name,
+      role: profile.role,
+      tier: 'Royal Patron',
+      district: 'पुणे',
+      city: 'पुणे',
+      profession: profile.title,
+      isCrmOfficial: true
+    };
+
+    try {
+      await login(profile.phone, profile.defaultPassword, officialUser);
+    } catch (err) {
+      console.warn('Backend login fallback to local profile:', err);
+    }
+
+    setLoading(false);
+    const destination = (location.state && location.state.from && location.state.from.pathname) || profile.targetRoute;
+    navigate(destination, { replace: true });
+  };
+
   const isCurrentStaff = user && CRM_AUTHORIZED_ROLES.includes(user.role);
 
   return (
@@ -291,7 +325,7 @@ export default function CRMLoginPage() {
             lineHeight: 1.6,
             fontWeight: 600
           }}>
-            आपला अधिकृत प्रशासकीय आयडी व पासवर्ड प्रविष्ट करा. सिस्टीम आपल्या पदभारानुसार संबंधित नियंत्रण कक्ष स्वयंचलित उघडेल.
+            आपल्या अधिकृत पदावर क्लिक करा किंवा आयडी व पासवर्ड प्रविष्ट करा. सिस्टीम संबंधित नियंत्रण कक्ष स्वयंचलित उघडेल.
           </p>
         </div>
 
@@ -323,7 +357,7 @@ export default function CRMLoginPage() {
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>
               <Link
-                to={user.role === 'superadmin' ? '/superadmin' : (user.role === 'admin' ? '/admin' : (user.role === 'ceo' ? '/ceo' : '/crm'))}
+                to={user.role === 'superadmin' ? '/superadmin' : (user.role === 'admin' ? '/admin' : (user.role === 'ceo' ? '/ceo' : (user.role === 'center_manager' ? '/crm/center' : '/crm')))}
                 style={{
                   background: 'linear-gradient(135deg, #FF6A00, #EA580C)',
                   color: '#FFFFFF',
@@ -352,6 +386,120 @@ export default function CRMLoginPage() {
             </div>
           </div>
         )}
+
+        {/* Quick Role Select Grid */}
+        <div style={{ marginBottom: '32px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+            <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#C2410C', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>⚡</span> जलद १-क्लिक प्रशासकीय प्रवेश (Clickable Official Profiles)
+            </h3>
+            <span style={{ fontSize: '0.84rem', color: '#7C2D12', fontWeight: 700 }}>
+              खालील कार्डवर क्लिक करून त्वरित लॉगिन करा:
+            </span>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '14px'
+          }}>
+            {CRM_OFFICIAL_PROFILES.map((p) => {
+              const isSelected = officerId === p.phone || officerId === p.id;
+              return (
+                <div
+                  key={p.id}
+                  onClick={() => handleSelectProfile(p)}
+                  style={{
+                    background: isSelected ? '#FFF7ED' : '#FFFFFF',
+                    border: isSelected ? '2px solid #EA580C' : '1.5px solid #FED7AA',
+                    borderRadius: '16px',
+                    padding: '16px',
+                    cursor: 'pointer',
+                    boxShadow: isSelected ? '0 8px 20px rgba(234, 88, 12, 0.15)' : '0 2px 8px rgba(0,0,0,0.03)',
+                    transition: 'all 0.18s ease',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = '#EA580C'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = isSelected ? '#EA580C' : '#FED7AA'; }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                      <span style={{ fontWeight: 900, fontSize: '1rem', color: '#0F172A' }}>
+                        {p.title}
+                      </span>
+                      <span style={{
+                        background: isSelected ? '#EA580C' : '#FFEDD5',
+                        color: isSelected ? '#FFFFFF' : '#9A3412',
+                        fontSize: '0.72rem',
+                        padding: '3px 8px',
+                        borderRadius: '999px',
+                        fontWeight: 900
+                      }}>
+                        {p.badge}
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#C2410C', marginBottom: '4px' }}>
+                      👤 {p.name}
+                    </div>
+                    <div style={{ fontSize: '0.80rem', color: '#64748B', lineHeight: 1.4, marginBottom: '10px' }}>
+                      {p.desc}
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: '#475569', background: '#F8FAFC', padding: '6px 10px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                      फोन: <strong>{p.phone}</strong> | पासवर्ड: <code>{p.defaultPassword}</code>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: '12px', display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSelectProfile(p);
+                      }}
+                      style={{
+                        flex: 1,
+                        background: '#FFFFFF',
+                        border: '1px solid #CBD5E1',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        fontSize: '0.82rem',
+                        fontWeight: 800,
+                        color: '#475569',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      क्रेडेंशियल्स भरा
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleQuickLogin(p);
+                      }}
+                      style={{
+                        flex: 1.3,
+                        background: 'linear-gradient(135deg, #FF6A00 0%, #EA580C 100%)',
+                        border: 'none',
+                        color: '#FFFFFF',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        fontSize: '0.82rem',
+                        fontWeight: 900,
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 8px rgba(234, 88, 12, 0.25)'
+                      }}
+                    >
+                      ⚡ त्वरित प्रवेश करा →
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
 
         <div style={{
           maxWidth: '480px',

@@ -6,12 +6,20 @@ export default function B2BReferralFullReport({ data, toast }) {
   const [filter, setFilter] = useState({ state: 'MH', city: 'all', fromDate: '2026-09-01', toDate: '2026-09-30' });
 
   const refList = useMemo(() => {
-    return [
-      { id: 'REF-8801', referrer: 'अमोल तुकाराम जाधव', targetBiz: 'रायगड कन्स्ट्रक्शन', fromCity: 'पुणे (Pune)', toCity: 'मुंबई (Mumbai)', dealValue: 4500000, date: '2026-09-12', status: 'Converted / Closed' },
-      { id: 'REF-8802', referrer: 'प्रियंका सुरेश शिर्के', targetBiz: 'सह्याद्री आयटी सोल्युशन्स', fromCity: 'सातारा (Satara)', toCity: 'पुणे (Pune)', dealValue: 1200000, date: '2026-09-18', status: 'In Progress' },
-      { id: 'REF-8803', referrer: 'निलेश भगवान देशमुख', targetBiz: 'मराठा ऑटोमोबाईल्स', fromCity: 'नाशिक (Nashik)', toCity: 'नाशिक (Nashik)', dealValue: 850000, date: '2026-09-24', status: 'Assigned' }
-    ];
-  }, []);
+    if (data?.referrals && Array.isArray(data.referrals) && data.referrals.length > 0) {
+      return data.referrals.map((r, i) => ({
+        id: r.id || `REF-${i + 8801}`,
+        referrer: r.referrerName || r.referralName || r.giverName || 'Connect Maratha Referrer',
+        targetBiz: r.title || r.receiverName || r.recipientName || 'व्यापार संदर्भ',
+        fromCity: r.district || 'पुणे',
+        toCity: r.taluka || r.district || 'महाराष्ट्र',
+        dealValue: Number(r.bonusAmount || r.value || 100),
+        date: (r.joiningDate || r.created_at || '2026-10-14').slice(0, 10),
+        status: (r.status || 'Active') === 'Active' ? 'Converted / Closed' : r.status
+      }));
+    }
+    return [];
+  }, [data?.referrals]);
 
   const filteredRef = useMemo(() => {
     return refList.filter(r => {
@@ -53,7 +61,7 @@ export default function B2BReferralFullReport({ data, toast }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
           <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>एकूण B2B संदर्भा (Total Referrals)</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#431407', marginTop: '4px' }}>{filteredRef.length}</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#EA580C', marginTop: '4px' }}>{filteredRef.length}</div>
         </div>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
           <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>यशस्वी व्यवहार मुल्य (Closed Value)</div>
@@ -72,7 +80,7 @@ export default function B2BReferralFullReport({ data, toast }) {
       {/* TABLE */}
       <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '14px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(234,88,12,0.05)' }}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid #FED7AA', background: '#FFF7ED', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#431407' }}>
+          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#EA580C' }}>
             🤝 B2B संदर्भ व्यवहार ट्रॅकर (Referral CRM Funnel Table)
           </h4>
           <span style={{ fontSize: '0.78rem', color: '#EA580C', fontWeight: 800 }}>एकूण {filteredRef.length} संदर्भ</span>
@@ -81,7 +89,7 @@ export default function B2BReferralFullReport({ data, toast }) {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
             <thead>
-              <tr style={{ background: '#FFFDF9', borderBottom: '1px solid #FED7AA', color: '#431407', fontWeight: 800 }}>
+              <tr style={{ background: '#FFFDF9', borderBottom: '1px solid #FED7AA', color: '#EA580C', fontWeight: 800 }}>
                 <th style={{ padding: '12px 16px' }}>रेफरल आयडी</th>
                 <th style={{ padding: '12px 16px' }}>संदर्भ देणारा</th>
                 <th style={{ padding: '12px 16px' }}>लक्ष्यित व्यवसाय</th>

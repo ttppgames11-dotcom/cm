@@ -30,6 +30,8 @@ export const adminApi = {
   getMembers: (params) => safe(apiClient.get('/admin/users', { params }), []),
   verifyMember: (id, verified) =>
     safe(apiClient.put(`/admin/users/${id}/verify`, { verified }), { ok: true }),
+  deleteMember: (id) => safe(apiClient.deleteAdminUser(id), { ok: true, success: true }),
+  deleteUser: (id) => safe(apiClient.deleteAdminUser(id), { ok: true, success: true }),
 
   // ---- Leads ----
   getLeads: () => safe(apiClient.get('/admin/leads'), []),
@@ -83,7 +85,18 @@ export const adminApi = {
   getAuditLogs: (params) => safe(apiClient.get('/admin/audit-logs', { params }), []),
 
   // ---- Blood / Seva ----
-  getBloodRequests: () => safe(apiClient.get('/blood/requests'), [])
+  getBloodRequests: () => safe(apiClient.get('/blood/requests'), []),
+
+  // ---- Unified Approvals Engine ----
+  getUnifiedApprovals: (params = {}) =>
+    safe(apiClient.getUnifiedApprovals(params), {
+      approvals: [],
+      countsByModule: {},
+      totalPendingCount: 0
+    }),
+  actionUnifiedApproval: (data) =>
+    safe(apiClient.actionUnifiedApproval(data), { ok: true })
 };
 
 export default adminApi;
+

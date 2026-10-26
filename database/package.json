@@ -4,7 +4,9 @@
   "description": "Connect Maratha SQLite Database & Schema Manager",
   "type": "module",
   "scripts": {
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "sync": "node migrate_json_to_sqlite.js",
+    "seed:locations": "node seed_locations.js"
   },
   "dependencies": {
     "sql.js": "^1.14.2"

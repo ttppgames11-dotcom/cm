@@ -430,13 +430,50 @@ export default function GranthalayaPage() {
               सभासद बखर, भाऊसाहेबांची बखर, ९१ कलमी बखर, बुधभूषणम्, आज्ञापत्र, शिवभारत आणि इतिहासचार्य राजवाडे यांच्या अस्सल ऐतिहासिक संशोधन ग्रंथांचे सविस्तर, सचित्र व प्रमाणीकृत डिजिटल दालन.
             </p>
 
+            {/* 7 Portals Quick Switcher */}
+            <div style={{
+              display: 'flex',
+              gap: '8px',
+              overflowX: 'auto',
+              paddingBottom: '14px',
+              marginTop: '16px'
+            }}>
+              {[
+                { label: '🎓 उच्च शिक्षण', path: '/education' },
+                { label: '🏛️ महाविद्यालये', path: '/colleges' },
+                { label: '📜 शिष्यवृत्ती', path: '/scholarships' },
+                { label: '🎯 स्वराज्य क्विझ', path: '/quiz' },
+                { label: '💡 ज्ञानकोश', path: '/dnyankosh' },
+                { label: '📚 ग्रंथालय व बखरी (सक्रिय)', path: '/history/granthalaya', active: true },
+                { label: '⏳ टाइम मशीन', path: '/time-machine' }
+              ].map((portal, idx) => (
+                <Link
+                  key={idx}
+                  to={portal.path}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '16px',
+                    background: portal.active ? '#DD8A2E' : 'rgba(255,255,255,0.15)',
+                    color: portal.active ? '#2A0709' : '#FFFFFF',
+                    border: '1px solid rgba(221, 138, 46, 0.4)',
+                    fontWeight: 700,
+                    fontSize: '0.8rem',
+                    textDecoration: 'none',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {portal.label}
+                </Link>
+              ))}
+            </div>
+
             {/* Quick Stats Banner */}
             <div style={{
               display: 'flex',
               flexWrap: 'wrap',
               gap: '16px',
-              marginTop: '24px',
-              paddingTop: '20px',
+              marginTop: '16px',
+              paddingTop: '16px',
               borderTop: '1px solid rgba(221,138,46,0.3)'
             }}>
               <div style={{ background: 'rgba(255,255,255,0.08)', padding: '8px 16px', borderRadius: '12px', backdropFilter: 'blur(4px)' }}>

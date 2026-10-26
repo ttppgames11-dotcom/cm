@@ -6,8 +6,10 @@ module.exports = {
     {
       name: 'connect-maratha-api',
       script: './backend/server.js',
-      instances: 'max', // Automatically forks workers to match all CPU cores
-      exec_mode: 'cluster',
+      // Single instance: db.json and the sql.js SQLite file are held in process memory and
+      // rewritten whole, so multiple instances would overwrite each other's data.
+      instances: 1,
+      exec_mode: 'fork',
       autorestart: true,
       watch: false,
       max_memory_restart: '1G',

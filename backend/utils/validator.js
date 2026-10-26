@@ -61,9 +61,17 @@ export function isValidPAN(pan) {
 
 export function isValidBloodGroup(bg) {
   if (!bg || typeof bg !== 'string') return false;
-  const normalized = bg.trim().toUpperCase().replace(/\s*\(.*\)/, '').replace(/\s*(POSITIVE|NEGATIVE)/i, '');
-  const validGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-  return validGroups.some(g => normalized.startsWith(g));
+  const clean = bg.trim().toUpperCase();
+  if (clean.includes('BOMBAY')) return true;
+  const patterns = ['AB+', 'AB-', 'A+', 'A-', 'B+', 'B-', 'O+', 'O-'];
+  if (patterns.some(p => clean.includes(p))) return true;
+  const wordPatterns = [
+    'AB POSITIVE', 'AB NEGATIVE',
+    'A POSITIVE', 'A NEGATIVE',
+    'B POSITIVE', 'B NEGATIVE',
+    'O POSITIVE', 'O NEGATIVE'
+  ];
+  return wordPatterns.some(wp => clean.includes(wp));
 }
 
 export function parseAmount(val) {

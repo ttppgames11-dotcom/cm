@@ -32,7 +32,7 @@ const T = {
   saffron: '#EA580C',
   amber: '#D97706',
   deep: '#C2410C',
-  ink: '#431407',
+  ink: '#EA580C',
   text: '#1E293B',
   muted: '#64748B',
   green: '#16A34A',
@@ -661,7 +661,7 @@ export default function AdminShell() {
               <Route path="/seva" element={<BloodView data={data} />} />
               <Route path="/reports" element={<ReportsView data={data} />} />
               <Route path="/analytics" element={<ReportsView data={data} />} />
-              <Route path="/approvals" element={<ApprovalsView data={data} />} />
+              <Route path="/approvals" element={<ApprovalsView data={data} toast={toast$} />} />
 
               <Route path="/master-data" element={<MasterDataView toast={toast$} />} />
               <Route path="/roles-matrix" element={<RolesMatrixPipelineView data={data} toast={toast$} />} />
@@ -712,7 +712,6 @@ function TopBar({ navigate, toast }) {
           + नवीन नोंद
         </Btn>
         <Btn variant="plain" onClick={() => window.location.reload()}>🔄 Refresh</Btn>
-        <Btn variant="ghost" onClick={() => navigate('/ai')}>🤖 AI</Btn>
       </div>
     </header>
   );
@@ -739,7 +738,7 @@ function Dashboard({ data, navigate }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Header Banner */}
       <div style={{
-        background: 'linear-gradient(135deg, #431407 0%, #7C2D12 50%, #C2410C 100%)',
+        background: 'linear-gradient(135deg, #EA580C 0%, #7C2D12 50%, #C2410C 100%)',
         borderRadius: 16, padding: '24px 30px', color: '#FFF',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16,
         boxShadow: '0 10px 30px rgba(194,65,12,0.25)'
@@ -1164,6 +1163,25 @@ function MembersView({ data, setData, toast }) {
     toast(`${u.name} यांची पडताळणी ${newStatus ? 'मंजूर' : 'रद्द'}`, 'success');
   };
 
+  const deleteMember = async (u) => {
+    const id = u.id || u._id;
+    if (!window.confirm(`⚠️ सावधान: तुम्हाला नक्की सदस्य "${u.name}" (ID: ${id}) डेटाबेसमधून कायमचा काढून टाकायचा आहे का?`)) return;
+    try {
+      const res = await adminApi.deleteMember(id);
+      if (res && (res.success || res.ok)) {
+        setData(prev => ({
+          ...prev,
+          users: prev.users.filter(x => (x.id || x._id) !== id)
+        }));
+        toast(`वापरकर्ता "${u.name}" डेटाबेसमधून यशस्वीरीत्या हटवला!`, 'success');
+      } else {
+        toast('वापरकर्ता हटवता आला नाही.', 'error');
+      }
+    } catch (err) {
+      toast(err.message || 'त्रुटी आली.', 'error');
+    }
+  };
+
   return (
     <>
       <SectionTitle subtitle={`एकूण ${data.users.length} सदस्य`}>👤 Members & KYC</SectionTitle>
@@ -1198,11 +1216,19 @@ function MembersView({ data, setData, toast }) {
             <Badge tone={u.verified ? 'green' : 'saffron'}>
               {u.verified ? '✓ प्रमाणित' : '⏳ प्रलंबित'}
             </Badge>,
-            <Btn
-              variant={u.verified ? 'danger' : 'success'}
-              onClick={(e) => { e.stopPropagation(); toggleVerify(u); }}>
-              {u.verified ? 'रद्द करा' : 'मंजूर करा'}
-            </Btn>
+            <div style={{ display: 'flex', gap: 6 }} onClick={e => e.stopPropagation()}>
+              <Btn
+                variant={u.verified ? 'danger' : 'success'}
+                onClick={() => toggleVerify(u)}>
+                {u.verified ? 'रद्द करा' : 'मंजूर करा'}
+              </Btn>
+              <Btn
+                variant="plain"
+                style={{ background: '#FEE2E2', color: '#DC2626', border: '1px solid #FCA5A5', fontWeight: 800 }}
+                onClick={() => deleteMember(u)}>
+                🗑️ हटवा
+              </Btn>
+            </div>
           ])}
         />
       </Card>
@@ -1218,9 +1244,15 @@ function MembersView({ data, setData, toast }) {
             <div><strong style={{ color: T.deep }}>व्यवसाय:</strong> {selected.profession || '—'}</div>
             <div><strong style={{ color: T.deep }}>KYC:</strong> <Badge tone={selected.verified ? 'green' : 'saffron'}>{selected.verified ? 'प्रमाणित' : 'प्रलंबित'}</Badge></div>
           </div>
-          <div style={{ marginTop: 20, display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+          <div style={{ marginTop: 20, display: 'flex', gap: 10, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
             <Btn variant="primary" onClick={() => { toggleVerify(selected); setSelected(null); }}>
               {selected.verified ? 'रद्द करा' : 'प्रमाणित करा'}
+            </Btn>
+            <Btn
+              variant="plain"
+              style={{ background: '#FEE2E2', color: '#DC2626', border: '1px solid #FCA5A5', fontWeight: 800 }}
+              onClick={() => { const target = selected; setSelected(null); deleteMember(target); }}>
+              🗑️ डेटाबेसमधून हटवा
             </Btn>
             <Btn variant="plain" onClick={() => setSelected(null)}>बंद करा</Btn>
           </div>
@@ -1954,45 +1986,285 @@ function ReportsView({ data }) {
    15. APPROVALS
    ============================================================ */
 function ApprovalsView({ data, toast }) {
-  const [approvalsList, setApprovalsList] = useState([
-    { id: 'APP-01', module: 'KYC Verification', applicant: 'अमोल तुकाराम जाधव', location: 'Pune', submitted: '15:10 Today', status: 'Pending' },
-    { id: 'APP-02', module: 'Business Verification', applicant: 'शिवनेरी टेक्स्टाईल्स (राजेश निंबाळकर)', location: 'Satara', submitted: '14:58 Today', status: 'Pending' },
-    { id: 'APP-03', module: 'Content Review', applicant: 'रायगड रोपवे पर्यटन लेख (प्रणाली देसाई)', location: 'Raigad', submitted: '14:20 Today', status: 'Pending' },
-    { id: 'APP-04', module: 'Event Approval', applicant: 'मराठा उद्योजक परिषद 2026 (विक्रम शेलार)', location: 'Mumbai', submitted: '13:45 Today', status: 'Pending' },
-    { id: 'APP-05', module: 'Role Appointment', applicant: 'तालुका महिला अध्यक्ष (प्रियंका शिर्के)', location: 'Karad', submitted: 'Yesterday', status: 'Pending' },
-    { id: 'APP-06', module: 'Chapter Application', applicant: 'सोलापूर सिद्धेश्वर शाखा (रुपेश पाटील)', location: 'Solapur', submitted: 'Yesterday', status: 'Pending' }
-  ]);
+  const [approvalsList, setApprovalsList] = useState([]);
+  const [countsByModule, setCountsByModule] = useState({});
+  const [selectedModule, setSelectedModule] = useState('all');
+  const [selectedDistrict, setSelectedDistrict] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [actionItem, setActionItem] = useState(null);
+  const [actionRemarks, setActionRemarks] = useState('');
+  const [sanctionedAmount, setSanctionedAmount] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleApprove = (id, name) => {
-    setApprovalsList(prev => prev.filter(x => x.id !== id));
-    toast ? toast(`"${name}" मंजूर केले! ✓`, 'success') : alert(`Approved ${name}`);
+  const fetchApprovals = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await adminApi.getUnifiedApprovals({
+        module: selectedModule !== 'all' ? selectedModule : undefined,
+        district: selectedDistrict !== 'all' ? selectedDistrict : undefined,
+        search: searchQuery || undefined
+      });
+      const list = res?.approvals || [];
+      setApprovalsList(list);
+      if (res?.countsByModule) {
+        setCountsByModule(res.countsByModule);
+      }
+    } catch (err) {
+      console.warn('Error fetching unified approvals:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedModule, selectedDistrict, searchQuery]);
+
+  useEffect(() => {
+    fetchApprovals();
+  }, [fetchApprovals]);
+
+  const openActionModal = (item, action) => {
+    setActionItem({ item, action });
+    setActionRemarks(action === 'approve' || action === 'sanction' 
+      ? 'सर्व कागदपत्रे व निकष पडताळून मंजुरी देण्यात येत आहे.' 
+      : 'पडताळणी निकष पूर्ण न झाल्यामुळे अर्ज फेटाळण्यात येत आहे.');
+    if (item.type === 'loan') {
+      const numericVal = String(item.valueOrDetails || '').replace(/\D/g, '');
+      setSanctionedAmount(numericVal || '500000');
+    } else {
+      setSanctionedAmount('');
+    }
   };
 
-  const handleReject = (id, name) => {
-    setApprovalsList(prev => prev.filter(x => x.id !== id));
-    toast ? toast(`"${name}" फेटाळले. ✕`, 'error') : alert(`Rejected ${name}`);
+  const handleConfirmAction = async () => {
+    if (!actionItem) return;
+    setSubmitting(true);
+    try {
+      const { item, action } = actionItem;
+      await adminApi.actionUnifiedApproval({
+        itemId: item.id,
+        type: item.type,
+        collection: item.collection,
+        action,
+        remarks: actionRemarks,
+        sanctionedAmount: item.type === 'loan' ? sanctionedAmount : undefined
+      });
+
+      setApprovalsList(prev => prev.filter(x => x.id !== item.id));
+      const actionName = action === 'approve' || action === 'sanction' ? 'मंजूर' : 'फेटाळले';
+      toast ? toast(`"${item.title || item.applicantName}" यशस्वीरीत्या ${actionName}! ✓`, 'success')
+            : alert(`Item ${actionName}`);
+      setActionItem(null);
+      fetchApprovals();
+    } catch (err) {
+      toast ? toast(`त्रुटी: ${err.message}`, 'error') : alert(`Error: ${err.message}`);
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  const moduleTabs = [
+    { id: 'all', label: 'सर्व प्रलंबित', icon: '⚡', count: countsByModule.all || approvalsList.length },
+    { id: 'directory', label: 'व्यवसाय नोंदणी', icon: '🏨', count: countsByModule.directory || 0 },
+    { id: 'job', label: 'नोकरी भरती', icon: '💼', count: countsByModule.job || 0 },
+    { id: 'loan', label: 'बँक कर्ज अर्ज', icon: '🏦', count: countsByModule.loan || 0 },
+    { id: 'blood', label: 'रक्त मदत स्लिप', icon: '🩸', count: countsByModule.blood || 0 },
+    { id: 'lead', label: 'B2B रडार मागणी', icon: '🚀', count: countsByModule.lead || 0 },
+    { id: 'dairy_partner', label: 'दूध संकलन BMC', icon: '🥛', count: countsByModule.dairy_partner || 0 },
+    { id: 'post_report', label: 'मंच तक्रारी', icon: '🚨', count: countsByModule.post_report || 0 },
+    { id: 'member_kyc', label: 'सदस्य KYC', icon: '🪪', count: countsByModule.member_kyc || 0 }
+  ];
 
   return (
     <>
-      <SectionTitle subtitle={`एकूण ${approvalsList.length} प्रलंबित मंजुऱ्या`}>✅ Unified Approval Command Center</SectionTitle>
-      <Card style={{ padding: 0 }}>
-        <Table
-          headers={['आयडी', 'मॉड्यूल (Module)', 'अर्जदार / नोंद', 'स्थान', 'सादर वेळ', 'स्थिती', 'कृती']}
-          rows={approvalsList.map(a => [
-            <span style={{ fontFamily: 'monospace', color: T.saffron, fontWeight: 800 }}>{a.id}</span>,
-            <Badge tone="saffron">{a.module}</Badge>,
-            <strong>{a.applicant}</strong>,
-            a.location,
-            a.submitted,
-            <Badge tone="saffron">⏳ {a.status}</Badge>,
-            <div style={{ display: 'flex', gap: 6 }}>
-              <Btn variant="success" style={{ fontSize: '0.7rem', padding: '4px 8px' }} onClick={() => handleApprove(a.id, a.applicant)}>✓ मंजूर (Approve)</Btn>
-              <Btn variant="danger" style={{ fontSize: '0.7rem', padding: '4px 8px' }} onClick={() => handleReject(a.id, a.applicant)}>✕ फेटाळा</Btn>
-            </div>
-          ])}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+        <SectionTitle subtitle={`सर्व ९ बिझनेस, आर्थिक व समुदाय मॉड्यूल्सचे एकत्रित मंजुरी आदेश केंद्र`}>
+          ⚖️ एकत्रित प्रशासकीय मंजुरी केंद्र (Unified Approvals Command Center)
+        </SectionTitle>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Btn variant="plain" onClick={fetchApprovals} style={{ fontSize: '0.8rem' }}>🔄 रिफ्रेश (Refresh)</Btn>
+        </div>
+      </div>
+
+      {/* Module Filter Chips */}
+      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, marginBottom: 16 }}>
+        {moduleTabs.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setSelectedModule(tab.id)}
+            style={{
+              padding: '7px 12px',
+              borderRadius: 20,
+              fontSize: '0.78rem',
+              fontWeight: 800,
+              cursor: 'pointer',
+              border: selectedModule === tab.id ? `2px solid ${T.saffron}` : `1px solid ${T.border}`,
+              background: selectedModule === tab.id ? T.softBg : T.panel,
+              color: selectedModule === tab.id ? T.saffron : T.text,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              whiteSpace: 'nowrap',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <span>{tab.icon}</span>
+            <span>{tab.label}</span>
+            <span style={{
+              background: selectedModule === tab.id ? T.saffron : T.border,
+              color: selectedModule === tab.id ? '#FFF' : T.text,
+              fontSize: '0.68rem',
+              padding: '1px 6px',
+              borderRadius: 999,
+              fontWeight: 900
+            }}>
+              {tab.count}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Search & District Filter */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
+        <input
+          type="text"
+          placeholder="अर्जदार, शीर्षक, जिल्हा किंवा आयडी शोधा..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            flex: 1, minWidth: 220, padding: '8px 14px', borderRadius: 8,
+            border: `1px solid ${T.border}`, fontSize: '0.82rem', outline: 'none'
+          }}
         />
+        <select
+          value={selectedDistrict}
+          onChange={(e) => setSelectedDistrict(e.target.value)}
+          style={{
+            padding: '8px 12px', borderRadius: 8, border: `1px solid ${T.border}`,
+            background: T.panel, fontSize: '0.82rem', outline: 'none', cursor: 'pointer'
+          }}
+        >
+          <option value="all">सर्व जिल्हे (All Districts)</option>
+          <option value="पुणे">पुणे</option>
+          <option value="मुंबई">मुंबई</option>
+          <option value="सातारा">सातारा</option>
+          <option value="कोल्हापूर">कोल्हापूर</option>
+          <option value="नाशिक">नाशिक</option>
+          <option value="छत्रपती संभाजीनगर">छत्रपती संभाजीनगर</option>
+          <option value="सोलापूर">सोलापूर</option>
+          <option value="नागपूर">नागपूर</option>
+          <option value="सांगली">सांगली</option>
+        </select>
+      </div>
+
+      {/* Main Table */}
+      <Card style={{ padding: 0 }}>
+        {loading ? (
+          <div style={{ padding: 32, textAlign: 'center', color: T.saffron, fontWeight: 700 }}>
+            ⏳ प्रलंबित मंजुऱ्या लोड होत आहेत...
+          </div>
+        ) : approvalsList.length === 0 ? (
+          <div style={{ padding: 40, textAlign: 'center' }}>
+            <span style={{ fontSize: '2rem' }}>🎉</span>
+            <h4 style={{ margin: '8px 0 4px', color: T.ink, fontWeight: 800 }}>सर्व प्रलंबित मंजुऱ्या पूर्ण झाल्या आहेत!</h4>
+            <p style={{ margin: 0, fontSize: '0.82rem', color: T.muted }}>सध्या या फिल्टर अंतर्गत कोणतीही प्रलंबित नोंद शिल्लक नाही.</p>
+          </div>
+        ) : (
+          <Table
+            headers={['आयडी', 'मॉड्यूल (Module)', 'विषय / नोंद शीर्षक', 'अर्जदार / संस्था', 'तपशील / मूल्य', 'स्थान व जिल्हा', 'प्राधान्य', 'कृती']}
+            rows={approvalsList.map(a => [
+              <span key="id" style={{ fontFamily: 'monospace', color: T.saffron, fontWeight: 800 }}>{a.id}</span>,
+              <div key="mod">
+                <Badge tone="saffron">{a.module}</Badge>
+                <div style={{ fontSize: '0.7rem', color: T.muted, marginTop: 2 }}>{a.subModule}</div>
+              </div>,
+              <strong key="title" style={{ color: T.ink }}>{a.title}</strong>,
+              <div key="app">
+                <div style={{ fontWeight: 700 }}>{a.applicantName}</div>
+                <div style={{ fontSize: '0.68rem', color: T.muted }}>{new Date(a.submittedAt).toLocaleDateString('mr-IN')}</div>
+              </div>,
+              <div key="val" style={{ fontSize: '0.76rem', color: T.text }}>{a.valueOrDetails || '—'}</div>,
+              <div key="loc" style={{ fontSize: '0.76rem' }}>{a.location || a.district || 'महाराष्ट्र'}</div>,
+              <Badge key="prio" tone={a.priority === 'Critical' ? 'red' : a.priority === 'High' ? 'amber' : 'blue'}>
+                {a.priority || 'Normal'}
+              </Badge>,
+              <div key="act" style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                <Btn
+                  variant="success"
+                  style={{ fontSize: '0.72rem', padding: '5px 10px' }}
+                  onClick={() => openActionModal(a, a.type === 'loan' ? 'sanction' : 'approve')}
+                >
+                  {a.type === 'loan' ? '✓ कर्ज मंजूर करा' : '✓ मंजूर (Approve)'}
+                </Btn>
+                <Btn
+                  variant="danger"
+                  style={{ fontSize: '0.72rem', padding: '5px 10px' }}
+                  onClick={() => openActionModal(a, 'reject')}
+                >
+                  ✕ फेटाळा
+                </Btn>
+              </div>
+            ])}
+          />
+        )}
       </Card>
+
+      {/* Action Confirmation & Remarks Modal */}
+      {actionItem && (
+        <Modal
+          title={actionItem.action === 'reject' ? '⚠️ नोंद नामंजूर / फेटाळणी' : '✅ अधिकृत मंजुरी आदेश व प्रमाणीकरण'}
+          onClose={() => setActionItem(null)}
+          width={540}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ background: T.softBg, border: `1px solid ${T.border}`, borderRadius: 10, padding: 14 }}>
+              <div style={{ fontSize: '0.74rem', color: T.saffron, fontWeight: 800 }}>{actionItem.item.module} • {actionItem.item.subModule}</div>
+              <div style={{ fontSize: '0.98rem', fontWeight: 900, color: T.ink, marginTop: 4 }}>{actionItem.item.title}</div>
+              <div style={{ fontSize: '0.8rem', color: T.muted, marginTop: 2 }}>अर्जदार: {actionItem.item.applicantName} | ठिकाण: {actionItem.item.location}</div>
+              {actionItem.item.valueOrDetails && (
+                <div style={{ fontSize: '0.78rem', color: T.text, marginTop: 4, fontWeight: 700 }}>{actionItem.item.valueOrDetails}</div>
+              )}
+            </div>
+
+            {actionItem.item.type === 'loan' && (actionItem.action === 'approve' || actionItem.action === 'sanction') && (
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: T.ink, marginBottom: 4 }}>
+                  मंजूर केलेली कर्ज रक्कम (Sanctioned Loan Amount in ₹):
+                </label>
+                <input
+                  type="number"
+                  value={sanctionedAmount}
+                  onChange={(e) => setSanctionedAmount(e.target.value)}
+                  placeholder="उदा. 1500000"
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: `1px solid ${T.border}`, fontSize: '0.85rem' }}
+                />
+              </div>
+            )}
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 800, color: T.ink, marginBottom: 4 }}>
+                प्रशासकीय शेरा व टिप्पणी (Administrative Remarks / Audit Note):
+              </label>
+              <textarea
+                rows={3}
+                value={actionRemarks}
+                onChange={(e) => setActionRemarks(e.target.value)}
+                placeholder="शेरा प्रविष्ट करा..."
+                style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: `1px solid ${T.border}`, fontSize: '0.82rem', resize: 'vertical' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 8 }}>
+              <Btn variant="plain" onClick={() => setActionItem(null)}>रद्द करा (Cancel)</Btn>
+              <Btn
+                variant={actionItem.action === 'reject' ? 'danger' : 'success'}
+                onClick={handleConfirmAction}
+                disabled={submitting}
+              >
+                {submitting ? 'प्रक्रिया सुरू आहे...' : actionItem.action === 'reject' ? '✕ खात्रीने फेटाळा' : '✓ अंतिम मंजुरी जारी करा'}
+              </Btn>
+            </div>
+          </div>
+        </Modal>
+      )}
     </>
   );
 }
@@ -2065,45 +2337,9 @@ function RolesMatrixPipelineView({ data, toast }) {
   const [nominatedUser, setNominatedUser] = useState('');
   const [appointmentNotes, setAppointmentNotes] = useState('');
 
-  // Applications List from localStorage + initial mock
+  // Applications List from localStorage (clean live data, no demo mocks)
   const [applicationsList, setApplicationsList] = useState(() => {
-    const saved = JSON.parse(localStorage.getItem('cm_role_applications') || '[]');
-    if (saved.length > 0) return saved;
-    return [
-      {
-        id: 'app_demo_1',
-        userId: 'CM-MH-9876543210',
-        userName: 'अमोल तुकाराम जाधव',
-        userDistrict: 'पुणे (हवेली)',
-        roleId: 'adm-01',
-        roleTitleMr: 'ग्रामाध्यक्ष (ग्राम अध्यक्ष)',
-        referrals: 12450,
-        status: 'Pending',
-        appliedAt: new Date(Date.now() - 3600000 * 4).toISOString()
-      },
-      {
-        id: 'app_demo_2',
-        userId: 'CM-MH-4458129012',
-        userName: 'प्रियंका सुरेश शिर्के',
-        userDistrict: 'सातारा (कराड)',
-        roleId: 'wmn-02',
-        roleTitleMr: 'तालुका महिला अध्यक्ष',
-        referrals: 18200,
-        status: 'Pending',
-        appliedAt: new Date(Date.now() - 3600000 * 24).toISOString()
-      },
-      {
-        id: 'app_demo_3',
-        userId: 'CM-MH-7712398451',
-        userName: 'निलेश भगवान देशमुख',
-        userDistrict: 'नाशिक (मालेगाव)',
-        roleId: 'tech-03',
-        roleTitleMr: 'तालुका डिजिटल प्रमुख (IT Head)',
-        referrals: 15600,
-        status: 'Pending',
-        appliedAt: new Date(Date.now() - 3600000 * 48).toISOString()
-      }
-    ];
+    return JSON.parse(localStorage.getItem('cm_role_applications') || '[]');
   });
 
   const handleApproveApp = (app) => {

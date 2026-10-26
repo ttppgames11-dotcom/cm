@@ -26,9 +26,21 @@ import cultureRoutes from './routes/culture.routes.js';
 import quizRoutes from './routes/quiz.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import crmOperationsRoutes from './routes/crmOperations.routes.js';
+import crmHierarchyRoutes from './routes/crmHierarchy.routes.js';
+import locationsRoutes from './routes/locations.routes.js';
+import mediaRoutes from './routes/media.routes.js';
+import sevaEmergencyRoutes from './routes/sevaEmergency.routes.js';
+import legalRoutes from './routes/legal.routes.js';
+import messagesRoutes from './routes/messages.routes.js';
+import matrimonyRoutes from './routes/matrimony.routes.js';
+import womenRoutes from './routes/women.routes.js';
 import aiRoutes from './routes/ai.routes.js';
+import portalsEcosystemRoutes from './routes/portalsEcosystem.routes.js';
 import errorHandler from './middleware/errorHandler.js';
 import { sendSuccess } from './utils/response.js';
+import { db } from './db/realtimeDb.js';
+import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from './middleware/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -116,12 +128,18 @@ app.use('/api/sangam', sangamRoutes);
 
 // 4. Specialized Community Directories & Commercial Verticals
 app.use('/api', directoriesRoutes);
+app.use('/api/matrimony', matrimonyRoutes);
+app.use('/api/women', womenRoutes);
 
 // 5. Community Safety, Seva & Emergency
 app.use('/api', emergencyRoutes);
+app.use('/api/v1', sevaEmergencyRoutes);
+app.use('/api/seva', sevaEmergencyRoutes);
 
-// 6. Community Social Feed & Forums
+// 6. Community Social Feed & Direct Messages
 app.use('/api/community', communityRoutes);
+app.use('/api/messages', messagesRoutes);
+app.use('/api/members/messages', messagesRoutes);
 
 // 7. Events, Gatherings & Shivjayanti Utsav
 app.use('/api/events', eventsRoutes);
@@ -136,22 +154,114 @@ app.use('/api/services', servicesRoutes);
 // 10. History, Culture & Knowledge Graph
 app.use('/api/culture', cultureRoutes);
 app.use('/api/quiz', quizRoutes);
+app.use('/api/portals', portalsEcosystemRoutes);
+app.use('/api/v1/portals', portalsEcosystemRoutes);
 
 // 11. Role-Based CRM & Admin ERP
 app.use('/api/admin', adminRoutes);
+app.use('/api/crm-hierarchy', crmHierarchyRoutes);
 app.use('/api/crm', crmOperationsRoutes);
 app.use('/api/admin/crm', crmOperationsRoutes);
 
-// 12. Connect Maratha AI Agent (Trilingual Knowledge Base, RAG & Support)
+
+// 13. Abhay App Media & Dynamic Hierarchical Location APIs (44,810+ Maharashtra LGD Locations)
+app.use('/media', mediaRoutes);
+app.use('/api/media', mediaRoutes);
+app.use('/api/locations', locationsRoutes);
+
+// 14. Google Play Child Safety Standards & Legal Compliance
+app.use('/api/legal', legalRoutes);
+app.use('/api/safety', legalRoutes);
+
+// 15. Connect Maratha AI Agent (Chhatrapati AI Assistant & Knowledge RAG)
 app.use('/api/ai', aiRoutes);
+
+// High-Speed Static Assets Serving with 1-Year Immutable Caching & ETag
+const distPath = path.join(__dirname, '../dist');
+const publicPath = path.join(__dirname, '../frontend/public');
+const assetsPath = path.join(__dirname, '../assets');
+
+const staticCacheOptions = {
+  maxAge: '365d',
+  immutable: true,
+  etag: true,
+  lastModified: true
+};
+
+app.use('/assets', express.static(path.join(publicPath, 'assets'), staticCacheOptions));
+app.use('/assets', express.static(assetsPath, staticCacheOptions));
+app.use(express.static(distPath, {
+  maxAge: '1d',
+  setHeaders: (res, pathUrl) => {
+    if (pathUrl.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+    } else if (/\.(js|css|webp|jpg|jpeg|png|svg|woff2|avif)$/.test(pathUrl)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  }
+}));
+
+// ==========================================
+// 📡 REALTIME LIVE DATA STREAM (SSE for Web & Mobile APK)
+// ==========================================
+app.get('/api/realtime/stream', (req, res) => {
+  // EventSource cannot send headers, so the token may come in the query string. Only a valid, current login may listen.
+  const bearer = (req.headers['authorization'] || '').split(' ')[1];
+  const raw = bearer || (typeof req.query.token === 'string' ? req.query.token : '');
+  let viewer = null;
+  try { viewer = raw ? jwt.verify(raw, JWT_SECRET) : null; } catch (_) { viewer = null; }
+  const account = viewer?.id ? db.findById('members', viewer.id) : null;
+  if (!account || account.status === 'disabled' || (account.tokenVersion || 0) !== (viewer.tv || 0)) {
+    return res.status(401).json({ success: false, error: 'प्रमाणीकरण आवश्यक आहे.', code: 'AUTH_REQUIRED' });
+  }
+
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  if (res.flushHeaders) res.flushHeaders();
+
+  res.write(`data: ${JSON.stringify({ type: 'CONNECTED', message: 'Connect Maratha Realtime Live Stream Active', timestamp: new Date().toISOString() })}
+
+`);
+
+  // Only say what changed, never the record itself.
+  const onDbChange = (event) => {
+    res.write(`data: ${JSON.stringify({ type: 'DB_CHANGE', collection: event.collection, action: event.action, id: event.item?.id ?? event.id ?? null, timestamp: event.timestamp })}
+
+`);
+  };
+
+  db.on('change', onDbChange);
+
+  const heartbeat = setInterval(() => {
+    res.write(`: heartbeat\n\n`);
+  }, 15000);
+
+  req.on('close', () => {
+    db.off('change', onDbChange);
+    clearInterval(heartbeat);
+  });
+});
+
+// Realtime Health & Sync Diagnostics
+app.get('/api/realtime/health', (req, res) => {
+  return sendSuccess(res, 'Realtime Database Engine Active', {
+    status: 'ONLINE',
+    totalMembers: db.getCollection('members').length,
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Centralized Secure Error Handler (No stack trace leaks)
 app.use(errorHandler);
 
+const HOST = process.env.HOST || '0.0.0.0';
+
 // Start Express Server
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
-    console.log(`🛡️ Connect Maratha Protected Enterprise Server running on port ${PORT}`);
+  app.listen(PORT, HOST, () => {
+    console.log(`🛡️ Connect Maratha Protected Enterprise Server running on http://${HOST}:${PORT}`);
+    console.log(`📡 Realtime SSE Live Stream at http://${HOST}:${PORT}/api/realtime/stream`);
     console.log(`🔒 Active Defenses: Helmet CSP | Rate Limiter | Data Isolation Guard | Anti-XSS/SQLi`);
   });
 }

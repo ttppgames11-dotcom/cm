@@ -1,624 +1,1131 @@
 import React, { useState, useEffect } from 'react';
 import { useToast } from '../../context/ToastContext';
 import apiClient from '../../services/apiClient';
+import { useAuth } from '../../context/AuthContext';
 
-const SOCIAL_WORKERS = [
-  {
-    name: 'कर्मवीर संभाजीराव जाधव',
-    field: 'जलसंधारण व दुष्काळ मुक्ती',
-    location: 'बीड / धाराशिव',
-    experience: '२२ वर्षे समाजसेवा',
-    impact: '४५ गावांमध्ये "पाणी अडवा पाणी जिरवा" मोहिमेतून २५० शेततळी व बंधारे निर्माण.',
-    icon: '💧',
-    category: 'water',
-    phone: '+91 94221 54321',
-    email: 'sambhajirao.j@connectmaratha.org',
-    awards: 'महाराष्ट्र जलमित्र पुरस्कार'
-  },
-  {
-    name: 'डॉ. सौ. वंदना मोहिते-पाटील',
-    field: 'ग्रामीण आरोग्य व रुग्णमित्र',
-    location: 'सोलापूर / पंढरपूर',
-    experience: '१८ वर्षे रुग्णसेवा',
-    impact: '१०,००० पेक्षा जास्त गरीब रुग्णांना मुंबई-पुण्यातील मोठ्या रुग्णालयांत मोफत उपचार व शस्त्रक्रिया.',
-    icon: '🏥',
-    category: 'health',
-    phone: '+91 98223 65432',
-    email: 'vandana.mohite@connectmaratha.org',
-    awards: 'धनवंतरी समाजभूषण'
-  },
-  {
-    name: 'दिगंबर राजे गायकवाड',
-    field: 'गडकिल्ले श्रमदान व संवर्धन',
-    location: 'पुणे / रायगड / सातारा',
-    experience: '१० वर्षे दुर्ग संवर्धन',
-    impact: '१,५००+ शिवभक्त तरुणांची फळी तयार करून ३५ पेक्षा जास्त गडकिल्ल्यांवर स्वच्छता व जीर्णोद्धार.',
-    icon: '🏰',
-    category: 'heritage',
-    phone: '+91 91580 76543',
-    email: 'digambar.g@connectmaratha.org',
-    awards: 'दुर्गमित्र सन्मान'
-  },
-  {
-    name: 'सौ. अनिता प्रतापराव शिंदे',
-    field: 'शेतकरी आत्महत्याग्रस्त कुटुंब पुनर्वसन',
-    location: 'यवतमाळ / अमरावती',
-    experience: '१४ वर्षे पुनर्वसन कार्य',
-    impact: '३००+ विधवा भगिनींना शेळीपालन, शिलाई व लघुउद्योगाद्वारे आर्थिक आधार व मुलांचे शिक्षण.',
-    icon: '🌾',
-    category: 'farmers',
-    phone: '+91 94030 87654',
-    email: 'anita.shinde@connectmaratha.org',
-    awards: 'क्रांतीज्योती सावित्रीबाई फुले पुरस्कार'
-  },
-  {
-    name: 'ॲड. संग्रामसिंह कदम',
-    field: 'मोफत कायदेशीर सल्ला व विद्यार्थी हक्क',
-    location: 'छत्रपती संभाजीनगर',
-    experience: '१२ वर्षे विधिसेवा',
-    impact: '२,०००+ मराठा विद्यार्थ्यांना जात प्रमाणपत्र पडताळणी, ईडब्ल्यूएस आणि शिष्यवृत्ती कायदेशीर मदत.',
-    icon: '⚖️',
-    category: 'legal',
-    phone: '+91 98900 98765',
-    email: 'sangram.kadam@connectmaratha.org',
-    awards: 'न्यायमित्र सन्मान'
-  },
-  {
-    name: 'विजय बाबुराव भोसले',
-    field: 'अनाथ बालसंगोपन व गुरुकुल',
-    location: 'सातारा / कऱ्हाड',
-    experience: '२५ वर्षे बालसंगोपन',
-    impact: '१२० अनाथ व निराधार मराठा-बहुजन मुलांना मोफत शिक्षण, निवास व संस्कार गुरुकुलातून पालनपोषण.',
-    icon: '🧒',
-    category: 'education',
-    phone: '+91 98234 11223',
-    email: 'vijay.bhosale@connectmaratha.org',
-    awards: 'बाळमित्र राष्ट्रीय पुरस्कार'
-  },
-  {
-    name: 'सुनील तानाजी सावंत',
-    field: '२४ तास रक्त मदत व अवयवदान प्रबोधन',
-    location: 'मुंबई / ठाणे',
-    experience: '१६ वर्षे रक्तसेवा',
-    impact: 'आतापर्यंत २५,०००+ युनिट्स रक्त रुग्णांना वेळेत उपलब्ध करून दिले, ४००+ अवयवदान संकल्प.',
-    icon: '🩸',
-    category: 'blood',
-    phone: '+91 98200 33445',
-    email: 'sunil.sawant@connectmaratha.org',
-    awards: 'जीवनदाता गौरव'
-  },
-  {
-    name: 'प्रा. महेश चंद्रकांत पाटील',
-    field: 'ग्रामीण शिक्षण व स्पर्धा परीक्षा केंद्र',
-    location: 'कोल्हापूर / सांगली',
-    experience: '१५ वर्षे शिक्षण प्रसार',
-    impact: 'मोफत ग्रंथालय व वाचनालयांच्या माध्यमातून ३५०+ ग्रामीण मुले एमपीएससी/पोलीस भरतीमध्ये यशस्वी.',
-    icon: '📚',
-    category: 'education',
-    phone: '+91 94212 55667',
-    email: 'mahesh.patil@connectmaratha.org',
-    awards: 'आदर्श शिक्षक सन्मान'
-  },
-  {
-    name: 'अजिंक्य विनायक घोरपडे',
-    field: 'आपत्ती व्यवस्थापन व पूर निवारण',
-    location: 'पुणे / कोल्हापूर',
-    experience: '९ वर्षे आपत्ती साहाय्य',
-    impact: 'महापूर आणि भूस्खलन काळात ५००+ कुटुंबांचे सुरक्षित स्थलांतर व मोफत अन्नधान्य किट वितरण.',
-    icon: '🤝',
-    category: 'all',
-    phone: '+91 98220 33333',
-    email: 'ajinkya.ghorpade@connectmaratha.org',
-    awards: 'सह्याद्री जीवनरक्षक'
-  },
-  {
-    name: 'रोहित संभाजीराव पाटील',
-    field: 'शेतकरी साहाय्य व शून्य बजेट शेती',
-    location: 'यवतमाळ / नांदेड',
-    experience: '८ वर्षे कृषी विस्तार',
-    impact: '१,२०० शेतकऱ्यांना सेंद्रिय शेती प्रशिक्षण देऊन रासायनिक खतांचा खर्च ४० टक्क्यांनी कमी केला.',
-    icon: '🌱',
-    category: 'farmers',
-    phone: '+91 98221 44555',
-    email: 'rohit.patil@connectmaratha.org',
-    awards: 'कृषिमित्र गौरव'
-  },
-  {
-    name: 'प्रियांका तानाजी सावंत',
-    field: 'मराठा विद्यार्थिनी वसतिगृह समन्वय',
-    location: 'कोल्हापूर',
-    experience: '७ वर्षे विद्यार्थी मार्गदर्शन',
-    impact: 'ग्रामीण भागातील ४००+ गरजू विद्यार्थिनींना पुण्यात सुरक्षित वसतिगृह व मोफत मार्गदर्शन मिळवून दिले.',
-    icon: '🎓',
-    category: 'education',
-    phone: '+91 98222 55666',
-    email: 'priyanka.sawant@connectmaratha.org',
-    awards: 'सावित्री कन्या रत्न'
-  },
-  {
-    name: 'डॉ. दीपाली विक्रम शिंदे',
-    field: 'ग्रामीण फिरते मोफत आरोग्य शिबिर',
-    location: 'सोलापूर / उस्मानाबाद',
-    experience: '११ वर्षे वैद्यकीय सेवा',
-    impact: '८० ग्रामीण वाड्या-वस्त्यांवर जाऊन मोफत नेत्र तपासणी, महिला आरोग्य शिबिर व औषध वाटप.',
-    icon: '🩺',
-    category: 'health',
-    phone: '+91 98225 88999',
-    email: 'deepali.shinde@connectmaratha.org',
-    awards: 'आरोग्यदूत सन्मान'
-  }
+const CATEGORIES = [
+  { id: 'all', label: 'सर्व समाजसेवक', icon: '🌟' },
+  { id: 'water', label: 'जलसंधारण व दुष्काळ', icon: '💧' },
+  { id: 'health', label: 'आरोग्य व रुग्णमित्र', icon: '🏥' },
+  { id: 'farmers', label: 'शेतकरी कुटुंब आधार', icon: '🌾' },
+  { id: 'legal', label: 'कायदेशीर विधी साहाय्य', icon: '⚖️' },
+  { id: 'education', label: 'शिक्षण व वसतिगृह', icon: '📚' },
+  { id: 'blood', label: 'रक्तदान व अवयवदान', icon: '🩸' },
+  { id: 'heritage', label: 'गडकिल्ले संवर्धन', icon: '🏰' }
+];
+
+const MAHARASHTRA_DISTRICTS = [
+  'सर्व जिल्हे',
+  'पुणे',
+  'सोलापूर',
+  'बीड',
+  'छत्रपती संभाजीनगर',
+  'यवतमाळ',
+  'मुंबई',
+  'ठाणे',
+  'कोल्हापूर',
+  'सातारा',
+  'सांगली',
+  'नाशिक',
+  'अमरावती',
+  'नागपूर',
+  'लातूर',
+  'जालना',
+  'रायगड'
 ];
 
 export default function SocialWorkersPage() {
   const { showToast } = useToast();
-  const [workersList, setWorkersList] = useState(SOCIAL_WORKERS);
+  const { user } = useAuth();
+
+  const [activeTab, setActiveTab] = useState('workers'); // 'workers' | 'help' | 'missions' | 'crm'
+  const [workersList, setWorkersList] = useState([]);
+  const [helpRequests, setHelpRequests] = useState([]);
+  const [missions, setMissions] = useState([]);
+  const [crmStats, setCrmStats] = useState(null);
+
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedDistrict, setSelectedDistrict] = useState('सर्व जिल्हे');
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  // Modals
+  const [selectedWorker, setSelectedWorker] = useState(null);
+  const [workerDetail, setWorkerDetail] = useState(null);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false);
-  const [form, setForm] = useState({ name: '', phone: '', city: 'पुणे', fieldOfInterest: 'जलसंधारण व पर्यावरण', hoursPerWeek: '५ तास' });
-  const [submitted, setSubmitted] = useState(false);
+  const [isTestimonialModalOpen, setIsTestimonialModalOpen] = useState(false);
+
+  // Form Submitting
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    apiClient.getVolunteers()
-      .then(volunteers => {
-        if (Array.isArray(volunteers) && volunteers.length > 0) {
-          // Normalize existing names for strict deduplication
-          const normalize = str => (str || '').replace(/\s+/g, '').toLowerCase();
-          const existingNames = new Set(SOCIAL_WORKERS.map(w => normalize(w.name)));
-          const existingPhones = new Set(SOCIAL_WORKERS.map(w => (w.phone || '').replace(/\D/g, '').slice(-10)));
-          
-          const uniqueVolunteers = [];
-          const seen = new Set();
-          
-          for (const v of volunteers) {
-            const rawName = (v.name || '').trim();
-            const normName = normalize(rawName);
-            const rawPhone = (v.phone || '').replace(/\D/g, '').slice(-10);
-            
-            // Exclude if name matches or contains any existing name (e.g. अजिंक्य घोरपडे vs अजिंक्य विनायक घोरपडे)
-            const isNameDuplicate = Array.from(existingNames).some(ex => 
-              ex.includes(normName) || normName.includes(ex) || (normName.includes('अजिंक्य') && ex.includes('अजिंक्य'))
-            );
-            const isPhoneDuplicate = rawPhone && existingPhones.has(rawPhone);
+    loadAllData();
+  }, [selectedCategory, selectedDistrict]);
 
-            if (normName && !isNameDuplicate && !isPhoneDuplicate && !seen.has(normName)) {
-              seen.add(normName);
-              uniqueVolunteers.push({
-                name: v.name,
-                field: v.field || 'आपत्ती व्यवस्थापन व सामाजिक मदत',
-                location: v.district || 'महाराष्ट्र',
-                experience: v.availability ? `उपलब्धता: ${v.availability}` : 'सक्रिय स्वयंसेवक',
-                impact: `Connect Maratha सेवा कक्ष स्वयंसेवक (रक्तगट: ${v.bloodGroup || 'O+'})`,
-                icon: '🤝',
-                category: 'all',
-                phone: v.phone,
-                email: 'volunteer@connectmaratha.org',
-                awards: 'समाजमित्र'
-              });
-            }
-          }
-          if (uniqueVolunteers.length > 0) {
-            setWorkersList(prev => [...prev, ...uniqueVolunteers]);
-          }
-        }
-      })
-      .catch(err => console.warn('Could not load live volunteers:', err.message));
-  }, []);
-
-  const filteredWorkers = workersList.filter(w => {
-    const matchesCategory = selectedCategory === 'all' || w.category === selectedCategory;
-    const matchesSearch = w.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          w.field.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          (w.location && w.location.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch;
-  });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const loadAllData = async () => {
+    setLoading(true);
     try {
-      await apiClient.addVolunteer({
-        name: form.name,
-        phone: form.phone,
-        district: form.city,
-        field: form.fieldOfInterest,
-        availability: form.hoursPerWeek
-      });
-      const newWorker = {
-        name: form.name,
-        field: form.fieldOfInterest,
-        location: form.city,
-        experience: 'नवीन स्वयंसेवक',
-        impact: 'आताच नोंदणीकृत स्वयंसेवक',
-        icon: '🤝',
-        category: 'all',
-        phone: form.phone,
-        email: 'volunteer@connectmaratha.org',
-        awards: 'नवीन स्वयंसेवक'
-      };
-      setWorkersList(prev => [newWorker, ...prev]);
-      setSubmitted(true);
-      showToast('🤝 स्वयंसेवक नोंदणी यशस्वीरीत्या पूर्ण झाली!', 'success');
-      setTimeout(() => {
-        setSubmitted(false);
-        setIsVolunteerModalOpen(false);
-        setForm({ name: '', phone: '', city: 'पुणे', fieldOfInterest: 'जलसंधारण व पर्यावरण', hoursPerWeek: '५ तास' });
-      }, 1500);
+      const params = {};
+      if (selectedCategory !== 'all') params.category = selectedCategory;
+      if (selectedDistrict !== 'सर्व जिल्हे') params.district = selectedDistrict;
+
+      const [workersRes, helpRes, missionsRes, statsRes] = await Promise.all([
+        apiClient.getSocialWorkers(params).catch(() => []),
+        apiClient.getSocialHelpRequests().catch(() => []),
+        apiClient.getSocialMissions().catch(() => []),
+        apiClient.getSocialWorkerCrmStats().catch(() => null)
+      ]);
+
+      if (Array.isArray(workersRes) && workersRes.length > 0) {
+        setWorkersList(workersRes);
+      }
+      if (Array.isArray(helpRes) && helpRes.length > 0) {
+        setHelpRequests(helpRes);
+      }
+      if (Array.isArray(missionsRes) && missionsRes.length > 0) {
+        setMissions(missionsRes);
+      }
+      if (statsRes) {
+        setCrmStats(statsRes);
+      }
     } catch (err) {
-      showToast(err.message || 'नोंदणी अयशस्वी', 'error');
+      console.warn('Error loading social workers suite:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
+  const handleOpenWorkerDetail = async (worker) => {
+    setSelectedWorker(worker);
+    try {
+      const res = await apiClient.getSocialWorkerById(worker.id);
+      if (res) {
+        setWorkerDetail(res);
+      } else {
+        setWorkerDetail(worker);
+      }
+    } catch {
+      setWorkerDetail(worker);
+    }
+  };
+
+  // 1. Citizen Request Help Submit
+  const handleRequestHelpSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const fd = new FormData(e.target);
+
+    try {
+      const res = await apiClient.requestSocialHelp({
+        citizenName: fd.get('citizenName'),
+        citizenPhone: fd.get('citizenPhone'),
+        district: fd.get('district'),
+        taluka: fd.get('taluka'),
+        category: fd.get('category'),
+        urgency: fd.get('urgency'),
+        description: fd.get('description'),
+        preferredWorkerId: selectedWorker?.id || null
+      });
+
+      showToast(res?.message || '🚩 आपली मदत विनंती यशस्वी नोंदवली गेली!', 'success');
+      setIsHelpModalOpen(false);
+      loadAllData();
+    } catch (err) {
+      showToast(err.message || 'मदत विनंती सादर करताना त्रुटी आली.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // 2. Register New Social Worker / Volunteer Submit
+  const handleVolunteerSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const fd = new FormData(e.target);
+
+    try {
+      const res = await apiClient.addSocialWorker({
+        name: fd.get('name'),
+        field: fd.get('field'),
+        category: fd.get('category'),
+        district: fd.get('district'),
+        taluka: fd.get('taluka'),
+        phone: fd.get('phone'),
+        email: fd.get('email'),
+        organization: fd.get('organization'),
+        skills: fd.get('skills'),
+        availability: fd.get('availability'),
+        experience: fd.get('experience'),
+        impact: fd.get('impact')
+      });
+
+      showToast(res?.message || '🚩 समाजसेवक स्वयंसेवा नोंदणी यशस्वी झाली!', 'success');
+      setIsVolunteerModalOpen(false);
+      loadAllData();
+    } catch (err) {
+      showToast(err.message || 'नोंदणी त्रुटी', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // 3. Submit Testimonial
+  const handleTestimonialSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedWorker) return;
+    setIsSubmitting(true);
+    const fd = new FormData(e.target);
+
+    try {
+      await apiClient.addSocialTestimonial(selectedWorker.id, {
+        citizenName: fd.get('citizenName'),
+        citizenCity: fd.get('citizenCity'),
+        testimonial: fd.get('testimonial'),
+        rating: fd.get('rating'),
+        impactStory: fd.get('impactStory')
+      });
+
+      showToast(`🚩 ${selectedWorker.name} यांच्यासाठी आपले प्रशंसापत्र जोडले गेले!`, 'success');
+      setIsTestimonialModalOpen(false);
+      handleOpenWorkerDetail(selectedWorker);
+    } catch (err) {
+      showToast(err.message || 'प्रशंसापत्र त्रुटी', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // 4. CRM Status Update
+  const handleUpdateRequestStatus = async (reqId, newStatus) => {
+    try {
+      await apiClient.updateSocialHelpRequest(reqId, { status: newStatus });
+      showToast(`प्रकरण स्थिती अद्ययावत: ${newStatus}`, 'success');
+      loadAllData();
+    } catch (err) {
+      showToast(err.message || 'त्रुटी', 'error');
+    }
+  };
+
+  // Filter in-memory for instant search
+  const filteredWorkers = workersList.filter(w => {
+    const q = searchQuery.toLowerCase();
+    return (
+      (w.name || '').toLowerCase().includes(q) ||
+      (w.field || '').toLowerCase().includes(q) ||
+      (w.location || '').toLowerCase().includes(q) ||
+      (w.district || '').toLowerCase().includes(q) ||
+      (w.impact || '').toLowerCase().includes(q)
+    );
+  });
+
   return (
-    <div style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '5rem' }}>
-      {/* Hero Banner - Realistic volunteer photo without flat background color */}
-      <div style={{
-        position: 'relative',
-        backgroundImage: 'linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.65)), url("/assets/images/maratha-social-workers-hero.jpg")',
-        backgroundPosition: 'center 40%',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-        color: '#fff',
-        padding: '4.5rem 1.5rem 4rem',
+    <div style={{ background: '#FAF7F2', minHeight: '100vh', paddingBottom: '60px', color: '#1E293B', fontFamily: 'inherit' }}>
+      
+      {/* HERO BANNER */}
+      <section style={{
+        background: 'linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%)',
+        color: '#FFFFFF',
+        padding: '52px 20px 48px',
         textAlign: 'center',
-        borderBottom: '4px solid #ea580c',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.15)'
+        position: 'relative',
+        boxShadow: '0 12px 30px rgba(30,27,75,0.25)',
+        overflow: 'hidden'
       }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <div style={{
-            display: 'inline-block',
-            background: 'rgba(234, 88, 12, 0.9)',
-            border: '1px solid rgba(255, 255, 255, 0.4)',
-            padding: '0.45rem 1.4rem',
-            borderRadius: '999px',
-            fontSize: '0.92rem',
-            fontWeight: 800,
-            marginBottom: '1.25rem',
-            color: '#FFFFFF',
-            boxShadow: '0 4px 14px rgba(234, 88, 12, 0.5)',
-            letterSpacing: '0.3px'
-          }}>
-            🤝 सेवा परमो धर्मः | Social Activists & Changemakers
+        <div style={{ position: 'absolute', right: '-20px', top: '-30px', opacity: 0.08, fontSize: '18rem', pointerEvents: 'none' }}>
+          🤝
+        </div>
+
+        <div style={{ maxWidth: '980px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '14px', flexWrap: 'wrap' }}>
+            <span style={{
+              background: 'rgba(255, 213, 79, 0.2)',
+              border: '1px solid #FFD54F',
+              padding: '4px 16px',
+              borderRadius: '24px',
+              fontSize: '0.85rem',
+              fontWeight: 800,
+              color: '#FFD54F'
+            }}>
+              🤝 CONNECT MARATHA — निष्ठावंत समाजसेवक व मदत कक्ष
+            </span>
+            <span style={{ background: '#10B981', color: '#fff', padding: '4px 14px', borderRadius: '24px', fontSize: '0.82rem', fontWeight: 700 }}>
+              ✓ सेवा परमो धर्मः (२४x७ जनसाहाय्य)
+            </span>
           </div>
-          <h1 style={{
-            fontSize: 'clamp(2.2rem, 5.5vw, 3.4rem)',
-            fontWeight: 900,
-            color: '#FFFFFF',
-            margin: '0.5rem 0 1.25rem',
-            textShadow: '0 4px 20px rgba(0,0,0,0.95), 0 2px 6px rgba(0,0,0,0.9)',
-            letterSpacing: '-0.5px'
-          }}>
-            मराठा समाजसेवक आणि कार्यकर्ते
+
+          <h1 style={{ fontSize: 'clamp(2.1rem, 3.8vw, 2.9rem)', fontWeight: 900, margin: '0 0 12px', lineHeight: 1.25 }}>
+            समाजातील शेवटच्या घटकासाठी अहोरात्र झटणारे निष्ठावंत समाजसेवक
           </h1>
-          <p style={{
-            fontSize: '1.25rem',
-            color: '#f8fafc',
-            maxWidth: '820px',
-            margin: '0 auto 2.5rem',
-            lineHeight: 1.7,
-            fontWeight: 600,
-            textShadow: '0 2px 12px rgba(0,0,0,0.95), 0 1px 4px rgba(0,0,0,0.9)'
-          }}>
-            स्वार्थापलीकडे जाऊन समाजातील शेवटच्या घटकासाठी अहोरात्र झटणारे निष्ठावंत मराठा समाजसेवक. त्यांच्या कार्यात आपणही हातभार लावा.
+          <p style={{ fontSize: '1.08rem', color: '#E0E7FF', margin: '0 auto 24px', maxWidth: '800px', lineHeight: 1.6, opacity: 0.95 }}>
+            जलसंधारण, शेतकरी कुटुंब आधार, मोफत कायदेशीर विधी सेवा, आपत्कालीन रुग्ण मित्र व अनाथ बालसंगोपन 
+            क्षेत्रात निःस्वार्थपणे कार्यरत असलेल्या मराठा समाजसेवकांशी थेट संपर्क व नागरिक मदत जुळवणी.
           </p>
 
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => setIsHelpModalOpen(true)}
+              style={{
+                background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                color: '#fff',
+                border: 'none',
+                padding: '12px 26px',
+                borderRadius: '10px',
+                fontWeight: 800,
+                fontSize: '1rem',
+                cursor: 'pointer',
+                boxShadow: '0 6px 16px rgba(220,38,38,0.35)'
+              }}>
+              🆘 तातडीने मदत हवी आहे? (विनंती नोंदवा)
+            </button>
             <button
               onClick={() => setIsVolunteerModalOpen(true)}
               style={{
-                background: '#ea580c',
-                color: '#fff',
+                background: 'linear-gradient(135deg, #FFD54F 0%, #FFB300 100%)',
+                color: '#78350F',
                 border: 'none',
-                padding: '0.85rem 2.2rem',
-                borderRadius: '12px',
+                padding: '12px 24px',
+                borderRadius: '10px',
                 fontWeight: 800,
-                fontSize: '1.05rem',
+                fontSize: '0.98rem',
                 cursor: 'pointer',
-                boxShadow: '0 6px 20px rgba(234, 88, 12, 0.45)',
-                transition: 'all 0.2s'
-              }}
-            >
-              + स्वयंसेवक (Volunteer) म्हणून नोंदणी करा
+                boxShadow: '0 6px 16px rgba(0,0,0,0.2)'
+              }}>
+              ＋ समाजसेवक / स्वयंसेवक म्हणून जुळा
             </button>
-            <a
-              href="#workers-list"
-              style={{
-                background: 'rgba(255,255,255,0.2)',
-                backdropFilter: 'blur(8px)',
-                color: '#fff',
-                textDecoration: 'none',
-                padding: '0.85rem 2.2rem',
-                borderRadius: '12px',
-                fontWeight: 700,
-                fontSize: '1.05rem',
-                display: 'inline-block',
-                border: '1.5px solid rgba(255,255,255,0.4)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
-              }}
-            >
-              कार्यकर्ते शोधा ➔
-            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* METRICS STRIP */}
+      <div style={{ maxWidth: '1240px', margin: '-22px auto 24px', padding: '0 16px', position: 'relative', zIndex: 5 }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: '14px'
+        }}>
+          <div style={{ background: '#fff', padding: '16px 20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 10px rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600 }}>सत्यापित समाजसेवक</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#312E81', marginTop: '2px' }}>
+              {crmStats?.totalSocialWorkers || workersList.length || 6}+
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#16A34A', fontWeight: 600 }}>राज्यव्यापी समर्पित कार्यकर्ते</div>
+          </div>
+
+          <div style={{ background: '#fff', padding: '16px 20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 10px rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600 }}>नागरिक मदत प्रकरणे सोडवली</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#0F766E', marginTop: '2px' }}>
+              {crmStats?.resolvedRequests || 7,500}+
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#64748B' }}>आरोग्य, विधी व आपत्ती साहाय्य</div>
+          </div>
+
+          <div style={{ background: '#fff', padding: '16px 20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 10px rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600 }}>समर्पित कामाचे तास (Hours)</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#D97706', marginTop: '2px' }}>
+              {crmStats?.totalVolunteerHours ? `${crmStats.totalVolunteerHours.toLocaleString('en-IN')}+` : '२९,५००+'}
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#64748B' }}>अविरत जनसेवा तास</div>
+          </div>
+
+          <div style={{ background: '#fff', padding: '16px 20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 10px rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600 }}>सक्रिय सामाजिक मोहिमा</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#DC2626', marginTop: '2px' }}>
+              {crmStats?.totalMissions || missions.length || 2}+
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#10B981', fontWeight: 600 }}>दुष्काळमुक्ती व दुर्ग श्रमदान</div>
           </div>
         </div>
       </div>
 
-      <div id="workers-list" style={{ maxWidth: '1200px', margin: '2rem auto', padding: '0 1rem' }}>
-        {/* Filter Bar */}
-        <div style={{
-          background: '#fff',
-          padding: '1.25rem',
-          borderRadius: '16px',
-          border: '1px solid #e2e8f0',
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '1rem',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: '2rem'
-        }}>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            {[
-              { id: 'all', label: 'सर्व कार्यक्षेत्र' },
-              { id: 'water', label: '💧 जलसंधारण' },
-              { id: 'health', label: '🏥 रुग्णमित्र' },
-              { id: 'heritage', label: '🏰 गडकिल्ले' },
-              { id: 'farmers', label: '🌾 शेतकरी मदत' },
-              { id: 'education', label: '📚 शिक्षण' },
-              { id: 'blood', label: '🩸 रक्तसेवा' }
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setSelectedCategory(tab.id)}
-                style={{
-                  background: selectedCategory === tab.id ? '#ea580c' : '#f1f5f9',
-                  color: selectedCategory === tab.id ? '#fff' : '#475569',
-                  border: 'none',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '8px',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          <input
-            type="text"
-            placeholder="नाव, जिल्हा किंवा कार्यक्षेत्र शोधा..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            style={{
-              padding: '0.6rem 1rem',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              minWidth: '260px',
-              fontSize: '0.9rem'
-            }}
-          />
-        </div>
-
-        {/* Workers Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: '1.5rem'
-        }}>
-          {filteredWorkers.map((w, idx) => (
-            <div key={idx} style={{
-              background: '#fff',
-              borderRadius: '16px',
-              padding: '1.75rem',
-              boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
-              border: '1px solid #e2e8f0',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between'
-            }}>
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                  <div style={{
-                    width: '52px',
-                    height: '52px',
-                    borderRadius: '14px',
-                    background: '#fff7ed',
-                    border: '1px solid #fed7aa',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '1.8rem'
-                  }}>
-                    {w.icon}
-                  </div>
-                  <span style={{
-                    background: '#fef3c7',
-                    color: '#92400e',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    padding: '0.25rem 0.65rem',
-                    borderRadius: '6px'
-                  }}>
-                    {w.awards}
-                  </span>
-                </div>
-
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem' }}>
-                  {w.name}
-                </h3>
-                <div style={{ fontSize: '0.88rem', color: '#ea580c', fontWeight: 700, marginBottom: '0.5rem' }}>
-                  {w.field}
-                </div>
-                <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.75rem' }}>
-                  📍 {w.location} | ⏳ {w.experience}
-                </div>
-                <p style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.6, margin: '0 0 1.25rem' }}>
-                  <strong>कार्य व प्रभाव:</strong> {w.impact}
-                </p>
-              </div>
-
-              <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1rem', display: 'flex', gap: '0.5rem' }}>
-                <a
-                  href={`tel:${w.phone}`}
-                  style={{
-                    flex: 1,
-                    background: '#fff7ed',
-                    color: '#c2410c',
-                    textDecoration: 'none',
-                    padding: '0.65rem',
-                    borderRadius: '8px',
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    textAlign: 'center',
-                    border: '1px solid #fed7aa'
-                  }}
-                >
-                  📞 संपर्क करा
-                </a>
-                <button
-                  onClick={() => setIsVolunteerModalOpen(true)}
-                  style={{
-                    flex: 1,
-                    background: '#ea580c',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '0.65rem',
-                    borderRadius: '8px',
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 8px rgba(234, 88, 12, 0.25)',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  + सोबत काम करा
-                </button>
-              </div>
-            </div>
+      {/* TABS NAVIGATION */}
+      <div style={{ maxWidth: '1240px', margin: '0 auto 20px', padding: '0 16px' }}>
+        <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #E2E8F0', overflowX: 'auto', paddingBottom: '2px' }}>
+          {[
+            { id: 'workers', label: '🤝 निष्ठावंत समाजसेवक रोस्टर', count: workersList.length },
+            { id: 'help', label: '🆘 नागरिक मदत मागणी व स्थिती', count: helpRequests.length },
+            { id: 'missions', label: '🚩 सक्रिय सामाजिक मोहिमा', count: missions.length },
+            { id: 'crm', label: '📊 CRM कार्य वाटप व मोजमाप' }
+          ].map(t => (
+            <button
+              key={t.id}
+              onClick={() => setActiveTab(t.id)}
+              style={{
+                background: 'none',
+                border: 'none',
+                borderBottom: activeTab === t.id ? '3px solid #312E81' : '3px solid transparent',
+                color: activeTab === t.id ? '#312E81' : '#64748B',
+                fontWeight: activeTab === t.id ? 800 : 600,
+                fontSize: '1rem',
+                padding: '10px 18px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+              {t.label}
+              {t.count !== undefined && (
+                <span style={{
+                  background: activeTab === t.id ? '#312E81' : '#E2E8F0',
+                  color: activeTab === t.id ? '#fff' : '#64748B',
+                  fontSize: '0.75rem',
+                  padding: '2px 8px',
+                  borderRadius: '12px',
+                  fontWeight: 700
+                }}>
+                  {t.count}
+                </span>
+              )}
+            </button>
           ))}
         </div>
       </div>
 
-      {/* Volunteer Modal */}
+      {/* TAB 1: SOCIAL WORKERS DIRECTORY */}
+      {activeTab === 'workers' && (
+        <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 16px' }}>
+          {/* Filters Bar */}
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '14px',
+            padding: '18px 20px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+            border: '1px solid #E2E8F0',
+            marginBottom: '24px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '14px'
+          }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
+              <input
+                type="text"
+                placeholder="नाव, कार्यक्षेत्र, कौशल्य किंवा जिल्हा शोधा..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }}
+              />
+
+              <select
+                value={selectedDistrict}
+                onChange={(e) => setSelectedDistrict(e.target.value)}
+                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.9rem', background: '#fff' }}>
+                {MAHARASHTRA_DISTRICTS.map(d => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Category Pills */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    border: selectedCategory === cat.id ? '1px solid #312E81' : '1px solid #E2E8F0',
+                    background: selectedCategory === cat.id ? '#312E81' : '#F8FAFC',
+                    color: selectedCategory === cat.id ? '#fff' : '#475569',
+                    fontSize: '0.84rem',
+                    fontWeight: selectedCategory === cat.id ? 700 : 500,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                  <span>{cat.icon}</span> {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Workers Cards Grid */}
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '60px 0', color: '#64748B' }}>समाजसेवक यादी लोड होत आहे...</div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '22px' }}>
+              {filteredWorkers.map(w => (
+                <div
+                  key={w.id}
+                  style={{
+                    background: '#FFFFFF',
+                    borderRadius: '16px',
+                    border: '1px solid #E2E8F0',
+                    padding: '22px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}>
+                  <div>
+                    {/* Top Badges */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <span style={{
+                        background: '#EEF2FF',
+                        color: '#312E81',
+                        padding: '4px 10px',
+                        borderRadius: '8px',
+                        fontSize: '0.78rem',
+                        fontWeight: 700
+                      }}>
+                        {w.field}
+                      </span>
+                      <span style={{
+                        background: '#DCFCE7',
+                        color: '#166534',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        fontSize: '0.75rem',
+                        fontWeight: 700
+                      }}>
+                        ✓ {w.verification_status || 'सत्यापित'}
+                      </span>
+                    </div>
+
+                    {/* Name & Location */}
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', marginBottom: '10px' }}>
+                      <div style={{ fontSize: '2.2rem', lineHeight: 1 }}>{w.icon || '🤝'}</div>
+                      <div>
+                        <h3 style={{ margin: '0 0 4px 0', fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', lineHeight: 1.3 }}>
+                          {w.name}
+                        </h3>
+                        <div style={{ fontSize: '0.8rem', color: '#64748B' }}>
+                          📍 {w.location || w.district} • {w.experience}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Impact description */}
+                    <p style={{ fontSize: '0.88rem', color: '#475569', margin: '0 0 14px 0', lineHeight: 1.5 }}>
+                      <strong>साध्य केलेले कार्य:</strong> {w.impact}
+                    </p>
+
+                    {/* Details Box */}
+                    <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '10px', fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
+                      <div><strong>संघटना:</strong> {w.organization || 'मराठा समाजकार्य मंच'}</div>
+                      <div><strong>उपलब्धता:</strong> {w.availability || 'पूर्णवेळ'}</div>
+                      <div><strong>समर्पित कामाचे तास:</strong> <span style={{ color: '#312E81', fontWeight: 800 }}>{w.volunteer_hours || 500}+ तास</span></div>
+                      <div><strong>सोडवलेली प्रकरणे:</strong> <span style={{ color: '#0F766E', fontWeight: 800 }}>{w.cases_resolved || 50}+ नागरिक</span></div>
+                      {w.awards && <div><strong>सन्मान:</strong> 🏆 {w.awards}</div>}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', paddingTop: '10px', borderTop: '1px solid #F1F5F9' }}>
+                    <button
+                      onClick={() => handleOpenWorkerDetail(w)}
+                      style={{
+                        background: '#F1F5F9',
+                        color: '#334155',
+                        border: '1px solid #CBD5E1',
+                        padding: '9px',
+                        borderRadius: '8px',
+                        fontWeight: 700,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer'
+                      }}>
+                      🔍 सविस्तर प्रोफाइल
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedWorker(w);
+                        setIsHelpModalOpen(true);
+                      }}
+                      style={{
+                        background: '#312E81',
+                        color: '#fff',
+                        border: 'none',
+                        padding: '9px',
+                        borderRadius: '8px',
+                        fontWeight: 700,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer'
+                      }}>
+                      🆘 मदत विनंती पाठवा
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 2: CITIZEN HELP REQUESTS (मदत मागणी व प्रगती) */}
+      {activeTab === 'help' && (
+        <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div>
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 800, margin: '0 0 4px 0', color: '#0F172A' }}>
+                🆘 नागरिक मदत विनंत्या व प्रगती (Live Help Desk)
+              </h2>
+              <p style={{ margin: 0, fontSize: '0.88rem', color: '#64748B' }}>
+                गरजू नागरिकांच्या मदतीसाठी थेट नियुक्त समाजसेवक व कामाचा प्रत्यक्ष निकाल.
+              </p>
+            </div>
+            <button
+              onClick={() => setIsHelpModalOpen(true)}
+              style={{
+                background: '#DC2626',
+                color: '#fff',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                fontWeight: 800,
+                fontSize: '0.9rem',
+                cursor: 'pointer'
+              }}>
+              ＋ नवीन मदत विनंती टाका
+            </button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '18px' }}>
+            {helpRequests.map((hr) => (
+              <div key={hr.id} style={{ background: '#fff', borderRadius: '14px', border: '1px solid #E2E8F0', padding: '20px', boxShadow: '0 4px 10px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <span style={{
+                    background: hr.urgency?.includes('तातडीचे') ? '#FEE2E2' : '#FEF3C7',
+                    color: hr.urgency?.includes('तातडीचे') ? '#991B1B' : '#92400E',
+                    padding: '3px 8px',
+                    borderRadius: '6px',
+                    fontSize: '0.75rem',
+                    fontWeight: 700
+                  }}>
+                    {hr.urgency}
+                  </span>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#312E81' }}>
+                    केस क्र: {hr.case_number}
+                  </span>
+                </div>
+
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: '0 0 6px 0', color: '#0F172A' }}>
+                  {hr.category}
+                </h3>
+                <div style={{ fontSize: '0.82rem', color: '#64748B', marginBottom: '8px' }}>
+                  नागरिक: <strong>{hr.citizen_name}</strong> • जिल्हा: {hr.district} ({hr.taluka || ''})
+                </div>
+
+                <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.5, margin: '0 0 12px 0' }}>
+                  {hr.description}
+                </p>
+
+                <div style={{ background: '#F8FAFC', padding: '10px', borderRadius: '8px', fontSize: '0.82rem', marginBottom: '12px' }}>
+                  <div><strong>नियुक्त समाजसेवक:</strong> <span style={{ color: '#312E81', fontWeight: 700 }}>{hr.assigned_worker_name || 'पडताळणी कक्ष'}</span></div>
+                  <div><strong>स्थिती:</strong> <span style={{ color: hr.status?.includes('पूर्ण') ? '#16A34A' : '#D97706', fontWeight: 700 }}>{hr.status}</span></div>
+                  {hr.outcome_notes && (
+                    <div style={{ marginTop: '4px', color: '#0F766E' }}>
+                      <strong>परिणाम:</strong> {hr.outcome_notes}
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ fontSize: '0.75rem', color: '#94A3B8', textAlign: 'right' }}>
+                  दिनांक: {hr.created_at?.split('T')[0] || '२०२६-१०-१९'}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: SOCIAL MISSIONS */}
+      {activeTab === 'missions' && (
+        <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 16px' }}>
+          <h2 style={{ fontSize: '1.35rem', fontWeight: 800, margin: '0 0 6px 0', color: '#0F172A' }}>
+            🚩 राज्यव्यापी सामाजिक मोहिमा व सामूहिक श्रमदान (Social Missions)
+          </h2>
+          <p style={{ margin: '0 0 20px 0', fontSize: '0.88rem', color: '#64748B' }}>
+            निष्ठावंत समाजसेवकांच्या नेतृत्वाखाली सुरू असलेले मोठे जनआंदोलन व पुनर्वसन प्रकल्प.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '20px' }}>
+            {missions.map((m) => (
+              <div key={m.id} style={{ background: '#fff', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <span style={{ background: '#DCFCE7', color: '#166534', padding: '3px 10px', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 700 }}>
+                    {m.status}
+                  </span>
+                  <span style={{ fontSize: '0.8rem', color: '#64748B' }}>{m.category} • {m.district}</span>
+                </div>
+
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '0 0 6px 0', color: '#0F172A' }}>{m.title}</h3>
+                <div style={{ fontSize: '0.85rem', color: '#312E81', fontWeight: 700, marginBottom: '10px' }}>
+                  प्रकल्प प्रमुख: {m.lead_worker_name}
+                </div>
+
+                <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.5, margin: '0 0 14px 0' }}>
+                  {m.description}
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', background: '#F8FAFC', padding: '12px', borderRadius: '10px', textAlign: 'center', fontSize: '0.82rem' }}>
+                  <div>
+                    <div style={{ color: '#64748B', fontSize: '0.75rem' }}>लाभार्थी</div>
+                    <div style={{ fontWeight: 800, color: '#312E81', fontSize: '1rem' }}>{m.beneficiaries_count.toLocaleString('en-IN')}+</div>
+                  </div>
+                  <div>
+                    <div style={{ color: '#64748B', fontSize: '0.75rem' }}>स्वयंसेवक</div>
+                    <div style={{ fontWeight: 800, color: '#0F766E', fontSize: '1rem' }}>{m.volunteers_engaged}+ मावळे</div>
+                  </div>
+                  <div>
+                    <div style={{ color: '#64748B', fontSize: '0.75rem' }}>श्रमदान तास</div>
+                    <div style={{ fontWeight: 800, color: '#D97706', fontSize: '1rem' }}>{m.hours_invested}+ तास</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 4: CRM GOVERNANCE */}
+      {activeTab === 'crm' && (
+        <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 16px' }}>
+          <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '24px' }}>
+            <h2 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '0 0 16px 0', color: '#0F172A' }}>
+              📊 CRM कार्य वाटप, सोडवणूक व निकाल नियंत्रण (Helpdesk Dispatch CRM)
+            </h2>
+
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.86rem' }}>
+                <thead>
+                  <tr style={{ background: '#F8FAFC', borderBottom: '2px solid #E2E8F0', textAlign: 'left' }}>
+                    <th style={{ padding: '10px' }}>केस क्र.</th>
+                    <th style={{ padding: '10px' }}>नागरिक नाव</th>
+                    <th style={{ padding: '10px' }}>जिल्हा / प्रकार</th>
+                    <th style={{ padding: '10px' }}>तातडी</th>
+                    <th style={{ padding: '10px' }}>नियुक्त समाजसेवक</th>
+                    <th style={{ padding: '10px' }}>सद्य स्थिती</th>
+                    <th style={{ padding: '10px' }}>कृती (Actions)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {helpRequests.map((r) => (
+                    <tr key={r.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: '10px', fontWeight: 700, color: '#312E81' }}>{r.case_number}</td>
+                      <td style={{ padding: '10px', fontWeight: 600 }}>{r.citizen_name} ({r.citizen_phone})</td>
+                      <td style={{ padding: '10px', color: '#475569' }}>{r.district} • {r.category}</td>
+                      <td style={{ padding: '10px' }}>
+                        <span style={{
+                          background: r.urgency?.includes('तातडीचे') ? '#FEE2E2' : '#FEF3C7',
+                          color: r.urgency?.includes('तातडीचे') ? '#991B1B' : '#92400E',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          fontSize: '0.75rem',
+                          fontWeight: 700
+                        }}>
+                          {r.urgency}
+                        </span>
+                      </td>
+                      <td style={{ padding: '10px', fontWeight: 600, color: '#0F172A' }}>{r.assigned_worker_name || 'समन्वयक'}</td>
+                      <td style={{ padding: '10px' }}>
+                        <span style={{
+                          background: r.status?.includes('पूर्ण') ? '#DCFCE7' : '#FEF3C7',
+                          color: r.status?.includes('पूर्ण') ? '#166534' : '#92400E',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          fontSize: '0.75rem',
+                          fontWeight: 700
+                        }}>
+                          {r.status}
+                        </span>
+                      </td>
+                      <td style={{ padding: '10px' }}>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <button
+                            onClick={() => handleUpdateRequestStatus(r.id, 'यशस्वी पूर्ण (Resolved)')}
+                            style={{ background: '#DCFCE7', color: '#166534', border: '1px solid #86EFAC', padding: '3px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}>
+                            ✓ पूर्ण झाले
+                          </button>
+                          <button
+                            onClick={() => handleUpdateRequestStatus(r.id, 'प्रगतीपथावर (In Progress)')}
+                            style={{ background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE', padding: '3px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
+                            ⚡ काम सुरू
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 1: WORKER DETAIL & TESTIMONIALS */}
+      {selectedWorker && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.65)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '16px'
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            maxWidth: '680px',
+            width: '100%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            padding: '26px',
+            position: 'relative'
+          }}>
+            <button
+              onClick={() => setSelectedWorker(null)}
+              style={{ position: 'absolute', right: '16px', top: '16px', background: '#F1F5F9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 700 }}>
+              ✕
+            </button>
+
+            <div style={{ display: 'flex', gap: '14px', alignItems: 'center', marginBottom: '14px' }}>
+              <span style={{ fontSize: '2.5rem' }}>{selectedWorker.icon || '🤝'}</span>
+              <div>
+                <h2 style={{ color: '#312E81', margin: '0 0 4px', fontSize: '1.35rem', fontWeight: 800 }}>{selectedWorker.name}</h2>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <span style={{ background: '#EEF2FF', color: '#312E81', padding: '2px 8px', borderRadius: '6px', fontWeight: 700, fontSize: '0.78rem' }}>
+                    {selectedWorker.field}
+                  </span>
+                  <span style={{ background: '#DCFCE7', color: '#166534', padding: '2px 8px', borderRadius: '6px', fontWeight: 700, fontSize: '0.78rem' }}>
+                    📍 {selectedWorker.location || selectedWorker.district}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.6, marginBottom: '16px' }}>
+              {selectedWorker.bio || selectedWorker.impact}
+            </p>
+
+            {/* Stats row */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', background: '#F8FAFC', padding: '12px', borderRadius: '10px', marginBottom: '16px', textAlign: 'center', fontSize: '0.82rem' }}>
+              <div>
+                <div style={{ color: '#64748B' }}>कामाचे तास</div>
+                <div style={{ fontWeight: 800, color: '#312E81', fontSize: '1.1rem' }}>{selectedWorker.volunteer_hours || 500}+</div>
+              </div>
+              <div>
+                <div style={{ color: '#64748B' }}>प्रकरणे पूर्ण</div>
+                <div style={{ fontWeight: 800, color: '#0F766E', fontSize: '1.1rem' }}>{selectedWorker.cases_resolved || 50}+</div>
+              </div>
+              <div>
+                <div style={{ color: '#64748B' }}>रेटींग</div>
+                <div style={{ fontWeight: 800, color: '#D97706', fontSize: '1.1rem' }}>⭐ {selectedWorker.rating || 4.9}</div>
+              </div>
+            </div>
+
+            {/* Testimonials */}
+            {workerDetail?.testimonials && workerDetail.testimonials.length > 0 && (
+              <div style={{ marginBottom: '16px' }}>
+                <h4 style={{ margin: '0 0 8px 0', fontSize: '0.95rem', fontWeight: 800, color: '#0F172A' }}>
+                  💬 नागरिकांची प्रशंसापत्रे (Citizen Testimonials)
+                </h4>
+                {workerDetail.testimonials.map((t, idx) => (
+                  <div key={idx} style={{ background: '#F1F5F9', padding: '10px 14px', borderRadius: '8px', fontSize: '0.82rem', marginBottom: '6px' }}>
+                    <div style={{ fontWeight: 700, color: '#0F172A' }}>{t.citizen_name} ({t.citizen_city}): ⭐⭐⭐⭐⭐</div>
+                    <div style={{ color: '#475569', marginTop: '2px' }}>"{t.testimonial}"</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px' }}>
+              <button
+                onClick={() => setIsTestimonialModalOpen(true)}
+                style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FCD34D', padding: '9px 16px', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
+                ✍️ प्रशंसापत्र लिहा
+              </button>
+              <button
+                onClick={() => setIsHelpModalOpen(true)}
+                style={{ background: '#312E81', color: '#fff', border: 'none', padding: '9px 18px', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
+                🆘 मदत मागा
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 2: REQUEST HELP MODAL */}
+      {isHelpModalOpen && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.65)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '16px'
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            maxWidth: '560px',
+            width: '100%',
+            padding: '26px',
+            position: 'relative'
+          }}>
+            <button
+              onClick={() => setIsHelpModalOpen(false)}
+              style={{ position: 'absolute', right: '16px', top: '16px', background: '#F1F5F9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 700 }}>
+              ✕
+            </button>
+
+            <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#DC2626', margin: '0 0 6px' }}>
+              🆘 तातडीने मदत विनंती फॉर्म (Help Request)
+            </h3>
+            <p style={{ fontSize: '0.84rem', color: '#64748B', margin: '0 0 16px' }}>
+              {selectedWorker ? `प्राधान्य समाजसेवक: ${selectedWorker.name}` : 'आपली विनंती योग्य समाजसेवकाकडे तातडीने सोपवली जाईल.'}
+            </p>
+
+            <form onSubmit={handleRequestHelpSubmit}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>आपले नाव *</label>
+                    <input name="citizenName" required defaultValue={user?.name || ''} placeholder="उदा. अमोल देशमुख" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>मोबाईल नंबर *</label>
+                    <input name="citizenPhone" required type="tel" defaultValue={user?.phone || ''} placeholder="9822000000" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>जिल्हा *</label>
+                    <select name="district" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#fff' }}>
+                      {MAHARASHTRA_DISTRICTS.filter(d => d !== 'सर्व जिल्हे').map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>तातडीचे स्वरूप *</label>
+                    <select name="urgency" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#fff' }}>
+                      <option value="तातडीचे (Emergency)">तातडीचे (Emergency - २४ तासांत)</option>
+                      <option value="उच्च (High)">उच्च (High - २ ते ३ दिवस)</option>
+                      <option value="मध्यम">मध्यम</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>मदतीचा प्रकार *</label>
+                  <select name="category" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#fff' }}>
+                    <option value="वैद्यकीय उपचार व रुग्ण मदत">वैद्यकीय उपचार व रुग्ण मदत</option>
+                    <option value="शेतकरी कुटुंब पुनर्वसन">शेतकरी कुटुंब पुनर्वसन</option>
+                    <option value="कायदेशीर सल्ला व जात पडताळणी">कायदेशीर सल्ला व जात पडताळणी</option>
+                    <option value="शैक्षणिक वसतिगृह व फी साहाय्य">शैक्षणिक वसतिगृह व फी साहाय्य</option>
+                    <option value="आपत्कालीन रक्तदान">आपत्कालीन रक्तदान</option>
+                    <option value="इतर सामाजिक मदत">इतर सामाजिक मदत</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>समस्येचा सविस्तर तपशील *</label>
+                  <textarea name="description" required placeholder="आपल्याला कोणती मदत हवी आहे? रुग्णालय, गाव किंवा परिस्थिती..." rows="3" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }}></textarea>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{
+                    background: '#DC2626',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '11px',
+                    borderRadius: '8px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    marginTop: '8px'
+                  }}>
+                  {isSubmitting ? 'नोंद होत आहे...' : '🆘 मदत विनंती सादर करा'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 3: VOLUNTEER REGISTRATION MODAL */}
       {isVolunteerModalOpen && (
         <div style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(0,0,0,0.6)',
+          background: 'rgba(0,0,0,0.65)',
+          backdropFilter: 'blur(4px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '1rem',
-          zIndex: 9999
+          zIndex: 9999,
+          padding: '16px'
         }}>
           <div style={{
-            background: '#fff',
-            borderRadius: '20px',
-            maxWidth: '500px',
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            maxWidth: '600px',
             width: '100%',
-            padding: '2rem',
-            maxHeight: '90vh',
-            overflowY: 'auto'
+            maxHeight: '92vh',
+            overflowY: 'auto',
+            padding: '26px',
+            position: 'relative'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0, color: '#ea580c' }}>
-                मराठा समाजसेवा स्वयंसेवक नोंदणी
-              </h3>
-              <button onClick={() => setIsVolunteerModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
-            </div>
+            <button
+              onClick={() => setIsVolunteerModalOpen(false)}
+              style={{ position: 'absolute', right: '16px', top: '16px', background: '#F1F5F9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 700 }}>
+              ✕
+            </button>
 
-            {submitted ? (
-              <div style={{ textAlign: 'center', padding: '2rem 0', color: '#ea580c' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🤝</div>
-                <h4>आपली स्वयंसेवक नोंदणी यशस्वी झाली!</h4>
-                <p style={{ color: '#64748b', fontSize: '0.9rem' }}>आपल्या जिल्ह्यातील संबंधित समाजसेवक किंवा समन्वयक आपल्याशी लवकरच जोडले जातील.</p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>पूर्ण नाव *</label>
-                  <input
-                    type="text"
-                    required
-                    value={form.name}
-                    onChange={e => setForm({ ...form, name: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    placeholder="उदा. अजिंक्य संभाजी जाधव"
-                  />
+            <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#312E81', margin: '0 0 6px' }}>
+              🤝 समाजसेवक / स्वयंसेवक नावनोंदणी अर्ज
+            </h3>
+            <p style={{ fontSize: '0.84rem', color: '#64748B', margin: '0 0 16px' }}>
+              समाजातील गरजूंना मदत करण्यासाठी आपले योगदान नोंदवा.
+            </p>
+
+            <form onSubmit={handleVolunteerSubmit}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>पूर्ण नाव *</label>
+                    <input name="name" required placeholder="आपले नाव" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>मोबाईल नंबर *</label>
+                    <input name="phone" required type="tel" placeholder="9822000000" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>मोबाईल नंबर *</label>
-                  <input
-                    type="tel"
-                    required
-                    value={form.phone}
-                    onChange={e => setForm({ ...form, phone: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    placeholder="उदा. 9822XXXXXX"
-                  />
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>जिल्हा *</label>
+                    <select name="district" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#fff' }}>
+                      {MAHARASHTRA_DISTRICTS.filter(d => d !== 'सर्व जिल्हे').map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>कार्यक्षेत्र (Field) *</label>
+                    <select name="field" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#fff' }}>
+                      <option value="जलसंधारण व दुष्काळ मुक्ती">जलसंधारण व दुष्काळ मुक्ती</option>
+                      <option value="ग्रामीण आरोग्य व रुग्णमित्र">ग्रामीण आरोग्य व रुग्णमित्र</option>
+                      <option value="शेतकरी कुटुंब आधार">शेतकरी कुटुंब आधार</option>
+                      <option value="मोफत कायदेशीर सल्ला">मोफत कायदेशीर सल्ला</option>
+                      <option value="रक्तदान व अवयवदान">रक्तदान व अवयवदान</option>
+                      <option value="गडकिल्ले संवर्धन">गडकिल्ले संवर्धन</option>
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>जिल्हा / तालुका *</label>
-                  <input
-                    type="text"
-                    required
-                    value={form.city}
-                    onChange={e => setForm({ ...form, city: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    placeholder="उदा. सातारा / फलटण"
-                  />
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>उपलब्धता (Availability)</label>
+                    <select name="availability" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#fff' }}>
+                      <option value="पूर्णवेळ (Full-time)">पूर्णवेळ (Full-time)</option>
+                      <option value="शनिवार-रविवार">शनिवार-रविवार</option>
+                      <option value="आपत्कालीन २४x७">आपत्कालीन २४x७</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>संघटना / ट्रस्ट (असल्यास)</label>
+                    <input name="organization" placeholder="उदा. सह्याद्री प्रतिष्ठान" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                  </div>
                 </div>
+
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>आवडीचे सेवाक्षेत्र *</label>
-                  <select
-                    value={form.fieldOfInterest}
-                    onChange={e => setForm({ ...form, fieldOfInterest: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                  >
-                    <option value="जलसंधारण व पर्यावरण">जलसंधारण व वृक्षारोपण</option>
-                    <option value="रुग्णसेवा व आरोग्य">रुग्णसेवा व मोफत औषधोपचार</option>
-                    <option value="गडकिल्ले श्रमदान">गडकिल्ले स्वच्छता व संवर्धन</option>
-                    <option value="शेतकरी साहाय्य">शेतकरी कुटुंब पुनर्वसन</option>
-                    <option value="रक्तदान कक्ष">रक्तदान शिबिर व आपत्कालीन मदत</option>
-                    <option value="स्पर्धा परीक्षा व शिक्षण">ग्रामीण शिक्षण व ग्रंथालय</option>
-                  </select>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>आपली विशेष कौशल्ये (Skills)</label>
+                  <input name="skills" placeholder="उदा. समुपदेशन, रुग्णालय समन्वय, प्राथमिक उपचार, कायदेशीर मसुदा" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>आठवड्यातून उपलब्ध वेळ *</label>
-                  <select
-                    value={form.hoursPerWeek}
-                    onChange={e => setForm({ ...form, hoursPerWeek: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                  >
-                    <option value="२ तास">आठवड्यातून २ तास</option>
-                    <option value="५ तास">आठवड्यातून ५ तास (शनिवार/रविवार)</option>
-                    <option value="१० तास">आठवड्यातून १०+ तास</option>
-                    <option value="पूर्णवेळ">आपत्कालीन परिस्थितीत पूर्णवेळ</option>
-                  </select>
-                </div>
+
+                <input type="hidden" name="category" value="social" />
+                <input type="hidden" name="experience" value="नवीन स्वयंसेवक" />
+                <input type="hidden" name="impact" value="मराठा समाजकार्य मंच सक्रिय स्वयंसेवक" />
+
                 <button
                   type="submit"
+                  disabled={isSubmitting}
                   style={{
-                    background: '#ea580c',
+                    background: '#312E81',
                     color: '#fff',
                     border: 'none',
-                    padding: '0.9rem',
-                    borderRadius: '10px',
-                    fontWeight: 700,
+                    padding: '11px',
+                    borderRadius: '8px',
+                    fontWeight: 800,
                     cursor: 'pointer',
-                    marginTop: '0.5rem',
-                    boxShadow: '0 4px 12px rgba(234, 88, 12, 0.35)',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  स्वयंसेवक नोंदणी पूर्ण करा
+                    marginTop: '8px'
+                  }}>
+                  {isSubmitting ? 'नोंद होत आहे...' : '🤝 स्वयंसेवक म्हणून सामील व्हा'}
                 </button>
-              </form>
-            )}
+              </div>
+            </form>
           </div>
         </div>
       )}
+
+      {/* MODAL 4: WRITE TESTIMONIAL MODAL */}
+      {isTestimonialModalOpen && selectedWorker && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.65)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '16px'
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            maxWidth: '520px',
+            width: '100%',
+            padding: '24px',
+            position: 'relative'
+          }}>
+            <button
+              onClick={() => setIsTestimonialModalOpen(false)}
+              style={{ position: 'absolute', right: '16px', top: '16px', background: '#F1F5F9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 700 }}>
+              ✕
+            </button>
+
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#312E81', margin: '0 0 4px' }}>
+              ✍️ प्रशंसापत्र नोंदवा (Citizen Appreciation)
+            </h3>
+            <p style={{ fontSize: '0.84rem', color: '#64748B', margin: '0 0 14px' }}>
+              समाजसेवक: <strong>{selectedWorker.name}</strong>
+            </p>
+
+            <form onSubmit={handleTestimonialSubmit}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <input name="citizenName" required defaultValue={user?.name || ''} placeholder="आपले नाव *" style={{ padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                <input name="citizenCity" required placeholder="आपले शहर / गाव *" style={{ padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }} />
+                <textarea name="testimonial" required placeholder="त्यांनी आपल्याला कशी मदत केली? आपला अनुभव लिहा..." rows="3" style={{ padding: '9px', borderRadius: '8px', border: '1px solid #CBD5E1' }}></textarea>
+                <input type="hidden" name="rating" value="5" />
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{
+                    background: '#312E81',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '10px',
+                    borderRadius: '8px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    marginTop: '6px'
+                  }}>
+                  {isSubmitting ? 'सादर करत आहे...' : 'प्रशंसापत्र प्रकाशित करा'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

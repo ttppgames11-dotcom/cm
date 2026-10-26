@@ -1690,7 +1690,7 @@ function initUniversalModals() {
   window.openGuidelinesModal = function() {
     const body = `
       <div style="font-size:0.88rem; line-height:1.65; color:var(--ink-soft);">
-        <p style="margin-bottom:12px;"><strong>अखिल भारतीय मराठा महासंघाच्या अधिकृत डिजिटल व्यासपीठाची ५ सुवर्ण तत्त्वे:</strong></p>
+        <p style="margin-bottom:12px;"><strong>अखिल भारतीय मराठा महासंघाच्या आधुनिक युगातील आधुनिक संघटनाची ५ सुवर्ण तत्त्वे:</strong></p>
         <ol style="margin-left:18px; margin-bottom:16px; display:flex; flex-direction:column; gap:8px;">
           <li><strong>शिवरायांचा आचारधर्म:</strong> रयतेचे कल्याण, सर्व धर्मसमभाव आणि उच्च नैतिक मूल्ये यांचे जीवनात पालन करणे.</li>
           <li><strong>स्त्रीसन्मान:</strong> छत्रपतींच्या राज्यात स्त्रियांचा सर्वोच्च सन्मान होता. महिला बांधवांशी सदैव आदराने वागणे बंधनकारक आहे.</li>

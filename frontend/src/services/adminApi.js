@@ -9,7 +9,16 @@ import apiClient from './apiClient';
 const safe = async (promise, fallback = null) => {
   try {
     const res = await promise;
-    return res?.data ?? fallback;
+    if (res === null || res === undefined) return fallback;
+    // Handle { success, data } envelopes or top-level arrays/objects
+    if (Array.isArray(res)) return res;
+    if (Array.isArray(res?.data)) return res.data;
+    if (res?.users && Array.isArray(res.users)) return res.users;
+    if (res?.businesses && Array.isArray(res.businesses)) return res.businesses;
+    if (res?.referrals && Array.isArray(res.referrals)) return res.referrals;
+    if (res?.records && Array.isArray(res.records)) return res.records;
+    if (res?.requests && Array.isArray(res.requests)) return res.requests;
+    return res?.data ?? res ?? fallback;
   } catch (err) {
     console.warn('[adminApi fallback]', err?.message);
     return fallback;
@@ -30,15 +39,19 @@ export const adminApi = {
   getMembers: (params) => safe(apiClient.get('/admin/users', { params }), []),
   verifyMember: (id, verified) =>
     safe(apiClient.put(`/admin/users/${id}/verify`, { verified }), { ok: true }),
+  deleteMember: (id) => safe(apiClient.deleteAdminUser(id), { ok: true, success: true }),
+  deleteUser: (id) => safe(apiClient.deleteAdminUser(id), { ok: true, success: true }),
+  changeMemberId: (id, newId, isVip, vipNumber) =>
+    safe(apiClient.put(`/admin/members/${id}/change-id`, { newId, isVip, vipNumber }), { ok: true, success: true }),
 
   // ---- Leads ----
-  getLeads: () => safe(apiClient.get('/admin/leads'), []),
+  getLeads: () => safe(apiClient.get('/crm/member-referrals'), []),
   updateLeadStage: (id, stage) =>
     safe(apiClient.put(`/admin/leads/${id}`, { stage }), { ok: true }),
 
   // ---- Businesses & Referrals ----
-  getBusinesses: () => safe(apiClient.get('/sangam/businesses'), []),
-  getReferrals: () => safe(apiClient.get('/sangam/referrals'), []),
+  getBusinesses: () => safe(apiClient.get('/businesses'), []),
+  getReferrals: () => safe(apiClient.getAllMemberReferrals(), []),
   createReferral: (payload) =>
     safe(apiClient.post('/sangam/referrals', payload), { ok: true }),
 
@@ -83,7 +96,45 @@ export const adminApi = {
   getAuditLogs: (params) => safe(apiClient.get('/admin/audit-logs', { params }), []),
 
   // ---- Blood / Seva ----
-  getBloodRequests: () => safe(apiClient.get('/blood/requests'), [])
+  getBloodRequests: () => safe(apiClient.get('/blood/requests'), []),
+
+  // ---- Member Referrals (CRM) ----
+  getReferrals: () => safe(apiClient.getAllMemberReferrals(), []),
+
+  // ---- Unified Approvals Engine ----
+  getUnifiedApprovals: (params = {}) =>
+    safe(apiClient.getUnifiedApprovals(params), {
+      approvals: [],
+      countsByModule: {},
+      totalPendingCount: 0
+    }),
+  actionUnifiedApproval: (data) =>
+    safe(apiClient.actionUnifiedApproval(data), { ok: true }),
+
+  // ---- User CRUD (Superadmin Create/Edit) ----
+  createUser: (payload) =>
+    safe(apiClient.post('/admin/users', payload), { ok: true, success: false }),
+  updateUser: (id, payload) =>
+    safe(apiClient.put(`/admin/users/${id}`, payload), { ok: true, success: false }),
+
+  // ---- Super Admin Sponsor & Downline Controller ----
+  getSponsorHierarchy: (memberId) =>
+    safe(apiClient.get(`/admin/sponsor-hierarchy/${memberId}`), null),
+  changeSponsor: (payload) =>
+    safe(apiClient.post('/admin/change-sponsor', payload), { success: false }),
+
+  // ---- Super Admin Platform Switches & Feature Control ----
+  getPlatformControls: () =>
+    safe(apiClient.get('/admin/platform-controls'), { controls: {} }),
+  updatePlatformControls: (payload) =>
+    safe(apiClient.put('/admin/platform-controls', payload), { success: false }),
+
+  // ---- Granular Permission Controller Matrix ----
+  getPermissionRules: () =>
+    safe(apiClient.get('/admin/permission-controller'), { rules: [] }),
+  updatePermissionRules: (rules) =>
+    safe(apiClient.put('/admin/permission-controller', { rules }), { success: false })
 };
 
 export default adminApi;
+

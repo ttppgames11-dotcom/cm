@@ -118,9 +118,17 @@ export function generateCardHTML(data, mode = 'certificate') {
 
   const origin = typeof window !== 'undefined' ? window.location.origin : 'https://www.connectmaratha.com';
   const logoUrl = `${origin}/assets/images/logo.png`;
-  const photoUrl = (photo && (photo.startsWith('http') || photo.startsWith('/'))) 
+  const isValidImg = (s) => typeof s === 'string' && (
+    s.startsWith('data:image/') ||
+    s.startsWith('blob:') ||
+    s.startsWith('http://') ||
+    s.startsWith('https://') ||
+    s.startsWith('/')
+  );
+  const photoUrl = isValidImg(photo)
     ? (photo.startsWith('/') ? `${origin}${photo}` : photo)
     : `${origin}/assets/images/officers/officer_tukaram.jpg`;
+
 
   if (mode === 'smartcard') {
     // Executive Smart Card with clean White/Ivory background and crisp Saffron borders

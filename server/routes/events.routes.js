@@ -1,158 +1,161 @@
 import { Router } from 'express';
+import { all, get, runQuery } from '../../database/database.js';
 import { db } from '../db/realtimeDb.js';
 import { authenticateToken, optionalToken } from '../middleware/auth.js';
 import { sendSuccess, sendError } from '../utils/response.js';
-import { validateEvent, sanitize } from '../utils/validator.js';
 
 const router = Router();
 
 // GET /api/events
-// Calendar of Shivjayanti, conventions, webinars, rallies
-router.get('/', (req, res) => {
-  const { district, category, search } = req.query;
-  let list = db.getCollection('events');
+// Fetch all events with optional filters (district, category)
+router.get('/', async (req, res, next) => {
+  try {
+    const { district, category, search } = req.query;
+    let sql = 'SELECT * FROM events WHERE 1=1';
+    const params = [];
 
-  if (list.length === 0) {
-    const seedEvents = [
-      {
-        id: 'EVT-001',
-        title: 'अखिल भारतीय मराठा महासंघ महाअधिवेशन २०२६',
-        date: '२५ नोव्हेंबर २०२६',
-        time: 'स. १० ते सायं. ६',
-        location: 'शिवछत्रपती क्रीडानगरी, बालेवाडी, पुणे',
-        district: 'पुणे',
-        category: 'महाअधिवेशन',
-        chiefGuests: 'मा. प्रदेशाध्यक्ष व ज्येष्ठ सामाजिक नेतृत्व',
-        description: 'महाराष्ट्रातील ३६ जिल्हे व इतर राज्यांतील मराठा प्रतिनिधींचे भव्य संमेलन.',
-        attendeesCount: 4200,
-        capacity: 5000,
-        createdAt: new Date().toISOString()
-      },
-      {
-        id: 'EVT-002',
-        title: 'शिवजयंती भव्य पदयात्रा व गडदर्शन मोहीम',
-        date: '१९ फेब्रुवारी २०२७',
-        time: 'पहाटे ५:०० वा.',
-        location: 'किल्ले रायगड, महाड',
-        district: 'रायगड',
-        category: 'दुर्ग मोहीम',
-        chiefGuests: 'इतिहास संशोधक व शिवप्रेमी',
-        description: 'किल्ले रायगडावर पारंपरिक पोषाखात शिवरायांना अभिवादन व दुर्ग स्वच्छता मोहीम.',
-        attendeesCount: 1850,
-        capacity: 2500,
-        createdAt: new Date().toISOString()
+    if (district && district !== 'सर्व' && district !== 'all') {
+      sql += ' AND district LIKE ?';
+      params.push(`%${district}%`);
+    }
+    if (category && category !== 'all' && category !== 'सर्व') {
+      sql += ' AND category LIKE ?';
+      params.push(`%${category}%`);
+    }
+    if (search) {
+      sql += ' AND (title LIKE ? OR venue LIKE ? OR desc LIKE ?)';
+      params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+    }
+
+    sql += ' ORDER BY date ASC';
+    const events = await all(sql, params);
+
+    // Provide dual payload so both mobile app (events) and web API consumers (data.events) work seamlessly
+    res.json({
+      success: true,
+      count: events.length,
+      events,
+      data: {
+        events,
+        count: events.length
       }
-    ];
-    for (const e of seedEvents) db.insert('events', e);
-    list = seedEvents;
+    });
+  } catch (err) {
+    // Fallback to realtimeDb if SQLite has any issue
+    try {
+      const list = db.getCollection('events') || [];
+      return res.json({ success: true, count: list.length, events: list, data: { events: list } });
+    } catch {
+      next(err);
+    }
   }
-
-  if (district && district !== 'सर्व') {
-    list = list.filter(e => (e.district || '').toLowerCase() === district.toLowerCase());
-  }
-  if (category && category !== 'सर्व') {
-    list = list.filter(e => (e.category || '').toLowerCase() === category.toLowerCase());
-  }
-  if (search) {
-    const q = search.toLowerCase();
-    list = list.filter(e => 
-      (e.title || '').toLowerCase().includes(q) ||
-      (e.location || '').toLowerCase().includes(q) ||
-      (e.description || '').toLowerCase().includes(q)
-    );
-  }
-
-  return sendSuccess(res, 'कार्यक्रमांची यादी प्राप्त झाली', { events: list, count: list.length });
 });
 
 // GET /api/events/:id
-// Event itinerary, venue map, speakers, chief guests
-router.get('/:id', (req, res) => {
-  const event = db.findById('events', req.params.id);
-  if (!event) {
-    return sendError(res, 'कार्यक्रम सापडला नाही.', 'EVENT_NOT_FOUND', 404);
+router.get('/:id', async (req, res, next) => {
+  try {
+    const event = await get('SELECT * FROM events WHERE id = ?', [req.params.id]);
+    if (!event) {
+      const fallback = db.findById('events', req.params.id);
+      if (!fallback) {
+        return res.status(404).json({ success: false, error: 'कार्यक्रम आढळला नाही.' });
+      }
+      return res.json({ success: true, event: fallback, data: { event: fallback } });
+    }
+
+    const rsvps = await all('SELECT * FROM event_rsvps WHERE event_id = ? ORDER BY created_at DESC', [req.params.id]);
+    event.rsvps = rsvps;
+    event.attendeesCount = event.rsvp_count || rsvps.length;
+
+    res.json({
+      success: true,
+      event,
+      data: {
+        event,
+        rsvpsCount: rsvps.length
+      }
+    });
+  } catch (err) {
+    next(err);
   }
-
-  const rsvps = db.getCollection('eventRsvps').filter(r => r.eventId === req.params.id);
-
-  return sendSuccess(res, 'कार्यक्रमाचा सविस्तर तपशील', {
-    event,
-    rsvpsCount: rsvps.length
-  });
-});
-
-// POST /api/events
-// Create sanctioned event with registration capacity
-router.post('/', authenticateToken, (req, res) => {
-  const { isValid, errors, sanitized } = validateEvent(req.body);
-  if (!isValid) {
-    return sendError(res, errors[0]?.error || 'अवैध कार्यक्रम माहिती.', 'VALIDATION_ERROR', 400, { validationErrors: errors });
-  }
-
-  const { title, date, location } = sanitized;
-  const { time, district, category, description, capacity, chiefGuests } = req.body;
-
-  const newEvent = {
-    id: `EVT-${Date.now().toString().slice(-4)}`,
-    title,
-    date,
-    time: sanitize(time) || 'सकाळी १०:००',
-    location,
-    district: sanitize(district) || req.user.district || 'पुणे',
-    category: sanitize(category) || 'सामाजिक व सांस्कृतिक',
-    description: sanitize(description) || '',
-    chiefGuests: sanitize(chiefGuests) || 'स्थानिक महासंघ पदाधिकारी',
-    capacity: Number(capacity) || 500,
-    attendeesCount: 0,
-    createdBy: req.user.id,
-    creatorName: req.user.name,
-    createdAt: new Date().toISOString()
-  };
-
-  db.insert('events', newEvent);
-  db.addAuditLog('CREATE_EVENT', req.user.id, { eventId: newEvent.id, title });
-
-  return sendSuccess(res, 'कार्यक्रम यशस्वीरीत्या नियोजित करण्यात आला!', { event: newEvent }, 201);
 });
 
 // POST /api/events/:id/rsvp
-// Confirm attendance / download entry QR pass
-router.post('/:id/rsvp', authenticateToken, (req, res) => {
-  const event = db.findById('events', req.params.id);
-  if (!event) {
-    return sendError(res, 'कार्यक्रम सापडला नाही.', 'EVENT_NOT_FOUND', 404);
-  }
+router.post('/:id/rsvp', optionalToken, async (req, res, next) => {
+  try {
+    const member_id = req.user?.id || req.body.member_id || 'M1001';
+    const member_name = req.user?.name || req.body.member_name || 'सदस्य';
+    const phone = req.user?.phone || req.body.phone || '';
+    const seats = parseInt(req.body.seats || 1, 10);
+    const rsvpId = 'RSVP-' + Date.now().toString().slice(-6);
 
-  const rsvps = db.getCollection('eventRsvps');
-  const existing = rsvps.find(r => r.eventId === req.params.id && r.memberId === req.user.id);
+    await runQuery(`
+      INSERT INTO event_rsvps (id, event_id, member_id, member_name, phone, seats, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
+    `, [rsvpId, req.params.id, member_id, member_name, phone, seats]);
 
-  if (existing) {
-    return sendSuccess(res, 'आपण आधीच या कार्यक्रमासाठी उपस्थिती नोंदवली आहे.', {
-      rsvp: existing,
-      qrPass: `PASS-${existing.id}`
+    await runQuery('UPDATE events SET rsvp_count = COALESCE(rsvp_count, 0) + ? WHERE id = ?', [seats, req.params.id]);
+
+    const updated = await get('SELECT id, rsvp_count FROM events WHERE id = ?', [req.params.id]);
+
+    // Mirror to realtimeDb
+    db.insert('eventRsvps', { id: rsvpId, eventId: req.params.id, memberId: member_id, memberName: member_name, phone, seats, timestamp: new Date().toISOString() });
+
+    res.status(201).json({
+      success: true,
+      message: 'उपस्थिती नोंदणी (RSVP) यशस्वी झाली!',
+      rsvpId,
+      rsvp_count: updated?.rsvp_count || seats,
+      qrPass: `PASS-${rsvpId}`
     });
+  } catch (err) {
+    next(err);
   }
+});
 
-  const newRsvp = {
-    id: `RSVP-${Date.now().toString().slice(-4)}`,
-    eventId: req.params.id,
-    eventTitle: event.title,
-    memberId: req.user.id,
-    memberName: req.user.name,
-    phone: req.user.phone || '',
-    timestamp: new Date().toISOString()
-  };
+// POST /api/events
+router.post('/', optionalToken, async (req, res, next) => {
+  try {
+    const { title, category, date, time, venue, location, district, desc, description, organizer, banner } = req.body;
 
-  db.insert('eventRsvps', newRsvp);
-  event.attendeesCount = (event.attendeesCount || 0) + 1;
-  db.update('events', req.params.id, { attendeesCount: event.attendeesCount });
-  db.addAuditLog('EVENT_RSVP', req.user.id, { eventId: req.params.id });
+    if (!title || !date) {
+      return res.status(400).json({ success: false, error: 'कार्यक्रमाचे नाव आणि तारीख आवश्यक आहे.' });
+    }
 
-  return sendSuccess(res, 'कार्यक्रमासाठी उपस्थिती नोंदणी यशस्वी! आपला डिजिटल प्रवेश पास तयार झाला आहे.', {
-    rsvp: newRsvp,
-    qrPass: `PASS-${newRsvp.id}`,
-    attendeesCount: event.attendeesCount
-  }, 201);
+    const id = 'E' + Math.floor(10 + Math.random() * 90);
+    const eventVenue = venue || location || 'पुणे';
+    const eventDesc = desc || description || '';
+
+    await runQuery(`
+      INSERT INTO events (id, title, category, date, time, venue, district, desc, organizer, banner, rsvp_count, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, datetime('now'))
+    `, [
+      id,
+      title,
+      category || 'सामाजिक मेळावा',
+      date,
+      time || 'सकाळी १०:००',
+      eventVenue,
+      district || 'पुणे',
+      eventDesc,
+      organizer || 'अखिल भारतीय मराठा महासंघ',
+      banner || '/assets/images/meeting.jpg'
+    ]);
+
+    const created = await get('SELECT * FROM events WHERE id = ?', [id]);
+    
+    // Mirror to realtimeDb
+    db.insert('events', created);
+
+    res.status(201).json({
+      success: true,
+      message: 'कार्यक्रम यशस्वीरित्या जोडला!',
+      event: created,
+      data: { event: created }
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

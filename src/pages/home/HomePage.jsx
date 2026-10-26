@@ -239,7 +239,7 @@ export default function HomePage() {
             <AuthLink to="/login" style={{ background: '#FFFFFF', color: '#EA580C', padding: '4px 14px', borderRadius: '8px', textDecoration: 'none', fontWeight: 900, fontSize: '0.8rem', boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}>
               लॉगिन करा ➔
             </AuthLink>
-            <AuthLink to="/register" style={{ background: '#FFF7ED', color: '#431407', border: '1px solid #FED7AA', padding: '4px 12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 800, fontSize: '0.8rem' }}>
+            <AuthLink to="/register" style={{ background: '#FFF7ED', color: '#EA580C', border: '1px solid #FED7AA', padding: '4px 12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 800, fontSize: '0.8rem' }}>
               मोफत नोंदणी
             </AuthLink>
           </div>
@@ -350,7 +350,7 @@ export default function HomePage() {
                 to="/business/directory"
                 style={{
                   background: '#FFFFFF',
-                  color: '#431407',
+                  color: '#EA580C',
                   border: '2px solid #FED7AA',
                   padding: '12px 20px',
                   borderRadius: '12px',
@@ -404,7 +404,7 @@ export default function HomePage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
               <div>
                 <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#EA580C', textTransform: 'uppercase', letterSpacing: '0.5px' }}>LIVE OPPORTUNITY RADAR</span>
-                <h3 style={{ margin: '4px 0 0', fontSize: '1.35rem', fontFamily: 'Baloo 2', color: '#431407' }}>
+                <h3 style={{ margin: '4px 0 0', fontSize: '1.35rem', fontFamily: 'Baloo 2', color: '#EA580C' }}>
                   आज तुमच्यासाठी काय उपलब्ध आहे?
                 </h3>
               </div>
@@ -425,7 +425,7 @@ export default function HomePage() {
                 </div>
                 <div style={{ padding: '12px 14px' }}>
                   <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#C2410C', lineHeight: 1.1 }}>128+</div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#431407', marginTop: '2px' }}>सक्रिय Jobs (पुणे, मुंबई...)</div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', marginTop: '2px' }}>सक्रिय Jobs (पुणे, मुंबई...)</div>
                 </div>
               </AuthLink>
 
@@ -440,7 +440,7 @@ export default function HomePage() {
                 </div>
                 <div style={{ padding: '12px 14px' }}>
                   <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#15803D', lineHeight: 1.1 }}>72+</div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#431407', marginTop: '2px' }}>नवीन ग्राहक मागण्या</div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', marginTop: '2px' }}>नवीन ग्राहक मागण्या</div>
                 </div>
               </AuthLink>
 
@@ -455,7 +455,7 @@ export default function HomePage() {
                 </div>
                 <div style={{ padding: '12px 14px' }}>
                   <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#C2410C', lineHeight: 1.1 }}>46+</div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#431407', marginTop: '2px' }}>B2B बिझनेस Deals</div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', marginTop: '2px' }}>B2B बिझनेस Deals</div>
                 </div>
               </AuthLink>
 
@@ -470,7 +470,7 @@ export default function HomePage() {
                 </div>
                 <div style={{ padding: '12px 14px' }}>
                   <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#7C2D12', lineHeight: 1.1 }}>24+</div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#431407', marginTop: '2px' }}>शिष्यवृत्ती व कोर्सेस</div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', marginTop: '2px' }}>शिष्यवृत्ती व कोर्सेस</div>
                 </div>
               </AuthLink>
             </div>
@@ -480,7 +480,7 @@ export default function HomePage() {
               style={{
                 display: 'block',
                 textAlign: 'center',
-                background: '#431407',
+                background: '#EA580C',
                 color: '#FFFFFF',
                 padding: '12px',
                 borderRadius: '12px',
@@ -506,7 +506,7 @@ export default function HomePage() {
             <span style={{ color: '#EA580C', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>
               REVENUE & EARNING PATHWAYS
             </span>
-            <h2 style={{ fontSize: 'clamp(2rem, 3.8vw, 2.9rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#431407', margin: '6px 0 10px' }}>
+            <h2 style={{ fontSize: 'clamp(2rem, 3.8vw, 2.9rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#EA580C', margin: '6px 0 10px' }}>
               💰 Connect Maratha वर तुम्ही कमवू शकता
             </h2>
             <p style={{ color: '#64748B', fontSize: '1.05rem', maxWidth: '680px', margin: '0 auto' }}>
@@ -542,7 +542,7 @@ export default function HomePage() {
               </div>
 
               <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#C2410C', textTransform: 'uppercase' }}>पायरी १ • थेट करिअर</span>
-              <h3 style={{ fontSize: '1.45rem', fontFamily: 'Baloo 2', color: '#431407', margin: '4px 0 8px' }}>
+              <h3 style={{ fontSize: '1.45rem', fontFamily: 'Baloo 2', color: '#EA580C', margin: '4px 0 8px' }}>
                 १. रोजगार मिळवा (Jobs)
               </h3>
               <p style={{ color: '#475569', fontSize: '0.92rem', lineHeight: 1.6, marginBottom: '14px' }}>
@@ -587,7 +587,7 @@ export default function HomePage() {
               </div>
 
               <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#C2410C', textTransform: 'uppercase' }}>पायरी २ • विक्री व ग्राहक</span>
-              <h3 style={{ fontSize: '1.45rem', fontFamily: 'Baloo 2', color: '#431407', margin: '4px 0 8px' }}>
+              <h3 style={{ fontSize: '1.45rem', fontFamily: 'Baloo 2', color: '#EA580C', margin: '4px 0 8px' }}>
                 २. तुमच्या व्यवसायाला ग्राहक मिळवा
               </h3>
               <p style={{ color: '#475569', fontSize: '0.92rem', lineHeight: 1.6, marginBottom: '12px' }}>
@@ -632,7 +632,7 @@ export default function HomePage() {
               </div>
 
               <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#C2410C', textTransform: 'uppercase' }}>पायरी ३ • नेटवर्कचा फायदा</span>
-              <h3 style={{ fontSize: '1.45rem', fontFamily: 'Baloo 2', color: '#431407', margin: '4px 0 8px' }}>
+              <h3 style={{ fontSize: '1.45rem', fontFamily: 'Baloo 2', color: '#EA580C', margin: '4px 0 8px' }}>
                 ३. Referral मधून सन्मान व कमाई
               </h3>
               <p style={{ color: '#475569', fontSize: '0.92rem', lineHeight: 1.6, marginBottom: '12px' }}>
@@ -683,7 +683,7 @@ export default function HomePage() {
             <span style={{ color: '#EA580C', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>
               PERSONAL OPPORTUNITY FINDER
             </span>
-            <h2 style={{ fontSize: 'clamp(2rem, 3.8vw, 2.7rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#431407', margin: '6px 0 10px' }}>
+            <h2 style={{ fontSize: 'clamp(2rem, 3.8vw, 2.7rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#EA580C', margin: '6px 0 10px' }}>
               🎯 तुमची गरज निवडा — एका क्लिकवर थेट संधी!
             </h2>
             <p style={{ color: '#64748B', fontSize: '1.02rem', maxWidth: '640px', margin: '0 auto', fontWeight: 600 }}>
@@ -862,7 +862,7 @@ export default function HomePage() {
               <span style={{ color: '#EA580C', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>
                 LIVE DAILY RADAR
               </span>
-              <h2 style={{ fontSize: 'clamp(2rem, 3.6vw, 2.6rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#431407', margin: '4px 0' }}>
+              <h2 style={{ fontSize: 'clamp(2rem, 3.6vw, 2.6rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#EA580C', margin: '4px 0' }}>
                 🔥 आजच्या ताज्या संधी (Today's Opportunities)
               </h2>
               <p style={{ color: '#64748B', fontSize: '1rem', margin: 0, fontWeight: 600 }}>
@@ -985,7 +985,7 @@ export default function HomePage() {
 
                 {/* Card Content */}
                 <div style={{ padding: '18px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <h4 style={{ fontSize: '1.2rem', fontFamily: 'Baloo 2', color: '#431407', margin: '0 0 8px', fontWeight: 800, lineHeight: 1.3 }}>
+                  <h4 style={{ fontSize: '1.2rem', fontFamily: 'Baloo 2', color: '#EA580C', margin: '0 0 8px', fontWeight: 800, lineHeight: 1.3 }}>
                     {job.title}
                   </h4>
                   <div style={{ fontSize: '0.86rem', color: '#475569', marginBottom: '4px', fontWeight: 600 }}>📍 {job.loc}</div>
@@ -1216,7 +1216,7 @@ export default function HomePage() {
             <span style={{ color: '#EA580C', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>
               BNI-STYLE EMPOWERMENT CHAPTERS
             </span>
-            <h2 style={{ fontSize: 'clamp(2rem, 3.8vw, 2.8rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#431407', margin: '6px 0 10px' }}>
+            <h2 style={{ fontSize: 'clamp(2rem, 3.8vw, 2.8rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#EA580C', margin: '6px 0 10px' }}>
               🤝 Business Sangam — एकमेकांना ग्राहक देणारे व्यवसायिकांचे नेटवर्क
             </h2>
             <p style={{ color: '#64748B', fontSize: '1.02rem', maxWidth: '680px', margin: '0 auto 28px' }}>
@@ -1264,7 +1264,7 @@ export default function HomePage() {
                   पुणे, मुंबई, नाशिक, कोल्हापूर, छत्रपती संभाजीनगरमधील अधिकृत चॅप्टर्स
                 </p>
               </div>
-              <AuthLink to="/sangam" style={{ background: '#FFFFFF', color: '#431407', padding: '12px 24px', borderRadius: '10px', fontWeight: 900, textDecoration: 'none', fontSize: '0.92rem', boxShadow: '0 4px 14px rgba(0,0,0,0.2)' }}>
+              <AuthLink to="/sangam" style={{ background: '#FFFFFF', color: '#EA580C', padding: '12px 24px', borderRadius: '10px', fontWeight: 900, textDecoration: 'none', fontSize: '0.92rem', boxShadow: '0 4px 14px rgba(0,0,0,0.2)' }}>
                 चॅप्टर शोधा / सभासद व्हा ➔
               </AuthLink>
             </div>
@@ -1308,7 +1308,7 @@ export default function HomePage() {
                     </span>
                   </div>
                   <div style={{ padding: '8px 6px' }}>
-                    <div style={{ fontWeight: 800, color: '#431407', fontSize: '0.88rem' }}>{syn.title}</div>
+                    <div style={{ fontWeight: 800, color: '#EA580C', fontSize: '0.88rem' }}>{syn.title}</div>
                     <div style={{ fontSize: '0.72rem', color: '#9A3412', fontWeight: 600 }}>{syn.role}</div>
                   </div>
                 </div>
@@ -1374,7 +1374,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <h4 style={{ fontFamily: 'Baloo 2', fontSize: '1.16rem', color: '#431407', margin: '0 0 2px', fontWeight: 800 }}>
+                  <h4 style={{ fontFamily: 'Baloo 2', fontSize: '1.16rem', color: '#EA580C', margin: '0 0 2px', fontWeight: 800 }}>
                     {pCard.title}
                   </h4>
                   <div style={{ fontSize: '0.78rem', color: '#EA580C', fontWeight: 700, marginBottom: '6px' }}>
@@ -1407,7 +1407,7 @@ export default function HomePage() {
             <span style={{ color: '#EA580C', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>
               MONETIZE YOUR EXPERTISE
             </span>
-            <h2 style={{ fontSize: 'clamp(2rem, 3.8vw, 2.7rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#431407', margin: '6px 0 10px' }}>
+            <h2 style={{ fontSize: 'clamp(2rem, 3.8vw, 2.7rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#EA580C', margin: '6px 0 10px' }}>
               🧑‍💼 तुमचे Skill → तुमची कमाई!
             </h2>
             <p style={{ color: '#78350F', fontSize: '1.02rem', maxWidth: '640px', margin: '0 auto' }}>
@@ -1483,7 +1483,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div style={{ padding: '10px 8px 12px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  <div style={{ fontWeight: 800, color: '#431407', fontSize: '0.92rem', fontFamily: 'Baloo 2', lineHeight: 1.25, marginBottom: '2px' }}>
+                  <div style={{ fontWeight: 800, color: '#EA580C', fontSize: '0.92rem', fontFamily: 'Baloo 2', lineHeight: 1.25, marginBottom: '2px' }}>
                     {sk.role}
                   </div>
                   <div style={{ fontSize: '0.74rem', color: '#EA580C', fontWeight: 700 }}>
@@ -1527,7 +1527,7 @@ export default function HomePage() {
               <span style={{ color: '#EA580C', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>
                 STUDENT & YOUTH LAUNCHPAD
               </span>
-              <h2 style={{ fontSize: 'clamp(2rem, 3.8vw, 2.7rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#431407', margin: '6px 0 14px' }}>
+              <h2 style={{ fontSize: 'clamp(2rem, 3.8vw, 2.7rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#EA580C', margin: '6px 0 14px' }}>
                 👨‍🎓 Student Zone — आजचा विद्यार्थी ➔ उद्याचा यशस्वी Professional
               </h2>
               <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.6, marginBottom: '22px' }}>
@@ -1641,7 +1641,7 @@ export default function HomePage() {
           <div style={{ background: '#FFFFFF', border: '2px solid #FED7AA', borderRadius: '24px', padding: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
               <div>
-                <h3 style={{ fontSize: '1.6rem', fontFamily: 'Baloo 2', color: '#431407', margin: 0 }}>
+                <h3 style={{ fontSize: '1.6rem', fontFamily: 'Baloo 2', color: '#EA580C', margin: 0 }}>
                   📍 {currDistrict.name}
                 </h3>
                 <span style={{ fontSize: '0.86rem', color: '#64748B' }}>{currDistrict.highlight}</span>
@@ -1689,7 +1689,7 @@ export default function HomePage() {
               <span style={{ color: '#EA580C', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>
                 DIRECT CLIENT DEMAND
               </span>
-              <h2 style={{ fontSize: 'clamp(2rem, 3.6vw, 2.6rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#431407', margin: '4px 0' }}>
+              <h2 style={{ fontSize: 'clamp(2rem, 3.6vw, 2.6rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#EA580C', margin: '4px 0' }}>
                 🔥 आज कोणाला काय हवे आहे? (Live Urgent Enquiries)
               </h2>
               <p style={{ color: '#64748B', fontSize: '0.98rem', margin: 0 }}>
@@ -1719,7 +1719,7 @@ export default function HomePage() {
                   </span>
                 </div>
                 <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <h4 style={{ fontSize: '1.12rem', fontFamily: 'Baloo 2', color: '#431407', margin: '0 0 6px' }}>
+                  <h4 style={{ fontSize: '1.12rem', fontFamily: 'Baloo 2', color: '#EA580C', margin: '0 0 6px' }}>
                     {enq.title}
                   </h4>
                   <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.5, margin: '0 0 14px' }}>
@@ -1806,7 +1806,7 @@ export default function HomePage() {
             <div style={{ display: 'inline-block', background: '#FFEDD5', color: '#9A3412', border: '1px solid #FDBA74', padding: '6px 16px', borderRadius: '30px', fontWeight: 800, fontSize: '0.84rem', marginBottom: '12px' }}>
               🚩 आमचा वारसा • आमची अस्मिता
             </div>
-            <h2 style={{ fontSize: 'clamp(2.1rem, 4vw, 3rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#431407', margin: '4px 0 12px' }}>
+            <h2 style={{ fontSize: 'clamp(2.1rem, 4vw, 3rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#EA580C', margin: '4px 0 12px' }}>
               इतिहास देतो स्वाभिमान, नेटवर्क देते प्रगती!
             </h2>
             <p style={{ color: '#78350F', fontSize: '1.1rem', maxWidth: '780px', margin: '0 auto', lineHeight: 1.6 }}>
@@ -1835,7 +1835,7 @@ export default function HomePage() {
                 <text x="100" y="155" fontFamily="'Baloo 2',sans-serif" fontSize="14" fontWeight="800" fill="#FFFFFF" textAnchor="middle">राजते ॥</text>
               </svg>
             </div>
-            <div style={{ fontFamily: 'Baloo 2', fontSize: '1.4rem', fontWeight: 800, color: '#431407', marginBottom: '8px' }}>
+            <div style={{ fontFamily: 'Baloo 2', fontSize: '1.4rem', fontWeight: 800, color: '#EA580C', marginBottom: '8px' }}>
               " प्रतिपच्चंद्रलेखेव वर्धिष्णुर्विश्ववंदिता । शाहसूनोः शिवस्यैषा मुद्रा भद्राय राजते ॥ "
             </div>
             <p style={{ color: '#9A3412', fontSize: '0.96rem', maxWidth: '780px', margin: '0 auto', fontWeight: 600 }}>
@@ -1875,7 +1875,7 @@ export default function HomePage() {
                 </span>
               </div>
               <div style={{ padding: '22px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <h3 style={{ fontSize: '1.45rem', fontFamily: 'Baloo 2', color: '#431407', margin: '0 0 10px' }}>
+                <h3 style={{ fontSize: '1.45rem', fontFamily: 'Baloo 2', color: '#EA580C', margin: '0 0 10px' }}>
                   सह्याद्रीचे दुर्गवैभव व स्थापत्यशास्त्र
                 </h3>
                 <p style={{ color: '#64748B', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '16px' }}>
@@ -1896,7 +1896,7 @@ export default function HomePage() {
           </div>
 
           <div style={{ textAlign: 'center' }}>
-            <AuthLink to="/history" className="history-hub-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#431407', color: '#FFFFFF', padding: '14px 24px', borderRadius: '12px', fontWeight: 800, textDecoration: 'none', maxWidth: '100%', whiteSpace: 'normal', textAlign: 'center', justifyContent: 'center' }}>
+            <AuthLink to="/history" className="history-hub-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#EA580C', color: '#FFFFFF', padding: '14px 24px', borderRadius: '12px', fontWeight: 800, textDecoration: 'none', maxWidth: '100%', whiteSpace: 'normal', textAlign: 'center', justifyContent: 'center' }}>
               <span>📜</span>
               <span>संपूर्ण मराठा इतिहास महाग्रंथालयात प्रवेश करा (History Hub) ➔</span>
             </AuthLink>
@@ -1915,7 +1915,7 @@ export default function HomePage() {
             <span style={{ color: '#EA580C', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>
               COMPLETE 70+ PLATFORM PORTALS
             </span>
-            <h2 style={{ fontSize: 'clamp(2rem, 3.8vw, 2.7rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#431407', margin: '6px 0 8px' }}>
+            <h2 style={{ fontSize: 'clamp(2rem, 3.8vw, 2.7rem)', fontFamily: 'Baloo 2, sans-serif', fontWeight: 900, color: '#EA580C', margin: '6px 0 8px' }}>
               Connect Maratha संपूर्ण डिजिटल परिसंस्था
             </h2>
             <p style={{ color: '#64748B', fontSize: '1rem', margin: '0 0 20px' }}>
@@ -2027,7 +2027,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <strong style={{ color: '#431407', display: 'block', fontSize: '1.05rem', fontFamily: 'Baloo 2', marginBottom: '4px', lineHeight: 1.25 }}>
+                  <strong style={{ color: '#EA580C', display: 'block', fontSize: '1.05rem', fontFamily: 'Baloo 2', marginBottom: '4px', lineHeight: 1.25 }}>
                     {p.title}
                   </strong>
                   <span style={{ color: '#64748B', fontSize: '0.84rem', lineHeight: 1.4 }}>
@@ -2091,7 +2091,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <strong style={{ color: '#431407', display: 'block', fontSize: '1.05rem', fontFamily: 'Baloo 2', marginBottom: '4px', lineHeight: 1.25 }}>
+                  <strong style={{ color: '#EA580C', display: 'block', fontSize: '1.05rem', fontFamily: 'Baloo 2', marginBottom: '4px', lineHeight: 1.25 }}>
                     {p.title}
                   </strong>
                   <span style={{ color: '#64748B', fontSize: '0.84rem', lineHeight: 1.4 }}>
@@ -2155,7 +2155,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <strong style={{ color: '#431407', display: 'block', fontSize: '1.05rem', fontFamily: 'Baloo 2', marginBottom: '4px', lineHeight: 1.25 }}>
+                  <strong style={{ color: '#EA580C', display: 'block', fontSize: '1.05rem', fontFamily: 'Baloo 2', marginBottom: '4px', lineHeight: 1.25 }}>
                     {p.title}
                   </strong>
                   <span style={{ color: '#64748B', fontSize: '0.84rem', lineHeight: 1.4 }}>
@@ -2219,7 +2219,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <strong style={{ color: '#431407', display: 'block', fontSize: '1.05rem', fontFamily: 'Baloo 2', marginBottom: '4px', lineHeight: 1.25 }}>
+                  <strong style={{ color: '#EA580C', display: 'block', fontSize: '1.05rem', fontFamily: 'Baloo 2', marginBottom: '4px', lineHeight: 1.25 }}>
                     {p.title}
                   </strong>
                   <span style={{ color: '#64748B', fontSize: '0.84rem', lineHeight: 1.4 }}>
@@ -2363,7 +2363,7 @@ export default function HomePage() {
             </button>
 
             <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🔐 🚩</div>
-            <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#431407', margin: '0 0 6px' }}>
+            <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#EA580C', margin: '0 0 6px' }}>
               Connect Maratha — सभासद लॉगिन आवश्यक
             </h3>
             <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EA580C', marginBottom: '14px' }}>
@@ -2497,7 +2497,7 @@ export default function HomePage() {
                 }}
                 style={{
                   flex: 1,
-                  background: '#431407',
+                  background: '#EA580C',
                   color: '#FFFFFF',
                   border: 'none',
                   borderRadius: '10px',

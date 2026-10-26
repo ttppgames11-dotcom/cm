@@ -14,48 +14,7 @@ export default function FinanceLedgerCRM() {
   const [toastMessage, setToastMessage] = useState(null);
 
   // Expense Vouchers state
-  const [vouchers, setVouchers] = useState([
-    {
-      id: 'VCH-2026-081',
-      title: 'आपत्कालीन रक्तदान शिबिर मंडप व वैद्यकीय सामग्री',
-      department: 'सेवा व आरोग्य विभाग',
-      submittedBy: 'आनंदराव देशमुख (पुणे)',
-      amount: 45000,
-      date: '२०२६-०९-२०',
-      status: 'Pending',
-      remarks: 'ससून रुग्णालयाजवळ आयोजित रक्तदान शिबिर खर्च'
-    },
-    {
-      id: 'VCH-2026-082',
-      title: 'मराठा नवउद्योजक B2B परिषद सभागृह भाडे',
-      department: 'उद्योग व संगम कक्ष',
-      submittedBy: 'तानाजी विठ्ठलराव जाधव',
-      amount: 85000,
-      date: '२०२६-०९-१८',
-      status: 'Approved',
-      remarks: 'ऑटो क्लस्टर ऑडिटोरियम आरक्षण'
-    },
-    {
-      id: 'VCH-2026-083',
-      title: 'दुर्गराज रायगड स्वच्छता व माहिती फलक उभारणी',
-      department: 'इतिहास व गडकोट संवर्धन',
-      submittedBy: 'संभाजी कदम (महाड)',
-      amount: 32000,
-      date: '२०२६-०९-१५',
-      status: 'Approved',
-      remarks: 'महादरवाजा व नगारखाना माहिती फलक'
-    },
-    {
-      id: 'VCH-2026-084',
-      title: 'अनाथ विद्यार्थी उच्च शिक्षण सहाय्य धनादेश',
-      department: 'शैक्षणिक सहाय्य निधी',
-      submittedBy: 'राजेंद्र मोहिते',
-      amount: 60000,
-      date: '२०२६-०९-१२',
-      status: 'Pending',
-      remarks: 'इंजिनीअरिंग व मेडिकल कॉलेज फी धनादेश'
-    }
-  ]);
+  const [vouchers, setVouchers] = useState([]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -65,15 +24,21 @@ export default function FinanceLedgerCRM() {
   const loadFinanceData = async () => {
     setLoading(true);
     try {
-      const [metRes, donRes] = await Promise.all([
+      const [metRes, donRes, vouchRes] = await Promise.all([
         apiClient.getAdminMetrics().catch(() => null),
-        apiClient.getAdminDonations().catch(() => [])
+        apiClient.getAdminDonations().catch(() => []),
+        apiClient.get('/admin/vouchers').catch(() => null)
       ]);
 
       if (metRes && metRes.metrics) {
         setMetrics(metRes.metrics);
       }
       setDonations(donRes || []);
+
+      const vouchList = vouchRes?.data?.vouchers || vouchRes?.vouchers || (Array.isArray(vouchRes) ? vouchRes : []);
+      if (vouchList && vouchList.length > 0) {
+        setVouchers(vouchList);
+      }
     } catch (e) {
       console.error('Finance CRM load error:', e);
     } finally {
@@ -85,14 +50,26 @@ export default function FinanceLedgerCRM() {
     loadFinanceData();
   }, []);
 
-  const handleApproveVoucher = (id) => {
-    setVouchers(prev => prev.map(v => v.id === id ? { ...v, status: 'Approved', approvedBy: user?.name || 'कोषाध्यक्ष', approvedAt: new Date().toISOString() } : v));
-    showToast(`✓ व्हाउचर #${id} यशस्वीरीत्या मंजूर करण्यात आले!`);
+  const handleApproveVoucher = async (id) => {
+    try {
+      await apiClient.patch(`/admin/vouchers/${id}/status`, { status: 'Approved', remarks: `मंजूर केले: ${user?.name || 'कोषाध्यक्ष'}` });
+      setVouchers(prev => prev.map(v => v.id === id ? { ...v, status: 'Approved', approvedBy: user?.name || 'कोषाध्यक्ष', approvedAt: new Date().toISOString() } : v));
+      showToast(`✓ व्हाउचर #${id} यशस्वीरीत्या मंजूर करण्यात आले!`);
+    } catch (err) {
+      setVouchers(prev => prev.map(v => v.id === id ? { ...v, status: 'Approved' } : v));
+      showToast(`✓ व्हाउचर #${id} मंजूर (स्थानिक)`);
+    }
   };
 
-  const handleRejectVoucher = (id) => {
-    setVouchers(prev => prev.map(v => v.id === id ? { ...v, status: 'Rejected', rejectedBy: user?.name || 'कोषाध्यक्ष' } : v));
-    showToast(`✕ व्हाउचर #${id} नाकारण्यात आले.`);
+  const handleRejectVoucher = async (id) => {
+    try {
+      await apiClient.patch(`/admin/vouchers/${id}/status`, { status: 'Rejected', remarks: `नाकारले: ${user?.name || 'कोषाध्यक्ष'}` });
+      setVouchers(prev => prev.map(v => v.id === id ? { ...v, status: 'Rejected', rejectedBy: user?.name || 'कोषाध्यक्ष' } : v));
+      showToast(`✕ व्हाउचर #${id} नाकारण्यात आले.`);
+    } catch (err) {
+      setVouchers(prev => prev.map(v => v.id === id ? { ...v, status: 'Rejected' } : v));
+      showToast(`✕ व्हाउचर #${id} नाकारले (स्थानिक)`);
+    }
   };
 
   const filteredDonations = donations.filter(d => {
