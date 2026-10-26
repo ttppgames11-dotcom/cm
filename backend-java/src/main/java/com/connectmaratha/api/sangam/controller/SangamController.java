@@ -81,28 +81,6 @@ public class SangamController {
         return referrals.setStatus(user, id, bodies.read(req));
     }
 
-    @GetMapping("/meetings")
-    public Map<String, Object> meetings(@RequestParam(required = false) String memberId) {
-        return sangam.listMeetings(memberId);
-    }
-
-    @PostMapping("/meetings")
-    public ResponseEntity<Map<String, Object>> createMeeting(CurrentUser user, HttpServletRequest req) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(sangam.createMeeting(user, bodies.read(req)));
-    }
-
-    @PutMapping("/meetings/{id}")
-    @RequireAuth
-    public Map<String, Object> reschedule(@PathVariable String id, CurrentUser user, HttpServletRequest req) {
-        return sangam.reschedule(user, id, bodies.read(req));
-    }
-
-    @PutMapping("/meetings/{id}/status")
-    @RequireAuth
-    public Map<String, Object> meetingStatus(@PathVariable String id, CurrentUser user, HttpServletRequest req) {
-        return sangam.setMeetingStatus(user, id, bodies.read(req));
-    }
-
     @GetMapping("/metrics")
     public Map<String, Object> metrics() {
         return sangam.metrics();

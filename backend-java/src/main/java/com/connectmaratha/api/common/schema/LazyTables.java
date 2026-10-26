@@ -102,6 +102,9 @@ public class LazyTables {
 
     /** Which of the receiver's businesses a referral is for. Not from Node: the same SQL is kept as migration 009. */
     static final String REFERRAL_COLUMNS = "ALTER TABLE referrals ADD COLUMN IF NOT EXISTS business_id TEXT";
+    static final String[] MEETING_COLUMNS = {
+        "ALTER TABLE meetings ADD COLUMN IF NOT EXISTS mode TEXT",
+        "ALTER TABLE meetings ADD COLUMN IF NOT EXISTS awaiting_id TEXT"};
 
     private final JdbcTemplate jdbc;
     private final TransactionTemplate ownTransaction;
@@ -110,6 +113,7 @@ public class LazyTables {
     private final AtomicBoolean websiteTablesReady = new AtomicBoolean();
     private final AtomicBoolean enquiryTablesReady = new AtomicBoolean();
     private final AtomicBoolean referralColumnsReady = new AtomicBoolean();
+    private final AtomicBoolean meetingColumnsReady = new AtomicBoolean();
 
     public LazyTables(JdbcTemplate jdbc, PlatformTransactionManager transactions) {
         this.jdbc = jdbc;
@@ -152,5 +156,10 @@ public class LazyTables {
     /** The referrals.business_id column, added on first use (a no-op when it exists). */
     public void ensureReferralColumns() {
         createOnce(referralColumnsReady, REFERRAL_COLUMNS);
+    }
+
+    /** The meetings.mode and meetings.awaiting_id columns, added on first use (a no-op when they exist). */
+    public void ensureMeetingColumns() {
+        createOnce(meetingColumnsReady, MEETING_COLUMNS);
     }
 }
