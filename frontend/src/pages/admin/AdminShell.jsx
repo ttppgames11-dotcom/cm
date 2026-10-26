@@ -246,6 +246,16 @@ const SectionTitle = ({ children, subtitle }) => (
 /* ============================================================
    MAIN ADMIN SHELL
    ============================================================ */
+// These report pages used to show invented sample rows. The server has no data source for them yet, so say so.
+function NotConnectedReport({ title }) {
+  return (
+    <div style={{ padding: 24, background: '#FFF', border: '1px solid #FED7AA', borderRadius: 14, color: '#431407' }}>
+      <h3 style={{ margin: '0 0 8px' }}>{title}</h3>
+      <div>या अहवालासाठी अजून थेट डेटा जोडलेला नाही. (No live data is connected to this report yet, so nothing is shown.)</div>
+    </div>
+  );
+}
+
 export default function AdminShell() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -452,11 +462,11 @@ export default function AdminShell() {
             personalities: (fetchedPersonalities && fetchedPersonalities.length > 0) ? fetchedPersonalities : defaultPersonalities
           },
           media: (Array.isArray(media) && media.length > 0) ? media : defaultMedia,
-          events: (Array.isArray(events) && events.length > 0) ? events : defaultEvents,
+          events: Array.isArray(events) ? events : [],
           campaigns: Array.isArray(campaigns) ? campaigns : [],
-          tickets: (Array.isArray(tickets) && tickets.length > 0) ? tickets : defaultTickets,
+          tickets: Array.isArray(tickets) ? tickets : [],
           workflows: Array.isArray(workflows) ? workflows : [],
-          blood: (Array.isArray(blood) && blood.length > 0) ? blood : defaultBlood,
+          blood: Array.isArray(blood) ? blood : [],
           audit: (Array.isArray(audit) && audit.length > 0) ? audit : defaultAudit,
           roles: Array.isArray(roles) ? roles : []
         });
@@ -639,13 +649,13 @@ export default function AdminShell() {
 
               {/* Full Module Reports */}
               <Route path="/users/report" element={<UsersFullReport data={data} toast={toast$} />} />
-              <Route path="/kyc/report" element={<KYCFullReport />} />
-              <Route path="/business/report" element={<BusinessFullReport />} />
+              <Route path="/kyc/report" element={<NotConnectedReport title="KYC कागदपत्र पडताळणी" />} />
+              <Route path="/business/report" element={<BusinessFullReport data={data} toast={toast$} />} />
               <Route path="/b2b/referrals/report" element={<div style={{ padding: 20 }}><ReferralReportPanel /></div>} />
-              <Route path="/seva/report" element={<BloodHelpFullReport />} />
-              <Route path="/tickets/report" element={<TicketFullReport />} />
-              <Route path="/events/report" element={<EventsFullReport />} />
-              <Route path="/content/report" element={<ContentFullReport />} />
+              <Route path="/seva/report" element={<NotConnectedReport title="24×7 सेवा विनंत्या" />} />
+              <Route path="/tickets/report" element={<NotConnectedReport title="तक्रारी / Tickets" />} />
+              <Route path="/events/report" element={<NotConnectedReport title="कार्यक्रम (Events)" />} />
+              <Route path="/content/report" element={<NotConnectedReport title="Content (CMS)" />} />
 
               <Route path="/members" element={<MembersView data={data} setData={setData} toast={toast$} />} />
               <Route path="/leads" element={<LeadsView data={data} toast={toast$} />} />
