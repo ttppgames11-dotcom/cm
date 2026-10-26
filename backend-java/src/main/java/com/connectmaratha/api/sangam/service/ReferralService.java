@@ -99,6 +99,28 @@ public class ReferralService {
         return out;
     }
 
+    /** Only the receiver or an admin moves a referral through the pipeline; value (when sent) is the deal value. */
+    @Transactional
+    public Map<String, Object> setStatus(CurrentUser user, String id, Map<String, Object> body) {
+        tables.ensureReferralColumns();
+        SchemaValidator.check(body, ReferralSchemas.STATUS, true, null);
+        SangamReferral referral = referrals.findById(id).orElseThrow(() ->
+            ApiException.notFound("REFERRAL_NOT_FOUND", "हा संदर्भ आढळला नाही (Referral not found)."));
+        if (!user.id().equals(referral.getRecipientId()) && !Roles.isAdmin(user)) {
+            throw ApiException.forbidden("NOT_RECEIVER",
+                "फक्त संदर्भ स्वीकारणारा सदस्य किंवा प्रशासक स्थिती बदलू शकतात (Only the receiver or an admin can change the status).");
+        }
+        Object value = body.get("value");
+        referrals.updateStatus(id, text(body.get("status")), value == null ? null : Js.string(value));
+        SangamReferral saved = referrals.findById(id).orElseThrow();
+        events.publishEvent(new ReferralChanged(id, saved.getGiverId(), saved.getRecipientId(), saved.getStatus()));
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("success", true);
+        out.put("message", "स्थिती अद्ययावत केली! (Status updated.)");
+        out.put("referral", ReferralJson.referral(SangamService.referral(saved), saved, businessIds(List.of(saved)).get(id), user.id()));
+        return out;
+    }
+
     /**
      * The caller's referrals (as giver or receiver), newest first. Admins get every referral, and only they may
      * narrow the list with memberIdFilter. status empty or "all" means every status.

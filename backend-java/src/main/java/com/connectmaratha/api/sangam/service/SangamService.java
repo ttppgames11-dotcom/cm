@@ -46,20 +46,6 @@ public class SangamService {
 
     // ------------------------------------------------------------------ referrals
 
-    /** Sets the status (cleared when none is sent, as in Node) and, if sent, the deal value. */
-    @Transactional
-    public Map<String, Object> updateReferralStatus(String id, Map<String, Object> b) {
-        Object status = b.get("status");
-        Object value = b.get("value");
-        referrals.updateStatus(id, status == null ? null : Js.string(status), value == null ? null : Js.string(value));
-        Map<String, Object> out = new LinkedHashMap<>();
-        out.put("success", true);
-        out.put("message", "स्थिती अद्ययावत केली!");
-        // For an unknown id Node sends "referral": null.
-        out.put("referral", referrals.findById(id).map(SangamService::referral).orElse(null));
-        return out;
-    }
-
     // ------------------------------------------------------------------- meetings
 
     public Map<String, Object> listMeetings(String memberId) {

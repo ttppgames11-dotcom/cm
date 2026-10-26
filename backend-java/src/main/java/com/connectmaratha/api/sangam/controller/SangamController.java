@@ -61,9 +61,11 @@ public class SangamController {
         return ResponseEntity.status(HttpStatus.CREATED).body(referrals.give(user, bodies.read(req)));
     }
 
+    /** Only the receiver (or an admin) changes a referral status. */
+    @RequireAuth
     @PutMapping("/referrals/{id}/status")
-    public Map<String, Object> referralStatus(@PathVariable String id, HttpServletRequest req) {
-        return sangam.updateReferralStatus(id, bodies.read(req));
+    public Map<String, Object> referralStatus(CurrentUser user, @PathVariable String id, HttpServletRequest req) {
+        return referrals.setStatus(user, id, bodies.read(req));
     }
 
     @GetMapping("/meetings")

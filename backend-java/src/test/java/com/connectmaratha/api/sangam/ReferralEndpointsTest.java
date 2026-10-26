@@ -316,4 +316,64 @@ class ReferralEndpointsTest extends PostgresTestBase {
         assertThat(stats.get("wonValue").asDouble()).isEqualTo(jdbc.queryForObject("SELECT COALESCE(SUM(value), 0) FROM referrals WHERE status IN ('Won', 'Deal Won')", Double.class));
         assertThat(body).doesNotContain("Suresh").doesNotContain("9822144550");
     }
+
+    // ------------------------------------------------------------------ status changes
+
+    ResultActions setStatus(String token, String id, Map<String, Object> body) throws Exception {
+        MockHttpServletRequestBuilder req = put("/api/sangam/referrals/" + id + "/status").contentType(MediaType.APPLICATION_JSON)
+            .content(json.writeValueAsBytes(body));
+        if (token != null) req.header("Authorization", token);
+        return mvc.perform(req);
+    }
+
+    @Test
+    void onlyTheReceiverOrAnAdminChangesTheStatus() throws Exception {
+        String id = given(token("M9601", "member"), "M9602", "Zr Status rules");
+        setStatus(null, id, Map.of("status", "Contacted")).andExpect(status().isUnauthorized());
+        setStatus(token("M9601", "member"), id, Map.of("status", "Contacted")).andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.code").value("NOT_RECEIVER"));
+        setStatus(token("M9604", "member"), id, Map.of("status", "Contacted")).andExpect(status().isForbidden());
+        assertThat(row(id).get("status")).isEqualTo("New");
+        setStatus(token("M9602", "member"), id, Map.of("status", "Contacted")).andExpect(status().isOk())
+            .andExpect(jsonPath("$.referral.status").value("Contacted"))
+            .andExpect(jsonPath("$.referral.role").value("receiver"));
+        setStatus(token("M9609", "admin"), id, Map.of("status", "Qualified")).andExpect(status().isOk());
+        assertThat(row(id).get("status")).isEqualTo("Qualified");
+        setStatus(token("M9602", "member"), "REF-0", Map.of("status", "Won")).andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value("REFERRAL_NOT_FOUND"));
+    }
+
+    @Test
+    void onlySixStatusWordsAreAccepted() throws Exception {
+        String id = given(token("M9601", "member"), "M9602", "Zr Status words");
+        String receiver = token("M9602", "member");
+        for (Map<String, Object> bad : List.of(Map.<String, Object>of("status", "Deal Won"), Map.<String, Object>of("status", "x"),
+                Map.<String, Object>of("status", ""), Map.<String, Object>of())) {
+            setStatus(receiver, id, bad).andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+        }
+        for (String word : List.of("New", "Contacted", "Qualified", "Proposal", "Won", "Lost")) {
+            setStatus(receiver, id, Map.of("status", word)).andExpect(status().isOk());
+        }
+        assertThat(row(id).get("status")).isEqualTo("Lost");
+    }
+
+    @Test
+    void wonKeepsOrSetsTheValue() throws Exception {
+        String id = given(token("M9601", "member"), "M9602", "Zr Status value");
+        String receiver = token("M9602", "member");
+        setStatus(receiver, id, Map.of("status", "Won", "value", 50000)).andExpect(status().isOk());
+        assertThat(((Number) row(id).get("value")).doubleValue()).isEqualTo(50000.0);
+        setStatus(receiver, id, Map.of("status", "Lost")).andExpect(status().isOk());
+        assertThat(((Number) row(id).get("value")).doubleValue()).isEqualTo(50000.0);
+        setStatus(receiver, id, Map.of("status", "Won", "value", -5)).andExpect(status().isBadRequest());
+        assertThat(((Number) row(id).get("value")).doubleValue()).isEqualTo(50000.0);
+    }
+
+    @Test
+    void legacyRowCanBeMovedToANewWord() throws Exception {
+        String id = given(token("M9601", "member"), "M9602", "Zr Legacy row");
+        jdbc.update("UPDATE referrals SET status = NULL WHERE id = ?", id);
+        setStatus(token("M9602", "member"), id, Map.of("status", "New")).andExpect(status().isOk());
+        assertThat(row(id).get("status")).isEqualTo("New");
+    }
 }

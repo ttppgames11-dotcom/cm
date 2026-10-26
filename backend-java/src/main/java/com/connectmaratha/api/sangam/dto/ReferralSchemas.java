@@ -20,6 +20,11 @@ public final class ReferralSchemas {
         "value", Rule.number().minValue(0),
         "notes", Rule.string().max(1000));
 
+    /** The six words a referral status can be set to. */
+    public static final Map<String, Rule> STATUS = ordered(
+        "status", Rule.string().required().oneOf("New", "Contacted", "Qualified", "Proposal", "Won", "Lost"),
+        "value", Rule.number().minValue(0));
+
     /**
      * A copy of the body with the snake_case field names the older callers use mapped to the camelCase ones
      * (the camelCase key wins when both are sent) and spaces and dashes removed from a text phone.
