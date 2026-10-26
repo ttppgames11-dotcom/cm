@@ -1,6 +1,8 @@
 package com.connectmaratha.api.business.controller;
 
 import com.connectmaratha.api.business.service.BusinessService;
+import com.connectmaratha.api.common.security.CurrentUser;
+import com.connectmaratha.api.common.security.RequireAuth;
 import com.connectmaratha.api.common.web.JsonBody;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -27,20 +29,29 @@ public class BusinessController {
     }
 
     @GetMapping
-    public Map<String, Object> list(@RequestParam(required = false) String cat,
+    public Map<String, Object> list(CurrentUser user,
+                                    @RequestParam(required = false) String cat,
                                     @RequestParam(required = false) String district,
                                     @RequestParam(required = false) String search) {
-        return businesses.list(cat, district, search);
+        return businesses.list(user, cat, district, search);
+    }
+
+    /** The member's own businesses (declared before /{id}). */
+    @RequireAuth
+    @GetMapping("/mine")
+    public Map<String, Object> mine(CurrentUser user) {
+        return businesses.mine(user);
     }
 
     @GetMapping("/{id}")
-    public Map<String, Object> detail(@PathVariable String id) {
-        return businesses.detail(id);
+    public Map<String, Object> detail(CurrentUser user, @PathVariable String id) {
+        return businesses.detail(user, id);
     }
 
+    @RequireAuth
     @PostMapping
-    public ResponseEntity<Map<String, Object>> create(HttpServletRequest req) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(businesses.create(bodies.read(req)));
+    public ResponseEntity<Map<String, Object>> create(CurrentUser user, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(businesses.create(user, bodies.read(req)));
     }
 
     @PostMapping("/{id}/reviews")

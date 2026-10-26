@@ -6,6 +6,8 @@ import com.connectmaratha.api.business.entity.BusinessReview;
 import com.connectmaratha.api.business.repository.BusinessRepository;
 import com.connectmaratha.api.business.repository.BusinessReviewRepository;
 import com.connectmaratha.api.common.exception.ApiException;
+import com.connectmaratha.api.common.security.CurrentUser;
+import com.connectmaratha.api.common.security.Roles;
 import com.connectmaratha.api.common.util.Ids;
 import com.connectmaratha.api.common.util.Js;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,11 +34,12 @@ public class BusinessService {
         this.reviews = reviews;
     }
 
-    public Map<String, Object> list(String cat, String district, String search) {
+    public Map<String, Object> list(CurrentUser viewer, String cat, String district, String search) {
+        String viewerId = viewerId(viewer);
         String catFilter = Js.truthy(cat) && !"all".equals(cat) ? cat : null;
         String districtFilter = Js.truthy(district) && !"सर्व".equals(district) ? district : null;
         List<Map<String, Object>> rows = new ArrayList<>();
-        for (Business b : businesses.search(catFilter, districtFilter, Js.nullIfFalsy(search))) rows.add(BusinessJson.business(b));
+        for (Business b : businesses.search(catFilter, districtFilter, Js.nullIfFalsy(search))) rows.add(BusinessJson.business(b, viewerId));
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("success", true);
         out.put("count", rows.size());
@@ -44,10 +47,11 @@ public class BusinessService {
         return out;
     }
 
-    public Map<String, Object> detail(String id) {
+    public Map<String, Object> detail(CurrentUser viewer, String id) {
         Business b = businesses.findById(id)
-            .orElseThrow(() -> ApiException.plain(HttpStatus.NOT_FOUND, "व्यवसाय सापडला नाही."));
-        Map<String, Object> json = BusinessJson.business(b);
+            .filter(found -> !isHidden(found) || canManage(viewer, found))
+            .orElseThrow(BusinessService::notFound);
+        Map<String, Object> json = BusinessJson.business(b, viewerId(viewer));
         List<Map<String, Object>> list = new ArrayList<>();
         for (BusinessReview r : reviews.findForBusiness(id)) list.add(BusinessJson.review(r));
         json.put("reviews", list);
@@ -58,7 +62,7 @@ public class BusinessService {
     }
 
     @Transactional
-    public Map<String, Object> create(Map<String, Object> body) {
+    public Map<String, Object> create(CurrentUser user, Map<String, Object> body) {
         Object name = body.get("name");
         Object owner = body.get("owner");
         Object cat = body.get("cat");
@@ -78,12 +82,23 @@ public class BusinessService {
             Js.orElse(body.get("city"), "पुणे"), Js.orElse(body.get("district"), "पुणे"), photo,
             Js.textOrEmpty(body.get("phone")), Js.textOrEmpty(body.get("whatsapp")), Js.textOrEmpty(body.get("website")),
             Js.orElse(body.get("hours"), "सकाळी ९ ते रात्री ८"), servicesJson(body.get("services")),
-            Js.textOrEmpty(body.get("offers")));
+            Js.textOrEmpty(body.get("offers")), user.id());
 
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("success", true);
         out.put("message", "व्यवसाय यशस्वीरित्या नोंदवला गेला!");
-        out.put("business", BusinessJson.business(businesses.findById(id).orElseThrow()));
+        out.put("business", BusinessJson.business(businesses.findById(id).orElseThrow(), user.id()));
+        return out;
+    }
+
+    /** The member's own businesses, hidden ones included, newest first. */
+    public Map<String, Object> mine(CurrentUser user) {
+        List<Map<String, Object>> rows = new ArrayList<>();
+        for (Business b : businesses.findByOwner(user.id())) rows.add(BusinessJson.business(b, user.id()));
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("success", true);
+        out.put("count", rows.size());
+        out.put("businesses", rows);
         return out;
     }
 
@@ -97,6 +112,23 @@ public class BusinessService {
         out.put("success", true);
         out.put("message", "अभिप्राय नोंदवला गेला!");
         return out;
+    }
+
+    private static String viewerId(CurrentUser viewer) {
+        return viewer == null ? null : viewer.id();
+    }
+
+    private static boolean isHidden(Business b) {
+        return "hidden".equals(b.getStatus());
+    }
+
+    /** The owner or an admin. */
+    private static boolean canManage(CurrentUser user, Business b) {
+        return user != null && (user.id() != null && user.id().equals(b.getOwnerId()) || Roles.isAdmin(user));
+    }
+
+    private static ApiException notFound() {
+        return ApiException.plain(HttpStatus.NOT_FOUND, "व्यवसाय सापडला नाही.");
     }
 
     /** A list as JSON; a single value becomes a one-item list; nothing becomes []. */
