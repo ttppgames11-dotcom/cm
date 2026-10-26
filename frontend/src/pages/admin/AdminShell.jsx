@@ -15,7 +15,7 @@ import {
 import UsersFullReport from './reports/UsersFullReport';
 import KYCFullReport from './reports/KYCFullReport';
 import BusinessFullReport from './reports/BusinessFullReport';
-import B2BReferralFullReport from './reports/B2BReferralFullReport';
+import ReferralReportPanel from './reports/ReferralReportPanel';
 import BloodHelpFullReport from './reports/BloodHelpFullReport';
 import TicketFullReport from './reports/TicketFullReport';
 import EventsFullReport from './reports/EventsFullReport';
@@ -641,7 +641,7 @@ export default function AdminShell() {
               <Route path="/users/report" element={<UsersFullReport />} />
               <Route path="/kyc/report" element={<KYCFullReport />} />
               <Route path="/business/report" element={<BusinessFullReport />} />
-              <Route path="/b2b/referrals/report" element={<B2BReferralFullReport />} />
+              <Route path="/b2b/referrals/report" element={<div style={{ padding: 20 }}><ReferralReportPanel /></div>} />
               <Route path="/seva/report" element={<BloodHelpFullReport />} />
               <Route path="/tickets/report" element={<TicketFullReport />} />
               <Route path="/events/report" element={<EventsFullReport />} />
@@ -1370,6 +1370,7 @@ function ReferralsView({ data, setData, toast }) {
 
   return (
     <>
+      <ReferralReportPanel />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <SectionTitle subtitle={`एकूण ${data.referrals.length} रेफरल्स`}>🤝 B2B Referrals</SectionTitle>
         <Btn variant="primary" onClick={() => setShowModal(true)}>+ नवीन रेफरल</Btn>
@@ -1386,7 +1387,7 @@ function ReferralsView({ data, setData, toast }) {
             </div>
             <div style={{ fontWeight: 900, color: T.ink, marginBottom: 6 }}>{r.title}</div>
             <div style={{ fontSize: '0.75rem', color: T.muted }}>
-              <strong>{r.giverName || '—'}</strong> → <strong>{r.receiverName || '—'}</strong>
+              <strong>{r.giver_name || r.giverName || '—'}</strong> → <strong>{r.recipient_name || r.receiverName || '—'}</strong>
             </div>
           </Card>
         ))}
