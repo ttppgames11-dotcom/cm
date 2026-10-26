@@ -13,6 +13,8 @@ const MAHARASHTRA_DIVISIONS = [
 ];
 
 export default function DivisionAdminCRM() {
+  const [selectedState, setSelectedState] = useState('महाराष्ट्र');
+  const [viewPerspective, setViewPerspective] = useState('owner'); // 'owner' | 'manager'
   const [selectedDivision, setSelectedDivision] = useState('पुणे विभाग');
   const [activeTab, setActiveTab] = useState('districts'); // 'districts', 'centers', 'leadership', 'notices'
   const [loading, setLoading] = useState(true);
@@ -91,7 +93,6 @@ export default function DivisionAdminCRM() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#FDFBF7' }}>
-      <CRMScopeSwitcher currentScope="division" />
       <div style={{ padding: '32px 16px 80px', color: '#1C1917', fontFamily: 'system-ui, sans-serif' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
         
@@ -128,18 +129,80 @@ export default function DivisionAdminCRM() {
           gap: '20px'
         }}>
           <div>
-            <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '0.5px' }}>
-              🏛️ CONNECT MARATHA — REGION / DIVISION COMMAND CRM
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
+              <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.5px' }}>
+                🏛️ CONNECT MARATHA — REGION / DIVISION COMMAND CRM
+              </div>
+              <span style={{ background: '#fff', color: '#c2410c', padding: '3px 10px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 800 }}>
+                {viewPerspective === 'owner' ? '👑 विभागीय अध्यक्ष दृष्टिकोन (Executive Owner)' : '📋 विभागीय सचिव / व्यवस्थापक दृष्टिकोन (Operations Manager)'}
+              </span>
             </div>
             <h1 style={{ fontSize: '2rem', fontWeight: 900, margin: '4px 0 8px' }}>
-              {selectedDivision} — विभागीय नेतृत्व डॅशबोर्ड
+              {selectedDivision} — {viewPerspective === 'owner' ? 'विभागीय अध्यक्ष कक्ष' : 'विभागीय संचालन व व्यवस्थापक कक्ष'}
             </h1>
             <p style={{ margin: 0, opacity: 0.9, fontSize: '1rem' }}>
-              विभागीय अध्यक्ष: <strong>{currentDivObj.head}</strong> | कार्यक्षेत्र: <strong>{divDistricts.join(', ')}</strong> ({divDistricts.length} जिल्हे)
+              राज्य: <strong>{selectedState}</strong> | {viewPerspective === 'owner' ? 'अध्यक्ष' : 'व्यवस्थापक'}: <strong>{currentDivObj.head}</strong> | कार्यक्षेत्र: <strong>{divDistricts.join(', ')}</strong> ({divDistricts.length} जिल्हे)
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+            {/* Owner vs Manager Toggle */}
+            <div style={{ background: 'rgba(0,0,0,0.25)', padding: '4px', borderRadius: '8px', display: 'flex', gap: '4px' }}>
+              <button
+                type="button"
+                onClick={() => setViewPerspective('owner')}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  background: viewPerspective === 'owner' ? '#fff' : 'transparent',
+                  color: viewPerspective === 'owner' ? '#c2410c' : '#fff'
+                }}
+              >
+                👑 अध्यक्ष (Owner)
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewPerspective('manager')}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  background: viewPerspective === 'manager' ? '#fff' : 'transparent',
+                  color: viewPerspective === 'manager' ? '#c2410c' : '#fff'
+                }}
+              >
+                📋 व्यवस्थापक (Manager)
+              </button>
+            </div>
+
+            <select
+              value={selectedState}
+              onChange={(e) => setSelectedState(e.target.value)}
+              style={{
+                background: '#FFF',
+                color: '#7C2D12',
+                border: 'none',
+                padding: '9px 12px',
+                borderRadius: '8px',
+                fontWeight: 700,
+                fontSize: '0.85rem'
+              }}
+            >
+              <option value="महाराष्ट्र">महाराष्ट्र (Maharashtra)</option>
+              <option value="कर्नाटक">कर्नाटक (Karnataka)</option>
+              <option value="गोवा">गोवा (Goa)</option>
+              <option value="गुजरात">गुजरात (Gujarat)</option>
+              <option value="मध्य प्रदेश">मध्य प्रदेश (MP)</option>
+              <option value="दिल्ली-एनसीआर">दिल्ली-एनसीआर</option>
+            </select>
+
             <select
               value={selectedDivision}
               onChange={(e) => setSelectedDivision(e.target.value)}
@@ -147,10 +210,10 @@ export default function DivisionAdminCRM() {
                 background: '#FFF',
                 color: '#7C2D12',
                 border: 'none',
-                padding: '10px 16px',
-                borderRadius: '10px',
+                padding: '9px 14px',
+                borderRadius: '8px',
                 fontWeight: 700,
-                fontSize: '0.95rem',
+                fontSize: '0.9rem',
                 cursor: 'pointer',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
               }}
@@ -165,9 +228,10 @@ export default function DivisionAdminCRM() {
               style={{
                 background: 'rgba(255,255,255,0.2)',
                 color: '#FFF',
-                padding: '10px 18px',
-                borderRadius: '10px',
+                padding: '9px 14px',
+                borderRadius: '8px',
                 fontWeight: 700,
+                fontSize: '0.85rem',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',

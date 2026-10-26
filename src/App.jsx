@@ -58,6 +58,9 @@ import MemberProtectedRoute from './components/auth/MemberProtectedRoute';
 import SiteContentEditorPage from './pages/admin/SiteContentEditorPage';
 import SuperAdminDashboardPage from './pages/admin/SuperAdminDashboardPage';
 import SuperAdminPage from './pages/admin/SuperAdminPage';
+import CenterOperationsDeskCRM from './pages/admin/CenterOperationsDeskCRM';
+import MahaEventsManagerCRM from './pages/admin/MahaEventsManagerCRM';
+import { CRMRoleProvider } from './context/CRMRoleContext';
 import AdminShell from './pages/admin/AdminShell';
 import GenericArticlePage from './pages/common/GenericArticlePage';
 import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
@@ -244,8 +247,9 @@ export default function App() {
       <LanguageProvider>
         <AuthProvider>
           <ScopeProvider>
-            <SiteContentProvider>
-              <Routes>
+            <CRMRoleProvider>
+              <SiteContentProvider>
+                <Routes>
           {/* Automatic Clean Redirects from legacy .html to clean React routes */}
           {legacyRedirects.map((r, i) => (
             <Route key={i} path={r.from} element={<Navigate to={r.to} replace />} />
@@ -495,8 +499,8 @@ export default function App() {
             <Route path="/admin/crm-login" element={<CRMLoginPage />} />
 
             {/* Role-Specific Live Enterprise CRM Suite — Protected for Authenticated Staff/Admins */}
-            <Route path="/crm" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
-            <Route path="/crm/roles" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
+            <Route path="/crm" element={<Navigate to="/crm/login" replace />} />
+            <Route path="/crm/roles" element={<Navigate to="/crm/login" replace />} />
             <Route path="/crm/admin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
             <Route path="/admin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
             <Route path="/admin/dashboard" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
@@ -523,6 +527,8 @@ export default function App() {
 
             {/* Physical Community Center Operational CRM */}
             <Route path="/crm/center" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'center_manager', 'center_admin', 'center', 'center_partner', 'taluka_admin', 'district_admin']}><CommunityCenterCRM /></CRMProtectedRoute>} />
+            <Route path="/crm/desk" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'center_manager', 'center_admin', 'center_staff', 'cashier', 'counselor']}><CenterOperationsDeskCRM /></CRMProtectedRoute>} />
+            <Route path="/crm/operations-desk" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'center_manager', 'center_admin', 'center_staff', 'cashier', 'counselor']}><CenterOperationsDeskCRM /></CRMProtectedRoute>} />
 
             {/* Unified Operations & Governance Dashboard (12 Golden Rules) */}
             <Route path="/crm/operations" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo', 'division_admin', 'district_admin', 'taluka_admin', 'branch_admin', 'center_manager', 'center_admin']}><UnifiedOperationsDashboard /></CRMProtectedRoute>} />
@@ -532,6 +538,10 @@ export default function App() {
 
             <Route path="/crm/helpdesk" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'seva_helpdesk', 'helpdesk_admin']}><SevaHelpdeskCRM /></CRMProtectedRoute>} />
             <Route path="/crm/seva" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'seva_helpdesk', 'helpdesk_admin']}><SevaHelpdeskCRM /></CRMProtectedRoute>} />
+
+            {/* 15 Maha-Events Management CRM */}
+            <Route path="/crm/events" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo', 'state_admin', 'division_admin', 'district_admin', 'taluka_admin', 'branch_admin', 'center_manager']}><MahaEventsManagerCRM /></CRMProtectedRoute>} />
+            <Route path="/crm/maha-events" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo', 'state_admin', 'division_admin', 'district_admin', 'taluka_admin', 'branch_admin', 'center_manager']}><MahaEventsManagerCRM /></CRMProtectedRoute>} />
 
             <Route path="/crm/finance" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'finance_officer', 'finance']}><FinanceLedgerCRM /></CRMProtectedRoute>} />
 
@@ -653,6 +663,7 @@ export default function App() {
           </Route>
         </Routes>
           </SiteContentProvider>
+            </CRMRoleProvider>
         </ScopeProvider>
       </AuthProvider>
       </LanguageProvider>

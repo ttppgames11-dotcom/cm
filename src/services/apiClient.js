@@ -623,8 +623,18 @@ export const apiClient = {
   deleteCommunityCenter: async (id) => {
     return await fetchJson(`/admin/community-centers/${id}`, { method: 'DELETE' });
   },
-  recordCenterAction: async (data) => {
-    return await fetchJson('/admin/center-action', { method: 'POST', body: JSON.stringify(data) });
+  getBranches: async (params = {}) => {
+    const q = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/crm/branches${q ? `?${q}` : ''}`).catch(async () => {
+      return await fetchJson(`/admin/branches${q ? `?${q}` : ''}`);
+    });
+    return res.data?.branches || res.branches || [];
+  },
+  createBranch: async (branchData) => {
+    return await fetchJson('/crm/branches', {
+      method: 'POST',
+      body: JSON.stringify(branchData)
+    });
   },
   getMembers: async (params = {}) => {
     const query = new URLSearchParams(params).toString();
@@ -1118,6 +1128,59 @@ export const apiClient = {
   },
   searchMembersForChat: async (q) => {
     return await fetchJson(`/messages/search/members${q ? '?q=' + encodeURIComponent(q) : ''}`);
+  },
+
+  // 🗺️ Location & State/District APIs
+  getLocationsStates: async (countryId) => {
+    return await fetchJson(`/locations/states${countryId ? `?countryId=${encodeURIComponent(countryId)}` : ''}`);
+  },
+  getLocationsDistricts: async (stateId) => {
+    return await fetchJson(`/locations/districts?stateId=${encodeURIComponent(stateId)}`);
+  },
+  getLocationsTalukas: async (districtId) => {
+    return await fetchJson(`/locations/talukas?districtId=${encodeURIComponent(districtId)}`);
+  },
+
+  // 🏛️ CRM Unit Hierarchy (Multi-State & Multi-Branch Engine)
+  getCrmHierarchyMe: async () => {
+    return await fetchJson('/crm-hierarchy/me');
+  },
+  getCrmUnits: async (params = {}) => {
+    const q = new URLSearchParams(params).toString();
+    return await fetchJson(`/crm-hierarchy/units${q ? `?${q}` : ''}`);
+  },
+  getCrmUnitDetail: async (id) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(id)}`);
+  },
+  createCrmUnit: async (unitData) => {
+    return await fetchJson('/crm-hierarchy/units', {
+      method: 'POST',
+      body: JSON.stringify(unitData)
+    });
+  },
+  updateCrmUnit: async (id, updates) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      body: JSON.stringify(updates)
+    });
+  },
+  addCrmUnitStaff: async (unitId, staffData) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/staff`, {
+      method: 'POST',
+      body: JSON.stringify(staffData)
+    });
+  },
+  getCrmUnitStaff: async (unitId) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/staff`);
+  },
+  getCrmUnitActivities: async (unitId, year = 2026) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/activities?year=${year}`);
+  },
+  updateCrmUnitActivity: async (unitId, type, data) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/activities/${encodeURIComponent(type)}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
   },
 
   // 📡 Realtime Live SSE Stream Subscription (Instant Live Push)

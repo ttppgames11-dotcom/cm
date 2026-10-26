@@ -6,6 +6,8 @@ import { MAHARASHTRA_DISTRICTS, DISTRICT_TALUKAS } from '../../services/referral
 import CRMScopeSwitcher from '../../components/layout/CRMScopeSwitcher';
 
 export default function DistrictAdminCRM() {
+  const [selectedState, setSelectedState] = useState('महाराष्ट्र');
+  const [viewPerspective, setViewPerspective] = useState('owner'); // 'owner' | 'manager'
   const [selectedDistrict, setSelectedDistrict] = useState('पुणे');
   const [activeTab, setActiveTab] = useState('kyc'); // 'kyc', 'mandals', 'stats', 'opportunities'
   const [loading, setLoading] = useState(true);
@@ -135,7 +137,6 @@ export default function DistrictAdminCRM() {
 
   return (
     <div style={{ background: '#FFFDF9', minHeight: '100vh', paddingBottom: '60px' }}>
-      <CRMScopeSwitcher currentScope="district" />
       
       {/* Toast Notification */}
       {toastMessage && (
@@ -222,41 +223,107 @@ export default function DistrictAdminCRM() {
           gap: '16px'
         }}>
           <div>
-            <span style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>
-              📍 LIVE DATABASE DISTRICT CRM
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <span style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>
+                📍 LIVE DATABASE DISTRICT CRM
+              </span>
+              <span style={{ background: '#fff', color: '#c2410c', padding: '3px 10px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 800 }}>
+                {viewPerspective === 'owner' ? '👑 जिल्हाध्यक्ष दृष्टिकोन (Executive Owner)' : '📋 जिल्हा सरचिटणीस / व्यवस्थापक दृष्टिकोन (Operations Manager)'}
+              </span>
+            </div>
             <h1 style={{ fontSize: '1.9rem', margin: '8px 0 4px', fontFamily: 'Baloo 2', fontWeight: 800 }}>
-              {selectedDistrict} जिल्हा — थेट डेटाबेस प्रशासन
+              {selectedDistrict} जिल्हा — {viewPerspective === 'owner' ? 'जिल्हाध्यक्ष कक्ष' : 'जिल्हा कार्यालय व्यवस्थापक कक्ष'}
             </h1>
             <p style={{ margin: 0, fontSize: '0.92rem', opacity: 0.9 }}>
-              एकूण नोंदणीकृत सदस्य: <strong>{totalMembers}</strong> • सत्यापित: {verifiedCount} • प्रलंबित: {pendingCount}
+              राज्य: <strong>{selectedState}</strong> • एकूण सदस्य: <strong>{totalMembers}</strong> • सत्यापित: {verifiedCount} • प्रलंबित: {pendingCount}
             </p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <label style={{ fontSize: '0.85rem', fontWeight: 800, color: '#FFEDD5' }}>जिल्हा निवडा:</label>
-            <select
-              value={selectedDistrict}
-              onChange={(e) => {
-                setSelectedDistrict(e.target.value);
-                setTalukaFilter('all');
-              }}
-              style={{
-                padding: '10px 16px',
-                borderRadius: '8px',
-                border: 'none',
-                background: '#fff',
-                color: '#0f172a',
-                fontWeight: 800,
-                fontSize: '0.92rem',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-              }}
-            >
-              {MAHARASHTRA_DISTRICTS.map(d => (
-                <option key={d} value={d}>{d}</option>
-              ))}
-            </select>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            {/* Owner vs Manager Toggle */}
+            <div style={{ background: 'rgba(0,0,0,0.25)', padding: '4px', borderRadius: '8px', display: 'flex', gap: '4px' }}>
+              <button
+                type="button"
+                onClick={() => setViewPerspective('owner')}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  background: viewPerspective === 'owner' ? '#fff' : 'transparent',
+                  color: viewPerspective === 'owner' ? '#c2410c' : '#fff'
+                }}
+              >
+                👑 अध्यक्ष (Owner)
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewPerspective('manager')}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  background: viewPerspective === 'manager' ? '#fff' : 'transparent',
+                  color: viewPerspective === 'manager' ? '#c2410c' : '#fff'
+                }}
+              >
+                📋 व्यवस्थापक (Manager)
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#FFEDD5' }}>राज्य:</label>
+              <select
+                value={selectedState}
+                onChange={(e) => setSelectedState(e.target.value)}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: '#fff',
+                  color: '#0f172a',
+                  fontWeight: 700,
+                  fontSize: '0.85rem'
+                }}
+              >
+                <option value="महाराष्ट्र">महाराष्ट्र (Maharashtra)</option>
+                <option value="कर्नाटक">कर्नाटक (Karnataka)</option>
+                <option value="गोवा">गोवा (Goa)</option>
+                <option value="गुजरात">गुजरात (Gujarat)</option>
+                <option value="मध्य प्रदेश">मध्य प्रदेश (Madhya Pradesh)</option>
+                <option value="दिल्ली-एनसीआर">दिल्ली-एनसीआर (Delhi-NCR)</option>
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#FFEDD5' }}>जिल्हा:</label>
+              <select
+                value={selectedDistrict}
+                onChange={(e) => {
+                  setSelectedDistrict(e.target.value);
+                  setTalukaFilter('all');
+                }}
+                style={{
+                  padding: '8px 14px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: '#fff',
+                  color: '#0f172a',
+                  fontWeight: 800,
+                  fontSize: '0.88rem',
+                  cursor: 'pointer'
+                }}
+              >
+                {MAHARASHTRA_DISTRICTS.map(d => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 

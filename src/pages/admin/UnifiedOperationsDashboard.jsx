@@ -141,7 +141,6 @@ export default function UnifiedOperationsDashboard() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#0b1120', color: '#f8fafc', paddingBottom: '60px' }}>
-      <CRMScopeSwitcher currentScope="operations" />
       
       {/* Top Banner & Header */}
       <div style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)', padding: '24px 32px' }}>

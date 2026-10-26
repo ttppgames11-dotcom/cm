@@ -20,26 +20,24 @@ router.get('/countries', async (req, res, next) => {
 router.get('/states', async (req, res, next) => {
   try {
     const { countryId } = req.query;
-    if (!countryId) {
-      return res.status(400).json({
-        success: false,
-        error: 'countryId parameter is required'
-      });
+    let states;
+    if (countryId) {
+      const country = await get('SELECT id FROM countries WHERE id = ?', [countryId]);
+      if (!country) {
+        return res.status(404).json({
+          success: false,
+          error: 'Country not found'
+        });
+      }
+      states = await all(
+        'SELECT id, country_id as countryId, name, code FROM states WHERE country_id = ? ORDER BY name ASC',
+        [countryId]
+      );
+    } else {
+      states = await all(
+        'SELECT id, country_id as countryId, name, code FROM states ORDER BY name ASC'
+      );
     }
-
-    // Verify country exists
-    const country = await get('SELECT id FROM countries WHERE id = ?', [countryId]);
-    if (!country) {
-      return res.status(404).json({
-        success: false,
-        error: 'Country not found'
-      });
-    }
-
-    const states = await all(
-      'SELECT id, country_id as countryId, name, code FROM states WHERE country_id = ? ORDER BY name ASC',
-      [countryId]
-    );
 
     res.json({
       success: true,

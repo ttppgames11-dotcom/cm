@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 import CRMScopeSwitcher from '../../components/layout/CRMScopeSwitcher';
 import { MAHARASHTRA_DISTRICTS, DISTRICT_TALUKAS } from '../../services/referralService';
+import { MAHA_EVENTS_LIST } from '../../data/mahaEventsData';
 
 // 4-Tier Hierarchical Structure
 export const CENTER_TIERS = [
@@ -119,6 +120,16 @@ export default function CommunityCenterCRM() {
     { id: 'REC-902', name: 'सह्याद्री ऑटोमोबाईल्स', amount: 5000, type: 'B2B संगम नोंदणी', time: '12:40 PM' },
     { id: 'REC-903', name: 'अशोकराव सावंत', amount: 2100, type: 'ऐच्छिक देणगी', time: '02:20 PM' }
   ]);
+
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [networkSearch, setNetworkSearch] = useState('');
+  const [networkFilterTier, setNetworkFilterTier] = useState('all'); // 'all', 'direct', 'l2'
+  const [eventsFilterType, setEventsFilterType] = useState('all'); // 'all', 'completed', 'upcoming'
+  const [newStaffModal, setNewStaffModal] = useState(false);
+  const [newStaffName, setNewStaffName] = useState('');
+  const [newStaffRole, setNewStaffRole] = useState('कौन्सिलर व जनसंपर्क अधिकारी');
+  const [newStaffPhone, setNewStaffPhone] = useState('');
+  const [newStaffDesk, setNewStaffDesk] = useState('membership');
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -409,7 +420,6 @@ export default function CommunityCenterCRM() {
 
   return (
     <div style={{ background: '#F8FAFC', minHeight: '100vh' }}>
-      <CRMScopeSwitcher currentScope="center" />
       <div style={{ padding: '24px 16px 80px', color: '#0F172A', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
         <div style={{ maxWidth: '1360px', margin: '0 auto' }}>
 
@@ -932,6 +942,8 @@ export default function CommunityCenterCRM() {
         <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', borderBottom: '2px solid #E2E8F0', marginBottom: '22px', paddingBottom: '2px' }}>
           {[
             { id: 'geo', label: '📍 भौगोलिक केंद्र यादी व लोकेशन (Geo Directory)' },
+            { id: 'maha_events', label: '🎪 १५ महा-उपक्रम व्यवस्थापन (15 Maha-Events)' },
+            { id: 'downline_network', label: '🌐 रेफरल नेटवर्क, डाउनलाइन व कर्मचारी (Network & Staff)' },
             { id: 'desk', label: '🧑‍💼 काउंटर व अभ्यागत (Front Desk)' },
             { id: 'pipeline', label: '📋 "माझे कार्य प्रवाह" (My Pipelines)' },
             { id: 'desks', label: '🛠️ १६ व्यावसायिक सेवा कक्ष (16 Desks)' },
@@ -2030,6 +2042,729 @@ export default function CommunityCenterCRM() {
             </div>
           </div>
         )}
+
+        {/* ============================================================ */}
+        {/* TAB 8: 15 MAHA-EVENTS COMMUNITY CENTER MANAGEMENT PANEL */}
+        {/* ============================================================ */}
+        {activeTab === 'maha_events' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #7C2D12 0%, #C2410C 50%, #EA580C 100%)',
+              borderRadius: '18px',
+              padding: '24px 28px',
+              color: '#FFFFFF',
+              boxShadow: '0 8px 24px rgba(194,65,12,0.2)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                <div>
+                  <span style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '100px', fontSize: '0.8rem', fontWeight: 800 }}>
+                    🎪 केंद्र पातळीवरील उपक्रम नोंदवही
+                  </span>
+                  <h2 style={{ fontSize: '1.6rem', fontWeight: 900, margin: '6px 0 4px' }}>
+                    {currentCenter.name} — १५ महा-उपक्रम व्यवस्थापन
+                  </h2>
+                  <p style={{ margin: 0, opacity: 0.9, fontSize: '0.92rem' }}>
+                    केंद्राशी संबंधित सर्व वार्षिक महा-उपक्रमांचे प्रस्ताव, नोंदणी, सहभागी आणि अहवाल थेट रेकॉर्ड ठेवा.
+                  </p>
+                </div>
+                <Link
+                  to="/crm/events"
+                  style={{
+                    background: '#FFFFFF',
+                    color: '#C2410C',
+                    padding: '10px 18px',
+                    borderRadius: '10px',
+                    fontWeight: 800,
+                    textDecoration: 'none',
+                    fontSize: '0.88rem',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                  }}
+                >
+                  🚀 संपूर्ण १५ उपक्रम कमांड कक्ष उघडा →
+                </Link>
+              </div>
+            </div>
+
+            {/* 15 Events Grid for Center Owner */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+              {MAHA_EVENTS_LIST.map((evt) => (
+                <div
+                  key={evt.id}
+                  style={{
+                    background: '#FFFFFF',
+                    borderRadius: '16px',
+                    border: '1px solid #E2E8F0',
+                    padding: '20px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '1.8rem' }}>{evt.icon}</span>
+                        <div>
+                          <span style={{ fontSize: '0.72rem', background: '#FEE2E2', color: '#991B1B', padding: '2px 8px', borderRadius: '4px', fontWeight: 800 }}>
+                            उपक्रम #{evt.number}
+                          </span>
+                          <h4 style={{ margin: '4px 0 0', fontSize: '1rem', fontWeight: 900, color: '#0F172A' }}>
+                            {evt.name}
+                          </h4>
+                        </div>
+                      </div>
+                      <span style={{ fontSize: '0.78rem', color: '#C2410C', fontWeight: 800 }}>
+                        📅 {evt.plannedMonth}
+                      </span>
+                    </div>
+
+                    <p style={{ margin: '0 0 14px', fontSize: '0.82rem', color: '#64748B', lineHeight: 1.4 }}>
+                      {evt.tagline}
+                    </p>
+
+                    <div style={{ background: '#F8FAFC', borderRadius: '10px', padding: '10px 12px', border: '1px solid #F1F5F9', marginBottom: '14px' }}>
+                      <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 700, marginBottom: '6px' }}>केंद्र उद्दिष्टे (Center Target):</div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 800, color: '#0F172A' }}>
+                        <span>{evt.primaryKPIs[0]?.label}:</span>
+                        <span style={{ color: '#2563EB' }}>{evt.primaryKPIs[0]?.defaultTarget} {evt.primaryKPIs[0]?.unit}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 800, color: '#0F172A', marginTop: '4px' }}>
+                        <span>{evt.primaryKPIs[1]?.label}:</span>
+                        <span style={{ color: '#16A34A' }}>{evt.primaryKPIs[1]?.defaultTarget} {evt.primaryKPIs[1]?.unit}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <Link
+                      to={`/crm/events?event=${evt.id}`}
+                      style={{
+                        flex: 1,
+                        background: '#FFF7ED',
+                        color: '#EA580C',
+                        border: '1px solid #FED7AA',
+                        padding: '8px',
+                        borderRadius: '8px',
+                        textAlign: 'center',
+                        textDecoration: 'none',
+                        fontWeight: 800,
+                        fontSize: '0.8rem'
+                      }}
+                    >
+                      📋 नियोजन व प्रस्ताव
+                    </Link>
+                    <Link
+                      to={`/crm/events?event=${evt.id}`}
+                      style={{
+                        flex: 1,
+                        background: '#EA580C',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        padding: '8px',
+                        borderRadius: '8px',
+                        textAlign: 'center',
+                        textDecoration: 'none',
+                        fontWeight: 800,
+                        fontSize: '0.8rem'
+                      }}
+                    >
+                      👥 सहभागी नोंदी
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* TAB 9: REFERRAL LINK, DOWNLINE NETWORK, STAFF & EVENTS DATA */}
+        {/* ============================================================ */}
+        {activeTab === 'downline_network' && (() => {
+          const centerRefCode = `CM-CTR-${(currentCenter.district || 'MH').slice(0, 3).toUpperCase()}-${(currentCenter.id || '101').replace(/[^0-9]/g, '') || '01'}`;
+          const centerRefLink = `https://connectmaratha.com/register?ref=${centerRefCode}`;
+
+          // Staff under this center
+          const staffMembers = [
+            { id: 'STF-01', name: currentCenter.headName || 'श्री. सचिन मोहिते', role: 'केंद्र संचालक व मुख्य व्यवस्थापक (Center Head)', phone: currentCenter.contactPhone || '९८२२०१२३४५', desk: 'सर्व कक्ष प्रमुख (General Admin)', status: 'सक्रिय (Active)', joinedDate: '१५ जाने २०२५', type: 'पूर्णवेळ (Full-time)' },
+            { id: 'STF-02', name: 'सौ. सुप्रिया पाटील-कदम', role: 'सदस्यता समन्वयक व KYC अधिकारी', phone: '९८२२१५४३२१', desk: '👥 सदस्य नोंदणी व KYC', status: 'सक्रिय (Active)', joinedDate: '०१ फेब्रु २०२५', type: 'पूर्णवेळ (Full-time)' },
+            { id: 'STF-03', name: 'श्री. गणेश बाळासाहेब जगताप', role: 'B2B व्यापारी संपर्क अधिकारी', phone: '९८९०२३४५६७', desk: '💼 MSME व B2B संगम', status: 'सक्रिय (Active)', joinedDate: '२० फेब्रु २०२५', type: 'पूर्णवेळ (Full-time)' },
+            { id: 'STF-04', name: 'ॲड. संग्रामसिंह भोसले', role: 'कायदेशीर सल्लागार (Legal Advisor)', phone: '९८२२३४५६७८', desk: '⚖️ महसूल, ७/१२ व कायदेशीर', status: 'ऑन-कॉल (Partner)', joinedDate: '०१ मार्च २०२५', type: 'सेवा भागीदार (Partner)' },
+            { id: 'STF-05', name: 'डॉ. अनिरुद्ध सावंत', role: 'वैद्यकीय व आपत्कालीन समन्वयक', phone: '९९२२८७६५४३', desk: '🏥 आरोग्य व रक्तदान कक्ष', status: 'सक्रिय (Active)', joinedDate: '१० मार्च २०२५', type: 'मानद समन्वयक (Honorary)' },
+            { id: 'STF-06', name: 'कु. रोहन धनाजी जाधव', role: 'डिजिटल ऑपरेटर व हेल्पडेस्क', phone: '८८०५१२३९८७', desk: '☎️ हेल्पडेस्क व काउंटर', status: 'सक्रिय (Active)', joinedDate: '०१ एप्रिल २०२५', type: 'पूर्णवेळ (Full-time)' }
+          ];
+
+          // Downline members linked to this center
+          const downlineList = (dbMembers.length > 0 ? dbMembers : [
+            { id: 'M-101', name: 'विक्रम तानाजीराव मोरे', role: 'उद्योजक (मोरे इंजिनिअरिंग)', mobile: '९८२२०११२२३', district: currentCenter.district || 'पुणे', taluka: currentCenter.taluka || 'हवेली', level: 1, joinedDate: '१२ ऑक्टो २०२६', status: 'प्रमाणित (Active KYC)', incentive: '₹२५०' },
+            { id: 'M-102', name: 'सौ. भाग्यश्री रणजित पवार', role: 'महिला बचत गट प्रमुख', mobile: '९८२२३३४४५५', district: currentCenter.district || 'पुणे', taluka: currentCenter.taluka || 'हवेली', level: 1, joinedDate: '१५ ऑक्टो २०२६', status: 'प्रमाणित (Active KYC)', incentive: '₹२५०' },
+            { id: 'M-103', name: 'राजवर्धन प्रतापराव देशमुख', role: 'शेतकरी FPO संचालक', mobile: '९४२२११३३५५', district: currentCenter.district || 'पुणे', taluka: currentCenter.taluka || 'हवेली', level: 1, joinedDate: '१८ ऑक्टो २०२६', status: 'प्रमाणित (Active KYC)', incentive: '₹२५०' },
+            { id: 'M-104', name: 'दिलीप नारायण कदम', role: 'व्यापारी (कदम ट्रेडर्स)', mobile: '९८५०४४३३२२', district: currentCenter.district || 'पुणे', taluka: currentCenter.taluka || 'हवेली', level: 2, joinedDate: '२० ऑक्टो २०२६', status: 'प्रमाणित (Active KYC)', incentive: '₹१००' },
+            { id: 'M-105', name: 'कु. ओंकार संभाजी चव्हाण', role: 'विद्यार्थी / स्पर्धा परीक्षा', mobile: '७७०९८८११२२', district: currentCenter.district || 'पुणे', taluka: currentCenter.taluka || 'हवेली', level: 2, joinedDate: '२२ ऑक्टो २०२६', status: 'पडताळणी चालू (Pending KYC)', incentive: '₹१००' },
+            { id: 'M-106', name: 'हर्षल बापूराव भोसले', role: 'हॉटेल व्यावसायिक', mobile: '९९२३५५६६७७', district: currentCenter.district || 'पुणे', taluka: currentCenter.taluka || 'हवेली', level: 2, joinedDate: '२४ ऑक्टो २०२६', status: 'प्रमाणित (Active KYC)', incentive: '₹१००' }
+          ]).filter(m => {
+            const matchesTier = networkFilterTier === 'all' || (networkFilterTier === 'direct' && (m.level === 1 || !m.level)) || (networkFilterTier === 'l2' && m.level === 2);
+            if (!matchesTier) return false;
+            if (!networkSearch.trim()) return true;
+            const q = networkSearch.toLowerCase();
+            return (m.name || '').toLowerCase().includes(q) || (m.mobile || '').includes(q) || (m.role || '').toLowerCase().includes(q);
+          });
+
+          // Center-specific Events: Past vs Future
+          const pastEvents = [
+            { id: 'EVT-P01', name: 'छत्रपती शिवाजी महाराज जयंती भव्य व्याख्यानमाला व रक्त संकलन', date: '१९ फेब्रुवारी २०२६', attendees: '५४०+', budget: '₹१,२५,०००', outcome: '८५ रक्त पिशव्या संकलित, ३५ नवीन सभासद', status: 'यशस्वी संपन्न (Completed)' },
+            { id: 'EVT-P02', name: 'मराठा MSME व स्थानिक उद्योजक संगम परिषद (B2B Meet)', date: '१४ एप्रिल २०२६', attendees: '१२० व्यावसायिक', budget: '₹८०,०००', outcome: '२४ व्यापारी सामंजस्य करार (MOU), ₹४२ लाख व्यवहार लीड्स', status: 'यशस्वी संपन्न (Completed)' },
+            { id: 'EVT-P03', name: 'विद्यार्थी करिअर मार्गदर्शन व अण्णासाहेब पाटील योजना शिबिर', date: '२५ मे २०२६', attendees: '२८० विद्यार्थी व पालक', budget: '₹३५,०००', outcome: '४२ उमेदवारांना कौशल्य प्रशिक्षण नोंदणी, १५ कर्ज प्रस्ताव दाखल', status: 'यशस्वी संपन्न (Completed)' }
+          ];
+
+          const futureEvents = [
+            { id: 'EVT-F01', name: 'दिवाळी मराठा खाद्य महोत्सव व हस्तकला प्रदर्शन', date: '०५ नोव्हेंबर २०२६', venue: 'केंद्र सभागृह व मैदान', targetBeneficiaries: '१,०००+ नागरिक', budgetProposed: '₹१,५०,०००', status: 'नियोजित (Scheduled)' },
+            { id: 'EVT-F02', name: 'वार्षिक मराठा वधू-वर पालक परिचय महा-मेळावा', date: '१२ डिसेंबर २०२६', venue: 'विभागीय महा-संकुल हॉल', targetBeneficiaries: '५००+ कुटुंबे', budgetProposed: '₹२,२०,०००', status: 'नोंदणी चालू (Registrations Open)' },
+            { id: 'EVT-F03', name: 'राज्यव्यापी गडकोट संवर्धन व युवा इतिहास परिषद', date: '१६ जानेवारी २०२७', venue: 'सिंहगड पायथा / केंद्र संकुल', targetBeneficiaries: '३५० युवा सैनिक', budgetProposed: '₹९५,०००', status: 'मंजुरी प्रक्रियेत (Under Approval)' }
+          ];
+
+          const copyLinkHandler = () => {
+            navigator.clipboard.writeText(centerRefLink);
+            setCopiedLink(true);
+            showToast('✅ केंद्राची रेफरल लिंक कॉपी झाली!');
+            setTimeout(() => setCopiedLink(false), 3000);
+          };
+
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              
+              {/* TOP HEADER: REFERRAL LINK & QUICK METRICS BANNER */}
+              <div style={{
+                background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%)',
+                borderRadius: '20px',
+                padding: '28px',
+                color: '#FFFFFF',
+                boxShadow: '0 10px 28px rgba(15,23,42,0.18)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
+                  <div style={{ flex: '1 1 500px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                      <span style={{ background: '#EA580C', color: '#FFFFFF', fontSize: '0.76rem', fontWeight: 900, padding: '3px 10px', borderRadius: '100px', letterSpacing: '0.5px' }}>
+                        🔗 केंद्र अधिकृत रेफरल कोड
+                      </span>
+                      <span style={{ background: 'rgba(255,255,255,0.15)', color: '#F8FAFC', fontSize: '0.76rem', fontWeight: 700, padding: '3px 10px', borderRadius: '100px' }}>
+                        केंद्राचे नाव: {currentCenter.name}
+                      </span>
+                    </div>
+
+                    <h2 style={{ fontSize: '1.7rem', fontWeight: 900, margin: '0 0 10px', color: '#F8FAFC' }}>
+                      रेफरल लिंक, डाउनलाइन नेटवर्क व केंद्र कार्यबल (Downline & Team)
+                    </h2>
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#CBD5E1', lineHeight: 1.5 }}>
+                      तुमच्या कम्युनिटी सेंटरच्या अधिकृत लिंकद्वारे जोडल्या गेलेल्या सर्व सदस्यांची <strong>थेट व द्वितीय स्तर (Tier-1 & Tier-2) डाउनलाइन</strong>, केंद्र अंतर्गत कार्यरत कर्मचाऱ्यांची माहिती आणि झालेले व आगामी सर्व कार्यक्रमांचा संपूर्ण डेटा एकाच ठिकाणी व्यवस्थापित करा.
+                    </p>
+
+                    {/* Copy Link Input Bar */}
+                    <div style={{
+                      marginTop: '20px',
+                      background: 'rgba(255,255,255,0.08)',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      padding: '8px 12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      flexWrap: 'wrap'
+                    }}>
+                      <div style={{ flex: 1, minWidth: '220px', fontFamily: 'monospace', fontSize: '0.88rem', color: '#FDBA74', wordBreak: 'break-all' }}>
+                        {centerRefLink}
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          onClick={copyLinkHandler}
+                          style={{
+                            background: copiedLink ? '#16A34A' : '#EA580C',
+                            color: '#FFFFFF',
+                            border: 'none',
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            fontWeight: 800,
+                            fontSize: '0.85rem',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px'
+                          }}
+                        >
+                          {copiedLink ? '✓ कॉपी झाले!' : '📋 लिंक कॉपी करा'}
+                        </button>
+                        <a
+                          href={`https://api.whatsapp.com/send?text=${encodeURIComponent('मराठा समाजाच्या अधिकृत ' + currentCenter.name + ' शी जोडा. खालील लिंकवरून नोंदणी करा: ' + centerRefLink)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            background: '#25D366',
+                            color: '#FFFFFF',
+                            textDecoration: 'none',
+                            padding: '8px 14px',
+                            borderRadius: '8px',
+                            fontWeight: 800,
+                            fontSize: '0.85rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px'
+                          }}
+                        >
+                          💬 WhatsApp वर शेअर करा
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 4 Quick Stat Cards in Banner */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', minWidth: '280px' }}>
+                    <div style={{ background: 'rgba(255,255,255,0.07)', borderRadius: '12px', padding: '14px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>एकूण रेफरल जोडणी</div>
+                      <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#38BDF8', marginTop: '2px' }}>
+                        {(currentCenter.activeMembers || 284).toLocaleString()}
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: '#BAE6FD', marginTop: '2px' }}>👥 थेट + डाउनलाइन सभासद</div>
+                    </div>
+
+                    <div style={{ background: 'rgba(255,255,255,0.07)', borderRadius: '12px', padding: '14px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>केंद्रातील कर्मचारी</div>
+                      <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#4ADE80', marginTop: '2px' }}>
+                        {staffMembers.length} जण
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: '#BBF7D0', marginTop: '2px' }}>🧑‍💼 विविध कक्ष प्रमुख</div>
+                    </div>
+
+                    <div style={{ background: 'rgba(255,255,255,0.07)', borderRadius: '12px', padding: '14px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>झालेले कार्यक्रम</div>
+                      <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#FACC15', marginTop: '2px' }}>
+                        {pastEvents.length} उपक्रम
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: '#FEF08A', marginTop: '2px' }}>✅ यशस्वी संपन्न अहवाल</div>
+                    </div>
+
+                    <div style={{ background: 'rgba(255,255,255,0.07)', borderRadius: '12px', padding: '14px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700 }}>आगामी कार्यक्रम</div>
+                      <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#FB923C', marginTop: '2px' }}>
+                        {futureEvents.length} नियोजित
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: '#FED7AA', marginTop: '2px' }}>📅 पुढील ६ महिन्यांचे</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* SECTION 1: CENTER STAFF & TEAM DIRECTORY (केंद्राअंतर्गत कार्यरत कर्मचारी) */}
+              <div style={{
+                background: '#FFFFFF',
+                borderRadius: '18px',
+                border: '1px solid #E2E8F0',
+                padding: '24px',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.03)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
+                  <div>
+                    <h3 style={{ margin: 0, color: '#0F172A', fontSize: '1.25rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>👥</span> कम्युनिटी सेंटर अंतर्गत कार्यरत कर्मचारी व जबाबदारी (Center Staff & Team)
+                    </h3>
+                    <p style={{ margin: '4px 0 0', color: '#64748B', fontSize: '0.84rem' }}>
+                      केंद्रात येणाऱ्या नागरिकांना मार्गदर्शन करण्यासाठी नियुक्त केलेले व्यवस्थापक, समुपदेशक व सेवा भागीदार.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setNewStaffModal(true)}
+                    style={{
+                      background: '#16A34A',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      padding: '9px 16px',
+                      borderRadius: '10px',
+                      fontWeight: 800,
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    <span>+</span> नवीन कर्मचारी / प्रतिनिधी जोडा
+                  </button>
+                </div>
+
+                {/* Staff Cards Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '14px' }}>
+                  {staffMembers.map((stf) => (
+                    <div
+                      key={stf.id}
+                      style={{
+                        background: '#F8FAFC',
+                        borderRadius: '14px',
+                        border: '1px solid #E2E8F0',
+                        padding: '16px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between'
+                      }}
+                    >
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                          <div>
+                            <span style={{ fontSize: '0.72rem', background: '#E2E8F0', color: '#475569', padding: '2px 8px', borderRadius: '4px', fontWeight: 800 }}>
+                              {stf.id} • {stf.type}
+                            </span>
+                            <h4 style={{ margin: '6px 0 2px', fontSize: '1.05rem', fontWeight: 900, color: '#0F172A' }}>
+                              {stf.name}
+                            </h4>
+                            <div style={{ fontSize: '0.82rem', color: '#C2410C', fontWeight: 800 }}>
+                              {stf.role}
+                            </div>
+                          </div>
+                          <span style={{ background: '#DCFCE7', color: '#166534', fontSize: '0.74rem', padding: '3px 8px', borderRadius: '100px', fontWeight: 800 }}>
+                            {stf.status}
+                          </span>
+                        </div>
+
+                        <div style={{ background: '#FFFFFF', borderRadius: '10px', padding: '10px 12px', border: '1px solid #F1F5F9', marginTop: '10px', fontSize: '0.82rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                            <span style={{ color: '#64748B', fontWeight: 600 }}>नियुक्त कक्ष / Desk:</span>
+                            <strong style={{ color: '#0F172A' }}>{stf.desk}</strong>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                            <span style={{ color: '#64748B', fontWeight: 600 }}>नियुक्ती दिनांक:</span>
+                            <strong style={{ color: '#0F172A' }}>{stf.joinedDate}</strong>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '8px', marginTop: '12px', borderTop: '1px solid #E2E8F0', paddingTop: '10px' }}>
+                        <a
+                          href={`tel:${stf.phone}`}
+                          style={{
+                            flex: 1,
+                            background: '#DCFCE7',
+                            color: '#15803D',
+                            textDecoration: 'none',
+                            padding: '8px',
+                            borderRadius: '8px',
+                            fontWeight: 800,
+                            fontSize: '0.8rem',
+                            textAlign: 'center',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          📞 {stf.phone}
+                        </a>
+                        <button
+                          onClick={() => showToast(`ℹ️ ${stf.name} यांची दैनिक हजेरी व कामगिरी अद्ययावत आहे.`)}
+                          style={{
+                            background: '#FFFFFF',
+                            border: '1px solid #CBD5E1',
+                            color: '#475569',
+                            padding: '8px 12px',
+                            borderRadius: '8px',
+                            fontWeight: 700,
+                            fontSize: '0.8rem',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          कामगिरी अहवाल
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* SECTION 2: DOWNLINE NETWORK TABLE (रेफरल लिंकद्वारे जोडलेले सदस्य) */}
+              <div style={{
+                background: '#FFFFFF',
+                borderRadius: '18px',
+                border: '1px solid #E2E8F0',
+                padding: '24px',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.03)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '14px' }}>
+                  <div>
+                    <h3 style={{ margin: 0, color: '#0F172A', fontSize: '1.25rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>🌳</span> रेफरल लिंक डाऊनलाइन नेटवर्क (Downline Members Tree)
+                    </h3>
+                    <p style={{ margin: '4px 0 0', color: '#64748B', fontSize: '0.84rem' }}>
+                      या केंद्राच्या रेफरल कोडने थेट (Level-1) व त्यांच्या माध्यमातून (Level-2) सामील झालेल्या सभासदांची संपूर्ण यादी.
+                    </p>
+                  </div>
+
+                  {/* Filter & Search Bar */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', background: '#F1F5F9', borderRadius: '10px', padding: '3px' }}>
+                      {[
+                        { id: 'all', label: 'सर्व स्तर (All)' },
+                        { id: 'direct', label: 'थेट (Level-1)' },
+                        { id: 'l2', label: 'द्वितीय स्तर (Level-2)' }
+                      ].map(t => (
+                        <button
+                          key={t.id}
+                          onClick={() => setNetworkFilterTier(t.id)}
+                          style={{
+                            background: networkFilterTier === t.id ? '#FFFFFF' : 'transparent',
+                            color: networkFilterTier === t.id ? '#C2410C' : '#64748B',
+                            border: 'none',
+                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            fontSize: '0.8rem',
+                            fontWeight: 800,
+                            cursor: 'pointer',
+                            boxShadow: networkFilterTier === t.id ? '0 1px 4px rgba(0,0,0,0.08)' : 'none'
+                          }}
+                        >
+                          {t.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <input
+                      type="text"
+                      value={networkSearch}
+                      onChange={(e) => setNetworkSearch(e.target.value)}
+                      placeholder="नाव / मोबाईल / व्यवसाय शोधा..."
+                      style={{
+                        padding: '8px 14px',
+                        borderRadius: '10px',
+                        border: '1px solid #CBD5E1',
+                        fontSize: '0.85rem',
+                        minWidth: '220px'
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Downline Table */}
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.86rem' }}>
+                    <thead>
+                      <tr style={{ background: '#F8FAFC', borderBottom: '2px solid #E2E8F0', color: '#475569', fontWeight: 800 }}>
+                        <th style={{ padding: '12px 14px' }}>सभासद नाव व तपशील</th>
+                        <th style={{ padding: '12px 14px' }}>नेटवर्क स्तर (Level)</th>
+                        <th style={{ padding: '12px 14px' }}>मोबाईल नंबर</th>
+                        <th style={{ padding: '12px 14px' }}>जिल्हा / तालुका</th>
+                        <th style={{ padding: '12px 14px' }}>नोंदणी दिनांक</th>
+                        <th style={{ padding: '12px 14px' }}>KYC स्थिती</th>
+                        <th style={{ padding: '12px 14px' }}>केंद्र कमिशन</th>
+                        <th style={{ padding: '12px 14px', textAlign: 'right' }}>कृती</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {downlineList.map((m, idx) => (
+                        <tr key={m.id || idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                          <td style={{ padding: '12px 14px' }}>
+                            <div style={{ fontWeight: 800, color: '#0F172A' }}>{m.name}</div>
+                            <div style={{ fontSize: '0.74rem', color: '#64748B' }}>{m.role || 'सभासद'}</div>
+                          </td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <span style={{
+                              background: m.level === 2 ? '#EDE9FE' : '#FEF3C7',
+                              color: m.level === 2 ? '#6D28D9' : '#92400E',
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              fontWeight: 800,
+                              fontSize: '0.74rem'
+                            }}>
+                              {m.level === 2 ? 'L2 (विस्तारित)' : 'L1 (थेट रेफरल)'}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px 14px', fontWeight: 700, color: '#334155' }}>
+                            {m.mobile || 'उपलब्ध नाही'}
+                          </td>
+                          <td style={{ padding: '12px 14px', color: '#475569' }}>
+                            {m.district || currentCenter.district || 'महाराष्ट्र'}
+                            {m.taluka ? ` / ${m.taluka}` : ''}
+                          </td>
+                          <td style={{ padding: '12px 14px', color: '#64748B' }}>
+                            {m.joinedDate || '१० ऑक्टो २०२६'}
+                          </td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <span style={{
+                              background: (m.status || '').includes('प्रमाणित') ? '#DCFCE7' : '#FEF3C7',
+                              color: (m.status || '').includes('प्रमाणित') ? '#15803D' : '#B45309',
+                              padding: '3px 8px',
+                              borderRadius: '100px',
+                              fontSize: '0.74rem',
+                              fontWeight: 800
+                            }}>
+                              {m.status || 'प्रमाणित (Active)'}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px 14px', fontWeight: 900, color: '#16A34A' }}>
+                            {m.incentive || (m.level === 2 ? '₹१००' : '₹२५०')}
+                          </td>
+                          <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                            <button
+                              onClick={() => {
+                                setSelectedMemberDetail(m);
+                                setDataModalType('members');
+                              }}
+                              style={{
+                                background: '#F1F5F9',
+                                border: '1px solid #CBD5E1',
+                                padding: '5px 10px',
+                                borderRadius: '6px',
+                                fontSize: '0.75rem',
+                                fontWeight: 800,
+                                color: '#334155',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              प्रोफाइल पहा ➔
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* SECTION 3: CENTER EVENTS MANAGEMENT (झालेले व आगामी कार्यक्रम) */}
+              <div style={{
+                background: '#FFFFFF',
+                borderRadius: '18px',
+                border: '1px solid #E2E8F0',
+                padding: '24px',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.03)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
+                  <div>
+                    <h3 style={{ margin: 0, color: '#0F172A', fontSize: '1.25rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>🎪</span> केंद्राचे कार्यक्रम रेकॉर्ड: झालेले व भविष्यातील नियोजन (Events Register)
+                    </h3>
+                    <p style={{ margin: '4px 0 0', color: '#64748B', fontSize: '0.84rem' }}>
+                      या केंद्रामध्ये पार पडलेले ऐतिहासिक उपक्रम आणि भविष्यात आयोजित करावयाच्या उपक्रमांचे संपूर्ण कॅलेंडर.
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {[
+                      { id: 'all', label: 'सर्व कार्यक्रम (All Events)' },
+                      { id: 'completed', label: 'झालेले कार्यक्रम (Past Events)' },
+                      { id: 'upcoming', label: 'पुढील कार्यक्रम (Upcoming)' }
+                    ].map(btn => (
+                      <button
+                        key={btn.id}
+                        onClick={() => setEventsFilterType(btn.id)}
+                        style={{
+                          background: eventsFilterType === btn.id ? '#EA580C' : '#F1F5F9',
+                          color: eventsFilterType === btn.id ? '#FFFFFF' : '#475569',
+                          border: 'none',
+                          padding: '7px 14px',
+                          borderRadius: '8px',
+                          fontSize: '0.82rem',
+                          fontWeight: 800,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {btn.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '20px' }}>
+                  {/* PAST COMPLETED EVENTS */}
+                  {(eventsFilterType === 'all' || eventsFilterType === 'completed') && (
+                    <div style={{ background: '#F8FAFC', borderRadius: '14px', border: '1px solid #E2E8F0', padding: '18px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                        <h4 style={{ margin: 0, color: '#166534', fontSize: '1.05rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span>✅</span> झालेले यशस्वी कार्यक्रम (Past Completed Events)
+                        </h4>
+                        <span style={{ fontSize: '0.74rem', background: '#DCFCE7', color: '#166534', padding: '2px 8px', borderRadius: '100px', fontWeight: 800 }}>
+                          {pastEvents.length} अहवाल उपलब्ध
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {pastEvents.map((pe) => (
+                          <div key={pe.id} style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E2E8F0', padding: '14px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
+                              <h5 style={{ margin: 0, fontSize: '0.94rem', fontWeight: 900, color: '#0F172A' }}>
+                                {pe.name}
+                              </h5>
+                              <span style={{ fontSize: '0.7rem', background: '#DCFCE7', color: '#15803D', padding: '2px 8px', borderRadius: '4px', fontWeight: 800 }}>
+                                {pe.status}
+                              </span>
+                            </div>
+                            <div style={{ fontSize: '0.78rem', color: '#64748B', marginBottom: '8px' }}>
+                              📅 दिनांक: <strong style={{ color: '#0F172A' }}>{pe.date}</strong> | 👥 उपस्थिती: <strong style={{ color: '#2563EB' }}>{pe.attendees}</strong> | 💰 खर्च: <strong style={{ color: '#0F172A' }}>{pe.budget}</strong>
+                            </div>
+                            <div style={{ background: '#F0FDF4', borderRadius: '8px', padding: '8px 10px', fontSize: '0.78rem', color: '#166534', fontWeight: 700, border: '1px solid #BBF7D0' }}>
+                              🎯 फलित (Outcome): {pe.outcome}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* FUTURE UPCOMING EVENTS */}
+                  {(eventsFilterType === 'all' || eventsFilterType === 'upcoming') && (
+                    <div style={{ background: '#FFF7ED', borderRadius: '14px', border: '1px solid #FFEDD5', padding: '18px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                        <h4 style={{ margin: 0, color: '#C2410C', fontSize: '1.05rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span>📅</span> पुढील नियोजित कार्यक्रम (Upcoming Events Pipeline)
+                        </h4>
+                        <span style={{ fontSize: '0.74rem', background: '#FFEDD5', color: '#C2410C', padding: '2px 8px', borderRadius: '100px', fontWeight: 800 }}>
+                          {futureEvents.length} नियोजित
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {futureEvents.map((fe) => (
+                          <div key={fe.id} style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #FED7AA', padding: '14px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
+                              <h5 style={{ margin: 0, fontSize: '0.94rem', fontWeight: 900, color: '#0F172A' }}>
+                                {fe.name}
+                              </h5>
+                              <span style={{ fontSize: '0.7rem', background: '#FEF3C7', color: '#92400E', padding: '2px 8px', borderRadius: '4px', fontWeight: 800 }}>
+                                {fe.status}
+                              </span>
+                            </div>
+                            <div style={{ fontSize: '0.78rem', color: '#64748B', marginBottom: '8px' }}>
+                              📅 नियोजित तारीख: <strong style={{ color: '#C2410C' }}>{fe.date}</strong> | 📍 ठिकाण: <strong style={{ color: '#0F172A' }}>{fe.venue}</strong>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFBEB', borderRadius: '8px', padding: '8px 10px', fontSize: '0.78rem', color: '#92400E', border: '1px solid #FDE68A' }}>
+                              <span>लक्ष्य लाभार्थी: <strong>{fe.targetBeneficiaries}</strong></span>
+                              <span>अंदाजे बजेट: <strong>{fe.budgetProposed}</strong></span>
+                            </div>
+                            <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
+                              <Link
+                                to="/crm/events"
+                                style={{
+                                  flex: 1,
+                                  background: '#EA580C',
+                                  color: '#FFFFFF',
+                                  padding: '7px',
+                                  borderRadius: '6px',
+                                  textAlign: 'center',
+                                  textDecoration: 'none',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 800
+                                }}
+                              >
+                                स्वयंसेवक व नावनोंदणी सुरू करा ➔
+                              </Link>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+            </div>
+          );
+        })()}
 
         {/* ============================================================ */}
         {/* MODAL 1: ADD NEW COMMUNITY CENTER MODAL */}
@@ -3665,6 +4400,117 @@ export default function CommunityCenterCRM() {
                   style={{ flex: 1, background: '#F1F5F9', border: '1px solid #CBD5E1', padding: '12px', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }}
                 >
                   बंद करा
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL: ADD NEW STAFF / TEAM MEMBER */}
+        {newStaffModal && (
+          <div style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 10000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px'
+          }}>
+            <div style={{
+              background: '#FFFFFF',
+              borderRadius: '20px',
+              maxWidth: '520px',
+              width: '100%',
+              padding: '28px',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>🧑‍💼</span> केंद्रासाठी नवीन कर्मचारी / प्रतिनिधी नियुक्ती
+                </h3>
+                <button
+                  onClick={() => setNewStaffModal(false)}
+                  style={{ background: 'none', border: 'none', fontSize: '1.3rem', cursor: 'pointer', color: '#64748B' }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '6px' }}>कर्मचारी / प्रतिनिधीचे पूर्ण नाव</label>
+                <input
+                  type="text"
+                  value={newStaffName}
+                  onChange={(e) => setNewStaffName(e.target.value)}
+                  placeholder="उदा. श्री. राहुल धनाजी चव्हाण"
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '6px' }}>पद / भूमिका (Designation)</label>
+                <input
+                  type="text"
+                  value={newStaffRole}
+                  onChange={(e) => setNewStaffRole(e.target.value)}
+                  placeholder="उदा. बी२बी मॅनेजर / समुपदेशक"
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '6px' }}>मोबाईल नंबर (WhatsApp)</label>
+                <input
+                  type="tel"
+                  value={newStaffPhone}
+                  onChange={(e) => setNewStaffPhone(e.target.value)}
+                  placeholder="९८२२०XXXXX"
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '6px' }}>जबाबदारी कक्ष (Assigned Desk)</label>
+                <select
+                  value={newStaffDesk}
+                  onChange={(e) => setNewStaffDesk(e.target.value)}
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '0.9rem', background: '#FFF' }}
+                >
+                  <option value="membership">👥 सदस्य नोंदणी व KYC कक्ष</option>
+                  <option value="business">💼 MSME व स्थानिक व्यापार कक्ष</option>
+                  <option value="b2b">🤝 B2B संगम व व्यापारी डील</option>
+                  <option value="jobs">👔 रोजगार व नोकरी कक्ष</option>
+                  <option value="legal">⚖️ महसूल, ७/१२ व कायदेशीर साहाय्य</option>
+                  <option value="health">🏥 आरोग्य व आपत्कालीन मदत</option>
+                  <option value="events">🎪 सभा, उत्सव व १५ महा-उपक्रम</option>
+                  <option value="support">☎️ हेल्पडेस्क व काउंटर ऑपरेटर</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  onClick={() => {
+                    if (!newStaffName.trim()) {
+                      showToast('कृपया कर्मचाऱ्याचे नाव प्रविष्ट करा.');
+                      return;
+                    }
+                    showToast(`✅ ${newStaffName} यांची ${currentCenter.name} येथे यशस्वी नियुक्ती झाली!`);
+                    setNewStaffName('');
+                    setNewStaffPhone('');
+                    setNewStaffModal(false);
+                  }}
+                  style={{ flex: 1, background: '#16A34A', color: '#FFF', border: 'none', padding: '12px', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }}
+                >
+                  ✓ नियुक्ती पक्की करा
+                </button>
+                <button
+                  onClick={() => setNewStaffModal(false)}
+                  style={{ flex: 1, background: '#F1F5F9', border: '1px solid #CBD5E1', padding: '12px', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }}
+                >
+                  रद्द करा
                 </button>
               </div>
             </div>

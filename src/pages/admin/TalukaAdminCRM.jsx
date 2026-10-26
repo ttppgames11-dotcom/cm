@@ -5,6 +5,7 @@ import { MAHARASHTRA_DISTRICTS, DISTRICT_TALUKAS } from '../../services/referral
 import CRMScopeSwitcher from '../../components/layout/CRMScopeSwitcher';
 
 export default function TalukaAdminCRM() {
+  const [viewPerspective, setViewPerspective] = useState('owner'); // 'owner' | 'manager'
   const [selectedDistrict, setSelectedDistrict] = useState('पुणे');
   const [selectedTaluka, setSelectedTaluka] = useState('हवेली');
   const [activeTab, setActiveTab] = useState('kyc'); // 'kyc', 'centers', 'businesses', 'seva'
@@ -97,7 +98,6 @@ export default function TalukaAdminCRM() {
 
   return (
     <div style={{ background: '#FFFDF9', minHeight: '100vh' }}>
-      <CRMScopeSwitcher currentScope="taluka" />
       <div style={{ padding: '32px 16px 80px', color: '#1C1917', fontFamily: 'system-ui, sans-serif' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
 
@@ -134,18 +134,59 @@ export default function TalukaAdminCRM() {
           gap: '20px'
         }}>
           <div>
-            <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 800, marginBottom: '8px' }}>
-              📍 TALUKA OPERATIONAL COMMAND CENTER
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
+              <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 800 }}>
+                📍 TALUKA OPERATIONAL COMMAND CENTER
+              </div>
+              <span style={{ background: '#fff', color: '#1E3A8A', padding: '3px 10px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 800 }}>
+                {viewPerspective === 'owner' ? '👑 तालुकाध्यक्ष (Executive Owner)' : '📋 तालुका सचिव / व्यवस्थापक (Operations Manager)'}
+              </span>
             </div>
             <h1 style={{ fontSize: '1.9rem', fontWeight: 900, margin: '4px 0 8px' }}>
-              {selectedDistrict} — {selectedTaluka} तालुका कमांड डॅशबोर्ड
+              {selectedDistrict} — {selectedTaluka} {viewPerspective === 'owner' ? 'तालुकाध्यक्ष कक्ष' : 'तालुका समन्वयक व व्यवस्थापक कक्ष'}
             </h1>
             <p style={{ margin: 0, opacity: 0.9, fontSize: '0.95rem' }}>
-              तालुकाध्यक्ष व स्थानिक समन्वय कक्ष | थेट शाखा, कम्युनिटी सेंटर व सदस्य नोंदणी व्यवस्थापन
+              {viewPerspective === 'owner' ? 'तालुकाध्यक्ष धोरणात्मक व शाखा संचलन' : 'तालुका दैनंदिन सदस्य पडताळणी व शाखा समन्वय कक्ष'} | थेट शाखा, कम्युनिटी सेंटर व सदस्य नोंदणी व्यवस्थापन
             </p>
           </div>
 
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+            {/* Owner vs Manager Switcher */}
+            <div style={{ background: 'rgba(0,0,0,0.25)', padding: '4px', borderRadius: '8px', display: 'flex', gap: '4px' }}>
+              <button
+                type="button"
+                onClick={() => setViewPerspective('owner')}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  background: viewPerspective === 'owner' ? '#fff' : 'transparent',
+                  color: viewPerspective === 'owner' ? '#1E3A8A' : '#fff'
+                }}
+              >
+                👑 अध्यक्ष (Owner)
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewPerspective('manager')}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  background: viewPerspective === 'manager' ? '#fff' : 'transparent',
+                  color: viewPerspective === 'manager' ? '#1E3A8A' : '#fff'
+                }}
+              >
+                📋 व्यवस्थापक (Manager)
+              </button>
+            </div>
+
             <select
               value={selectedDistrict}
               onChange={(e) => setSelectedDistrict(e.target.value)}
@@ -153,10 +194,10 @@ export default function TalukaAdminCRM() {
                 background: '#FFF',
                 color: '#1E3A8A',
                 border: 'none',
-                padding: '10px 14px',
-                borderRadius: '10px',
+                padding: '9px 12px',
+                borderRadius: '8px',
                 fontWeight: 700,
-                fontSize: '0.9rem',
+                fontSize: '0.85rem',
                 cursor: 'pointer'
               }}
             >
@@ -172,10 +213,10 @@ export default function TalukaAdminCRM() {
                 background: '#FFF',
                 color: '#1E3A8A',
                 border: 'none',
-                padding: '10px 14px',
-                borderRadius: '10px',
+                padding: '9px 12px',
+                borderRadius: '8px',
                 fontWeight: 700,
-                fontSize: '0.9rem',
+                fontSize: '0.85rem',
                 cursor: 'pointer'
               }}
             >

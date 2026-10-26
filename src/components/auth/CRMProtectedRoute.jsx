@@ -81,7 +81,7 @@ export default function CRMProtectedRoute({ children, allowedRoles }) {
 
     if (!isSuperOrAdmin && !hasSpecificRole) {
       // Officer is logged into CRM, but does not have permission for this specific sub-module
-      return <Navigate to="/crm" state={{ reason: 'role_mismatch', currentRole: user.role }} replace />;
+      return <Navigate to="/crm/login" state={{ reason: 'role_mismatch', currentRole: user.role }} replace />;
     }
 
   }

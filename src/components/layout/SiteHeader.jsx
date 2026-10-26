@@ -1065,8 +1065,8 @@ export default function SiteHeader({ onOpenSearch }) {
                     <Link to="/movies" onClick={handleLinkClick}>🎬 दर्जेदार मराठी चित्रपट</Link>
                     <Link to="/gallery" onClick={handleLinkClick}>🖼️ आपुला महाराष्ट्र छायाचित्र दालन</Link>
                     {user && (user.role === 'superadmin' || user.role === 'admin' || user.role === 'ceo' || user.role === 'district_admin') && (
-                      <Link to="/crm" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800, borderTop: '1px dashed #CBD5E1', paddingTop: '8px' }}>
-                        🛡️ अधिकारी CRM पोर्टल →
+                      <Link to="/crm/login" onClick={handleLinkClick} style={{ color: '#DC2626', fontWeight: 800, borderTop: '1px dashed #CBD5E1', paddingTop: '8px' }}>
+                        🛡️ अधिकारी CRM लॉगिन →
                       </Link>
                     )}
                   </div>

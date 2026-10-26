@@ -120,12 +120,17 @@ router.get('/units/:id', ...guard, (req, res) => {
 
 function geoFromInput(level, input, parent) {
   const pick = (k) => sanitize(input[k]) || (parent ? parent[k] : '') || '';
-  const geo = { division: pick('division'), district: pick('district'), taluka: pick('taluka') };
+  const geo = {
+    state: pick('state') || (level === 'state' ? sanitize(input.name) : '') || 'महाराष्ट्र',
+    division: pick('division'),
+    district: pick('district'),
+    taluka: pick('taluka')
+  };
   // A unit above a level has no value for the finer fields
   if (level === 'state' || level === 'branch') {
-    geo.division = sanitize(input.division) || '';
-    geo.district = sanitize(input.district) || '';
-    geo.taluka = sanitize(input.taluka) || '';
+    geo.division = sanitize(input.division) || (parent ? parent.division : '') || '';
+    geo.district = sanitize(input.district) || (parent ? parent.district : '') || '';
+    geo.taluka = sanitize(input.taluka) || (parent ? parent.taluka : '') || '';
   }
   if (level === 'division') { geo.district = ''; geo.taluka = ''; }
   if (level === 'district') { geo.taluka = ''; }
@@ -174,7 +179,7 @@ router.post('/units', ...guard, async (req, res) => {
 
   const unitId = `UNIT-${level.slice(0, 3).toUpperCase()}-${Date.now().toString(36).toUpperCase()}${Math.floor(Math.random() * 1296).toString(36).toUpperCase()}`;
   const ownerRes = await createMemberAccount(
-    { ...ownerInput, district: geo.district || ownerInput.district, taluka: geo.taluka || ownerInput.taluka, division: geo.division },
+    { ...ownerInput, state: geo.state || ownerInput.state || 'महाराष्ट्र', district: geo.district || ownerInput.district, taluka: geo.taluka || ownerInput.taluka, division: geo.division },
     { role: OWNER_ROLE_BY_LEVEL[level], unitId, unitRole: 'owner', createdBy: req.user.id }
   );
   if (!ownerRes.ok) return sendError(res, ownerRes.error, ownerRes.code, ownerRes.status);
@@ -188,6 +193,7 @@ router.post('/units', ...guard, async (req, res) => {
     ancestorIds: parent ? [...(parent.ancestorIds || []), parent.id] : [],
     ownerId: ownerRes.user.id,
     staffIds: [],
+    state: geo.state || 'महाराष्ट्र',
     division: geo.division,
     district: geo.district,
     taluka: geo.taluka,
