@@ -37,7 +37,8 @@ export const CRM_AUTHORIZED_ROLES = [
  * Ensures the user is logged in AND possesses an authorized CRM/administrative role.
  * Regular users (or unauthenticated visitors) are redirected to /crm/login.
  */
-export default function CRMProtectedRoute({ children, allowedRoles }) {
+// strict: only the roles listed in allowedRoles may enter (admin and superadmin get no universal pass).
+export default function CRMProtectedRoute({ children, allowedRoles, strict = false }) {
   const { user, loading } = useAuth();
   const location = useLocation();
 
@@ -86,7 +87,7 @@ export default function CRMProtectedRoute({ children, allowedRoles }) {
   // If this specific CRM page requires specific roles (e.g. only SuperAdmin or only CEO)
   if (allowedRoles && allowedRoles.length > 0) {
     // SuperAdmin and general admin have universal access across all CRM modules
-    const isSuperOrAdmin = activeUser.role === 'superadmin' || activeUser.role === 'admin';
+    const isSuperOrAdmin = !strict && (activeUser.role === 'superadmin' || activeUser.role === 'admin');
     const hasSpecificRole = allowedRoles.includes(activeUser.role);
 
     if (!isSuperOrAdmin && !hasSpecificRole) {

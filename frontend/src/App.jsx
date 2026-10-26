@@ -248,7 +248,7 @@ export default function App() {
           ))}
 
           {/* Admin Shell Console */}
-          <Route path="/admin/*" element={<AdminShell />} />
+          <Route path="/admin/*" element={<CRMProtectedRoute strict allowedRoles={['admin', 'superadmin']}><AdminShell /></CRMProtectedRoute>} />
 
           {/* All Application Pages Wrapped Inside AppLayout */}
           <Route element={<AppLayout />}>
@@ -256,8 +256,8 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             
             {/* SuperAdmin Supreme Console */}
-            <Route path="/superadmin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminPage /></CRMProtectedRoute>} />
-            <Route path="/crm/superadmin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin']}><SuperAdminPage /></CRMProtectedRoute>} />
+            <Route path="/superadmin" element={<CRMProtectedRoute strict allowedRoles={['superadmin']}><SuperAdminPage /></CRMProtectedRoute>} />
+            <Route path="/crm/superadmin" element={<CRMProtectedRoute strict allowedRoles={['superadmin']}><SuperAdminPage /></CRMProtectedRoute>} />
             
             {/* History & Heritage */}
             <Route path="/history" element={<HistoryPage />} />
@@ -467,7 +467,6 @@ export default function App() {
             <Route path="/crm" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
             <Route path="/crm/roles" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
             <Route path="/crm/admin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
-            <Route path="/admin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
             <Route path="/admin/dashboard" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
             <Route path="/admin/users" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
             <Route path="/admin/members" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
