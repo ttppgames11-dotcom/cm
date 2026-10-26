@@ -534,8 +534,8 @@ public class AuthService {
             Map<String, Object> info = new LinkedHashMap<>();
             info.put("id", r.getId());
             info.put("name", r.getName());
-            info.put("reference_id", orDefault(r.getReferenceId(), r.getId()));
-            info.put("referral_id", orDefault(r.getReferralId(), orDefault(r.getReferenceId(), r.getId())));
+            info.put("reference_id", shownCode(r));
+            info.put("referral_id", orDefault(r.getReferralId(), shownCode(r)));
             info.put("district", orDefault(r.getDistrict(), "महाराष्ट्र"));
             info.put("city", nz(r.getCity()));
             Map<String, Object> reply = success("सत्यापित रेफरल कोड");
@@ -629,7 +629,16 @@ public class AuthService {
         String upper = code.toUpperCase();
         // Old dashboard code CM-M1234 means member M1234 (as in the Node backend).
         String idCode = upper.replaceFirst("^CM-(?=M[0-9]+$)", "");
-        return members.findReferrer(upper, idCode, digits.length() >= 10 ? digits.substring(digits.length() - 10) : "");
+        // REF-96K-<digits>: the code shown for a member with no saved code (made from the digits of the id).
+        String idDigits = upper.matches("^REF-96K-[0-9]+$") ? upper.substring("REF-96K-".length()) : "";
+        return members.findReferrer(upper, idCode, digits.length() >= 10 ? digits.substring(digits.length() - 10) : "", idDigits);
+    }
+
+    /** The member's referral code as the site shows it: the saved one, or REF-96K-<digits of id> when none is saved. */
+    private static String shownCode(Member r) {
+        if (!isEmpty(r.getReferenceId())) return r.getReferenceId();
+        String digits = r.getId().replaceAll("[^0-9]", "");
+        return digits.isEmpty() ? r.getId() : "REF-96K-" + digits;
     }
 
     /** M + 4 digits, retried so two sign-ups never collide on the same id. */

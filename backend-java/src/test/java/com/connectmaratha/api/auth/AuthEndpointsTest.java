@@ -595,6 +595,24 @@ class AuthEndpointsTest extends PostgresTestBase {
     }
 
     @Test
+    void theCodeShownForAMemberWithNoSavedCodeIsAccepted() throws Exception {
+        // Accounts made by hand (like the admin) have no saved code; the site shows REF-96K-<digits of id> for them.
+        jdbc.update("DELETE FROM members WHERE id IN ('M8041', 'M8042')");
+        jdbc.update("INSERT INTO members (id, name, phone, reference_id, referral_id) VALUES ('M8041', 'Hand Made Admin', '', NULL, '')");
+        jdbc.update("INSERT INTO members (id, name, phone, reference_id, referral_id) VALUES ('M8042', 'Has Own Code', '', 'REF-96K-1111', 'REF-96K-1111')");
+
+        for (String code : new String[] {"REF-96K-8041", "ref-96k-8041"}) {
+            JsonNode r = call(get("/api/auth/referrals/verify/{code}", code), 200);
+            assertThat(r.get("isValid").asBoolean()).as(code).isTrue();
+            assertThat(r.get("referrer").get("id").asText()).isEqualTo("M8041");
+            assertThat(r.get("referrer").get("reference_id").asText()).isEqualTo("REF-96K-8041");
+        }
+        // A member with a saved code is found by that code only, not by one made from the id digits.
+        call(get("/api/auth/referrals/verify/{code}", "REF-96K-8042"), 404);
+        assertThat(call(get("/api/auth/referrals/verify/{code}", "REF-96K-1111"), 200).get("referrer").get("id").asText()).isEqualTo("M8042");
+    }
+
+    @Test
     void myReferralsListsTheMembersWhoJoinedWithMyCode() throws Exception {
         JsonNode owner = register(Map.of("name", "Owner", "phone", uniquePhone(), "password", PASSWORD), 201);
         String code = owner.get("member").get("reference_id").asText();
