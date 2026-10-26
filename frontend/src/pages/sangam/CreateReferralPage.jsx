@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import CMDB from '../../services/cmdb';
 import apiClient from '../../services/apiClient';
+import { asNumberOrUndefined } from './referralList';
 
 export default function CreateReferralPage() {
   const [formData, setFormData] = useState({
-    recipientId: 'M1002',
+    recipientId: '',
+    businessId: '',
     prospect: '',
     phone: '',
     requirement: '',
@@ -13,51 +14,56 @@ export default function CreateReferralPage() {
     estimatedValue: '',
     location: 'पुणे'
   });
+  const [receivers, setReceivers] = useState([]);
+  const [loadingReceivers, setLoadingReceivers] = useState(true);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
-  const members = CMDB.raw ? CMDB.raw().members : [];
+  // Real members who own a business: the only ones a referral can be given to.
+  useEffect(() => {
+    apiClient.getReferralReceivers()
+      .then((list) => setReceivers(Array.isArray(list) ? list : []))
+      .catch((err) => setErrorMsg(err.message || 'सदस्यांची यादी मिळाली नाही.'))
+      .finally(() => setLoadingReceivers(false));
+  }, []);
+
+  const chosenReceiver = receivers.find((m) => m.id === formData.recipientId);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.prospect || !formData.requirement) {
-      alert('कृपया ग्राहकाचे नाव व कामाचे स्वरूप प्रविष्ट करा.');
+    setErrorMsg('');
+    if (!formData.recipientId) {
+      setErrorMsg('कृपया संदर्भ कोणत्या सदस्याला द्यायचा ते निवडा.');
+      return;
+    }
+    if (!formData.prospect.trim() || !formData.requirement.trim()) {
+      setErrorMsg('कृपया ग्राहकाचे नाव व कामाचे स्वरूप प्रविष्ट करा.');
+      return;
+    }
+    const cleanPhone = formData.phone.replace(/[^0-9]/g, '').slice(-10);
+    if (cleanPhone.length !== 10) {
+      setErrorMsg('कृपया ग्राहकाचा १० अंकी मोबाईल नंबर प्रविष्ट करा.');
       return;
     }
 
     try {
-      const cleanPhone = formData.phone ? formData.phone.replace(/[^0-9]/g, '').slice(-10) : '9822144550';
       const payload = {
-        title: formData.requirement.slice(0, 60),
-        clientName: formData.prospect,
-        clientPhone: cleanPhone.length === 10 ? cleanPhone : '9822144550',
+        title: formData.requirement.trim().slice(0, 60),
+        clientName: formData.prospect.trim(),
+        clientPhone: cleanPhone,
         recipientId: formData.recipientId,
         category: formData.category,
-        requirement: formData.requirement,
-        value: Number(formData.estimatedValue) || 50000,
-        estimatedValue: Number(formData.estimatedValue) || 50000,
-        prospect: formData.prospect,
-        city: formData.location
+        notes: formData.requirement.trim() + (formData.location.trim() ? ' (' + formData.location.trim() + ')' : '')
       };
+      if (formData.businessId) payload.businessId = formData.businessId;
+      const value = asNumberOrUndefined(formData.estimatedValue);
+      if (value !== undefined) payload.value = value;
 
       await apiClient.createReferral(payload);
 
-      if (CMDB.createReferral) {
-        CMDB.createReferral({
-          recipient: formData.recipientId,
-          recipientId: formData.recipientId,
-          prospect: formData.prospect,
-          requirement: formData.requirement,
-          category: formData.category,
-          estimatedValue: Number(formData.estimatedValue) || 50000,
-          location: formData.location,
-          status: 'New'
-        });
-      }
-
-      setSuccessMsg('संदर्भ थेट डेटाबेसमध्ये यशस्वीरीत्या नोंदवला गेला! आपल्या खात्यात +१० गुण जोडले गेले आहेत.');
-      setTimeout(() => navigate('/referrals'), 1200);
+      setSuccessMsg('संदर्भ यशस्वीरीत्या दिला गेला! संबंधित सदस्याला तो आपल्या यादीत दिसेल.');
+      setTimeout(() => navigate('/referrals/tracker'), 1200);
     } catch (err) {
       setErrorMsg(err.message || 'संदर्भ नोंदवताना त्रुटी आली.');
     }
@@ -71,7 +77,7 @@ export default function CreateReferralPage() {
             🤝 नवीन व्यवसाय संदर्भ द्या (Give Referral)
           </h1>
           <p style={{ color: '#666', fontSize: '0.88rem', margin: 0 }}>
-            मराठा बांधवांच्या व्यवसायाला ग्राहक मिळवून द्या. प्रत्येक वैध संदर्भाला +१० योगदान गुण.
+            मराठा बांधवांच्या व्यवसायाला ग्राहक मिळवून द्या. ग्राहकाचा संपर्क फक्त तुम्हाला व संदर्भ घेणाऱ्या सदस्याला दिसतो.
           </p>
         </div>
 
@@ -92,16 +98,34 @@ export default function CreateReferralPage() {
             <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 600, marginBottom: '6px' }}>
               हा संदर्भ कोणाला द्यायचा आहे? (सदस्य निवडा)
             </label>
-            <select
-              value={formData.recipientId}
-              onChange={(e) => setFormData({ ...formData, recipientId: e.target.value })}
-              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #CCC', fontSize: '0.95rem' }}>
-              {members.map(m => (
-                <option key={m.id} value={m.id}>
-                  {m.name} ({m.profession || m.business || 'सदस्य'} - {m.district})
-                </option>
-              ))}
-            </select>
+            {!loadingReceivers && receivers.length === 0 ? (
+              <div style={{ background: '#FFF8E1', color: '#8D6E00', padding: '12px', borderRadius: '8px', fontSize: '0.9rem' }}>
+                अद्याप कोणत्याही सदस्याने आपला व्यवसाय नोंदवलेला नाही. व्यवसाय नोंदवलेल्या सदस्यांनाच संदर्भ देता येतो.
+              </div>
+            ) : (
+              <select
+                value={formData.recipientId}
+                onChange={(e) => setFormData({ ...formData, recipientId: e.target.value, businessId: '' })}
+                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #CCC', fontSize: '0.95rem' }}>
+                <option value="">— सदस्य निवडा —</option>
+                {receivers.map(m => (
+                  <option key={m.id} value={m.id}>
+                    {m.name} ({(m.businesses || []).map(b => b.name).join(', ')})
+                  </option>
+                ))}
+              </select>
+            )}
+            {chosenReceiver && (chosenReceiver.businesses || []).length > 1 && (
+              <select
+                value={formData.businessId}
+                onChange={(e) => setFormData({ ...formData, businessId: e.target.value })}
+                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #CCC', fontSize: '0.95rem', marginTop: '8px' }}>
+                <option value="">— कोणता व्यवसाय? (ऐच्छिक) —</option>
+                {chosenReceiver.businesses.map(b => (
+                  <option key={b.id} value={b.id}>{b.name}</option>
+                ))}
+              </select>
+            )}
           </div>
 
           <div>

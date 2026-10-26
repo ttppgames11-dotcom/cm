@@ -246,6 +246,16 @@ export const apiClient = {
   updateReferralStatus: async (id, status, value) => {
     return await fetchJson(`/sangam/referrals/${id}/status`, { method: 'PUT', body: JSON.stringify({ status, value }) });
   },
+  // Members who own a visible business, with their businesses: who a referral can be given to
+  getReferralReceivers: async () => {
+    const res = await fetchJson('/sangam/referrals/receivers');
+    return res.receivers || res.data?.receivers || [];
+  },
+  // Community totals (numbers only): { given, won, wonValue }
+  getReferralStats: async () => {
+    const res = await fetchJson('/sangam/referrals/stats');
+    return res.stats || res.data?.stats || { given: 0, won: 0, wonValue: 0 };
+  },
   getMeetings: async (params = {}) => {
     const qs = new URLSearchParams(params).toString();
     const res = await fetchJson(`/sangam/meetings${qs ? '?' + qs : ''}`);

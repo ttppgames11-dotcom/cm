@@ -1,279 +1,78 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
-
-const INITIAL_REFERRALS = [
-  {
-    id: 'REF-2026-091',
-    year: '2026',
-    month: '09',
-    week: 'Week 38',
-    day: '19',
-    userId: 'CM-10291',
-    userName: 'राजेश कदम',
-    state: 'महाराष्ट्र',
-    city: 'पुणे',
-    prospect: 'सह्याद्री ॲग्रो फूड्स प्रायव्हेट लिमिटेड',
-    category: 'अन्न प्रक्रिया व पॅकेजिंग',
-    requirement: 'नवीन सोलर कोल्ड स्टोरेजसाठी ३० HP चिलर युनिट व वेअरहाऊस डिझाइन कंत्राट.',
-    estimatedValue: 850000,
-    actualValue: 850000,
-    status: 'Won',
-    recipient: 'संजय माने (माने इंजिनिअरिंग)',
-    date: '2026-09-19'
-  },
-  {
-    id: 'REF-2026-088',
-    year: '2026',
-    month: '09',
-    week: 'Week 38',
-    day: '18',
-    userId: 'CM-4081',
-    userName: 'सुनील साळुंखे',
-    state: 'महाराष्ट्र',
-    city: 'मुंबई',
-    prospect: 'मराठा लॉजिस्टिक्स कॉर्पोरेशन',
-    category: 'वाहतूक व पुरवठा साखळी',
-    requirement: 'जेएनपीटी ते चाकण दरम्यान ५० ट्रेलर वाहनांची वार्षिक ट्रान्सपोर्ट लीज.',
-    estimatedValue: 2400000,
-    actualValue: 0,
-    status: 'Proposal',
-    recipient: 'अमोल शिंदे (शिंदे फ्लीट)',
-    date: '2026-09-18'
-  },
-  {
-    id: 'REF-2026-075',
-    year: '2026',
-    month: '09',
-    week: 'Week 37',
-    day: '14',
-    userId: 'CM-9012',
-    userName: 'विकास पाटील',
-    state: 'महाराष्ट्र',
-    city: 'कोल्हापूर',
-    prospect: 'राजाराम इंजिनिअरिंग वर्क्स',
-    category: 'औद्योगिक उत्पादन व लेथ',
-    requirement: 'सीएनसी मशीनिंगसाठी उच्च दर्जाचे अलॉय स्टील बिलेट्सचा ३ महिन्यांचा सप्लाय.',
-    estimatedValue: 620000,
-    actualValue: 0,
-    status: 'Qualified',
-    recipient: 'दीपक चव्हाण (चव्हाण मेटल्स)',
-    date: '2026-09-14'
-  },
-  {
-    id: 'REF-2026-062',
-    year: '2026',
-    month: '08',
-    week: 'Week 34',
-    day: '22',
-    userId: 'CM-3309',
-    userName: 'अमित मोरे',
-    state: 'महाराष्ट्र',
-    city: 'ठाणे',
-    prospect: 'शिवम बिल्डकॉन',
-    category: 'बांधकाम व रिअल इस्टेट',
-    requirement: 'घोडबंदर रोड येथील ३२ मजली टॉवरसाठी स्ट्रक्चरल स्टील व आरएमसी कॉंक्रिट पुरवठा.',
-    estimatedValue: 4500000,
-    actualValue: 4500000,
-    status: 'Won',
-    recipient: 'नितीन जाधव (जाधव इन्फ्रा)',
-    date: '2026-08-22'
-  },
-  {
-    id: 'REF-2026-054',
-    year: '2026',
-    month: '08',
-    week: 'Week 32',
-    day: '08',
-    userId: 'CM-7712',
-    userName: 'सचिन घोरपडे',
-    state: 'महाराष्ट्र',
-    city: 'सातारा',
-    prospect: 'कृष्णा व्हॅली ॲग्रिकल्चरल ट्रस्ट',
-    category: 'शिक्षण व कौशल्य विकास',
-    requirement: 'विद्यार्थ्यांसाठी १२० कॉम्प्युटर लॅब नेटवर्किंग व क्लाउड सर्व्हर सेटअप.',
-    estimatedValue: 980000,
-    actualValue: 0,
-    status: 'Contacted',
-    recipient: 'गणेश मोहिते (मोहिते आयटी सोल्युशन्स)',
-    date: '2026-08-08'
-  },
-  {
-    id: 'REF-2026-041',
-    year: '2026',
-    month: '07',
-    week: 'Week 29',
-    day: '16',
-    userId: 'CM-10291',
-    userName: 'राजेश कदम',
-    state: 'महाराष्ट्र',
-    city: 'नाशिक',
-    prospect: 'गोदावरी वाइनरी & रिसॉर्ट',
-    category: 'हॉस्पिटॅलिटी व पर्यटन',
-    requirement: 'कॉर्पोरेट इव्हेंट ऑडिओ-व्हिज्युअल व डिजिटल मार्केटिंग कंत्राट.',
-    estimatedValue: 350000,
-    actualValue: 350000,
-    status: 'Won',
-    recipient: 'प्रशांत पवार (पवार मीडिया)',
-    date: '2026-07-16'
-  },
-  {
-    id: 'REF-2026-033',
-    year: '2026',
-    month: '06',
-    week: 'Week 25',
-    day: '20',
-    userId: 'CM-8812',
-    userName: 'तानाजी गायकवाड',
-    state: 'कर्नाटक (सीमाभाग)',
-    city: 'बेळगाव',
-    prospect: 'कर्नाटक मराठा चेंबर सदस्य फर्म',
-    category: 'टेक्सटाइल व वस्त्रोद्योग',
-    requirement: '५००० मीटर कॉटन खादी व वर्दी कापड घाऊक खरेदी ऑर्डर.',
-    estimatedValue: 720000,
-    actualValue: 720000,
-    status: 'Won',
-    recipient: 'अजिंक्य भोसले (भोसले टेक्स्टाइल्स)',
-    date: '2026-06-20'
-  },
-  {
-    id: 'REF-2025-112',
-    year: '2025',
-    month: '11',
-    week: 'Week 47',
-    day: '25',
-    userId: 'CM-4081',
-    userName: 'सुनील साळुंखे',
-    state: 'महाराष्ट्र',
-    city: 'नागपूर',
-    prospect: 'विदर्भ ऑरेंज प्रोसेसिंग युनिट',
-    category: 'अन्न प्रक्रिया व पॅकेजिंग',
-    requirement: 'संत्रा ज्यूस बॉटलिंग लाईन व ऑटोमॅटिक लेबलिंग प्लांट इन्स्टॉलेशन.',
-    estimatedValue: 1800000,
-    actualValue: 1800000,
-    status: 'Won',
-    recipient: 'संजय माने (माने इंजिनिअरिंग)',
-    date: '2025-11-25'
-  },
-  {
-    id: 'REF-2025-089',
-    year: '2025',
-    month: '09',
-    week: 'Week 37',
-    day: '12',
-    userId: 'CM-2204',
-    userName: 'महेश इंगळे',
-    state: 'महाराष्ट्र',
-    city: 'छत्रपती संभाजीनगर',
-    prospect: 'ऑरिक ऑटो कंपोनंट्स',
-    category: 'ऑटोमोटिव्ह',
-    requirement: 'प्रिसिजन डाय कास्टिंग मोल्ड्स सप्लाय व मेंटेनन्स वार्षिक करार.',
-    estimatedValue: 1450000,
-    actualValue: 1450000,
-    status: 'Won',
-    recipient: 'दीपक चव्हाण (चव्हाण मेटल्स)',
-    date: '2025-09-12'
-  },
-  {
-    id: 'REF-2025-045',
-    year: '2025',
-    month: '04',
-    week: 'Week 16',
-    day: '18',
-    userId: 'CM-6102',
-    userName: 'दीपाली सावंत',
-    state: 'गुजरात',
-    city: 'सुरत',
-    prospect: 'सुरत डायमंड क्लस्टर लॉजिस्टिक्स',
-    category: 'सुरक्षा व मौल्यवान माल वाहतूक',
-    requirement: 'सशस्त्र सुरक्षा व्हॅन व जीपीएस ट्रॅकिंग एस्कॉर्ट सेवा.',
-    estimatedValue: 950000,
-    actualValue: 950000,
-    status: 'Won',
-    recipient: 'तानाजी गायकवाड (शिवराय सिक्युरिटी)',
-    date: '2025-04-18'
-  },
-  {
-    id: 'REF-2024-077',
-    year: '2024',
-    month: '10',
-    week: 'Week 42',
-    day: '15',
-    userId: 'CM-10291',
-    userName: 'राजेश कदम',
-    state: 'महाराष्ट्र',
-    city: 'पुणे',
-    prospect: 'पुणे मेट्रो फेज २ उपकंत्राटदार',
-    category: 'इन्फ्रास्ट्रक्चर',
-    requirement: 'मेट्रो पिलर फॅब्रिकेशन व हेवी क्रेन भाडे करार (६ महिने).',
-    estimatedValue: 3200000,
-    actualValue: 3200000,
-    status: 'Won',
-    recipient: 'नितीन जाधव (जाधव इन्फ्रा)',
-    date: '2024-10-15'
-  },
-  {
-    id: 'REF-2024-032',
-    year: '2024',
-    month: '03',
-    week: 'Week 11',
-    day: '12',
-    userId: 'CM-3309',
-    userName: 'अमित मोरे',
-    state: 'महाराष्ट्र',
-    city: 'सोलापूर',
-    prospect: 'सोलापूर चादर व टॉवेल असोसिएशन',
-    category: 'निर्यात व लॉजिस्टिक्स',
-    requirement: 'मध्य पूर्वेसाठी ४० फूट कंटेनर एक्सपोर्ट क्लिअरन्स व सी फ्रेट.',
-    estimatedValue: 1100000,
-    actualValue: 1100000,
-    status: 'Won',
-    recipient: 'अमोल शिंदे (शिंदे फ्लीट)',
-    date: '2024-03-12'
-  }
-];
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
+import { useReferralStream } from '../../hooks/useReferralStream';
+import { STATUSES, splitByRole, canChangeStatus, needsValue, eventConcernsMe, asNumberOrUndefined, isAmountTypedButUnreadable } from './referralList';
 
 export default function ReferralsTrackerPage() {
-  const [referrals, setReferrals] = useState(() => {
-    try {
-      const saved = localStorage.getItem('cm_referrals_tracker_data');
-      return saved ? JSON.parse(saved) : INITIAL_REFERRALS;
-    } catch (e) {
-      return INITIAL_REFERRALS;
-    }
-  });
+  const { user } = useAuth();
+  const { showToast } = useToast();
+  const myId = user?.id;
+  const isAdmin = ['admin', 'superadmin', 'ceo'].includes(String(user?.role || '').toLowerCase());
+
+  const [referrals, setReferrals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  // 'all' | 'given' | 'received'
+  const [tab, setTab] = useState('all');
+
+  // The server row as this page shows it. Nothing is invented: a missing value stays empty.
+  const toRow = (r) => {
+    const stamp = r.created_at ? new Date(String(r.created_at).replace(' ', 'T')) : new Date();
+    const dateObj = Number.isNaN(stamp.getTime()) ? new Date() : stamp;
+    const value = Number(r.value || 0);
+    const won = r.status === 'Won' || r.status === 'Deal Won';
+    return {
+      id: r.id,
+      year: String(dateObj.getFullYear()),
+      month: String(dateObj.getMonth() + 1).padStart(2, '0'),
+      week: 'Week ' + Math.ceil(dateObj.getDate() / 7),
+      day: String(dateObj.getDate()).padStart(2, '0'),
+      userId: r.giver_id || '—',
+      userName: r.giver_name || '',
+      state: '—',
+      city: '—',
+      prospect: r.client_name || '',
+      category: r.category || '',
+      requirement: r.title || '',
+      estimatedValue: value,
+      actualValue: won ? value : 0,
+      status: r.status || 'New',
+      recipient: r.recipient_name || '',
+      date: dateObj.toISOString().slice(0, 10),
+      giver_id: r.giver_id,
+      recipient_id: r.recipient_id,
+      role: r.role
+    };
+  };
+
+  const loadReferrals = () => {
+    return apiClient.getReferrals()
+      .then((list) => {
+        setReferrals(Array.isArray(list) ? list.map(toRow) : []);
+        setLoadError('');
+      })
+      .catch((err) => setLoadError(err.message || 'संदर्भ लोड करता आले नाहीत.'))
+      .finally(() => setLoading(false));
+  };
 
   useEffect(() => {
-    apiClient.getReferrals()
-      .then(liveRefs => {
-        if (Array.isArray(liveRefs) && liveRefs.length > 0) {
-          const normalized = liveRefs.map(r => {
-            const dateObj = r.date ? new Date(r.date) : (r.createdAt ? new Date(r.createdAt) : new Date());
-            return {
-              id: r.id,
-              year: r.year || String(dateObj.getFullYear()),
-              month: r.month || String(dateObj.getMonth() + 1).padStart(2, '0'),
-              week: r.week || `Week ${Math.ceil(dateObj.getDate() / 7)}`,
-              day: r.day || String(dateObj.getDate()).padStart(2, '0'),
-              userId: r.userId || r.giverId || 'CM-10291',
-              userName: r.userName || r.giverName || 'सदस्य',
-              state: r.state || 'महाराष्ट्र',
-              city: r.city || 'पुणे',
-              prospect: r.prospect || r.clientName || 'ग्राहक',
-              category: r.category || 'व्यवसाय',
-              requirement: r.requirement || r.title || 'व्यवसाय लीड',
-              estimatedValue: Number(r.estimatedValue || r.value || 0),
-              actualValue: Number(r.actualValue || (r.status === 'Won' ? r.estimatedValue || r.value : 0) || 0),
-              status: r.status || 'Won',
-              recipient: r.recipient || r.recipientName || 'सहकारी सदस्य',
-              date: r.date || dateObj.toISOString().slice(0, 10)
-            };
-          });
-          setReferrals(normalized);
-        }
-      })
-      .catch(err => console.warn('Could not load live referrals from API:', err.message));
-  }, []);
+    loadReferrals();
+  }, [myId]);
+
+  // Live: reload when a referral involving this member is given or changes.
+  useReferralStream({
+    onChanged: (event) => {
+      if (!eventConcernsMe(event, myId)) return;
+      if (event.recipientId === myId && event.giverId !== myId && event.status === 'New') {
+        showToast('नवीन संदर्भ मिळाला!', 'success');
+      }
+      loadReferrals();
+    },
+    onReconnect: () => loadReferrals()
+  });
 
   const [viewMode, setViewMode] = useState('table'); // 'table' or 'cards'
 
@@ -304,8 +103,14 @@ export default function ReferralsTrackerPage() {
   }, [referrals]);
 
   // Apply all 7 filters + status + search
+  const tabbedReferrals = useMemo(() => {
+    if (tab === 'all') return referrals;
+    const { given, received } = splitByRole(referrals, myId);
+    return tab === 'given' ? given : received;
+  }, [referrals, tab, myId]);
+
   const filteredReferrals = useMemo(() => {
-    return referrals.filter(r => {
+    return tabbedReferrals.filter(r => {
       if (filters.year !== 'all' && r.year !== filters.year) return false;
       if (filters.month !== 'all' && r.month !== filters.month) return false;
       if (filters.week !== 'all' && r.week !== filters.week) return false;
@@ -330,7 +135,7 @@ export default function ReferralsTrackerPage() {
       }
       return true;
     });
-  }, [referrals, filters]);
+  }, [tabbedReferrals, filters]);
 
   // Real-time aggregates computed strictly from filtered results
   const metrics = useMemo(() => {
@@ -364,28 +169,26 @@ export default function ReferralsTrackerPage() {
     });
   };
 
-  const handleStatusUpdate = (id, newStatus) => {
-    let targetVal = 0;
-    const updated = referrals.map(r => {
-      if (r.id === id) {
-        targetVal = newStatus === 'Won' ? (r.actualValue || r.estimatedValue) : r.actualValue;
-        return {
-          ...r,
-          status: newStatus,
-          actualValue: targetVal
-        };
+  // Only the receiver (or an admin) may move a referral; choosing Won asks for the deal value first.
+  const handleStatusUpdate = async (id, newStatus) => {
+    const referral = referrals.find(r => r.id === id);
+    if (!referral || !canChangeStatus(referral, myId, isAdmin)) return;
+    let value;
+    if (needsValue(newStatus)) {
+      const typed = window.prompt('सौद्याचे मूल्य (₹):', referral.estimatedValue ? String(referral.estimatedValue) : '');
+      if (typed === null) return; // cancelled
+      if (isAmountTypedButUnreadable(typed)) {
+        alert('कृपया सौद्याचे मूल्य अंकात लिहा, उदा. 50000. स्थिती बदलली गेली नाही.');
+        return; // nothing is sent: the old value must not be kept by mistake
       }
-      return r;
-    });
-    setReferrals(updated);
-    try {
-      localStorage.setItem('cm_referrals_tracker_data', JSON.stringify(updated));
-    } catch (e) {
-      console.error(e);
+      value = asNumberOrUndefined(typed);
     }
-    apiClient.updateReferralStatus(id, newStatus, targetVal).catch(err => {
-      console.warn('Could not sync referral status to API:', err.message);
-    });
+    try {
+      await apiClient.updateReferralStatus(id, newStatus, value);
+      await loadReferrals();
+    } catch (err) {
+      alert('स्थिती बदलताना त्रुटी: ' + (err.message || 'काहीतरी चूक झाली'));
+    }
   };
 
   const exportCSV = () => {
@@ -479,6 +282,39 @@ export default function ReferralsTrackerPage() {
             </Link>
           </div>
         </div>
+
+        {/* Tabs: all / given by me / received by me */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
+          {[
+            { key: 'all', label: 'सर्व' },
+            { key: 'given', label: 'मी दिलेले' },
+            { key: 'received', label: 'मला मिळालेले' }
+          ].map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setTab(item.key)}
+              style={{
+                background: tab === item.key ? '#7C2D12' : '#FFFFFF',
+                color: tab === item.key ? '#FFFFFF' : '#7C2D12',
+                border: '1.5px solid #7C2D12',
+                padding: '8px 18px',
+                borderRadius: '10px',
+                fontWeight: 800,
+                fontSize: '0.9rem',
+                cursor: 'pointer'
+              }}>
+              {item.label}
+            </button>
+          ))}
+          <Link to="/referrals/create" style={{ marginLeft: 'auto', color: '#C2410C', fontWeight: 800, textDecoration: 'none' }}>
+            ➕ नवीन संदर्भ द्या
+          </Link>
+        </div>
+        {loadError && (
+          <div style={{ background: '#FFEBEE', color: '#C62828', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontWeight: 600 }}>
+            ⚠️ {loadError}
+          </div>
+        )}
 
         {/* Real-Time Aggregate KPI Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
@@ -707,11 +543,7 @@ export default function ReferralsTrackerPage() {
                 onChange={e => handleFilterChange('status', e.target.value)}
                 style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #FED7AA', background: '#FFF7ED', color: '#431407', fontSize: '0.88rem', fontWeight: 600 }}>
                 <option value="all">सर्व स्थिती (All)</option>
-                <option value="New">New (नवीन)</option>
-                <option value="Contacted">Contacted (संपर्क)</option>
-                <option value="Qualified">Qualified (पात्र)</option>
-                <option value="Proposal">Proposal (प्रस्ताव)</option>
-                <option value="Won">Won (यशस्वी)</option>
+                {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
 
@@ -772,7 +604,7 @@ export default function ReferralsTrackerPage() {
                   {filteredReferrals.length === 0 ? (
                     <tr>
                       <td colSpan="12" style={{ padding: '48px', textAlign: 'center', color: '#9A3412', background: '#FFFDF9' }}>
-                        निवडलेल्या निकषांनुसार कोणतेही व्यवसाय संदर्भ आढळले नाहीत.
+                        {loading ? 'संदर्भ लोड होत आहेत...' : (referrals.length === 0 ? 'अद्याप कोणताही संदर्भ नाही. "नवीन संदर्भ द्या" वर क्लिक करा.' : 'निवडलेल्या निकषांनुसार कोणतेही व्यवसाय संदर्भ आढळले नाहीत.')}
                       </td>
                     </tr>
                   ) : (
@@ -823,6 +655,8 @@ export default function ReferralsTrackerPage() {
                         <td style={{ padding: '12px', textAlign: 'center' }}>
                           <select
                             value={r.status}
+                            disabled={!canChangeStatus(r, myId, isAdmin)}
+                            title={canChangeStatus(r, myId, isAdmin) ? '' : 'फक्त संदर्भ स्वीकारणारा सदस्य स्थिती बदलू शकतो'}
                             onChange={e => handleStatusUpdate(r.id, e.target.value)}
                             style={{
                               padding: '4px 8px',
@@ -834,11 +668,8 @@ export default function ReferralsTrackerPage() {
                               fontWeight: 700,
                               cursor: 'pointer'
                             }}>
-                            <option value="New">New</option>
-                            <option value="Contacted">Contacted</option>
-                            <option value="Qualified">Qualified</option>
-                            <option value="Proposal">Proposal</option>
-                            <option value="Won">Won 🎉</option>
+                            {!STATUSES.includes(r.status) && <option value={r.status}>{r.status}</option>}
+                            {STATUSES.map(s => <option key={s} value={s}>{s === 'Won' ? 'Won 🎉' : s}</option>)}
                           </select>
                         </td>
                       </tr>
@@ -920,7 +751,7 @@ export default function ReferralsTrackerPage() {
                         {ref.status}
                       </span>
 
-                      {ref.status !== 'Won' && (
+                      {ref.status !== 'Won' && canChangeStatus(ref, myId, isAdmin) && (
                         <button
                           onClick={() => handleStatusUpdate(ref.id, 'Won')}
                           style={{

@@ -192,9 +192,9 @@ export default function AdminERPPage() {
       setNewReferralData({ title: '', value: '', giverName: '', receiverName: '', status: 'active' });
       loadRealtimeData();
     } catch (err) {
-      setReferrals((prev) => [{ id: `REF-${Date.now()}`, ...newReferralData, createdAt: new Date() }, ...prev]);
-      showToast('रेफरल स्थानिकरित्या नोंदवला गेला!', 'success');
-      setNewReferralModal(false);
+      // A referral needs a real customer and a receiver who owns a business: show the server's reason,
+      // never a made-up local row.
+      showToast('रेफरल नोंदवला गेला नाही: ' + (err.message || 'त्रुटी'), 'error');
     }
   };
 

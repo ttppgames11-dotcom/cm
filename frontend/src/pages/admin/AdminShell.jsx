@@ -1352,7 +1352,13 @@ function ReferralsView({ data, setData, toast }) {
 
   const submit = async (e) => {
     e.preventDefault();
-    await adminApi.createReferral(form);
+    try {
+      await adminApi.createReferral(form);
+    } catch (err) {
+      // The server needs a real customer and a receiver who owns a business: show its reason, never a made-up row.
+      toast('रेफरल नोंदवला गेला नाही: ' + (err.message || 'त्रुटी'), 'error');
+      return;
+    }
     setData(prev => ({
       ...prev,
       referrals: [{ id: `REF-${Date.now()}`, ...form, createdAt: new Date() }, ...prev.referrals]

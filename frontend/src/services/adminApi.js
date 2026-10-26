@@ -40,8 +40,8 @@ export const adminApi = {
   // ---- Businesses & Referrals ----
   getBusinesses: () => safe(apiClient.get('/businesses'), [], 'businesses', (res) => res?.businesses || res?.data),
   getReferrals: () => safe(apiClient.get('/sangam/referrals'), [], 'referrals', (res) => res?.referrals || res?.data),
-  createReferral: (payload) =>
-    safe(apiClient.post('/sangam/referrals', payload), { ok: true }),
+  // Not wrapped in safe(): the server refuses an invalid referral and the dashboard must show that, not pretend it worked.
+  createReferral: (payload) => apiClient.post('/sangam/referrals', payload),
 
   // ---- Content CMS ----
   getContent: (type) => safe(apiClient.get(`/admin/content/${type}`), []),
