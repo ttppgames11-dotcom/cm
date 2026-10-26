@@ -15,6 +15,13 @@ public final class BusinessJson {
 
     private BusinessJson() {}
 
+    /** The business as Node sends it; for a logged-in viewer also isMine (absent for anonymous requests, so those replies stay as before). */
+    public static Map<String, Object> business(Business b, String viewerId) {
+        Map<String, Object> out = business(b);
+        if (viewerId != null) out.put("isMine", viewerId.equals(b.getOwnerId()));
+        return out;
+    }
+
     public static Map<String, Object> business(Business b) {
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("id", b.getId());

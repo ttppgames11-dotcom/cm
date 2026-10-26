@@ -12,7 +12,8 @@ public interface BusinessRepository extends JpaRepository<Business, String> {
     /** Every filter optional; text search is a case-insensitive substring (Node's LIKE becomes ILIKE). */
     @Query(nativeQuery = true, value = """
         SELECT * FROM businesses
-        WHERE (CAST(:cat AS TEXT) IS NULL OR cat = CAST(:cat AS TEXT))
+        WHERE (status IS NULL OR status <> 'hidden')
+          AND (CAST(:cat AS TEXT) IS NULL OR cat = CAST(:cat AS TEXT))
           AND (CAST(:district AS TEXT) IS NULL OR district = CAST(:district AS TEXT))
           AND (CAST(:search AS TEXT) IS NULL
                OR name ILIKE CONCAT('%', CAST(:search AS TEXT), '%')
@@ -24,12 +25,35 @@ public interface BusinessRepository extends JpaRepository<Business, String> {
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(nativeQuery = true, value = """
-        INSERT INTO businesses (id, name, owner, cat, city, district, photo, phone, whatsapp, website, hours, services, offers, rating, created_at)
+        INSERT INTO businesses (id, name, owner, cat, city, district, photo, phone, whatsapp, website, hours, services, offers, rating, created_at, owner_id, status)
         VALUES (:id, :name, :owner, :cat, :city, :district, :photo, :phone, :whatsapp, :website, :hours, :services, :offers, 5.0,
-                to_char(now(), 'YYYY-MM-DD HH24:MI:SS'))""")
+                to_char(now(), 'YYYY-MM-DD HH24:MI:SS'), :ownerId, 'visible')""")
     void insertBusiness(@Param("id") String id, @Param("name") String name, @Param("owner") String owner,
                         @Param("cat") String cat, @Param("city") String city, @Param("district") String district,
                         @Param("photo") String photo, @Param("phone") String phone, @Param("whatsapp") String whatsapp,
                         @Param("website") String website, @Param("hours") String hours, @Param("services") String services,
-                        @Param("offers") String offers);
+                        @Param("offers") String offers, @Param("ownerId") String ownerId);
+
+    /** Changes the twelve editable columns (never id, owner_id, status or rating). */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(nativeQuery = true, value = """
+        UPDATE businesses SET name = :name, owner = :owner, cat = :cat, city = :city, district = :district,
+               phone = :phone, whatsapp = :whatsapp, website = :website, hours = :hours, services = :services, offers = :offers
+        WHERE id = :id""")
+    void updateBusiness(@Param("id") String id, @Param("name") String name, @Param("owner") String owner,
+                        @Param("cat") String cat, @Param("city") String city, @Param("district") String district,
+                        @Param("phone") String phone, @Param("whatsapp") String whatsapp, @Param("website") String website,
+                        @Param("hours") String hours, @Param("services") String services, @Param("offers") String offers);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(nativeQuery = true, value = "UPDATE businesses SET owner_id = :ownerId WHERE id = :id")
+    void setOwner(@Param("id") String id, @Param("ownerId") String ownerId);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(nativeQuery = true, value = "UPDATE businesses SET status = :status WHERE id = :id")
+    void setStatus(@Param("id") String id, @Param("status") String status);
+
+    /** A member's own businesses, hidden ones included, newest first. */
+    @Query(nativeQuery = true, value = "SELECT * FROM businesses WHERE owner_id = :ownerId ORDER BY created_at DESC, id DESC")
+    List<Business> findByOwner(@Param("ownerId") String ownerId);
 }

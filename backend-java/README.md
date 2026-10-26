@@ -48,6 +48,10 @@ accounts, passwords and tokens made by one server work on the other.
   login, 403 for members). Node listed them publicly; no public page uses these lists.
 - The public matrimony list leaves out phone numbers (the website does not show them).
 - At most 20 form submissions per IP in 15 minutes (429 after that).
+- Adding a business needs a login (401 without) and records the member as its owner; Node let anyone add one.
+  Hidden businesses (status `hidden`) are left out of the list and are a 404 on their detail page except for
+  the owner and admins. Logged-in viewers get an extra `isMine` field on each business.
+  Tested in `BusinessOwnershipTest`; the Node comparison seeds its businesses instead of creating them.
 - Tested in PortalSecurityTest instead of the Node comparison.
 
 ## Known gaps found while porting
@@ -109,6 +113,15 @@ Rules:
 - A feature may use another feature's service or repository, never its controller.
 
 ## New features (not in Node)
+
+**Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
+
+| Endpoint | Login | |
+|---|---|---|
+| `PUT /api/businesses/{id}` | owner or admin | edit the business (fields left out keep their value) |
+| `PUT /api/businesses/{id}/visibility` | owner or admin | `{ "hidden": true/false }` |
+| `GET /api/businesses/mine` | member | your businesses, hidden ones included |
+| `PUT /api/admin/businesses/{id}/owner` | admin | `{ "memberId": "M1234" }` |
 
 **B2B opportunities** for the website's `/leads` page. Design: `docs/superpowers/specs/2026-10-24-b2b-leads-realtime-design.md`.
 
