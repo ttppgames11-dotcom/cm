@@ -18,6 +18,12 @@ export function roleOf(meeting, memberId) {
 
 const byWhen = (a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`);
 
+// Only a real YYYY-MM-DD date can be compared with today; older rows may hold Marathi text dates.
+const isIsoDate = (text) => /^\d{4}-\d{2}-\d{2}$/.test(text || '');
+
+// The member whose answer a Requested meeting waits for: the one the server names, else the recipient.
+const awaitingOf = (meeting) => meeting.awaiting_id || meeting.recipient_id;
+
 // The four lists the page shows. todayIso is today's date in India as YYYY-MM-DD.
 //   waiting: requests to me that I have not answered; sent: my requests not answered yet;
 //   confirmed: agreed and not yet past; past: everything else, newest first.
@@ -29,8 +35,8 @@ export function groupMeetings(list, memberId, todayIso) {
   for (const meeting of list) {
     const role = roleOf(meeting, memberId);
     if (!role) continue;
-    if (meeting.status === 'Requested') (role === 'recipient' ? waiting : sent).push(meeting);
-    else if (meeting.status === 'Confirmed' && meeting.date >= todayIso) confirmed.push(meeting);
+    if (meeting.status === 'Requested') (awaitingOf(meeting) === memberId ? waiting : sent).push(meeting);
+    else if (meeting.status === 'Confirmed' && isIsoDate(meeting.date) && meeting.date >= todayIso) confirmed.push(meeting);
     else past.push(meeting);
   }
   waiting.sort(byWhen);
@@ -45,10 +51,10 @@ export function actionsFor(meeting, memberId, todayIso) {
   const role = roleOf(meeting, memberId);
   if (!role) return [];
   if (meeting.status === 'Requested') {
-    return role === 'recipient' ? ['accept', 'decline', 'cancel', 'reschedule'] : ['cancel', 'reschedule'];
+    return awaitingOf(meeting) === memberId ? ['accept', 'decline', 'cancel', 'reschedule'] : ['cancel', 'reschedule'];
   }
   if (meeting.status === 'Confirmed') {
-    const actions = meeting.date <= todayIso ? ['complete'] : [];
+    const actions = isIsoDate(meeting.date) && meeting.date <= todayIso ? ['complete'] : [];
     return [...actions, 'cancel', 'reschedule', 'note'];
   }
   if (meeting.status === 'Completed') return ['note'];

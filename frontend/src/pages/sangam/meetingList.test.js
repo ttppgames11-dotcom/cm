@@ -39,6 +39,22 @@ test('requests to me wait, my own requests are sent, confirmed ones are upcoming
   assert.deepEqual(g.past.map((m) => m.id), ['e', 'f', 'd']); // newest date first; a confirmed one in the past is past
 });
 
+test('the person whose answer is awaited gets the request, even after a new time was proposed', () => {
+  const proposed = meeting({ id: 'p', awaiting_id: 'M1' }); // M2 moved the time, so M1 must answer
+  assert.deepEqual(groupMeetings([proposed], 'M1', TODAY).waiting.map((m) => m.id), ['p']);
+  assert.deepEqual(groupMeetings([proposed], 'M2', TODAY).sent.map((m) => m.id), ['p']);
+  assert.deepEqual(actionsFor(proposed, 'M1', TODAY), ['accept', 'decline', 'cancel', 'reschedule']);
+  assert.deepEqual(actionsFor(proposed, 'M2', TODAY), ['cancel', 'reschedule']);
+});
+
+test('an old meeting with a Marathi date is history, never upcoming and never completable', () => {
+  const old = meeting({ id: 'old', status: 'Confirmed', date: '२० ऑक्टोबर २०२६' });
+  const g = groupMeetings([old], 'M1', TODAY);
+  assert.deepEqual(g.confirmed, []);
+  assert.deepEqual(g.past.map((m) => m.id), ['old']);
+  assert.deepEqual(actionsFor(old, 'M1', TODAY), ['cancel', 'reschedule', 'note']);
+});
+
 test('upcoming groups are soonest first', () => {
   const list = [meeting({ id: 'late', date: '2026-12-01' }), meeting({ id: 'soon', date: '2026-11-03' })];
   assert.deepEqual(groupMeetings(list, 'M1', TODAY).sent.map((m) => m.id), ['soon', 'late']);
