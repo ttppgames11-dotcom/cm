@@ -54,7 +54,7 @@ Errors use the existing format `{ success: false, code, error }`.
 | `GET /api/businesses` | anyone | Same reply as today, but hidden businesses are left out |
 | `GET /api/businesses/{id}` | anyone | Same reply as today; a hidden business is 404 for everyone except its owner and admins |
 
-Both list and detail replies gain one field per business, `isMine` (true when the logged-in viewer owns it, false otherwise and when logged out). The existing `owner_id` and `status` fields stay as they are. A bad token on these optional-login endpoints counts as logged out, as elsewhere.
+Both list and detail replies gain one field per business, `isMine` (true when the logged-in viewer owns it, false for someone else's business). It is only present when the request carries a valid login, so replies to anonymous requests stay exactly as they are today (and equal Node's). The existing `owner_id` and `status` fields stay as they are. A bad token on these optional-login endpoints counts as logged out, as elsewhere.
 
 "Admin" means `Roles.isAdmin`. The route `/api/businesses/mine` must not be shadowed by `/{id}`.
 
