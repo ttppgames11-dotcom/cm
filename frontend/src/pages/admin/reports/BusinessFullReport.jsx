@@ -3,22 +3,26 @@ import React, { useState, useMemo } from 'react';
 import GlobalReportFilter from './GlobalReportFilter';
 
 export default function BusinessFullReport({ data, toast }) {
-  const [filter, setFilter] = useState({ state: 'MH', city: 'all', fromDate: '2026-09-01', toDate: '2026-09-30' });
+  const [filter, setFilter] = useState({ state: 'MH', city: 'all', fromDate: '', toDate: '' });
 
-  const bizList = useMemo(() => {
-    return [
-      { id: 'BIZ-101', name: 'सह्याद्री आयटी सोल्युशन्स', owner: 'अमोल तुकाराम जाधव', category: 'IT & Software', city: 'पुणे (Pune)', registeredDate: '2026-09-10', status: 'Verified', chapter: 'पुणे – शिवनेरी चॅप्टर' },
-      { id: 'BIZ-102', name: 'रायगड कन्स्ट्रक्शन व बिल्डर्स', owner: 'विक्रमसिंह मारुती कदम', category: 'Real Estate & Builders', city: 'मुंबई (Mumbai)', registeredDate: '2026-09-14', status: 'Verified', chapter: 'मुंबई – किल्ले रायगड चॅप्टर' },
-      { id: 'BIZ-103', name: 'शिवनेरी टेक्स्टाईल्स व गारमेंट्स', owner: 'प्रियंका सुरेश शिर्के', category: 'Textiles & Fashion', city: 'सातारा (Satara)', registeredDate: '2026-09-18', status: 'Verified', chapter: 'सातारा – प्रतापगड चॅप्टर' },
-      { id: 'BIZ-104', name: 'मराठा ऑटोमोबाईल्स स्पअर्स', owner: 'निलेश भगवान देशमुख', category: 'Manufacturing & Industrial', city: 'नाशिक (Nashik)', registeredDate: '2026-09-22', status: 'Pending Verification', chapter: 'नाशिक – रामशेज चॅप्टर' }
-    ];
-  }, []);
+  // The real businesses from the server. No sample rows: an empty list stays empty.
+  const bizList = useMemo(() => (data?.businesses || []).map((b) => ({
+    id: b.id,
+    name: b.name || '—',
+    owner: b.owner || '—',
+    ownerLinked: Boolean(b.owner_id),
+    category: b.cat || '—',
+    city: b.district || b.city || '—',
+    chapter: b.city || '',
+    registeredDate: String(b.created_at || '').slice(0, 10) || '—',
+    status: b.owner_id ? 'Owner linked' : 'Not claimed'
+  })), [data?.businesses]);
 
   const filteredBiz = useMemo(() => {
     return bizList.filter(b => {
-      if (filter.city !== 'all' && !b.city.includes(filter.city.split(' ')[0])) return false;
-      if (filter.fromDate && b.registeredDate < filter.fromDate) return false;
-      if (filter.toDate && b.registeredDate > filter.toDate) return false;
+      if (filter.city && filter.city !== 'all' && !String(b.city).includes(filter.city.split(' ')[0])) return false;
+      if (filter.fromDate && (b.registeredDate === '—' || b.registeredDate < filter.fromDate)) return false;
+      if (filter.toDate && (b.registeredDate === '—' || b.registeredDate > filter.toDate)) return false;
       return true;
     });
   }, [bizList, filter]);
@@ -53,15 +57,15 @@ export default function BusinessFullReport({ data, toast }) {
           <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#431407', marginTop: '4px' }}>{filteredBiz.length}</div>
         </div>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
-          <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>सत्यापित (Verified Businesses)</div>
+          <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>मालक जोडलेले (Owner linked)</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#16A34A', marginTop: '4px' }}>
-            {filteredBiz.filter(b => b.status === 'Verified').length}
+            {filteredBiz.filter(b => b.ownerLinked).length}
           </div>
         </div>
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
-          <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>प्रलंबित पडताळणी</div>
+          <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>मालक नसलेले (Not claimed)</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#D97706', marginTop: '4px' }}>
-            {filteredBiz.filter(b => b.status.includes('Pending')).length}
+            {filteredBiz.filter(b => !b.ownerLinked).length}
           </div>
         </div>
       </div>
@@ -108,8 +112,8 @@ export default function BusinessFullReport({ data, toast }) {
                   <td style={{ padding: '12px 16px' }}>
                     <span style={{
                       padding: '3px 10px', borderRadius: '12px', fontSize: '0.74rem', fontWeight: 800,
-                      background: b.status === 'Verified' ? '#DCFCE7' : '#FEF3C7',
-                      color: b.status === 'Verified' ? '#166534' : '#92400E'
+                      background: b.ownerLinked ? '#DCFCE7' : '#FEF3C7',
+                      color: b.ownerLinked ? '#166534' : '#92400E'
                     }}>
                       {b.status}
                     </span>
