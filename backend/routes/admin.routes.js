@@ -1973,16 +1973,21 @@ router.put('/community-centers/:id', authenticateToken, requireRole('admin', 'ce
   const { name, tier, division, district, taluka, address, contactPerson, contactPhone, partnerName, investmentTier, status } = req.body;
   const updates = {};
   if (name) updates.name = sanitize(name);
-  if (tier) updates.tier = sanitize(tier);
-  if (division) updates.division = sanitize(division);
-  if (district) updates.district = sanitize(district);
-  if (taluka) updates.taluka = sanitize(taluka);
+  // Where a unit sits (level, area, status) decides who can see its data, so only platform admins may move it.
+  if (putScope.kind === 'global') {
+    if (tier) updates.tier = sanitize(tier);
+    if (division) updates.division = sanitize(division);
+    if (district) updates.district = sanitize(district);
+    if (taluka) updates.taluka = sanitize(taluka);
+  } else if (tier || division || district || taluka || status) {
+    return sendError(res, 'युनिटचे स्तर, क्षेत्र किंवा स्थिती फक्त प्लॅटफॉर्म अॅडमिन बदलू शकतो.', 'FORBIDDEN_FIELDS', 403);
+  }
   if (address !== undefined) updates.address = sanitize(address);
   if (contactPerson) updates.contactPerson = sanitize(contactPerson);
   if (contactPhone) updates.contactPhone = cleanPhone(contactPhone);
   if (partnerName) updates.partnerName = sanitize(partnerName);
   if (investmentTier) updates.investmentTier = sanitize(investmentTier);
-  if (status) updates.status = sanitize(status);
+  if (status && putScope.kind === 'global') updates.status = sanitize(status);
   updates.updated_at = new Date().toISOString();
 
   const updatedCenter = db.update('communityCenters', id, updates);
@@ -2048,6 +2053,19 @@ router.post('/center-action', authenticateToken, (req, res) => {
   }
   if (!canWriteActivities(actionScope, center)) {
     return sendError(res, 'या केंद्राची कृती नोंदवण्याचा अधिकार नाही.', 'FORBIDDEN', 403);
+  }
+
+  const CENTER_MONEY_ROLES = ['superadmin', 'admin', 'finance_officer', 'finance', 'center_manager', 'center_admin', 'state_admin'];
+  if (actionType === 'collection') {
+    const money = Number(amount);
+    if (!CENTER_MONEY_ROLES.includes(String(req.user.role || '').toLowerCase())) {
+      return sendError(res, 'आर्थिक नोंद फक्त वित्त अधिकारी किंवा केंद्र व्यवस्थापक करू शकतात.', 'FORBIDDEN_FINANCE_ROLE', 403);
+    }
+    if (!Number.isFinite(money) || money <= 0 || money > 10000000) {
+      return sendError(res, 'वैध रक्कम आवश्यक आहे.', 'INVALID_AMOUNT', 400);
+    }
+  } else if (!['visitor_checkin', 'kyc_verified', 'branch_meeting', 'desk_case'].includes(actionType)) {
+    return sendError(res, 'अवैध कृती प्रकार.', 'INVALID_ACTION', 400);
   }
 
   const updates = {};

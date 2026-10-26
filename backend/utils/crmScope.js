@@ -94,7 +94,7 @@ export function resolveScope(account) {
     // The role has to match the binding: if a platform admin changes an owner/staff role to something else,
     // the unit access is withdrawn with it.
     const isOwner = account.unitRole === 'owner';
-    const roleOk = isOwner ? OWNER_ROLES.includes(role) : role === STAFF_ROLE;
+    const roleOk = isOwner ? OWNER_ROLES.includes(role) : (role === STAFF_ROLE || role === 'branch_head');
     if (unit && isHierarchyUnit(unit) && unit.status !== 'archived' && roleOk) {
       return { kind: 'unit', unit, unitRole: isOwner ? 'owner' : 'staff', account };
     }
