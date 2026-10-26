@@ -71,7 +71,8 @@ public class BusinessService {
         Object name = body.get("name");
         Object owner = body.get("owner");
         Object cat = body.get("cat");
-        if (!Js.truthy(name) || !Js.truthy(owner) || !Js.truthy(cat)) {
+        if (!Js.truthy(name) || !Js.truthy(owner) || !Js.truthy(cat)
+                || Js.string(name).isBlank() || Js.string(owner).isBlank() || Js.string(cat).isBlank()) {
             throw ApiException.plain(HttpStatus.BAD_REQUEST, "व्यवसायाचे नाव, मालकाचे नाव आणि वर्गवारी आवश्यक आहे.");
         }
         String category = Js.string(cat);
@@ -170,7 +171,11 @@ public class BusinessService {
     }
 
     @Transactional
-    public Map<String, Object> addReview(String businessId, Map<String, Object> body) {
+    public Map<String, Object> addReview(CurrentUser viewer, String businessId, Map<String, Object> body) {
+        // A hidden business is frozen for outsiders, and looks exactly like a missing one.
+        businesses.findById(businessId)
+            .filter(found -> !isHidden(found) || canManage(viewer, found))
+            .orElseThrow(BusinessService::notFound);
         Object rating = body.get("rating");
         reviews.insertReview(Ids.millis("REV-", reviews::existsById), businessId,
             Js.orElse(body.get("member_name"), "सदस्य"), Js.truthy(rating) ? Js.string(rating) : "5",

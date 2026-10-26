@@ -68,7 +68,7 @@ public class BusinessController {
     }
 
     @PostMapping("/{id}/reviews")
-    public ResponseEntity<Map<String, Object>> review(@PathVariable String id, HttpServletRequest req) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(businesses.addReview(id, bodies.read(req)));
+    public ResponseEntity<Map<String, Object>> review(CurrentUser user, @PathVariable String id, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(businesses.addReview(user, id, bodies.read(req)));
     }
 }

@@ -330,4 +330,35 @@ class BusinessOwnershipTest extends PostgresTestBase {
         edit(token("M9502", "member"), id, Map.of("phone", "9800000003")).andExpect(status().isOk());
         edit(token("M9501", "member"), id, Map.of("phone", "9800000004")).andExpect(status().isForbidden());
     }
+
+    // ------------------------------------------------------------------ review fixes
+
+    ResultActions review(String token, String id) throws Exception {
+        MockHttpServletRequestBuilder req = post("/api/businesses/" + id + "/reviews").contentType(MediaType.APPLICATION_JSON)
+            .content(json.writeValueAsBytes(Map.of("member_name", "Rao", "rating", "4", "text", "ok")));
+        if (token != null) req.header("Authorization", token);
+        return mvc.perform(req);
+    }
+
+    @Test
+    void hiddenBusinessCannotBeReviewedByOutsiders() throws Exception {
+        String id = added(token("M9501", "member"), "Zo Frozen");
+        visibility(token("M9501", "member"), id, Map.of("hidden", true)).andExpect(status().isOk());
+        review(null, id).andExpect(status().isNotFound()).andExpect(jsonPath("$.error").value(NOT_FOUND));
+        review(token("M9502", "member"), id).andExpect(status().isNotFound());
+        review(token("M9501", "member"), id).andExpect(status().isCreated());
+        review(null, "B0").andExpect(status().isNotFound());
+        visibility(token("M9501", "member"), id, Map.of("hidden", false)).andExpect(status().isOk());
+        review(null, id).andExpect(status().isCreated());
+    }
+
+    @Test
+    void addRejectsABlankNameOwnerOrCategory() throws Exception {
+        for (String field : List.of("name", "owner", "cat")) {
+            Map<String, Object> body = business("Zo Blank");
+            body.put(field, "   ");
+            add(token("M9501", "member"), body).andExpect(status().isBadRequest()).andExpect(jsonPath("$.error").value(NO_FIELDS));
+        }
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM businesses WHERE name LIKE 'Zo Blank%'", Integer.class)).isZero();
+    }
 }
