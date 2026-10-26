@@ -638,7 +638,7 @@ export default function AdminShell() {
               <Route path="/" element={<Dashboard data={data} navigate={navigate} />} />
 
               {/* Full Module Reports */}
-              <Route path="/users/report" element={<UsersFullReport />} />
+              <Route path="/users/report" element={<UsersFullReport data={data} toast={toast$} />} />
               <Route path="/kyc/report" element={<KYCFullReport />} />
               <Route path="/business/report" element={<BusinessFullReport />} />
               <Route path="/b2b/referrals/report" element={<div style={{ padding: 20 }}><ReferralReportPanel /></div>} />

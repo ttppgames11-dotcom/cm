@@ -21,8 +21,8 @@ const STATES = [
 export default function GlobalReportFilter({ onApply, onExport, reportTitle = 'अहवाल' }) {
   const [selectedState, setSelectedState] = useState('MH');
   const [selectedCity, setSelectedCity] = useState('all');
-  const [fromDate, setFromDate] = useState('2026-09-01');
-  const [toDate, setToDate] = useState('2026-09-30');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [dateError, setDateError] = useState('');
 
   // Validate dates
@@ -50,11 +50,11 @@ export default function GlobalReportFilter({ onApply, onExport, reportTitle = '�
   const handleReset = () => {
     setSelectedState('MH');
     setSelectedCity('all');
-    setFromDate('2026-09-01');
-    setToDate('2026-09-30');
+    setFromDate('');
+    setToDate('');
     setDateError('');
     if (onApply) {
-      onApply({ state: 'MH', city: 'all', fromDate: '2026-09-01', toDate: '2026-09-30' });
+      onApply({ state: 'MH', city: 'all', fromDate: '', toDate: '' });
     }
   };
 

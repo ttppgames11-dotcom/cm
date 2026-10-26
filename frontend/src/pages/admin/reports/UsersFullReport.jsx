@@ -3,27 +3,33 @@ import React, { useState, useMemo } from 'react';
 import GlobalReportFilter from './GlobalReportFilter';
 
 export default function UsersFullReport({ data, toast }) {
-  const [filter, setFilter] = useState({ state: 'MH', city: 'all', fromDate: '2026-09-01', toDate: '2026-09-30' });
+  const [filter, setFilter] = useState({ state: 'MH', city: 'all', fromDate: '', toDate: '' });
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // Mock initial users dataset if data.users empty
-  const usersList = useMemo(() => {
-    if (data?.users && data.users.length > 0) return data.users;
-    return [
-      { id: 'CM-1001', name: 'अमोल तुकाराम जाधव', phone: '+९१ ९८२२० ११९२४', role: 'MEMBER', type: 'Premium', state: 'MH', city: 'पुणे (Pune)', registeredAt: '2026-09-12', status: 'Verified', kycStatus: 'Approved', referrals: 12450 },
-      { id: 'CM-1002', name: 'प्रियंका सुरेश शिर्के', phone: '+९१ ९४२१२ ३३००९', role: 'CHAPTER_PRESIDENT', type: 'Business', state: 'MH', city: 'सातारा (Satara)', registeredAt: '2026-09-15', status: 'Verified', kycStatus: 'Approved', referrals: 18200 },
-      { id: 'CM-1003', name: 'निलेश भगवान देशमुख', phone: '+९१ ९८९०० ७७३६१', role: 'TALUKA_COORDINATOR', type: 'Standard', state: 'MH', city: 'नाशिक (Nashik)', registeredAt: '2026-09-18', status: 'Pending', kycStatus: 'Under Review', referrals: 15600 },
-      { id: 'CM-1004', name: 'कविता बाळकृष्ण भोसले', phone: '+९१ ९७६५४ ११२३०', role: 'SEVA_HEAD', type: 'Volunteer', state: 'MH', city: 'छत्रपती संभाजीनगर (Chhatrapati Sambhajinagar)', registeredAt: '2026-09-20', status: 'Verified', kycStatus: 'Approved', referrals: 8900 },
-      { id: 'CM-1005', name: 'संदीप मारुती कदम', phone: '+९१ ९१५८० ९९८११', role: 'DISTRICT_COORDINATOR', type: 'Lifetime', state: 'MH', city: 'कोल्हापूर (Kolhapur)', registeredAt: '2026-09-22', status: 'Verified', kycStatus: 'Approved', referrals: 24100 }
-    ];
-  }, [data?.users]);
+  // The real members from the server (admin list), shaped for this report. No sample rows: an empty list stays empty.
+  const usersList = useMemo(() => (data?.users || []).map((u) => {
+    const verified = u.verified === true || u.verified_profile === 1;
+    return {
+      id: u.id,
+      name: u.name || '—',
+      phone: u.phone || '',
+      role: String(u.role || 'member').toUpperCase(),
+      business: u.business || '',
+      state: u.state || '',
+      city: u.district || u.city || '—',
+      registeredAt: String(u.created_at || u.joined || '').slice(0, 10) || '—',
+      status: verified ? 'Verified' : 'Pending',
+      kycStatus: verified ? 'Approved' : 'Pending',
+      referrals: Number(u.total_referrals) || 0
+    };
+  }), [data?.users]);
 
   // Filtered dataset based on Global Filters
   const filteredUsers = useMemo(() => {
     return usersList.filter(u => {
-      if (filter.city !== 'all' && !u.city.includes(filter.city.split(' ')[0])) return false;
-      if (filter.fromDate && u.registeredAt < filter.fromDate) return false;
-      if (filter.toDate && u.registeredAt > filter.toDate) return false;
+      if (filter.city && filter.city !== 'all' && !String(u.city).includes(filter.city.split(' ')[0])) return false;
+      if (filter.fromDate && (u.registeredAt === '—' || u.registeredAt < filter.fromDate)) return false;
+      if (filter.toDate && (u.registeredAt === '—' || u.registeredAt > filter.toDate)) return false;
       return true;
     });
   }, [usersList, filter]);
@@ -58,7 +64,7 @@ export default function UsersFullReport({ data, toast }) {
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
           <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>एकूण नोंदणीकृत सदस्य</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#431407', marginTop: '4px' }}>{filteredUsers.length}</div>
-          <div style={{ fontSize: '0.7rem', color: '#16A34A', fontWeight: 700, marginTop: '4px' }}>१००% सत्यापित डेटाबेसमधून</div>
+          <div style={{ fontSize: '0.7rem', color: '#16A34A', fontWeight: 700, marginTop: '4px' }}>डेटाबेसमधील नोंदणी</div>
         </div>
 
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
@@ -78,11 +84,11 @@ export default function UsersFullReport({ data, toast }) {
         </div>
 
         <div style={{ background: '#FFFFFF', border: '1px solid #FED7AA', borderRadius: '12px', padding: '16px' }}>
-          <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>व्यवसाय / B2B सदस्य</div>
+          <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>व्यवसाय नोंदवलेले सदस्य</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#EA580C', marginTop: 4 }}>
-            {filteredUsers.filter(u => u.type === 'Business').length || 1}
+            {filteredUsers.filter(u => u.business).length}
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#EA580C', fontWeight: 700, marginTop: '4px' }}>B2B चॅप्टर जोडणी</div>
+          <div style={{ fontSize: '0.7rem', color: '#EA580C', fontWeight: 700, marginTop: '4px' }}>व्यवसाय नोंदवलेले</div>
         </div>
       </div>
 
