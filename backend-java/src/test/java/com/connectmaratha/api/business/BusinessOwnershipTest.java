@@ -299,4 +299,35 @@ class BusinessOwnershipTest extends PostgresTestBase {
         visibility(token("M9509", "admin"), id, Map.of("hidden", true)).andExpect(status().isOk());
         assertThat(row(id).get("status")).isEqualTo("hidden");
     }
+
+    // ------------------------------------------------------------------ admin assigns an owner
+
+    ResultActions assign(String token, String id, Map<String, Object> body) throws Exception {
+        MockHttpServletRequestBuilder req = put("/api/admin/businesses/" + id + "/owner").contentType(MediaType.APPLICATION_JSON)
+            .content(json.writeValueAsBytes(body));
+        if (token != null) req.header("Authorization", token);
+        return mvc.perform(req);
+    }
+
+    @Test
+    void adminAssignsAnOwnerWhoCanThenEdit() throws Exception {
+        String id = added(token("M9501", "member"), "Zo Handover");
+        assign(token("M9502", "member"), id, Map.of("memberId", "M9502")).andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.code").value("ADMIN_ONLY"));
+        assign(null, id, Map.of("memberId", "M9502")).andExpect(status().isUnauthorized());
+        assign(token("M9509", "admin"), id, Map.of("memberId", "M0000")).andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value("MEMBER_NOT_FOUND"));
+        assign(token("M9509", "admin"), "B0", Map.of("memberId", "M9502")).andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.error").value(NOT_FOUND));
+        assign(token("M9509", "admin"), id, Map.of()).andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+        assertThat(row(id).get("owner_id")).isEqualTo("M9501");
+
+        assign(token("M9509", "admin"), id, Map.of("memberId", "M9502")).andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.business.owner_id").value("M9502"));
+        assertThat(row(id).get("owner_id")).isEqualTo("M9502");
+        edit(token("M9502", "member"), id, Map.of("phone", "9800000003")).andExpect(status().isOk());
+        edit(token("M9501", "member"), id, Map.of("phone", "9800000004")).andExpect(status().isForbidden());
+    }
 }

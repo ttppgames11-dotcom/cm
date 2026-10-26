@@ -12,6 +12,7 @@ import com.connectmaratha.api.common.util.Ids;
 import com.connectmaratha.api.common.util.Js;
 import com.connectmaratha.api.common.validation.Rule;
 import com.connectmaratha.api.common.validation.SchemaValidator;
+import com.connectmaratha.api.member.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -30,10 +31,12 @@ public class BusinessService {
 
     private final BusinessRepository businesses;
     private final BusinessReviewRepository reviews;
+    private final MemberRepository members;
 
-    public BusinessService(BusinessRepository businesses, BusinessReviewRepository reviews) {
+    public BusinessService(BusinessRepository businesses, BusinessReviewRepository reviews, MemberRepository members) {
         this.businesses = businesses;
         this.reviews = reviews;
+        this.members = members;
     }
 
     public Map<String, Object> list(CurrentUser viewer, String cat, String district, String search) {
@@ -133,6 +136,25 @@ public class BusinessService {
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("success", true);
         out.put("business", BusinessJson.business(businesses.findById(id).orElseThrow(), user.id()));
+        return out;
+    }
+
+    private static final Map<String, Rule> ASSIGN_OWNER = Map.of("memberId", Rule.string().required());
+
+    /** Admins only: hands a business to another member. */
+    @Transactional
+    public Map<String, Object> assignOwner(CurrentUser admin, String id, Map<String, Object> body) {
+        if (!Roles.isAdmin(admin)) throw ApiException.forbidden("ADMIN_ONLY", "फक्त प्रशासकांना परवानगी आहे. (Admins only)");
+        SchemaValidator.check(body, ASSIGN_OWNER, false, null);
+        businesses.findById(id).orElseThrow(BusinessService::notFound);
+        String memberId = Js.textOrEmpty(body.get("memberId")).trim();
+        if (!members.existsById(memberId)) {
+            throw ApiException.notFound("MEMBER_NOT_FOUND", "सदस्य आढळला नाही (Member not found).");
+        }
+        businesses.setOwner(id, memberId);
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("success", true);
+        out.put("business", BusinessJson.business(businesses.findById(id).orElseThrow(), admin.id()));
         return out;
     }
 

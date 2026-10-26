@@ -46,6 +46,10 @@ public interface BusinessRepository extends JpaRepository<Business, String> {
                         @Param("hours") String hours, @Param("services") String services, @Param("offers") String offers);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(nativeQuery = true, value = "UPDATE businesses SET owner_id = :ownerId WHERE id = :id")
+    void setOwner(@Param("id") String id, @Param("ownerId") String ownerId);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(nativeQuery = true, value = "UPDATE businesses SET status = :status WHERE id = :id")
     void setStatus(@Param("id") String id, @Param("status") String status);
 
