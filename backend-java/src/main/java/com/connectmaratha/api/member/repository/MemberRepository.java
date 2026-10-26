@@ -37,7 +37,9 @@ public interface MemberRepository extends JpaRepository<Member, String> {
 
     /**
      * Referral code check: reference/referral code, member id, or a 10-digit phone.
-     * idCode is the code as a member id (an old dashboard code CM-M1234 means M1234).
+     * idCode is the code as a member id (an old dashboard code CM-M1234 means M1234). idDigits is set for a
+     * REF-96K-&lt;digits&gt; code: a member with no saved code is shown exactly that code (made from the digits of
+     * the id), so it must be accepted too. A saved code always wins over one made from the digits.
      */
     @Query(nativeQuery = true, value = """
         SELECT * FROM members
@@ -45,9 +47,11 @@ public interface MemberRepository extends JpaRepository<Member, String> {
            OR UPPER(referral_id) = :code
            OR UPPER(id) = :idCode
            OR (:digits10 != '' AND SUBSTR(phone, -10) = :digits10)
+           OR (:idDigits != '' AND COALESCE(reference_id, '') = '' AND regexp_replace(id, '[^0-9]', '', 'g') = :idDigits)
+        ORDER BY CASE WHEN COALESCE(reference_id, '') = '' THEN 1 ELSE 0 END
         LIMIT 1""")
     Optional<Member> findReferrer(@Param("code") String upperCode, @Param("idCode") String idCode,
-                                  @Param("digits10") String digits10);
+                                  @Param("digits10") String digits10, @Param("idDigits") String idDigits);
 
     /** Registration duplicate check (only non-empty values, exact match). */
     @Query(nativeQuery = true, value = """
