@@ -1,11 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
+import { useEnquiryStream } from '../../hooks/useEnquiryStream';
+import {
+  statusLabel, listParams, addEnquiry, updateEnquiry, concernsMe, isNewQuoteForMe, FILTER_DISTRICTS, FORM_DISTRICTS
+} from './enquiryList';
 
 export default function BusinessLeadsPortalPage() {
   const { user } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
+
+  // 'all' = every requirement, 'mine' = the member's own requirements with the quotes received
+  const [activeTab, setActiveTab] = useState('all');
+  const [myEnquiries, setMyEnquiries] = useState([]);
+  const [myLoading, setMyLoading] = useState(false);
 
   const [enquiries, setEnquiries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +42,7 @@ export default function BusinessLeadsPortalPage() {
     clientName: user?.name || '',
     phone: user?.phone || '',
     category: 'इंटेरियर व बांधकाम',
-    city: 'पुणे',
+    city: '',
     district: 'पुणे',
     budget: '',
     description: ''
@@ -42,13 +53,15 @@ export default function BusinessLeadsPortalPage() {
     loadEnquiries();
   }, [selectedDistrict, selectedCategory]);
 
+  useEffect(() => {
+    if (user) loadMine();
+    else setMyEnquiries([]);
+  }, [user]);
+
   const loadEnquiries = async () => {
     setLoading(true);
     try {
-      const res = await api.enquiries.getAll({
-        district: selectedDistrict !== 'सर्व' ? selectedDistrict : undefined,
-        category: selectedCategory !== 'सर्व' ? selectedCategory : undefined
-      });
+      const res = await api.enquiries.getAll(listParams({ district: selectedDistrict, category: selectedCategory }));
       if (res && res.enquiries) {
         setEnquiries(res.enquiries);
       }
@@ -57,6 +70,55 @@ export default function BusinessLeadsPortalPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadMine = async () => {
+    if (!user) return;
+    setMyLoading(true);
+    try {
+      const res = await api.enquiries.mine();
+      setMyEnquiries(res?.enquiries || []);
+    } catch (err) {
+      console.error('Error fetching my requirements:', err);
+    } finally {
+      setMyLoading(false);
+    }
+  };
+
+  const toggleStatus = async (enq) => {
+    try {
+      await api.enquiries.setStatus(enq.id, enq.status === 'open' ? 'closed' : 'open');
+      loadMine();
+      loadEnquiries();
+    } catch (err) {
+      alert('स्थिती बदलताना त्रुटी: ' + (err.message || 'काहीतरी चूक झाली'));
+    }
+  };
+
+  // Live updates. Decisions are made from the latest lists (refs), outside the state
+  // updater, because React may run an updater twice (StrictMode) and toast twice.
+  const enquiriesRef = useRef(enquiries);
+  enquiriesRef.current = enquiries;
+  const myEnquiriesRef = useRef(myEnquiries);
+  myEnquiriesRef.current = myEnquiries;
+  const filtersRef = useRef({});
+  filtersRef.current = { district: selectedDistrict, category: selectedCategory };
+
+  const { connected } = useEnquiryStream({
+    onCreated: (card) => setEnquiries((list) => addEnquiry(list, card, filtersRef.current)),
+    onUpdated: (update) => {
+      const known = enquiriesRef.current.concat(myEnquiriesRef.current);
+      if (isNewQuoteForMe(known, update)) showToast('नवीन कोटेशन मिळाले!', 'success');
+      if (concernsMe(known, update)) loadMine();
+      setEnquiries((list) => updateEnquiry(list, update));
+    },
+    onReconnect: () => loadEnquiries()
+  });
+
+  const requireLogin = (message) => {
+    alert(message);
+    sessionStorage.setItem('cm_login_redirect', '/leads');
+    navigate(`/login?redirect=${encodeURIComponent('/leads')}`);
   };
 
   const handleQuoteSubmit = async (e) => {
@@ -93,12 +155,13 @@ export default function BusinessLeadsPortalPage() {
         clientName: user?.name || '',
         phone: user?.phone || '',
         category: 'इंटेरियर व बांधकाम',
-        city: 'पुणे',
+        city: '',
         district: 'पुणे',
         budget: '',
         description: ''
       });
       loadEnquiries();
+      loadMine();
     } catch (err) {
       alert('Enquiry प्रसिद्ध करताना त्रुटी: ' + (err.message || 'काहीतरी चूक झाली'));
     } finally {
@@ -157,6 +220,18 @@ export default function BusinessLeadsPortalPage() {
               <span style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 800 }}>
                 महाराष्ट्र B2B व्यवसाय दालन
               </span>
+              <span
+                title={connected ? 'नवीन मागण्या व कोटेशन्स आपोआप दिसतात' : 'थेट अपडेट्सशी जोडत आहे'}
+                style={{
+                  background: connected ? '#16A34A' : 'rgba(255,255,255,0.25)',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontSize: '0.78rem',
+                  fontWeight: 800
+                }}
+              >
+                {connected ? '● लाइव्ह' : '● जोडत आहे…'}
+              </span>
             </div>
             <h1 style={{ margin: '0 0 10px', fontSize: 'clamp(1.8rem, 3.2vw, 2.5rem)', fontFamily: 'Baloo 2', fontWeight: 900 }}>
               🏢 ग्राहक Enquiries व B2B व्यावसायिक Leads
@@ -201,7 +276,13 @@ export default function BusinessLeadsPortalPage() {
 
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
             <button
-              onClick={() => setShowNewEnquiryModal(true)}
+              onClick={() => {
+                if (!user) {
+                  requireLogin('मागणी नोंदवण्यासाठी कृपया आधी लॉगिन करा.');
+                  return;
+                }
+                setShowNewEnquiryModal(true);
+              }}
               style={{
                 background: 'linear-gradient(135deg, #EA580C, #C2410C)',
                 color: '#FFFFFF',
@@ -238,12 +319,42 @@ export default function BusinessLeadsPortalPage() {
           </div>
         </div>
 
+        {/* 2b. Tabs: all requirements / my requirements */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+          {[
+            { key: 'all', label: '🚀 सर्व संधी' },
+            ...(user ? [{ key: 'mine', label: `📋 माझ्या मागण्या${myEnquiries.length ? ` (${myEnquiries.length})` : ''}` }] : [])
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => {
+                setActiveTab(tab.key);
+                if (tab.key === 'mine') loadMine();
+              }}
+              style={{
+                background: activeTab === tab.key ? '#431407' : '#FFFFFF',
+                color: activeTab === tab.key ? '#FFFFFF' : '#431407',
+                border: '1.5px solid #431407',
+                padding: '8px 18px',
+                borderRadius: '10px',
+                fontWeight: 800,
+                fontSize: '0.9rem',
+                cursor: 'pointer'
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === 'all' && (
+        <>
         {/* 3. Filters */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '24px' }}>
           <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#78350F', alignSelf: 'center', marginRight: '6px' }}>
             📍 जिल्हा निवडा:
           </span>
-          {['सर्व', 'पुणे', 'मुंबई', 'नाशिक', 'कोल्हापूर', 'छत्रपती संभाजीनगर', 'सातारा', 'नागपूर'].map((d) => (
+          {FILTER_DISTRICTS.map((d) => (
             <button
               key={d}
               onClick={() => setSelectedDistrict(d)}
@@ -317,14 +428,14 @@ export default function BusinessLeadsPortalPage() {
                     {enq.category || 'व्यावसायिक लीड'}
                   </span>
                   <span style={{
-                    background: enq.status === 'पूर्ण (Closed)' ? '#F1F5F9' : '#DCFCE7',
-                    color: enq.status === 'पूर्ण (Closed)' ? '#64748B' : '#15803D',
+                    background: enq.status === 'closed' ? '#F1F5F9' : '#DCFCE7',
+                    color: enq.status === 'closed' ? '#64748B' : '#15803D',
                     padding: '3px 10px',
                     borderRadius: '6px',
                     fontSize: '0.74rem',
                     fontWeight: 800
                   }}>
-                    ● {enq.status || 'सक्रिय (Open)'}
+                    ● {statusLabel(enq.status)}
                   </span>
                 </div>
 
@@ -355,6 +466,18 @@ export default function BusinessLeadsPortalPage() {
                   <span style={{ fontSize: '0.78rem', color: '#64748B' }}>
                     कोटेशन्स: <strong>{enq.quotesCount || (enq.quotes ? enq.quotes.length : 0)}</strong>
                   </span>
+                  {enq.isMine ? (
+                    <span style={{
+                      background: '#E0F2FE',
+                      color: '#0369A1',
+                      padding: '7px 14px',
+                      borderRadius: '10px',
+                      fontSize: '0.84rem',
+                      fontWeight: 800
+                    }}>
+                      तुमची मागणी
+                    </span>
+                  ) : enq.status === 'closed' ? null : (
                   <button
                     onClick={() => {
                       if (!user) {
@@ -383,12 +506,98 @@ export default function BusinessLeadsPortalPage() {
                       boxShadow: '0 2px 8px rgba(234, 88, 12, 0.2)'
                     }}
                   >
-                    कोटेशन / प्रतिसाद द्या ➔
+                    {enq.quotedByMe ? 'कोटेशन अपडेट करा ➔' : 'कोटेशन / प्रतिसाद द्या ➔'}
                   </button>
+                  )}
                 </div>
               </div>
             ))}
           </div>
+        )}
+        </>
+        )}
+
+        {/* 5. My requirements, with the quotes received */}
+        {activeTab === 'mine' && (
+          myLoading && myEnquiries.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '12px' }}>⏳</div>
+              <p style={{ fontWeight: 800 }}>तुमच्या मागण्या लोड होत आहेत...</p>
+            </div>
+          ) : myEnquiries.length === 0 ? (
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', padding: '50px 20px', textAlign: 'center', border: '1.5px dashed #CBD5E1' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>📋</div>
+              <h3 style={{ margin: '0 0 8px', color: '#334155', fontFamily: 'Baloo 2' }}>तुम्ही अद्याप कोणतीही मागणी नोंदवलेली नाही</h3>
+              <p style={{ color: '#64748B', fontSize: '0.92rem', margin: 0 }}>
+                "नवीन Enquiry नोंदवा" वर क्लिक करून तुमची गरज सांगा; व्यावसायिकांची कोटेशन्स येथे दिसतील.
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: '18px' }}>
+              {myEnquiries.map((enq) => (
+                <div key={enq.id} style={{ background: '#FFFFFF', borderRadius: '18px', border: '1.5px solid #FFEDD5', padding: '22px', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: 'wrap', marginBottom: '14px' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1.2rem', fontFamily: 'Baloo 2', color: '#1E293B', margin: '0 0 6px' }}>{enq.title}</h3>
+                      <span style={{
+                        background: enq.status === 'closed' ? '#F1F5F9' : '#DCFCE7',
+                        color: enq.status === 'closed' ? '#64748B' : '#15803D',
+                        padding: '3px 10px',
+                        borderRadius: '6px',
+                        fontSize: '0.74rem',
+                        fontWeight: 800
+                      }}>
+                        ● {statusLabel(enq.status)}
+                      </span>
+                      <span style={{ marginLeft: '10px', fontSize: '0.8rem', color: '#64748B' }}>
+                        📍 {enq.city || enq.district} · 💰 {enq.budget || 'चर्चेनुसार'}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => toggleStatus(enq)}
+                      style={{
+                        background: enq.status === 'open' ? '#FFFFFF' : '#16A34A',
+                        color: enq.status === 'open' ? '#B91C1C' : '#FFFFFF',
+                        border: enq.status === 'open' ? '1.5px solid #FCA5A5' : '1.5px solid #16A34A',
+                        padding: '8px 16px',
+                        borderRadius: '10px',
+                        fontWeight: 800,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {enq.status === 'open' ? '✔ मागणी बंद करा' : '↺ पुन्हा सुरू करा'}
+                    </button>
+                  </div>
+
+                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#78350F', marginBottom: '8px' }}>
+                    मिळालेली कोटेशन्स ({enq.quotes ? enq.quotes.length : 0})
+                  </div>
+                  {!enq.quotes || enq.quotes.length === 0 ? (
+                    <p style={{ margin: 0, color: '#64748B', fontSize: '0.88rem' }}>अद्याप कोटेशन नाही</p>
+                  ) : (
+                    <div style={{ display: 'grid', gap: '10px' }}>
+                      {enq.quotes.map((q) => (
+                        <div key={q.id} style={{ background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: '12px', padding: '12px 14px', fontSize: '0.86rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+                            <strong style={{ color: '#1E293B' }}>{q.businessName}{q.ownerName ? ` · ${q.ownerName}` : ''}</strong>
+                            <strong style={{ color: '#C2410C' }}>💰 {q.quoteAmount || 'चर्चेनुसार'}</strong>
+                          </div>
+                          {q.proposalNotes && <p style={{ margin: '6px 0', color: '#475569', lineHeight: 1.5 }}>{q.proposalNotes}</p>}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap', marginTop: '6px' }}>
+                            <a href={`tel:${q.phone}`} style={{ color: '#0284C7', fontWeight: 800, textDecoration: 'none' }}>📞 {q.phone}</a>
+                            <span style={{ color: '#94A3B8', fontSize: '0.78rem' }}>
+                              {q.updatedAt ? new Date(q.updatedAt).toLocaleString('mr-IN') : ''}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )
         )}
 
       </div>
@@ -634,15 +843,24 @@ export default function BusinessLeadsPortalPage() {
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
-                      जिल्हा / शहर *
+                      जिल्हा *
                     </label>
+                    {/* The same list as the district filter buttons, so the requirement shows under its district */}
+                    <select
+                      required
+                      value={newEnquiryForm.district}
+                      onChange={(e) => setNewEnquiryForm({ ...newEnquiryForm, district: e.target.value })}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.88rem' }}
+                    >
+                      {FORM_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
+                    </select>
                     <input
                       type="text"
-                      required
+                      maxLength={100}
                       value={newEnquiryForm.city}
-                      onChange={(e) => setNewEnquiryForm({ ...newEnquiryForm, city: e.target.value, district: e.target.value })}
-                      placeholder="उदा. पुणे"
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }}
+                      onChange={(e) => setNewEnquiryForm({ ...newEnquiryForm, city: e.target.value })}
+                      placeholder="शहर / गाव (ऐच्छिक), उदा. हडपसर"
+                      style={{ width: '100%', marginTop: '6px', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }}
                     />
                   </div>
                 </div>

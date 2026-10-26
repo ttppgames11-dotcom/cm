@@ -8,6 +8,13 @@
 const API_ORIGIN = 'https://api.connectmaratha.com';
 const LIVE_HOSTS = ['www.connectmaratha.com', 'connectmaratha.com'];
 
+// For connections that do not go through fetch(), such as EventSource (live updates):
+// the API server's full address on the live site, the plain "/api/..." path elsewhere.
+export function apiUrl(path) {
+  const host = typeof window !== 'undefined' ? window.location.hostname : '';
+  return LIVE_HOSTS.includes(host) ? API_ORIGIN + path : path;
+}
+
 if (typeof window !== 'undefined' && LIVE_HOSTS.includes(window.location.hostname) && window.fetch) {
   const originalFetch = window.fetch.bind(window);
   window.fetch = (input, init) => {
