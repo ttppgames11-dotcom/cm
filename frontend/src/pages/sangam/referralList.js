@@ -38,8 +38,17 @@ export function eventConcernsMe(event, memberId) {
 }
 
 // A typed amount as a number, or undefined when it is empty, not a number, or negative.
+// Commas, spaces and the rupee sign are allowed, the way people write amounts: "₹ 1,25,000".
 export function asNumberOrUndefined(text) {
-  if (text === undefined || text === null || String(text).trim() === '') return undefined;
-  const n = Number(text);
+  if (text === undefined || text === null) return undefined;
+  const cleaned = String(text).replace(/[,\s₹]/g, '');
+  if (cleaned === '') return undefined;
+  const n = Number(cleaned);
   return Number.isFinite(n) && n >= 0 ? n : undefined;
+}
+
+// True when something was typed but it is not a usable amount (so the page asks again instead of sending nothing).
+export function isAmountTypedButUnreadable(text) {
+  if (text === undefined || text === null || String(text).trim() === '') return false;
+  return asNumberOrUndefined(text) === undefined && String(text).replace(/[,\s₹]/g, '') !== '';
 }

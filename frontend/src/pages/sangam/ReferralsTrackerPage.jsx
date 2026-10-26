@@ -4,7 +4,7 @@ import apiClient from '../../services/apiClient';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useReferralStream } from '../../hooks/useReferralStream';
-import { STATUSES, splitByRole, canChangeStatus, needsValue, eventConcernsMe, asNumberOrUndefined } from './referralList';
+import { STATUSES, splitByRole, canChangeStatus, needsValue, eventConcernsMe, asNumberOrUndefined, isAmountTypedButUnreadable } from './referralList';
 
 export default function ReferralsTrackerPage() {
   const { user } = useAuth();
@@ -177,6 +177,10 @@ export default function ReferralsTrackerPage() {
     if (needsValue(newStatus)) {
       const typed = window.prompt('सौद्याचे मूल्य (₹):', referral.estimatedValue ? String(referral.estimatedValue) : '');
       if (typed === null) return; // cancelled
+      if (isAmountTypedButUnreadable(typed)) {
+        alert('कृपया सौद्याचे मूल्य अंकात लिहा, उदा. 50000. स्थिती बदलली गेली नाही.');
+        return; // nothing is sent: the old value must not be kept by mistake
+      }
       value = asNumberOrUndefined(typed);
     }
     try {

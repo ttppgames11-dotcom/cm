@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  STATUSES, roleOf, splitByRole, canChangeStatus, needsValue, eventConcernsMe, asNumberOrUndefined
+  STATUSES, roleOf, splitByRole, canChangeStatus, needsValue, eventConcernsMe, asNumberOrUndefined, isAmountTypedButUnreadable
 } from './referralList.js';
 
 const given = { id: 'REF-100', giver_id: 'M1', recipient_id: 'M2', status: 'New' };
@@ -53,4 +53,20 @@ test('a typed amount becomes a non-negative number or nothing', () => {
   assert.equal(asNumberOrUndefined('50000'), 50000);
   assert.equal(asNumberOrUndefined('0'), 0);
   assert.equal(asNumberOrUndefined(undefined), undefined);
+});
+
+test('amounts typed the way people write them are understood', () => {
+  assert.equal(asNumberOrUndefined('50,000'), 50000);
+  assert.equal(asNumberOrUndefined('₹50000'), 50000);
+  assert.equal(asNumberOrUndefined(' ₹ 1,25,000 '), 125000);
+  assert.equal(asNumberOrUndefined('12.5'), 12.5);
+  assert.equal(asNumberOrUndefined('₹'), undefined);
+});
+
+test('an amount that was typed but cannot be read is told apart from an empty one', () => {
+  assert.equal(isAmountTypedButUnreadable(''), false);
+  assert.equal(isAmountTypedButUnreadable('   '), false);
+  assert.equal(isAmountTypedButUnreadable('50,000'), false);
+  assert.equal(isAmountTypedButUnreadable('abc'), true);
+  assert.equal(isAmountTypedButUnreadable('-5'), true);
 });
