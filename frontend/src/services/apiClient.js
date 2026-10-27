@@ -280,6 +280,41 @@ export const apiClient = {
     return await fetchJson(`/sangam/meetings/${id}/notes`, { method: 'PUT', body: JSON.stringify({ notes }) });
   },
 
+  // Business Sangam chapters: public list, join requests, coordinator decisions, admin management
+  getChapters: async () => {
+    const res = await fetchJson('/sangam/chapters');
+    return res.chapters || [];
+  },
+  getChapterBusinesses: async (id) => {
+    const res = await fetchJson(`/sangam/chapters/${encodeURIComponent(id)}/businesses`);
+    return res.businesses || [];
+  },
+  getMyChapters: async () => {
+    const res = await fetchJson('/sangam/chapters/mine');
+    return { seats: res.seats || [], coordinating: res.coordinating || [] };
+  },
+  getChapterSeats: async (id) => {
+    const res = await fetchJson(`/sangam/chapters/${encodeURIComponent(id)}/seats`);
+    return res.seats || [];
+  },
+  joinChapter: async (id, { businessId, message }) => {
+    return await fetchJson(`/sangam/chapters/${encodeURIComponent(id)}/join`, { method: 'POST', body: JSON.stringify({ businessId, message }) });
+  },
+  // action: 'approve' | 'decline' | 'remove' | 'cancel' | 'leave'
+  chapterSeatAction: async (seatId, action) => {
+    return await fetchJson(`/sangam/chapters/seats/${encodeURIComponent(seatId)}`, { method: 'PUT', body: JSON.stringify({ action }) });
+  },
+  adminGetChapters: async () => {
+    const res = await fetchJson('/admin/chapters');
+    return res.chapters || [];
+  },
+  adminCreateChapter: async (data) => {
+    return await fetchJson('/admin/chapters', { method: 'POST', body: JSON.stringify(data) });
+  },
+  adminUpdateChapter: async (id, data) => {
+    return await fetchJson(`/admin/chapters/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+
   // Site Content & CMS Management API
   getSiteContent: async () => {
     const res = await fetchJson('/admin/site-content');
