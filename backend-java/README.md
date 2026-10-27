@@ -147,6 +147,20 @@ Rules:
 | `PUT /api/sangam/meetings/{id}/notes` | the two members | `{ "notes": up to 2000 characters }`, shared by both |
 | `GET /api/sangam/meetings/stream` | none | live `meeting.changed` events: ids and status only |
 
+**Chapters** (design: `docs/superpowers/specs/2026-10-27-business-chapters-design.md`; tables `chapters`, `chapter_seats`, migration 011, also created on first use):
+
+| Endpoint | Login | |
+|---|---|---|
+| `GET /api/sangam/chapters` | none | open chapters: details, coordinator name, `businesses`, `open_seats` (null without a maximum), `categories`; never phones, member ids or business names |
+| `GET /api/sangam/chapters/{id}/businesses` | member | approved visible businesses (`business_id`, `name`, `cat`, `city`, `owner_id`, `owner`); a closed chapter only for its coordinator and admins |
+| `GET /api/sangam/chapters/mine` | member | your seats (every status) and the chapters you coordinate (`waiting` count) |
+| `GET /api/sangam/chapters/{id}/seats` | coordinator or admin | waiting and approved seats with `similar` (approved businesses of the same category) and `business_hidden` |
+| `POST /api/sangam/chapters/{id}/join` | business owner | `{ businessId, message }`: one waiting or approved seat per business, one per member in each chapter, 10 requests per day |
+| `PUT /api/sangam/chapters/seats/{seatId}` | depends | `{ action }`: `approve`, `decline`, `remove` (coordinator or admin; approve refuses a full or closed chapter), `cancel`, `leave` (the member who asked) |
+| `GET /api/admin/chapters` | admin | every chapter, open and closed, with `businesses` and `waiting` counts |
+| `POST /api/admin/chapters` | admin | `name`, `city`, `district`, `area`, `meetingDay`, `meetingTime`, `venue`, `coordinatorId`, `maxSeats` (1-200 or empty) |
+| `PUT /api/admin/chapters/{id}` | admin | edit (fields left out keep their value), change coordinator, `status` open/closed; closing declines the waiting requests (and tells those members), reopening keeps the approved seats |
+
 **Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
 
 | Endpoint | Login | |

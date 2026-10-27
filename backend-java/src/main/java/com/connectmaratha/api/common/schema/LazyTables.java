@@ -105,6 +105,19 @@ public class LazyTables {
     static final String[] MEETING_COLUMNS = {
         "ALTER TABLE meetings ADD COLUMN IF NOT EXISTS mode TEXT",
         "ALTER TABLE meetings ADD COLUMN IF NOT EXISTS awaiting_id TEXT"};
+    /** Business chapters and their seats (join requests). Not from Node: the same SQL is kept as migration 011. */
+    static final String[] CHAPTER_TABLES = {
+        """
+        CREATE TABLE IF NOT EXISTS chapters (
+          id TEXT PRIMARY KEY, name TEXT NOT NULL, city TEXT, district TEXT, area TEXT,
+          meeting_day TEXT, meeting_time TEXT, venue TEXT, coordinator_id TEXT, max_seats INTEGER,
+          status TEXT NOT NULL DEFAULT 'open', created_at TEXT, updated_at TEXT)""",
+        """
+        CREATE TABLE IF NOT EXISTS chapter_seats (
+          id TEXT PRIMARY KEY, chapter_id TEXT NOT NULL, business_id TEXT NOT NULL, member_id TEXT NOT NULL,
+          message TEXT, status TEXT NOT NULL, decided_by TEXT, created_at TEXT, updated_at TEXT)""",
+        "CREATE UNIQUE INDEX IF NOT EXISTS chapter_seats_one_per_business ON chapter_seats (business_id) WHERE status IN ('waiting', 'approved')",
+        "CREATE UNIQUE INDEX IF NOT EXISTS chapter_seats_one_per_member ON chapter_seats (chapter_id, member_id) WHERE status IN ('waiting', 'approved')"};
 
     private final JdbcTemplate jdbc;
     private final TransactionTemplate ownTransaction;
@@ -114,6 +127,7 @@ public class LazyTables {
     private final AtomicBoolean enquiryTablesReady = new AtomicBoolean();
     private final AtomicBoolean referralColumnsReady = new AtomicBoolean();
     private final AtomicBoolean meetingColumnsReady = new AtomicBoolean();
+    private final AtomicBoolean chapterTablesReady = new AtomicBoolean();
 
     public LazyTables(JdbcTemplate jdbc, PlatformTransactionManager transactions) {
         this.jdbc = jdbc;
@@ -161,5 +175,10 @@ public class LazyTables {
     /** The meetings.mode and meetings.awaiting_id columns, added on first use (a no-op when they exist). */
     public void ensureMeetingColumns() {
         createOnce(meetingColumnsReady, MEETING_COLUMNS);
+    }
+
+    /** The chapters and chapter_seats tables with their two one-active-seat indexes, created on first use. */
+    public void ensureChapterTables() {
+        createOnce(chapterTablesReady, CHAPTER_TABLES);
     }
 }
