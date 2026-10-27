@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import apiClient from '../../services/apiClient';
 import {
-  SEAT_STATUS_LABELS, CATEGORY_LABELS, seatsText, isFull, seatActions, joinableBusinesses, filterChapters, summary
+  SEAT_STATUS_LABELS, CATEGORY_LABELS, seatsText, isFull, seatActions, joinableBusinesses, activeSeatIn, filterChapters, summary
 } from './chapterList';
 
 // Existing city photos; any other city gets the standard picture.
@@ -124,8 +124,7 @@ export default function BusinessSangamPage() {
       const businesses = await apiClient.getChapterBusinesses(chapter.id);
       setViewing({ chapter, businesses, loading: false });
     } catch (err) {
-      setViewing(null);
-      setNotice({ text: err.message, ok: false });
+      setViewing({ chapter, businesses: [], loading: false, error: err.message || 'व्यवसाय लोड करता आले नाहीत.' });
     }
   };
 
@@ -141,7 +140,7 @@ export default function BusinessSangamPage() {
       return;
     }
     const choices = joinableBusinesses(list, mine.seats);
-    setJoining({ chapter, businessId: choices[0]?.id || '', message: '' });
+    setJoining({ chapter, businessId: choices[0]?.id || '', message: '', error: '' });
   };
 
   const submitJoin = async (e) => {
@@ -154,7 +153,8 @@ export default function BusinessSangamPage() {
       setJoining(null);
       await Promise.all([loadMine(), loadChapters()]);
     } catch (err) {
-      setNotice({ text: err.message, ok: false });
+      // Shown inside the open window, where the member is looking.
+      setJoining((j) => j && { ...j, error: err.message || 'विनंती पाठवता आली नाही.' });
     } finally {
       setBusy('');
     }
@@ -795,6 +795,8 @@ export default function BusinessSangamPage() {
         <Modal title={`${viewing.chapter.name} — व्यवसाय`} onClose={() => setViewing(null)}>
           {viewing.loading ? (
             <div style={{ color: '#6A7280' }}>लोड होत आहे...</div>
+          ) : viewing.error ? (
+            <div role="alert" style={{ color: '#8A1C1C', fontWeight: 600 }}>{viewing.error}</div>
           ) : viewing.businesses.length === 0 ? (
             <div style={{ color: '#6A7280' }}>या चॅप्टरमध्ये अद्याप कोणताही व्यवसाय नाही.</div>
           ) : (
@@ -822,7 +824,14 @@ export default function BusinessSangamPage() {
 
       {joining && (
         <Modal title={`${joining.chapter.name} — सामील होण्याची विनंती`} onClose={() => setJoining(null)}>
-          {joinChoices.length === 0 ? (
+          {activeSeatIn(mine.seats, joining.chapter.id) ? (
+            <div style={{ fontSize: '0.88rem' }}>
+              <p style={{ margin: 0 }}>
+                आपण या चॅप्टरमध्ये आधीच आहात किंवा आपली विनंती प्रलंबित आहे ({activeSeatIn(mine.seats, joining.chapter.id).business_name} —{' '}
+                {SEAT_STATUS_LABELS[activeSeatIn(mine.seats, joining.chapter.id).status]}). एका चॅप्टरमध्ये एका सदस्याची एकच जागा असते.
+              </p>
+            </div>
+          ) : joinChoices.length === 0 ? (
             <div style={{ fontSize: '0.88rem' }}>
               <p style={{ marginTop: 0 }}>
                 आधी तुमचा व्यवसाय नोंदवा. चॅप्टरमध्ये सामील होण्यासाठी नोंदवलेला (लपवलेला नसलेला) आणि इतर चॅप्टरमध्ये नसलेला व्यवसाय आवश्यक आहे.
@@ -854,6 +863,11 @@ export default function BusinessSangamPage() {
                 />
                 <span style={{ fontSize: '0.72rem', color: '#6A7280' }}>{joining.message.length}/300</span>
               </label>
+              {joining.error && (
+                <div role="alert" style={{ padding: '10px 12px', borderRadius: '8px', background: '#FDECEA', color: '#8A1C1C', border: '1px solid #F5C2C0', fontSize: '0.84rem', fontWeight: 600 }}>
+                  {joining.error}
+                </div>
+              )}
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                 <button type="button" style={btn(false)} onClick={() => setJoining(null)}>रद्द करा</button>
                 <button type="submit" style={btn(true)} disabled={busy === 'join'}>{busy === 'join' ? 'पाठवत आहे...' : 'विनंती पाठवा'}</button>

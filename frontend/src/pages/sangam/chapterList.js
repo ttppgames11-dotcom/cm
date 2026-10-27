@@ -53,6 +53,11 @@ export function joinableBusinesses(myBusinesses, mySeats) {
   return (myBusinesses || []).filter((b) => b.status !== 'hidden' && !taken.has(b.id));
 }
 
+// The member's waiting or approved seat in this chapter, if any (one per member per chapter).
+export function activeSeatIn(mySeats, chapterId) {
+  return (mySeats || []).find((s) => s.chapter_id === chapterId && (s.status === 'waiting' || s.status === 'approved'));
+}
+
 export function filterChapters(chapters, { search = '', city = 'all' } = {}) {
   const q = search.trim().toLowerCase();
   return (chapters || []).filter((c) => {

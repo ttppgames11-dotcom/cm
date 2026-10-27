@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  SEAT_STATUS_LABELS, CATEGORY_LABELS, seatsText, isFull, seatActions, joinableBusinesses, filterChapters, summary
+  SEAT_STATUS_LABELS, CATEGORY_LABELS, seatsText, isFull, seatActions, joinableBusinesses, activeSeatIn, filterChapters, summary
 } from './chapterList.js';
 
 const chapter = (over) => ({ id: 'CH1', name: 'पुणे पश्चिम', city: 'पुणे', area: 'हिंजवडी', businesses: 12, open_seats: 8, ...over });
@@ -43,6 +43,17 @@ test('joinableBusinesses keeps visible businesses without an active seat', () =>
   const seats = [seat({ business_id: 'B3', status: 'approved' }), seat({ business_id: 'B4', status: 'declined' })];
   assert.deepEqual(joinableBusinesses(mine, seats).map((b) => b.id), ['B1', 'B4']);
   assert.deepEqual(joinableBusinesses(null, null), []);
+});
+
+test('activeSeatIn finds my waiting or approved seat in that chapter only', () => {
+  const seats = [
+    seat({ chapter_id: 'CH1', status: 'waiting' }),
+    seat({ id: 'CS2', chapter_id: 'CH2', status: 'declined' })
+  ];
+  assert.equal(activeSeatIn(seats, 'CH1')?.chapter_id, 'CH1');
+  assert.equal(activeSeatIn(seats, 'CH2'), undefined);
+  assert.equal(activeSeatIn([seat({ chapter_id: 'CH1', status: 'approved' })], 'CH1')?.status, 'approved');
+  assert.equal(activeSeatIn(null, 'CH1'), undefined);
 });
 
 test('filterChapters matches name, city or area, and the city tab', () => {
