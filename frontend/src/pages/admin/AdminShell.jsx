@@ -16,6 +16,8 @@ import UsersFullReport from './reports/UsersFullReport';
 import KYCFullReport from './reports/KYCFullReport';
 import BusinessFullReport from './reports/BusinessFullReport';
 import ReferralReportPanel from './reports/ReferralReportPanel';
+import apiClient from '../../services/apiClient';
+import { SEAT_STATUS_LABELS, CATEGORY_LABELS, seatActions } from '../sangam/chapterList';
 import BloodHelpFullReport from './reports/BloodHelpFullReport';
 import TicketFullReport from './reports/TicketFullReport';
 import EventsFullReport from './reports/EventsFullReport';
@@ -661,7 +663,7 @@ export default function AdminShell() {
               <Route path="/leads" element={<LeadsView data={data} toast={toast$} />} />
               <Route path="/businesses" element={<BusinessesView data={data} />} />
               <Route path="/referrals" element={<ReferralsView data={data} setData={setData} toast={toast$} />} />
-              <Route path="/chapters" element={<ChaptersView toast={toast$} />} />
+              <Route path="/chapters" element={<ChaptersView toast={toast$} data={data} />} />
               <Route path="/admins" element={<AdminUsersView toast={toast$} />} />
 
               <Route path="/articles" element={<ContentView type="articles" data={data} toast={toast$} />} />
@@ -1564,74 +1566,241 @@ function EventsView({ data, toast }) {
 /* ============================================================
    CHAPTERS VIEW
    ============================================================ */
-function ChaptersView({ toast }) {
-  const [chapters, setChapters] = useState([
-    { id: 'CHP-MH-01', name: 'पुणे मध्यवर्ती शाखा', district: 'Pune', city: 'Pune', members: 450, leader: 'अमोल जाधव', status: 'Active' },
-    { id: 'CHP-MH-02', name: 'सातारा छत्रपती शाखा', district: 'Satara', city: 'Satara', members: 380, leader: 'राजेश निंबाळकर', status: 'Active' },
-    { id: 'CHP-MH-03', name: 'मुंबई पूर्व शाखा', district: 'Mumbai', city: 'Ghatkopar', members: 620, leader: 'सुरेश शिर्के', status: 'Active' },
-    { id: 'CHP-MH-04', name: 'नाशिक गोदावरी शाखा', district: 'Nashik', city: 'Nashik', members: 290, leader: 'प्रणाली देसाई', status: 'Active' },
-    { id: 'CHP-MH-05', name: 'कोल्हापूर करवीर शाखा', district: 'Kolhapur', city: 'Kolhapur', members: 410, leader: 'विक्रम शेलार', status: 'Active' },
-    { id: 'CHP-MH-06', name: 'नागपूर उपराजधानी शाखा', district: 'Nagpur', city: 'Nagpur', members: 210, leader: 'अक्षय जगताप', status: 'Active' },
-    { id: 'CHP-MH-07', name: 'सोलापूर सिद्धेश्वर शाखा', district: 'Solapur', city: 'Solapur', members: 310, leader: 'रुपेश पाटील', status: 'Active' },
-    { id: 'CHP-MH-08', name: 'संभाजीनगर घृष्णेश्वर शाखा', district: 'Chhatrapati Sambhajinagar', city: 'Sambhajinagar', members: 270, leader: 'महेश भोसले', status: 'Active' }
-  ]);
+const EMPTY_CHAPTER = { name: '', city: '', district: '', area: '', meetingDay: '', meetingTime: '', venue: '', coordinatorId: '', maxSeats: '' };
+const CHAPTER_ACTION_LABELS = { approve: '✓ मंजूर', decline: 'नाकारा', remove: 'काढा' };
+
+function ChaptersView({ toast, data }) {
+  const [chapters, setChapters] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [search, setSearch] = useState('');
-  const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ name: '', district: 'Pune', city: '', leader: '' });
+  const [editing, setEditing] = useState(null); // { id?, form }
+  const [coordSearch, setCoordSearch] = useState('');
+  const [requests, setRequests] = useState(null); // { chapter, seats, loading }
+  const [busy, setBusy] = useState('');
 
-  const filtered = chapters.filter(c =>
-    !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.district.toLowerCase().includes(search.toLowerCase()) || c.city.toLowerCase().includes(search.toLowerCase())
-  );
+  const load = useCallback(async () => {
+    try {
+      setChapters(await apiClient.adminGetChapters());
+      setLoadError('');
+    } catch (err) {
+      setLoadError(err.message || 'चॅप्टर्स लोड करता आले नाहीत');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const handleAdd = (e) => {
-    e.preventDefault();
-    const newCh = { id: `CHP-MH-0${chapters.length + 1}`, ...form, members: 1, status: 'Active' };
-    setChapters([newCh, ...chapters]);
-    setShowAdd(false);
-    toast(`नवीन शाखा "${form.name}" जोडली!`, 'success');
+  useEffect(() => { load(); }, [load]);
+
+  const users = data?.users || [];
+  const userName = (id) => users.find(u => u.id === id)?.name;
+  const coordMatches = useMemo(() => {
+    const q = coordSearch.trim().toLowerCase();
+    if (!q) return [];
+    return users.filter(u =>
+      (u.name || '').toLowerCase().includes(q) || (u.id || '').toLowerCase().includes(q) || (u.phone || '').includes(q)
+    ).slice(0, 8);
+  }, [users, coordSearch]);
+
+  const filtered = chapters.filter(c => {
+    const q = search.trim().toLowerCase();
+    return !q || [c.name, c.city, c.district].some(v => (v || '').toLowerCase().includes(q));
+  });
+
+  const openCreate = () => { setCoordSearch(''); setEditing({ form: { ...EMPTY_CHAPTER } }); };
+  const openEdit = (c) => {
+    setCoordSearch('');
+    setEditing({
+      id: c.id,
+      form: {
+        name: c.name || '', city: c.city || '', district: c.district || '', area: c.area || '',
+        meetingDay: c.meeting_day || '', meetingTime: c.meeting_time || '', venue: c.venue || '',
+        coordinatorId: c.coordinator_id || '', maxSeats: c.max_seats ?? ''
+      }
+    });
   };
+  const setField = (k, v) => setEditing(e => ({ ...e, form: { ...e.form, [k]: v } }));
+
+  const save = async (e) => {
+    e.preventDefault();
+    if (busy) return;
+    setBusy('save');
+    const body = { ...editing.form, maxSeats: editing.form.maxSeats === '' ? null : Number(editing.form.maxSeats) };
+    try {
+      if (editing.id) await apiClient.adminUpdateChapter(editing.id, body);
+      else await apiClient.adminCreateChapter(body);
+      toast(editing.id ? 'चॅप्टर जतन झाला' : `नवीन चॅप्टर "${body.name}" तयार झाला!`, 'success');
+      setEditing(null);
+      await load();
+    } catch (err) {
+      toast(err.message, 'error');
+    } finally {
+      setBusy('');
+    }
+  };
+
+  const setStatus = async (c, status) => {
+    if (busy) return;
+    if (status === 'closed' && !window.confirm(`"${c.name}" बंद करायचा? प्रलंबित विनंत्या नाकारल्या जातील (waiting requests will be declined).`)) return;
+    setBusy(c.id);
+    try {
+      await apiClient.adminUpdateChapter(c.id, { status });
+      toast(status === 'closed' ? 'चॅप्टर बंद केला' : 'चॅप्टर पुन्हा सुरू केला', 'success');
+      await load();
+    } catch (err) {
+      toast(err.message, 'error');
+    } finally {
+      setBusy('');
+    }
+  };
+
+  const openRequests = async (chapter) => {
+    setRequests({ chapter, seats: [], loading: true });
+    try {
+      setRequests({ chapter, seats: await apiClient.getChapterSeats(chapter.id), loading: false });
+    } catch (err) {
+      setRequests(null);
+      toast(err.message, 'error');
+    }
+  };
+
+  const decide = async (seatId, action) => {
+    if (busy) return;
+    if (action === 'remove' && !window.confirm('हा व्यवसाय चॅप्टरमधून काढायचा?')) return;
+    setBusy(seatId);
+    try {
+      const res = await apiClient.chapterSeatAction(seatId, action);
+      toast(res.message || 'झाले', 'success');
+      const seats = await apiClient.getChapterSeats(requests.chapter.id);
+      setRequests(r => r && { ...r, seats });
+      await load();
+    } catch (err) {
+      toast(err.message, 'error');
+    } finally {
+      setBusy('');
+    }
+  };
+
+  const f = editing?.form;
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <SectionTitle subtitle={`एकूण ${chapters.length} नोंदणीकृत शाखा (Chapters)`}>📍 Chapters Command Center</SectionTitle>
-        <Btn variant="primary" onClick={() => setShowAdd(true)}>+ नवीन शाखा जोडा</Btn>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+        <SectionTitle subtitle={`एकूण ${chapters.length} चॅप्टर्स (Chapters)`}>📍 Chapters Command Center</SectionTitle>
+        <Btn variant="primary" onClick={openCreate}>+ नवीन चॅप्टर</Btn>
       </div>
 
       <Card style={{ padding: 0 }}>
         <div style={{ padding: 12, background: T.softBg, borderBottom: `1px solid ${T.border}` }}>
           <input
-            placeholder="शाखा नाव, जिल्हा किंवा शहर शोधा..."
+            placeholder="चॅप्टर नाव, जिल्हा किंवा शहर शोधा..."
             value={search} onChange={e => setSearch(e.target.value)}
             style={{ width: '100%', maxWidth: 400, padding: '8px 12px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: '0.82rem' }}
           />
         </div>
-        <Table
-          headers={['ID', 'शाखा नाव', 'जिल्हा / शहर', 'एकूण सदस्य', 'शाखा प्रमुख', 'स्थिती', 'कृती']}
-          rows={filtered.map(c => [
-            <span style={{ fontFamily: 'monospace', color: T.saffron, fontWeight: 800 }}>{c.id}</span>,
-            <strong>{c.name}</strong>,
-            `${c.city}, ${c.district}`,
-            <span style={{ fontWeight: 800, color: T.green }}>{c.members} सदस्य</span>,
-            c.leader,
-            <Badge tone="green">{c.status}</Badge>,
-            <Btn variant="plain" onClick={() => toast(`${c.name} तपशील उघडत आहे`, 'success')}>तपशील (Details)</Btn>
-          ])}
-        />
+        {loading ? (
+          <div style={{ padding: 20, color: T.muted }}>लोड होत आहे...</div>
+        ) : loadError ? (
+          <div style={{ padding: 20, color: T.red }}>{loadError} <Btn variant="plain" onClick={load}>पुन्हा प्रयत्न करा</Btn></div>
+        ) : chapters.length === 0 ? (
+          <div style={{ padding: 20, color: T.muted }}>अद्याप एकही चॅप्टर नाही. "+ नवीन चॅप्टर" वापरून पहिला चॅप्टर तयार करा.</div>
+        ) : (
+          <Table
+            headers={['ID', 'चॅप्टर नाव', 'शहर / जिल्हा', 'समन्वयक', 'व्यवसाय', 'प्रलंबित', 'कमाल जागा', 'स्थिती', 'कृती']}
+            rows={filtered.map(c => [
+              <span style={{ fontFamily: 'monospace', color: T.saffron, fontWeight: 800 }}>{c.id}</span>,
+              <strong>{c.name}</strong>,
+              `${c.city}, ${c.district}`,
+              `${c.coordinator_name || '—'} (${c.coordinator_id})`,
+              <span style={{ fontWeight: 800, color: T.green }}>{c.businesses}</span>,
+              c.waiting > 0 ? <Badge tone="saffron">{c.waiting}</Badge> : '0',
+              c.max_seats ?? '—',
+              <Badge tone={c.status === 'open' ? 'green' : 'gray'}>{c.status === 'open' ? 'सुरू' : 'बंद'}</Badge>,
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                <Btn variant="plain" onClick={() => openEdit(c)}>बदला</Btn>
+                <Btn variant="ghost" onClick={() => openRequests(c)}>विनंत्या</Btn>
+                {c.status === 'open'
+                  ? <Btn variant="danger" disabled={busy === c.id} onClick={() => setStatus(c, 'closed')}>बंद करा</Btn>
+                  : <Btn variant="success" disabled={busy === c.id} onClick={() => setStatus(c, 'open')}>पुन्हा सुरू</Btn>}
+              </div>
+            ])}
+          />
+        )}
       </Card>
 
-      {showAdd && (
-        <Modal title="📍 नवीन शाखा जोडणी (Create Chapter)" onClose={() => setShowAdd(false)}>
-          <form onSubmit={handleAdd} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <Input label="शाखेचे नाव *" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="उदा. पुणे पश्चिम शाखा" />
-            <Input label="जिल्हा *" required value={form.district} onChange={e => setForm({ ...form, district: e.target.value })} />
-            <Input label="शहर / तालुका *" required value={form.city} onChange={e => setForm({ ...form, city: e.target.value })} />
-            <Input label="नियुक्त शाखा प्रमुख नाव *" required value={form.leader} onChange={e => setForm({ ...form, leader: e.target.value })} />
+      {editing && (
+        <Modal title={editing.id ? '📍 चॅप्टर बदला (Edit Chapter)' : '📍 नवीन चॅप्टर (Create Chapter)'} onClose={() => setEditing(null)} width={560}>
+          <form onSubmit={save} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <Input label="चॅप्टरचे नाव *" required minLength={3} maxLength={120} value={f.name} onChange={e => setField('name', e.target.value)} placeholder="उदा. पुणे पश्चिम व्यवसाय मंडळ" />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
+              <Input label="शहर *" required maxLength={60} value={f.city} onChange={e => setField('city', e.target.value)} placeholder="उदा. पुणे" />
+              <Input label="जिल्हा *" required maxLength={60} value={f.district} onChange={e => setField('district', e.target.value)} />
+            </div>
+            <Input label="परिसर" maxLength={120} value={f.area} onChange={e => setField('area', e.target.value)} placeholder="उदा. हिंजवडी / वाकड" />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
+              <Input label="बैठकीचा दिवस" maxLength={40} value={f.meetingDay} onChange={e => setField('meetingDay', e.target.value)} placeholder="उदा. प्रत्येक बुधवार" />
+              <Input label="बैठकीची वेळ" maxLength={40} value={f.meetingTime} onChange={e => setField('meetingTime', e.target.value)} placeholder="उदा. सकाळी ७:३० ते ९:००" />
+            </div>
+            <Input label="ठिकाण" maxLength={200} value={f.venue} onChange={e => setField('venue', e.target.value)} />
+            <div>
+              <Input
+                label={`समन्वयक * ${f.coordinatorId ? `— निवडले: ${userName(f.coordinatorId) || ''} (${f.coordinatorId})` : ''}`}
+                value={coordSearch} onChange={e => setCoordSearch(e.target.value)}
+                placeholder="नाव, सदस्य ID किंवा फोन टाइप करा..."
+              />
+              {coordMatches.length > 0 && (
+                <div style={{ border: `1px solid ${T.border}`, borderRadius: 6, marginTop: 4, maxHeight: 180, overflowY: 'auto' }}>
+                  {coordMatches.map(u => (
+                    <div
+                      key={u.id}
+                      onClick={() => { setField('coordinatorId', u.id); setCoordSearch(''); }}
+                      style={{ padding: '6px 10px', cursor: 'pointer', fontSize: '0.8rem', borderBottom: `1px solid ${T.border}` }}
+                    >
+                      {u.name} ({u.id}) {u.phone ? `· ${u.phone}` : ''}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <Input label="कमाल जागा (रिकामे = मर्यादा नाही)" type="number" min={1} max={200} value={f.maxSeats} onChange={e => setField('maxSeats', e.target.value)} />
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 10 }}>
-              <Btn variant="plain" type="button" onClick={() => setShowAdd(false)}>रद्द करा</Btn>
-              <Btn variant="primary" type="submit">शाखा तयार करा</Btn>
+              <Btn variant="plain" type="button" onClick={() => setEditing(null)}>रद्द करा</Btn>
+              <Btn variant="primary" type="submit" disabled={busy === 'save' || !f.coordinatorId}>{editing.id ? 'जतन करा' : 'चॅप्टर तयार करा'}</Btn>
             </div>
           </form>
+        </Modal>
+      )}
+
+      {requests && (
+        <Modal title={`${requests.chapter.name} — विनंत्या व सदस्य`} onClose={() => setRequests(null)} width={640}>
+          {requests.loading ? (
+            <div style={{ color: T.muted }}>लोड होत आहे...</div>
+          ) : requests.seats.length === 0 ? (
+            <div style={{ color: T.muted }}>कोणतीही विनंती किंवा सदस्य नाही.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {requests.seats.map(s => (
+                <div key={s.id} style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+                  padding: '8px 10px', borderRadius: 8, border: `1px solid ${s.status === 'waiting' && s.similar > 0 ? '#F6C27A' : T.border}`,
+                  background: s.status === 'waiting' && s.similar > 0 ? '#FFF4E5' : T.panel
+                }}>
+                  <div style={{ fontSize: '0.8rem' }}>
+                    <strong>{s.business_name}</strong> · {CATEGORY_LABELS[s.cat] || s.cat} · {s.city} · {s.owner} ({s.member_id})
+                    <span style={{ marginLeft: 6 }}><Badge tone={s.status === 'approved' ? 'green' : 'saffron'}>{SEAT_STATUS_LABELS[s.status]}</Badge></span>
+                    {s.business_hidden && <span style={{ marginLeft: 6, color: T.muted }}>(लपवलेला)</span>}
+                    {s.status === 'waiting' && s.similar > 0 && <div style={{ color: '#92400E', fontWeight: 700 }}>⚠ याच प्रकारचे {s.similar} व्यवसाय आधीच सदस्य आहेत</div>}
+                    {s.message && <div style={{ color: T.muted }}>“{s.message}”</div>}
+                  </div>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    {seatActions(s, { memberId: null, isCoordinator: true }).map(a => (
+                      <Btn key={a} variant={a === 'approve' ? 'success' : 'danger'} disabled={busy === s.id} onClick={() => decide(s.id, a)}>{CHAPTER_ACTION_LABELS[a]}</Btn>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </Modal>
       )}
     </>
