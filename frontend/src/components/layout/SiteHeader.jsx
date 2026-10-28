@@ -1,17 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSiteContent } from '../../context/SiteContentContext';
 import LanguageSwitcher from '../common/LanguageSwitcher';
+import apiClient from '../../services/apiClient';
+import { unreadBadge } from '../../pages/member/notificationList';
 
 export default function SiteHeader({ onOpenSearch }) {
   const { user, logout } = useAuth();
   const { getContent } = useSiteContent();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expandedPillar, setExpandedPillar] = useState(null);
+  const [unread, setUnread] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const isLoggedIn = !!(user && (user.id || user._id) && (typeof window === 'undefined' || localStorage.getItem('cm_logged_in') === 'true'));
+
+  // The bell's unread count, checked again on every page change (no live updates).
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setUnread(0);
+      return undefined;
+    }
+    let cancelled = false;
+    apiClient.getMyNotifications()
+      .then((res) => { if (!cancelled) setUnread(res.unread); })
+      .catch(() => { if (!cancelled) setUnread(0); });
+    return () => { cancelled = true; };
+  }, [isLoggedIn, location.pathname]);
 
   const handleSearchClick = () => {
     if (onOpenSearch) {
@@ -356,6 +373,40 @@ export default function SiteHeader({ onOpenSearch }) {
                   </span>
                 </Link>
                 <Link
+                  to="/notifications"
+                  onClick={handleLinkClick}
+                  style={{
+                    position: 'relative',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    background: '#FFF7ED',
+                    border: '1.5px solid #FED7AA',
+                    color: '#EA580C',
+                    textDecoration: 'none',
+                    boxShadow: '0 2px 6px rgba(234, 88, 12, 0.08)'
+                  }}
+                  title={unread ? `${unread} न वाचलेल्या सूचना` : 'सूचना (Notifications)'}
+                  aria-label="सूचना (Notifications)"
+                >
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
+                  {unreadBadge(unread) && (
+                    <span style={{
+                      position: 'absolute', top: '-4px', right: '-4px', minWidth: '18px', height: '18px', padding: '0 4px',
+                      borderRadius: '9px', background: '#DC2626', color: '#FFFFFF', fontSize: '0.68rem', fontWeight: 800,
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box'
+                    }}>
+                      {unreadBadge(unread)}
+                    </span>
+                  )}
+                </Link>
+                <Link
                   to="/card"
                   onClick={handleLinkClick}
                   style={{
@@ -571,6 +622,9 @@ export default function SiteHeader({ onOpenSearch }) {
                       <circle cx="12" cy="7" r="4" />
                     </svg>
                     <span>डॅशबोर्ड</span>
+                  </Link>
+                  <Link to="/notifications" onClick={handleLinkClick} className="btn btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    <span>🔔 सूचना{unreadBadge(unread) ? ` (${unreadBadge(unread)})` : ''}</span>
                   </Link>
                   <Link to="/card" onClick={handleLinkClick} className="btn btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

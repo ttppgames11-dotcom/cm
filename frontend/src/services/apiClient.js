@@ -141,6 +141,18 @@ export const apiClient = {
     return await fetchJson(`/admin/blood/donors/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ hidden }) });
   },
 
+  // My notifications (newest 50 and the unread count)
+  getMyNotifications: async () => {
+    const res = await fetchJson('/members/notifications');
+    return { notifications: res.notifications || [], unread: res.unread || 0 };
+  },
+  markNotificationRead: async (id) => {
+    return await fetchJson(`/members/notifications/${encodeURIComponent(id)}/read`, { method: 'PUT' });
+  },
+  markAllNotificationsRead: async () => {
+    return await fetchJson('/members/notifications/read-all', { method: 'PUT' });
+  },
+
   // Matrimony API
   getMatrimonyProfiles: async (params = {}) => {
     const qs = new URLSearchParams(params).toString();
