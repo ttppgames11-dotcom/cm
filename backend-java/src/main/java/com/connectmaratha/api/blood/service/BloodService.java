@@ -118,16 +118,19 @@ public class BloodService {
         blood.insertRequest(id, user.id(), text(input.get("patientName")), group, units, hospital, city, district,
             text(input.get("contactPhone")), text(input.get("urgency")), note.isEmpty() ? null : note);
 
-        int notified = 0;
         String title = "🩸 " + group + " रक्ताची गरज — " + district;
         String message = hospital + ", " + city + ": " + units + " युनिट. रक्तदान मदत पानावर संपर्क पहा.";
-        for (String memberId : blood.matchingDonorMembers(group, district, user.id(), MAX_NOTIFIED)) {
-            try {
-                ownTransaction.executeWithoutResult(status -> activity.notifyMember(notificationId(), memberId, title, message, "blood"));
-                notified++;
-            } catch (RuntimeException e) {
-                log.warn("Blood request {}: could not notify {}", id, memberId, e);
-            }
+        List<String> donors = blood.matchingDonorMembers(group, district, user.id(), MAX_NOTIFIED);
+        int notified = 0;
+        for (String memberId : donors) {
+            if (send(id, memberId, title, message, "blood")) notified++;
+        }
+        // Admins hear about every request (once: an admin who is also a matching donor already has one).
+        String adminTitle = "🩸 नवीन रक्त मागणी: " + group + " — " + district;
+        String adminMessage = text(input.get("patientName")) + ", " + hospital + ", " + city + ": " + units
+            + " युनिट. Blood Helpdesk मध्ये पहा.";
+        for (String adminId : blood.adminMembers(user.id())) {
+            if (!donors.contains(adminId)) send(id, adminId, adminTitle, adminMessage, "blood_admin");
         }
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("success", true);
@@ -135,6 +138,17 @@ public class BloodService {
         out.put("request", requestJson(blood.findRequest(id).orElseThrow(), user));
         out.put("notified", notified);
         return out;
+    }
+
+    /** One notification in its own transaction; false (logged) when it fails, which never undoes the post. */
+    private boolean send(String requestId, String memberId, String title, String message, String type) {
+        try {
+            ownTransaction.executeWithoutResult(status -> activity.notifyMember(notificationId(), memberId, title, message, type));
+            return true;
+        } catch (RuntimeException e) {
+            log.warn("Blood request {}: could not notify {}", requestId, memberId, e);
+            return false;
+        }
     }
 
     /** { action: received | close | extend } by the owner or an admin, only while the request is open. */

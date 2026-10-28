@@ -54,14 +54,57 @@ class BloodEndpointsTest extends PostgresTestBase {
         jdbc.update("DELETE FROM directory_records WHERE id LIKE '%Zb%'");
         jdbc.update("DELETE FROM notifications WHERE member_id LIKE 'M92%'");
         jdbc.update("DELETE FROM audit_logs WHERE user_id LIKE 'M92%'");
-        for (String id : List.of("M9201", "M9202", "M9203", "M9204", "M9205", "M9206", "M9207", "M9208", ADMIN)) member(id);
+        for (String id : List.of("M9201", "M9202", "M9203", "M9204", "M9205", "M9206", "M9207", "M9208", ADMIN, "M9210")) member(id);
     }
 
     // ------------------------------------------------------------------ helpers
 
     void member(String id) {
-        jdbc.update("INSERT INTO members (id, name, phone) VALUES (?, ?, ?) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name",
+        jdbc.update("INSERT INTO members (id, name, phone, role) VALUES (?, ?, ?, 'member') "
+            + "ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, role = 'member'",
             id, "Member " + id, "98000" + id.substring(1));
+    }
+
+    void role(String id, String role) {
+        jdbc.update("UPDATE members SET role = ? WHERE id = ?", role, id);
+    }
+
+    List<Map<String, Object>> notificationsOf(String memberId) {
+        return jdbc.queryForList("SELECT * FROM notifications WHERE member_id = ?", memberId);
+    }
+
+    @Test
+    void adminsAreToldAboutEveryNewRequest() throws Exception {
+        member("M9210");
+        role(ADMIN, "admin");
+        role("M9210", "SuperAdmin");
+        role("M9203", "ceo");
+        role("M9204", "seva_helpdesk"); // staff, not admin
+
+        JsonNode reply = body(send(post("/api/blood/requests"), member1(), requestBody()).andExpect(status().isCreated()));
+        assertThat(reply.get("notified").asInt()).isZero(); // donors only
+        for (String id : List.of(ADMIN, "M9210", "M9203")) {
+            List<Map<String, Object>> rows = notificationsOf(id);
+            assertThat(rows).as(id).hasSize(1);
+            assertThat(rows.get(0).get("type")).isEqualTo("blood_admin");
+            assertThat(String.valueOf(rows.get(0).get("title"))).contains("O+").contains("पुणे");
+        }
+        assertThat(notificationsOf("M9204")).isEmpty();
+        assertThat(notificationsOf("M9201")).isEmpty();
+
+        // an admin posting is not told about their own request
+        send(post("/api/blood/requests"), token(ADMIN, "admin"), requestBody()).andExpect(status().isCreated());
+        assertThat(notificationsOf(ADMIN)).hasSize(1);
+        assertThat(notificationsOf("M9210")).hasSize(2);
+    }
+
+    @Test
+    void anAdminWhoIsAlsoAMatchingDonorGetsOneNotification() throws Exception {
+        role("M9202", "admin");
+        donor("BDZbAd", "M9202", "O+", "पुणे", true, null, false);
+        JsonNode reply = body(send(post("/api/blood/requests"), member1(), requestBody()).andExpect(status().isCreated()));
+        assertThat(reply.get("notified").asInt()).isEqualTo(1);
+        assertThat(notificationsOf("M9202")).hasSize(1);
     }
 
     String token(String id, String role) {

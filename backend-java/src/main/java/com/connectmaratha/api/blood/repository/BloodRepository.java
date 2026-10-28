@@ -96,6 +96,13 @@ public class BloodRepository {
             "UPDATE blood_requests SET closes_at = now() + interval '7 days', updated_at = now() WHERE id = ? AND status = 'open'", id);
     }
 
+    /** Members with an admin role (admin, superadmin, ceo, any case), except the poster: told about every new request. */
+    public List<String> adminMembers(String posterId) {
+        return jdbc.queryForList("""
+            SELECT id FROM members WHERE lower(role) IN ('admin', 'superadmin', 'ceo') AND id <> ? ORDER BY id""",
+            String.class, posterId);
+    }
+
     /**
      * Members to tell about a new request: available, eligible, visible donors with an owner other than the poster, the
      * same group and the same district (trimmed, any case); most recently updated first, at most {@code limit}.
