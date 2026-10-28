@@ -184,6 +184,17 @@ Rules:
 | `PUT /api/members/notifications/{id}/read` | member | mark one of yours as read (someone else's or unknown → 404 `NOTIFICATION_NOT_FOUND`); reply has `unread` |
 | `PUT /api/members/notifications/read-all` | member | mark all of yours as read; reply has `unread` |
 
+**Jobs** (design: `docs/superpowers/specs/2026-10-28-jobs-applications-design.md`; columns: migration 013, also added on first use). Node's four routes now need a login to post and apply, and jobs close.
+
+| Endpoint | Login | |
+|---|---|---|
+| `GET /api/jobs?category=&district=&search=` | optional | open, visible jobs newest first; `phone` / `contact_email` only when logged in; `mine`, `applied` |
+| `GET /api/jobs/{id}` | optional | one job in any `state` (`open` / `expired` / `closed`); hidden → 404 except poster and admin |
+| `GET /api/jobs/stats` | none | `{ open_jobs, hired }` |
+| `POST /api/jobs` | member | post a job (5 per member per 24 h); closes in 30 days |
+| `PUT /api/jobs/{id}` | poster or admin | `{ "action": "close" | "extend" }` (+30 days); only while open |
+| `GET /api/jobs/mine` | member | your jobs, every state, with `applications` and `new_applications` |
+
 **Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
 
 | Endpoint | Login | |

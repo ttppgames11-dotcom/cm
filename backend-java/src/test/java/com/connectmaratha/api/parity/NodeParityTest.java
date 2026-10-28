@@ -726,23 +726,6 @@ class NodeParityTest extends PostgresTestBase {
             r.rec("list search service", s.get("/api/businesses?district=" + d + "&search=catering", null));
         });
 
-        compare("jobs", (s, r) -> {
-            String d = "Zq" + s.tag;
-            r.rec("create missing company", s.post("/api/jobs", Map.of("title", "Dev")));
-            Resp j1 = s.post("/api/jobs", Map.of("title", "Flutter Dev", "company", "Zq" + s.tag + " IT", "district", d,
-                "category", "IT", "desc", "Build the Maratha app"));
-            r.rec("create", j1);
-            r.rec("create defaults", s.post("/api/jobs", Map.of("title", "Clerk", "company", "Zq" + s.tag + " Office", "district", d)));
-            String id = j1.json().get("job").get("id").asText();
-            r.rec("detail", s.get("/api/jobs/" + id, null));
-            r.rec("detail missing", s.get("/api/jobs/JOB-0", null));
-            r.rec("list district", s.get("/api/jobs?district=" + d, null));
-            r.rec("search in description", s.get("/api/jobs?district=" + d + "&search=maratha", null));
-            r.rec("list category", s.get("/api/jobs?district=" + d + "&category=IT", null));
-            r.rec("apply missing phone", s.post("/api/jobs/" + id + "/apply", Map.of("applicant_name", "Ram")));
-            r.rec("apply", s.post("/api/jobs/" + id + "/apply", Map.of("applicant_name", "Ram", "phone", "9800000001")));
-        });
-
         compare("events", (s, r) -> {
             String d = "Zq" + s.tag;
             r.rec("create missing venue", s.post("/api/events", Map.of("title", "Melava", "date", "2026-12-01")));
