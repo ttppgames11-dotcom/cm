@@ -13,12 +13,18 @@ public class ActivityRepository {
         this.em = em;
     }
 
+    /** A meeting notification. */
     public void notifyMember(String id, String memberId, String title, String message) {
+        notifyMember(id, memberId, title, message, "meeting");
+    }
+
+    /** type tells the website which page the notification opens: meeting, chapter, blood. */
+    public void notifyMember(String id, String memberId, String title, String message, String type) {
         em.createNativeQuery("""
                 INSERT INTO notifications (id, member_id, title, message, type, is_read, created_at)
-                VALUES (:id, :memberId, :title, :message, 'meeting', 0, to_char(now(), 'YYYY-MM-DD HH24:MI:SS'))""")
+                VALUES (:id, :memberId, :title, :message, :type, 0, to_char(now(), 'YYYY-MM-DD HH24:MI:SS'))""")
             .setParameter("id", id).setParameter("memberId", memberId)
-            .setParameter("title", title).setParameter("message", message)
+            .setParameter("title", title).setParameter("message", message).setParameter("type", type)
             .executeUpdate();
     }
 

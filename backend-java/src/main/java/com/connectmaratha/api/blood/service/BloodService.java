@@ -123,7 +123,7 @@ public class BloodService {
         String message = hospital + ", " + city + ": " + units + " युनिट. रक्तदान मदत पानावर संपर्क पहा.";
         for (String memberId : blood.matchingDonorMembers(group, district, user.id(), MAX_NOTIFIED)) {
             try {
-                ownTransaction.executeWithoutResult(status -> activity.notifyMember(notificationId(), memberId, title, message));
+                ownTransaction.executeWithoutResult(status -> activity.notifyMember(notificationId(), memberId, title, message, "blood"));
                 notified++;
             } catch (RuntimeException e) {
                 log.warn("Blood request {}: could not notify {}", id, memberId, e);

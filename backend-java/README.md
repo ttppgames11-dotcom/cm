@@ -176,6 +176,14 @@ Rules:
 | `POST /api/blood/donors` | member | create (201) or update (200) your one profile: `name`, `bloodGroup`, `city`, `district`, `phone`, `available`, `lastDonated` (YYYY-MM-DD, not in the future) |
 | `DELETE /api/blood/donors/me` | member | delete your profile |
 
+**Notifications** (the `notifications` rows that meetings, chapters, blood help and enquiries write; `type` = `meeting`, `chapter`, `blood`, `enquiry`, ...):
+
+| Endpoint | Login | |
+|---|---|---|
+| `GET /api/members/notifications` | member | your newest 50: `id`, `title`, `message`, `type`, `read`, `created_at` (ISO), and `unread` (count of all unread) |
+| `PUT /api/members/notifications/{id}/read` | member | mark one of yours as read (someone else's or unknown → 404 `NOTIFICATION_NOT_FOUND`); reply has `unread` |
+| `PUT /api/members/notifications/read-all` | member | mark all of yours as read; reply has `unread` |
+
 **Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
 
 | Endpoint | Login | |

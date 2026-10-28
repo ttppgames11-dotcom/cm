@@ -117,7 +117,7 @@ public class ChapterService {
         if (status.equals(CLOSED) && !oldStatus.equals(CLOSED)) {
             for (String memberId : chapters.declineWaiting(id, user.id(), now())) {
                 activity.notifyMember(notificationId(), memberId, "चॅप्टर बंद झाला (Chapter closed)",
-                    "\"" + text(fields.get("name")) + "\" चॅप्टर बंद झाल्याने आपली विनंती नाकारली गेली (The chapter was closed, so your request was declined).");
+                    "\"" + text(fields.get("name")) + "\" चॅप्टर बंद झाल्याने आपली विनंती नाकारली गेली (The chapter was closed, so your request was declined).", "chapter");
             }
         }
         String action = status.equals(oldStatus) ? "CHAPTER_UPDATE" : status.equals(CLOSED) ? "CHAPTER_CLOSE" : "CHAPTER_REOPEN";
@@ -220,7 +220,7 @@ public class ChapterService {
         if (!coordinator.isEmpty() && !coordinator.equals(user.id())) {
             activity.notifyMember(notificationId(), coordinator, "नवीन चॅप्टर विनंती (New Chapter Request)",
                 nameOf(user.id()) + " यांनी \"" + text(business.get("name")) + "\" साठी \"" + text(chapter.get("name"))
-                    + "\" चॅप्टरमध्ये सामील होण्याची विनंती केली आहे.");
+                    + "\" चॅप्टरमध्ये सामील होण्याची विनंती केली आहे.", "chapter");
         }
         return seatResult("विनंती पाठवली! समन्वयकाच्या निर्णयाची प्रतीक्षा करा (Request sent.)", id);
     }
@@ -265,7 +265,7 @@ public class ChapterService {
                 case "decline" -> "\"" + chapterName + "\" चॅप्टरसाठी \"" + businessName + "\" ची विनंती नाकारली गेली (Your request was declined).";
                 default -> "\"" + businessName + "\" ला \"" + chapterName + "\" चॅप्टरमधून काढण्यात आले (Your business was removed from the chapter).";
             };
-            activity.notifyMember(notificationId(), text(seat.get("member_id")), "चॅप्टर: " + chapterName + " (Chapter update)", message);
+            activity.notifyMember(notificationId(), text(seat.get("member_id")), "चॅप्टर: " + chapterName + " (Chapter update)", message, "chapter");
             audit(user, "CHAPTER_SEAT_" + action.toUpperCase(java.util.Locale.ROOT), Map.of(
                 "chapterId", chapterId, "seatId", seatId, "businessId", text(seat.get("business_id")), "memberId", text(seat.get("member_id"))));
         }
