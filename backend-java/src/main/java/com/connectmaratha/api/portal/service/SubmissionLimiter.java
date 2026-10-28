@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 /**
- * At most 20 form submissions (blood, matrimony, grievances, volunteers, women's help, loans,
+ * At most 20 form submissions (matrimony, grievances, volunteers, women's help, loans,
  * doctors) per IP in 15 minutes. The forms need no login, so this stops one sender or bot from
  * filling the public lists with junk. Not in the Node backend.
  */

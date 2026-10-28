@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The older community endpoints of backend/server.js (doctors, blood, matrimony, grievances, volunteers, women, loans).
+ * The older community endpoints of backend/server.js (doctors, matrimony, grievances, volunteers, women, loans).
  * Safer than Node: every form is validated and limited per IP, grievances, women's help and loan
  * applications are visible to admins only, and private fields are hidden from public lists.
  */
@@ -44,16 +44,6 @@ public class PortalController {
     @GetMapping("/api/doctors")
     public List<Map<String, Object>> doctors() {
         return portal.publicList(PortalService.DOCTORS);
-    }
-
-    @GetMapping("/api/blood/requests")
-    public List<Map<String, Object>> bloodRequests() {
-        return portal.publicList(PortalService.BLOOD_REQUESTS);
-    }
-
-    @GetMapping("/api/blood/donors")
-    public List<Map<String, Object>> bloodDonors() {
-        return portal.publicList(PortalService.BLOOD_DONORS);
     }
 
     @GetMapping("/api/matrimony")
@@ -97,16 +87,6 @@ public class PortalController {
         return submit(req, PortalSchemas.DOCTOR, true, portal::addDoctor);
     }
 
-    @PostMapping("/api/blood/requests")
-    public ResponseEntity<Map<String, Object>> addBloodRequest(HttpServletRequest req) {
-        return submit(req, PortalSchemas.BLOOD_REQUEST, true, portal::addBloodRequest);
-    }
-
-    @PostMapping("/api/blood/donors")
-    public ResponseEntity<Map<String, Object>> addBloodDonor(HttpServletRequest req) {
-        return submit(req, PortalSchemas.BLOOD_DONOR, false, portal::addBloodDonor);
-    }
-
     @PostMapping("/api/matrimony")
     public ResponseEntity<Map<String, Object>> addMatrimony(HttpServletRequest req) {
         return submit(req, PortalSchemas.MATRIMONY, false, portal::addMatrimony);
@@ -133,8 +113,8 @@ public class PortalController {
     }
 
     /**
-     * Limit per IP, then validate. strict = unknown fields are an error (doctors and blood
-     * requests, as in Node); otherwise unknown fields are simply not saved.
+     * Limit per IP, then validate. strict = unknown fields are an error (doctors,
+     * as in Node); otherwise unknown fields are simply not saved.
      */
     private ResponseEntity<Map<String, Object>> submit(HttpServletRequest req, Map<String, Rule> schema, boolean strict,
                                                        Function<Map<String, Object>, Map<String, Object>> action) {

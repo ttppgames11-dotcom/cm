@@ -161,6 +161,15 @@ Rules:
 | `POST /api/admin/chapters` | admin | `name`, `city`, `district`, `area`, `meetingDay`, `meetingTime`, `venue`, `coordinatorId`, `maxSeats` (1-200 or empty) |
 | `PUT /api/admin/chapters/{id}` | admin | edit (fields left out keep their value), change coordinator, `status` open/closed; closing declines the waiting requests (and tells those members), reopening keeps the approved seats |
 
+**Blood help** (design: `docs/superpowers/specs/2026-10-28-blood-help-design.md`; tables `blood_requests`, `blood_donors`, migration 012, also created on first use, when the old `directory_records` blood entries are copied in without an owner):
+
+| Endpoint | Login | |
+|---|---|---|
+| `GET /api/blood/donors` | none | visible donors, available first; `available` (switch on, 90 days since the last donation), `can_donate_from`, `mine`; `phone` only when logged in; `?bloodGroup=`, `?district=` |
+| `GET /api/blood/donors/me` | member | your profile (`available_setting`, `last_donated`, `hidden`) or `{ donor: null }` |
+| `POST /api/blood/donors` | member | create (201) or update (200) your one profile: `name`, `bloodGroup`, `city`, `district`, `phone`, `available`, `lastDonated` (YYYY-MM-DD, not in the future) |
+| `DELETE /api/blood/donors/me` | member | delete your profile |
+
 **Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
 
 | Endpoint | Login | |

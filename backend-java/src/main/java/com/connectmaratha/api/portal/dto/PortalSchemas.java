@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * DOCTOR and BLOOD_REQUEST: port of backend/schemas/general.schemas.js (same fields, rules and order;
+ * DOCTOR: port of backend/schemas/general.schemas.js (same fields, rules and order;
  * unknown fields are rejected, as in Node).
  *
  * The other lists accepted ANY fields in Node, so a sender could set the server's own fields
@@ -26,26 +26,6 @@ public final class PortalSchemas {
         "degree", Rule.string().max(100),
         "experience", Rule.string().max(50),
         "address", Rule.string().max(250));
-
-    public static final Map<String, Rule> BLOOD_REQUEST = ordered(
-        "patientName", Rule.string().required().min(2).max(100),
-        "bloodGroup", Rule.string().required().oneOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"),
-        "units", Rule.number().integer().minValue(1).maxValue(20),
-        "hospital", Rule.string().required().min(2).max(150),
-        "city", Rule.string().required().min(2).max(100),
-        "district", Rule.string().required().min(2).max(100),
-        "contactPhone", Rule.string().required().format("phone").min(10).max(15),
-        "urgency", Rule.string().max(50),
-        "date", Rule.string().max(50),
-        "notes", Rule.string().max(500));
-
-    public static final Map<String, Rule> BLOOD_DONOR = ordered(
-        "name", Rule.string().max(100),
-        "group", Rule.string().max(10),
-        "bloodGroup", Rule.string().max(10),
-        "city", Rule.string().max(100),
-        "district", Rule.string().max(100),
-        "phone", Rule.string().max(20));
 
     public static final Map<String, Rule> MATRIMONY = ordered(
         "name", Rule.string().max(100),
