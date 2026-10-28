@@ -102,21 +102,43 @@ export const apiClient = {
     return await fetchJson('/doctors', { method: 'POST', body: JSON.stringify(doctor) });
   },
 
-  // Blood API
-  getBloodRequests: async () => {
-    const res = await fetchJson('/blood/requests');
-    return res.data?.requests || res.requests || res.data || [];
+  // Blood help (params: bloodGroup, district)
+  getBloodRequests: async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetchJson(`/blood/requests${qs ? '?' + qs : ''}`);
+    return res.requests || [];
   },
-  addBloodRequest: async (req) => {
-    return await fetchJson('/blood/requests', { method: 'POST', body: JSON.stringify(req) });
+  addBloodRequest: async (data) => {
+    return await fetchJson('/blood/requests', { method: 'POST', body: JSON.stringify(data) });
+  },
+  bloodRequestAction: async (id, action) => {
+    return await fetchJson(`/blood/requests/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ action }) });
+  },
+  getMyBloodRequests: async () => {
+    const res = await fetchJson('/blood/requests/mine');
+    return res.requests || [];
   },
   getDonors: async (params = {}) => {
     const qs = new URLSearchParams(params).toString();
     const res = await fetchJson(`/blood/donors${qs ? '?' + qs : ''}`);
-    return res.data?.donors || res.donors || res.data || [];
+    return res.donors || [];
   },
-  addDonor: async (donor) => {
-    return await fetchJson('/blood/donors', { method: 'POST', body: JSON.stringify(donor) });
+  getMyDonor: async () => {
+    const res = await fetchJson('/blood/donors/me');
+    return res.donor || null;
+  },
+  saveMyDonor: async (data) => {
+    return await fetchJson('/blood/donors', { method: 'POST', body: JSON.stringify(data) });
+  },
+  deleteMyDonor: async () => {
+    return await fetchJson('/blood/donors/me', { method: 'DELETE' });
+  },
+  adminGetBlood: async () => {
+    const res = await fetchJson('/admin/blood');
+    return { requests: res.requests || [], donors: res.donors || [] };
+  },
+  adminSetDonorHidden: async (id, hidden) => {
+    return await fetchJson(`/admin/blood/donors/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ hidden }) });
   },
 
   // Matrimony API
