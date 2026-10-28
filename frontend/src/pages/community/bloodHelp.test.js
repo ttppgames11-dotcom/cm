@@ -82,3 +82,40 @@ test('requestPayload uses the server field names', () => {
   });
   assert.equal(requestPayload({ note: ' needs 2 units ', units: 1 }).note, 'needs 2 units');
 });
+
+// ---- final review fixes ----
+import { donorDistrict, canCall, cleanPhone, donorPayload, requestsFromReply } from './bloodHelp.js';
+
+test('donorDistrict keeps only a district from the list', () => {
+  const list = ['पुणे', 'सातारा', 'मुंबई'];
+  assert.equal(donorDistrict('सातारा', list), 'सातारा');
+  assert.equal(donorDistrict(' मुंबई ', list), 'मुंबई');
+  assert.equal(donorDistrict('Pune', list), 'पुणे');
+  assert.equal(donorDistrict('महाराष्ट्र', list), 'पुणे');
+  assert.equal(donorDistrict(undefined, list), 'पुणे');
+});
+
+test('canCall only with a login and a phone number', () => {
+  assert.equal(canCall(true, '9822055443'), true);
+  assert.equal(canCall(true, undefined), false);
+  assert.equal(canCall(true, ''), false);
+  assert.equal(canCall(false, '9822055443'), false);
+});
+
+test('phones are sent without spaces or dashes', () => {
+  assert.equal(cleanPhone('98220 55443'), '9822055443');
+  assert.equal(cleanPhone(' +91-98220-55443 '), '+919822055443');
+  assert.equal(cleanPhone(undefined), '');
+  assert.equal(requestPayload({ contactPhone: '98220 55443', units: 1 }).contactPhone, '9822055443');
+  assert.deepEqual(donorPayload({
+    name: ' Ram ', bloodGroup: 'O+', city: ' Pune ', district: 'पुणे', phone: '98220-55443', available: false, lastDonated: ''
+  }), { name: 'Ram', bloodGroup: 'O+', city: 'Pune', district: 'पुणे', phone: '9822055443', available: false, lastDonated: null });
+  assert.equal(donorPayload({ available: undefined, lastDonated: '2026-10-01' }).available, true);
+  assert.equal(donorPayload({ lastDonated: '2026-10-01' }).lastDonated, '2026-10-01');
+});
+
+test('requestsFromReply reads the server list', () => {
+  assert.deepEqual(requestsFromReply({ success: true, count: 1, requests: [{ id: 'a' }] }), [{ id: 'a' }]);
+  assert.deepEqual(requestsFromReply({ data: [{ id: 'b' }] }), [{ id: 'b' }]);
+  assert.deepEqual(requestsFromReply(null), []);
+});

@@ -5,7 +5,7 @@ import apiClient from '../../services/apiClient';
 import { MAHARASHTRA_DISTRICTS } from '../../services/referralService';
 import {
   BLOOD_GROUPS, STATE_LABELS, toMarathiDigits, timeAgo, closesInText, donorBadge, requestActions,
-  filterDonors, filterRequests, requestPayload
+  filterDonors, filterRequests, requestPayload, donorPayload, donorDistrict, canCall, cleanPhone
 } from './bloodHelp';
 
 const BLOOD_BANKS = [
@@ -103,7 +103,7 @@ export default function BloodHelpPortalPage() {
 
   const openRequestForm = () => {
     if (!loggedIn) return loginFirst();
-    setRequestForm({ ...emptyRequest(), contactPhone: user?.phone || '' });
+    setRequestForm({ ...emptyRequest(), contactPhone: cleanPhone(user?.phone) });
     setRequestError('');
     setRequestDone('');
     setIsRequestModalOpen(true);
@@ -115,8 +115,8 @@ export default function BloodHelpPortalPage() {
       name: myDonor.name, bloodGroup: myDonor.blood_group, city: myDonor.city, district: myDonor.district || 'पुणे',
       phone: myDonor.phone || '', available: myDonor.available_setting !== false, lastDonated: myDonor.last_donated || ''
     } : {
-      name: user?.name || '', bloodGroup: 'O+', city: '', district: user?.district || 'पुणे',
-      phone: user?.phone || '', available: true, lastDonated: ''
+      name: user?.name || '', bloodGroup: 'O+', city: '', district: donorDistrict(user?.district, MAHARASHTRA_DISTRICTS),
+      phone: cleanPhone(user?.phone), available: true, lastDonated: ''
     });
     setDonorError('');
     setIsDonorModalOpen(true);
@@ -156,10 +156,7 @@ export default function BloodHelpPortalPage() {
     setBusy('donor');
     setDonorError('');
     try {
-      await apiClient.saveMyDonor({
-        name: donorForm.name, bloodGroup: donorForm.bloodGroup, city: donorForm.city, district: donorForm.district,
-        phone: donorForm.phone, available: donorForm.available, lastDonated: donorForm.lastDonated || null
-      });
+      await apiClient.saveMyDonor(donorPayload(donorForm));
       setIsDonorModalOpen(false);
       await loadAll();
     } catch (err) {
@@ -186,7 +183,7 @@ export default function BloodHelpPortalPage() {
   const shownRequests = filterRequests(requests, { group: reqGroup, search: reqSearch });
   const shownDonors = filterDonors(donors, { group: donorGroup, search: donorSearch });
 
-  const phoneButton = (phone, label, dark) => (loggedIn ? (
+  const phoneButton = (phone, label, dark) => (canCall(loggedIn, phone) ? (
     <a href={`tel:${phone}`} style={{
       background: dark ? '#dc2626' : '#f8fafc', color: dark ? '#fff' : '#0f172a', border: dark ? 'none' : '1px solid #cbd5e1',
       textDecoration: 'none', padding: '0.6rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, textAlign: 'center', display: 'block'

@@ -66,9 +66,47 @@ export function filterRequests(requests, { group = 'all', search = '' } = {}) {
     (group === 'all' || r.blood_group === group) && matches([r.patient_name, r.hospital, r.city, r.district], search));
 }
 
+const t = (v) => (v == null ? '' : String(v).trim());
+
+// "98220 55443" → "9822055443": the server's phone check allows no spaces or dashes.
+export function cleanPhone(phone) {
+  return t(phone).replace(/[\s-]/g, '');
+}
+
+// A new donor's district: the member's own only when it is in the list (requests always use the list,
+// so "Pune" or "महाराष्ट्र" would never match); otherwise पुणे.
+export function donorDistrict(userDistrict, districts) {
+  const d = t(userDistrict);
+  return districts.includes(d) ? d : 'पुणे';
+}
+
+// A call button needs a login and a number (a stale login gets no number from the server).
+export function canCall(loggedIn, phone) {
+  return !!loggedIn && !!t(phone);
+}
+
+// The list from GET /blood/requests ({ requests }), or an older { data } reply.
+export function requestsFromReply(res) {
+  if (Array.isArray(res?.requests)) return res.requests;
+  if (Array.isArray(res?.data)) return res.data;
+  return [];
+}
+
+// The donor form as the server expects it.
+export function donorPayload(form) {
+  return {
+    name: t(form.name),
+    bloodGroup: t(form.bloodGroup),
+    city: t(form.city),
+    district: t(form.district),
+    phone: cleanPhone(form.phone),
+    available: form.available !== false,
+    lastDonated: t(form.lastDonated) || null
+  };
+}
+
 // The request form as the server expects it: trimmed text, units as a number, no empty note.
 export function requestPayload(form) {
-  const t = (v) => (v == null ? '' : String(v).trim());
   const out = {
     patientName: t(form.patientName),
     bloodGroup: t(form.bloodGroup),
@@ -76,7 +114,7 @@ export function requestPayload(form) {
     hospital: t(form.hospital),
     city: t(form.city),
     district: t(form.district),
-    contactPhone: t(form.contactPhone),
+    contactPhone: cleanPhone(form.contactPhone),
     urgency: t(form.urgency)
   };
   if (t(form.note)) out.note = t(form.note);

@@ -1,5 +1,6 @@
 // src/services/adminApi.js
 import apiClient from './apiClient';
+import { requestsFromReply } from '../pages/community/bloodHelp';
 
 // -----------------------------------------------------------
 // CENTRALIZED ADMIN API LAYER
@@ -84,7 +85,7 @@ export const adminApi = {
   getAuditLogs: (params) => safe(apiClient.get('/admin/audit-logs', { params }), []),
 
   // ---- Blood / Seva ----
-  getBloodRequests: () => safe(apiClient.get('/blood/requests'), [])
+  getBloodRequests: () => safe(apiClient.get('/blood/requests'), [], null, requestsFromReply)
 };
 
 export default adminApi;

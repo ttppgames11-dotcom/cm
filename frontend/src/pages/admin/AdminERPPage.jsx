@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 import { useAuth } from '../../context/AuthContext';
+import { requestsFromReply } from '../community/bloodHelp';
 
 // Available Executive CRM Roles (Strict White & Bhagwa Saffron Palette)
 const ROLES = {
@@ -134,8 +135,8 @@ export default function AdminERPPage() {
         const rList = Array.isArray(refRes.value.data) ? refRes.value.data : refRes.value.data.referrals || [];
         setReferrals(rList);
       }
-      if (bloodRes.status === 'fulfilled' && bloodRes.value?.data) {
-        const bList = Array.isArray(bloodRes.value.data) ? bloodRes.value.data : bloodRes.value.data.requests || [];
+      if (bloodRes.status === 'fulfilled') {
+        const bList = requestsFromReply(bloodRes.value);
         setBloodRequests(bList);
       }
       if (auditRes.status === 'fulfilled' && auditRes.value?.data) {

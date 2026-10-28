@@ -2161,7 +2161,7 @@ function ReportsView({ data }) {
     { label: 'प्रमाणित KYC', value: data.users.filter(u => u.verified).length, color: T.green },
     { label: 'व्यवसाय', value: data.businesses.length, color: T.amber },
     { label: 'B2B रेफरल्स', value: data.referrals.length, color: T.deep },
-    { label: '२४x७ सेवारक्त विनंत्या', value: data.blood.length || 94, color: T.red },
+    { label: '२४x७ सेवारक्त विनंत्या', value: data.blood.length, color: T.red },
     { label: 'कार्यक्रम नोंदणी', value: data.events.length || 28, color: T.saffron }
   ];
   return (
