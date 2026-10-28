@@ -56,6 +56,15 @@ export function jobPayload(form) {
   return cleaned({ title, company, district, category, salary, job_type, experience, desc, phone, contact_email });
 }
 
+// The board's query: the typed search (trimmed) and the filters, leaving out "all" / "सर्व" and empty values.
+export function jobQuery(category, district, search) {
+  const q = {};
+  if (category && category !== 'all') q.category = category;
+  if (district && district !== 'सर्व') q.district = district;
+  if (t(search)) q.search = t(search);
+  return q;
+}
+
 export function applicationPayload(form) {
   return cleaned({ applicant_name: form.name, phone: form.phone, email: form.email, resume_summary: form.summary });
 }

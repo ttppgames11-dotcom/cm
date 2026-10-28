@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import apiClient from '../../services/apiClient';
 import { MAHARASHTRA_DISTRICTS } from '../../services/referralService';
 import { timeAgo, toMarathiDigits } from '../community/bloodHelp';
 import {
-  APPLICATION_STATUSES, STATE_LABELS, closesInText, applyButton, whatsappLink, jobPayload, statusInfo
+  APPLICATION_STATUSES, STATE_LABELS, closesInText, applyButton, whatsappLink, jobPayload, statusInfo, jobQuery
 } from './jobsHelp';
 import JobApplyModal from './JobApplyModal';
 
@@ -63,6 +63,9 @@ export default function JobsPortalPage() {
   const [postForm, setPostForm] = useState(() => emptyJobForm(user));
   const [postError, setPostError] = useState('');
   const [posting, setPosting] = useState(false);
+  const [postDone, setPostDone] = useState('');
+  // Bumped after a post so "माझ्या जाहिराती" reloads even when it is already the open tab.
+  const [mineVersion, setMineVersion] = useState(0);
 
   const loginFirst = (to = '/jobs') => navigate('/login?redirect=' + encodeURIComponent(to));
   const openTab = (id) => setParams(id === 'all' ? {} : { tab: id });
@@ -71,23 +74,21 @@ export default function JobsPortalPage() {
     apiClient.getJobStats().then(setStats).catch(() => {});
   }, []);
 
+  // The search box is applied with the button or Enter, not on every key, so it is read from a ref (always the latest text).
+  const searchRef = useRef(search);
+  searchRef.current = search;
+
   const loadJobs = useCallback(async () => {
     setLoading(true);
     setListError('');
     try {
-      setJobs(await apiClient.getJobs({
-        category: selectedCat !== 'all' ? selectedCat : '',
-        district: selectedDistrict !== 'सर्व' ? selectedDistrict : '',
-        search
-      }));
+      setJobs(await apiClient.getJobs(jobQuery(selectedCat, selectedDistrict, searchRef.current)));
     } catch (err) {
       setListError(err.message || 'नोकऱ्या लोड करता आल्या नाहीत.');
     } finally {
       setLoading(false);
     }
-    // search is applied with the button, not on every key
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCat, selectedDistrict]);
+  }, [selectedCat, selectedDistrict, user?.id]);
 
   useEffect(() => { loadStats(); }, [loadStats]);
   useEffect(() => { if (tab === 'all') loadJobs(); }, [tab, loadJobs]);
@@ -106,6 +107,8 @@ export default function JobsPortalPage() {
     try {
       await apiClient.postJob(jobPayload(postForm));
       setShowPostModal(false);
+      setPostDone('✅ नोकरी जाहिरात प्रसिद्ध झाली! ती ३० दिवस दिसेल.');
+      setMineVersion((v) => v + 1);
       loadStats();
       openTab('mine');
     } catch (err) {
@@ -226,7 +229,10 @@ export default function JobsPortalPage() {
           </>
         )}
 
-        {tab === 'mine' && (loggedIn ? <MyJobs onChanged={loadStats} /> : <LoginPrompt onLogin={() => loginFirst('/jobs?tab=mine')} />)}
+        {postDone && tab === 'mine' && (
+          <div role="status" style={{ background: '#F0FDF4', color: '#166534', padding: '10px 14px', borderRadius: '8px', fontWeight: 700, marginBottom: '14px' }}>{postDone}</div>
+        )}
+        {tab === 'mine' && (loggedIn ? <MyJobs key={mineVersion} onChanged={loadStats} /> :<LoginPrompt onLogin={() => loginFirst('/jobs?tab=mine')} />)}
         {tab === 'applied' && (loggedIn ? <MyApplications /> : <LoginPrompt onLogin={() => loginFirst('/jobs?tab=applied')} />)}
 
         {applyingJob && (

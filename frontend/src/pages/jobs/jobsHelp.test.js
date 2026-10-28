@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  APPLICATION_STATUSES, STATE_LABELS, closesInText, applyButton, whatsappText, whatsappLink, jobPayload, applicationPayload, statusInfo
+  APPLICATION_STATUSES, STATE_LABELS, closesInText, applyButton, whatsappText, whatsappLink, jobPayload, applicationPayload, statusInfo, jobQuery
 } from './jobsHelp.js';
 
 const NOW = new Date('2026-10-28T10:00:00Z');
@@ -65,6 +65,12 @@ test('jobPayload cleans the form', () => {
   assert.equal(p.phone, '9876500001');
   assert.equal('contact_email' in p, false);
   assert.equal('desc' in p, false);
+});
+
+test('jobQuery sends the typed search and drops "all" filters', () => {
+  assert.deepEqual(jobQuery('all', 'सर्व', ' Tally '), { search: 'Tally' });
+  assert.deepEqual(jobQuery('IT & Software', 'पुणे', ''), { category: 'IT & Software', district: 'पुणे' });
+  assert.deepEqual(jobQuery('all', 'सर्व', '   '), {});
 });
 
 test('applicationPayload maps the apply form to the server names', () => {
