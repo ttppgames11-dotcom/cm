@@ -23,3 +23,10 @@ export function unreadBadge(count) {
 export function markedRead(list, id) {
   return (list || []).map((n) => (id === undefined || n.id === id ? { ...n, read: true } : n));
 }
+
+// Sent after marking notifications read, so the header bell re-counts without a page change.
+export const NOTIFICATIONS_CHANGED = 'cm:notifications-changed';
+
+export function announceNotificationsChanged(target = typeof window !== 'undefined' ? window : null) {
+  if (target) target.dispatchEvent(new Event(NOTIFICATIONS_CHANGED));
+}

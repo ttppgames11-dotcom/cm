@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useSiteContent } from '../../context/SiteContentContext';
 import LanguageSwitcher from '../common/LanguageSwitcher';
 import apiClient from '../../services/apiClient';
-import { unreadBadge } from '../../pages/member/notificationList';
+import { unreadBadge, NOTIFICATIONS_CHANGED } from '../../pages/member/notificationList';
 
 export default function SiteHeader({ onOpenSearch }) {
   const { user, logout } = useAuth();
@@ -17,17 +17,22 @@ export default function SiteHeader({ onOpenSearch }) {
 
   const isLoggedIn = !!(user && (user.id || user._id) && (typeof window === 'undefined' || localStorage.getItem('cm_logged_in') === 'true'));
 
-  // The bell's unread count, checked again on every page change (no live updates).
+  // The bell's unread count, checked again on every page change and whenever notifications are marked read.
   useEffect(() => {
     if (!isLoggedIn) {
       setUnread(0);
       return undefined;
     }
     let cancelled = false;
-    apiClient.getMyNotifications()
+    const recount = () => apiClient.getMyNotifications()
       .then((res) => { if (!cancelled) setUnread(res.unread); })
       .catch(() => { if (!cancelled) setUnread(0); });
-    return () => { cancelled = true; };
+    recount();
+    window.addEventListener(NOTIFICATIONS_CHANGED, recount);
+    return () => {
+      cancelled = true;
+      window.removeEventListener(NOTIFICATIONS_CHANGED, recount);
+    };
   }, [isLoggedIn, location.pathname]);
 
   const handleSearchClick = () => {

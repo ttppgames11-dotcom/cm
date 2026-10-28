@@ -33,3 +33,15 @@ test('markedRead updates one or all without changing the rest', () => {
   assert.deepEqual(markedRead(list).map((n) => n.read), [true, true, true]);
   assert.equal(list[0].read, false);
 });
+
+import { NOTIFICATIONS_CHANGED, announceNotificationsChanged } from './notificationList.js';
+
+test('announceNotificationsChanged tells listeners (the header bell) to re-count', () => {
+  const target = new EventTarget();
+  let heard = 0;
+  target.addEventListener(NOTIFICATIONS_CHANGED, () => { heard += 1; });
+  announceNotificationsChanged(target);
+  announceNotificationsChanged(target);
+  assert.equal(heard, 2);
+  assert.equal(NOTIFICATIONS_CHANGED, 'cm:notifications-changed');
+});

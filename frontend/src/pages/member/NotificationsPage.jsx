@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 import { timeAgo } from '../community/bloodHelp';
-import { notificationLink, notificationIcon, markedRead } from './notificationList';
+import { notificationLink, notificationIcon, markedRead, announceNotificationsChanged } from './notificationList';
 
 // The member's real notifications (meetings, chapters, blood help, enquiries) from the server.
 export default function NotificationsPage() {
@@ -35,6 +35,7 @@ export default function NotificationsPage() {
         const res = await apiClient.markNotificationRead(n.id);
         setNotifications((list) => markedRead(list, n.id));
         setUnread(res.unread ?? Math.max(0, unread - 1));
+        announceNotificationsChanged();
       } catch (err) {
         setError(err.message);
       }
@@ -49,6 +50,7 @@ export default function NotificationsPage() {
       await apiClient.markAllNotificationsRead();
       setNotifications((list) => markedRead(list));
       setUnread(0);
+      announceNotificationsChanged();
     } catch (err) {
       setError(err.message);
     } finally {
