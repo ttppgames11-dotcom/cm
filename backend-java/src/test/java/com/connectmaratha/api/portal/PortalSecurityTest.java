@@ -55,20 +55,17 @@ class PortalSecurityTest extends PostgresTestBase {
 
     @Test
     void senderCannotSetTheServersOwnFields() throws Exception {
-        Map<String, Object> donor = new LinkedHashMap<>();
-        donor.put("name", "Safe Donor");
-        donor.put("group", "A+");
-        donor.put("id", "HACKED-1");
-        donor.put("totalDonations", 99);
-        donor.put("verified", true);
-        donor.put("isAdmin", true);
-        send("/api/blood/donors", donor)
+        Map<String, Object> volunteer = new LinkedHashMap<>();
+        volunteer.put("name", "Safe Volunteer");
+        volunteer.put("id", "HACKED-1");
+        volunteer.put("verified", true);
+        volunteer.put("isAdmin", true);
+        send("/api/social/volunteers", volunteer)
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.donor.name").value("Safe Donor"))
-            .andExpect(jsonPath("$.donor.id").value(startsWith("DON-")))
-            .andExpect(jsonPath("$.donor.totalDonations").value(1))
-            .andExpect(jsonPath("$.donor.verified").doesNotExist())
-            .andExpect(jsonPath("$.donor.isAdmin").doesNotExist());
+            .andExpect(jsonPath("$.volunteer.name").value("Safe Volunteer"))
+            .andExpect(jsonPath("$.volunteer.id").value(startsWith("VOL-")))
+            .andExpect(jsonPath("$.volunteer.verified").doesNotExist())
+            .andExpect(jsonPath("$.volunteer.isAdmin").doesNotExist());
 
         send("/api/matrimony", Map.of("name", "Safe Vadhu", "gender", "वधू", "verified", false,
                 "caste", "other", "id", "HACKED-2"))
@@ -109,7 +106,7 @@ class PortalSecurityTest extends PostgresTestBase {
 
     @Test
     void oversizedOrWrongTypeFieldsAreRejected() throws Exception {
-        send("/api/blood/donors", Map.of("name", "x".repeat(101)))
+        send("/api/social/volunteers", Map.of("name", "x".repeat(101)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
         // Node failed with a server error here

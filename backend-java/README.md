@@ -161,6 +161,29 @@ Rules:
 | `POST /api/admin/chapters` | admin | `name`, `city`, `district`, `area`, `meetingDay`, `meetingTime`, `venue`, `coordinatorId`, `maxSeats` (1-200 or empty) |
 | `PUT /api/admin/chapters/{id}` | admin | edit (fields left out keep their value), change coordinator, `status` open/closed; closing declines the waiting requests (and tells those members), reopening keeps the approved seats |
 
+**Blood help** (design: `docs/superpowers/specs/2026-10-28-blood-help-design.md`; tables `blood_requests`, `blood_donors`, migration 012, also created on first use, when the old `directory_records` blood entries are copied in without an owner):
+
+| Endpoint | Login | |
+|---|---|---|
+| `GET /api/blood/requests` | none | open requests not past `closes_at`, newest first; `state`, `mine`; `contact_phone` only when logged in; `?bloodGroup=`, `?district=` |
+| `POST /api/blood/requests` | member | `patientName`, `bloodGroup`, `units` (1-20), `hospital`, `city`, `district`, `contactPhone`, `urgency`, `note`; 3 per member per 24 hours; closes in 7 days; reply has `notified` = available donors of the same group and district told by notification (at most 100) |
+| `GET /api/blood/requests/mine` | member | your requests with `state` `open`, `expired`, `fulfilled` or `closed` |
+| `PUT /api/blood/requests/{id}` | owner or admin | `{ action }`: `received`, `close`, `extend` (7 more days, also after expiry); only while open, else 409 `INVALID_TRANSITION` |
+| `GET /api/admin/blood` | admin | every request and donor (hidden too) with phones and `owner_name` |
+| `PUT /api/admin/blood/donors/{id}` | admin | `{ hidden }`: hide a donor from the public list or show them again (audited) |
+| `GET /api/blood/donors` | none | visible donors, available first; `available` (switch on, 90 days since the last donation), `can_donate_from`, `mine`; `phone` only when logged in; `?bloodGroup=`, `?district=` |
+| `GET /api/blood/donors/me` | member | your profile (`available_setting`, `last_donated`, `hidden`) or `{ donor: null }` |
+| `POST /api/blood/donors` | member | create (201) or update (200) your one profile: `name`, `bloodGroup`, `city`, `district`, `phone`, `available`, `lastDonated` (YYYY-MM-DD, not in the future) |
+| `DELETE /api/blood/donors/me` | member | delete your profile |
+
+**Notifications** (the `notifications` rows that meetings, chapters, blood help and enquiries write; `type` = `meeting`, `chapter`, `blood`, `enquiry`, ...):
+
+| Endpoint | Login | |
+|---|---|---|
+| `GET /api/members/notifications` | member | your newest 50: `id`, `title`, `message`, `type`, `read`, `created_at` (ISO), and `unread` (count of all unread) |
+| `PUT /api/members/notifications/{id}/read` | member | mark one of yours as read (someone else's or unknown → 404 `NOTIFICATION_NOT_FOUND`); reply has `unread` |
+| `PUT /api/members/notifications/read-all` | member | mark all of yours as read; reply has `unread` |
+
 **Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
 
 | Endpoint | Login | |

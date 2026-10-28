@@ -1098,34 +1098,16 @@ class NodeParityTest extends PostgresTestBase {
             r.rec("doctor", s.post("/api/doctors", Map.of("name", z + " Dr Patil", "specialty", "Cardio", "phone", "9876543210",
                 "city", "Pune", "degree", "MD")));
             r.rec("doctor minimal", s.post("/api/doctors", Map.of("name", "Dr B", "specialty", "Skin")));
-            // blood requests: strict input
-            Map<String, Object> ok = new LinkedHashMap<>(Map.of("patientName", z + " Patient", "bloodGroup", "O+", "units", 2,
-                "hospital", "Sassoon", "city", "Pune", "district", "Pune", "contactPhone", "9876543211"));
-            r.rec("blood request", s.post("/api/blood/requests", ok));
-            for (String[] bad : new String[][] {{"bloodGroup", "Z+"}, {"city", ""}, {"contactPhone", "1"}}) {
-                Map<String, Object> m = new LinkedHashMap<>(ok);
-                m.put(bad[0], bad[1]);
-                r.rec("blood request bad " + bad[0], s.post("/api/blood/requests", m));
-            }
-            Map<String, Object> units = new LinkedHashMap<>(ok);
-            units.put("units", 25);
-            r.rec("blood request units 25", s.post("/api/blood/requests", units));
-            units.put("units", 2.5);
-            r.rec("blood request units 2.5", s.post("/api/blood/requests", units));
-            Map<String, Object> extra = new LinkedHashMap<>(ok);
-            extra.put("verified", true);
-            r.rec("blood request unknown field", s.post("/api/blood/requests", extra));
-
-            // The free-form lists (donors, matrimony, grievances, volunteers, women, loans) are
+            // Blood requests and donors are a new design in Java (login, owners, closing): see BloodEndpointsTest.
+            // The free-form lists (matrimony, grievances, volunteers, women, loans) are
             // deliberately stricter in Java: see PortalSecurityTest.
 
-            for (String path : List.of("/api/doctors", "/api/blood/requests", "/api/blood/donors", "/api/social/volunteers")) {
+            for (String path : List.of("/api/doctors", "/api/social/volunteers")) {
                 Resp list = s.get(path, null);
                 assertThat(list.status()).as(s.name + " " + path).isEqualTo(200);
                 assertThat(list.json().isArray()).as(s.name + " " + path + " is a plain list").isTrue();
             }
             assertThat(s.get("/api/doctors", null).raw()).as(s.name + " doctor listed").contains(z + " Dr Patil");
-            assertThat(s.get("/api/blood/requests", null).raw()).as(s.name + " blood request listed").contains(z + " Patient");
         });
 
         compare("ai assistant", (s, r) -> {

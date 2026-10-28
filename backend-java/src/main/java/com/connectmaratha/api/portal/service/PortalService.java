@@ -14,7 +14,7 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 
 /**
- * The older community lists of the website: doctors, blood requests and donors, matrimony,
+ * The older community lists of the website: doctors, matrimony,
  * grievances, volunteers, women's help and loan applications (the endpoints that lived in
  * backend/server.js). Records are stored in the shared records table: the defaults below plus
  * only the fields allowed by {@link PortalSchemas}, so a sender can never set the server's own
@@ -24,8 +24,6 @@ import org.springframework.stereotype.Service;
 public class PortalService {
 
     public static final String DOCTORS = "doctors";
-    public static final String BLOOD_REQUESTS = "bloodRequests";
-    public static final String BLOOD_DONORS = "bloodDonors";
     public static final String MATRIMONY = "matrimony";
     public static final String GRIEVANCES = "grievances";
     public static final String VOLUNTEERS = "volunteers";
@@ -64,21 +62,6 @@ public class PortalService {
         record.put("rating", "5.0 ★ (नवीन नोंदणी)");
         record.put("icon", "🩺");
         return save(DOCTORS, record, body, PortalSchemas.DOCTOR, "डॉक्टर प्रोफाइल यशस्वीरीत्या जोडले गेले!", "doctor");
-    }
-
-    public Map<String, Object> addBloodRequest(Map<String, Object> body) {
-        Map<String, Object> record = new LinkedHashMap<>();
-        record.put("id", store.freeShortId(BLOOD_REQUESTS, "REQ-", 3));
-        record.put("time", "आत्ताच");
-        return save(BLOOD_REQUESTS, record, body, PortalSchemas.BLOOD_REQUEST, "🚨 तातडीची रक्त मागणी प्रसारित करण्यात आली!", "request");
-    }
-
-    public Map<String, Object> addBloodDonor(Map<String, Object> body) {
-        Map<String, Object> record = new LinkedHashMap<>();
-        record.put("id", store.freeShortId(BLOOD_DONORS, "DON-"));
-        record.put("totalDonations", 1);
-        record.put("lastDonated", "नवीन नोंदणी");
-        return save(BLOOD_DONORS, record, body, PortalSchemas.BLOOD_DONOR, "❤️ रक्तदाता नोंदणी यशस्वी झाली!", "donor");
     }
 
     public Map<String, Object> addMatrimony(Map<String, Object> body) {

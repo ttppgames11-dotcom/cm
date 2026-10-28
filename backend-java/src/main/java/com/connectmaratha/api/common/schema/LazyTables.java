@@ -119,6 +119,21 @@ public class LazyTables {
         "CREATE UNIQUE INDEX IF NOT EXISTS chapter_seats_one_per_business ON chapter_seats (business_id) WHERE status IN ('waiting', 'approved')",
         "CREATE UNIQUE INDEX IF NOT EXISTS chapter_seats_one_per_member ON chapter_seats (chapter_id, member_id) WHERE status IN ('waiting', 'approved')"};
 
+    static final String[] BLOOD_TABLES = {
+        """
+        CREATE TABLE IF NOT EXISTS blood_requests (
+          id TEXT PRIMARY KEY, member_id TEXT, patient_name TEXT NOT NULL, blood_group TEXT NOT NULL,
+          units INTEGER NOT NULL DEFAULT 1, hospital TEXT, city TEXT, district TEXT, contact_phone TEXT, urgency TEXT,
+          note TEXT, status TEXT NOT NULL DEFAULT 'open', closed_by TEXT, closes_at TIMESTAMPTZ NOT NULL,
+          created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now())""",
+        """
+        CREATE TABLE IF NOT EXISTS blood_donors (
+          id TEXT PRIMARY KEY, member_id TEXT, name TEXT NOT NULL, blood_group TEXT NOT NULL, city TEXT, district TEXT,
+          phone TEXT, available BOOLEAN NOT NULL DEFAULT true, last_donated DATE, hidden BOOLEAN NOT NULL DEFAULT false,
+          created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now())""",
+        "CREATE UNIQUE INDEX IF NOT EXISTS blood_donors_one_per_member ON blood_donors (member_id) WHERE member_id IS NOT NULL",
+        "CREATE INDEX IF NOT EXISTS blood_requests_member ON blood_requests (member_id, created_at)"};
+
     private final JdbcTemplate jdbc;
     private final TransactionTemplate ownTransaction;
     private final AtomicBoolean moderationReady = new AtomicBoolean();
@@ -128,6 +143,7 @@ public class LazyTables {
     private final AtomicBoolean referralColumnsReady = new AtomicBoolean();
     private final AtomicBoolean meetingColumnsReady = new AtomicBoolean();
     private final AtomicBoolean chapterTablesReady = new AtomicBoolean();
+    private final AtomicBoolean bloodTablesReady = new AtomicBoolean();
 
     public LazyTables(JdbcTemplate jdbc, PlatformTransactionManager transactions) {
         this.jdbc = jdbc;
@@ -180,5 +196,10 @@ public class LazyTables {
     /** The chapters and chapter_seats tables with their two one-active-seat indexes, created on first use. */
     public void ensureChapterTables() {
         createOnce(chapterTablesReady, CHAPTER_TABLES);
+    }
+
+    /** The blood_requests and blood_donors tables with the one-profile-per-member index, created on first use. */
+    public void ensureBloodTables() {
+        createOnce(bloodTablesReady, BLOOD_TABLES);
     }
 }
