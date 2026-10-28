@@ -11,6 +11,13 @@ test('notificationLink opens the right page by type', () => {
   assert.equal(notificationLink(undefined), null);
 });
 
+test('job notifications open the right jobs tab', () => {
+  assert.equal(notificationLink('job'), '/jobs?tab=mine');
+  assert.equal(notificationLink('job_application'), '/jobs?tab=applied');
+  assert.equal(notificationIcon('job'), '💼');
+  assert.equal(notificationIcon('job_application'), '📋');
+});
+
 test('notificationIcon by type', () => {
   assert.equal(notificationIcon('blood'), '🩸');
   assert.equal(notificationIcon('chapter'), '🤝');
