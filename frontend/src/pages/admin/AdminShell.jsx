@@ -18,6 +18,7 @@ import BusinessFullReport from './reports/BusinessFullReport';
 import ReferralReportPanel from './reports/ReferralReportPanel';
 import apiClient from '../../services/apiClient';
 import { SEAT_STATUS_LABELS, CATEGORY_LABELS, seatActions } from '../sangam/chapterList';
+import { BLOOD_GROUPS, STATE_LABELS, timeAgo } from '../community/bloodHelp';
 import BloodHelpFullReport from './reports/BloodHelpFullReport';
 import TicketFullReport from './reports/TicketFullReport';
 import EventsFullReport from './reports/EventsFullReport';
@@ -366,11 +367,7 @@ export default function AdminShell() {
     { id: 'TCK-8804', subject: 'नवीन शाखा सदस्य नोंदणी संदर्भात शंका', priority: 'high', status: 'open', category: 'General' }
   ];
 
-  const defaultBlood = [
-    { id: 'BLD-101', patientName: 'सुनील तानाजी पवार', bloodGroup: 'A+ve', hospital: 'दीनानाथ मंगेशकर हॉस्पिटल, पुणे', city: 'पुणे', contactNumber: '+91 98220 55443', units: 2, status: 'Urgent' },
-    { id: 'BLD-102', patientName: 'रेश्मा सुरेश निंबाळकर', bloodGroup: 'O-ve', hospital: 'जिल्हा सरकारी रुग्णालय, सातारा', city: 'सातारा', contactNumber: '+91 98221 66778', units: 3, status: 'Fulfilled' },
-    { id: 'BLD-103', patientName: 'गणेश आनंदा भोसले', bloodGroup: 'B+ve', hospital: 'घाटी रुग्णालय, छत्रपती संभाजीनगर', city: 'संभाजीनगर', contactNumber: '+91 91580 99887', units: 1, status: 'Pending' }
-  ];
+  const defaultBlood = [];
 
   const defaultAudit = [
     { action: 'LOGIN_SUCCESS', performedBy: 'Super Admin Central', module: 'Auth', timestamp: new Date() },
@@ -679,7 +676,7 @@ export default function AdminShell() {
 
               <Route path="/workflows" element={<WorkflowsView data={data} />} />
               <Route path="/tickets" element={<TicketsView data={data} toast={toast$} />} />
-              <Route path="/seva" element={<BloodView data={data} />} />
+              <Route path="/seva" element={<BloodView toast={toast$} />} />
               <Route path="/reports" element={<ReportsView data={data} />} />
               <Route path="/analytics" element={<ReportsView data={data} />} />
               <Route path="/approvals" element={<ApprovalsView data={data} />} />
@@ -2032,32 +2029,125 @@ function TicketsView({ data, toast }) {
 /* ============================================================
    13. BLOOD / SEVA
    ============================================================ */
-function BloodView({ data }) {
+function BloodView({ toast }) {
+  const [blood, setBlood] = useState({ requests: [], donors: [] });
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [state, setState] = useState('all');
+  const [group, setGroup] = useState('all');
+  const [district, setDistrict] = useState('');
+  const [busy, setBusy] = useState('');
+
+  const load = useCallback(async () => {
+    try {
+      setBlood(await apiClient.adminGetBlood());
+      setLoadError('');
+    } catch (err) {
+      setLoadError(err.message || 'रक्त मदत माहिती लोड करता आली नाही');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const inDistrict = (v) => !district.trim() || (v || '').toLowerCase().includes(district.trim().toLowerCase());
+  const requests = blood.requests.filter(r =>
+    (state === 'all' || r.state === state) && (group === 'all' || r.blood_group === group) && inDistrict(r.district));
+  const donors = blood.donors.filter(d => (group === 'all' || d.blood_group === group) && inDistrict(d.district));
+  const openCount = blood.requests.filter(r => r.state === 'open').length;
+
+  const closeRequest = async (r) => {
+    if (!window.confirm(`"${r.patient_name}" ची मागणी बंद करायची का?`)) return;
+    setBusy(r.id);
+    try {
+      await apiClient.bloodRequestAction(r.id, 'close');
+      toast('मागणी बंद केली', 'success');
+      await load();
+    } catch (err) {
+      toast(err.message, 'error');
+    } finally {
+      setBusy('');
+    }
+  };
+
+  const toggleHidden = async (d) => {
+    if (!window.confirm(d.hidden ? `"${d.name}" पुन्हा दाखवायचे का?` : `"${d.name}" यादीतून लपवायचे का?`)) return;
+    setBusy(d.id);
+    try {
+      const res = await apiClient.adminSetDonorHidden(d.id, !d.hidden);
+      toast(res.message || 'झाले', 'success');
+      await load();
+    } catch (err) {
+      toast(err.message, 'error');
+    } finally {
+      setBusy('');
+    }
+  };
+
+  const stateTone = { open: 'green', expired: 'saffron', fulfilled: 'gray', closed: 'gray' };
+
   return (
     <>
-      <SectionTitle subtitle={`${data.blood.length} विनंत्या`}>🩸 Blood Helpdesk</SectionTitle>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
-        {data.blood.map((b, i) => (
-          <Card key={i} style={{ borderColor: '#FCA5A5' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-              <Badge tone="red">🩸 {b.bloodGroup || 'सर्व'}</Badge>
-              <Badge tone="red">तातडीची</Badge>
-            </div>
-            <div style={{ fontWeight: 900, color: T.ink }}>{b.patientName || 'रुग्ण'}</div>
-            <div style={{ fontSize: '0.75rem', color: T.muted, marginTop: 6 }}>
-              🏥 {b.hospital || '—'} • 📍 {b.city || '—'}
-            </div>
-            <div style={{ fontSize: '0.75rem', color: T.muted, marginTop: 4 }}>
-              📞 {b.contactNumber || '—'}
-            </div>
-          </Card>
-        ))}
-        {data.blood.length === 0 && (
-          <Card style={{ gridColumn: '1/-1', textAlign: 'center', padding: 40, color: T.muted }}>
-            कोणत्याही विनंत्या नाहीत
-          </Card>
+      <SectionTitle subtitle={`${openCount} सुरू मागण्या • ${blood.donors.length} रक्तदाते`}>🩸 Blood Helpdesk</SectionTitle>
+      {loadError && <Card style={{ borderColor: '#FCA5A5', color: T.red, marginBottom: 14 }}>{loadError}</Card>}
+      <Card style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 14 }}>
+        <div style={{ minWidth: 160 }}>
+          <Select label="स्थिती" value={state} onChange={e => setState(e.target.value)}
+            options={[{ value: 'all', label: 'सर्व' }, ...Object.entries(STATE_LABELS).map(([value, label]) => ({ value, label }))]} />
+        </div>
+        <div style={{ minWidth: 120 }}>
+          <Select label="रक्तगट" value={group} onChange={e => setGroup(e.target.value)}
+            options={[{ value: 'all', label: 'सर्व' }, ...BLOOD_GROUPS]} />
+        </div>
+        <div style={{ minWidth: 200, flex: 1 }}>
+          <Input label="जिल्हा" placeholder="उदा. पुणे" value={district} onChange={e => setDistrict(e.target.value)} />
+        </div>
+      </Card>
+
+      <Card style={{ marginBottom: 18 }}>
+        <div style={{ fontWeight: 900, color: T.ink, marginBottom: 10 }}>रक्त मागण्या ({requests.length})</div>
+        {loading ? <div style={{ color: T.muted }}>लोड होत आहे...</div> : (
+          <Table
+            headers={['ID', 'रुग्ण', 'रक्तगट', 'युनिट्स', 'रुग्णालय / ठिकाण', 'संपर्क', 'नोंदवणारे', 'स्थिती', 'वेळ', 'कृती']}
+            rows={requests.map(r => [
+              r.id,
+              <strong key="p">{r.patient_name}</strong>,
+              <Badge key="g" tone="red">{r.blood_group}</Badge>,
+              r.units,
+              `${r.hospital || '—'}, ${r.city || ''} (${r.district || '—'})`,
+              r.contact_phone || '—',
+              r.owner_name || 'जुनी नोंद',
+              <Badge key="s" tone={stateTone[r.state] || 'gray'}>{STATE_LABELS[r.state] || r.state}</Badge>,
+              timeAgo(r.created_at),
+              (r.state === 'open' || r.state === 'expired')
+                ? <Btn key="c" variant="danger" disabled={busy === r.id} onClick={() => closeRequest(r)}>बंद करा</Btn>
+                : '—'
+            ])}
+          />
         )}
-      </div>
+      </Card>
+
+      <Card>
+        <div style={{ fontWeight: 900, color: T.ink, marginBottom: 10 }}>रक्तदाते ({donors.length})</div>
+        {loading ? <div style={{ color: T.muted }}>लोड होत आहे...</div> : (
+          <Table
+            headers={['नाव', 'रक्तगट', 'शहर / जिल्हा', 'फोन', 'सदस्य', 'उपलब्ध', 'दृश्यता', 'कृती']}
+            rows={donors.map(d => [
+              <strong key="n">{d.name}</strong>,
+              <Badge key="g" tone="red">{d.blood_group}</Badge>,
+              `${d.city || '—'}, ${d.district || '—'}`,
+              d.phone || '—',
+              d.owner_name || 'जुनी नोंद',
+              d.available ? <Badge key="a" tone="green">उपलब्ध</Badge> : <Badge key="a" tone="gray">{d.can_donate_from ? `${d.can_donate_from} पासून` : 'नाही'}</Badge>,
+              d.hidden ? <Badge key="h" tone="red">लपवलेले</Badge> : <Badge key="h" tone="green">दिसते</Badge>,
+              <Btn key="t" variant={d.hidden ? 'success' : 'danger'} disabled={busy === d.id} onClick={() => toggleHidden(d)}>
+                {d.hidden ? 'दाखवा' : 'लपवा'}
+              </Btn>
+            ])}
+          />
+        )}
+      </Card>
     </>
   );
 }
@@ -2071,7 +2161,7 @@ function ReportsView({ data }) {
     { label: 'प्रमाणित KYC', value: data.users.filter(u => u.verified).length, color: T.green },
     { label: 'व्यवसाय', value: data.businesses.length, color: T.amber },
     { label: 'B2B रेफरल्स', value: data.referrals.length, color: T.deep },
-    { label: '२४x७ सेवारक्त विनंत्या', value: data.blood.length || 94, color: T.red },
+    { label: '२४x७ सेवारक्त विनंत्या', value: data.blood.length, color: T.red },
     { label: 'कार्यक्रम नोंदणी', value: data.events.length || 28, color: T.saffron }
   ];
   return (

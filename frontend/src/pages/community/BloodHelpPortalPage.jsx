@@ -1,58 +1,12 @@
-import React, { useState } from 'react';
-
-const ACTIVE_REQUESTS = [
-  {
-    id: 'REQ-101',
-    patient: 'प्रशांत संभाजी जाधव',
-    hospital: 'ससून सर्वोपचार रुग्णालय, पुणे',
-    bloodGroup: 'O Negative (O-)',
-    units: 2,
-    urgency: 'तात्काळ (Emergency)',
-    time: '१० मिनिटांपूर्वी',
-    contact: '+91 98221 11223'
-  },
-  {
-    id: 'REQ-102',
-    patient: 'सौ. सुमित्रा बाजीराव गायकवाड',
-    hospital: 'के.ई.एम. रुग्णालय, परळ, मुंबई',
-    bloodGroup: 'AB Positive (AB+)',
-    units: 3,
-    urgency: 'पुढील ४ तासांत',
-    time: '२५ मिनिटांपूर्वी',
-    contact: '+91 99203 44556'
-  },
-  {
-    id: 'REQ-103',
-    patient: 'मास्टर आरव विक्रम मोरे',
-    hospital: 'छत्रपती प्रमिलाराजे रुग्णालय (CPR), कोल्हापूर',
-    bloodGroup: 'B Positive (B+)',
-    units: 1,
-    urgency: 'आज रात्रीपर्यंत',
-    time: '१ तासापूर्वी',
-    contact: '+91 94220 88991'
-  },
-  {
-    id: 'REQ-104',
-    patient: 'दत्तात्रय रामराव शिंदे',
-    hospital: 'घाटी रुग्णालय, छत्रपती संभाजीनगर',
-    bloodGroup: 'A Positive (A+)',
-    units: 2,
-    urgency: 'नियोजित शस्त्रक्रिया (उद्या)',
-    time: '२ तासांपूर्वी',
-    contact: '+91 98901 22334'
-  }
-];
-
-const DONORS_SAMPLE = [
-  { name: 'रोहन प्रकाश देशमुख', group: 'O+', city: 'पुणे (कोथरूड)', lastDonated: '४ महिन्यांपूर्वी', totalDonations: 8, phone: '+91 98220 XXXXX' },
-  { name: 'अजिंक्य तानाजी सावंत', group: 'O-', city: 'सातारा', lastDonated: '५ महिन्यांपूर्वी', totalDonations: 12, phone: '+91 94211 XXXXX' },
-  { name: 'प्रतीक संभाजी पाटील', group: 'B+', city: 'कोल्हापूर', lastDonated: '६ महिन्यांपूर्वी', totalDonations: 6, phone: '+91 98900 XXXXX' },
-  { name: 'योगेश विठ्ठल चव्हाण', group: 'A+', city: 'मुंबई (दादर)', lastDonated: '३ महिन्यांपूर्वी', totalDonations: 15, phone: '+91 98201 XXXXX' },
-  { name: 'विशाल विजयराव मोहिते', group: 'AB+', city: 'नाशिक', lastDonated: '७ महिन्यांपूर्वी', totalDonations: 5, phone: '+91 91580 XXXXX' },
-  { name: 'महेंद्र सयाजीराव कदम', group: 'A-', city: 'छत्रपती संभाजीनगर', lastDonated: '४ महिन्यांपूर्वी', totalDonations: 9, phone: '+91 94030 XXXXX' },
-  { name: 'सागर दादासाहेब पवार', group: 'B-', city: 'सोलापूर', lastDonated: '५ महिन्यांपूर्वी', totalDonations: 7, phone: '+91 98224 XXXXX' },
-  { name: 'दिलीप नारायण भोसले', group: 'Bombay Blood Group (hh)', city: 'पुणे', lastDonated: '८ महिन्यांपूर्वी', totalDonations: 4, phone: '+91 98233 XXXXX' }
-];
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import apiClient from '../../services/apiClient';
+import { MAHARASHTRA_DISTRICTS } from '../../services/referralService';
+import {
+  BLOOD_GROUPS, STATE_LABELS, toMarathiDigits, timeAgo, closesInText, donorBadge, requestActions,
+  filterDonors, filterRequests, requestPayload, donorPayload, donorDistrict, canCall, cleanPhone
+} from './bloodHelp';
 
 const BLOOD_BANKS = [
   { city: 'पुणे', name: 'ससून शासकीय रक्तपेढी', contact: '020-26128000', timing: '२४ तास सेवा' },
@@ -63,120 +17,187 @@ const BLOOD_BANKS = [
   { city: 'नागपूर', name: 'मेडिकल कॉलेज ब्लड बँक', contact: '0712-2744671', timing: '२४ तास सेवा' }
 ];
 
-import { useEffect } from 'react';
-import apiClient from '../../services/apiClient';
+const URGENCY_OPTIONS = ['तात्काळ (२ तासांत)', 'आज संध्याकाळपर्यंत', 'उद्या सकाळपर्यंत', 'नियोजित शस्त्रक्रिया'];
+const ACTION_LABELS = { received: 'रक्त मिळाले ✅', extend: 'अजून गरज आहे (+७ दिवस)', close: 'बंद करा' };
+
+const emptyRequest = () => ({
+  patientName: '', bloodGroup: 'O+', units: 1, hospital: '', city: '', district: 'पुणे',
+  contactPhone: '', urgency: URGENCY_OPTIONS[0], note: ''
+});
+
+// Today as YYYY-MM-DD in the visitor's own time zone (the latest allowed donation date).
+const todayLocal = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+const labelStyle = { display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' };
+const inputStyle = { width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', boxSizing: 'border-box' };
+const pillStyle = (active) => ({
+  background: active ? '#dc2626' : '#f1f5f9', color: active ? '#fff' : '#475569', border: 'none',
+  padding: '0.4rem 0.8rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer'
+});
+const errorStyle = { background: '#fef2f2', color: '#b91c1c', border: '1px solid #fecaca', borderRadius: '8px', padding: '0.6rem 0.8rem', fontSize: '0.85rem' };
+const modalBackdrop = { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 9999 };
+const modalBox = { background: '#fff', borderRadius: '20px', maxWidth: '520px', width: '100%', padding: '2rem', maxHeight: '90vh', overflowY: 'auto', boxSizing: 'border-box' };
+const twoCols = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' };
 
 export default function BloodHelpPortalPage() {
-  const [activeRequests, setActiveRequests] = useState([]);
-  const [donorsList, setDonorsList] = useState([]);
-  const [reqStatusBanner, setReqStatusBanner] = useState(null);
-  const [donorStatusBanner, setDonorStatusBanner] = useState(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const loggedIn = !!user;
 
-  const [bloodFilter, setBloodFilter] = useState('all');
-  const [searchDistrict, setSearchDistrict] = useState('');
+  const [requests, setRequests] = useState([]);
+  const [donors, setDonors] = useState([]);
+  const [myRequests, setMyRequests] = useState([]);
+  const [myDonor, setMyDonor] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [listError, setListError] = useState('');
+  const [myError, setMyError] = useState('');
+
+  const [reqGroup, setReqGroup] = useState('all');
+  const [reqSearch, setReqSearch] = useState('');
+  const [donorGroup, setDonorGroup] = useState('all');
+  const [donorSearch, setDonorSearch] = useState('');
+
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [requestForm, setRequestForm] = useState(emptyRequest);
+  const [requestError, setRequestError] = useState('');
+  const [requestDone, setRequestDone] = useState('');
+
   const [isDonorModalOpen, setIsDonorModalOpen] = useState(false);
-  const [requestForm, setRequestForm] = useState({
-    patient: '', hospital: '', city: '', bloodGroup: 'O+', units: 1, urgency: 'तात्काळ (२ तासांत)', contact: ''
-  });
-  const [donorForm, setDonorForm] = useState({
-    name: '', phone: '', city: '', bloodGroup: 'O+', age: '', weight: '', isReadyEmergency: true
-  });
-  const [submitted, setSubmitted] = useState(false);
+  const [donorForm, setDonorForm] = useState({});
+  const [donorError, setDonorError] = useState('');
+  const [busy, setBusy] = useState('');
+
+  const loginFirst = () => navigate('/login?redirect=' + encodeURIComponent(location.pathname));
+
+  const loadAll = useCallback(async () => {
+    setListError('');
+    try {
+      const [reqs, dons] = await Promise.all([apiClient.getBloodRequests(), apiClient.getDonors()]);
+      setRequests(reqs);
+      setDonors(dons);
+    } catch (err) {
+      setListError('माहिती लोड करता आली नाही. कृपया थोड्या वेळाने पुन्हा प्रयत्न करा.');
+    }
+    if (loggedIn) {
+      try {
+        const [mine, me] = await Promise.all([apiClient.getMyBloodRequests(), apiClient.getMyDonor()]);
+        setMyRequests(mine);
+        setMyDonor(me);
+      } catch (err) {
+        setMyError(err.message);
+      }
+    } else {
+      setMyRequests([]);
+      setMyDonor(null);
+    }
+    setLoading(false);
+  }, [loggedIn]);
 
   useEffect(() => {
-    apiClient.getBloodRequests()
-      .then(reqs => {
-        if (Array.isArray(reqs) && reqs.length > 0) setActiveRequests(reqs);
-        else if (Array.isArray(reqs)) setActiveRequests(reqs);
-        else setActiveRequests(ACTIVE_REQUESTS);
-      })
-      .catch(() => setActiveRequests(ACTIVE_REQUESTS));
+    loadAll();
+  }, [loadAll]);
 
-    apiClient.getDonors()
-      .then(donors => {
-        if (Array.isArray(donors) && donors.length > 0) setDonorsList(donors);
-        else if (Array.isArray(donors)) setDonorsList(donors);
-        else setDonorsList(DONORS_SAMPLE);
-      })
-      .catch(() => setDonorsList(DONORS_SAMPLE));
-  }, []);
+  const openRequestForm = () => {
+    if (!loggedIn) return loginFirst();
+    setRequestForm({ ...emptyRequest(), contactPhone: cleanPhone(user?.phone) });
+    setRequestError('');
+    setRequestDone('');
+    setIsRequestModalOpen(true);
+  };
 
-  const filteredDonors = donorsList.filter(d => {
-    const matchesBlood = bloodFilter === 'all' || d.group === bloodFilter || d.group.includes(bloodFilter);
-    const matchesCity = searchDistrict === '' || d.city.toLowerCase().includes(searchDistrict.toLowerCase()) || d.name.toLowerCase().includes(searchDistrict.toLowerCase());
-    return matchesBlood && matchesCity;
-  });
+  const openDonorForm = () => {
+    if (!loggedIn) return loginFirst();
+    setDonorForm(myDonor ? {
+      name: myDonor.name, bloodGroup: myDonor.blood_group, city: myDonor.city, district: myDonor.district || 'पुणे',
+      phone: myDonor.phone || '', available: myDonor.available_setting !== false, lastDonated: myDonor.last_donated || ''
+    } : {
+      name: user?.name || '', bloodGroup: 'O+', city: '', district: donorDistrict(user?.district, MAHARASHTRA_DISTRICTS),
+      phone: cleanPhone(user?.phone), available: true, lastDonated: ''
+    });
+    setDonorError('');
+    setIsDonorModalOpen(true);
+  };
 
-  const handleRequestSubmit = async (e) => {
+  const submitRequest = async (e) => {
     e.preventDefault();
-    const payload = {
-      patient: requestForm.patient,
-      hospital: requestForm.hospital + ', ' + requestForm.city,
-      bloodGroup: requestForm.bloodGroup,
-      units: requestForm.units,
-      urgency: requestForm.urgency,
-      contact: requestForm.contact
-    };
-
+    setBusy('request');
+    setRequestError('');
     try {
-      const res = await apiClient.addBloodRequest(payload);
-      const newReq = res.request || res.data?.request || { id: `REQ-${Date.now().toString().slice(-3)}`, time: 'आत्ताच', ...payload };
-      setActiveRequests(prev => [newReq, ...prev]);
-      setReqStatusBanner('🚨 REST API Confirmation: ' + (res.message || 'तातडीची रक्त मागणी प्रसारित झाली!'));
-      setSubmitted(true);
-      setTimeout(() => {
-        setSubmitted(false);
-        setIsRequestModalOpen(false);
-        setReqStatusBanner(null);
-        setRequestForm({ patient: '', hospital: '', city: '', bloodGroup: 'O+', units: 1, urgency: 'तात्काळ (२ तासांत)', contact: '' });
-      }, 1500);
+      const res = await apiClient.addBloodRequest(requestPayload(requestForm));
+      setRequestDone(`✅ मागणी प्रसिद्ध झाली. ${toMarathiDigits(res.notified || 0)} रक्तदात्यांना कळवले.`);
+      loadAll();
     } catch (err) {
-      setActiveRequests(prev => [{ id: `REQ-${Date.now().toString().slice(-3)}`, time: 'आत्ताच', ...payload }, ...prev]);
-      setReqStatusBanner('🚨 तातडीची रक्त मागणी प्रसारित करण्यात आली!');
-      setSubmitted(true);
-      setTimeout(() => {
-        setSubmitted(false);
-        setIsRequestModalOpen(false);
-        setReqStatusBanner(null);
-        setRequestForm({ patient: '', hospital: '', city: '', bloodGroup: 'O+', units: 1, urgency: 'तात्काळ (२ तासांत)', contact: '' });
-      }, 1500);
+      setRequestError(err.message);
+    } finally {
+      setBusy('');
     }
   };
 
-  const handleDonorSubmit = async (e) => {
-    e.preventDefault();
-    const payload = {
-      name: donorForm.name,
-      group: donorForm.bloodGroup,
-      city: donorForm.city,
-      phone: donorForm.phone
-    };
-
+  const doAction = async (request, action) => {
+    if (action === 'close' && !window.confirm('ही मागणी बंद करायची का?')) return;
+    setBusy(request.id + action);
+    setMyError('');
     try {
-      const res = await apiClient.addDonor(payload);
-      const newDonor = res.donor || res.data?.donor || { id: Date.now(), totalDonations: 1, lastDonated: 'आत्ताच', ...payload };
-      setDonorsList(prev => [newDonor, ...prev]);
-      setDonorStatusBanner('❤️ REST API Confirmation: ' + (res.message || 'रक्तदाता म्हणून नोंदणी यशस्वी झाली!'));
-      setSubmitted(true);
-      setTimeout(() => {
-        setSubmitted(false);
-        setIsDonorModalOpen(false);
-        setDonorStatusBanner(null);
-        setDonorForm({ name: '', phone: '', city: '', bloodGroup: 'O+', age: '', weight: '', isReadyEmergency: true });
-      }, 1500);
+      await apiClient.bloodRequestAction(request.id, action);
+      await loadAll();
     } catch (err) {
-      setDonorsList(prev => [{ id: Date.now(), totalDonations: 1, lastDonated: 'नवीन नोंदणी', ...payload }, ...prev]);
-      setDonorStatusBanner('❤️ रक्तदाता म्हणून नोंदणी यशस्वी झाली!');
-      setSubmitted(true);
-      setTimeout(() => {
-        setSubmitted(false);
-        setIsDonorModalOpen(false);
-        setDonorStatusBanner(null);
-        setDonorForm({ name: '', phone: '', city: '', bloodGroup: 'O+', age: '', weight: '', isReadyEmergency: true });
-      }, 1500);
+      setMyError(err.message);
+    } finally {
+      setBusy('');
     }
   };
+
+  const saveDonor = async (e) => {
+    e.preventDefault();
+    setBusy('donor');
+    setDonorError('');
+    try {
+      await apiClient.saveMyDonor(donorPayload(donorForm));
+      setIsDonorModalOpen(false);
+      await loadAll();
+    } catch (err) {
+      setDonorError(err.message);
+    } finally {
+      setBusy('');
+    }
+  };
+
+  const removeDonor = async () => {
+    if (!window.confirm('आपले रक्तदाता प्रोफाइल काढायचे का?')) return;
+    setBusy('delete');
+    setMyError('');
+    try {
+      await apiClient.deleteMyDonor();
+      await loadAll();
+    } catch (err) {
+      setMyError(err.message);
+    } finally {
+      setBusy('');
+    }
+  };
+
+  const shownRequests = filterRequests(requests, { group: reqGroup, search: reqSearch });
+  const shownDonors = filterDonors(donors, { group: donorGroup, search: donorSearch });
+
+  const phoneButton = (phone, label, dark) => (canCall(loggedIn, phone) ? (
+    <a href={`tel:${phone}`} style={{
+      background: dark ? '#dc2626' : '#f8fafc', color: dark ? '#fff' : '#0f172a', border: dark ? 'none' : '1px solid #cbd5e1',
+      textDecoration: 'none', padding: '0.6rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, textAlign: 'center', display: 'block'
+    }}>
+      📞 {label} ({phone})
+    </a>
+  ) : (
+    <button onClick={loginFirst} style={{
+      background: '#f8fafc', color: '#0f172a', border: '1px dashed #94a3b8', padding: '0.6rem', borderRadius: '8px',
+      fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', width: '100%'
+    }}>
+      🔒 लॉगिन करा व नंबर पहा
+    </button>
+  ));
 
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '5rem' }}>
@@ -251,7 +272,7 @@ export default function BloodHelpPortalPage() {
 
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button
-              onClick={() => setIsRequestModalOpen(true)}
+              onClick={openRequestForm}
               style={{
                 background: '#ffffff',
                 color: '#dc2626',
@@ -267,7 +288,7 @@ export default function BloodHelpPortalPage() {
               🚨 तातडीने रक्त मागा (Emergency Request)
             </button>
             <button
-              onClick={() => setIsDonorModalOpen(true)}
+              onClick={openDonorForm}
               style={{
                 background: '#fbbf24',
                 color: '#1e293b',
@@ -286,258 +307,177 @@ export default function BloodHelpPortalPage() {
       </div>
 
       <div style={{ maxWidth: '1200px', margin: '2rem auto', padding: '0 1rem' }}>
-        {/* Live Active Requests Banner */}
-        <div style={{
-          background: '#fff',
-          borderRadius: '20px',
-          padding: '2rem',
-          boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)',
-          border: '2px solid #fecaca',
-          marginBottom: '3rem'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <span style={{
-                width: '12px',
-                height: '12px',
-                borderRadius: '50%',
-                background: '#dc2626',
-                display: 'inline-block',
-                boxShadow: '0 0 0 4px #fee2e2'
-              }}></span>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#991b1b', margin: 0 }}>
-                तातडीच्या रक्त मागण्या (Active Live Emergency Requests)
-              </h2>
+        {listError && <div style={{ ...errorStyle, marginBottom: '1.5rem' }}>{listError}</div>}
+
+        {/* My requests and my donor profile (logged in) */}
+        {loggedIn && (
+          <div style={{ background: '#fff', borderRadius: '20px', padding: '1.5rem', border: '1px solid #e2e8f0', marginBottom: '2rem' }}>
+            {myError && <div style={{ ...errorStyle, marginBottom: '1rem' }}>{myError}</div>}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+              <div>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#991b1b', margin: '0 0 0.75rem' }}>माझ्या मागण्या</h3>
+                {myRequests.length === 0 && <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>आपण अद्याप कोणतीही रक्त मागणी केलेली नाही.</p>}
+                {myRequests.map((r) => (
+                  <div key={r.id} style={{ border: '1px solid #fecaca', borderRadius: '12px', padding: '0.9rem', marginBottom: '0.75rem', background: '#fff5f5' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <strong>{r.blood_group} · {r.patient_name}</strong>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: r.state === 'open' ? '#16a34a' : '#64748b' }}>
+                        {STATE_LABELS[r.state] || r.state}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b', margin: '0.3rem 0 0.6rem' }}>
+                      🏥 {r.hospital}, {r.city} · {timeAgo(r.created_at)}
+                      {r.state === 'open' && <> · {closesInText(r.closes_at)}</>}
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                      {requestActions(r).map((a) => (
+                        <button key={a} disabled={!!busy} onClick={() => doAction(r, a)} style={{
+                          background: a === 'received' ? '#16a34a' : a === 'extend' ? '#0f172a' : '#fff',
+                          color: a === 'close' ? '#b91c1c' : '#fff', border: a === 'close' ? '1px solid #fecaca' : 'none',
+                          padding: '0.4rem 0.7rem', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700,
+                          cursor: busy ? 'wait' : 'pointer', opacity: busy === r.id + a ? 0.6 : 1
+                        }}>
+                          {ACTION_LABELS[a]}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#166534', margin: '0 0 0.75rem' }}>माझे रक्तदाता प्रोफाइल</h3>
+                {myDonor ? (
+                  <div style={{ border: '1px solid #bbf7d0', borderRadius: '12px', padding: '0.9rem', background: '#f0fdf4' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <strong>{myDonor.blood_group} · {myDonor.name}</strong>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: donorBadge(myDonor).tone === 'green' ? '#16a34a' : '#b45309' }}>
+                        {donorBadge(myDonor).text}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b', margin: '0.3rem 0 0.6rem' }}>
+                      📍 {myDonor.city}, {myDonor.district} · 📞 {myDonor.phone}
+                      {myDonor.last_donated && <> · शेवटचे रक्तदान: {myDonor.last_donated.split('-').reverse().join('-')}</>}
+                      {myDonor.hidden && <> · <strong style={{ color: '#b91c1c' }}>प्रशासकांनी लपवले आहे</strong></>}
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                      <button onClick={openDonorForm} disabled={!!busy} style={{ background: '#16a34a', color: '#fff', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>
+                        ✏️ बदला
+                      </button>
+                      <button onClick={removeDonor} disabled={!!busy} style={{ background: '#fff', color: '#b91c1c', border: '1px solid #fecaca', padding: '0.4rem 0.8rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>
+                        प्रोफाइल काढा
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <p style={{ color: '#64748b', fontSize: '0.9rem', margin: '0 0 0.75rem' }}>आपण अद्याप रक्तदाता म्हणून नोंदणी केलेली नाही.</p>
+                    <button onClick={openDonorForm} style={{ background: '#16a34a', color: '#fff', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
+                      ❤️ रक्तदाता म्हणून नोंदणी करा
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
-            <button
-              onClick={() => setIsRequestModalOpen(true)}
-              style={{
-                background: '#dc2626',
-                color: '#fff',
-                border: 'none',
-                padding: '0.5rem 1.2rem',
-                borderRadius: '8px',
-                fontWeight: 700,
-                fontSize: '0.85rem',
-                cursor: 'pointer'
-              }}
-            >
+          </div>
+        )}
+
+        {/* Active requests */}
+        <div style={{ background: '#fff', borderRadius: '20px', padding: '2rem', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', border: '2px solid #fecaca', marginBottom: '3rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#dc2626', display: 'inline-block', boxShadow: '0 0 0 4px #fee2e2' }}></span>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#991b1b', margin: 0 }}>तातडीच्या रक्त मागण्या (Active Requests)</h2>
+            </div>
+            <button onClick={openRequestForm} style={{ background: '#dc2626', color: '#fff', border: 'none', padding: '0.5rem 1.2rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
               + नवीन मागणी जोडा
             </button>
           </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', alignItems: 'center', marginBottom: '1.25rem' }}>
+            {['all', ...BLOOD_GROUPS].map((bg) => (
+              <button key={bg} onClick={() => setReqGroup(bg)} style={pillStyle(reqGroup === bg)}>{bg === 'all' ? 'सर्व रक्तगट' : bg}</button>
+            ))}
+            <input type="text" placeholder="रुग्णालय / शहर / जिल्हा शोधा..." value={reqSearch} onChange={(e) => setReqSearch(e.target.value)}
+              style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem', minWidth: '200px', flex: '1 1 200px' }} />
+          </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))',
-            gap: '1rem'
-          }}>
-            {activeRequests.map(req => (
-              <div key={req.id} style={{
-                background: '#fff5f5',
-                borderRadius: '14px',
-                padding: '1.25rem',
-                border: '1px solid #fecaca',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between'
-              }}>
+          {loading && <p style={{ color: '#64748b' }}>लोड होत आहे...</p>}
+          {!loading && shownRequests.length === 0 && (
+            <p style={{ color: '#64748b', textAlign: 'center', padding: '1.5rem 0', margin: 0 }}>सध्या कोणतीही सुरू मागणी नाही</p>
+          )}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', gap: '1rem' }}>
+            {shownRequests.map((req) => (
+              <div key={req.id} style={{ background: '#fff5f5', borderRadius: '14px', padding: '1.25rem', border: '1px solid #fecaca', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                    <span style={{
-                      background: '#dc2626',
-                      color: '#fff',
-                      padding: '0.2rem 0.6rem',
-                      borderRadius: '6px',
-                      fontSize: '0.8rem',
-                      fontWeight: 800
-                    }}>
-                      {req.bloodGroup}
-                    </span>
-                    <span style={{ fontSize: '0.75rem', color: '#dc2626', fontWeight: 700 }}>
-                      ⚡ {req.urgency}
-                    </span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', gap: '0.5rem' }}>
+                    <span style={{ background: '#dc2626', color: '#fff', padding: '0.2rem 0.6rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 800 }}>{req.blood_group}</span>
+                    {req.urgency && <span style={{ fontSize: '0.75rem', color: '#dc2626', fontWeight: 700 }}>⚡ {req.urgency}</span>}
                   </div>
-                  <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1e293b', margin: '0 0 0.25rem' }}>
-                    {req.patient}
-                  </h4>
-                  <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>
-                    🏥 {req.hospital}
-                  </div>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1e293b', margin: '0 0 0.25rem' }}>{req.patient_name}</h4>
+                  <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>🏥 {req.hospital}, {req.city} ({req.district})</div>
+                  {req.note && <div style={{ fontSize: '0.8rem', color: '#475569', marginBottom: '0.5rem' }}>📝 {req.note}</div>}
                   <div style={{ fontSize: '0.8rem', color: '#475569', marginBottom: '0.75rem' }}>
-                    आवश्यक युनिट्स: <strong>{req.units}</strong> | वेळ: {req.time}
+                    युनिट्स: <strong>{toMarathiDigits(req.units)}</strong> · {timeAgo(req.created_at)} · {closesInText(req.closes_at)}
                   </div>
                 </div>
-                <a
-                  href={`tel:${req.contact}`}
-                  style={{
-                    background: '#dc2626',
-                    color: '#fff',
-                    textDecoration: 'none',
-                    padding: '0.6rem',
-                    borderRadius: '8px',
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    textAlign: 'center'
-                  }}
-                >
-                  📞 तातडीने मदत करा ({req.contact})
-                </a>
+                {req.mine
+                  ? <div style={{ fontSize: '0.8rem', color: '#64748b', textAlign: 'center' }}>ही आपली मागणी आहे</div>
+                  : phoneButton(req.contact_phone, 'मदत करा', true)}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Donors Directory */}
+        {/* Donors */}
         <div style={{ marginBottom: '3rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
             <div>
-              <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem' }}>
-                सत्यापित रक्तदाते निर्देशिका (Verified Blood Donors)
-              </h2>
-              <p style={{ color: '#64748b', margin: 0, fontSize: '0.9rem' }}>
-                महाराष्ट्रातील ३६ जिल्ह्यांमध्ये तत्पर असणारे मराठा स्वयंसेवक रक्तदाते.
-              </p>
+              <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem' }}>रक्तदाते (Blood Donors)</h2>
+              <p style={{ color: '#64748b', margin: 0, fontSize: '0.9rem' }}>नोंदणी केलेले मराठा रक्तदाते. शेवटच्या रक्तदानानंतर ९० दिवसांनी पुन्हा उपलब्ध.</p>
             </div>
-            <button
-              onClick={() => setIsDonorModalOpen(true)}
-              style={{
-                background: '#0f172a',
-                color: '#fff',
-                border: 'none',
-                padding: '0.6rem 1.25rem',
-                borderRadius: '8px',
-                fontWeight: 700,
-                fontSize: '0.85rem',
-                cursor: 'pointer'
-              }}
-            >
-              + मी रक्तदान करू इच्छितो
+            <button onClick={openDonorForm} style={{ background: '#0f172a', color: '#fff', border: 'none', padding: '0.6rem 1.25rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
+              {myDonor ? '✏️ माझे प्रोफाइल बदला' : '+ मी रक्तदान करू इच्छितो'}
             </button>
           </div>
 
-          {/* Blood Group Filter Pills */}
-          <div style={{
-            background: '#fff',
-            padding: '1.25rem',
-            borderRadius: '16px',
-            border: '1px solid #e2e8f0',
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '0.75rem',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1.5rem'
-          }}>
+          <div style={{ background: '#fff', padding: '1.25rem', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-              {['all', 'O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'Bombay Blood Group (hh)'].map(bg => (
-                <button
-                  key={bg}
-                  onClick={() => setBloodFilter(bg)}
-                  style={{
-                    background: bloodFilter === bg ? '#dc2626' : '#f1f5f9',
-                    color: bloodFilter === bg ? '#fff' : '#475569',
-                    border: 'none',
-                    padding: '0.4rem 0.8rem',
-                    borderRadius: '8px',
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  {bg === 'all' ? 'सर्व रक्तगट' : bg}
-                </button>
+              {['all', ...BLOOD_GROUPS].map((bg) => (
+                <button key={bg} onClick={() => setDonorGroup(bg)} style={pillStyle(donorGroup === bg)}>{bg === 'all' ? 'सर्व रक्तगट' : bg}</button>
               ))}
             </div>
-
-            <input
-              type="text"
-              placeholder="जिल्हा / शहराचे नाव टाका..."
-              value={searchDistrict}
-              onChange={e => setSearchDistrict(e.target.value)}
-              style={{
-                padding: '0.5rem 0.9rem',
-                borderRadius: '8px',
-                border: '1px solid #cbd5e1',
-                fontSize: '0.85rem',
-                minWidth: '220px'
-              }}
-            />
+            <input type="text" placeholder="नाव / शहर / जिल्हा टाका..." value={donorSearch} onChange={(e) => setDonorSearch(e.target.value)}
+              style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem', minWidth: '200px', flex: '1 1 200px' }} />
           </div>
 
-          {/* Donors Cards */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '1.25rem'
-          }}>
-            {filteredDonors.map((d, i) => (
-              <div key={i} style={{
-                background: '#fff',
-                borderRadius: '16px',
-                padding: '1.5rem',
-                border: '1px solid #e2e8f0',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.03)'
-              }}>
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-                    <div style={{
-                      width: '44px',
-                      height: '44px',
-                      borderRadius: '10px',
-                      background: '#fee2e2',
-                      color: '#dc2626',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 900,
-                      fontSize: '1rem'
-                    }}>
-                      {d.group}
+          {!loading && shownDonors.length === 0 && (
+            <p style={{ color: '#64748b', textAlign: 'center', padding: '1.5rem 0', margin: 0 }}>अद्याप रक्तदाते नोंदवलेले नाहीत</p>
+          )}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem' }}>
+            {shownDonors.map((d) => {
+              const badge = donorBadge(d);
+              return (
+                <div key={d.id} style={{ background: '#fff', borderRadius: '16px', padding: '1.5rem', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem', gap: '0.5rem' }}>
+                      <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '1rem' }}>
+                        {d.blood_group}
+                      </div>
+                      <span style={{
+                        background: badge.tone === 'green' ? '#f0fdf4' : '#fffbeb', color: badge.tone === 'green' ? '#16a34a' : '#b45309',
+                        fontSize: '0.75rem', fontWeight: 700, padding: '0.2rem 0.5rem', borderRadius: '4px'
+                      }}>
+                        {badge.tone === 'green' ? '🟢' : '⏳'} {badge.text}
+                      </span>
                     </div>
-                    <span style={{
-                      background: '#f0fdf4',
-                      color: '#16a34a',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      padding: '0.2rem 0.5rem',
-                      borderRadius: '4px'
-                    }}>
-                      {d.totalDonations} वेळा रक्तदान
-                    </span>
+                    <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1e293b', margin: '0 0 0.25rem' }}>{d.name}</h4>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1rem' }}>📍 {d.city}{d.district ? `, ${d.district}` : ''}</div>
                   </div>
-                  <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1e293b', margin: '0 0 0.25rem' }}>
-                    {d.name}
-                  </h4>
-                  <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>
-                    📍 {d.city}
-                  </div>
-                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '1rem' }}>
-                    शेवटचे रक्तदान: {d.lastDonated}
-                  </div>
+                  {d.mine
+                    ? <div style={{ fontSize: '0.8rem', color: '#64748b', textAlign: 'center' }}>हे आपले प्रोफाइल आहे</div>
+                    : phoneButton(d.phone, 'संपर्क साधा', false)}
                 </div>
-
-                <a
-                  href={`tel:${d.phone}`}
-                  style={{
-                    background: '#f8fafc',
-                    color: '#0f172a',
-                    border: '1px solid #cbd5e1',
-                    textDecoration: 'none',
-                    padding: '0.5rem',
-                    borderRadius: '8px',
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    textAlign: 'center',
-                    display: 'block'
-                  }}
-                >
-                  📞 रक्तदात्याशी संपर्क साधा
-                </a>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -581,270 +521,148 @@ export default function BloodHelpPortalPage() {
         </div>
       </div>
 
-      {/* Emergency Request Modal */}
+      {/* Request form */}
       {isRequestModalOpen && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0,0,0,0.6)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '1rem',
-          zIndex: 9999
-        }}>
-          <div style={{
-            background: '#fff',
-            borderRadius: '20px',
-            maxWidth: '520px',
-            width: '100%',
-            padding: '2rem',
-            maxHeight: '90vh',
-            overflowY: 'auto'
-          }}>
+        <div style={modalBackdrop}>
+          <div style={modalBox}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0, color: '#dc2626' }}>
-                तातडीची रक्त मागणी नोंदवा
-              </h3>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0, color: '#dc2626' }}>तातडीची रक्त मागणी नोंदवा</h3>
               <button onClick={() => setIsRequestModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
             </div>
 
-            {submitted ? (
-              <div style={{ textAlign: 'center', padding: '2rem 0', color: '#16a34a' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🚨</div>
-                <h4>आपली मागणी तात्काळ प्रसारित केली गेली आहे!</h4>
-                <p style={{ color: '#64748b', fontSize: '0.9rem' }}>संबंधित जिल्ह्यातील रक्तदात्यांना तात्काळ व्हॉट्सअॅप व एसएमएस अलर्ट पाठवला जात आहे.</p>
+            {requestDone ? (
+              <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
+                <h4 style={{ color: '#16a34a', margin: '0 0 0.5rem' }}>{requestDone}</h4>
+                <p style={{ color: '#64748b', fontSize: '0.9rem' }}>रक्त मिळाल्यावर "माझ्या मागण्या" मध्ये "रक्त मिळाले ✅" दाबा. मागणी ७ दिवसांनी आपोआप बंद होईल.</p>
+                <button onClick={() => setIsRequestModalOpen(false)} style={{ background: '#0f172a', color: '#fff', border: 'none', padding: '0.6rem 1.5rem', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>ठीक आहे</button>
               </div>
             ) : (
-              <form onSubmit={handleRequestSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <form onSubmit={submitRequest} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>रुग्णाचे नाव *</label>
-                  <input
-                    type="text"
-                    required
-                    value={requestForm.patient}
-                    onChange={e => setRequestForm({ ...requestForm, patient: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    placeholder="उदा. रमेश तानाजी कदम"
-                  />
+                  <label style={labelStyle}>रुग्णाचे नाव *</label>
+                  <input type="text" required minLength={2} maxLength={100} value={requestForm.patientName}
+                    onChange={(e) => setRequestForm({ ...requestForm, patientName: e.target.value })} style={inputStyle} placeholder="उदा. रमेश तानाजी कदम" />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={twoCols}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>रक्तगट *</label>
-                    <select
-                      value={requestForm.bloodGroup}
-                      onChange={e => setRequestForm({ ...requestForm, bloodGroup: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    >
-                      {['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'Bombay Blood Group (hh)'].map(bg => (
-                        <option key={bg} value={bg}>{bg}</option>
-                      ))}
+                    <label style={labelStyle}>रक्तगट *</label>
+                    <select value={requestForm.bloodGroup} onChange={(e) => setRequestForm({ ...requestForm, bloodGroup: e.target.value })} style={inputStyle}>
+                      {BLOOD_GROUPS.map((bg) => <option key={bg} value={bg}>{bg}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>आवश्यक बाटल्या (Units) *</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="10"
-                      required
-                      value={requestForm.units}
-                      onChange={e => setRequestForm({ ...requestForm, units: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    />
+                    <label style={labelStyle}>आवश्यक युनिट्स *</label>
+                    <input type="number" min="1" max="20" required value={requestForm.units}
+                      onChange={(e) => setRequestForm({ ...requestForm, units: e.target.value })} style={inputStyle} />
                   </div>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>रुग्णालयाचे नाव व पत्ता *</label>
-                  <input
-                    type="text"
-                    required
-                    value={requestForm.hospital}
-                    onChange={e => setRequestForm({ ...requestForm, hospital: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    placeholder="उदा. जहांगीर हॉस्पिटल, पुणे"
-                  />
+                  <label style={labelStyle}>रुग्णालयाचे नाव *</label>
+                  <input type="text" required minLength={2} maxLength={150} value={requestForm.hospital}
+                    onChange={(e) => setRequestForm({ ...requestForm, hospital: e.target.value })} style={inputStyle} placeholder="उदा. जहांगीर हॉस्पिटल" />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={twoCols}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>शहर / जिल्हा *</label>
-                    <input
-                      type="text"
-                      required
-                      value={requestForm.city}
-                      onChange={e => setRequestForm({ ...requestForm, city: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                      placeholder="उदा. पुणे"
-                    />
+                    <label style={labelStyle}>शहर *</label>
+                    <input type="text" required minLength={2} maxLength={100} value={requestForm.city}
+                      onChange={(e) => setRequestForm({ ...requestForm, city: e.target.value })} style={inputStyle} placeholder="उदा. पुणे" />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>तातडीची पातळी *</label>
-                    <select
-                      value={requestForm.urgency}
-                      onChange={e => setRequestForm({ ...requestForm, urgency: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    >
-                      <option value="तात्काळ (२ तासांत)">तात्काळ (२ तासांत)</option>
-                      <option value="आज संध्याकाळपर्यंत">आज संध्याकाळपर्यंत</option>
-                      <option value="उद्या सकाळपर्यंत">उद्या सकाळपर्यंत</option>
-                      <option value="नियोजित शस्त्रक्रिया">नियोजित शस्त्रक्रिया</option>
+                    <label style={labelStyle}>जिल्हा *</label>
+                    <select value={requestForm.district} onChange={(e) => setRequestForm({ ...requestForm, district: e.target.value })} style={inputStyle}>
+                      {MAHARASHTRA_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div style={twoCols}>
+                  <div>
+                    <label style={labelStyle}>संपर्क क्रमांक *</label>
+                    <input type="tel" required value={requestForm.contactPhone}
+                      onChange={(e) => setRequestForm({ ...requestForm, contactPhone: e.target.value })} style={inputStyle} placeholder="उदा. 9822XXXXXX" />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>तातडीची पातळी</label>
+                    <select value={requestForm.urgency} onChange={(e) => setRequestForm({ ...requestForm, urgency: e.target.value })} style={inputStyle}>
+                      {URGENCY_OPTIONS.map((u) => <option key={u} value={u}>{u}</option>)}
                     </select>
                   </div>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>नातेवाईकाचा संपर्क क्रमांक *</label>
-                  <input
-                    type="tel"
-                    required
-                    value={requestForm.contact}
-                    onChange={e => setRequestForm({ ...requestForm, contact: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    placeholder="उदा. 9822XXXXXX"
-                  />
+                  <label style={labelStyle}>टीप (ऐच्छिक)</label>
+                  <textarea maxLength={300} rows={2} value={requestForm.note}
+                    onChange={(e) => setRequestForm({ ...requestForm, note: e.target.value })} style={inputStyle} placeholder="उदा. वॉर्ड क्र. ५, डॉ. पाटील" />
                 </div>
-                <button
-                  type="submit"
-                  style={{
-                    background: '#dc2626',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '0.9rem',
-                    borderRadius: '10px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    marginTop: '0.5rem'
-                  }}
-                >
-                  तातडीने मागणी प्रसारित करा
+                {requestError && <div style={errorStyle}>{requestError}</div>}
+                <button type="submit" disabled={busy === 'request'} style={{ background: '#dc2626', color: '#fff', border: 'none', padding: '0.9rem', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', opacity: busy === 'request' ? 0.6 : 1 }}>
+                  {busy === 'request' ? 'पाठवत आहे...' : 'मागणी प्रसिद्ध करा'}
                 </button>
+                <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>
+                  याच रक्तगटाच्या व याच जिल्ह्यातील उपलब्ध रक्तदात्यांना सूचना पाठवली जाईल. संपर्क क्रमांक फक्त लॉगिन केलेल्या सदस्यांना दिसेल.
+                </p>
               </form>
             )}
           </div>
         </div>
       )}
 
-      {/* Register Donor Modal */}
+      {/* Donor profile form */}
       {isDonorModalOpen && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0,0,0,0.6)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '1rem',
-          zIndex: 9999
-        }}>
-          <div style={{
-            background: '#fff',
-            borderRadius: '20px',
-            maxWidth: '520px',
-            width: '100%',
-            padding: '2rem',
-            maxHeight: '90vh',
-            overflowY: 'auto'
-          }}>
+        <div style={modalBackdrop}>
+          <div style={modalBox}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
               <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0, color: '#16a34a' }}>
-                रक्तदाता नोंदणी (Register as Donor)
+                {myDonor ? 'माझे रक्तदाता प्रोफाइल बदला' : 'रक्तदाता नोंदणी (Register as Donor)'}
               </h3>
               <button onClick={() => setIsDonorModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
             </div>
-
-            {submitted ? (
-              <div style={{ textAlign: 'center', padding: '2rem 0', color: '#16a34a' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>❤️</div>
-                <h4>रक्तदाता म्हणून नोंदणीबद्दल धन्यवाद!</h4>
-                <p style={{ color: '#64748b', fontSize: '0.9rem' }}>आपल्या या उदात्त निर्णयामुळे गरजू रुग्णांचे प्राण वाचण्यास मोलाची मदत होईल.</p>
+            <form onSubmit={saveDonor} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={labelStyle}>पूर्ण नाव *</label>
+                <input type="text" required minLength={2} maxLength={100} value={donorForm.name || ''}
+                  onChange={(e) => setDonorForm({ ...donorForm, name: e.target.value })} style={inputStyle} />
               </div>
-            ) : (
-              <form onSubmit={handleDonorSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={twoCols}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>पूर्ण नाव *</label>
-                  <input
-                    type="text"
-                    required
-                    value={donorForm.name}
-                    onChange={e => setDonorForm({ ...donorForm, name: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                  />
+                  <label style={labelStyle}>रक्तगट *</label>
+                  <select value={donorForm.bloodGroup} onChange={(e) => setDonorForm({ ...donorForm, bloodGroup: e.target.value })} style={inputStyle}>
+                    {BLOOD_GROUPS.map((bg) => <option key={bg} value={bg}>{bg}</option>)}
+                  </select>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>रक्तगट *</label>
-                    <select
-                      value={donorForm.bloodGroup}
-                      onChange={e => setDonorForm({ ...donorForm, bloodGroup: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    >
-                      {['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'Bombay Blood Group (hh)'].map(bg => (
-                        <option key={bg} value={bg}>{bg}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>मोबाईल नंबर *</label>
-                    <input
-                      type="tel"
-                      required
-                      value={donorForm.phone}
-                      onChange={e => setDonorForm({ ...donorForm, phone: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    />
-                  </div>
+                <div>
+                  <label style={labelStyle}>मोबाईल नंबर *</label>
+                  <input type="tel" required value={donorForm.phone || ''}
+                    onChange={(e) => setDonorForm({ ...donorForm, phone: e.target.value })} style={inputStyle} />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>शहर / जिल्हा *</label>
-                    <input
-                      type="text"
-                      required
-                      value={donorForm.city}
-                      onChange={e => setDonorForm({ ...donorForm, city: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.3rem' }}>वय (१८ ते ६०) *</label>
-                    <input
-                      type="number"
-                      min="18"
-                      max="60"
-                      required
-                      value={donorForm.age}
-                      onChange={e => setDonorForm({ ...donorForm, age: e.target.value })}
-                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    />
-                  </div>
+              </div>
+              <div style={twoCols}>
+                <div>
+                  <label style={labelStyle}>शहर *</label>
+                  <input type="text" required minLength={2} maxLength={100} value={donorForm.city || ''}
+                    onChange={(e) => setDonorForm({ ...donorForm, city: e.target.value })} style={inputStyle} />
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
-                  <input
-                    type="checkbox"
-                    id="emergencyReady"
-                    checked={donorForm.isReadyEmergency}
-                    onChange={e => setDonorForm({ ...donorForm, isReadyEmergency: e.target.checked })}
-                  />
-                  <label htmlFor="emergencyReady" style={{ fontSize: '0.85rem', color: '#475569' }}>
-                    मी आपत्कालीन वेळेत रक्तदान करण्यासाठी तयार आहे.
-                  </label>
+                <div>
+                  <label style={labelStyle}>जिल्हा *</label>
+                  <select value={donorForm.district} onChange={(e) => setDonorForm({ ...donorForm, district: e.target.value })} style={inputStyle}>
+                    {(MAHARASHTRA_DISTRICTS.includes(donorForm.district) ? MAHARASHTRA_DISTRICTS : [donorForm.district, ...MAHARASHTRA_DISTRICTS])
+                      .filter(Boolean).map((d) => <option key={d} value={d}>{d}</option>)}
+                  </select>
                 </div>
-                <button
-                  type="submit"
-                  style={{
-                    background: '#16a34a',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '0.9rem',
-                    borderRadius: '10px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    marginTop: '0.5rem'
-                  }}
-                >
-                  रक्तदाता नोंदणी पूर्ण करा
-                </button>
-              </form>
-            )}
+              </div>
+              <div>
+                <label style={labelStyle}>शेवटचे रक्तदान (ऐच्छिक)</label>
+                <input type="date" max={todayLocal()} value={donorForm.lastDonated || ''}
+                  onChange={(e) => setDonorForm({ ...donorForm, lastDonated: e.target.value })} style={inputStyle} />
+              </div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: '#334155' }}>
+                <input type="checkbox" checked={donorForm.available !== false}
+                  onChange={(e) => setDonorForm({ ...donorForm, available: e.target.checked })} />
+                सध्या रक्तदानासाठी उपलब्ध आहे (आजारी / बाहेरगावी असल्यास बंद करा)
+              </label>
+              {donorError && <div style={errorStyle}>{donorError}</div>}
+              <button type="submit" disabled={busy === 'donor'} style={{ background: '#16a34a', color: '#fff', border: 'none', padding: '0.9rem', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', opacity: busy === 'donor' ? 0.6 : 1 }}>
+                {busy === 'donor' ? 'जतन करत आहे...' : myDonor ? 'बदल जतन करा' : 'रक्तदाता नोंदणी पूर्ण करा'}
+              </button>
+            </form>
           </div>
         </div>
       )}
