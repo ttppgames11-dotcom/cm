@@ -19,6 +19,7 @@ import ReferralReportPanel from './reports/ReferralReportPanel';
 import apiClient from '../../services/apiClient';
 import { SEAT_STATUS_LABELS, CATEGORY_LABELS, seatActions } from '../sangam/chapterList';
 import { BLOOD_GROUPS, STATE_LABELS, timeAgo } from '../community/bloodHelp';
+import { unreadBadge, NOTIFICATIONS_CHANGED } from '../member/notificationList';
 import BloodHelpFullReport from './reports/BloodHelpFullReport';
 import TicketFullReport from './reports/TicketFullReport';
 import EventsFullReport from './reports/EventsFullReport';
@@ -701,6 +702,22 @@ export default function AdminShell() {
    ============================================================ */
 function TopBar({ navigate, toast }) {
   const [q, setQ] = useState('');
+  const [unread, setUnread] = useState(0);
+
+  // Unread notifications (new blood requests and the admin's own), re-counted when they are marked read.
+  useEffect(() => {
+    let cancelled = false;
+    const recount = () => apiClient.getMyNotifications()
+      .then((res) => { if (!cancelled) setUnread(res.unread); })
+      .catch(() => { if (!cancelled) setUnread(0); });
+    recount();
+    window.addEventListener(NOTIFICATIONS_CHANGED, recount);
+    return () => {
+      cancelled = true;
+      window.removeEventListener(NOTIFICATIONS_CHANGED, recount);
+    };
+  }, []);
+
   return (
     <header style={{
       position: 'sticky', top: 0, zIndex: 30,
@@ -728,6 +745,15 @@ function TopBar({ navigate, toast }) {
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         <Btn variant="primary" onClick={() => toast('नवीन नोंद तयार करा', 'success')}>
           + नवीन नोंद
+        </Btn>
+        <Btn variant="plain" onClick={() => navigate('/notifications')}
+          aria-label={unread ? `${unread} न वाचलेल्या सूचना` : 'सूचना (Notifications)'}>
+          🔔 सूचना{unreadBadge(unread) && (
+            <span style={{
+              background: T.red, color: '#FFF', borderRadius: 9, minWidth: 18, height: 18, padding: '0 5px',
+              fontSize: '0.68rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box'
+            }}>{unreadBadge(unread)}</span>
+          )}
         </Btn>
         <Btn variant="plain" onClick={() => window.location.reload()}>🔄 Refresh</Btn>
         <Btn variant="ghost" onClick={() => navigate('/ai')}>🤖 AI</Btn>

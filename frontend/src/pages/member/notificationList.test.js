@@ -45,3 +45,8 @@ test('announceNotificationsChanged tells listeners (the header bell) to re-count
   assert.equal(heard, 2);
   assert.equal(NOTIFICATIONS_CHANGED, 'cm:notifications-changed');
 });
+
+test('admin blood notifications open the admin Blood Helpdesk', () => {
+  assert.equal(notificationLink('blood_admin'), '/admin/seva');
+  assert.equal(notificationIcon('blood_admin'), '🩸');
+});

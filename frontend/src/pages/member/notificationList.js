@@ -1,8 +1,8 @@
 // Pure helpers for the notifications page and the header bell (no React, so they are tested with
 // `node --test src/pages/member/notificationList.test.js`).
 
-const LINKS = { blood: '/blood-help', chapter: '/sangam', meeting: '/meetings' };
-const ICONS = { blood: '🩸', chapter: '🤝', meeting: '📅', enquiry: '📩' };
+const LINKS = { blood: '/blood-help', blood_admin: '/admin/seva', chapter: '/sangam', meeting: '/meetings' };
+const ICONS = { blood: '🩸', blood_admin: '🩸', chapter: '🤝', meeting: '📅', enquiry: '📩' };
 
 // The page a notification opens, or null when it has none.
 export function notificationLink(type) {
