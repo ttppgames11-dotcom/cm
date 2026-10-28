@@ -28,10 +28,85 @@ public class BloodRepository {
                m.name AS owner_name
         FROM blood_donors d LEFT JOIN members m ON m.id = d.member_id""";
 
+    /** A request with its state (open past closes_at = expired) and the owner's name. */
+    private static final String REQUEST_SELECT = """
+        SELECT r.*, CASE WHEN r.status = 'open' AND r.closes_at <= now() THEN 'expired' ELSE r.status END AS state,
+               m.name AS owner_name
+        FROM blood_requests r LEFT JOIN members m ON m.id = r.member_id""";
+
     private final JdbcTemplate jdbc;
 
     public BloodRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
+    }
+
+    // ------------------------------------------------------------------ requests
+
+    public boolean existsRequest(String id) {
+        return Boolean.TRUE.equals(jdbc.queryForObject("SELECT EXISTS (SELECT 1 FROM blood_requests WHERE id = ?)", Boolean.class, id));
+    }
+
+    public Optional<Map<String, Object>> findRequest(String id) {
+        return jdbc.queryForList(REQUEST_SELECT + " WHERE r.id = ?", id).stream().findFirst();
+    }
+
+    /** Open requests not yet past closes_at, newest first; optional exact group and district (trimmed, any case). */
+    public List<Map<String, Object>> activeRequests(String bloodGroup, String district) {
+        StringBuilder sql = new StringBuilder(REQUEST_SELECT).append(" WHERE r.status = 'open' AND r.closes_at > now()");
+        List<Object> args = new ArrayList<>();
+        filters(sql, args, "r", bloodGroup, district);
+        sql.append(" ORDER BY r.created_at DESC, r.id DESC");
+        return jdbc.queryForList(sql.toString(), args.toArray());
+    }
+
+    public List<Map<String, Object>> requestsOfMember(String memberId) {
+        return jdbc.queryForList(REQUEST_SELECT + " WHERE r.member_id = ? ORDER BY r.created_at DESC, r.id DESC", memberId);
+    }
+
+    public List<Map<String, Object>> allRequests() {
+        return jdbc.queryForList(REQUEST_SELECT + " ORDER BY r.created_at DESC, r.id DESC");
+    }
+
+    /** Requests the member posted in the last 24 hours. */
+    public int recentRequests(String memberId) {
+        Integer n = jdbc.queryForObject(
+            "SELECT COUNT(*) FROM blood_requests WHERE member_id = ? AND created_at > now() - interval '24 hours'", Integer.class, memberId);
+        return n == null ? 0 : n;
+    }
+
+    /** A new open request that closes 7 days from now. */
+    public void insertRequest(String id, String memberId, String patientName, String group, int units, String hospital, String city,
+                              String district, String contactPhone, String urgency, String note) {
+        jdbc.update("""
+            INSERT INTO blood_requests (id, member_id, patient_name, blood_group, units, hospital, city, district, contact_phone,
+              urgency, note, status, closes_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open', now() + interval '7 days')""",
+            id, memberId, patientName, group, units, hospital, city, district, contactPhone, urgency, note);
+    }
+
+    /** Sets fulfilled or closed only while the request is open; 0 when someone else changed it first. */
+    public int closeIfOpen(String id, String status, String closedBy) {
+        return jdbc.update("UPDATE blood_requests SET status = ?, closed_by = ?, updated_at = now() WHERE id = ? AND status = 'open'",
+            status, closedBy, id);
+    }
+
+    /** Moves closes_at to 7 days from now, only while the request is open (expired included). */
+    public int extendIfOpen(String id) {
+        return jdbc.update(
+            "UPDATE blood_requests SET closes_at = now() + interval '7 days', updated_at = now() WHERE id = ? AND status = 'open'", id);
+    }
+
+    /**
+     * Members to tell about a new request: available, eligible, visible donors with an owner other than the poster, the
+     * same group and the same district (trimmed, any case); most recently updated first, at most {@code limit}.
+     */
+    public List<String> matchingDonorMembers(String bloodGroup, String district, String posterId, int limit) {
+        return jdbc.queryForList("""
+            SELECT member_id FROM blood_donors
+            WHERE member_id IS NOT NULL AND member_id <> ? AND available AND NOT hidden
+              AND (last_donated IS NULL OR last_donated <= current_date - 90)
+              AND blood_group = ? AND lower(trim(district)) = lower(trim(?))
+            ORDER BY updated_at DESC, id LIMIT ?""", String.class, posterId, bloodGroup, district, limit);
     }
 
     // ------------------------------------------------------------------ donors

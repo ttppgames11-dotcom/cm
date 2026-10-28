@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -323,5 +324,320 @@ class BloodEndpointsTest extends PostgresTestBase {
         int[] second = repository.copyOldEntries();
         assertThat(second).containsExactly(0, 0);
         assertThat(donorRow(body(send(get("/api/blood/donors"), null, null)), "Zb Old")).isNotNull();
+    }
+
+    // ------------------------------------------------------------------ requests
+
+    static Map<String, Object> requestBody() {
+        Map<String, Object> b = new LinkedHashMap<>();
+        b.put("patientName", "Zb Patient");
+        b.put("bloodGroup", "O+");
+        b.put("units", 2);
+        b.put("hospital", "Zb Hospital");
+        b.put("city", "Pune");
+        b.put("district", "पुणे");
+        b.put("contactPhone", "9876543211");
+        b.put("urgency", "तात्काळ");
+        return b;
+    }
+
+    ResultActions postRequest(String token, Map<String, Object> body) throws Exception {
+        return send(post("/api/blood/requests"), token, body);
+    }
+
+    /** Posts as the member (expects 201) and returns the request id. */
+    String posted(String token, Map<String, Object> body) throws Exception {
+        return body(postRequest(token, body).andExpect(status().isCreated())).at("/request/id").asText();
+    }
+
+    ResultActions act(String token, String id, Object action) throws Exception {
+        Map<String, Object> b = new LinkedHashMap<>();
+        if (action != null) b.put("action", action);
+        return send(put("/api/blood/requests/" + id), token, b);
+    }
+
+    void expire(String id) {
+        jdbc.update("UPDATE blood_requests SET closes_at = now() - interval '1 second' WHERE id = ?", id);
+    }
+
+    String requestStatus(String id) {
+        return jdbc.queryForObject("SELECT status FROM blood_requests WHERE id = ?", String.class, id);
+    }
+
+    List<String> publicIds(String token) throws Exception {
+        List<String> ids = new java.util.ArrayList<>();
+        for (JsonNode r : body(send(get("/api/blood/requests"), token, null)).get("requests")) ids.add(r.get("id").asText());
+        return ids;
+    }
+
+    JsonNode mineRow(String token, String id) throws Exception {
+        for (JsonNode r : body(send(get("/api/blood/requests/mine"), token, null)).get("requests")) {
+            if (id.equals(r.get("id").asText())) return r;
+        }
+        return null;
+    }
+
+    int notificationsFor(String memberId) {
+        return jdbc.queryForObject("SELECT COUNT(*) FROM notifications WHERE member_id = ?", Integer.class, memberId);
+    }
+
+    int auditBy(String userId, String action) {
+        return jdbc.queryForObject("SELECT COUNT(*) FROM audit_logs WHERE user_id = ? AND action = ?", Integer.class, userId, action);
+    }
+
+    @Test
+    void postingNeedsALogin() throws Exception {
+        postRequest(null, requestBody()).andExpect(status().isUnauthorized());
+        send(get("/api/blood/requests/mine"), null, null).andExpect(status().isUnauthorized());
+        act(null, "BR1", "close").andExpect(status().isUnauthorized());
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM blood_requests WHERE patient_name = 'Zb Patient'", Integer.class)).isZero();
+    }
+
+    @Test
+    void memberPostsARequest() throws Exception {
+        JsonNode reply = body(postRequest(member1(), requestBody()).andExpect(status().isCreated()));
+        JsonNode r = reply.get("request");
+        assertThat(r.get("id").asText()).startsWith("BR");
+        assertThat(r.get("state").asText()).isEqualTo("open");
+        assertThat(r.get("mine").asBoolean()).isTrue();
+        assertThat(r.get("units").asInt()).isEqualTo(2);
+        assertThat(reply.get("notified").asInt()).isZero();
+        java.time.Instant closes = java.time.Instant.parse(r.get("closes_at").asText());
+        java.time.Instant expected = java.time.Instant.now().plus(java.time.Duration.ofDays(7));
+        assertThat(java.time.Duration.between(closes, expected).abs()).isLessThan(java.time.Duration.ofMinutes(1));
+        assertThat(jdbc.queryForObject("SELECT member_id FROM blood_requests WHERE id = ?", String.class, r.get("id").asText()))
+            .isEqualTo("M9201");
+    }
+
+    @Test
+    void requestFieldsAreValidated() throws Exception {
+        for (Map<String, Object> bad : List.of(
+                with(requestBody(), "bloodGroup", "Z+"),
+                with(requestBody(), "city", ""),
+                with(requestBody(), "contactPhone", "1"),
+                with(requestBody(), "units", 25),
+                with(requestBody(), "units", 2.5),
+                with(requestBody(), "note", "x".repeat(301)),
+                with(requestBody(), "patientName", null))) {
+            String reply = raw(postRequest(member1(), bad).andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("VALIDATION_ERROR")));
+            assertThat(reply).doesNotContain("9876543211");
+        }
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM blood_requests WHERE member_id = 'M9201'", Integer.class)).isZero();
+    }
+
+    @Test
+    void threeRequestsADay() throws Exception {
+        for (int i = 0; i < 3; i++) posted(member1(), requestBody());
+        postRequest(member1(), requestBody())
+            .andExpect(status().isTooManyRequests())
+            .andExpect(jsonPath("$.code").value("RATE_LIMIT_EXCEEDED"));
+        jdbc.update("UPDATE blood_requests SET created_at = now() - interval '25 hours' WHERE member_id = 'M9201'");
+        postRequest(member1(), requestBody()).andExpect(status().isCreated());
+    }
+
+    @Test
+    void visitorsSeeRequestsWithoutPhones() throws Exception {
+        posted(member1(), requestBody());
+        String visitor = raw(send(get("/api/blood/requests"), null, null));
+        assertThat(visitor).contains("Zb Patient").doesNotContain("9876543211").doesNotContain("member_id").doesNotContain("contact_phone");
+        JsonNode asMember = body(send(get("/api/blood/requests"), token("M9202", "member"), null));
+        boolean found = false;
+        for (JsonNode r : asMember.get("requests")) {
+            if ("Zb Patient".equals(r.get("patient_name").asText())) {
+                found = true;
+                assertThat(r.get("contact_phone").asText()).isEqualTo("9876543211");
+                assertThat(r.get("mine").asBoolean()).isFalse();
+                assertThat(r.has("member_id")).isFalse();
+            }
+        }
+        assertThat(found).isTrue();
+    }
+
+    @Test
+    void listShowsOnlyActiveNewestFirstWithFilters() throws Exception {
+        String done = posted(member1(), requestBody());
+        String closed = posted(member1(), requestBody());
+        String expired = posted(member1(), requestBody());
+        act(member1(), done, "received").andExpect(status().isOk());
+        act(member1(), closed, "close").andExpect(status().isOk());
+        expire(expired);
+        String older = posted(token("M9202", "member"), with(requestBody(), "bloodGroup", "A+"));
+        jdbc.update("UPDATE blood_requests SET created_at = now() - interval '1 hour' WHERE id = ?", older);
+        String newer = posted(token("M9202", "member"), with(requestBody(), "district", "सातारा"));
+
+        List<String> ids = publicIds(null);
+        assertThat(ids).doesNotContain(done, closed, expired);
+        assertThat(ids.indexOf(newer)).isLessThan(ids.indexOf(older)).isGreaterThanOrEqualTo(0);
+
+        List<String> aPlus = new java.util.ArrayList<>();
+        for (JsonNode r : body(send(get("/api/blood/requests").param("bloodGroup", "A+"), null, null)).get("requests")) aPlus.add(r.get("id").asText());
+        assertThat(aPlus).contains(older).doesNotContain(newer);
+        List<String> satara = new java.util.ArrayList<>();
+        for (JsonNode r : body(send(get("/api/blood/requests").param("district", " सातारा "), null, null)).get("requests")) satara.add(r.get("id").asText());
+        assertThat(satara).contains(newer).doesNotContain(older);
+    }
+
+    @Test
+    void ownerMarksReceivedOrCloses() throws Exception {
+        String a = posted(member1(), requestBody());
+        String b = posted(member1(), requestBody());
+        act(member1(), a, "received").andExpect(status().isOk()).andExpect(jsonPath("$.request.state").value("fulfilled"));
+        act(member1(), b, " Close ").andExpect(status().isOk()).andExpect(jsonPath("$.request.state").value("closed"));
+        assertThat(publicIds(null)).doesNotContain(a, b);
+        assertThat(jdbc.queryForObject("SELECT closed_by FROM blood_requests WHERE id = ?", String.class, a)).isEqualTo("M9201");
+    }
+
+    @Test
+    void extendAddsSevenDaysEvenAfterExpiry() throws Exception {
+        String id = posted(member1(), requestBody());
+        expire(id);
+        assertThat(publicIds(null)).doesNotContain(id);
+        assertThat(mineRow(member1(), id).get("state").asText()).isEqualTo("expired");
+        act(member1(), id, "extend").andExpect(status().isOk()).andExpect(jsonPath("$.request.state").value("open"));
+        assertThat(publicIds(null)).contains(id);
+        java.time.Instant closes = java.time.Instant.parse(mineRow(member1(), id).get("closes_at").asText());
+        assertThat(closes).isAfter(java.time.Instant.now().plus(java.time.Duration.ofDays(6)));
+
+        String other = posted(member1(), requestBody());
+        expire(other);
+        act(member1(), other, "received").andExpect(status().isOk());
+        assertThat(requestStatus(other)).isEqualTo("fulfilled");
+    }
+
+    @Test
+    void othersCannotActOnMyRequest() throws Exception {
+        String id = posted(member1(), requestBody());
+        for (String action : List.of("received", "close", "extend")) {
+            act(token("M9202", "member"), id, action).andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value("NOT_OWNER"));
+        }
+        assertThat(requestStatus(id)).isEqualTo("open");
+        act(member1(), "BR-none", "close").andExpect(status().isNotFound()).andExpect(jsonPath("$.code").value("REQUEST_NOT_FOUND"));
+    }
+
+    @Test
+    void actingTwiceIsRefused() throws Exception {
+        String id = posted(member1(), requestBody());
+        act(member1(), id, "received").andExpect(status().isOk());
+        for (String action : List.of("close", "extend", "received")) {
+            act(member1(), id, action).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("INVALID_TRANSITION"));
+        }
+        assertThat(requestStatus(id)).isEqualTo("fulfilled");
+    }
+
+    @Test
+    void badActionWordsAre400() throws Exception {
+        String id = posted(member1(), requestBody());
+        for (Object bad : new Object[] {"accept", "", null, 5}) {
+            act(member1(), id, bad).andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+        }
+        assertThat(requestStatus(id)).isEqualTo("open");
+    }
+
+    @Test
+    void adminClosesAnyRequestAndItIsAudited() throws Exception {
+        String id = posted(member1(), requestBody());
+        act(admin(), id, "close").andExpect(status().isOk());
+        assertThat(requestStatus(id)).isEqualTo("closed");
+        assertThat(auditBy(ADMIN, "BLOOD_REQUEST_CLOSE")).isEqualTo(1);
+        String own = posted(member1(), requestBody());
+        act(member1(), own, "close").andExpect(status().isOk());
+        assertThat(auditBy("M9201", "BLOOD_REQUEST_CLOSE")).isZero();
+    }
+
+    @Test
+    void mineListsAllMyRequestsWithState() throws Exception {
+        String open = posted(member1(), requestBody());
+        String expired = posted(member1(), requestBody());
+        String done = posted(member1(), requestBody());
+        String other = posted(token("M9202", "member"), requestBody());
+        expire(expired);
+        act(member1(), done, "received").andExpect(status().isOk());
+        jdbc.update("UPDATE blood_requests SET created_at = now() - interval '25 hours' WHERE member_id = 'M9201'");
+        String closed = posted(member1(), requestBody());
+        act(member1(), closed, "close").andExpect(status().isOk());
+
+        assertThat(mineRow(member1(), open).get("state").asText()).isEqualTo("open");
+        assertThat(mineRow(member1(), expired).get("state").asText()).isEqualTo("expired");
+        assertThat(mineRow(member1(), done).get("state").asText()).isEqualTo("fulfilled");
+        assertThat(mineRow(member1(), closed).get("state").asText()).isEqualTo("closed");
+        assertThat(mineRow(member1(), other)).isNull();
+        assertThat(mineRow(member1(), open).get("contact_phone").asText()).isEqualTo("9876543211");
+    }
+
+    @Test
+    void matchingDonorsAreNotified() throws Exception {
+        donor("BDZbN2", "M9202", "O+", " पुणे ", true, null, false);   // matches (district spaces ignored)
+        donor("BDZbN3", "M9203", "O+", "पुणे", true, 89, false);      // gave blood 89 days ago
+        donor("BDZbN4", "M9204", "O+", "पुणे", false, null, false);   // switched off
+        donor("BDZbN5", "M9205", "O+", "पुणे", true, null, true);     // hidden
+        donor("BDZbN6", "M9206", "A+", "पुणे", true, null, false);    // other group
+        donor("BDZbN7", "M9207", "O+", "सातारा", true, null, false);  // other district
+        donor("BDZbN1", "M9201", "O+", "पुणे", true, null, false);    // the poster
+        donor("BDZbN0", null, "O+", "पुणे", true, null, false);       // old entry without an owner
+        donor("BDZbN8", "M9208", "O+", "पुणे", true, 90, false);      // exactly 90 days: eligible
+
+        JsonNode reply = body(postRequest(member1(), requestBody()).andExpect(status().isCreated()));
+        assertThat(reply.get("notified").asInt()).isEqualTo(2);
+        assertThat(notificationsFor("M9202")).isEqualTo(1);
+        assertThat(notificationsFor("M9208")).isEqualTo(1);
+        for (String id : List.of("M9201", "M9203", "M9204", "M9205", "M9206", "M9207")) {
+            assertThat(notificationsFor(id)).as(id).isZero();
+        }
+        Map<String, Object> n = jdbc.queryForMap("SELECT * FROM notifications WHERE member_id = 'M9202'");
+        assertThat(String.valueOf(n.get("title"))).contains("O+").contains("पुणे");
+        assertThat(String.valueOf(n.get("message"))).contains("Zb Hospital");
+    }
+
+    @Test
+    void notificationsAreCappedAt100() throws Exception {
+        for (int i = 0; i < 105; i++) {
+            String m = "M92A" + String.format("%03d", i);
+            member(m);
+            donor("BDZbC" + i, m, "B-", "पुणे", true, null, false);
+        }
+        JsonNode reply = body(postRequest(member1(), with(requestBody(), "bloodGroup", "B-")).andExpect(status().isCreated()));
+        assertThat(reply.get("notified").asInt()).isEqualTo(100);
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM notifications WHERE member_id LIKE 'M92A%'", Integer.class)).isEqualTo(100);
+    }
+
+    @Test
+    void adminSeesEverythingAndHidesDonors() throws Exception {
+        send(get("/api/admin/blood"), member1(), null).andExpect(status().isForbidden());
+        send(put("/api/admin/blood/donors/BDZbA"), member1(), Map.of("hidden", true)).andExpect(status().isForbidden());
+        send(get("/api/admin/blood"), null, null).andExpect(status().isUnauthorized());
+
+        String closed = posted(member1(), requestBody());
+        act(member1(), closed, "close").andExpect(status().isOk());
+        donor("BDZbA", "M9202", "O+", "पुणे", true, null, false);
+        donor("BDZbH", null, "A+", "पुणे", true, null, true);
+
+        JsonNode all = body(send(get("/api/admin/blood"), admin(), null).andExpect(status().isOk()));
+        JsonNode req = null;
+        for (JsonNode r : all.get("requests")) if (closed.equals(r.get("id").asText())) req = r;
+        assertThat(req).isNotNull();
+        assertThat(req.get("state").asText()).isEqualTo("closed");
+        assertThat(req.get("contact_phone").asText()).isEqualTo("9876543211");
+        assertThat(req.get("owner_name").asText()).isEqualTo("Member M9201");
+        JsonNode hidden = null;
+        JsonNode owned = null;
+        for (JsonNode d : all.get("donors")) {
+            if ("BDZbH".equals(d.get("id").asText())) hidden = d;
+            if ("BDZbA".equals(d.get("id").asText())) owned = d;
+        }
+        assertThat(hidden).isNotNull();
+        assertThat(hidden.get("hidden").asBoolean()).isTrue();
+        assertThat(owned.get("phone").asText()).isEqualTo("9811111111");
+        assertThat(owned.get("owner_name").asText()).isEqualTo("Member M9202");
+
+        send(put("/api/admin/blood/donors/BDZbA"), admin(), Map.of("hidden", true))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.donor.hidden").value(true));
+        assertThat(donorRow(body(send(get("/api/blood/donors"), null, null)), "Zb BDZbA")).isNull();
+        assertThat(auditBy(ADMIN, "BLOOD_DONOR_HIDE")).isEqualTo(1);
+        send(put("/api/admin/blood/donors/BDZbA"), admin(), Map.of("hidden", false)).andExpect(status().isOk());
+        assertThat(donorRow(body(send(get("/api/blood/donors"), null, null)), "Zb BDZbA")).isNotNull();
+        assertThat(auditBy(ADMIN, "BLOOD_DONOR_UNHIDE")).isEqualTo(1);
+        send(put("/api/admin/blood/donors/BD-none"), admin(), Map.of("hidden", true))
+            .andExpect(status().isNotFound()).andExpect(jsonPath("$.code").value("DONOR_NOT_FOUND"));
+        send(put("/api/admin/blood/donors/BDZbA"), admin(), Map.of("hidden", "yes")).andExpect(status().isBadRequest());
     }
 }

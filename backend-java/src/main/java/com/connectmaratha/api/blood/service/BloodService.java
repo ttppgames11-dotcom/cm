@@ -8,6 +8,11 @@ import com.connectmaratha.api.common.security.CurrentUser;
 import com.connectmaratha.api.common.security.Roles;
 import com.connectmaratha.api.common.util.Ids;
 import com.connectmaratha.api.common.validation.SchemaValidator;
+import com.connectmaratha.api.member.entity.Member;
+import com.connectmaratha.api.member.repository.MemberRepository;
+import com.connectmaratha.api.sangam.repository.ActivityRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
@@ -35,14 +40,22 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class BloodService {
 
     private static final Logger log = LoggerFactory.getLogger(BloodService.class);
+    private static final ObjectMapper JSON = new ObjectMapper();
+    static final int MAX_REQUESTS_PER_DAY = 3;
+    static final int MAX_NOTIFIED = 100;
 
     private final BloodRepository blood;
+    private final MemberRepository members;
+    private final ActivityRepository activity;
     private final LazyTables tables;
     private final TransactionTemplate ownTransaction;
     private final AtomicBoolean oldEntriesCopied = new AtomicBoolean();
 
-    public BloodService(BloodRepository blood, LazyTables tables, PlatformTransactionManager transactions) {
+    public BloodService(BloodRepository blood, MemberRepository members, ActivityRepository activity, LazyTables tables,
+                        PlatformTransactionManager transactions) {
         this.blood = blood;
+        this.members = members;
+        this.activity = activity;
         this.tables = tables;
         this.ownTransaction = new TransactionTemplate(transactions);
         this.ownTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
@@ -61,6 +74,132 @@ public class BloodService {
         } catch (RuntimeException e) {
             log.warn("Copying old blood entries failed; will retry on next use", e);
         }
+    }
+
+    // ------------------------------------------------------------------ requests
+
+    /** Open requests that have not expired, newest first; contact phones only for logged-in viewers. */
+    @Transactional(readOnly = true)
+    public Map<String, Object> requests(CurrentUser viewer, String bloodGroup, String district) {
+        ensure();
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Map<String, Object> row : blood.activeRequests(bloodGroup, district)) list.add(requestJson(row, viewer));
+        return listResult("requests", list);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> myRequests(CurrentUser user) {
+        ensure();
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Map<String, Object> row : blood.requestsOfMember(user.id())) list.add(requestJson(row, user));
+        return listResult("requests", list);
+    }
+
+    /**
+     * Posts a request (3 per member per 24 hours) that closes in 7 days, then tells the matching donors. Not one
+     * transaction: the request is saved first, and each notification is sent on its own, so a failed notification
+     * never undoes the post.
+     */
+    public Map<String, Object> post(CurrentUser user, Map<String, Object> body) {
+        ensure();
+        Map<String, Object> input = BloodSchemas.normalize(body);
+        SchemaValidator.check(input, BloodSchemas.REQUEST, true, null);
+        if (blood.recentRequests(user.id()) >= MAX_REQUESTS_PER_DAY) {
+            throw new ApiException(HttpStatus.TOO_MANY_REQUESTS, "RATE_LIMIT_EXCEEDED",
+                "२४ तासांत जास्तीत जास्त ३ मागण्या करता येतात (At most 3 requests in 24 hours).");
+        }
+        String id = newId("BR", blood::existsRequest);
+        int units = input.get("units") instanceof Number n ? n.intValue() : 1;
+        String group = text(input.get("bloodGroup"));
+        String district = text(input.get("district"));
+        String hospital = text(input.get("hospital"));
+        String city = text(input.get("city"));
+        String note = text(input.get("note"));
+        blood.insertRequest(id, user.id(), text(input.get("patientName")), group, units, hospital, city, district,
+            text(input.get("contactPhone")), text(input.get("urgency")), note.isEmpty() ? null : note);
+
+        int notified = 0;
+        String title = "🩸 " + group + " रक्ताची गरज — " + district;
+        String message = hospital + ", " + city + ": " + units + " युनिट. रक्तदान मदत पानावर संपर्क पहा.";
+        for (String memberId : blood.matchingDonorMembers(group, district, user.id(), MAX_NOTIFIED)) {
+            try {
+                ownTransaction.executeWithoutResult(status -> activity.notifyMember(notificationId(), memberId, title, message));
+                notified++;
+            } catch (RuntimeException e) {
+                log.warn("Blood request {}: could not notify {}", id, memberId, e);
+            }
+        }
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("success", true);
+        out.put("message", "🚨 रक्ताची मागणी प्रसिद्ध झाली! (Request posted.)");
+        out.put("request", requestJson(blood.findRequest(id).orElseThrow(), user));
+        out.put("notified", notified);
+        return out;
+    }
+
+    /** { action: received | close | extend } by the owner or an admin, only while the request is open. */
+    @Transactional
+    public Map<String, Object> act(CurrentUser user, String id, Map<String, Object> body) {
+        ensure();
+        Map<String, Object> input = BloodSchemas.normalize(body);
+        SchemaValidator.check(input, BloodSchemas.ACTION, true, null);
+        String action = text(input.get("action"));
+        Map<String, Object> row = blood.findRequest(id).orElseThrow(BloodService::requestNotFound);
+        boolean owner = user.id().equals(row.get("member_id"));
+        if (!owner && !isAdmin(user)) {
+            throw ApiException.forbidden("NOT_OWNER", "ही मागणी आपली नाही (This request is not yours).");
+        }
+        int changed = switch (action) {
+            case "received" -> blood.closeIfOpen(id, "fulfilled", user.id());
+            case "close" -> blood.closeIfOpen(id, "closed", user.id());
+            default -> blood.extendIfOpen(id);
+        };
+        if (changed == 0) {
+            throw new ApiException(HttpStatus.CONFLICT, "INVALID_TRANSITION", "ही मागणी आधीच बंद झाली आहे (This request is already closed).");
+        }
+        if (!owner && action.equals("close")) audit(user, "BLOOD_REQUEST_CLOSE", Map.of("requestId", id));
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("success", true);
+        out.put("message", switch (action) {
+            case "received" -> "रक्त मिळाले — मागणी बंद केली ✅ (Marked as received.)";
+            case "close" -> "मागणी बंद केली (Request closed.)";
+            default -> "मागणी आणखी ७ दिवस सुरू राहील (Request extended by 7 days.)";
+        });
+        out.put("request", requestJson(blood.findRequest(id).orElseThrow(), user));
+        return out;
+    }
+
+    // ------------------------------------------------------------------ admin
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> adminAll(CurrentUser user) {
+        requireAdmin(user);
+        ensure();
+        List<Map<String, Object>> requests = new ArrayList<>();
+        for (Map<String, Object> row : blood.allRequests()) requests.add(adminRequestJson(row, user));
+        List<Map<String, Object>> donors = new ArrayList<>();
+        for (Map<String, Object> row : blood.allDonors()) donors.add(adminDonorJson(row, user));
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("success", true);
+        out.put("requests", requests);
+        out.put("donors", donors);
+        return out;
+    }
+
+    /** { hidden: true | false }: hide a donor from the public list, or show them again. */
+    @Transactional
+    public Map<String, Object> setHidden(CurrentUser user, String donorId, Map<String, Object> body) {
+        requireAdmin(user);
+        ensure();
+        SchemaValidator.check(body, BloodSchemas.HIDDEN, true, null);
+        boolean hidden = Boolean.TRUE.equals(body.get("hidden"));
+        if (blood.setDonorHidden(donorId, hidden) == 0) throw donorNotFound();
+        audit(user, hidden ? "BLOOD_DONOR_HIDE" : "BLOOD_DONOR_UNHIDE", Map.of("donorId", donorId));
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("success", true);
+        out.put("message", hidden ? "रक्तदाता लपवला (Donor hidden.)" : "रक्तदाता पुन्हा दिसेल (Donor shown again.)");
+        out.put("donor", adminDonorJson(blood.findDonor(donorId).orElseThrow(), user));
+        return out;
     }
 
     // ------------------------------------------------------------------ donors
@@ -114,6 +253,60 @@ public class BloodService {
     }
 
     // ------------------------------------------------------------------ helpers
+
+    /** A request as a viewer may see it: no member id; the contact phone only for logged-in viewers. */
+    static Map<String, Object> requestJson(Map<String, Object> row, CurrentUser viewer) {
+        Map<String, Object> r = new LinkedHashMap<>();
+        r.put("id", row.get("id"));
+        for (String k : new String[] {"patient_name", "blood_group"}) r.put(k, text(row.get(k)));
+        r.put("units", row.get("units") instanceof Number n ? n.intValue() : 1);
+        for (String k : new String[] {"hospital", "city", "district", "urgency", "note"}) r.put(k, text(row.get(k)));
+        r.put("created_at", iso(row.get("created_at")));
+        r.put("closes_at", iso(row.get("closes_at")));
+        r.put("state", text(row.get("state")));
+        r.put("mine", viewer != null && viewer.id().equals(row.get("member_id")));
+        if (viewer != null) r.put("contact_phone", text(row.get("contact_phone")));
+        return r;
+    }
+
+    static Map<String, Object> adminRequestJson(Map<String, Object> row, CurrentUser viewer) {
+        Map<String, Object> r = requestJson(row, viewer);
+        r.put("member_id", row.get("member_id"));
+        r.put("owner_name", row.get("owner_name"));
+        r.put("closed_by", row.get("closed_by"));
+        return r;
+    }
+
+    static Map<String, Object> adminDonorJson(Map<String, Object> row, CurrentUser viewer) {
+        Map<String, Object> d = ownDonorJson(row, viewer);
+        d.put("member_id", row.get("member_id"));
+        d.put("owner_name", row.get("owner_name"));
+        d.put("created_at", iso(row.get("created_at")));
+        return d;
+    }
+
+    private static void requireAdmin(CurrentUser user) {
+        if (!isAdmin(user)) throw ApiException.forbidden("FORBIDDEN", "ही कृती आपण करू शकत नाही (You cannot do this).");
+    }
+
+    private void audit(CurrentUser user, String action, Map<String, Object> details) {
+        String name = members.findById(user.id()).map(Member::getName).map(BloodService::text).filter(s -> !s.isEmpty()).orElse("सदस्य");
+        String json;
+        try {
+            json = JSON.writeValueAsString(details);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
+        activity.audit("LOG-" + System.currentTimeMillis() + "-" + Ids.between(0, 1000), user.id(), name, action, json);
+    }
+
+    private static String notificationId() {
+        return "NOTIF-" + System.currentTimeMillis() + "-" + java.util.UUID.randomUUID().toString().substring(0, 8);
+    }
+
+    static ApiException requestNotFound() {
+        return ApiException.notFound("REQUEST_NOT_FOUND", "ही रक्त मागणी सापडली नाही (Blood request not found).");
+    }
 
     /** A donor as a viewer may see it: no member id; the phone only for logged-in viewers. */
     static Map<String, Object> donorJson(Map<String, Object> row, CurrentUser viewer) {

@@ -6,10 +6,13 @@ import com.connectmaratha.api.common.security.RequireAuth;
 import com.connectmaratha.api.common.web.JsonBody;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +28,35 @@ public class BloodController {
     public BloodController(BloodService blood, JsonBody bodies) {
         this.blood = blood;
         this.bodies = bodies;
+    }
+
+    /** Open requests that have not expired, newest first; contact phones only when logged in. Optional ?bloodGroup= and ?district=. */
+    @GetMapping("/requests")
+    public Map<String, Object> requests(CurrentUser user,
+                                        @RequestParam(required = false) String bloodGroup,
+                                        @RequestParam(required = false) String district) {
+        return blood.requests(user, bloodGroup, district);
+    }
+
+    /** Post a request (3 per 24 hours); matching donors are notified. */
+    @RequireAuth
+    @PostMapping("/requests")
+    public ResponseEntity<Map<String, Object>> post(CurrentUser user, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(blood.post(user, bodies.read(req)));
+    }
+
+    /** Your requests, every state (declared before /requests/{id}). */
+    @RequireAuth
+    @GetMapping("/requests/mine")
+    public Map<String, Object> mine(CurrentUser user) {
+        return blood.myRequests(user);
+    }
+
+    /** { action: received | close | extend }, by the owner or an admin. */
+    @RequireAuth
+    @PutMapping("/requests/{id}")
+    public Map<String, Object> act(@PathVariable String id, CurrentUser user, HttpServletRequest req) {
+        return blood.act(user, id, bodies.read(req));
     }
 
     /** Visible donors; phone numbers only when logged in. Optional ?bloodGroup= and ?district=. */

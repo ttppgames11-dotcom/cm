@@ -165,6 +165,12 @@ Rules:
 
 | Endpoint | Login | |
 |---|---|---|
+| `GET /api/blood/requests` | none | open requests not past `closes_at`, newest first; `state`, `mine`; `contact_phone` only when logged in; `?bloodGroup=`, `?district=` |
+| `POST /api/blood/requests` | member | `patientName`, `bloodGroup`, `units` (1-20), `hospital`, `city`, `district`, `contactPhone`, `urgency`, `note`; 3 per member per 24 hours; closes in 7 days; reply has `notified` = available donors of the same group and district told by notification (at most 100) |
+| `GET /api/blood/requests/mine` | member | your requests with `state` `open`, `expired`, `fulfilled` or `closed` |
+| `PUT /api/blood/requests/{id}` | owner or admin | `{ action }`: `received`, `close`, `extend` (7 more days, also after expiry); only while open, else 409 `INVALID_TRANSITION` |
+| `GET /api/admin/blood` | admin | every request and donor (hidden too) with phones and `owner_name` |
+| `PUT /api/admin/blood/donors/{id}` | admin | `{ hidden }`: hide a donor from the public list or show them again (audited) |
 | `GET /api/blood/donors` | none | visible donors, available first; `available` (switch on, 90 days since the last donation), `can_donate_from`, `mine`; `phone` only when logged in; `?bloodGroup=`, `?district=` |
 | `GET /api/blood/donors/me` | member | your profile (`available_setting`, `last_donated`, `hidden`) or `{ donor: null }` |
 | `POST /api/blood/donors` | member | create (201) or update (200) your one profile: `name`, `bloodGroup`, `city`, `district`, `phone`, `available`, `lastDonated` (YYYY-MM-DD, not in the future) |
