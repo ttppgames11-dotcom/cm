@@ -118,6 +118,50 @@ public class JobRepository {
         return jdbc.update("UPDATE jobs SET hidden = ?, updated_at = now() WHERE id = ?", hidden, id);
     }
 
+    // ------------------------------------------------------------------ applications
+
+    /** An application with created_ts, and its job's poster, title, company, district and state (null when the job is gone). */
+    private static final String APPLICATION_SELECT = """
+        SELECT a.*, %s AS created_ts, j.poster_id, j.title AS job_title, j.company AS job_company, j.district AS job_district,
+               CASE WHEN j.status = 'closed' THEN 'closed' WHEN j.closes_at <= now() THEN 'expired' ELSE 'open' END AS job_state
+        FROM job_applications a LEFT JOIN jobs j ON j.id = a.job_id""".formatted(CREATED_TS.formatted("a.created_at", "a.created_at"));
+
+    public boolean existsApplication(String id) {
+        return Boolean.TRUE.equals(jdbc.queryForObject("SELECT EXISTS (SELECT 1 FROM job_applications WHERE id = ?)", Boolean.class, id));
+    }
+
+    /** Saves a new application; 0 when this member has already applied to this job (the unique index, so a race never fails). */
+    public int insertApplication(String id, String jobId, String memberId, String name, String phone, String email, String summary) {
+        return jdbc.update("""
+            INSERT INTO job_applications (id, job_id, member_id, applicant_name, phone, email, resume_summary, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'new', to_char(now(), 'YYYY-MM-DD HH24:MI:SS'))
+            ON CONFLICT (job_id, member_id) WHERE member_id IS NOT NULL DO NOTHING""",
+            id, jobId, memberId, name, phone, email, summary);
+    }
+
+    public Optional<Map<String, Object>> findApplication(String id) {
+        return jdbc.queryForList(APPLICATION_SELECT + " WHERE a.id = ?", id).stream().findFirst();
+    }
+
+    public List<Map<String, Object>> applicationsOfJob(String jobId) {
+        return jdbc.queryForList(APPLICATION_SELECT + " WHERE a.job_id = ? ORDER BY a.created_at DESC, a.id DESC", jobId);
+    }
+
+    public List<Map<String, Object>> applicationsOfMember(String memberId) {
+        return jdbc.queryForList(APPLICATION_SELECT + " WHERE a.member_id = ? ORDER BY a.created_at DESC, a.id DESC", memberId);
+    }
+
+    /** Sets the status when it is different; 0 when it already had that status. */
+    public int changeStatus(String id, String status) {
+        return jdbc.update("UPDATE job_applications SET status = ?, updated_at = now() WHERE id = ? AND status <> ?", status, id, status);
+    }
+
+    /** How many members got a job through Connect Maratha: applications marked hired. */
+    public int hiredCount() {
+        Integer n = jdbc.queryForObject("SELECT COUNT(*) FROM job_applications WHERE status = 'hired'", Integer.class);
+        return n == null ? 0 : n;
+    }
+
     /** Jobs posted before closing dates existed run 30 more days from now. Returns the number of jobs changed. */
     public int backfillClosesAt() {
         return jdbc.update("UPDATE jobs SET closes_at = now() + interval '30 days' WHERE closes_at IS NULL");

@@ -51,6 +51,34 @@ public class JobController {
         return jobs.mine(user);
     }
 
+    /** Your applications with their job and status (declared before /{id}). */
+    @RequireAuth
+    @GetMapping("/applications/mine")
+    public Map<String, Object> myApplications(CurrentUser user) {
+        return jobs.myApplications(user);
+    }
+
+    /** { status: new | shortlisted | rejected | hired }, by the job's poster or an admin. */
+    @RequireAuth
+    @PutMapping("/applications/{applicationId}")
+    public Map<String, Object> setStatus(@PathVariable String applicationId, CurrentUser user, HttpServletRequest req) {
+        return jobs.setStatus(user, applicationId, bodies.read(req));
+    }
+
+    /** Apply once to an open job that is not yours; the poster is notified. */
+    @RequireAuth
+    @PostMapping("/{id}/apply")
+    public ResponseEntity<Map<String, Object>> apply(@PathVariable String id, CurrentUser user, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(jobs.apply(user, id, bodies.read(req)));
+    }
+
+    /** The job's applicants with their contacts, for its poster and admins. */
+    @RequireAuth
+    @GetMapping("/{id}/applications")
+    public Map<String, Object> applications(@PathVariable String id, CurrentUser user) {
+        return jobs.applications(user, id);
+    }
+
     /** One job in any state (for shared links); hidden jobs only for the poster and admins. */
     @GetMapping("/{id}")
     public Map<String, Object> detail(@PathVariable String id, CurrentUser user) {

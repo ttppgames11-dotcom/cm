@@ -194,6 +194,12 @@ Rules:
 | `POST /api/jobs` | member | post a job (5 per member per 24 h); closes in 30 days |
 | `PUT /api/jobs/{id}` | poster or admin | `{ "action": "close" | "extend" }` (+30 days); only while open |
 | `GET /api/jobs/mine` | member | your jobs, every state, with `applications` and `new_applications` |
+| `POST /api/jobs/{id}/apply` | member | once per job, only while open, not your own (`ALREADY_APPLIED` / `JOB_CLOSED` / `OWN_JOB`); the poster gets a `job` notification |
+| `GET /api/jobs/applications/mine` | member | your applications: `status` and the job's `id`, `title`, `company`, `district`, `state` |
+| `GET /api/jobs/{id}/applications` | poster or admin | the applicants with phone, email and summary |
+| `PUT /api/jobs/applications/{id}` | poster or admin | `{ "status": "new" | "shortlisted" | "rejected" | "hired" }`; the applicant gets a `job_application` notification when it changes |
+| `GET /api/admin/jobs` | admin | every job (hidden, closed, old) with poster name and application count |
+| `PUT /api/admin/jobs/{id}` | admin | `{ "hidden": true/false }` (audit `JOB_HIDE` / `JOB_UNHIDE`) |
 
 **Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
 
