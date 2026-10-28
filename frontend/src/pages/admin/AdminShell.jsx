@@ -20,6 +20,8 @@ import apiClient from '../../services/apiClient';
 import { SEAT_STATUS_LABELS, CATEGORY_LABELS, seatActions } from '../sangam/chapterList';
 import { BLOOD_GROUPS, STATE_LABELS, timeAgo } from '../community/bloodHelp';
 import { unreadBadge, NOTIFICATIONS_CHANGED } from '../member/notificationList';
+import { STATE_LABELS as JOB_STATE_LABELS } from '../jobs/jobsHelp';
+import { Applicants as JobApplicants } from '../jobs/JobsPortalPage';
 import BloodHelpFullReport from './reports/BloodHelpFullReport';
 import TicketFullReport from './reports/TicketFullReport';
 import EventsFullReport from './reports/EventsFullReport';
@@ -88,6 +90,7 @@ const NAV_GROUPS = [
     { path: '/admin/workflows', label: 'Workflows', icon: '🔄' },
     { path: '/admin/tickets', label: 'Complaints', icon: '🎫' },
     { path: '/admin/seva', label: 'Blood Helpdesk', icon: '🩸' },
+    { path: '/admin/jobs', label: 'Jobs (नोकरी)', icon: '💼' },
     { path: '/admin/reports', label: 'Reports Overview', icon: '📊' }
   ]},
   { id: 'system', label: 'System', icon: '🔒', items: [
@@ -678,6 +681,7 @@ export default function AdminShell() {
               <Route path="/workflows" element={<WorkflowsView data={data} />} />
               <Route path="/tickets" element={<TicketsView data={data} toast={toast$} />} />
               <Route path="/seva" element={<BloodView toast={toast$} />} />
+              <Route path="/jobs" element={<JobsView toast={toast$} />} />
               <Route path="/reports" element={<ReportsView data={data} />} />
               <Route path="/analytics" element={<ReportsView data={data} />} />
               <Route path="/approvals" element={<ApprovalsView data={data} />} />
@@ -2174,6 +2178,110 @@ function BloodView({ toast }) {
           />
         )}
       </Card>
+    </>
+  );
+}
+
+function JobsView({ toast }) {
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [state, setState] = useState('all');
+  const [visibility, setVisibility] = useState('all');
+  const [search, setSearch] = useState('');
+  const [busy, setBusy] = useState('');
+  const [openId, setOpenId] = useState(null);
+
+  const load = useCallback(async () => {
+    try {
+      setJobs(await apiClient.adminGetJobs());
+      setLoadError('');
+    } catch (err) {
+      setLoadError(err.message || 'नोकरी जाहिराती लोड करता आल्या नाहीत');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const q = search.trim().toLowerCase();
+  const shown = jobs.filter(j =>
+    (state === 'all' || j.state === state)
+    && (visibility === 'all' || (visibility === 'hidden') === !!j.hidden)
+    && (!q || [j.title, j.company, j.district].some(v => (v || '').toLowerCase().includes(q))));
+  const openCount = jobs.filter(j => j.state === 'open' && !j.hidden).length;
+
+  const run = async (job, confirmText, call) => {
+    if (!window.confirm(confirmText)) return;
+    setBusy(job.id);
+    try {
+      const res = await call();
+      toast(res.message || 'झाले', 'success');
+      await load();
+    } catch (err) {
+      toast(err.message, 'error');
+    } finally {
+      setBusy('');
+    }
+  };
+
+  const stateTone = { open: 'green', expired: 'saffron', closed: 'gray' };
+
+  return (
+    <>
+      <SectionTitle subtitle={`${openCount} खुल्या जागा • ${jobs.length} एकूण जाहिराती`}>💼 नोकरी जाहिराती</SectionTitle>
+      {loadError && <Card style={{ borderColor: '#FCA5A5', color: T.red, marginBottom: 14 }}>{loadError}</Card>}
+      <Card style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 14 }}>
+        <div style={{ minWidth: 160 }}>
+          <Select label="स्थिती" value={state} onChange={e => setState(e.target.value)}
+            options={[{ value: 'all', label: 'सर्व' }, ...Object.entries(JOB_STATE_LABELS).map(([value, label]) => ({ value, label }))]} />
+        </div>
+        <div style={{ minWidth: 140 }}>
+          <Select label="दृश्यता" value={visibility} onChange={e => setVisibility(e.target.value)}
+            options={[{ value: 'all', label: 'सर्व' }, { value: 'shown', label: 'दिसते' }, { value: 'hidden', label: 'लपवलेले' }]} />
+        </div>
+        <div style={{ minWidth: 200, flex: 1 }}>
+          <Input label="शोधा" placeholder="पद, कंपनी किंवा जिल्हा" value={search} onChange={e => setSearch(e.target.value)} />
+        </div>
+      </Card>
+
+      <Card>
+        {loading ? <div style={{ color: T.muted }}>लोड होत आहे...</div> : (
+          <Table
+            headers={['ID', 'पद', 'कंपनी', 'जिल्हा', 'जाहिरात देणारे', 'स्थिती', 'अर्ज', 'वेळ', 'दृश्यता', 'कृती']}
+            rows={shown.map(j => [
+              j.id,
+              <strong key="t">{j.title}</strong>,
+              j.company,
+              j.district,
+              j.poster_name || 'जुनी',
+              <Badge key="s" tone={stateTone[j.state] || 'gray'}>{JOB_STATE_LABELS[j.state] || j.state}</Badge>,
+              <Btn key="a" variant="plain" onClick={() => setOpenId(openId === j.id ? null : j.id)}>{j.applications} अर्ज {openId === j.id ? '▴' : '▾'}</Btn>,
+              timeAgo(j.created_at),
+              j.hidden ? <Badge key="h" tone="red">लपवलेले</Badge> : <Badge key="h" tone="green">दिसते</Badge>,
+              <div key="c" style={{ display: 'flex', gap: 6 }}>
+                <Btn variant={j.hidden ? 'success' : 'danger'} disabled={busy === j.id}
+                  onClick={() => run(j, j.hidden ? `"${j.title}" पुन्हा दाखवायची का?` : `"${j.title}" लपवायची का?`, () => apiClient.adminSetJobHidden(j.id, !j.hidden))}>
+                  {j.hidden ? 'दाखवा' : 'लपवा'}
+                </Btn>
+                {(j.state === 'open' || j.state === 'expired') && (
+                  <Btn variant="plain" disabled={busy === j.id}
+                    onClick={() => run(j, `"${j.title}" ही जागा बंद करायची का?`, () => apiClient.jobAction(j.id, 'close'))}>
+                    बंद करा
+                  </Btn>
+                )}
+              </div>
+            ])}
+          />
+        )}
+      </Card>
+      {openId && (
+        <Card style={{ marginTop: 14 }}>
+          <div style={{ fontWeight: 900, color: T.ink }}>अर्ज: {(jobs.find(j => j.id === openId) || {}).title}</div>
+          <JobApplicants jobId={openId} onChanged={load} />
+        </Card>
+      )}
     </>
   );
 }
