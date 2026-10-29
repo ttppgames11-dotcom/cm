@@ -134,6 +134,19 @@ public class LazyTables {
         "CREATE UNIQUE INDEX IF NOT EXISTS blood_donors_one_per_member ON blood_donors (member_id) WHERE member_id IS NOT NULL",
         "CREATE INDEX IF NOT EXISTS blood_requests_member ON blood_requests (member_id, created_at)"};
 
+    /** Migration 013: jobs get an owner, a status, a closing date and a hidden flag; applications a status, one per member per job. */
+    static final String[] JOB_COLUMNS = {
+        "ALTER TABLE jobs ADD COLUMN IF NOT EXISTS poster_id TEXT",
+        "ALTER TABLE jobs ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'open'",
+        "ALTER TABLE jobs ADD COLUMN IF NOT EXISTS closes_at TIMESTAMPTZ",
+        "ALTER TABLE jobs ADD COLUMN IF NOT EXISTS hidden BOOLEAN NOT NULL DEFAULT false",
+        "ALTER TABLE jobs ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT now()",
+        "ALTER TABLE job_applications ADD COLUMN IF NOT EXISTS member_id TEXT",
+        "ALTER TABLE job_applications ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'new'",
+        "ALTER TABLE job_applications ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT now()",
+        "CREATE UNIQUE INDEX IF NOT EXISTS job_applications_one_per_member ON job_applications (job_id, member_id) WHERE member_id IS NOT NULL",
+        "CREATE INDEX IF NOT EXISTS job_applications_job ON job_applications (job_id)"};
+
     private final JdbcTemplate jdbc;
     private final TransactionTemplate ownTransaction;
     private final AtomicBoolean moderationReady = new AtomicBoolean();
@@ -144,6 +157,7 @@ public class LazyTables {
     private final AtomicBoolean meetingColumnsReady = new AtomicBoolean();
     private final AtomicBoolean chapterTablesReady = new AtomicBoolean();
     private final AtomicBoolean bloodTablesReady = new AtomicBoolean();
+    private final AtomicBoolean jobColumnsReady = new AtomicBoolean();
 
     public LazyTables(JdbcTemplate jdbc, PlatformTransactionManager transactions) {
         this.jdbc = jdbc;
@@ -201,5 +215,10 @@ public class LazyTables {
     /** The blood_requests and blood_donors tables with the one-profile-per-member index, created on first use. */
     public void ensureBloodTables() {
         createOnce(bloodTablesReady, BLOOD_TABLES);
+    }
+
+    /** The jobs and job_applications columns and indexes of migration 013, added on first use (a no-op when they exist). */
+    public void ensureJobColumns() {
+        createOnce(jobColumnsReady, JOB_COLUMNS);
     }
 }
