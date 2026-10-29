@@ -39,6 +39,8 @@ public class JobService {
     private static final Logger log = LoggerFactory.getLogger(JobService.class);
     private static final ObjectMapper JSON = new ObjectMapper();
     static final int MAX_JOBS_PER_DAY = 5;
+    static final int MAX_ALERTS = 3;
+    static final int MAX_ALERTED = 200;
 
     private final JobRepository jobs;
     private final MemberRepository members;
@@ -109,8 +111,10 @@ public class JobService {
 
     // ------------------------------------------------------------------ posting and managing
 
-    /** Posts a job (5 per member per 24 hours) that closes in 30 days. */
-    @Transactional
+    /**
+     * Posts a job (5 per member per 24 hours) that closes in 30 days, then tells the members whose alerts match. Not
+     * one transaction: the job is saved first and each notification is sent on its own, so a failed one never undoes it.
+     */
     public Map<String, Object> create(CurrentUser user, Map<String, Object> body) {
         ensure();
         Map<String, Object> input = JobSchemas.normalize(body);
@@ -124,11 +128,86 @@ public class JobService {
             orElse(input.get("category"), "सामान्य"), orElse(input.get("salary"), "चर्चेनुसार"),
             orElse(input.get("job_type"), "Full-time"), orElse(input.get("experience"), "१-३ वर्षे"),
             text(input.get("desc")), text(input.get("contact_email")), text(input.get("phone")));
+        Map<String, Object> job = jobs.findJob(id, user.id()).orElseThrow();
+
+        String title = "💼 नवीन नोकरी: " + text(job.get("title")) + " — " + text(job.get("district"));
+        String message = text(job.get("company")) + " · " + text(job.get("salary")) + ". रोजगार केंद्रात पहा.";
+        int alerted = 0;
+        for (String memberId : jobs.matchingAlertMembers(text(job.get("district")), text(job.get("category")), user.id(), MAX_ALERTED)) {
+            if (send(id, memberId, title, message, "job_alert")) alerted++;
+        }
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("success", true);
         out.put("message", "नोकरी जाहिरात प्रसिद्ध झाली! (Job posted.)");
-        out.put("job", jobJson(jobs.findJob(id, user.id()).orElseThrow(), user));
+        out.put("job", jobJson(job, user));
+        out.put("alerted", alerted);
         return out;
+    }
+
+    // ------------------------------------------------------------------ alerts
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> alerts(CurrentUser user) {
+        ensure();
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Map<String, Object> row : jobs.alertsOf(user.id())) list.add(alertJson(row));
+        return listResult("alerts", list);
+    }
+
+    /** Saves { district, category } (empty / all / सर्व = any, not both); at most 3 per member, each once. */
+    @Transactional
+    public Map<String, Object> addAlert(CurrentUser user, Map<String, Object> body) {
+        ensure();
+        Map<String, Object> input = new LinkedHashMap<>();
+        String district = anyToNull(body.get("district"));
+        String category = anyToNull(body.get("category"));
+        if (district != null) input.put("district", district);
+        if (category != null) input.put("category", category);
+        SchemaValidator.check(input, JobSchemas.ALERT, true, null);
+        if (district == null && category == null) {
+            throw ApiException.badRequest("VALIDATION_ERROR",
+                "किमान जिल्हा किंवा क्षेत्र निवडा (Choose a district or a category).");
+        }
+        if (jobs.alertCount(user.id()) >= MAX_ALERTS) {
+            throw new ApiException(HttpStatus.CONFLICT, "ALERT_LIMIT", "जास्तीत जास्त ३ सूचना ठेवता येतात (At most 3 alerts).");
+        }
+        String id = newId("JA-", jobs::existsAlert);
+        if (jobs.insertAlert(id, user.id(), district, category) == 0) {
+            throw new ApiException(HttpStatus.CONFLICT, "ALERT_EXISTS", "ही सूचना आधीच आहे (You already have this alert).");
+        }
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("success", true);
+        out.put("message", "🔔 सूचना जतन झाली (Alert saved.)");
+        out.put("alert", alertJson(jobs.findAlert(id).orElseThrow()));
+        return out;
+    }
+
+    @Transactional
+    public Map<String, Object> deleteAlert(CurrentUser user, String id) {
+        ensure();
+        if (jobs.deleteAlert(id, user.id()) == 0) {
+            throw ApiException.notFound("ALERT_NOT_FOUND", "ही सूचना सापडली नाही (Alert not found).");
+        }
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("success", true);
+        out.put("message", "सूचना काढली (Alert removed.)");
+        return out;
+    }
+
+    /** An alert: district and category, null meaning any. */
+    static Map<String, Object> alertJson(Map<String, Object> row) {
+        Map<String, Object> a = new LinkedHashMap<>();
+        a.put("id", row.get("id"));
+        a.put("district", row.get("district"));
+        a.put("category", row.get("category"));
+        a.put("created_at", iso(row.get("created_at"), null));
+        return a;
+    }
+
+    /** The value trimmed, or null for empty, "all" and "सर्व" (meaning any). */
+    static String anyToNull(Object value) {
+        String s = text(value);
+        return s.isEmpty() || s.equalsIgnoreCase("all") || s.equals("सर्व") ? null : s;
     }
 
     /** { action: close | extend } by the poster or an admin, only while the job is open. */

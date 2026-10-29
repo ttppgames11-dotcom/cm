@@ -198,6 +198,9 @@ Rules:
 | `GET /api/jobs/applications/mine` | member | your applications: `status` and the job's `id`, `title`, `company`, `district`, `state` |
 | `GET /api/jobs/{id}/applications` | poster or admin | the applicants with phone, email and summary |
 | `PUT /api/jobs/applications/{id}` | poster or admin | `{ "status": "new" | "shortlisted" | "rejected" | "hired" }`; the applicant gets a `job_application` notification when it changes |
+| `GET /api/jobs/alerts` | member | your job alerts (`district` / `category`, null = any), oldest first |
+| `POST /api/jobs/alerts` | member | `{ district, category }` (empty / `all` / `सर्व` = any, not both); at most 3 (`ALERT_LIMIT`), each once (`ALERT_EXISTS`). A new job notifies matching members (`job_alert`, max 200); the post reply has `alerted` |
+| `DELETE /api/jobs/alerts/{id}` | member | remove one of yours (someone else's → 404 `ALERT_NOT_FOUND`) |
 | `GET /api/admin/jobs` | admin | every job (hidden, closed, old) with poster name and application count |
 | `PUT /api/admin/jobs/{id}` | admin | `{ "hidden": true/false }` (audit `JOB_HIDE` / `JOB_UNHIDE`) |
 

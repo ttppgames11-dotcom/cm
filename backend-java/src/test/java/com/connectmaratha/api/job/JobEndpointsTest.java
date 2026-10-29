@@ -53,6 +53,10 @@ class JobEndpointsTest extends PostgresTestBase {
         String jobs = "SELECT id FROM jobs WHERE poster_id LIKE 'M90%' OR title LIKE 'Zj%'";
         jdbc.update("DELETE FROM job_applications WHERE job_id IN (" + jobs + ") OR member_id LIKE 'M90%' OR applicant_name LIKE 'Zj%'");
         jdbc.update("DELETE FROM jobs WHERE poster_id LIKE 'M90%' OR title LIKE 'Zj%'");
+        // alerts saved by JobAlertsTest would add notifications here
+        if (jdbc.queryForObject("SELECT to_regclass('job_alerts') IS NOT NULL", Boolean.class)) {
+            jdbc.update("DELETE FROM job_alerts WHERE member_id LIKE 'M90%'");
+        }
         jdbc.update("DELETE FROM notifications WHERE member_id LIKE 'M90%'");
         jdbc.update("DELETE FROM audit_logs WHERE user_id LIKE 'M90%'");
         for (String id : List.of("M9001", "M9002", "M9003", "M9004", "M9005", "M9006", ADMIN)) member(id);
