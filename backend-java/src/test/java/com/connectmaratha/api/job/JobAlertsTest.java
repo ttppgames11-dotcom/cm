@@ -214,4 +214,16 @@ class JobAlertsTest extends PostgresTestBase {
             jdbc.update("DELETE FROM notifications WHERE member_id LIKE 'M90A%'");
         }
     }
+
+    @Test
+    void aFailingAlertLookupStillPostsTheJob() throws Exception {
+        jdbc.execute("ALTER TABLE job_alerts RENAME TO job_alerts_off");
+        try {
+            JsonNode reply = postJob(m(1));
+            assertThat(reply.get("alerted").asInt()).isZero();
+            assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM jobs WHERE poster_id = 'M9001'", Integer.class)).isEqualTo(1);
+        } finally {
+            jdbc.execute("ALTER TABLE job_alerts_off RENAME TO job_alerts");
+        }
+    }
 }

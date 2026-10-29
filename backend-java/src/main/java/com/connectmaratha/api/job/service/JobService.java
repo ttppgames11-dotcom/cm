@@ -133,8 +133,13 @@ public class JobService {
         String title = "💼 नवीन नोकरी: " + text(job.get("title")) + " — " + text(job.get("district"));
         String message = text(job.get("company")) + " · " + text(job.get("salary")) + ". रोजगार केंद्रात पहा.";
         int alerted = 0;
-        for (String memberId : jobs.matchingAlertMembers(text(job.get("district")), text(job.get("category")), user.id(), MAX_ALERTED)) {
-            if (send(id, memberId, title, message, "job_alert")) alerted++;
+        try {
+            for (String memberId : jobs.matchingAlertMembers(text(job.get("district")), text(job.get("category")), user.id(), MAX_ALERTED)) {
+                if (send(id, memberId, title, message, "job_alert")) alerted++;
+            }
+        } catch (RuntimeException e) {
+            // the job is already saved: a failed alert lookup must not turn the post into an error (and a duplicate re-post)
+            log.warn("Job {}: could not look up job alerts", id, e);
         }
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("success", true);
