@@ -5,7 +5,8 @@ import apiClient from '../../services/apiClient';
 import { MAHARASHTRA_DISTRICTS } from '../../services/referralService';
 import { timeAgo, toMarathiDigits } from '../community/bloodHelp';
 import {
-  APPLICATION_STATUSES, STATE_LABELS, closesInText, applyButton, whatsappLink, jobPayload, statusInfo, jobQuery
+  APPLICATION_STATUSES, STATE_LABELS, closesInText, applyButton, whatsappLink, jobPayload, statusInfo, jobQuery,
+  alertLabel, canSaveAlert, alertPayload, MAX_ALERTS
 } from './jobsHelp';
 import JobApplyModal from './JobApplyModal';
 
@@ -210,6 +211,8 @@ export default function JobsPortalPage() {
               <button onClick={loadJobs} style={{ ...primary, padding: '10px 20px' }}>शोधा 🔍</button>
             </div>
 
+            <JobAlertsBox userId={user?.id} loggedIn={loggedIn} category={selectedCat} district={selectedDistrict} onLogin={() => loginFirst()} />
+
             {listError && <div role="alert" style={errorBox}>{listError}</div>}
             {loading ? (
               <div style={{ textAlign: 'center', padding: '60px', color: '#888' }}>नोकऱ्या लोड होत आहेत... ⏳</div>
@@ -312,6 +315,94 @@ export default function JobsPortalPage() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+const ALERT_BUTTON = {
+  ok: '🔔 या शोधासाठी सूचना द्या',
+  login: 'लॉगिन करा व सूचना मिळवा',
+  pick: 'आधी जिल्हा किंवा क्षेत्र निवडा',
+  exists: 'ही सूचना आधीच आहे',
+  limit: `जास्तीत जास्त ${toMarathiDigits(MAX_ALERTS)} सूचना`
+};
+
+// "🔔 नवीन नोकरीची सूचना मिळवा": the member's alerts as chips, and a button that saves the current filters as an alert.
+function JobAlertsBox({ userId, loggedIn, category, district, onLogin }) {
+  const [alerts, setAlerts] = useState([]);
+  const [error, setError] = useState('');
+  const [done, setDone] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const load = useCallback(async () => {
+    if (!userId) { setAlerts([]); return; }
+    try {
+      setAlerts(await apiClient.getJobAlerts());
+    } catch (err) {
+      setError(err.message || 'सूचना लोड करता आल्या नाहीत.');
+    }
+  }, [userId]);
+  useEffect(() => { load(); }, [load]);
+
+  const kind = canSaveAlert(alerts, category, district, loggedIn);
+
+  const save = async () => {
+    if (kind === 'login') return onLogin();
+    if (kind !== 'ok') return;
+    setBusy(true);
+    setError('');
+    setDone('');
+    try {
+      await apiClient.addJobAlert(alertPayload(category, district));
+      setDone('✅ सूचना जतन झाली — अशी नवीन नोकरी आली की 🔔 कळवू.');
+      await load();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const remove = async (alert) => {
+    if (!window.confirm(`"${alertLabel(alert)}" ही सूचना काढायची?`)) return;
+    setBusy(true);
+    setError('');
+    setDone('');
+    try {
+      await apiClient.deleteJobAlert(alert.id);
+      await load();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const active = kind === 'ok' || kind === 'login';
+  return (
+    <div style={{ background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: '14px', padding: '14px 18px', marginBottom: '24px' }}>
+      <div style={{ fontWeight: 800, color: '#9A3412', marginBottom: '8px' }}>🔔 नवीन नोकरीची सूचना मिळवा</div>
+      {alerts.length > 0 && (
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '10px' }}>
+          {alerts.map((a) => (
+            <span key={a.id} style={{ background: '#fff', border: '1px solid #FDBA74', borderRadius: '999px', padding: '4px 6px 4px 12px', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              {alertLabel(a)}
+              <button onClick={() => remove(a)} disabled={busy} aria-label={`${alertLabel(a)} सूचना काढा`}
+                style={{ border: 'none', background: '#FFEDD5', borderRadius: '999px', width: '22px', height: '22px', cursor: 'pointer', fontWeight: 800 }}>✕</button>
+            </span>
+          ))}
+        </div>
+      )}
+      <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <button onClick={save} disabled={!active || busy}
+          style={{ ...primary, background: active ? '#C73800' : '#E5E7EB', color: active ? '#fff' : '#4B5563', cursor: active ? 'pointer' : 'default' }}>
+          {ALERT_BUTTON[kind]}
+        </button>
+        {loggedIn && <span style={{ fontSize: '0.82rem', color: '#6B7280' }}>({toMarathiDigits(alerts.length)}/{toMarathiDigits(MAX_ALERTS)} वापरल्या)</span>}
+        {!loggedIn && <span style={{ fontSize: '0.82rem', color: '#6B7280' }}>वर जिल्हा व क्षेत्र निवडा; नवीन नोकरी आली की 🔔 कळवू.</span>}
+      </div>
+      {done && <div role="status" style={{ color: '#166534', marginTop: '8px', fontSize: '0.9rem' }}>{done}</div>}
+      {error && <div role="alert" style={{ ...errorBox, marginTop: '8px', marginBottom: 0 }}>{error}</div>}
     </div>
   );
 }

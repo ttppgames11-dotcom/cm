@@ -184,6 +184,16 @@ export const apiClient = {
     const res = await fetchJson('/admin/jobs');
     return res.jobs || [];
   },
+  getJobAlerts: async () => {
+    const res = await fetchJson('/jobs/alerts');
+    return res.alerts || [];
+  },
+  addJobAlert: async (data) => {
+    return await fetchJson('/jobs/alerts', { method: 'POST', body: JSON.stringify(data) });
+  },
+  deleteJobAlert: async (id) => {
+    return await fetchJson(`/jobs/alerts/${encodeURIComponent(id)}`, { method: 'DELETE' });
+  },
   adminSetJobHidden: async (id, hidden) => {
     return await fetchJson(`/admin/jobs/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ hidden }) });
   },
