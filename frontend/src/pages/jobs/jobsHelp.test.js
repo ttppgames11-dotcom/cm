@@ -2,8 +2,31 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  APPLICATION_STATUSES, STATE_LABELS, closesInText, applyButton, whatsappText, whatsappLink, jobPayload, applicationPayload, statusInfo, jobQuery
+  APPLICATION_STATUSES, STATE_LABELS, closesInText, applyButton, whatsappText, whatsappLink, jobPayload, applicationPayload, statusInfo, jobQuery,
+  alertLabel, canSaveAlert, alertPayload
 } from './jobsHelp.js';
+
+test('alertLabel names district and category, "any" in Marathi', () => {
+  assert.equal(alertLabel({ district: 'पुणे', category: 'Finance & Accounts' }), 'पुणे · Finance & Accounts');
+  assert.equal(alertLabel({ district: null, category: 'IT & Software' }), 'सर्व जिल्हे · IT & Software');
+  assert.equal(alertLabel({ district: 'सातारा', category: null }), 'सातारा · सर्व क्षेत्रे');
+});
+
+test('canSaveAlert decides the alert button', () => {
+  const one = [{ district: ' Pune ', category: 'IT & Software' }];
+  assert.equal(canSaveAlert([], 'IT & Software', 'पुणे', false), 'login');
+  assert.equal(canSaveAlert([], 'all', 'सर्व', true), 'pick');
+  assert.equal(canSaveAlert(one, 'IT & Software', 'pune', true), 'exists');
+  assert.equal(canSaveAlert([{ district: null, category: 'Manufacturing' }], 'Manufacturing', 'सर्व', true), 'exists');
+  const three = [{ district: 'a', category: null }, { district: 'b', category: null }, { district: 'c', category: null }];
+  assert.equal(canSaveAlert(three, 'all', 'पुणे', true), 'limit');
+  assert.equal(canSaveAlert(one, 'all', 'पुणे', true), 'ok');
+});
+
+test('alertPayload leaves out "any"', () => {
+  assert.deepEqual(alertPayload('all', 'पुणे'), { district: 'पुणे' });
+  assert.deepEqual(alertPayload('IT & Software', 'सर्व'), { category: 'IT & Software' });
+});
 
 const NOW = new Date('2026-10-28T10:00:00Z');
 const HOUR = 60 * 60 * 1000;

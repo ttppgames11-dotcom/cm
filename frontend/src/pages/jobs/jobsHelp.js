@@ -68,3 +68,28 @@ export function jobQuery(category, district, search) {
 export function applicationPayload(form) {
   return cleaned({ applicant_name: form.name, phone: form.phone, email: form.email, resume_summary: form.summary });
 }
+
+// ---- job alerts (district / category; null = any)
+
+export const MAX_ALERTS = 3;
+
+export function alertLabel(alert) {
+  return `${alert.district || 'सर्व जिल्हे'} · ${alert.category || 'सर्व क्षेत्रे'}`;
+}
+
+// The alert to save for the current filters ("all" / "सर्व" left out).
+export function alertPayload(category, district) {
+  return jobQuery(category, district, '');
+}
+
+const same = (a, b) => t(a).toLowerCase() === t(b).toLowerCase();
+
+// What the alert button does for the current filters: 'login' | 'pick' | 'exists' | 'limit' | 'ok'.
+export function canSaveAlert(alerts, category, district, loggedIn) {
+  if (!loggedIn) return 'login';
+  const wanted = alertPayload(category, district);
+  if (!wanted.district && !wanted.category) return 'pick';
+  if ((alerts || []).some((a) => same(a.district, wanted.district) && same(a.category, wanted.category))) return 'exists';
+  if ((alerts || []).length >= MAX_ALERTS) return 'limit';
+  return 'ok';
+}
