@@ -141,6 +141,53 @@ export const apiClient = {
     return await fetchJson(`/admin/blood/donors/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ hidden }) });
   },
 
+  // Jobs (params: category, district, search; empty values skipped)
+  getJobs: async (params = {}) => {
+    const clean = Object.fromEntries(Object.entries(params).filter(([, v]) => v != null && String(v).trim() !== ''));
+    const qs = new URLSearchParams(clean).toString();
+    const res = await fetchJson(`/jobs${qs ? '?' + qs : ''}`);
+    return res.jobs || [];
+  },
+  getJob: async (id) => {
+    const res = await fetchJson(`/jobs/${encodeURIComponent(id)}`);
+    return res.job || null;
+  },
+  postJob: async (data) => {
+    return await fetchJson('/jobs', { method: 'POST', body: JSON.stringify(data) });
+  },
+  jobAction: async (id, action) => {
+    return await fetchJson(`/jobs/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ action }) });
+  },
+  getMyJobs: async () => {
+    const res = await fetchJson('/jobs/mine');
+    return res.jobs || [];
+  },
+  getJobStats: async () => {
+    const res = await fetchJson('/jobs/stats');
+    return { open_jobs: res.open_jobs || 0, hired: res.hired || 0 };
+  },
+  applyToJob: async (id, data) => {
+    return await fetchJson(`/jobs/${encodeURIComponent(id)}/apply`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  getMyApplications: async () => {
+    const res = await fetchJson('/jobs/applications/mine');
+    return res.applications || [];
+  },
+  getJobApplications: async (id) => {
+    const res = await fetchJson(`/jobs/${encodeURIComponent(id)}/applications`);
+    return res.applications || [];
+  },
+  setApplicationStatus: async (appId, status) => {
+    return await fetchJson(`/jobs/applications/${encodeURIComponent(appId)}`, { method: 'PUT', body: JSON.stringify({ status }) });
+  },
+  adminGetJobs: async () => {
+    const res = await fetchJson('/admin/jobs');
+    return res.jobs || [];
+  },
+  adminSetJobHidden: async (id, hidden) => {
+    return await fetchJson(`/admin/jobs/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ hidden }) });
+  },
+
   // My notifications (newest 50 and the unread count)
   getMyNotifications: async () => {
     const res = await fetchJson('/members/notifications');
