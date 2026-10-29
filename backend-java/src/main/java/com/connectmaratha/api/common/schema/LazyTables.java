@@ -134,7 +134,10 @@ public class LazyTables {
         "CREATE UNIQUE INDEX IF NOT EXISTS blood_donors_one_per_member ON blood_donors (member_id) WHERE member_id IS NOT NULL",
         "CREATE INDEX IF NOT EXISTS blood_requests_member ON blood_requests (member_id, created_at)"};
 
-    /** Migration 013: jobs get an owner, a status, a closing date and a hidden flag; applications a status, one per member per job. */
+    /**
+     * Migration 013: jobs get an owner, a status, a closing date and a hidden flag; applications a status, one per
+     * member per job. Migration 014: the job_alerts table (district / category, NULL = any), each alert once per member.
+     */
     static final String[] JOB_COLUMNS = {
         "ALTER TABLE jobs ADD COLUMN IF NOT EXISTS poster_id TEXT",
         "ALTER TABLE jobs ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'open'",
@@ -145,7 +148,13 @@ public class LazyTables {
         "ALTER TABLE job_applications ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'new'",
         "ALTER TABLE job_applications ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT now()",
         "CREATE UNIQUE INDEX IF NOT EXISTS job_applications_one_per_member ON job_applications (job_id, member_id) WHERE member_id IS NOT NULL",
-        "CREATE INDEX IF NOT EXISTS job_applications_job ON job_applications (job_id)"};
+        "CREATE INDEX IF NOT EXISTS job_applications_job ON job_applications (job_id)",
+        """
+        CREATE TABLE IF NOT EXISTS job_alerts (
+          id TEXT PRIMARY KEY, member_id TEXT NOT NULL, district TEXT, category TEXT,
+          created_at TIMESTAMPTZ NOT NULL DEFAULT now())""",
+        "CREATE UNIQUE INDEX IF NOT EXISTS job_alerts_one_each ON job_alerts (member_id, coalesce(lower(district), ''), coalesce(lower(category), ''))",
+        "CREATE INDEX IF NOT EXISTS job_alerts_member ON job_alerts (member_id)"};
 
     private final JdbcTemplate jdbc;
     private final TransactionTemplate ownTransaction;

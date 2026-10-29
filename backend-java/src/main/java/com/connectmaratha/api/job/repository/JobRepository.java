@@ -162,6 +162,54 @@ public class JobRepository {
         return n == null ? 0 : n;
     }
 
+    // ------------------------------------------------------------------ alerts
+
+    public List<Map<String, Object>> alertsOf(String memberId) {
+        return jdbc.queryForList("SELECT * FROM job_alerts WHERE member_id = ? ORDER BY created_at, id", memberId);
+    }
+
+    public Optional<Map<String, Object>> findAlert(String id) {
+        return jdbc.queryForList("SELECT * FROM job_alerts WHERE id = ?", id).stream().findFirst();
+    }
+
+    public int alertCount(String memberId) {
+        Integer n = jdbc.queryForObject("SELECT COUNT(*) FROM job_alerts WHERE member_id = ?", Integer.class, memberId);
+        return n == null ? 0 : n;
+    }
+
+    public boolean existsAlert(String id) {
+        return Boolean.TRUE.equals(jdbc.queryForObject("SELECT EXISTS (SELECT 1 FROM job_alerts WHERE id = ?)", Boolean.class, id));
+    }
+
+    /** Saves an alert (null = any); 0 when the member already has the same one (the unique index, any case). */
+    public int insertAlert(String id, String memberId, String district, String category) {
+        return jdbc.update("""
+            INSERT INTO job_alerts (id, member_id, district, category) VALUES (?, ?, ?, ?)
+            ON CONFLICT (member_id, coalesce(lower(district), ''), coalesce(lower(category), '')) DO NOTHING""",
+            id, memberId, district, category);
+    }
+
+    /** Deletes the alert only when it belongs to the member; 0 otherwise. */
+    public int deleteAlert(String id, String memberId) {
+        return jdbc.update("DELETE FROM job_alerts WHERE id = ? AND member_id = ?", id, memberId);
+    }
+
+    /**
+     * Members to tell about a new job: an alert whose district and category match the job (NULL matches anything;
+     * trimmed, any case), never the poster. One row per member however many alerts match; newest alerts first, at most
+     * {@code limit}.
+     */
+    public List<String> matchingAlertMembers(String district, String category, String posterId, int limit) {
+        return jdbc.queryForList("""
+            SELECT member_id FROM job_alerts
+            WHERE member_id <> ?
+              AND (district IS NULL OR lower(trim(district)) = lower(trim(?)))
+              AND (category IS NULL OR lower(trim(category)) = lower(trim(?)))
+            GROUP BY member_id
+            ORDER BY max(created_at) DESC, member_id
+            LIMIT ?""", String.class, posterId, district, category, limit);
+    }
+
     /** Jobs posted before closing dates existed run 30 more days from now. Returns the number of jobs changed. */
     public int backfillClosesAt() {
         return jdbc.update("UPDATE jobs SET closes_at = now() + interval '30 days' WHERE closes_at IS NULL");

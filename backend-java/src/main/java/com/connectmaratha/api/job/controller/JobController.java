@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +50,27 @@ public class JobController {
     @GetMapping("/mine")
     public Map<String, Object> mine(CurrentUser user) {
         return jobs.mine(user);
+    }
+
+    /** Your job alerts (declared before /{id}). */
+    @RequireAuth
+    @GetMapping("/alerts")
+    public Map<String, Object> alerts(CurrentUser user) {
+        return jobs.alerts(user);
+    }
+
+    /** Save { district, category } (either may be any, not both); at most 3. */
+    @RequireAuth
+    @PostMapping("/alerts")
+    public ResponseEntity<Map<String, Object>> addAlert(CurrentUser user, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(jobs.addAlert(user, bodies.read(req)));
+    }
+
+    /** Remove one of your alerts. */
+    @RequireAuth
+    @DeleteMapping("/alerts/{alertId}")
+    public Map<String, Object> deleteAlert(@PathVariable String alertId, CurrentUser user) {
+        return jobs.deleteAlert(user, alertId);
     }
 
     /** Your applications with their job and status (declared before /{id}). */

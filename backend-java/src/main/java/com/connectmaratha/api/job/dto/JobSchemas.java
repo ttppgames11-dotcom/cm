@@ -38,6 +38,14 @@ public final class JobSchemas {
 
     public static final Map<String, Rule> HIDDEN = ordered("hidden", Rule.bool().required());
 
+    /** The categories the website offers; an alert's category must be one of them. */
+    public static final Object[] CATEGORIES = {"IT & Software", "Finance & Accounts", "Manufacturing", "Marketing & Sales", "सामान्य"};
+
+    /** An alert after "any" values (empty, all, सर्व) were removed; at least one of the two must remain (checked in the service). */
+    public static final Map<String, Rule> ALERT = ordered(
+        "district", Rule.string().max(100),
+        "category", Rule.string().oneOf(CATEGORIES));
+
     private static final Map<String, String> ALIASES = Map.of(
         "jobType", "job_type", "contactEmail", "contact_email", "description", "desc",
         "applicantName", "applicant_name", "resumeSummary", "resume_summary");
