@@ -217,6 +217,24 @@ Rules:
 | `GET /api/speakers/requests/incoming` | member | requests to your profile with `organiser.name` and `organiser.phone` |
 | `PUT /api/speakers/requests/{id}` | depends | `{ "action": "accept" | "decline" }` by the speaker (an admin for a speaker without an account) or `"cancel"` by the organiser; only while `new` (`ALREADY_ANSWERED`); accept / decline send `speaker_reply` |
 | `GET /api/admin/speakers/requests` | admin | requests to speakers without an account, with both phones |
+
+**Officer guidance** (design: `docs/superpowers/specs/2026-10-30-officers-guidance-design.md`; tables: migration 016, also created on first use). Officers mentor MPSC / UPSC students; not in Node.
+
+| Endpoint | Login | |
+|---|---|---|
+| `GET /api/officers?exam=&service=&search=` | optional | approved, visible officers newest first; `exams` (codes), `accepting`; never `phone` or `member_id`; `mine`, `requested` |
+| `GET /api/officers/mine` | member | your profile in any `status` with `reject_reason`, or `null` |
+| `POST /api/officers` | member | apply: `name`, `service` (code), `service_status` (`serving` / `retired`), `batch_year` (1950–this year, optional), `post`, `department`, `city`, `exams` (one or more codes, stored once and sorted), `intro`, `phone`; one per member (`OFFICER_EXISTS`) |
+| `PUT /api/officers/mine` | member | edit your profile; back to `pending` (the switch is kept) |
+| `PUT /api/officers/mine/accepting` | member | `{ "accepting": true/false }`: pause or resume new requests, no re-approval |
+| `POST /api/officers/{id}/requests` | member | `{ exam, stage, question, mode, message }`: only an accepting officer (`NOT_ACCEPTING`), one of their exams (`EXAM_NOT_OFFERED`), not yourself (`OWN_PROFILE`), 5 per 24 h, one open per officer (`REQUEST_EXISTS`); only these fields are saved; notifies the officer (`officer_request`) or every admin for an officer without an account (`officer_admin`) |
+| `GET /api/officers/requests/mine` | member | requests you sent with `status`; `officer.phone` only once `accepted` |
+| `GET /api/officers/requests/incoming` | member | requests to your profile with `student.name` and `student.phone` |
+| `PUT /api/officers/requests/{id}` | depends | `{ "action": "accept" | "decline" }` by the officer (an admin for an officer without an account) or `"cancel"` by the student; only while `new` (`ALREADY_ANSWERED`), whatever the switch; accept / decline send `officer_reply` |
+| `GET /api/admin/officers/requests` | admin | requests to officers without an account, with both phones |
+| `GET /api/admin/officers` | admin | every officer, pending first, with `phone`, `has_account`, `member_id`, and a `pending` count |
+| `POST /api/admin/officers` | admin | add an officer without an account (approved at once) |
+| `PUT /api/admin/officers/{id}` | admin | `{ "action": "approve" | "reject" | "hide" | "unhide" | "link" | "pause" | "resume", "reason"?, "member"? }`; approve / reject send an `officer` notification; `link` takes a member id or phone (`MEMBER_NOT_FOUND`, `MEMBER_AMBIGUOUS`, `OFFICER_EXISTS`) |
 | `GET /api/admin/speakers` | admin | every speaker, pending first, with `phone`, `has_account`, `member_id`, and a `pending` count |
 | `POST /api/admin/speakers` | admin | add a speaker without an account (approved at once) |
 | `PUT /api/admin/speakers/{id}` | admin | `{ "action": "approve" | "reject" | "hide" | "unhide" | "link", "reason"?, "member"? }`; approve / reject send a `speaker` notification; `link` takes a member id or phone (`MEMBER_NOT_FOUND`, `SPEAKER_EXISTS`) |
