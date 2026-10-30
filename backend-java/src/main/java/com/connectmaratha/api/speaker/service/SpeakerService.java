@@ -10,7 +10,10 @@ import com.connectmaratha.api.common.validation.SchemaValidator;
 import com.connectmaratha.api.sangam.repository.ActivityRepository;
 import com.connectmaratha.api.speaker.dto.SpeakerSchemas;
 import com.connectmaratha.api.speaker.repository.SpeakerRepository;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,6 +35,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class SpeakerService {
 
     private static final Logger log = LoggerFactory.getLogger(SpeakerService.class);
+    private static final ZoneId INDIA = ZoneId.of("Asia/Kolkata");
+    static final int MAX_REQUESTS_PER_DAY = 5;
 
     private final SpeakerRepository speakers;
     private final ActivityRepository activity;
@@ -168,6 +173,201 @@ public class SpeakerService {
         if (hasOther || speakers.link(id, memberId) == 0) throw speakerExists();
     }
 
+    // ------------------------------------------------------------------ requests
+
+    /**
+     * A talk or guidance request to an approved, visible speaker (5 per member per 24 hours, one open per speaker).
+     * Saved first; then the speaker, or every admin when the speaker has no account, is told.
+     */
+    public Map<String, Object> sendRequest(CurrentUser user, String speakerId, Map<String, Object> body) {
+        ensure();
+        Map<String, Object> speaker = speakers.find(speakerId)
+            .filter(s -> "approved".equals(s.get("status")) && !Boolean.TRUE.equals(s.get("hidden")))
+            .orElseThrow(SpeakerService::speakerNotFound);
+        String speakerMember = (String) speaker.get("member_id");
+        if (user.id().equals(speakerMember)) {
+            throw ApiException.badRequest("OWN_PROFILE", "स्वतःला विनंती पाठवता येत नाही (You cannot request yourself).");
+        }
+        Map<String, Object> input = validRequest(speaker, body);
+        if (speakers.recentRequests(user.id()) >= MAX_REQUESTS_PER_DAY) {
+            throw new ApiException(HttpStatus.TOO_MANY_REQUESTS, "RATE_LIMIT_EXCEEDED",
+                "२४ तासांत जास्तीत जास्त ५ विनंत्या पाठवता येतात (At most 5 requests in 24 hours).");
+        }
+        String id = newId("SRQ-", speakers::existsRequest);
+        if (speakers.insertRequest(id, speakerId, user.id(), input) == 0) {
+            throw new ApiException(HttpStatus.CONFLICT, "REQUEST_EXISTS",
+                "या वक्त्यांना तुमची विनंती आधीच पाठवली आहे (You already have an open request).");
+        }
+        Map<String, Object> row = speakers.findRequest(id).orElseThrow();
+
+        boolean talk = "talk".equals(row.get("kind"));
+        String organiser = orElse(row.get("organiser_name"), "सदस्य");
+        String detail = talk ? organiser + ": " + text(row.get("place")) + ", " + text(row.get("event_date"))
+                             : organiser + ": " + text(row.get("topic"));
+        if (speakerMember != null) {
+            send(id, speakerMember, talk ? "🎙️ नवीन विनंती: व्याख्यान" : "🧭 नवीन विनंती: मार्गदर्शन", detail, "speaker_request");
+        } else {
+            String title = "🎙️ " + text(speaker.get("name")) + " साठी नवीन विनंती";
+            String message = detail + ". वक्त्यांना फोन करून उत्तर द्या.";
+            try {
+                for (String adminId : speakers.adminIds()) {
+                    if (!adminId.equals(user.id())) send(id, adminId, title, message, "speaker_admin");
+                }
+            } catch (RuntimeException e) {
+                // the request is already saved: a failed admin lookup must not turn it into an error
+                log.warn("Speaker request {}: could not look up admins", id, e);
+            }
+        }
+        Map<String, Object> out = success("विनंती पाठवली! उत्तर आल्यावर सूचना मिळेल. (Request sent.)");
+        out.put("request", sentJson(row));
+        return out;
+    }
+
+    /** Requests I sent, newest first; the speaker's phone only once accepted. */
+    @Transactional(readOnly = true)
+    public Map<String, Object> myRequests(CurrentUser user) {
+        ensure();
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Map<String, Object> row : speakers.requestsBy(user.id())) list.add(sentJson(row));
+        return listResult("requests", list);
+    }
+
+    /** Requests to my profile, newest first, with the organiser's name and phone. */
+    @Transactional(readOnly = true)
+    public Map<String, Object> incoming(CurrentUser user) {
+        ensure();
+        List<Map<String, Object>> list = new ArrayList<>();
+        speakers.ofMember(user.id()).ifPresent(mine -> {
+            for (Map<String, Object> row : speakers.requestsTo(text(mine.get("id")))) list.add(receivedJson(row));
+        });
+        return listResult("requests", list);
+    }
+
+    /** Requests to speakers without an account, which admins answer after phoning the speaker. */
+    @Transactional(readOnly = true)
+    public Map<String, Object> adminRequests(CurrentUser user) {
+        requireAdmin(user);
+        ensure();
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Map<String, Object> row : speakers.requestsForUnlinked()) {
+            Map<String, Object> r = receivedJson(row);
+            @SuppressWarnings("unchecked")
+            Map<String, Object> speaker = (Map<String, Object>) r.get("speaker");
+            speaker.put("phone", text(row.get("speaker_phone")));
+            list.add(r);
+        }
+        return listResult("requests", list);
+    }
+
+    /**
+     * accept / decline (the speaker, or an admin when the speaker has no account) or cancel (the organiser), only
+     * while the request is open; the organiser is told about an accept or decline.
+     */
+    public Map<String, Object> answer(CurrentUser user, String requestId, Map<String, Object> body) {
+        ensure();
+        Map<String, Object> input = SpeakerSchemas.normalize(body);
+        SchemaValidator.check(input, SpeakerSchemas.ANSWER, true, null);
+        String action = text(input.get("action"));
+        Map<String, Object> row = speakers.findRequest(requestId).orElseThrow(() ->
+            ApiException.notFound("REQUEST_NOT_FOUND", "विनंती आढळली नाही (Request not found)."));
+        String speakerMember = (String) row.get("speaker_member_id");
+        boolean allowed = "cancel".equals(action)
+            ? user.id().equals(row.get("member_id"))
+            : speakerMember != null ? user.id().equals(speakerMember) : isAdmin(user);
+        if (!allowed) throw ApiException.forbidden("FORBIDDEN", "ही कृती आपण करू शकत नाही (You cannot do this).");
+
+        String status = switch (action) {
+            case "accept" -> "accepted";
+            case "decline" -> "declined";
+            default -> "cancelled";
+        };
+        if (speakers.answer(requestId, status) == 0) {
+            throw new ApiException(HttpStatus.CONFLICT, "ALREADY_ANSWERED", "या विनंतीला आधीच उत्तर दिले आहे (Already answered).");
+        }
+        String speakerName = text(row.get("speaker_name"));
+        String organiser = text(row.get("member_id"));
+        if ("accepted".equals(status)) {
+            send(requestId, organiser, "✅ " + speakerName + " यांनी तुमची विनंती स्वीकारली",
+                "संपर्क क्रमांक 'माझ्या विनंत्या' मध्ये पहा.", "speaker_reply");
+        } else if ("declined".equals(status)) {
+            send(requestId, organiser, "❌ " + speakerName + " यांनी तुमची विनंती नाकारली",
+                "'माझ्या विनंत्या' मध्ये पहा.", "speaker_reply");
+        }
+        Map<String, Object> out = success("उत्तर जतन झाले. (Saved.)");
+        out.put("request", requestFields(speakers.findRequest(requestId).orElseThrow()));
+        return out;
+    }
+
+    /** The kind's fields, validated; the speaker must offer that kind and a talk's date must not be past. */
+    private static Map<String, Object> validRequest(Map<String, Object> speaker, Map<String, Object> body) {
+        Map<String, Object> input = SpeakerSchemas.normalize(body);
+        SchemaValidator.check(input, SpeakerSchemas.KIND, true, null);
+        boolean talk = "talk".equals(input.get("kind"));
+        if (!Boolean.TRUE.equals(speaker.get(talk ? "offers_talks" : "offers_guidance"))) {
+            throw ApiException.badRequest("KIND_NOT_OFFERED", talk
+                ? "हे वक्ते व्याख्यानासाठी उपलब्ध नाहीत (This speaker does not give talks)."
+                : "हे वक्ते मार्गदर्शनासाठी उपलब्ध नाहीत (This speaker does not give guidance).");
+        }
+        SchemaValidator.check(input, talk ? SpeakerSchemas.TALK : SpeakerSchemas.GUIDANCE, true, null);
+        if (talk) {
+            LocalDate date;
+            try {
+                date = LocalDate.parse(text(input.get("event_date")));
+            } catch (DateTimeParseException e) {
+                throw new ValidationException(List.of("तारीख चुकीची आहे (Invalid date)."));
+            }
+            if (date.isBefore(LocalDate.now(INDIA))) {
+                throw new ValidationException(List.of("कार्यक्रमाची तारीख आज किंवा पुढची असावी (The date must be today or later)."));
+            }
+        }
+        return input;
+    }
+
+    /** The request's own fields (only the ones of its kind). */
+    static Map<String, Object> requestFields(Map<String, Object> row) {
+        Map<String, Object> r = new LinkedHashMap<>();
+        r.put("id", row.get("id"));
+        r.put("kind", text(row.get("kind")));
+        if ("talk".equals(row.get("kind"))) {
+            r.put("event_date", row.get("event_date") == null ? null : row.get("event_date").toString());
+            r.put("place", text(row.get("place")));
+            r.put("event_type", text(row.get("event_type")));
+            r.put("audience", row.get("audience"));
+        } else {
+            r.put("topic", text(row.get("topic")));
+            r.put("mode", text(row.get("mode")));
+        }
+        r.put("message", text(row.get("message")));
+        r.put("status", text(row.get("status")));
+        r.put("created_at", iso(row.get("created_at")));
+        return r;
+    }
+
+    /** For the organiser: the speaker's name, and their phone only once the request is accepted. */
+    static Map<String, Object> sentJson(Map<String, Object> row) {
+        Map<String, Object> r = requestFields(row);
+        Map<String, Object> speaker = new LinkedHashMap<>();
+        speaker.put("id", row.get("speaker_id"));
+        speaker.put("name", text(row.get("speaker_name")));
+        if ("accepted".equals(row.get("status"))) speaker.put("phone", text(row.get("speaker_phone")));
+        r.put("speaker", speaker);
+        return r;
+    }
+
+    /** For the speaker (or the admins): who is asking, with their name and phone. */
+    static Map<String, Object> receivedJson(Map<String, Object> row) {
+        Map<String, Object> r = requestFields(row);
+        Map<String, Object> speaker = new LinkedHashMap<>();
+        speaker.put("id", row.get("speaker_id"));
+        speaker.put("name", text(row.get("speaker_name")));
+        r.put("speaker", speaker);
+        Map<String, Object> organiser = new LinkedHashMap<>();
+        organiser.put("name", orElse(row.get("organiser_name"), "सदस्य"));
+        organiser.put("phone", text(row.get("organiser_phone")));
+        r.put("organiser", organiser);
+        return r;
+    }
+
     // ------------------------------------------------------------------ helpers
 
     /** The normalized, validated profile; at least one of talks / guidance. */
@@ -270,6 +470,11 @@ public class SpeakerService {
 
     static String text(Object value) {
         return value == null ? "" : value.toString().trim();
+    }
+
+    static String orElse(Object value, String fallback) {
+        String s = text(value);
+        return s.isEmpty() ? fallback : s;
     }
 
     static Map<String, Object> success(String message) {

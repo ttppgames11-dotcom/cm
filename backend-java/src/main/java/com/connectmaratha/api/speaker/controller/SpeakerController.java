@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +50,34 @@ public class SpeakerController {
     @PutMapping("/mine")
     public Map<String, Object> editMine(CurrentUser user, HttpServletRequest req) {
         return speakers.editMine(user, bodies.read(req));
+    }
+
+    /** Requests you sent; the speaker's phone once accepted (declared before /{id}). */
+    @RequireAuth
+    @GetMapping("/requests/mine")
+    public Map<String, Object> myRequests(CurrentUser user) {
+        return speakers.myRequests(user);
+    }
+
+    /** Requests to your profile, with the organiser's name and phone. */
+    @RequireAuth
+    @GetMapping("/requests/incoming")
+    public Map<String, Object> incoming(CurrentUser user) {
+        return speakers.incoming(user);
+    }
+
+    /** { action: accept | decline } by the speaker (admins for a speaker without an account), or cancel by the organiser. */
+    @RequireAuth
+    @PutMapping("/requests/{requestId}")
+    public Map<String, Object> answer(@PathVariable String requestId, CurrentUser user, HttpServletRequest req) {
+        return speakers.answer(user, requestId, bodies.read(req));
+    }
+
+    /** A talk or guidance request: { kind, event_date, place, event_type, audience } or { kind, topic, mode }, and message. */
+    @RequireAuth
+    @PostMapping("/{id}/requests")
+    public ResponseEntity<Map<String, Object>> sendRequest(@PathVariable String id, CurrentUser user, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(speakers.sendRequest(user, id, bodies.read(req)));
     }
 
     /** Apply as a speaker; one profile per member, shown after an admin approves. */

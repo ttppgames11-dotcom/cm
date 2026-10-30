@@ -114,6 +114,60 @@ public class SpeakerRepository {
             ORDER BY (id = ?) DESC, id LIMIT 1""", String.class, idOrPhone, last10, idOrPhone).stream().findFirst();
     }
 
+    // ------------------------------------------------------------------ requests
+
+    /** Every request column plus the speaker's name, phone and account, and the organiser's name and phone. */
+    private static final String REQUEST_SELECT = """
+        SELECT r.*, s.name AS speaker_name, s.phone AS speaker_phone, s.member_id AS speaker_member_id,
+          m.name AS organiser_name, m.phone AS organiser_phone
+        FROM speaker_requests r JOIN speakers s ON s.id = r.speaker_id LEFT JOIN members m ON m.id = r.member_id""";
+
+    /** Requests this member sent in the last 24 hours. */
+    public int recentRequests(String memberId) {
+        Integer n = jdbc.queryForObject(
+            "SELECT count(*) FROM speaker_requests WHERE member_id = ? AND created_at > now() - interval '24 hours'",
+            Integer.class, memberId);
+        return n == null ? 0 : n;
+    }
+
+    public boolean existsRequest(String id) {
+        return Boolean.TRUE.equals(jdbc.queryForObject("SELECT EXISTS (SELECT 1 FROM speaker_requests WHERE id = ?)", Boolean.class, id));
+    }
+
+    /** Saves a request; 0 when this member already has an open one for this speaker. */
+    public int insertRequest(String id, String speakerId, String memberId, Map<String, Object> r) {
+        return jdbc.update("""
+            INSERT INTO speaker_requests (id, speaker_id, member_id, kind, event_date, place, event_type, audience, topic, mode, message)
+            VALUES (?, ?, ?, ?, CAST(? AS DATE), ?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING""",
+            id, speakerId, memberId, r.get("kind"), r.get("event_date"), r.get("place"), r.get("event_type"),
+            r.get("audience") instanceof Number n ? n.intValue() : null, r.get("topic"), r.get("mode"), r.get("message"));
+    }
+
+    public Optional<Map<String, Object>> findRequest(String id) {
+        return jdbc.queryForList(REQUEST_SELECT + " WHERE r.id = ?", id).stream().findFirst();
+    }
+
+    /** Requests this member sent, newest first. */
+    public List<Map<String, Object>> requestsBy(String memberId) {
+        return jdbc.queryForList(REQUEST_SELECT + " WHERE r.member_id = ? ORDER BY r.created_at DESC, r.id DESC", memberId);
+    }
+
+    /** Requests to this speaker, newest first. */
+    public List<Map<String, Object>> requestsTo(String speakerId) {
+        return jdbc.queryForList(REQUEST_SELECT + " WHERE r.speaker_id = ? ORDER BY r.created_at DESC, r.id DESC", speakerId);
+    }
+
+    /** Requests to speakers without an account (admins answer them), open ones first. */
+    public List<Map<String, Object>> requestsForUnlinked() {
+        return jdbc.queryForList(REQUEST_SELECT
+            + " WHERE s.member_id IS NULL ORDER BY (r.status = 'new') DESC, r.created_at DESC, r.id DESC");
+    }
+
+    /** Moves an open request to accepted / declined / cancelled; 0 when it was already answered. */
+    public int answer(String id, String status) {
+        return jdbc.update("UPDATE speaker_requests SET status = ?, updated_at = now() WHERE id = ? AND status = 'new'", status, id);
+    }
+
     private static String viewerIdOrBlank(String viewerId) {
         return viewerId == null ? "" : viewerId;
     }

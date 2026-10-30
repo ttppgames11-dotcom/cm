@@ -34,6 +34,13 @@ public class SpeakerAdminController {
         return speakers.adminAll(user);
     }
 
+    /** Requests to speakers without an account, with both phones, for admins to answer (declared before /{id}). */
+    @RequireAuth
+    @GetMapping("/requests")
+    public Map<String, Object> requests(CurrentUser user) {
+        return speakers.adminRequests(user);
+    }
+
     /** A speaker added with their permission: approved at once, no account needed. */
     @RequireAuth
     @PostMapping
