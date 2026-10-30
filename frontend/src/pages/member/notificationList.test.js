@@ -55,6 +55,14 @@ test('announceNotificationsChanged tells listeners (the header bell) to re-count
   assert.equal(NOTIFICATIONS_CHANGED, 'cm:notifications-changed');
 });
 
+test('officer notifications open the right officers tab', () => {
+  assert.equal(notificationLink('officer'), '/officers?tab=profile');
+  assert.equal(notificationLink('officer_request'), '/officers?tab=incoming');
+  assert.equal(notificationLink('officer_reply'), '/officers?tab=mine');
+  assert.equal(notificationLink('officer_admin'), '/admin/officers');
+  for (const type of ['officer', 'officer_request', 'officer_reply', 'officer_admin']) assert.equal(notificationIcon(type), '⭐');
+});
+
 test('admin blood notifications open the admin Blood Helpdesk', () => {
   assert.equal(notificationLink('blood_admin'), '/admin/seva');
   assert.equal(notificationIcon('blood_admin'), '🩸');
