@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,6 +57,34 @@ public class OfficerController {
     @PutMapping("/mine/accepting")
     public Map<String, Object> setAccepting(CurrentUser user, HttpServletRequest req) {
         return officers.setAccepting(user, bodies.read(req));
+    }
+
+    /** Requests you sent; the officer's phone once accepted (declared before /{id}). */
+    @RequireAuth
+    @GetMapping("/requests/mine")
+    public Map<String, Object> myRequests(CurrentUser user) {
+        return officers.myRequests(user);
+    }
+
+    /** Requests to your profile, with the student's name and phone. */
+    @RequireAuth
+    @GetMapping("/requests/incoming")
+    public Map<String, Object> incoming(CurrentUser user) {
+        return officers.incoming(user);
+    }
+
+    /** { action: accept | decline } by the officer (admins for an officer without an account), or cancel by the student. */
+    @RequireAuth
+    @PutMapping("/requests/{requestId}")
+    public Map<String, Object> answer(@PathVariable String requestId, CurrentUser user, HttpServletRequest req) {
+        return officers.answer(user, requestId, bodies.read(req));
+    }
+
+    /** A guidance request: { exam, stage, question, mode, message }. */
+    @RequireAuth
+    @PostMapping("/{id}/requests")
+    public ResponseEntity<Map<String, Object>> sendRequest(@PathVariable String id, CurrentUser user, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(officers.sendRequest(user, id, bodies.read(req)));
     }
 
     /** Apply as an officer mentor; one profile per member, shown after an admin approves. */

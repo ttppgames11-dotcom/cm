@@ -33,6 +33,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class OfficerService {
 
     private static final Logger log = LoggerFactory.getLogger(OfficerService.class);
+    static final int MAX_REQUESTS_PER_DAY = 5;
 
     private final OfficerRepository officers;
     private final ActivityRepository activity;
@@ -186,6 +187,175 @@ public class OfficerService {
         String memberId = found.get(0);
         boolean hasOther = officers.ofMember(memberId).map(o -> !id.equals(o.get("id"))).orElse(false);
         if (hasOther || officers.link(id, memberId) == 0) throw officerExists();
+    }
+
+    // ------------------------------------------------------------------ requests
+
+    /**
+     * A guidance request to an approved, visible, accepting officer for one of their exams (5 per member per 24 hours,
+     * one open per officer). Saved first; then the officer, or every admin when the officer has no account, is told.
+     */
+    public Map<String, Object> sendRequest(CurrentUser user, String officerId, Map<String, Object> body) {
+        ensure();
+        Map<String, Object> officer = officers.find(officerId)
+            .filter(o -> "approved".equals(o.get("status")) && !Boolean.TRUE.equals(o.get("hidden")))
+            .orElseThrow(OfficerService::officerNotFound);
+        String officerMember = (String) officer.get("member_id");
+        if (user.id().equals(officerMember)) {
+            throw ApiException.badRequest("OWN_PROFILE", "स्वतःला विनंती पाठवता येत नाही (You cannot request yourself).");
+        }
+        if (!Boolean.TRUE.equals(officer.get("accepting"))) {
+            throw new ApiException(HttpStatus.CONFLICT, "NOT_ACCEPTING",
+                "हे अधिकारी सध्या विनंत्या घेत नाहीत (This officer is not taking requests right now).");
+        }
+        Map<String, Object> input = OfficerSchemas.normalize(body);
+        SchemaValidator.check(input, OfficerSchemas.REQUEST, true, null);
+        // only the checked fields of a request are saved; anything else in the body is dropped
+        input.keySet().retainAll(OfficerSchemas.REQUEST.keySet());
+        String exam = text(input.get("exam"));
+        if (!exams(officer.get("exams")).contains(exam)) {
+            throw ApiException.badRequest("EXAM_NOT_OFFERED",
+                "हे अधिकारी या परीक्षेसाठी मार्गदर्शन करत नाहीत (This officer does not guide for this exam).");
+        }
+        if (officers.recentRequests(user.id()) >= MAX_REQUESTS_PER_DAY) {
+            throw new ApiException(HttpStatus.TOO_MANY_REQUESTS, "RATE_LIMIT_EXCEEDED",
+                "२४ तासांत जास्तीत जास्त ५ विनंत्या पाठवता येतात (At most 5 requests in 24 hours).");
+        }
+        String id = newId("ORQ-", officers::existsRequest);
+        if (officers.insertRequest(id, officerId, user.id(), input) == 0) {
+            throw new ApiException(HttpStatus.CONFLICT, "REQUEST_EXISTS",
+                "या अधिकाऱ्यांना तुमची विनंती आधीच पाठवली आहे (You already have an open request).");
+        }
+        Map<String, Object> row = officers.findRequest(id).orElseThrow();
+
+        String student = orElse(row.get("student_name"), "सदस्य");
+        String question = text(row.get("question"));
+        if (officerMember != null) {
+            send(id, officerMember, "🧭 नवीन मार्गदर्शन विनंती: " + OfficerSchemas.EXAM_LABELS.getOrDefault(exam, exam),
+                student + ": " + shortened(question), "officer_request");
+        } else {
+            String title = "⭐ " + text(officer.get("name")) + " साठी नवीन मार्गदर्शन विनंती";
+            String message = student + ": " + shortened(question) + ". अधिकाऱ्यांना फोन करून उत्तर द्या.";
+            try {
+                for (String adminId : officers.adminIds()) {
+                    if (!adminId.equals(user.id())) send(id, adminId, title, message, "officer_admin");
+                }
+            } catch (RuntimeException e) {
+                // the request is already saved: a failed admin lookup must not turn it into an error
+                log.warn("Officer request {}: could not look up admins", id, e);
+            }
+        }
+        Map<String, Object> out = success("विनंती पाठवली! उत्तर आल्यावर सूचना मिळेल. (Request sent.)");
+        out.put("request", sentJson(row));
+        return out;
+    }
+
+    /** Requests I sent, newest first; the officer's phone only once accepted. */
+    @Transactional(readOnly = true)
+    public Map<String, Object> myRequests(CurrentUser user) {
+        ensure();
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Map<String, Object> row : officers.requestsBy(user.id())) list.add(sentJson(row));
+        return listResult("requests", list);
+    }
+
+    /** Requests to my profile, newest first, with the student's name and phone. */
+    @Transactional(readOnly = true)
+    public Map<String, Object> incoming(CurrentUser user) {
+        ensure();
+        List<Map<String, Object>> list = new ArrayList<>();
+        officers.ofMember(user.id()).ifPresent(mine -> {
+            for (Map<String, Object> row : officers.requestsTo(text(mine.get("id")))) list.add(receivedJson(row, false));
+        });
+        return listResult("requests", list);
+    }
+
+    /** Requests to officers without an account, which admins answer after phoning the officer. */
+    @Transactional(readOnly = true)
+    public Map<String, Object> adminRequests(CurrentUser user) {
+        requireAdmin(user);
+        ensure();
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Map<String, Object> row : officers.requestsForUnlinked()) list.add(receivedJson(row, true));
+        return listResult("requests", list);
+    }
+
+    /**
+     * accept / decline (the officer, or an admin when the officer has no account) or cancel (the student), only while
+     * the request is open, whatever the officer's status or switch; the student is told about an accept or decline.
+     */
+    public Map<String, Object> answer(CurrentUser user, String requestId, Map<String, Object> body) {
+        ensure();
+        Map<String, Object> input = OfficerSchemas.normalize(body);
+        SchemaValidator.check(input, OfficerSchemas.ANSWER, true, null);
+        String action = text(input.get("action"));
+        Map<String, Object> row = officers.findRequest(requestId).orElseThrow(() ->
+            ApiException.notFound("REQUEST_NOT_FOUND", "विनंती आढळली नाही (Request not found)."));
+        String officerMember = (String) row.get("officer_member_id");
+        boolean allowed = "cancel".equals(action)
+            ? user.id().equals(row.get("member_id"))
+            : officerMember != null ? user.id().equals(officerMember) : isAdmin(user);
+        if (!allowed) throw ApiException.forbidden("FORBIDDEN", "ही कृती आपण करू शकत नाही (You cannot do this).");
+
+        String status = switch (action) {
+            case "accept" -> "accepted";
+            case "decline" -> "declined";
+            default -> "cancelled";
+        };
+        if (officers.answer(requestId, status) == 0) {
+            throw new ApiException(HttpStatus.CONFLICT, "ALREADY_ANSWERED", "या विनंतीला आधीच उत्तर दिले आहे (Already answered).");
+        }
+        String officerName = text(row.get("officer_name"));
+        String student = text(row.get("member_id"));
+        if ("accepted".equals(status)) {
+            send(requestId, student, "✅ " + officerName + " यांनी तुमची विनंती स्वीकारली",
+                "संपर्क क्रमांक 'माझ्या विनंत्या' मध्ये पहा.", "officer_reply");
+        } else if ("declined".equals(status)) {
+            send(requestId, student, "❌ " + officerName + " यांनी तुमची विनंती नाकारली",
+                "'माझ्या विनंत्या' मध्ये पहा.", "officer_reply");
+        }
+        Map<String, Object> out = success("उत्तर जतन झाले. (Saved.)");
+        out.put("request", requestFields(officers.findRequest(requestId).orElseThrow()));
+        return out;
+    }
+
+    /** The first 80 characters of a question, with "…" when it was longer (for a notification). */
+    static String shortened(String question) {
+        return question.length() <= 80 ? question : question.substring(0, 80) + "…";
+    }
+
+    static Map<String, Object> requestFields(Map<String, Object> row) {
+        Map<String, Object> r = new LinkedHashMap<>();
+        r.put("id", row.get("id"));
+        for (String k : new String[] {"exam", "stage", "question", "mode", "message", "status"}) r.put(k, text(row.get(k)));
+        r.put("created_at", iso(row.get("created_at")));
+        return r;
+    }
+
+    /** For the student: the officer's name, and their phone only once the request is accepted. */
+    static Map<String, Object> sentJson(Map<String, Object> row) {
+        Map<String, Object> r = requestFields(row);
+        Map<String, Object> officer = new LinkedHashMap<>();
+        officer.put("id", row.get("officer_id"));
+        officer.put("name", text(row.get("officer_name")));
+        if ("accepted".equals(row.get("status"))) officer.put("phone", text(row.get("officer_phone")));
+        r.put("officer", officer);
+        return r;
+    }
+
+    /** For the officer (or the admins, who also see the officer's phone): who is asking, with their name and phone. */
+    static Map<String, Object> receivedJson(Map<String, Object> row, boolean forAdmin) {
+        Map<String, Object> r = requestFields(row);
+        Map<String, Object> officer = new LinkedHashMap<>();
+        officer.put("id", row.get("officer_id"));
+        officer.put("name", text(row.get("officer_name")));
+        if (forAdmin) officer.put("phone", text(row.get("officer_phone")));
+        r.put("officer", officer);
+        Map<String, Object> student = new LinkedHashMap<>();
+        student.put("name", orElse(row.get("student_name"), "सदस्य"));
+        student.put("phone", text(row.get("student_phone")));
+        r.put("student", student);
+        return r;
     }
 
     // ------------------------------------------------------------------ helpers

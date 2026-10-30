@@ -34,6 +34,13 @@ public class OfficerAdminController {
         return officers.adminAll(user);
     }
 
+    /** Requests to officers without an account, with both phones, for admins to answer (declared before /{id}). */
+    @RequireAuth
+    @GetMapping("/requests")
+    public Map<String, Object> requests(CurrentUser user) {
+        return officers.adminRequests(user);
+    }
+
     /** An officer added with their permission: approved at once, no account needed. */
     @RequireAuth
     @PostMapping
