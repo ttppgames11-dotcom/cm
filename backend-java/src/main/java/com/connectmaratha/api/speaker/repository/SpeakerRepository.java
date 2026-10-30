@@ -105,13 +105,15 @@ public class SpeakerRepository {
             "SELECT id FROM members WHERE lower(role) IN ('admin', 'superadmin', 'ceo') ORDER BY id", String.class);
     }
 
-    /** A member by id, or by the last 10 digits of their phone. */
-    public Optional<String> memberByIdOrPhone(String idOrPhone) {
+    /** The member with this id; otherwise every member whose phone ends in the same 10 digits (more than one = ambiguous). */
+    public List<String> membersByIdOrPhone(String idOrPhone) {
+        List<String> byId = jdbc.queryForList("SELECT id FROM members WHERE id = ?", String.class, idOrPhone);
+        if (!byId.isEmpty()) return byId;
         String digits = idOrPhone.replaceAll("\\D", "");
-        String last10 = digits.length() >= 10 ? digits.substring(digits.length() - 10) : "#";
-        return jdbc.queryForList("""
-            SELECT id FROM members WHERE id = ? OR right(regexp_replace(coalesce(phone, ''), '\\D', '', 'g'), 10) = ?
-            ORDER BY (id = ?) DESC, id LIMIT 1""", String.class, idOrPhone, last10, idOrPhone).stream().findFirst();
+        if (digits.length() < 10) return List.of();
+        return jdbc.queryForList(
+            "SELECT id FROM members WHERE right(regexp_replace(coalesce(phone, ''), '\\D', '', 'g'), 10) = ? ORDER BY id",
+            String.class, digits.substring(digits.length() - 10));
     }
 
     // ------------------------------------------------------------------ requests

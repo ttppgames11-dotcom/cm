@@ -6,6 +6,7 @@ import com.connectmaratha.api.common.schema.LazyTables;
 import com.connectmaratha.api.common.security.CurrentUser;
 import com.connectmaratha.api.common.security.Roles;
 import com.connectmaratha.api.common.util.Ids;
+import com.connectmaratha.api.common.validation.Rule;
 import com.connectmaratha.api.common.validation.SchemaValidator;
 import com.connectmaratha.api.sangam.repository.ActivityRepository;
 import com.connectmaratha.api.speaker.dto.SpeakerSchemas;
@@ -167,8 +168,13 @@ public class SpeakerService {
         if (!(input.get("member") instanceof String member)) {
             throw ApiException.badRequest("VALIDATION_ERROR", "सदस्य आयडी किंवा मोबाईल नंबर द्या (Give a member id or phone).");
         }
-        String memberId = speakers.memberByIdOrPhone(member).orElseThrow(() ->
-            ApiException.notFound("MEMBER_NOT_FOUND", "हा सदस्य आढळला नाही (Member not found)."));
+        List<String> found = speakers.membersByIdOrPhone(member);
+        if (found.isEmpty()) throw ApiException.notFound("MEMBER_NOT_FOUND", "हा सदस्य आढळला नाही (Member not found).");
+        if (found.size() > 1) {
+            throw new ApiException(HttpStatus.CONFLICT, "MEMBER_AMBIGUOUS",
+                "हा मोबाईल नंबर एकापेक्षा जास्त सदस्यांचा आहे; सदस्य आयडी द्या (Several members share this phone; give the member id).");
+        }
+        String memberId = found.get(0);
         boolean hasOther = speakers.ofMember(memberId).map(s -> !id.equals(s.get("id"))).orElse(false);
         if (hasOther || speakers.link(id, memberId) == 0) throw speakerExists();
     }
@@ -308,7 +314,10 @@ public class SpeakerService {
                 ? "हे वक्ते व्याख्यानासाठी उपलब्ध नाहीत (This speaker does not give talks)."
                 : "हे वक्ते मार्गदर्शनासाठी उपलब्ध नाहीत (This speaker does not give guidance).");
         }
-        SchemaValidator.check(input, talk ? SpeakerSchemas.TALK : SpeakerSchemas.GUIDANCE, true, null);
+        Map<String, Rule> schema = talk ? SpeakerSchemas.TALK : SpeakerSchemas.GUIDANCE;
+        SchemaValidator.check(input, schema, true, null);
+        // only the checked fields of this kind are saved; anything else in the body is dropped
+        input.keySet().retainAll(schema.keySet());
         if (talk) {
             LocalDate date;
             try {

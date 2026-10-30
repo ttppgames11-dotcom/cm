@@ -175,6 +175,20 @@ class SpeakerProfilesTest extends SpeakerTestBase {
     }
 
     @Test
+    void linkingByAPhoneTwoMembersShareIsRefused() throws Exception {
+        jdbc.update("UPDATE members SET phone = '9822000001' WHERE id = 'M9104'");
+        jdbc.update("UPDATE members SET phone = '+91 9822000001' WHERE id = 'M9105'");
+        String guest = adminAdded("Zs Guest");
+        Map<String, Object> link = action("link");
+        link.put("member", "9822000001");
+        adminAct(guest, link).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("MEMBER_AMBIGUOUS"));
+        assertThat(jdbc.queryForObject("SELECT member_id FROM speakers WHERE id = ?", String.class, guest)).isNull();
+
+        link.put("member", "M9105");
+        adminAct(guest, link).andExpect(status().isOk());
+    }
+
+    @Test
     void adminRoutesAreForAdmins() throws Exception {
         String id = apply(m(1), profile("Zs Rahul"));
         send(get("/api/admin/speakers"), m(2), null).andExpect(status().isForbidden());

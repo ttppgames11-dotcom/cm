@@ -124,6 +124,25 @@ class SpeakerRequestsTest extends SpeakerTestBase {
     }
 
     @Test
+    void fieldsOfTheOtherKindAreIgnored() throws Exception {
+        String speaker = approved(1);
+        Map<String, Object> g = guidance();
+        g.put("event_date", "abc");
+        g.put("audience", 99999999999L);
+        g.put("place", "x".repeat(5000));
+        String req = sent(m(2), speaker, g);
+        Map<String, Object> row = jdbc.queryForMap("SELECT event_date, place, audience FROM speaker_requests WHERE id = ?", req);
+        assertThat(row.get("event_date")).isNull();
+        assertThat(row.get("place")).isNull();
+        assertThat(row.get("audience")).isNull();
+
+        Map<String, Object> t = talk();
+        t.put("topic", "y".repeat(5000));
+        String talkReq = sent(m(3), speaker, t);
+        assertThat(jdbc.queryForObject("SELECT topic FROM speaker_requests WHERE id = ?", String.class, talkReq)).isNull();
+    }
+
+    @Test
     void atMostFiveRequestsADay() throws Exception {
         for (int i = 0; i < 5; i++) sent(m(6), adminAdded("Zs Guest " + i), talk());
         request(m(6), adminAdded("Zs Guest 5"), talk())
