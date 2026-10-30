@@ -268,13 +268,52 @@ export const apiClient = {
     return await fetchJson('/artists', { method: 'POST', body: JSON.stringify(data) });
   },
 
-  // Officers API
-  getOfficers: async () => {
-    const res = await fetchJson('/officers');
-    return res.data?.officers || res.officers || res.data || [];
+  // Officer guidance (params: exam, service, search; empty values skipped)
+  getOfficers: async (params = {}) => {
+    const clean = Object.fromEntries(Object.entries(params).filter(([, v]) => v != null && String(v).trim() !== ''));
+    const qs = new URLSearchParams(clean).toString();
+    const res = await fetchJson(`/officers${qs ? '?' + qs : ''}`);
+    return res.officers || [];
   },
-  addOfficer: async (data) => {
+  getMyOfficer: async () => {
+    const res = await fetchJson('/officers/mine');
+    return res.officer || null;
+  },
+  applyOfficer: async (data) => {
     return await fetchJson('/officers', { method: 'POST', body: JSON.stringify(data) });
+  },
+  updateMyOfficer: async (data) => {
+    return await fetchJson('/officers/mine', { method: 'PUT', body: JSON.stringify(data) });
+  },
+  setOfficerAccepting: async (accepting) => {
+    return await fetchJson('/officers/mine/accepting', { method: 'PUT', body: JSON.stringify({ accepting }) });
+  },
+  sendOfficerRequest: async (id, data) => {
+    return await fetchJson(`/officers/${encodeURIComponent(id)}/requests`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  getMyOfficerRequests: async () => {
+    const res = await fetchJson('/officers/requests/mine');
+    return res.requests || [];
+  },
+  getIncomingOfficerRequests: async () => {
+    const res = await fetchJson('/officers/requests/incoming');
+    return res.requests || [];
+  },
+  answerOfficerRequest: async (id, action) => {
+    return await fetchJson(`/officers/requests/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ action }) });
+  },
+  adminGetOfficers: async () => {
+    return await fetchJson('/admin/officers');
+  },
+  adminAddOfficer: async (data) => {
+    return await fetchJson('/admin/officers', { method: 'POST', body: JSON.stringify(data) });
+  },
+  adminOfficerAction: async (id, data) => {
+    return await fetchJson(`/admin/officers/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+  adminGetOfficerRequests: async () => {
+    const res = await fetchJson('/admin/officers/requests');
+    return res.requests || [];
   },
 
   // Speakers API
