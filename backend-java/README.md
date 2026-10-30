@@ -204,6 +204,23 @@ Rules:
 | `GET /api/admin/jobs` | admin | every job (hidden, closed, old) with poster name and application count |
 | `PUT /api/admin/jobs/{id}` | admin | `{ "hidden": true/false }` (audit `JOB_HIDE` / `JOB_UNHIDE`) |
 
+**Speakers and mentors** (design: `docs/superpowers/specs/2026-10-30-speakers-mentors-design.md`; tables: migration 015, also created on first use). Not in Node (its page called routes that never existed).
+
+| Endpoint | Login | |
+|---|---|---|
+| `GET /api/speakers?category=&city=&search=` | optional | approved, visible speakers newest first; never `phone` or `member_id`; `mine`, `requested` |
+| `GET /api/speakers/mine` | member | your profile in any `status` (`pending` / `approved` / `rejected`) with `reject_reason`, or `null` |
+| `POST /api/speakers` | member | apply: `name`, `title`, `category` (one of six), `city`, `topics`, `intro`, `phone` (10 digits), `offers_talks`, `offers_guidance` (at least one); one per member (`SPEAKER_EXISTS`); waits for an admin |
+| `PUT /api/speakers/mine` | member | edit your profile; it goes back to `pending` |
+| `POST /api/speakers/{id}/requests` | member | `{ kind: "talk", event_date (today or later), place, event_type, audience }` or `{ kind: "guidance", topic, mode }`, plus `message`; only kinds the speaker offers (`KIND_NOT_OFFERED`), not yourself (`OWN_PROFILE`), 5 per 24 h, one open per speaker (`REQUEST_EXISTS`); notifies the speaker (`speaker_request`) or every admin for a speaker without an account (`speaker_admin`) |
+| `GET /api/speakers/requests/mine` | member | requests you sent with `status`; `speaker.phone` only once `accepted` |
+| `GET /api/speakers/requests/incoming` | member | requests to your profile with `organiser.name` and `organiser.phone` |
+| `PUT /api/speakers/requests/{id}` | depends | `{ "action": "accept" | "decline" }` by the speaker (an admin for a speaker without an account) or `"cancel"` by the organiser; only while `new` (`ALREADY_ANSWERED`); accept / decline send `speaker_reply` |
+| `GET /api/admin/speakers/requests` | admin | requests to speakers without an account, with both phones |
+| `GET /api/admin/speakers` | admin | every speaker, pending first, with `phone`, `has_account`, `member_id`, and a `pending` count |
+| `POST /api/admin/speakers` | admin | add a speaker without an account (approved at once) |
+| `PUT /api/admin/speakers/{id}` | admin | `{ "action": "approve" | "reject" | "hide" | "unhide" | "link", "reason"?, "member"? }`; approve / reject send a `speaker` notification; `link` takes a member id or phone (`MEMBER_NOT_FOUND`, `SPEAKER_EXISTS`) |
+
 **Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
 
 | Endpoint | Login | |
