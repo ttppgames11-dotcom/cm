@@ -47,7 +47,7 @@ public final class OfficerSchemas {
             "post", Rule.string().required().min(2).max(100),
             "department", Rule.string().max(100),
             "city", Rule.string().required().min(2).max(100),
-            "exams", Rule.array().required().minItems(1).items(Rule.string().oneOf(EXAMS)),
+            "exams", Rule.array().required().minItems(1).items(Rule.string().required().oneOf(EXAMS)),
             "intro", Rule.string().max(1000),
             "phone", Rule.string().required().pattern(TEN_DIGITS, PHONE_MESSAGE));
     }
@@ -93,15 +93,21 @@ public final class OfficerSchemas {
             if (copy.get(key) instanceof String s) copy.put(key, s.toLowerCase(Locale.ROOT));
         }
         if (copy.get("exams") instanceof List<?> list) {
-            boolean allText = list.stream().allMatch(x -> x instanceof String);
-            if (allText) {
-                TreeSet<String> codes = new TreeSet<>();
-                for (Object x : list) {
-                    String code = ((String) x).trim().toLowerCase(Locale.ROOT);
+            // texts trimmed, lower-cased, empty ones dropped, each once and sorted; anything else (null, numbers) is
+            // kept so that the item rule refuses it
+            TreeSet<String> codes = new TreeSet<>();
+            List<Object> others = new ArrayList<>();
+            for (Object x : list) {
+                if (x instanceof String s) {
+                    String code = s.trim().toLowerCase(Locale.ROOT);
                     if (!code.isEmpty()) codes.add(code);
+                } else {
+                    others.add(x);
                 }
-                copy.put("exams", new ArrayList<>(codes));
             }
+            List<Object> cleaned = new ArrayList<>(codes);
+            cleaned.addAll(others);
+            copy.put("exams", cleaned);
         }
         return copy;
     }

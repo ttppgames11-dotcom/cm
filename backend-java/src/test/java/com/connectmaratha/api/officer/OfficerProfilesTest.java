@@ -85,6 +85,21 @@ class OfficerProfilesTest extends OfficerTestBase {
     }
 
     @Test
+    void examListsWithEmptyOrMissingItemsAreRefusedOrCleaned() throws Exception {
+        java.util.List<Object> withNull = new java.util.ArrayList<>(List.of("upsc_cse"));
+        withNull.add(null);
+        send(post("/api/officers"), m(1), with(profile("Zo Null"), "exams", withNull))
+            .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+        send(post("/api/officers"), m(1), with(profile("Zo Empty"), "exams", List.of("", "  ")))
+            .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+
+        JsonNode o = body(send(post("/api/officers"), m(1), with(profile("Zo Spaces"), "exams", List.of(" UPSC_CSE ", "", "upsc_cse")))
+            .andExpect(status().isCreated())).get("officer");
+        assertThat(o.get("exams").toString()).isEqualTo("[\"upsc_cse\"]");
+        assertThat(jdbc.queryForObject("SELECT exams FROM officers WHERE id = ?", String.class, o.get("id").asText())).isEqualTo("upsc_cse");
+    }
+
+    @Test
     void batchYearIsOptional() throws Exception {
         JsonNode o = body(send(post("/api/officers"), m(1), with(profile("Zo NoBatch"), "batch_year", null))
             .andExpect(status().isCreated())).get("officer");
