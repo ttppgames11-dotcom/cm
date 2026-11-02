@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -51,6 +52,15 @@ abstract class CrmUnitTestBase extends PostgresTestBase {
         member(CEO, "ceo");
     }
 
+
+    /** Leaves the shared M93xx members as plain members again, so other test classes that use the same ids are not affected. */
+    @AfterEach
+    void restoreSharedMembers() {
+        for (int i = 1; i <= 8; i++) {
+            jdbc.update("UPDATE members SET role = 'member', phone = ? WHERE id = ?", phoneOf("M930" + i), "M930" + i);
+        }
+        jdbc.update("DELETE FROM crm_unit_members WHERE member_id LIKE 'M93%'");
+    }
     void member(String id, String role) {
         jdbc.update("INSERT INTO members (id, name, phone, role) VALUES (?, ?, ?, ?) "
             + "ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, phone = EXCLUDED.phone, role = EXCLUDED.role",
@@ -104,6 +114,17 @@ abstract class CrmUnitTestBase extends PostgresTestBase {
         return out;
     }
 
+
+    private int activitySerial;
+
+    /** Inserts an activity straight into the table; the year is the year of the date. */
+    String activity(String unitId, String type, String date, int target, String status, int attendees) {
+        String id = "ACT-ZQ" + (++activitySerial);
+        jdbc.update("INSERT INTO crm_activities (id, unit_id, year, type, title, scheduled_date, target_count, attendee_count, status) "
+            + "VALUES (?, ?, ?, ?, ?, CAST(? AS DATE), ?, ?, ?)",
+            id, unitId, Integer.parseInt(date.substring(0, 4)), type, "Zq " + type, date, target, attendees, status);
+        return id;
+    }
     static Map<String, Object> map(Object... pairs) {
         Map<String, Object> m = new LinkedHashMap<>();
         for (int i = 0; i < pairs.length; i += 2) m.put((String) pairs[i], pairs[i + 1]);
