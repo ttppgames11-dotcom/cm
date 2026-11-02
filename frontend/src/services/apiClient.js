@@ -342,6 +342,14 @@ export const apiClient = {
   crmDeleteActivity: async (unitId, id) => {
     return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/activities/${encodeURIComponent(id)}`, { method: 'DELETE' });
   },
+  crmUnitSummary: async (unitId, year) => {
+    const q = year ? `?year=${encodeURIComponent(year)}` : '';
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/summary${q}`);
+  },
+  crmRollup: async (params = {}) => {
+    const q = new URLSearchParams(Object.entries(params).filter(([, v]) => v)).toString();
+    return await fetchJson(`/crm-hierarchy/rollup${q ? `?${q}` : ''}`);
+  },
 
   // Organizations API
   getOrganizations: async () => {

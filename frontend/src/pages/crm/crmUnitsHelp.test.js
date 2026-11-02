@@ -137,7 +137,8 @@ test('canWriteActivities is true for an admin and for the owner or staff on thei
 
 test('progressLabel shows done of total and the types covered', async () => {
   const { progressLabel } = await import('./crmUnitsHelp.js');
-  assert.equal(progressLabel({ total: 12, done: 3, typesCovered: 12, typesRequired: 12 }), '3/12 पूर्ण · 12/12 प्रकार');
+  assert.equal(progressLabel({ total: 12, done: 3, typesCovered: 12, typesRequired: 12, typesDone: 2 }), '3/12 पूर्ण · 12/12 प्रकार नियोजित · 2 प्रकार पूर्ण');
+  assert.equal(progressLabel({ total: 4, done: 0, typesCovered: 4, typesRequired: 12 }), '0/4 पूर्ण · 4/12 प्रकार नियोजित · 0 प्रकार पूर्ण');
   assert.equal(progressLabel({ total: 0, done: 0, typesCovered: 0, typesRequired: 12 }), 'आराखडा नाही');
   assert.equal(progressLabel(null), 'आराखडा नाही');
 });
@@ -151,4 +152,33 @@ test('editableStatus uses the stored status, so an overdue started activity stay
   assert.equal(editableStatus({ status: 'in_progress' }), 'in_progress');
   assert.equal(editableStatus({ status: 'overdue' }), 'planned');
   assert.equal(editableStatus(null), 'planned');
+});
+
+test('pctBar rounds and clamps a percentage to 0-100', async () => {
+  const { pctBar } = await import('./crmUnitsHelp.js');
+  assert.equal(pctBar(33.4), 33);
+  assert.equal(pctBar(120), 100);
+  assert.equal(pctBar(-5), 0);
+  assert.equal(pctBar('x'), 0);
+  assert.equal(pctBar(undefined), 0);
+});
+
+test('coverageLabel shows the done types of 12', async () => {
+  const { coverageLabel } = await import('./crmUnitsHelp.js');
+  assert.equal(coverageLabel({ typesDone: 2 }), '2/12 प्रकार पूर्ण');
+  assert.equal(coverageLabel({}), '0/12 प्रकार पूर्ण');
+  assert.equal(coverageLabel(null), '—');
+});
+
+test('rollupRow flattens one table row and fills zeros', async () => {
+  const { rollupRow } = await import('./crmUnitsHelp.js');
+  const row = rollupRow({
+    unit: { id: 'U1', name: 'Pune', level: 'district' },
+    own: { done: 1, total: 3, coveragePct: 8, completionPct: 33, overdue: 2, achievedTotal: 40, targetTotal: 600 }
+  });
+  assert.deepEqual(row, { id: 'U1', name: 'Pune', levelLabel: 'जिल्हा', done: 1, total: 3, coveragePct: 8, completionPct: 33, overdue: 2, achieved: 40, target: 600 });
+  const empty = rollupRow({ unit: { id: 'U2', name: 'Nashik', level: 'branch' } });
+  assert.equal(empty.total, 0);
+  assert.equal(empty.completionPct, 0);
+  assert.equal(empty.levelLabel, 'शाखा');
 });

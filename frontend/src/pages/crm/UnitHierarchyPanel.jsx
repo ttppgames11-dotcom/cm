@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '../../services/apiClient';
 import StaffSection from './StaffSection';
 import ActivitiesSection from './ActivitiesSection';
+import SummarySection from './SummarySection';
+import RollupPanel from './RollupPanel';
 import {
   LEVELS, levelLabel, childLevels, canEditUnit, canManageAbove, unitPayload, breadcrumb
 } from './crmUnitsHelp';
@@ -156,6 +158,8 @@ export default function UnitHierarchyPanel({ me }) {
       {notice && <div role="status" style={{ ...card, borderColor: '#BBF7D0', background: '#F0FDF4', color: '#166534', fontWeight: 800 }}>{notice}</div>}
       {permissions?.readOnly && <div style={{ ...card, color: '#64748B', fontWeight: 800 }}>आपल्याकडे केवळ वाचनाचा अधिकार आहे.</div>}
 
+      <RollupPanel onSelect={setSelectedId} />
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', alignItems: 'start' }}>
         <div style={card}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', gap: '8px' }}>
@@ -240,8 +244,9 @@ export default function UnitHierarchyPanel({ me }) {
                 </form>
               )}
 
-              <StaffSection key={unit.id} unit={unit} me={me} />
-              <ActivitiesSection key={unit.id} unit={unit} me={me} />
+              <StaffSection key={`staff-${unit.id}`} unit={unit} me={me} />
+              <ActivitiesSection key={`act-${unit.id}`} unit={unit} me={me} />
+              <SummarySection key={`sum-${unit.id}`} unit={unit} />
             </div>
           )}
 
