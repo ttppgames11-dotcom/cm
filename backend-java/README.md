@@ -252,6 +252,13 @@ Rules:
 | `GET /api/crm-hierarchy/units/{id}/staff` | anyone who can see the unit | `{ owner, staff: [{id, name, since, phone?}], max: 10, canManage }`; staff of a unit see only that unit; `phone` only for the unit's owner and admins |
 | `POST /api/crm-hierarchy/units/{id}/staff` | owner of the unit, admin | `{ member \| phone }`: adds an existing member as staff (at most 10: `STAFF_LIMIT`); not admin / ceo (`OWNER_NOT_ALLOWED`); member must be free (`MEMBER_IN_UNIT`), one phone match (`MEMBER_AMBIGUOUS`); archived unit → `UNIT_ARCHIVED`; staff, owners above and the CEO get 403; 201 with the team |
 | `DELETE /api/crm-hierarchy/units/{id}/staff/{memberId}` | owner of the unit, admin | removes a staff member (`STAFF_NOT_FOUND` 404); their access ends on the next request; both get a bell (type `crm_unit`) |
+| `GET /api/crm-hierarchy/activity-types` | anyone | the 12 yearly activity types: `key`, `mr`, `en`, `icon`, `defaultTarget` (table `crm_activities`: migration 018, also created on first use) |
+| `GET /api/crm-hierarchy/units/{id}/activities?year=&type=&status=` | anyone who can see the unit | `{ year, count, activities, progress, canWrite, canDelete }`; each activity's `status` is `planned` / `in_progress` / `done` / `overdue` (not done and its date has passed, India time); `progress` has `total`, per status counts, `targetTotal`, `achievedTotal`, `typesCovered` (of 12), `coveragePct`, `completionPct`; year 2000–2100, default this year; 404 `UNIT_NOT_FOUND` outside your scope |
+| `POST /api/crm-hierarchy/units/{id}/plan` | owner or staff of the unit, admin | `{ year, targets: {type: number} }`: creates the missing types of the year, one per month on the 15th with the default targets (a second click, or two at once, makes no duplicates); 201 `{ created, skipped, year }`; owners above, the CEO and strangers get 403; an archived unit 409 `UNIT_ARCHIVED` |
+| `POST /api/crm-hierarchy/units/{id}/activities` | same | `{ type, scheduledDate, targetCount, title, notes }` (title defaults to the type's Marathi name; real dates 2000–2100); 201 |
+| `PUT /api/crm-hierarchy/units/{id}/activities/{aid}` | same | change date, target, title, note, `photoUrl` or `status` (`planned` / `in_progress`); `done` → 400 `USE_COMPLETE`; a done activity → 409 `ALREADY_DONE` |
+| `POST /api/crm-hierarchy/units/{id}/activities/{aid}/complete` | same | proof `{ attendeeCount, notes (3+ characters), photoUrl? }` (`PROOF_REQUIRED` 400); final: a second complete or an edit gives 409 `ALREADY_DONE` |
+| `DELETE /api/crm-hierarchy/units/{id}/activities/{aid}` | owner of the unit, admin | staff get 403; a done record only an admin |
 
 **Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
 

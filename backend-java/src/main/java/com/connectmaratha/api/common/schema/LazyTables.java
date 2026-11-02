@@ -211,6 +211,16 @@ public class LazyTables {
         "CREATE INDEX IF NOT EXISTS officer_requests_officer ON officer_requests (officer_id)",
         "CREATE INDEX IF NOT EXISTS officer_requests_member ON officer_requests (member_id, created_at)"};
 
+    /** Migration 018: the yearly activities of CRM units. */
+    static final String[] CRM_ACTIVITY_TABLES = {
+        """
+        CREATE TABLE IF NOT EXISTS crm_activities (
+          id TEXT PRIMARY KEY, unit_id TEXT NOT NULL, year INTEGER NOT NULL, type TEXT NOT NULL, title TEXT NOT NULL,
+          scheduled_date DATE NOT NULL, target_count INTEGER NOT NULL DEFAULT 0, attendee_count INTEGER NOT NULL DEFAULT 0,
+          notes TEXT, photo_url TEXT, status TEXT NOT NULL DEFAULT 'planned', completed_at TIMESTAMPTZ, completed_by TEXT,
+          created_by TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now())""",
+        "CREATE INDEX IF NOT EXISTS crm_activities_unit_year ON crm_activities (unit_id, year)"};
+
     private final JdbcTemplate jdbc;
     private final TransactionTemplate ownTransaction;
     private final AtomicBoolean moderationReady = new AtomicBoolean();
@@ -224,6 +234,7 @@ public class LazyTables {
     private final AtomicBoolean jobColumnsReady = new AtomicBoolean();
     private final AtomicBoolean speakerTablesReady = new AtomicBoolean();
     private final AtomicBoolean crmUnitTablesReady = new AtomicBoolean();
+    private final AtomicBoolean crmActivityTablesReady = new AtomicBoolean();
 
     private final AtomicBoolean officerTablesReady = new AtomicBoolean();
 
@@ -304,5 +315,10 @@ public class LazyTables {
     /** The officers and officer_requests tables of migration 016, created on first use (a no-op when they exist). */
     public void ensureOfficerTables() {
         createOnce(officerTablesReady, OFFICER_TABLES);
+    }
+
+    /** The crm_activities table of migration 018, created on first use (a no-op when it exists). */
+    public void ensureCrmActivityTables() {
+        createOnce(crmActivityTablesReady, CRM_ACTIVITY_TABLES);
     }
 }

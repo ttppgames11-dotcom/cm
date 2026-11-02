@@ -81,7 +81,7 @@ public class CrmUnitService {
         permissions.put("canCreateState", scope.kind().equals("global") && scope.canWrite());
         permissions.put("canCreateUnits", scope.canWrite() && !ownsTaluka);
         permissions.put("canManageStaff", scope.canWrite() && (scope.kind().equals("global") || scope.kind().equals("unit")));
-        permissions.put("canWriteActivities", false);
+        permissions.put("canWriteActivities", (scope.kind().equals("global") && scope.canWrite()) || scope.kind().equals("unit") || scope.kind().equals("staff"));
         permissions.put("readOnly", !scope.canWrite());
         out.put("permissions", permissions);
         return out;

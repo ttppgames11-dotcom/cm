@@ -38,6 +38,9 @@ abstract class CrmUnitTestBase extends PostgresTestBase {
         rateLimit.reset();
         // creates the columns before cleaning
         send(get(API + "/units"), null, null);
+        // creates the activity table too (a 404 request still prepares it)
+        send(get(API + "/units/UNIT-ZQ-NONE/activities"), null, null);
+        jdbc.update("DELETE FROM crm_activities WHERE unit_id LIKE 'UNIT-ZQ%'");
         jdbc.update("DELETE FROM community_centers WHERE id LIKE 'UNIT-ZQ%' OR name LIKE 'Zq%' OR name LIKE 'zq%'");
         jdbc.update("DELETE FROM community_centers WHERE id = 'OLD-ZQ-1'");
         jdbc.update("DELETE FROM crm_unit_members WHERE member_id LIKE 'M93%'");
