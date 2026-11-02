@@ -247,8 +247,14 @@ public class CrmActivityService {
         if ("archived".equals(unit.get("status"))) throw unitArchived();
         Map<String, Object> row = activities.find(unitId, activityId).orElseThrow(CrmActivityService::activityNotFound);
         if ("done".equals(row.get("status")) && !scope.kind().equals("global")) throw noAccess();
+        boolean admin = scope.kind().equals("global");
         tx.executeWithoutResult(status -> {
-            activities.delete(unitId, activityId);
+            // one statement decides: a non-admin can never remove a record that is (or just became) done
+            int removed = admin ? activities.delete(unitId, activityId) : activities.deleteIfNotDone(unitId, activityId);
+            if (removed == 0) {
+                boolean stillThere = activities.find(unitId, activityId).isPresent();
+                throw stillThere ? noAccess() : activityNotFound();
+            }
             audit(user, "CRM_ACTIVITY_DELETE", Map.of("unit", unitId, "activity", activityId, "type", String.valueOf(row.get("type"))));
         });
         Map<String, Object> out = success();
@@ -377,6 +383,7 @@ public class CrmActivityService {
         a.put("notes", row.get("notes"));
         a.put("photoUrl", row.get("photo_url"));
         a.put("status", derivedStatus((String) row.get("status"), date, today));
+        a.put("storedStatus", row.get("status"));
         a.put("completedAt", row.get("completed_at") == null ? null : String.valueOf(row.get("completed_at")));
         return a;
     }

@@ -29,6 +29,9 @@ import org.springframework.test.web.servlet.ResultActions;
 @AutoConfigureMockMvc
 class CrmActivityWriteTest extends CrmUnitTestBase {
 
+    @org.springframework.beans.factory.annotation.Autowired
+    com.connectmaratha.api.crmunit.repository.CrmActivityRepository repository;
+
     private static final String D1 = "UNIT-ZQ-D1";
     private static final String BASE = API + "/units/" + D1;
 
@@ -283,6 +286,34 @@ class CrmActivityWriteTest extends CrmUnitTestBase {
         assertThat(audits("CRM_ACTIVITY_DELETE")).isEqualTo(2);
     }
 
+
+    @Test
+    void aNonAdminDeleteNeverRemovesARecordThatIsDone() throws Exception {
+        tree();
+        String planned = added(m(2));
+        String finished = added(m(2));
+        send(post(BASE + "/activities/" + finished + "/complete"), m(2), proof()).andExpect(status().isOk());
+        // the delete itself refuses a done record, even if it became done after the owner's request had looked at it
+        assertThat(repository.deleteIfNotDone(D1, finished)).isZero();
+        assertThat(rows(" AND status = 'done'")).isEqualTo(1);
+        assertThat(repository.deleteIfNotDone(D1, planned)).isEqualTo(1);
+        assertThat(repository.deleteIfNotDone(D1, planned)).isZero();
+        // a second delete of a record that is gone is 404 and writes no audit row
+        String gone = added(m(2));
+        send(delete(BASE + "/activities/" + gone), m(2), null).andExpect(status().isOk());
+        int before = audits("CRM_ACTIVITY_DELETE");
+        send(delete(BASE + "/activities/" + gone), m(2), null).andExpect(status().isNotFound());
+        assertThat(audits("CRM_ACTIVITY_DELETE")).isEqualTo(before);
+    }
+
+    @Test
+    void theListKeepsTheStoredStatusOfAnOverdueActivity() throws Exception {
+        tree();
+        jdbc.update("INSERT INTO crm_activities (id, unit_id, year, type, title, scheduled_date, status) VALUES ('ACT-ZQ-S1', ?, 2020, 'job_fair', 'Zq x', DATE '2020-04-15', 'in_progress')", D1);
+        JsonNode a = body(send(get(BASE + "/activities?year=2020"), m(2), null)).get("activities").get(0);
+        assertThat(a.get("status").asText()).isEqualTo("overdue");
+        assertThat(a.get("storedStatus").asText()).isEqualTo("in_progress");
+    }
     @Test
     void anArchivedUnitIsReadOnly() throws Exception {
         tree();

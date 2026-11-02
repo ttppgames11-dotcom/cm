@@ -69,6 +69,11 @@ public class CrmActivityRepository {
             WHERE unit_id = ? AND id = ? AND status <> 'done'""", attendees, notes, photoUrl, memberId, unitId, id);
     }
 
+    /** Removes an activity that is not done; 0 rows when it is done or gone (the check and the delete are one statement). */
+    public int deleteIfNotDone(String unitId, String id) {
+        return jdbc.update("DELETE FROM crm_activities WHERE unit_id = ? AND id = ? AND status <> 'done'", unitId, id);
+    }
+
     public int delete(String unitId, String id) {
         return jdbc.update("DELETE FROM crm_activities WHERE unit_id = ? AND id = ?", unitId, id);
     }
