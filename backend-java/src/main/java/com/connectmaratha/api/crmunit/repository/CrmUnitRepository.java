@@ -160,4 +160,19 @@ public class CrmUnitRepository {
     public int countStaff(String unitId) {
         return jdbc.queryForObject("SELECT COUNT(*) FROM crm_unit_members WHERE unit_id = ? AND unit_role = 'staff'", Integer.class, unitId);
     }
+
+    /** Locks the unit row until the end of the transaction, so adds to one team line up one after the other. */
+    public void lockUnit(String id) {
+        jdbc.queryForList("SELECT id FROM community_centers WHERE id = ? FOR UPDATE", id);
+    }
+
+    /** Makes the member staff of the unit; 0 rows when they already belong to a unit. */
+    public int linkStaff(String memberId, String unitId) {
+        return jdbc.update("INSERT INTO crm_unit_members (member_id, unit_id, unit_role) VALUES (?, ?, 'staff') ON CONFLICT DO NOTHING",
+            memberId, unitId);
+    }
+
+    public int unlinkStaff(String memberId, String unitId) {
+        return jdbc.update("DELETE FROM crm_unit_members WHERE member_id = ? AND unit_id = ? AND unit_role = 'staff'", memberId, unitId);
+    }
 }

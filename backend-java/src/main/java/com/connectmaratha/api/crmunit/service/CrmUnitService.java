@@ -162,6 +162,54 @@ public class CrmUnitService {
         return out;
     }
 
+
+    /** Adds an existing member to the unit's team (owner of the unit, admin, superadmin); at most 10. */
+    public Map<String, Object> addStaff(CurrentUser user, String unitId, Map<String, Object> body) {
+        tables.ensureCrmUnitTables();
+        Scope scope = scopes.of(user);
+        requireWrite(scope);
+        Map<String, Object> row = inScope(unitId, scope);
+        if (!scope.managesStaffOf(unitId)) throw noAccess();
+        if ("archived".equals(row.get("status"))) throw unitArchived();
+        Map<String, Object> input = CrmUnitSchemas.normalize(body);
+        SchemaValidator.check(input, CrmUnitSchemas.OWNER, true, null);
+        String memberId = resolveMember(input, null, CrmUnitService::memberInUnit);
+        String name = (String) row.get("name");
+
+        tx.executeWithoutResult(status -> {
+            units.lockUnit(unitId);
+            units.releaseFromArchived(memberId);
+            if (units.countStaff(unitId) >= MAX_STAFF) throw staffLimit();
+            if (units.linkStaff(memberId, unitId) == 0) throw memberInUnit();
+            audit(user, "CRM_STAFF_ADD", Map.of("unit", unitId, "member", memberId));
+        });
+        send(unitId, memberId, "🏢 तुम्ही " + name + " युनिटचे कर्मचारी आहात", name + " युनिटचे कर्मचारी म्हणून तुमची नेमणूक झाली");
+        Map<String, Object> out = teamJson(units.find(unitId).orElseThrow(), scope);
+        out.put("message", "कर्मचारी जोडला. (Staff member added.)");
+        return out;
+    }
+
+    /** Removes a staff member; their access ends on their next request. */
+    public Map<String, Object> removeStaff(CurrentUser user, String unitId, String memberId) {
+        tables.ensureCrmUnitTables();
+        Scope scope = scopes.of(user);
+        requireWrite(scope);
+        Map<String, Object> row = inScope(unitId, scope);
+        if (!scope.managesStaffOf(unitId)) throw noAccess();
+        String name = (String) row.get("name");
+
+        tx.executeWithoutResult(status -> {
+            if (units.unlinkStaff(memberId, unitId) == 0) {
+                throw ApiException.notFound("STAFF_NOT_FOUND", "हा कर्मचारी सापडला नाही (Staff member not found).");
+            }
+            audit(user, "CRM_STAFF_REMOVE", Map.of("unit", unitId, "member", memberId));
+        });
+        send(unitId, memberId, "🏢 " + name + " युनिटमधील तुमचा प्रवेश काढला", "आता तुम्हाला या युनिटचा प्रवेश नाही.");
+        Map<String, Object> out = teamJson(units.find(unitId).orElseThrow(), scope);
+        out.put("message", "कर्मचारी काढला. (Staff member removed.)");
+        return out;
+    }
+
     // ------------------------------------------------------------------ create
 
     /**
@@ -188,7 +236,7 @@ public class CrmUnitService {
             if ("archived".equals(parent.get("status"))) throw unitArchived();
             if (LEVELS.indexOf((String) parent.get("level")) + 1 != LEVELS.indexOf(level)) throw levelOrder();
         }
-        String ownerId = resolveOwner(input, null);
+        String ownerId = resolveMember(input, null, CrmUnitService::ownerInUnit);
 
         String id = "UNIT-" + level.substring(0, 3).toUpperCase(Locale.ROOT) + "-"
             + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
@@ -279,7 +327,7 @@ public class CrmUnitService {
         if ("archived".equals(row.get("status"))) throw unitArchived();
         Map<String, Object> input = CrmUnitSchemas.normalize(body);
         SchemaValidator.check(input, CrmUnitSchemas.OWNER, true, null);
-        String newOwner = resolveOwner(input, (String) row.get("owner_id"));
+        String newOwner = resolveMember(input, (String) row.get("owner_id"), CrmUnitService::ownerInUnit);
         String oldOwner = (String) row.get("owner_id");
         String name = (String) row.get("name");
 
@@ -310,8 +358,8 @@ public class CrmUnitService {
         if (!scope.canWrite()) throw noAccess();
     }
 
-    /** The one free (or already current), non-admin member the body names by id or phone. */
-    private String resolveOwner(Map<String, Object> input, String currentOwner) {
+    /** The one free (or already current), non-admin member the body names by id or phone; `busy` is thrown when they belong to a unit. */
+    private String resolveMember(Map<String, Object> input, String currentOwner, java.util.function.Supplier<ApiException> busy) {
         String ref = input.get("owner_member") instanceof String s ? s : (String) input.get("owner_phone");
         if (ref == null) {
             throw ApiException.badRequest("VALIDATION_ERROR", "मालक सदस्याचा आयडी किंवा मोबाईल नंबर द्या (Give the owner's member id or phone).");
@@ -325,9 +373,9 @@ public class CrmUnitService {
         String memberId = found.get(0);
         String role = units.roleOf(memberId).orElse("member").toLowerCase(Locale.ROOT);
         if (NOT_OWNERS.contains(role)) {
-            throw ApiException.badRequest("OWNER_NOT_ALLOWED", "प्लॅटफॉर्म अ‍ॅडमिन किंवा CEO युनिटचा मालक होऊ शकत नाही (An admin or CEO cannot own a unit).");
+            throw ApiException.badRequest("OWNER_NOT_ALLOWED", "प्लॅटफॉर्म अ‍ॅडमिन किंवा CEO युनिटचा मालक किंवा कर्मचारी होऊ शकत नाही (An admin or CEO cannot own a unit or be its staff).");
         }
-        if (!memberId.equals(currentOwner) && units.inAUnit(memberId)) throw ownerInUnit();
+        if (!memberId.equals(currentOwner) && units.inAUnit(memberId)) throw busy.get();
         return memberId;
     }
 
@@ -381,6 +429,14 @@ public class CrmUnitService {
         return new ApiException(HttpStatus.CONFLICT, "UNIT_ARCHIVED", "हे युनिट संग्रहित आहे (This unit is archived).");
     }
 
+
+    private static ApiException memberInUnit() {
+        return new ApiException(HttpStatus.CONFLICT, "MEMBER_IN_UNIT", "हा सदस्य आधीच दुसऱ्या युनिटमध्ये आहे (This member already belongs to a unit).");
+    }
+
+    private static ApiException staffLimit() {
+        return new ApiException(HttpStatus.CONFLICT, "STAFF_LIMIT", "या युनिटमध्ये जास्तीत जास्त " + MAX_STAFF + " कर्मचारी असू शकतात (A unit can have at most " + MAX_STAFF + " staff).");
+    }
     private static ApiException ownerInUnit() {
         return new ApiException(HttpStatus.CONFLICT, "OWNER_IN_UNIT", "हा सदस्य आधीच दुसऱ्या युनिटमध्ये आहे (This member already belongs to a unit).");
     }
