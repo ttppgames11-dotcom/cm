@@ -41,6 +41,13 @@ public class CrmScope {
             };
         }
 
+        /** May this scope plan and record the unit's activities: an admin, or the owner or staff of exactly that unit. */
+        public boolean writesActivitiesOf(String id) {
+            if (id == null) return false;
+            if (kind.equals("global")) return write;
+            return (kind.equals("unit") || kind.equals("staff")) && id.equals(unitId);
+        }
+
         /** May this scope add and remove the staff of the unit: an admin, or the owner of exactly that unit. */
         public boolean managesStaffOf(String id) {
             if (!write) return false;
