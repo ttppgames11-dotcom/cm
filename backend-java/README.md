@@ -249,6 +249,9 @@ Rules:
 | `POST /api/crm-hierarchy/units` | admin / owner | `{ level, name, parent_id, address, owner: { member \| phone } }`; the level sits directly below the parent's (`INVALID_LEVEL_ORDER`); only an admin creates a `state`; owner must be an existing member who is free (`OWNER_IN_UNIT`), not admin / ceo (`OWNER_NOT_ALLOWED`), one match (`MEMBER_AMBIGUOUS`); same name under the same parent → `UNIT_EXISTS`; parent archived → `UNIT_ARCHIVED`; 201 |
 | `PUT /api/crm-hierarchy/units/{id}` | admin / owner | `{ name, address, status }`: name and address by anyone who can write there; `status` `archived` / `active` only by someone above the unit (the owner loses access at once); an archived unit is read only |
 | `POST /api/crm-hierarchy/units/{id}/owner` | someone above the unit | `{ member \| phone }`: the old owner goes back to no unit; both get a bell (type `crm_unit`); the same owner again changes nothing |
+| `GET /api/crm-hierarchy/units/{id}/staff` | anyone who can see the unit | `{ owner, staff: [{id, name, since, phone?}], max: 10, canManage }`; staff of a unit see only that unit; `phone` only for the unit's owner and admins |
+| `POST /api/crm-hierarchy/units/{id}/staff` | owner of the unit, admin | `{ member \| phone }`: adds an existing member as staff (at most 10: `STAFF_LIMIT`); not admin / ceo (`OWNER_NOT_ALLOWED`); member must be free (`MEMBER_IN_UNIT`), one phone match (`MEMBER_AMBIGUOUS`); archived unit → `UNIT_ARCHIVED`; staff, owners above and the CEO get 403; 201 with the team |
+| `DELETE /api/crm-hierarchy/units/{id}/staff/{memberId}` | owner of the unit, admin | removes a staff member (`STAFF_NOT_FOUND` 404); their access ends on the next request; both get a bell (type `crm_unit`) |
 
 **Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
 

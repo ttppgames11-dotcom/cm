@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import com.connectmaratha.api.crmunit.service.CrmUnitService;
 import java.util.Map;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,6 +52,12 @@ public class CrmUnitController {
         return units.get(user, id);
     }
 
+    /** The owner and staff of a unit (phones only for the owner and admins). */
+    @GetMapping("/units/{id}/staff")
+    public Map<String, Object> staff(@PathVariable String id, CurrentUser user) {
+        return units.listStaff(user, id);
+    }
+
     /** { level, name, parent_id, address, owner: { member | phone } }: a unit one level below its parent. */
     @RequireAuth
     @PostMapping("/units")
@@ -70,5 +77,19 @@ public class CrmUnitController {
     @PostMapping("/units/{id}/owner")
     public Map<String, Object> changeOwner(@PathVariable String id, CurrentUser user, HttpServletRequest req) {
         return units.changeOwner(user, id, bodies.read(req));
+    }
+
+    /** { member | phone }: add an existing member to the unit's team (owner of the unit or admin). */
+    @RequireAuth
+    @PostMapping("/units/{id}/staff")
+    public ResponseEntity<Map<String, Object>> addStaff(@PathVariable String id, CurrentUser user, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(units.addStaff(user, id, bodies.read(req)));
+    }
+
+    /** Remove a staff member; their access ends on their next request. */
+    @RequireAuth
+    @DeleteMapping("/units/{id}/staff/{memberId}")
+    public Map<String, Object> removeStaff(@PathVariable String id, @PathVariable String memberId, CurrentUser user) {
+        return units.removeStaff(user, id, memberId);
     }
 }
