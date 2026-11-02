@@ -310,6 +310,15 @@ export const apiClient = {
   crmChangeOwner: async (id, data) => {
     return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(id)}/owner`, { method: 'POST', body: JSON.stringify(data) });
   },
+  crmListStaff: async (unitId) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/staff`);
+  },
+  crmAddStaff: async (unitId, data) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/staff`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  crmRemoveStaff: async (unitId, memberId) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/staff/${encodeURIComponent(memberId)}`, { method: 'DELETE' });
+  },
 
   // Organizations API
   getOrganizations: async () => {

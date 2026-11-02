@@ -75,3 +75,25 @@ test('breadcrumb lists the chain above the unit, then the unit', () => {
   assert.deepEqual(breadcrumb({ name: 'Pune' }), ['Pune']);
   assert.deepEqual(breadcrumb(null), []);
 });
+
+test('canManageStaff is true for an admin and for the owner on their own unit only', async () => {
+  const { canManageStaff } = await import('./crmUnitsHelp.js');
+  const admin = { scopeKind: 'global', permissions: { canManageStaff: true } };
+  const owner = { scopeKind: 'unit', unit: { id: 'U-D1' }, permissions: { canManageStaff: true } };
+  assert.equal(canManageStaff({ id: 'U-D1' }, admin), true);
+  assert.equal(canManageStaff({ id: 'U-D1' }, owner), true);
+  assert.equal(canManageStaff({ id: 'U-T1' }, owner), false);
+  assert.equal(canManageStaff({ id: 'U-D1' }, { scopeKind: 'staff', unit: { id: 'U-D1' }, permissions: { canManageStaff: false } }), false);
+  assert.equal(canManageStaff({ id: 'U-D1' }, { scopeKind: 'global', permissions: { canManageStaff: false } }), false);
+  assert.equal(canManageStaff(null, admin), false);
+  assert.equal(canManageStaff({ id: 'U-D1' }, null), false);
+});
+
+test('staffSlotsLeft counts the free seats and never goes below zero', async () => {
+  const { staffSlotsLeft } = await import('./crmUnitsHelp.js');
+  assert.equal(staffSlotsLeft({ staff: [1, 2, 3], max: 10 }), 7);
+  assert.equal(staffSlotsLeft({ staff: new Array(10).fill(0), max: 10 }), 0);
+  assert.equal(staffSlotsLeft({ staff: new Array(12).fill(0), max: 10 }), 0);
+  assert.equal(staffSlotsLeft({ staff: [], max: 10 }), 10);
+  assert.equal(staffSlotsLeft(null), 0);
+});
