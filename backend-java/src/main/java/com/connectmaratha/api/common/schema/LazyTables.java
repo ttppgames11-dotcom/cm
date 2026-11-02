@@ -192,6 +192,25 @@ public class LazyTables {
         "CREATE TABLE IF NOT EXISTS crm_unit_members (member_id TEXT PRIMARY KEY, unit_id TEXT NOT NULL, unit_role TEXT NOT NULL DEFAULT 'owner', created_at TIMESTAMPTZ NOT NULL DEFAULT now())",
         "CREATE UNIQUE INDEX IF NOT EXISTS crm_unit_members_one_owner ON crm_unit_members (unit_id) WHERE unit_role = 'owner'"};
 
+    /** Migration 016: officer mentor profiles (member_id NULL = added by an admin) and students' guidance requests, one open per member. */
+    static final String[] OFFICER_TABLES = {
+        """
+        CREATE TABLE IF NOT EXISTS officers (
+          id TEXT PRIMARY KEY, member_id TEXT, name TEXT NOT NULL, service TEXT NOT NULL, service_status TEXT NOT NULL,
+          batch_year INTEGER, post TEXT NOT NULL, department TEXT, city TEXT NOT NULL, exams TEXT NOT NULL, intro TEXT,
+          phone TEXT NOT NULL, accepting BOOLEAN NOT NULL DEFAULT true, status TEXT NOT NULL DEFAULT 'pending',
+          reject_reason TEXT, hidden BOOLEAN NOT NULL DEFAULT false, created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+          updated_at TIMESTAMPTZ NOT NULL DEFAULT now())""",
+        "CREATE UNIQUE INDEX IF NOT EXISTS officers_one_per_member ON officers (member_id) WHERE member_id IS NOT NULL",
+        """
+        CREATE TABLE IF NOT EXISTS officer_requests (
+          id TEXT PRIMARY KEY, officer_id TEXT NOT NULL, member_id TEXT NOT NULL, exam TEXT NOT NULL, stage TEXT NOT NULL,
+          question TEXT NOT NULL, mode TEXT NOT NULL, message TEXT, status TEXT NOT NULL DEFAULT 'new',
+          created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now())""",
+        "CREATE UNIQUE INDEX IF NOT EXISTS officer_requests_one_open ON officer_requests (officer_id, member_id) WHERE status = 'new'",
+        "CREATE INDEX IF NOT EXISTS officer_requests_officer ON officer_requests (officer_id)",
+        "CREATE INDEX IF NOT EXISTS officer_requests_member ON officer_requests (member_id, created_at)"};
+
     private final JdbcTemplate jdbc;
     private final TransactionTemplate ownTransaction;
     private final AtomicBoolean moderationReady = new AtomicBoolean();
@@ -205,6 +224,8 @@ public class LazyTables {
     private final AtomicBoolean jobColumnsReady = new AtomicBoolean();
     private final AtomicBoolean speakerTablesReady = new AtomicBoolean();
     private final AtomicBoolean crmUnitTablesReady = new AtomicBoolean();
+
+    private final AtomicBoolean officerTablesReady = new AtomicBoolean();
 
     public LazyTables(JdbcTemplate jdbc, PlatformTransactionManager transactions) {
         this.jdbc = jdbc;
@@ -278,5 +299,10 @@ public class LazyTables {
     /** The speakers and speaker_requests tables of migration 015, created on first use (a no-op when they exist). */
     public void ensureSpeakerTables() {
         createOnce(speakerTablesReady, SPEAKER_TABLES);
+    }
+
+    /** The officers and officer_requests tables of migration 016, created on first use (a no-op when they exist). */
+    public void ensureOfficerTables() {
+        createOnce(officerTablesReady, OFFICER_TABLES);
     }
 }
