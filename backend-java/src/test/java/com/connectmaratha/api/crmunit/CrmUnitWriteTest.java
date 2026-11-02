@@ -205,6 +205,21 @@ class CrmUnitWriteTest extends CrmUnitTestBase {
         assertThat(body(send(get(API + "/me"), m(2), null)).get("scopeKind").asText()).isEqualTo("unit");
     }
 
+
+    @Test
+    void anArchivedUnitsOwnerCanOwnAnotherUnit() throws Exception {
+        unit("UNIT-ZQ-S", "state", null, "Zq Maharashtra", null);
+        unit("UNIT-ZQ-B1", "branch", "UNIT-ZQ-S", "Zq Pune Branch", null);
+        unit("UNIT-ZQ-D1", "district", "UNIT-ZQ-B1", "Zq Pune", "M9302");
+        send(put(API + "/units/UNIT-ZQ-D1"), admin(), map("status", "archived")).andExpect(status().isOk());
+        // the member is free again, the archived unit is left without an owner
+        create(admin(), "division", "UNIT-ZQ-B1", "Zq Satara", member("M9302")).andExpect(status().isCreated());
+        assertThat(jdbc.queryForObject("SELECT owner_id FROM community_centers WHERE id = 'UNIT-ZQ-D1'", String.class)).isNull();
+        assertThat(body(send(get(API + "/me"), m(2), null)).at("/unit/name").asText()).isEqualTo("Zq Satara");
+        // the old unit can still be restored and given a new owner
+        send(put(API + "/units/UNIT-ZQ-D1"), admin(), map("status", "active")).andExpect(status().isOk());
+        send(post(API + "/units/UNIT-ZQ-D1/owner"), admin(), member("M9303")).andExpect(status().isOk());
+    }
     @Test
     void changeOwnerMovesAccessAtOnce() throws Exception {
         unit("UNIT-ZQ-S", "state", null, "Zq Maharashtra", null);

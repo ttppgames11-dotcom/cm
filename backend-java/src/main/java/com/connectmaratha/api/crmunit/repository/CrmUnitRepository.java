@@ -116,8 +116,9 @@ public class CrmUnitRepository {
         return jdbc.update("DELETE FROM crm_unit_members WHERE member_id = ? AND unit_id = ?", memberId, unitId);
     }
 
+    /** Is the member the owner of an active unit? An archived unit does not hold its owner. */
     public boolean inAUnit(String memberId) {
-        return Boolean.TRUE.equals(jdbc.queryForObject("SELECT EXISTS (SELECT 1 FROM crm_unit_members WHERE member_id = ?)", Boolean.class, memberId));
+        return Boolean.TRUE.equals(jdbc.queryForObject("SELECT EXISTS (SELECT 1 FROM crm_unit_members u JOIN community_centers c ON c.id = u.unit_id WHERE u.member_id = ? AND c.status = 'active')", Boolean.class, memberId));
     }
 
     public Optional<String> roleOf(String memberId) {
@@ -133,5 +134,11 @@ public class CrmUnitRepository {
         return jdbc.queryForList(
             "SELECT id FROM members WHERE right(regexp_replace(coalesce(phone, ''), '\\D', '', 'g'), 10) = ? ORDER BY id",
             String.class, digits.substring(digits.length() - 10));
+    }
+
+    /** Frees a member whose unit is archived: the link goes and the archived unit is left without an owner. */
+    public void releaseFromArchived(String memberId) {
+        jdbc.update("UPDATE community_centers SET owner_id = NULL, updated_at = now() WHERE owner_id = ? AND status = 'archived' AND level IS NOT NULL", memberId);
+        jdbc.update("DELETE FROM crm_unit_members WHERE member_id = ? AND unit_id IN (SELECT id FROM community_centers WHERE status = 'archived')", memberId);
     }
 }

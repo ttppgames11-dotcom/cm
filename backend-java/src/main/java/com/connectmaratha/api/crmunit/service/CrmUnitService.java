@@ -174,6 +174,7 @@ public class CrmUnitService {
             } catch (DuplicateKeyException e) {
                 throw unitExists();
             }
+            units.releaseFromArchived(ownerId);
             if (units.linkOwner(ownerId, id) == 0) throw ownerInUnit();
             audit(user, "CRM_UNIT_CREATE", Map.of("unit", id, "level", level, "name", name, "owner", ownerId));
         });
@@ -246,6 +247,7 @@ public class CrmUnitService {
         if (!newOwner.equals(oldOwner)) {
             tx.executeWithoutResult(status -> {
                 if (oldOwner != null) units.unlinkOwner(oldOwner, id);
+                units.releaseFromArchived(newOwner);
                 if (units.linkOwner(newOwner, id) == 0) throw ownerInUnit();
                 units.setOwner(id, newOwner);
                 Map<String, Object> details = new LinkedHashMap<>();
