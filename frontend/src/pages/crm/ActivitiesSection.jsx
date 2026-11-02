@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import apiClient from '../../services/apiClient';
-import { activityStatus, completionPayload, planPayload, canWriteActivities, progressLabel } from './crmUnitsHelp';
+import { activityStatus, completionPayload, planPayload, canWriteActivities, progressLabel, editableStatus } from './crmUnitsHelp';
 
 const inputStyle = { width: '100%', padding: '8px 10px', background: '#FFFDF9', border: '1.5px solid #FED7AA', borderRadius: '10px', color: '#0F172A', fontWeight: 700, outline: 'none', boxSizing: 'border-box' };
 const primaryBtn = { padding: '9px 16px', background: 'linear-gradient(135deg, #EA580C, #C2410C)', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 900, cursor: 'pointer', fontSize: '0.85rem' };
@@ -69,7 +69,7 @@ export default function ActivitiesSection({ unit, me }) {
     setMode({ kind: 'plan' });
   };
   const openAdd = () => { setForm({ type: types[0]?.key || '', date: `${year}-01-15`, target: '' }); setMode({ kind: 'add' }); };
-  const openEdit = (a) => { setForm({ date: a.scheduledDate, target: String(a.targetCount), notes: a.notes || '', status: a.status === 'in_progress' ? 'in_progress' : 'planned' }); setMode({ kind: 'edit', id: a.id }); };
+  const openEdit = (a) => { setForm({ date: a.scheduledDate, target: String(a.targetCount), notes: a.notes || '', status: editableStatus(a), originalStatus: editableStatus(a) }); setMode({ kind: 'edit', id: a.id }); };
   const openDone = (a) => { setForm({ attendeeCount: '', notes: '', photoUrl: '' }); setMode({ kind: 'done', id: a.id }); };
 
   const submitPlan = (e) => {
@@ -84,7 +84,8 @@ export default function ActivitiesSection({ unit, me }) {
   };
   const submitEdit = (e) => {
     e.preventDefault();
-    const body = { scheduled_date: form.date, status: form.status };
+    const body = { scheduled_date: form.date };
+    if (form.status !== form.originalStatus) body.status = form.status;
     if (String(form.target).trim() !== '') body.target_count = Number(form.target);
     if (String(form.notes).trim() !== '') body.notes = form.notes;
     return run(() => apiClient.crmUpdateActivity(unit.id, mode.id, body), 'बदल जतन झाला.');

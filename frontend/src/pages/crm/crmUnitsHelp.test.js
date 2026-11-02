@@ -141,3 +141,14 @@ test('progressLabel shows done of total and the types covered', async () => {
   assert.equal(progressLabel({ total: 0, done: 0, typesCovered: 0, typesRequired: 12 }), 'आराखडा नाही');
   assert.equal(progressLabel(null), 'आराखडा नाही');
 });
+
+test('editableStatus uses the stored status, so an overdue started activity stays in progress', async () => {
+  const { editableStatus } = await import('./crmUnitsHelp.js');
+  assert.equal(editableStatus({ status: 'overdue', storedStatus: 'in_progress' }), 'in_progress');
+  assert.equal(editableStatus({ status: 'overdue', storedStatus: 'planned' }), 'planned');
+  assert.equal(editableStatus({ status: 'in_progress', storedStatus: 'in_progress' }), 'in_progress');
+  assert.equal(editableStatus({ status: 'planned', storedStatus: 'planned' }), 'planned');
+  assert.equal(editableStatus({ status: 'in_progress' }), 'in_progress');
+  assert.equal(editableStatus({ status: 'overdue' }), 'planned');
+  assert.equal(editableStatus(null), 'planned');
+});

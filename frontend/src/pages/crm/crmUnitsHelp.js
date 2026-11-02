@@ -130,3 +130,9 @@ export function progressLabel(progress) {
   if (!progress || !progress.total) return 'आराखडा नाही';
   return `${progress.done}/${progress.total} पूर्ण · ${progress.typesCovered}/${progress.typesRequired || 12} प्रकार`;
 }
+
+// The status the edit form starts with: the stored one (an overdue activity that was started stays "in progress").
+export function editableStatus(activity) {
+  const stored = activity?.storedStatus ?? activity?.status;
+  return stored === 'in_progress' ? 'in_progress' : 'planned';
+}
