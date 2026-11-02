@@ -34,7 +34,7 @@ public class CommunityCenterRepository {
     /** Active centres, optionally limited by tier, district and division; by name. */
     public List<Map<String, Object>> findActive(String tier, String district, String division) {
         String sql = SELECT + """
-             WHERE c.status = 'active'
+             WHERE c.status = 'active' AND c.level IS NULL
               AND (CAST(:tier AS TEXT) IS NULL OR c.tier = CAST(:tier AS TEXT))
               AND (CAST(:district AS TEXT) IS NULL OR c.district = CAST(:district AS TEXT))
               AND (CAST(:division AS TEXT) IS NULL OR c.division = CAST(:division AS TEXT))
@@ -47,7 +47,7 @@ public class CommunityCenterRepository {
     }
 
     public Optional<Map<String, Object>> find(String id) {
-        List<?> rows = em.createNativeQuery(SELECT + " WHERE c.id = :id").setParameter("id", id).getResultList();
+        List<?> rows = em.createNativeQuery(SELECT + " WHERE c.id = :id AND c.level IS NULL").setParameter("id", id).getResultList();
         return rows.isEmpty() ? Optional.empty() : Optional.of(toMap((Object[]) rows.get(0)));
     }
 
