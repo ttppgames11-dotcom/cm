@@ -71,4 +71,67 @@ public class CrmUnitRepository {
     public Optional<Map<String, Object>> memberName(String memberId) {
         return jdbc.queryForList("SELECT id, name FROM members WHERE id = ?", memberId).stream().findFirst();
     }
+
+    // ------------------------------------------------------------------ writes
+
+    /** Inserts a ladder unit (status active); a second unit with the same name under the same parent throws DuplicateKeyException. */
+    public int insert(Map<String, Object> u) {
+        return jdbc.update("""
+            INSERT INTO community_centers (id, name, level, parent_id, path, owner_id, state, division, district, taluka,
+              address, created_by, status, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', now())""",
+            u.get("id"), u.get("name"), u.get("level"), u.get("parent_id"), u.get("path"), u.get("owner_id"),
+            u.get("state"), u.get("division"), u.get("district"), u.get("taluka"), u.get("address"), u.get("created_by"));
+    }
+
+    /** Renames and/or changes the address; null leaves a value as it is. Also sets the unit's own geography name. */
+    public int update(String id, String level, String name, String address) {
+        String own = switch (level) {
+            case "state" -> "state";
+            case "division" -> "division";
+            case "district" -> "district";
+            case "taluka" -> "taluka";
+            default -> null;
+        };
+        String sql = "UPDATE community_centers SET name = COALESCE(?, name), address = COALESCE(?, address), updated_at = now()"
+            + (own != null && name != null ? ", " + own + " = ?" : "") + " WHERE id = ? AND level IS NOT NULL";
+        return own != null && name != null ? jdbc.update(sql, name, address, name, id) : jdbc.update(sql, name, address, id);
+    }
+
+    public int setStatus(String id, String status) {
+        return jdbc.update("UPDATE community_centers SET status = ?, updated_at = now() WHERE id = ? AND level IS NOT NULL", status, id);
+    }
+
+    public int setOwner(String unitId, String ownerId) {
+        return jdbc.update("UPDATE community_centers SET owner_id = ?, updated_at = now() WHERE id = ? AND level IS NOT NULL", ownerId, unitId);
+    }
+
+    /** Makes the member the owner of the unit; 0 rows when the member is already in a unit or the unit already has an owner. */
+    public int linkOwner(String memberId, String unitId) {
+        return jdbc.update("INSERT INTO crm_unit_members (member_id, unit_id, unit_role) VALUES (?, ?, 'owner') ON CONFLICT DO NOTHING",
+            memberId, unitId);
+    }
+
+    public int unlinkOwner(String memberId, String unitId) {
+        return jdbc.update("DELETE FROM crm_unit_members WHERE member_id = ? AND unit_id = ?", memberId, unitId);
+    }
+
+    public boolean inAUnit(String memberId) {
+        return Boolean.TRUE.equals(jdbc.queryForObject("SELECT EXISTS (SELECT 1 FROM crm_unit_members WHERE member_id = ?)", Boolean.class, memberId));
+    }
+
+    public Optional<String> roleOf(String memberId) {
+        return jdbc.queryForList("SELECT role FROM members WHERE id = ?", String.class, memberId).stream().findFirst();
+    }
+
+    /** Members whose id is this text or whose last 10 digits of phone match it (all of them, so a shared phone can be refused). */
+    public List<String> membersByIdOrPhone(String idOrPhone) {
+        List<String> byId = jdbc.queryForList("SELECT id FROM members WHERE id = ?", String.class, idOrPhone);
+        if (!byId.isEmpty()) return byId;
+        String digits = idOrPhone.replaceAll("\\D", "");
+        if (digits.length() < 10) return List.of();
+        return jdbc.queryForList(
+            "SELECT id FROM members WHERE right(regexp_replace(coalesce(phone, ''), '\\D', '', 'g'), 10) = ? ORDER BY id",
+            String.class, digits.substring(digits.length() - 10));
+    }
 }
