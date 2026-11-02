@@ -91,6 +91,7 @@ const NAV_GROUPS = [
     { path: '/admin/tickets', label: 'Complaints', icon: '🎫' },
     { path: '/admin/seva', label: 'Blood Helpdesk', icon: '🩸' },
     { path: '/admin/jobs', label: 'Jobs (नोकरी)', icon: '💼' },
+    { path: '/crm/units', label: 'CRM Units (युनिट्स)', icon: '🏛️' },
     { path: '/admin/reports', label: 'Reports Overview', icon: '📊' }
   ]},
   { id: 'system', label: 'System', icon: '🔒', items: [
