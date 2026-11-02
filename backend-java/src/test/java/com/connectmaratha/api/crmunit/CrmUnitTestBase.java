@@ -40,7 +40,7 @@ abstract class CrmUnitTestBase extends PostgresTestBase {
         send(get(API + "/units"), null, null);
         jdbc.update("DELETE FROM community_centers WHERE id LIKE 'UNIT-ZQ%' OR name LIKE 'Zq%' OR name LIKE 'zq%'");
         jdbc.update("DELETE FROM community_centers WHERE id = 'OLD-ZQ-1'");
-        jdbc.update("UPDATE members SET unit_id = NULL, unit_role = NULL WHERE id LIKE 'M93%'");
+        jdbc.update("DELETE FROM crm_unit_members WHERE member_id LIKE 'M93%'");
         jdbc.update("DELETE FROM notifications WHERE member_id LIKE 'M93%'");
         jdbc.update("DELETE FROM audit_logs WHERE user_id LIKE 'M93%'");
         for (int i = 1; i <= 8; i++) member("M930" + i, "member");
@@ -50,8 +50,7 @@ abstract class CrmUnitTestBase extends PostgresTestBase {
 
     void member(String id, String role) {
         jdbc.update("INSERT INTO members (id, name, phone, role) VALUES (?, ?, ?, ?) "
-            + "ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, phone = EXCLUDED.phone, role = EXCLUDED.role, "
-            + "unit_id = NULL, unit_role = NULL",
+            + "ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, phone = EXCLUDED.phone, role = EXCLUDED.role",
             id, "Member " + id, phoneOf(id), role);
     }
 
@@ -92,7 +91,7 @@ abstract class CrmUnitTestBase extends PostgresTestBase {
         String parentPath = parentId == null ? "/" : jdbc.queryForObject("SELECT path FROM community_centers WHERE id = ?", String.class, parentId);
         jdbc.update("INSERT INTO community_centers (id, name, level, parent_id, path, owner_id, status) VALUES (?, ?, ?, ?, ?, ?, 'active')",
             id, name, level, parentId, parentPath + id + "/", ownerId);
-        if (ownerId != null) jdbc.update("UPDATE members SET unit_id = ?, unit_role = 'owner' WHERE id = ?", id, ownerId);
+        if (ownerId != null) jdbc.update("INSERT INTO crm_unit_members (member_id, unit_id, unit_role) VALUES (?, ?, 'owner') ON CONFLICT (member_id) DO UPDATE SET unit_id = EXCLUDED.unit_id, unit_role = 'owner'", ownerId, id);
     }
 
     /** The ids of the units in a list answer. */

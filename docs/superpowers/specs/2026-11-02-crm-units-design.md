@@ -16,7 +16,7 @@ A ladder of units (State → Branch → Division → District → Taluka). Each 
 
 ## Database (migration 017 + `LazyTables`)
 `community_centers` new columns: `level` (state/branch/division/district/taluka), `parent_id`, `path` (e.g. `/UNIT-A/UNIT-B/`, includes the unit itself), `owner_id`, `state`, `created_by`, `updated_at` TIMESTAMPTZ. Status values `active` / `archived`. Indexes on `parent_id` and `path`; a unique index on `(parent_id, lower(name), level)` for ladder units only (`level IS NOT NULL`).
-`members` new columns: `unit_id`, `unit_role` (`owner`; Step 2 adds `staff`). A unique index allows one owner per unit.
+A new table `crm_unit_members` (`member_id` primary key, `unit_id`, `unit_role` `owner`; Step 2 adds `staff`; unique index: one owner per unit). The `members` table itself is not changed, because the Node backend returns every `members` column.
 Audit: every create, edit, archive and owner change goes to `audit_logs` (`CRM_UNIT_CREATE`, `CRM_UNIT_UPDATE`, `CRM_UNIT_ARCHIVE`, `CRM_UNIT_OWNER_CHANGE`).
 Notifications: type `crm_unit` (new owner: "🏢 तुम्ही {unit} युनिटचे मालक आहात"; old owner: "{unit} युनिटची मालकी काढली"). Sent in a REQUIRES_NEW transaction inside try/catch.
 

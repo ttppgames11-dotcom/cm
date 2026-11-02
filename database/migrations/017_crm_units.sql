@@ -1,5 +1,5 @@
 -- CRM units: a ladder State > Branch > Division > District > Taluka built on the community_centers table, each unit
--- with one owner (a member). Old front-desk centres keep level NULL and are not part of the ladder.
+-- with one owner (a member). The member-to-unit link lives in crm_unit_members (members itself is not changed: Node returns every members column). Old front-desk centres keep level NULL and are not part of the ladder.
 CREATE TABLE IF NOT EXISTS community_centers (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
@@ -27,6 +27,11 @@ CREATE INDEX IF NOT EXISTS community_centers_path ON community_centers (path tex
 CREATE UNIQUE INDEX IF NOT EXISTS community_centers_unit_name
   ON community_centers ((COALESCE(parent_id, '')), lower(name), level) WHERE level IS NOT NULL;
 
-ALTER TABLE members ADD COLUMN IF NOT EXISTS unit_id TEXT;
-ALTER TABLE members ADD COLUMN IF NOT EXISTS unit_role TEXT;
-CREATE UNIQUE INDEX IF NOT EXISTS members_one_unit_owner ON members (unit_id) WHERE unit_role = 'owner';
+
+CREATE TABLE IF NOT EXISTS crm_unit_members (
+  member_id TEXT PRIMARY KEY,
+  unit_id TEXT NOT NULL,
+  unit_role TEXT NOT NULL DEFAULT 'owner',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS crm_unit_members_one_owner ON crm_unit_members (unit_id) WHERE unit_role = 'owner';

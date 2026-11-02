@@ -67,8 +67,9 @@ public class CrmScope {
         if (user == null || user.id() == null) return Scope.NONE;
         tables.ensureCrmUnitTables();
         List<Map<String, Object>> rows = jdbc.queryForList("""
-            SELECT m.role, m.unit_id, m.unit_role, c.path, c.status, c.level
-            FROM members m LEFT JOIN community_centers c ON c.id = m.unit_id
+            SELECT m.role, u.unit_id, u.unit_role, c.path, c.status, c.level
+            FROM members m LEFT JOIN crm_unit_members u ON u.member_id = m.id
+            LEFT JOIN community_centers c ON c.id = u.unit_id
             WHERE m.id = ?""", user.id());
         if (rows.isEmpty()) return Scope.NONE;
         Map<String, Object> row = rows.get(0);

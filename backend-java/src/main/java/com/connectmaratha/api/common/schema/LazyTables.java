@@ -176,7 +176,7 @@ public class LazyTables {
         "CREATE INDEX IF NOT EXISTS speaker_requests_speaker ON speaker_requests (speaker_id)",
         "CREATE INDEX IF NOT EXISTS speaker_requests_member ON speaker_requests (member_id, created_at)"};
 
-    /** Migration 017: the CRM unit ladder on community_centers and the unit link on members. */
+    /** Migration 017: the CRM unit ladder on community_centers and the member-to-unit link table. */
     static final String[] CRM_UNIT_TABLES = {
         COMMUNITY_CENTERS,
         "ALTER TABLE community_centers ADD COLUMN IF NOT EXISTS level TEXT",
@@ -189,9 +189,8 @@ public class LazyTables {
         "CREATE INDEX IF NOT EXISTS community_centers_parent ON community_centers (parent_id)",
         "CREATE INDEX IF NOT EXISTS community_centers_path ON community_centers (path text_pattern_ops)",
         "CREATE UNIQUE INDEX IF NOT EXISTS community_centers_unit_name ON community_centers ((COALESCE(parent_id, '')), lower(name), level) WHERE level IS NOT NULL",
-        "ALTER TABLE members ADD COLUMN IF NOT EXISTS unit_id TEXT",
-        "ALTER TABLE members ADD COLUMN IF NOT EXISTS unit_role TEXT",
-        "CREATE UNIQUE INDEX IF NOT EXISTS members_one_unit_owner ON members (unit_id) WHERE unit_role = 'owner'"};
+        "CREATE TABLE IF NOT EXISTS crm_unit_members (member_id TEXT PRIMARY KEY, unit_id TEXT NOT NULL, unit_role TEXT NOT NULL DEFAULT 'owner', created_at TIMESTAMPTZ NOT NULL DEFAULT now())",
+        "CREATE UNIQUE INDEX IF NOT EXISTS crm_unit_members_one_owner ON crm_unit_members (unit_id) WHERE unit_role = 'owner'"};
 
     private final JdbcTemplate jdbc;
     private final TransactionTemplate ownTransaction;
@@ -241,7 +240,7 @@ public class LazyTables {
         ensureCrmUnitTables();
     }
 
-    /** The CRM unit ladder columns and members.unit_id / unit_role, created on first use (a no-op when they exist). */
+    /** The CRM unit ladder columns and the crm_unit_members link table, created on first use (a no-op when they exist). */
     public void ensureCrmUnitTables() {
         createOnce(crmUnitTablesReady, CRM_UNIT_TABLES);
     }
