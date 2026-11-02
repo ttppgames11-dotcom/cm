@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -51,6 +52,15 @@ abstract class CrmUnitTestBase extends PostgresTestBase {
         member(CEO, "ceo");
     }
 
+
+    /** Leaves the shared M93xx members as plain members again, so other test classes that use the same ids are not affected. */
+    @AfterEach
+    void restoreSharedMembers() {
+        for (int i = 1; i <= 8; i++) {
+            jdbc.update("UPDATE members SET role = 'member', phone = ? WHERE id = ?", phoneOf("M930" + i), "M930" + i);
+        }
+        jdbc.update("DELETE FROM crm_unit_members WHERE member_id LIKE 'M93%'");
+    }
     void member(String id, String role) {
         jdbc.update("INSERT INTO members (id, name, phone, role) VALUES (?, ?, ?, ?) "
             + "ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, phone = EXCLUDED.phone, role = EXCLUDED.role",
