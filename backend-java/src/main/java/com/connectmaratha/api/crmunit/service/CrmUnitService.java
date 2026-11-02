@@ -73,14 +73,14 @@ public class CrmUnitService {
         out.put("account", account);
         out.put("scopeKind", scope.kind());
         Map<String, Object> unit = null;
-        if (scope.kind().equals("unit")) unit = units.find(scope.unitId()).map(r -> unitJson(r, scope)).orElse(null);
+        if (scope.kind().equals("unit") || scope.kind().equals("staff")) unit = units.find(scope.unitId()).map(r -> unitJson(r, scope)).orElse(null);
         out.put("unit", unit);
         out.put("unitRole", scope.unitRole());
         boolean ownsTaluka = unit != null && "taluka".equals(unit.get("level"));
         Map<String, Object> permissions = new LinkedHashMap<>();
         permissions.put("canCreateState", scope.kind().equals("global") && scope.canWrite());
         permissions.put("canCreateUnits", scope.canWrite() && !ownsTaluka);
-        permissions.put("canManageStaff", false);
+        permissions.put("canManageStaff", scope.canWrite() && (scope.kind().equals("global") || scope.kind().equals("unit")));
         permissions.put("canWriteActivities", false);
         permissions.put("readOnly", !scope.canWrite());
         out.put("permissions", permissions);
@@ -120,6 +120,45 @@ public class CrmUnitService {
         Map<String, Object> out = success();
         out.put("unit", unitJson(row, scope));
         out.put("ancestors", ancestors);
+        return out;
+    }
+
+    // ------------------------------------------------------------------ staff
+
+    static final int MAX_STAFF = 10;
+
+    /** The owner and staff of a unit; phone numbers only for those who may manage the team. */
+    @Transactional(readOnly = true)
+    public Map<String, Object> listStaff(CurrentUser user, String unitId) {
+        tables.ensureCrmUnitTables();
+        Scope scope = scopes.of(user);
+        Map<String, Object> row = inScope(unitId, scope);
+        return teamJson(row, scope);
+    }
+
+    private Map<String, Object> teamJson(Map<String, Object> row, Scope scope) {
+        String id = (String) row.get("id");
+        boolean manage = scope.managesStaffOf(id);
+        Map<String, Object> owner = null;
+        if (row.get("owner_id") != null) {
+            owner = new LinkedHashMap<>();
+            owner.put("id", row.get("owner_id"));
+            owner.put("name", row.get("owner_name"));
+        }
+        List<Map<String, Object>> staff = new ArrayList<>();
+        for (Map<String, Object> s : units.staffOf(id)) {
+            Map<String, Object> j = new LinkedHashMap<>();
+            j.put("id", s.get("id"));
+            j.put("name", s.get("name"));
+            if (manage) j.put("phone", s.get("phone"));
+            j.put("since", s.get("since") == null ? null : String.valueOf(s.get("since")));
+            staff.add(j);
+        }
+        Map<String, Object> out = success();
+        out.put("owner", owner);
+        out.put("staff", staff);
+        out.put("max", MAX_STAFF);
+        out.put("canManage", manage);
         return out;
     }
 

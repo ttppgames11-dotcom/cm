@@ -51,6 +51,12 @@ public class CrmUnitController {
         return units.get(user, id);
     }
 
+    /** The owner and staff of a unit (phones only for the owner and admins). */
+    @GetMapping("/units/{id}/staff")
+    public Map<String, Object> staff(@PathVariable String id, CurrentUser user) {
+        return units.listStaff(user, id);
+    }
+
     /** { level, name, parent_id, address, owner: { member | phone } }: a unit one level below its parent. */
     @RequireAuth
     @PostMapping("/units")

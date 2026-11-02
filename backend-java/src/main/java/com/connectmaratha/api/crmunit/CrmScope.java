@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CrmScope {
 
-    /** What a member may reach: kind is "global", "unit" or "none"; path (units only) ends with "/". */
+    /** What a member may reach: kind is "global", "unit" (an owner: the unit and below), "staff" (the own unit only) or "none"; path (units only) ends with "/". */
     public record Scope(String kind, String unitId, String unitRole, String path, boolean write) {
 
         static final Scope NONE = new Scope("none", null, null, null, false);
@@ -36,8 +36,15 @@ public class CrmScope {
             return switch (kind) {
                 case "global" -> true;
                 case "unit" -> unitPath.startsWith(path);
+                case "staff" -> unitPath.equals(path);
                 default -> false;
             };
+        }
+
+        /** May this scope add and remove the staff of the unit: an admin, or the owner of exactly that unit. */
+        public boolean managesStaffOf(String id) {
+            if (!write) return false;
+            return kind.equals("global") || (kind.equals("unit") && id != null && id.equals(unitId));
         }
 
         /** Is the scope above the unit with this path, i.e. does it hold the unit's parent? Never true for the scope's own unit. */
@@ -77,9 +84,13 @@ public class CrmScope {
         if (role.equals("admin") || role.equals("superadmin")) return new Scope("global", null, null, null, true);
         if (role.equals("ceo")) return new Scope("global", null, null, null, false);
         boolean owner = "owner".equals(row.get("unit_role"));
+        boolean staff = "staff".equals(row.get("unit_role"));
         boolean usable = row.get("path") != null && row.get("level") != null && "active".equals(row.get("status"));
         if (owner && usable) {
             return new Scope("unit", (String) row.get("unit_id"), "owner", (String) row.get("path"), true);
+        }
+        if (staff && usable) {
+            return new Scope("staff", (String) row.get("unit_id"), "staff", (String) row.get("path"), false);
         }
         return Scope.NONE;
     }

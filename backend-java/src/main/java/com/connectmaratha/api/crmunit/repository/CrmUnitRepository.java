@@ -36,6 +36,10 @@ public class CrmUnitRepository {
         if (scope.isNone()) return List.of();
         StringBuilder sql = new StringBuilder(SELECT).append(" WHERE c.level IS NOT NULL");
         List<Object> args = new ArrayList<>();
+        if (scope.kind().equals("staff")) {
+            sql.append(" AND c.id = ?");
+            args.add(scope.unitId());
+        }
         if (scope.kind().equals("unit")) {
             sql.append(" AND starts_with(c.path, ?)");
             args.add(scope.path());
@@ -140,5 +144,20 @@ public class CrmUnitRepository {
     public void releaseFromArchived(String memberId) {
         jdbc.update("UPDATE community_centers SET owner_id = NULL, updated_at = now() WHERE owner_id = ? AND status = 'archived' AND level IS NOT NULL", memberId);
         jdbc.update("DELETE FROM crm_unit_members WHERE member_id = ? AND unit_id IN (SELECT id FROM community_centers WHERE status = 'archived')", memberId);
+    }
+
+    // ------------------------------------------------------------------ staff
+
+    /** The staff of a unit, oldest first: member id, name, phone and since. */
+    public List<Map<String, Object>> staffOf(String unitId) {
+        return jdbc.queryForList("""
+            SELECT m.id, m.name, m.phone, u.created_at AS since
+            FROM crm_unit_members u JOIN members m ON m.id = u.member_id
+            WHERE u.unit_id = ? AND u.unit_role = 'staff'
+            ORDER BY u.created_at, m.id""", unitId);
+    }
+
+    public int countStaff(String unitId) {
+        return jdbc.queryForObject("SELECT COUNT(*) FROM crm_unit_members WHERE unit_id = ? AND unit_role = 'staff'", Integer.class, unitId);
     }
 }
