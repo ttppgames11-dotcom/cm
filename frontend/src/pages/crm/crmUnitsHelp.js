@@ -82,3 +82,57 @@ export function staffSlotsLeft(team) {
   if (!team) return 0;
   return Math.max(0, (team.max ?? 10) - (team.staff || []).length);
 }
+
+// How an activity's status looks (Marathi label and colours); an unknown status is shown as planned.
+export const ACTIVITY_STATUSES = {
+  planned: { label: 'नियोजित', bg: '#EFF6FF', fg: '#1D4ED8', border: '#BFDBFE' },
+  in_progress: { label: 'सुरू आहे', bg: '#FEF9C3', fg: '#854D0E', border: '#FDE68A' },
+  done: { label: 'पूर्ण', bg: '#DCFCE7', fg: '#166534', border: '#BBF7D0' },
+  overdue: { label: 'मुदत संपली', bg: '#FEE2E2', fg: '#991B1B', border: '#FCA5A5' }
+};
+
+export function activityStatus(status) {
+  return ACTIVITY_STATUSES[status] || ACTIVITY_STATUSES.planned;
+}
+
+// The proof sent when an activity is marked done: the head count as a number, the note, an optional photo link.
+export function completionPayload(form) {
+  const out = {};
+  const count = String(form.attendeeCount ?? '').trim();
+  if (count !== '' && Number.isFinite(Number(count))) out.attendee_count = Number(count);
+  const notes = String(form.notes ?? '').trim();
+  if (notes) out.notes = notes;
+  const photo = String(form.photoUrl ?? '').trim();
+  if (photo) out.photo_url = photo;
+  return out;
+}
+
+// The body of "create the yearly plan": the year and the targets that are whole numbers of zero or more.
+export function planPayload(year, targets) {
+  const out = {};
+  Object.entries(targets || {}).forEach(([type, value]) => {
+    const text = String(value ?? '').trim();
+    if (text === '') return;
+    const n = Number(text);
+    if (Number.isInteger(n) && n >= 0) out[type] = n;
+  });
+  return { year, targets: out };
+}
+
+// May this member plan and record the unit's activities? An admin, or the owner or staff on their own unit.
+export function canWriteActivities(unit, me) {
+  if (!unit || !me?.permissions?.canWriteActivities) return false;
+  return me.scopeKind === 'global' || ((me.scopeKind === 'unit' || me.scopeKind === 'staff') && me.unit?.id === unit.id);
+}
+
+// "3/12 पूर्ण · 12/12 प्रकार", or a note when the year has no plan yet.
+export function progressLabel(progress) {
+  if (!progress || !progress.total) return 'आराखडा नाही';
+  return `${progress.done}/${progress.total} पूर्ण · ${progress.typesCovered}/${progress.typesRequired || 12} प्रकार`;
+}
+
+// The status the edit form starts with: the stored one (an overdue activity that was started stays "in progress").
+export function editableStatus(activity) {
+  const stored = activity?.storedStatus ?? activity?.status;
+  return stored === 'in_progress' ? 'in_progress' : 'planned';
+}

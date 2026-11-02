@@ -97,3 +97,58 @@ test('staffSlotsLeft counts the free seats and never goes below zero', async () 
   assert.equal(staffSlotsLeft({ staff: [], max: 10 }), 10);
   assert.equal(staffSlotsLeft(null), 0);
 });
+
+test('activityStatus has Marathi labels and falls back to planned', async () => {
+  const { activityStatus } = await import('./crmUnitsHelp.js');
+  assert.equal(activityStatus('overdue').label, 'मुदत संपली');
+  assert.equal(activityStatus('done').label, 'पूर्ण');
+  assert.equal(activityStatus('in_progress').label, 'सुरू आहे');
+  assert.equal(activityStatus('planned').label, 'नियोजित');
+  assert.equal(activityStatus('weird').label, 'नियोजित');
+  assert.equal(activityStatus(undefined).label, 'नियोजित');
+});
+
+test('completionPayload sends the head count as a number and drops an empty photo', async () => {
+  const { completionPayload } = await import('./crmUnitsHelp.js');
+  assert.deepEqual(completionPayload({ attendeeCount: ' 40 ', notes: ' ok done ', photoUrl: '' }), { attendee_count: 40, notes: 'ok done' });
+  assert.deepEqual(completionPayload({ attendeeCount: 5, notes: 'abc', photoUrl: ' https://x.com/a.jpg ' }),
+    { attendee_count: 5, notes: 'abc', photo_url: 'https://x.com/a.jpg' });
+  assert.equal(completionPayload({ attendeeCount: '', notes: 'abc' }).attendee_count, undefined);
+});
+
+test('planPayload keeps only whole numbers of zero or more', async () => {
+  const { planPayload } = await import('./crmUnitsHelp.js');
+  assert.deepEqual(planPayload(2090, { blood_donation: '120', job_fair: '', x: -5, y: 'abc', z: 0 }),
+    { year: 2090, targets: { blood_donation: 120, z: 0 } });
+  assert.deepEqual(planPayload(2091, undefined), { year: 2091, targets: {} });
+});
+
+test('canWriteActivities is true for an admin and for the owner or staff on their own unit', async () => {
+  const { canWriteActivities } = await import('./crmUnitsHelp.js');
+  const perm = { canWriteActivities: true };
+  assert.equal(canWriteActivities({ id: 'U-D1' }, { scopeKind: 'global', permissions: perm }), true);
+  assert.equal(canWriteActivities({ id: 'U-D1' }, { scopeKind: 'unit', unit: { id: 'U-D1' }, permissions: perm }), true);
+  assert.equal(canWriteActivities({ id: 'U-D1' }, { scopeKind: 'staff', unit: { id: 'U-D1' }, permissions: perm }), true);
+  assert.equal(canWriteActivities({ id: 'U-T1' }, { scopeKind: 'unit', unit: { id: 'U-D1' }, permissions: perm }), false);
+  assert.equal(canWriteActivities({ id: 'U-D1' }, { scopeKind: 'global', permissions: { canWriteActivities: false } }), false);
+  assert.equal(canWriteActivities(null, { scopeKind: 'global', permissions: perm }), false);
+  assert.equal(canWriteActivities({ id: 'U-D1' }, null), false);
+});
+
+test('progressLabel shows done of total and the types covered', async () => {
+  const { progressLabel } = await import('./crmUnitsHelp.js');
+  assert.equal(progressLabel({ total: 12, done: 3, typesCovered: 12, typesRequired: 12 }), '3/12 पूर्ण · 12/12 प्रकार');
+  assert.equal(progressLabel({ total: 0, done: 0, typesCovered: 0, typesRequired: 12 }), 'आराखडा नाही');
+  assert.equal(progressLabel(null), 'आराखडा नाही');
+});
+
+test('editableStatus uses the stored status, so an overdue started activity stays in progress', async () => {
+  const { editableStatus } = await import('./crmUnitsHelp.js');
+  assert.equal(editableStatus({ status: 'overdue', storedStatus: 'in_progress' }), 'in_progress');
+  assert.equal(editableStatus({ status: 'overdue', storedStatus: 'planned' }), 'planned');
+  assert.equal(editableStatus({ status: 'in_progress', storedStatus: 'in_progress' }), 'in_progress');
+  assert.equal(editableStatus({ status: 'planned', storedStatus: 'planned' }), 'planned');
+  assert.equal(editableStatus({ status: 'in_progress' }), 'in_progress');
+  assert.equal(editableStatus({ status: 'overdue' }), 'planned');
+  assert.equal(editableStatus(null), 'planned');
+});

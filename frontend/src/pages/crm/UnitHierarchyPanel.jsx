@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '../../services/apiClient';
 import StaffSection from './StaffSection';
+import ActivitiesSection from './ActivitiesSection';
 import {
   LEVELS, levelLabel, childLevels, canEditUnit, canManageAbove, unitPayload, breadcrumb
 } from './crmUnitsHelp';
@@ -240,6 +241,7 @@ export default function UnitHierarchyPanel({ me }) {
               )}
 
               <StaffSection key={unit.id} unit={unit} me={me} />
+              <ActivitiesSection key={unit.id} unit={unit} me={me} />
             </div>
           )}
 
