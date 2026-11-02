@@ -319,6 +319,29 @@ export const apiClient = {
   crmRemoveStaff: async (unitId, memberId) => {
     return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/staff/${encodeURIComponent(memberId)}`, { method: 'DELETE' });
   },
+  crmActivityTypes: async () => {
+    const res = await fetchJson('/crm-hierarchy/activity-types');
+    return res.types || [];
+  },
+  crmListActivities: async (unitId, params = {}) => {
+    const q = new URLSearchParams(Object.entries(params).filter(([, v]) => v)).toString();
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/activities${q ? `?${q}` : ''}`);
+  },
+  crmCreatePlan: async (unitId, data) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/plan`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  crmAddActivity: async (unitId, data) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/activities`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  crmUpdateActivity: async (unitId, id, data) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/activities/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+  crmCompleteActivity: async (unitId, id, data) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/activities/${encodeURIComponent(id)}/complete`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  crmDeleteActivity: async (unitId, id) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/activities/${encodeURIComponent(id)}`, { method: 'DELETE' });
+  },
 
   // Organizations API
   getOrganizations: async () => {
