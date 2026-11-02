@@ -70,3 +70,15 @@ export function breadcrumb(unit, ancestors = []) {
   if (!unit) return [];
   return [...ancestors.map((a) => a.name), unit.name];
 }
+
+// May this member add and remove the staff of the unit? An admin, or the owner on their own unit.
+export function canManageStaff(unit, me) {
+  if (!unit || !me?.permissions?.canManageStaff) return false;
+  return me.scopeKind === 'global' || (me.scopeKind === 'unit' && me.unit?.id === unit.id);
+}
+
+// Free seats in a team: max minus the staff, never below zero.
+export function staffSlotsLeft(team) {
+  if (!team) return 0;
+  return Math.max(0, (team.max ?? 10) - (team.staff || []).length);
+}

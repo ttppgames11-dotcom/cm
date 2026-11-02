@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '../../services/apiClient';
+import StaffSection from './StaffSection';
 import {
   LEVELS, levelLabel, childLevels, canEditUnit, canManageAbove, unitPayload, breadcrumb
 } from './crmUnitsHelp';
@@ -237,6 +238,8 @@ export default function UnitHierarchyPanel({ me }) {
                   </div>
                 </form>
               )}
+
+              <StaffSection key={unit.id} unit={unit} me={me} />
             </div>
           )}
 
