@@ -128,11 +128,42 @@ export function canWriteActivities(unit, me) {
 // "3/12 पूर्ण · 12/12 प्रकार", or a note when the year has no plan yet.
 export function progressLabel(progress) {
   if (!progress || !progress.total) return 'आराखडा नाही';
-  return `${progress.done}/${progress.total} पूर्ण · ${progress.typesCovered}/${progress.typesRequired || 12} प्रकार`;
+  return `${progress.done}/${progress.total} पूर्ण · ${progress.typesCovered}/${progress.typesRequired || 12} प्रकार नियोजित · ${progress.typesDone || 0} प्रकार पूर्ण`;
 }
 
 // The status the edit form starts with: the stored one (an overdue activity that was started stays "in progress").
 export function editableStatus(activity) {
   const stored = activity?.storedStatus ?? activity?.status;
   return stored === 'in_progress' ? 'in_progress' : 'planned';
+}
+
+// A percentage as a whole number from 0 to 100 (anything that is not a number is 0), for a progress bar.
+export function pctBar(pct) {
+  const n = Number(pct);
+  if (!Number.isFinite(n)) return 0;
+  return Math.max(0, Math.min(100, Math.round(n)));
+}
+
+// "2/12 प्रकार पूर्ण": how many of the 12 activity types the unit has finished at least once.
+export function coverageLabel(own) {
+  if (!own) return '—';
+  return `${own.typesDone || 0}/12 प्रकार पूर्ण`;
+}
+
+// One table row of a roll-up: the unit and its own numbers, zeros where a number is missing.
+export function rollupRow(entry) {
+  const own = entry?.own || {};
+  const unit = entry?.unit || {};
+  return {
+    id: unit.id,
+    name: unit.name,
+    levelLabel: levelLabel(unit.level),
+    done: own.done || 0,
+    total: own.total || 0,
+    coveragePct: own.coveragePct || 0,
+    completionPct: own.completionPct || 0,
+    overdue: own.overdue || 0,
+    achieved: own.achievedTotal || 0,
+    target: own.targetTotal || 0
+  };
 }

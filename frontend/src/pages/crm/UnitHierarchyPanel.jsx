@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '../../services/apiClient';
 import StaffSection from './StaffSection';
 import ActivitiesSection from './ActivitiesSection';
+import SummarySection from './SummarySection';
+import RollupPanel from './RollupPanel';
 import {
   LEVELS, levelLabel, childLevels, canEditUnit, canManageAbove, unitPayload, breadcrumb
 } from './crmUnitsHelp';
@@ -29,6 +31,8 @@ function Field({ label, children }) {
 const emptyForm = { name: '', address: '', owner: '' };
 
 export default function UnitHierarchyPanel({ me }) {
+  // bumped after every change, so the summary and the roll-up numbers load again
+  const [version, setVersion] = useState(0);
   const [units, setUnits] = useState([]);
   const [selectedId, setSelectedId] = useState(me?.unit?.id || '');
   const [detail, setDetail] = useState(null); // { unit, ancestors } of the selected unit
@@ -92,6 +96,7 @@ export default function UnitHierarchyPanel({ me }) {
     try {
       const res = await call();
       flash(success);
+      setVersion((v) => v + 1);
       await loadUnits();
       await loadDetail(selectedId);
       return res;
@@ -155,6 +160,8 @@ export default function UnitHierarchyPanel({ me }) {
       {error && <div role="alert" style={{ ...card, borderColor: '#FCA5A5', background: '#FEF2F2', color: '#991B1B', fontWeight: 800 }}>{error}</div>}
       {notice && <div role="status" style={{ ...card, borderColor: '#BBF7D0', background: '#F0FDF4', color: '#166534', fontWeight: 800 }}>{notice}</div>}
       {permissions?.readOnly && <div style={{ ...card, color: '#64748B', fontWeight: 800 }}>आपल्याकडे केवळ वाचनाचा अधिकार आहे.</div>}
+
+      <RollupPanel onSelect={setSelectedId} version={version} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', alignItems: 'start' }}>
         <div style={card}>
@@ -240,8 +247,9 @@ export default function UnitHierarchyPanel({ me }) {
                 </form>
               )}
 
-              <StaffSection key={unit.id} unit={unit} me={me} />
-              <ActivitiesSection key={unit.id} unit={unit} me={me} />
+              <StaffSection key={`staff-${unit.id}`} unit={unit} me={me} />
+              <ActivitiesSection key={`act-${unit.id}`} unit={unit} me={me} onChanged={() => setVersion((v) => v + 1)} />
+              <SummarySection key={`sum-${unit.id}`} unit={unit} version={version} />
             </div>
           )}
 
