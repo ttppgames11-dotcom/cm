@@ -176,6 +176,23 @@ public class LazyTables {
         "CREATE INDEX IF NOT EXISTS speaker_requests_speaker ON speaker_requests (speaker_id)",
         "CREATE INDEX IF NOT EXISTS speaker_requests_member ON speaker_requests (member_id, created_at)"};
 
+    /** Migration 017: the CRM unit ladder on community_centers and the unit link on members. */
+    static final String[] CRM_UNIT_TABLES = {
+        COMMUNITY_CENTERS,
+        "ALTER TABLE community_centers ADD COLUMN IF NOT EXISTS level TEXT",
+        "ALTER TABLE community_centers ADD COLUMN IF NOT EXISTS parent_id TEXT",
+        "ALTER TABLE community_centers ADD COLUMN IF NOT EXISTS path TEXT",
+        "ALTER TABLE community_centers ADD COLUMN IF NOT EXISTS owner_id TEXT",
+        "ALTER TABLE community_centers ADD COLUMN IF NOT EXISTS state TEXT",
+        "ALTER TABLE community_centers ADD COLUMN IF NOT EXISTS created_by TEXT",
+        "ALTER TABLE community_centers ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now()",
+        "CREATE INDEX IF NOT EXISTS community_centers_parent ON community_centers (parent_id)",
+        "CREATE INDEX IF NOT EXISTS community_centers_path ON community_centers (path text_pattern_ops)",
+        "CREATE UNIQUE INDEX IF NOT EXISTS community_centers_unit_name ON community_centers ((COALESCE(parent_id, '')), lower(name), level) WHERE level IS NOT NULL",
+        "ALTER TABLE members ADD COLUMN IF NOT EXISTS unit_id TEXT",
+        "ALTER TABLE members ADD COLUMN IF NOT EXISTS unit_role TEXT",
+        "CREATE UNIQUE INDEX IF NOT EXISTS members_one_unit_owner ON members (unit_id) WHERE unit_role = 'owner'"};
+
     private final JdbcTemplate jdbc;
     private final TransactionTemplate ownTransaction;
     private final AtomicBoolean moderationReady = new AtomicBoolean();
@@ -188,6 +205,7 @@ public class LazyTables {
     private final AtomicBoolean bloodTablesReady = new AtomicBoolean();
     private final AtomicBoolean jobColumnsReady = new AtomicBoolean();
     private final AtomicBoolean speakerTablesReady = new AtomicBoolean();
+    private final AtomicBoolean crmUnitTablesReady = new AtomicBoolean();
 
     public LazyTables(JdbcTemplate jdbc, PlatformTransactionManager transactions) {
         this.jdbc = jdbc;
@@ -219,7 +237,13 @@ public class LazyTables {
 
     /** All the website feature tables (services, bookings, tickets, centres), created on first use like Node's ensureWebsiteTables. */
     public void ensureWebsiteTables() {
-        createOnce(websiteTablesReady, SERVICES, SERVICE_BOOKINGS, SUPPORT_TICKETS, COMMUNITY_CENTERS, CENTER_ACTIVITIES);
+        createOnce(websiteTablesReady, SERVICES, SERVICE_BOOKINGS, SUPPORT_TICKETS, CENTER_ACTIVITIES);
+        ensureCrmUnitTables();
+    }
+
+    /** The CRM unit ladder columns and members.unit_id / unit_role, created on first use (a no-op when they exist). */
+    public void ensureCrmUnitTables() {
+        createOnce(crmUnitTablesReady, CRM_UNIT_TABLES);
     }
 
     /** The B2B requirement tables, created on first use (a no-op when they exist). */
