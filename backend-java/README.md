@@ -259,6 +259,7 @@ Rules:
 | `PUT /api/crm-hierarchy/units/{id}/activities/{aid}` | same | change date, target, title, note, `photoUrl` or `status` (`planned` / `in_progress`); `done` → 400 `USE_COMPLETE`; a done activity → 409 `ALREADY_DONE` |
 | `POST /api/crm-hierarchy/units/{id}/activities/{aid}/complete` | same | proof `{ attendeeCount, notes (3+ characters), photoUrl? }` (`PROOF_REQUIRED` 400); final: a second complete or an edit gives 409 `ALREADY_DONE` |
 | `DELETE /api/crm-hierarchy/units/{id}/activities/{aid}` | owner of the unit, admin | staff get 403; a done record only an admin |
+| `GET /api/crm-hierarchy/units/{id}/summary?year=` | anyone who can see the unit | read-only roll-up: `{ year, unit, own, rollup, children: [{unit, own, rollup}], types }`; `own` = that unit's yearly numbers (`total`, per-status counts, `targetTotal`, `achievedTotal`, `typesDone` of 12, `coveragePct` = done types, `completionPct`, `byType`); `rollup` = the sum over the unit and the active units below it that you may see (+ `unitsCount`, `avgCoveragePct`, `unitsFullyCovered`); archived units and their subtrees are left out; staff see only their own unit; 404 outside your scope |
 
 **Business ownership** (design: `docs/superpowers/specs/2026-10-26-business-ownership-design.md`):
 

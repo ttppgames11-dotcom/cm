@@ -17,17 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @AutoConfigureMockMvc
 class CrmActivityReadTest extends CrmUnitTestBase {
 
-    private int serial;
-
-    /** Inserts an activity straight into the table; the year is the year of the date. */
-    String activity(String unitId, String type, String date, int target, String status, int attendees) {
-        String id = "ACT-ZQ" + (++serial);
-        jdbc.update("INSERT INTO crm_activities (id, unit_id, year, type, title, scheduled_date, target_count, attendee_count, status) "
-            + "VALUES (?, ?, ?, ?, ?, CAST(? AS DATE), ?, ?, ?)",
-            id, unitId, Integer.parseInt(date.substring(0, 4)), type, "Zq " + type, date, target, attendees, status);
-        return id;
-    }
-
     /** S → B1 (owner M9301) → D1 (owner M9302, staff M9304) → T1; S → B2 (owner M9303) → D2. */
     private void tree() {
         unit("UNIT-ZQ-S", "state", null, "Zq Maharashtra", null);
@@ -127,6 +116,8 @@ class CrmActivityReadTest extends CrmUnitTestBase {
         assertThat(p.get("targetTotal").asInt()).isEqualTo(600);
         assertThat(p.get("achievedTotal").asInt()).isEqualTo(40);
         assertThat(p.get("typesCovered").asInt()).isEqualTo(3);
+        assertThat(p.get("typesDone").asInt()).isEqualTo(1);
+        assertThat(future.at("/progress/typesDone").asInt()).isZero();
         assertThat(p.get("typesRequired").asInt()).isEqualTo(12);
         assertThat(p.get("coveragePct").asInt()).isEqualTo(25);
         assertThat(p.get("completionPct").asInt()).isEqualTo(33);

@@ -87,4 +87,14 @@ public class CrmActivityRepository {
     public void lockUnit(String unitId) {
         jdbc.queryForList("SELECT id FROM community_centers WHERE id = ? FOR UPDATE", unitId);
     }
+
+    /** All the activity rows of the given units in the year (one query for a whole roll-up). */
+    public List<Map<String, Object>> rowsForUnits(List<String> unitIds, int year) {
+        if (unitIds.isEmpty()) return List.of();
+        String marks = String.join(",", unitIds.stream().map(i -> "?").toList());
+        List<Object> args = new ArrayList<>(unitIds);
+        args.add(year);
+        return jdbc.queryForList("SELECT unit_id, type, status, scheduled_date, target_count, attendee_count FROM crm_activities WHERE unit_id IN ("
+            + marks + ") AND year = ?", args.toArray());
+    }
 }

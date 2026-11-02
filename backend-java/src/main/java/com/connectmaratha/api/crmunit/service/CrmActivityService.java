@@ -392,9 +392,10 @@ public class CrmActivityService {
     static Map<String, Object> progress(List<Map<String, Object>> all) {
         int planned = 0, inProgress = 0, done = 0, overdue = 0, target = 0, achieved = 0;
         Set<Object> covered = new HashSet<>();
+        Set<Object> doneTypes = new HashSet<>();
         for (Map<String, Object> a : all) {
             switch ((String) a.get("status")) {
-                case "done" -> { done++; achieved += ((Number) a.get("attendeeCount")).intValue(); }
+                case "done" -> { done++; achieved += ((Number) a.get("attendeeCount")).intValue(); doneTypes.add(a.get("type")); }
                 case "overdue" -> overdue++;
                 case "in_progress" -> inProgress++;
                 default -> planned++;
@@ -413,6 +414,7 @@ public class CrmActivityService {
         p.put("targetTotal", target);
         p.put("achievedTotal", achieved);
         p.put("typesCovered", covered.size());
+        p.put("typesDone", doneTypes.size());
         p.put("typesRequired", required);
         p.put("coveragePct", Math.round(covered.size() * 100f / required));
         p.put("completionPct", total == 0 ? 0 : Math.round(done * 100f / total));

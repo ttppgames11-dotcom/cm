@@ -104,6 +104,17 @@ abstract class CrmUnitTestBase extends PostgresTestBase {
         return out;
     }
 
+
+    private int activitySerial;
+
+    /** Inserts an activity straight into the table; the year is the year of the date. */
+    String activity(String unitId, String type, String date, int target, String status, int attendees) {
+        String id = "ACT-ZQ" + (++activitySerial);
+        jdbc.update("INSERT INTO crm_activities (id, unit_id, year, type, title, scheduled_date, target_count, attendee_count, status) "
+            + "VALUES (?, ?, ?, ?, ?, CAST(? AS DATE), ?, ?, ?)",
+            id, unitId, Integer.parseInt(date.substring(0, 4)), type, "Zq " + type, date, target, attendees, status);
+        return id;
+    }
     static Map<String, Object> map(Object... pairs) {
         Map<String, Object> m = new LinkedHashMap<>();
         for (int i = 0; i < pairs.length; i += 2) m.put((String) pairs[i], pairs[i + 1]);
