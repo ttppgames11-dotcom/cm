@@ -19,7 +19,7 @@ function Bar({ pct, label }) {
 
 // The yearly summary of one unit: its own progress, the total of everything below it, the child units and the 12 types.
 // Read-only; the numbers come from /api/crm-hierarchy/units/{id}/summary and stay inside the viewer's own area.
-export default function SummarySection({ unit }) {
+export default function SummarySection({ unit, version = 0 }) {
   const thisYear = new Date().getFullYear();
   const [year, setYear] = useState(thisYear);
   const [data, setData] = useState(null);
@@ -35,7 +35,7 @@ export default function SummarySection({ unit }) {
       .then((res) => { if (mine === request.current) { setData(res); setError(''); } })
       .catch((e) => { if (mine === request.current) { setData(null); setError(e.message || 'सारांश लोड करता आला नाही.'); } })
       .finally(() => { if (mine === request.current) setLoading(false); });
-  }, [unit.id, year]);
+  }, [unit.id, year, version]);
 
   const typeName = (key) => data?.types?.find((t) => t.key === key)?.mr || key;
   const typeIcon = (key) => data?.types?.find((t) => t.key === key)?.icon || '📌';

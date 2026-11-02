@@ -8,7 +8,7 @@ const card = { background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadiu
 
 // The roll-up by level: one table per level with a row per unit and the totals of the level. Read-only; the server only
 // sends the units the member may see, and the panel stays hidden when there is nothing to compare (one unit or none).
-export default function RollupPanel({ onSelect }) {
+export default function RollupPanel({ onSelect, version = 0 }) {
   const thisYear = new Date().getFullYear();
   const [year, setYear] = useState(thisYear);
   const [data, setData] = useState(null);
@@ -23,7 +23,7 @@ export default function RollupPanel({ onSelect }) {
       .then((res) => { if (mine === request.current) { setData(res); setError(''); } })
       .catch((e) => { if (mine === request.current) { setData(null); setError(e.message || 'रोल-अप लोड करता आला नाही.'); } })
       .finally(() => { if (mine === request.current) setLoading(false); });
-  }, [year]);
+  }, [year, version]);
 
   const unitCount = (data?.levels || []).reduce((n, l) => n + l.unitsCount, 0);
   if (!loading && !error && unitCount <= 1) return null;

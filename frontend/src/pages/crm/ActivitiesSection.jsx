@@ -9,7 +9,7 @@ const labelStyle = { display: 'block', fontSize: '0.8rem', color: '#C2410C', fon
 
 // The yearly activities of one unit: the plan, the list with statuses and the proof that closes an activity.
 // Everyone who sees the unit reads the list; the buttons show only to those who may write (the server checks again).
-export default function ActivitiesSection({ unit, me }) {
+export default function ActivitiesSection({ unit, me, onChanged }) {
   const thisYear = new Date().getFullYear();
   const [types, setTypes] = useState([]);
   const [year, setYear] = useState(thisYear);
@@ -54,6 +54,7 @@ export default function ActivitiesSection({ unit, me }) {
       setError('');
       setMode(null);
       await load();
+      if (onChanged) onChanged();
       return true;
     } catch (e) {
       setError(e.message || 'काहीतरी चुकले. पुन्हा प्रयत्न करा.');
