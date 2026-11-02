@@ -25,4 +25,11 @@ public class CrmRollupController {
     public Map<String, Object> summary(@PathVariable String id, CurrentUser user, @RequestParam(required = false) String year) {
         return rollups.summary(user, id, year);
     }
+
+    /** One table per level with a row per unit and the totals of the level; optional ?year= and ?level=. */
+    @GetMapping("/rollup")
+    public Map<String, Object> rollup(CurrentUser user, @RequestParam(required = false) String year,
+                                      @RequestParam(required = false) String level) {
+        return rollups.rollup(user, year, level);
+    }
 }
