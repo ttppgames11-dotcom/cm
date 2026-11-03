@@ -8,7 +8,7 @@ const card = { background: '#FFFFFF', border: '1.5px solid #FED7AA', borderRadiu
 
 // The roll-up by level: one table per level with a row per unit and the totals of the level. Read-only; the server only
 // sends the units the member may see, and the panel stays hidden when there is nothing to compare (one unit or none).
-export default function RollupPanel({ onSelect, version = 0 }) {
+export default function RollupPanel({ onSelect, version = 0, alwaysShow = false }) {
   const thisYear = new Date().getFullYear();
   const [year, setYear] = useState(thisYear);
   const [data, setData] = useState(null);
@@ -26,7 +26,7 @@ export default function RollupPanel({ onSelect, version = 0 }) {
   }, [year, version]);
 
   const unitCount = (data?.levels || []).reduce((n, l) => n + l.unitsCount, 0);
-  if (!loading && !error && unitCount <= 1) return null;
+  if (!alwaysShow && !loading && !error && unitCount <= 1) return null;
 
   return (
     <div style={card} data-testid="rollup-panel">
@@ -43,6 +43,8 @@ export default function RollupPanel({ onSelect, version = 0 }) {
 
       {loading && <p style={{ margin: '8px 0 0', fontWeight: 700 }}>लोड होत आहे…</p>}
       {error && <div role="alert" style={{ color: '#991B1B', fontWeight: 800, margin: '6px 0' }}>{error}</div>}
+
+      {alwaysShow && data && data.levels.length === 0 && <p style={{ margin: "10px 0 0", color: "#64748B", fontWeight: 700 }}>अजून कोणतेही युनिट नाही.</p>}
 
       {data?.levels.map((level) => (
         <div key={level.level} style={{ marginTop: '14px', overflowX: 'auto' }}>
