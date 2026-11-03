@@ -236,6 +236,7 @@ public class CrmUnitService {
             if ("archived".equals(parent.get("status"))) throw unitArchived();
             if (LEVELS.indexOf((String) parent.get("level")) + 1 != LEVELS.indexOf(level)) throw levelOrder();
         }
+        Map<String, String> area = resolveArea(level, input);
         String ownerId = resolveMember(input, null, CrmUnitService::ownerInUnit);
 
         String id = "UNIT-" + level.substring(0, 3).toUpperCase(Locale.ROOT) + "-"
@@ -253,6 +254,8 @@ public class CrmUnitService {
         }
         if (!level.equals("branch")) unit.put(level, name);
         unit.put("address", input.get("address"));
+        unit.put("area_district_id", area == null ? null : area.get("districtId"));
+        unit.put("area_taluka_id", area == null ? null : area.get("talukaId"));
         unit.put("created_by", user.id());
 
         tx.executeWithoutResult(status -> {
@@ -291,7 +294,9 @@ public class CrmUnitService {
         String wanted = (String) input.get("status");
         boolean statusChange = wanted != null && !wanted.equals(current);
         if (statusChange && !scope.containsParentOf(path)) throw noAccess();
-        boolean textChange = input.containsKey("name") || input.containsKey("address");
+        Map<String, String> area = resolveArea((String) row.get("level"), input);
+        boolean areaChange = area != null;
+        boolean textChange = input.containsKey("name") || input.containsKey("address") || areaChange;
         // an archived unit is read only, unless this very request restores it
         if ("archived".equals(current) && textChange && !"active".equals(wanted)) throw unitArchived();
 
@@ -302,6 +307,7 @@ public class CrmUnitService {
                 } catch (DuplicateKeyException e) {
                     throw unitExists();
                 }
+                if (areaChange) units.updateArea(id, area.get("districtId"), area.get("talukaId"));
                 audit(user, "CRM_UNIT_UPDATE", Map.of("unit", id));
             }
             if (statusChange) {
@@ -425,6 +431,46 @@ public class CrmUnitService {
         return new ApiException(HttpStatus.CONFLICT, "UNIT_EXISTS", "या नावाचे युनिट येथे आधीच आहे (A unit with this name already exists here).");
     }
 
+
+    /**
+     * The place for a unit of this level from the area keys of the body, or null when the body has none (nothing to
+     * change). Blank values mean "no place". Only district and taluka units may have one; a taluka must belong to the
+     * district; sending only a taluka derives the district; a district unit cannot carry a taluka.
+     */
+    private Map<String, String> resolveArea(String level, Map<String, Object> input) {
+        if (!input.containsKey("area_district_id") && !input.containsKey("area_taluka_id")) return null;
+        String district = blankToNull((String) input.get("area_district_id"));
+        String taluka = blankToNull((String) input.get("area_taluka_id"));
+        Map<String, String> out = new LinkedHashMap<>();
+        if (district != null || taluka != null) {
+            if (!level.equals("district") && !level.equals("taluka")) {
+                throw ApiException.badRequest("AREA_NOT_ALLOWED", "फक्त जिल्हा व तालुका युनिटला ठिकाण देता येते (Only district and taluka units have a place).");
+            }
+            if (level.equals("district") && taluka != null) throw areaMismatch();
+            if (taluka != null) {
+                String ofTaluka = units.talukaDistrict(taluka).orElseThrow(CrmUnitService::areaNotFound);
+                if (district != null && !district.equals(ofTaluka)) throw areaMismatch();
+                district = ofTaluka;
+            } else if (!units.districtExists(district)) {
+                throw areaNotFound();
+            }
+        }
+        out.put("districtId", district);
+        out.put("talukaId", taluka);
+        return out;
+    }
+
+    private static String blankToNull(String s) {
+        return s == null || s.isBlank() ? null : s.trim();
+    }
+
+    private static ApiException areaNotFound() {
+        return ApiException.badRequest("AREA_NOT_FOUND", "हे ठिकाण यादीत आढळले नाही (This place is not in the location list).");
+    }
+
+    private static ApiException areaMismatch() {
+        return ApiException.badRequest("AREA_MISMATCH", "तालुका निवडलेल्या जिल्ह्याचा नाही, किंवा जिल्हा युनिटला तालुका देता येत नाही (The taluka does not belong to the district).");
+    }
     private static ApiException unitArchived() {
         return new ApiException(HttpStatus.CONFLICT, "UNIT_ARCHIVED", "हे युनिट संग्रहित आहे (This unit is archived).");
     }
@@ -455,6 +501,12 @@ public class CrmUnitService {
         u.put("taluka", row.get("taluka"));
         u.put("address", row.get("address"));
         u.put("status", row.get("status"));
+        Map<String, Object> area = new LinkedHashMap<>();
+        area.put("districtId", row.get("area_district_id"));
+        area.put("districtName", row.get("area_district_name"));
+        area.put("talukaId", row.get("area_taluka_id"));
+        area.put("talukaName", row.get("area_taluka_name"));
+        u.put("area", area);
         Map<String, Object> owner = null;
         if (row.get("owner_id") != null) {
             owner = new LinkedHashMap<>();
