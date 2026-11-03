@@ -18,7 +18,7 @@ test('job notifications open the right jobs tab', () => {
   assert.equal(notificationIcon('job_application'), '📋');
   assert.equal(notificationLink('job_alert'), '/jobs');
   assert.equal(notificationIcon('job_alert'), '💼');
-  assert.equal(notificationLink('crm_unit'), '/crm');
+  assert.equal(notificationLink('crm_unit'), '/crm/dashboard');
   assert.equal(notificationIcon('crm_unit'), '🏢');
 });
 

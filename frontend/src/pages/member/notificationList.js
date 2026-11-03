@@ -3,7 +3,7 @@
 
 const LINKS = {
   blood: '/blood-help', blood_admin: '/admin/seva', chapter: '/sangam', meeting: '/meetings',
-  job: '/jobs?tab=mine', job_application: '/jobs?tab=applied', job_alert: '/jobs', crm_unit: '/crm'
+  job: '/jobs?tab=mine', job_application: '/jobs?tab=applied', job_alert: '/jobs', crm_unit: '/crm/dashboard'
 };
 const ICONS = { blood: '🩸', blood_admin: '🩸', chapter: '🤝', meeting: '📅', enquiry: '📩', job: '💼', job_application: '📋', job_alert: '💼', crm_unit: '🏢' };
 
