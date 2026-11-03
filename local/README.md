@@ -25,4 +25,10 @@ state@, branch@, division@, district@, taluka@, staff@, free1@, free2@ — all `
 - `staff@local.test`: the staff desk (read-only unit, can record activities).
 - `ceo@local.test`: everything, read only.
 
+## The area section (Step 6)
+- The local database has Maharashtra with two districts (Pune, Satara) and three talukas, plus a few sample members, businesses, jobs, events and tickets in them.
+- The local District unit covers Pune and the local Taluka unit covers Haveli. Open the unit card (or a dashboard) to see the **क्षेत्र (Area)** counts.
+- As `admin@local.test` or the owner above a unit, edit a district or taluka unit and pick another place; the counts follow.
+- Counts for businesses, jobs, events and tickets are matched by the typed district name, so they say "जिल्ह्याच्या नावानुसार".
+
 `password123` works only because the local script starts the backend with `ALLOW_DEV_LOGIN_FALLBACK=true`; the live server never does.

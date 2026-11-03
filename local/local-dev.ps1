@@ -24,7 +24,8 @@ $Migrations = @(
   '001_initial.sql', '001_create_location_hierarchy.sql', '002_security_moderation.sql', '003_account_lifecycle.sql',
   '004_referrals.sql', '004_password_resets.sql', '005_media.sql', '006_meetings_columns.sql', '007_directory_records.sql',
   '008_enquiries.sql', '009_referrals_business.sql', '010_meetings_mode.sql', '011_chapters.sql', '012_blood_help.sql',
-  '013_job_applications.sql', '014_job_alerts.sql', '015_speakers.sql', '016_officers.sql', '017_crm_units.sql', '018_crm_activities.sql'
+  '013_job_applications.sql', '014_job_alerts.sql', '015_speakers.sql', '016_officers.sql', '017_crm_units.sql', '018_crm_activities.sql',
+  '019_crm_unit_area.sql'
 )
 $ExtraColumns = @"
 ALTER TABLE members ADD COLUMN IF NOT EXISTS reference_id TEXT;
@@ -86,8 +87,11 @@ function Up {
     [IO.File]::WriteAllText($tmp, $ExtraColumns, (New-Object Text.UTF8Encoding $false))
     Run-Sql $tmp
   }
+  # an older local database made before the place columns existed gets them here (safe to repeat)
+  Run-Sql (Join-Path $Repo 'database\migrations\019_crm_unit_area.sql')
   Write-Host 'Adding the test accounts and the CRM test data...'
   Run-Sql (Join-Path $PSScriptRoot 'seed-crm.sql')
+  Run-Sql (Join-Path $PSScriptRoot 'seed-crm-area.sql')
   Write-Host ''
   Write-Host 'Local database is ready.' -ForegroundColor Green
   Write-Host 'Log in on the website with password123 and one of these e-mails:'
