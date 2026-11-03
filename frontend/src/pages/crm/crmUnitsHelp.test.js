@@ -228,3 +228,40 @@ test('dashboardFor gives nothing to people without CRM access', async () => {
   assert.equal(crmHome({ scopeKind: 'none' }), null);
   assert.equal(crmHome(null), null);
 });
+
+test('kpiValue shows a dash for a missing or null count', async () => {
+  const { kpiValue } = await import('./crmUnitsHelp.js');
+  assert.equal(kpiValue(null), '—');
+  assert.equal(kpiValue(undefined), '—');
+  assert.equal(kpiValue({ value: null }), '—');
+  assert.equal(kpiValue({ value: 0 }), '0');
+  assert.equal(kpiValue({ value: 12 }), '12');
+});
+
+test('areaLabel shows the Marathi half of the place names', async () => {
+  const { areaLabel } = await import('./crmUnitsHelp.js');
+  assert.equal(areaLabel({ districtName: 'Pune / पुणे', talukaName: 'Pune City / पुणे शहर' }), 'पुणे › पुणे शहर');
+  assert.equal(areaLabel({ districtName: 'Pune / पुणे', talukaName: null }), 'पुणे');
+  assert.equal(areaLabel({ districtName: 'Satara', talukaName: null }), 'Satara');
+  assert.equal(areaLabel({ districtName: null, talukaName: null }), '—');
+  assert.equal(areaLabel(null), '—');
+  assert.equal(areaLabel(undefined), '—');
+});
+
+test('areaPayload sends only the chosen place, and an empty value only to clear', async () => {
+  const { areaPayload } = await import('./crmUnitsHelp.js');
+  assert.deepEqual(areaPayload({ districtId: ' ZQD1 ', talukaId: '' }), { districtId: 'ZQD1' });
+  assert.deepEqual(areaPayload({ districtId: 'ZQD1', talukaId: 'ZQT1' }), { districtId: 'ZQD1', talukaId: 'ZQT1' });
+  assert.deepEqual(areaPayload({ districtId: '', talukaId: '', clear: true }), { districtId: '', talukaId: '' });
+  assert.deepEqual(areaPayload({}), {});
+  assert.deepEqual(areaPayload(null), {});
+});
+
+test('needsArea is true for district and taluka units only', async () => {
+  const { needsArea } = await import('./crmUnitsHelp.js');
+  assert.equal(needsArea('district'), true);
+  assert.equal(needsArea('taluka'), true);
+  assert.equal(needsArea('branch'), false);
+  assert.equal(needsArea('state'), false);
+  assert.equal(needsArea(undefined), false);
+});

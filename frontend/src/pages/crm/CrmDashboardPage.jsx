@@ -5,6 +5,7 @@ import CrmGate from './CrmGate';
 import SummarySection from './SummarySection';
 import StaffSection from './StaffSection';
 import ActivitiesSection from './ActivitiesSection';
+import AreaKpisSection from './AreaKpisSection';
 import RollupPanel from './RollupPanel';
 import { levelLabel } from './crmUnitsHelp';
 
@@ -16,6 +17,7 @@ function UnitSections({ unit, me, version, onChanged }) {
   return (
     <div style={card}>
       <SummarySection key={`sum-${unit.id}`} unit={unit} version={version} />
+      <AreaKpisSection key={`area-${unit.id}`} unit={unit} version={version} />
       <StaffSection key={`staff-${unit.id}`} unit={unit} me={me} />
       <ActivitiesSection key={`act-${unit.id}`} unit={unit} me={me} onChanged={onChanged} />
     </div>

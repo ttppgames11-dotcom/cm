@@ -3,9 +3,11 @@ import apiClient from '../../services/apiClient';
 import StaffSection from './StaffSection';
 import ActivitiesSection from './ActivitiesSection';
 import SummarySection from './SummarySection';
+import AreaKpisSection from './AreaKpisSection';
+import PlacePicker from './PlacePicker';
 import RollupPanel from './RollupPanel';
 import {
-  LEVELS, levelLabel, childLevels, canEditUnit, canManageAbove, unitPayload, breadcrumb
+  LEVELS, levelLabel, childLevels, canEditUnit, canManageAbove, unitPayload, breadcrumb, areaPayload, needsArea, areaLabel
 } from './crmUnitsHelp';
 
 // राज्य > शाखा > विभाग > जिल्हा > तालुका: the units this account may see, with their owners.
@@ -111,7 +113,10 @@ export default function UnitHierarchyPanel({ me }) {
   const submitCreate = async (e) => {
     e.preventDefault();
     const res = await run(
-      () => apiClient.crmCreateUnit(unitPayload({ ...create, parentId: unit?.id })),
+      () => apiClient.crmCreateUnit({
+        ...unitPayload({ ...create, parentId: unit?.id }),
+        ...(needsArea(create.level) ? areaPayload(create) : {})
+      }),
       'युनिट तयार झाले! मालकाला सूचना गेली.'
     );
     if (res) {
@@ -122,7 +127,9 @@ export default function UnitHierarchyPanel({ me }) {
 
   const submitEdit = async (e) => {
     e.preventDefault();
-    const res = await run(() => apiClient.crmUpdateUnit(unit.id, unitPayload(edit)), 'बदल जतन झाला.');
+    // an empty place is sent as an explicit clear, so removing the place works
+    const body = { ...unitPayload(edit), ...(needsArea(unit.level) ? areaPayload({ ...edit, clear: true }) : {}) };
+    const res = await run(() => apiClient.crmUpdateUnit(unit.id, body), 'बदल जतन झाला.');
     if (res) setMode(null);
   };
 
@@ -141,7 +148,13 @@ export default function UnitHierarchyPanel({ me }) {
     if (res) { setMode(null); setNewOwner(''); }
   };
 
-  const startEdit = () => { setEdit({ name: unit.name || '', address: unit.address || '' }); setMode('edit'); };
+  const startEdit = () => {
+    setEdit({
+      name: unit.name || '', address: unit.address || '',
+      districtId: unit.area?.districtId || '', talukaId: unit.area?.talukaId || ''
+    });
+    setMode('edit');
+  };
 
   if (loading) return <div style={{ ...card, fontWeight: 800 }}>लोड होत आहे…</div>;
 
@@ -203,6 +216,7 @@ export default function UnitHierarchyPanel({ me }) {
               </h3>
               {unit.status === 'archived' && <p style={{ color: '#991B1B', fontWeight: 800, margin: '4px 0' }}>🗄️ हे युनिट संग्रहित आहे.</p>}
               {unit.address && <p style={{ margin: '4px 0', fontWeight: 700 }}>📍 {unit.address}</p>}
+              {needsArea(unit.level) && <p style={{ margin: '4px 0', fontWeight: 700 }}>🗺️ ठिकाण: {areaLabel(unit.area)}</p>}
               <p style={{ margin: '4px 0', fontWeight: 700 }}>
                 👤 मालक: {unit.owner ? `${unit.owner.name || unit.owner.id} (${unit.owner.id})` : '—'}
                 {unit.owner?.phone ? ` · 📞 ${unit.owner.phone}` : ''}
@@ -227,6 +241,9 @@ export default function UnitHierarchyPanel({ me }) {
                   <Field label="पत्ता">
                     <input aria-label="पत्ता" value={edit.address} onChange={(e) => setEdit({ ...edit, address: e.target.value })} style={inputStyle} />
                   </Field>
+                  {needsArea(unit.level) && (
+                    <PlacePicker level={unit.level} value={edit} onChange={(p) => setEdit({ ...edit, ...p })} />
+                  )}
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button type="submit" style={primaryBtn} disabled={busy}>जतन करा</button>
                     <button type="button" style={ghostBtn} onClick={() => setMode(null)}>रद्द करा</button>
@@ -250,6 +267,7 @@ export default function UnitHierarchyPanel({ me }) {
               <StaffSection key={`staff-${unit.id}`} unit={unit} me={me} />
               <ActivitiesSection key={`act-${unit.id}`} unit={unit} me={me} onChanged={() => setVersion((v) => v + 1)} />
               <SummarySection key={`sum-${unit.id}`} unit={unit} version={version} />
+              <AreaKpisSection key={`area-${unit.id}`} unit={unit} version={version} />
             </div>
           )}
 
@@ -271,6 +289,9 @@ export default function UnitHierarchyPanel({ me }) {
                 <Field label="पत्ता">
                   <input aria-label="नवीन युनिटचा पत्ता" value={create.address} onChange={(e) => setCreate({ ...create, address: e.target.value })} style={inputStyle} />
                 </Field>
+                {needsArea(create.level) && (
+                  <PlacePicker level={create.level} value={create} onChange={(p) => setCreate({ ...create, ...p })} />
+                )}
                 <Field label="मालक — सदस्य आयडी किंवा मोबाईल *">
                   <input aria-label="मालक" required value={create.owner} onChange={(e) => setCreate({ ...create, owner: e.target.value })} style={inputStyle} placeholder="उदा. M4521 किंवा 98765 00021" />
                 </Field>
