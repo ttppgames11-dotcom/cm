@@ -229,10 +229,11 @@ export function areaLabel(area) {
 }
 
 // The place sent with a unit: the chosen ids only; an empty value is sent only when the place is being cleared.
-export function areaPayload(form) {
+export function areaPayload(form, level) {
   if (!form) return {};
   const district = String(form.districtId ?? '').trim();
-  const taluka = String(form.talukaId ?? '').trim();
+  // a district unit cannot have a taluka, so a stale one left in the form is never sent
+  const taluka = level && level !== 'taluka' ? '' : String(form.talukaId ?? '').trim();
   if (form.clear && !district && !taluka) return { districtId: '', talukaId: '' };
   const out = {};
   if (district) out.districtId = district;

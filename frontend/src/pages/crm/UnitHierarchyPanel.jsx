@@ -115,7 +115,7 @@ export default function UnitHierarchyPanel({ me }) {
     const res = await run(
       () => apiClient.crmCreateUnit({
         ...unitPayload({ ...create, parentId: unit?.id }),
-        ...(needsArea(create.level) ? areaPayload(create) : {})
+        ...(needsArea(create.level) ? areaPayload(create, create.level) : {})
       }),
       'युनिट तयार झाले! मालकाला सूचना गेली.'
     );
@@ -128,7 +128,7 @@ export default function UnitHierarchyPanel({ me }) {
   const submitEdit = async (e) => {
     e.preventDefault();
     // an empty place is sent as an explicit clear, so removing the place works
-    const body = { ...unitPayload(edit), ...(needsArea(unit.level) ? areaPayload({ ...edit, clear: true }) : {}) };
+    const body = { ...unitPayload(edit), ...(needsArea(unit.level) ? areaPayload({ ...edit, clear: true }, unit.level) : {}) };
     const res = await run(() => apiClient.crmUpdateUnit(unit.id, body), 'बदल जतन झाला.');
     if (res) setMode(null);
   };

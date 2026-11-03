@@ -265,3 +265,12 @@ test('needsArea is true for district and taluka units only', async () => {
   assert.equal(needsArea('state'), false);
   assert.equal(needsArea(undefined), false);
 });
+
+test('areaPayload drops a taluka that the level of the unit cannot have', async () => {
+  const { areaPayload } = await import('./crmUnitsHelp.js');
+  // a stale taluka left over in the form must not be sent for a district unit
+  assert.deepEqual(areaPayload({ districtId: 'ZQD1', talukaId: 'ZQT1' }, 'district'), { districtId: 'ZQD1' });
+  assert.deepEqual(areaPayload({ districtId: 'ZQD1', talukaId: 'ZQT1' }, 'taluka'), { districtId: 'ZQD1', talukaId: 'ZQT1' });
+  assert.deepEqual(areaPayload({ districtId: 'ZQD1', talukaId: 'ZQT1' }), { districtId: 'ZQD1', talukaId: 'ZQT1' });
+  assert.deepEqual(areaPayload({ districtId: '', talukaId: 'ZQT1', clear: true }, 'district'), { districtId: '', talukaId: '' });
+});
