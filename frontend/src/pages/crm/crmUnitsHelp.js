@@ -207,3 +207,41 @@ export function dashboardFor(me) {
 export function crmHome(me) {
   return dashboardFor(me) ? '/crm/dashboard' : null;
 }
+
+// A count from the area KPIs: the number, or a dash when it is not available (null or missing).
+export function kpiValue(kpi) {
+  if (!kpi || kpi.value === null || kpi.value === undefined) return '—';
+  return String(kpi.value);
+}
+
+// "Pune / पुणे" → "पुणे": the Marathi half of a bilingual master name when there is one.
+export function placeName(name) {
+  if (!name) return '';
+  const parts = String(name).split('/').map((p) => p.trim()).filter(Boolean);
+  return parts.find((p) => /[ऀ-ॿ]/.test(p)) || parts[0] || '';
+}
+
+// The place of a unit as one line ("पुणे › पुणे शहर"), or a dash when it has none.
+export function areaLabel(area) {
+  if (!area) return '—';
+  const names = [placeName(area.districtName), placeName(area.talukaName)].filter(Boolean);
+  return names.length ? names.join(' › ') : '—';
+}
+
+// The place sent with a unit: the chosen ids only; an empty value is sent only when the place is being cleared.
+export function areaPayload(form, level) {
+  if (!form) return {};
+  const district = String(form.districtId ?? '').trim();
+  // a district unit cannot have a taluka, so a stale one left in the form is never sent
+  const taluka = level && level !== 'taluka' ? '' : String(form.talukaId ?? '').trim();
+  if (form.clear && !district && !taluka) return { districtId: '', talukaId: '' };
+  const out = {};
+  if (district) out.districtId = district;
+  if (taluka) out.talukaId = taluka;
+  return out;
+}
+
+// Only district and taluka units have a place of their own.
+export function needsArea(level) {
+  return level === 'district' || level === 'taluka';
+}

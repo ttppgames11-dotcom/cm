@@ -350,6 +350,17 @@ export const apiClient = {
     const q = new URLSearchParams(Object.entries(params).filter(([, v]) => v)).toString();
     return await fetchJson(`/crm-hierarchy/rollup${q ? `?${q}` : ''}`);
   },
+  crmUnitAreaKpis: async (unitId) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(unitId)}/area-kpis`);
+  },
+  getLocationDistricts: async (stateId) => {
+    const res = await fetchJson(`/locations/districts?stateId=${encodeURIComponent(stateId)}`);
+    return res.data || [];
+  },
+  getLocationTalukas: async (districtId) => {
+    const res = await fetchJson(`/locations/talukas?districtId=${encodeURIComponent(districtId)}`);
+    return res.data || [];
+  },
 
   // Organizations API
   getOrganizations: async () => {
