@@ -12,6 +12,7 @@ import HomePage from './pages/home/HomePage';
 import HistoryPage from './pages/history/HistoryPage';
 import FortsMapPage from './pages/forts/FortsMapPage';
 import MaharashtraNetworkPage from './pages/network/MaharashtraNetworkPage';
+import AwardFunctionPage from './pages/awards/AwardFunctionPage';
 import DigitalMemberCardPage from './pages/member/DigitalMemberCardPage';
 import RegisterWizardPage from './pages/member/RegisterWizardPage';
 import LoginPage from './pages/member/LoginPage';
@@ -331,7 +332,7 @@ export default function App() {
             <Route path="/onboarding" element={<RegisterWizardPage />} />
             <Route path="/membership" element={<RegisterWizardPage />} />
             <Route path="/login" element={<LoginPage />} />
-            {/* Private Member Center — Protected for Authenticated Members */}
+            {/* Private Member Center â€” Protected for Authenticated Members */}
             <Route path="/dashboard" element={<MemberProtectedRoute><MemberDashboardPage /></MemberProtectedRoute>} />
             <Route path="/profile" element={<MemberProtectedRoute><UserProfilePage /></MemberProtectedRoute>} />
             <Route path="/settings" element={<MemberProtectedRoute><UserProfilePage /></MemberProtectedRoute>} />
@@ -390,7 +391,7 @@ export default function App() {
             <Route path="/shivkal-festivals" element={<ShivkalFestivalsPage />} />
             <Route path="/festivals" element={<ShivkalFestivalsPage />} />
 
-            {/* Connect Maratha — Expanded Maharashtra Civilization Explorer (49 Features / 12 Worlds) */}
+            {/* Connect Maratha â€” Expanded Maharashtra Civilization Explorer (49 Features / 12 Worlds) */}
             <Route path="/universe" element={<ConnectMarathaUniversePage />} />
             <Route path="/civilization" element={<ConnectMarathaUniversePage />} />
             <Route path="/master-map" element={<ConnectMarathaUniversePage />} />
@@ -465,7 +466,7 @@ export default function App() {
             <Route path="/admin/login" element={<CRMLoginPage />} />
             <Route path="/admin/crm-login" element={<CRMLoginPage />} />
 
-            {/* Role-Specific Live Enterprise CRM Suite — Protected for Authenticated Staff/Admins */}
+            {/* Role-Specific Live Enterprise CRM Suite â€” Protected for Authenticated Staff/Admins */}
             <Route path="/crm" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
             <Route path="/crm/roles" element={<CRMProtectedRoute><CRMRoleHubPage /></CRMProtectedRoute>} />
             <Route path="/crm/admin" element={<CRMProtectedRoute allowedRoles={['superadmin', 'admin', 'ceo']}><SuperAdminDashboardPage /></CRMProtectedRoute>} />
