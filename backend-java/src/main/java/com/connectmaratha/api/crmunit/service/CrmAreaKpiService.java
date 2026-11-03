@@ -85,7 +85,7 @@ public class CrmAreaKpiService {
         int ticketsOpen = counts.countByDistrictNames("support_tickets", districtHalves, "status NOT IN ('Resolved', 'Closed')");
         if (!talukaOnly) {
             businesses = counts.countByDistrictNames("businesses", districtHalves, null);
-            jobsOpen = counts.countByDistrictNames("jobs", districtHalves, "status = 'open' AND hidden = false");
+            jobsOpen = counts.countByDistrictNames("jobs", districtHalves, "status = 'open' AND (closes_at IS NULL OR closes_at > now()) AND hidden = false");
             events = counts.countByDistrictNames("events", districtHalves, null);
         }
         // tickets also carry a typed taluka, so talukas that no district covers can be counted by taluka and district name

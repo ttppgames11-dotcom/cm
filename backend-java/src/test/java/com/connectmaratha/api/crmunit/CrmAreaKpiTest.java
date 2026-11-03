@@ -72,6 +72,9 @@ class CrmAreaKpiTest extends CrmUnitTestBase {
         job("ZQJ2", "Zqpune", "closed", false);
         job("ZQJ3", "Zqpune", "open", true);
         job("ZQJ4", "Zqsatara", "open", false);
+        // an open job whose closing date has passed is not on the jobs board, so it is not counted either
+        jdbc.update("INSERT INTO jobs (id, title, district, status, hidden, closes_at) VALUES (?, ?, ?, ?, ?, now() - interval '7 days')",
+            "ZQJ5", "Zq Job ZQJ5", "Zqpune", "open", false);
         // events
         for (String[] e : new String[][] {{"ZQE1", "Zqpune"}, {"ZQE2", "झक्यूपुणे"}, {"ZQE3", "Zqsatara"}}) {
             jdbc.update("INSERT INTO events (id, title, district) VALUES (?, ?, ?)", e[0], "Zq Event " + e[0], e[1]);
