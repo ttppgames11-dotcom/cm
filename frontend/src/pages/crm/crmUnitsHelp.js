@@ -167,3 +167,43 @@ export function rollupRow(entry) {
     target: own.targetTotal || 0
   };
 }
+
+// The name of the level just below a unit of this level ("शाखा" under a state), for a dashboard's child table.
+export function childLevelLabel(level) {
+  return { state: 'शाखा', branch: 'विभाग', division: 'जिल्हे', district: 'तालुके' }[level] || '';
+}
+
+const OWNER_DASHBOARDS = {
+  state: { title: 'राज्य अध्यक्ष डॅशबोर्ड', icon: '🏛️', color: '#4f46e5' },
+  branch: { title: 'शाखाध्यक्ष डॅशबोर्ड', icon: '🏢', color: '#c026d3' },
+  division: { title: 'विभागीय अध्यक्ष डॅशबोर्ड', icon: '🗺️', color: '#7c3aed' },
+  district: { title: 'जिल्हा अध्यक्ष डॅशबोर्ड', icon: '📍', color: '#0284c7' },
+  taluka: { title: 'तालुका अध्यक्ष डॅशबोर्ड', icon: '🏘️', color: '#16a34a' }
+};
+
+// Which dashboard a person gets, from the /me answer: owners by the level of their unit, staff on their unit's desk,
+// admin and CEO the top view. Nothing (null) for someone with no CRM access.
+export function dashboardFor(me) {
+  if (!me || me.scopeKind === 'none') return null;
+  const base = { childLabel: '', readOnly: false, showRollup: false, canManageUnits: false };
+  if (me.scopeKind === 'global') {
+    if (me.permissions?.readOnly) {
+      return { ...base, key: 'ceo', title: 'कार्याध्यक्ष (केवळ पाहणे)', icon: '👁️', color: '#2563eb', readOnly: true, showRollup: true };
+    }
+    return { ...base, key: 'admin', title: 'सर्वोच्च प्रशासक (CRM)', icon: '🛡️', color: '#ea580c', showRollup: true, canManageUnits: true };
+  }
+  if (me.scopeKind === 'staff') {
+    return { ...base, key: 'staff', title: 'केंद्र कर्मचारी डेस्क', icon: '🧑‍💼', color: '#059669', readOnly: true };
+  }
+  const level = me.unit?.level;
+  const d = OWNER_DASHBOARDS[level];
+  if (me.scopeKind === 'unit' && d) {
+    return { ...base, key: level, ...d, childLabel: childLevelLabel(level), canManageUnits: true };
+  }
+  return null;
+}
+
+// Where /crm sends a person: the dashboard, or nowhere when they have no CRM access.
+export function crmHome(me) {
+  return dashboardFor(me) ? '/crm/dashboard' : null;
+}
