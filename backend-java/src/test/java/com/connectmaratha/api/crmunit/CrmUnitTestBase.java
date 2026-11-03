@@ -44,6 +44,9 @@ abstract class CrmUnitTestBase extends PostgresTestBase {
         jdbc.update("DELETE FROM crm_activities WHERE unit_id LIKE 'UNIT-ZQ%'");
         jdbc.update("DELETE FROM community_centers WHERE id LIKE 'UNIT-ZQ%' OR name LIKE 'Zq%' OR name LIKE 'zq%'");
         jdbc.update("DELETE FROM community_centers WHERE id = 'OLD-ZQ-1'");
+        for (String table : new String[] {"talukas", "districts", "states", "countries"}) {
+            jdbc.update("DELETE FROM " + table + " WHERE id LIKE 'ZQ%'");
+        }
         jdbc.update("DELETE FROM crm_unit_members WHERE member_id LIKE 'M93%'");
         jdbc.update("DELETE FROM notifications WHERE member_id LIKE 'M93%'");
         jdbc.update("DELETE FROM audit_logs WHERE user_id LIKE 'M93%'");
@@ -115,6 +118,16 @@ abstract class CrmUnitTestBase extends PostgresTestBase {
     }
 
 
+
+    /** The test places: districts ZQD1 and ZQD2 and talukas ZQT1 and ZQT2 (in ZQD1) and ZQT3 (in ZQD2); names are bilingual. */
+    void places() {
+        jdbc.update("INSERT INTO countries (id, name, code) VALUES ('ZQC', 'Zqland', 'ZQC') ON CONFLICT (id) DO NOTHING");
+        jdbc.update("INSERT INTO states (id, country_id, name, code) VALUES ('ZQS', 'ZQC', 'Zqstate', 'ZQS') ON CONFLICT (id) DO NOTHING");
+        jdbc.update("INSERT INTO districts (id, state_id, name, code) VALUES ('ZQD1', 'ZQS', 'Zqpune / झक्यूपुणे', 'ZQD1'), "
+            + "('ZQD2', 'ZQS', 'Zqsatara / झक्यूसातारा', 'ZQD2') ON CONFLICT (id) DO NOTHING");
+        jdbc.update("INSERT INTO talukas (id, district_id, name, code) VALUES ('ZQT1', 'ZQD1', 'Zqhaveli / झक्यूहवेली', 'ZQT1'), "
+            + "('ZQT2', 'ZQD1', 'Zqmulshi / झक्यूमुळशी', 'ZQT2'), ('ZQT3', 'ZQD2', 'Zqkarad / झक्यूकराड', 'ZQT3') ON CONFLICT (id) DO NOTHING");
+    }
     private int activitySerial;
 
     /** Inserts an activity straight into the table; the year is the year of the date. */

@@ -14,6 +14,7 @@ public final class CrmUnitSchemas {
     public static final List<String> LEVELS = List.of("state", "branch", "division", "district", "taluka");
     public static final Object[] STATUSES = {"active", "archived"};
 
+    private static final java.util.Set<String> AREA_KEYS = java.util.Set.of("area_district_id", "area_taluka_id");
     private static final String TEN_DIGITS = "^[0-9]{10}$";
     private static final String PHONE_MESSAGE = "मोबाईल नंबर १० अंकी असावा (Phone must be 10 digits)";
 
@@ -22,12 +23,16 @@ public final class CrmUnitSchemas {
         "name", Rule.string().required().min(2).max(100),
         "parent_id", Rule.string().max(60),
         "address", Rule.string().max(300),
+        "area_district_id", Rule.string().max(60),
+        "area_taluka_id", Rule.string().max(60),
         "owner_member", Rule.string().max(30),
         "owner_phone", Rule.string().pattern(TEN_DIGITS, PHONE_MESSAGE));
 
     public static final Map<String, Rule> UPDATE = ordered(
         "name", Rule.string().min(2).max(100),
         "address", Rule.string().max(300),
+        "area_district_id", Rule.string().max(60),
+        "area_taluka_id", Rule.string().max(60),
         "status", Rule.string().oneOf(STATUSES));
 
     public static final Map<String, Rule> OWNER = ordered(
@@ -42,6 +47,15 @@ public final class CrmUnitSchemas {
     public static Map<String, Object> normalize(Map<String, Object> body) {
         Map<String, Object> copy = new LinkedHashMap<>(body);
         if (!copy.containsKey("parent_id") && copy.containsKey("parentId")) copy.put("parent_id", copy.get("parentId"));
+        // the place of a district or taluka unit; an empty value is kept (it means "clear it")
+        if (!copy.containsKey("area_district_id")) {
+            Object v = copy.containsKey("districtId") ? copy.get("districtId") : copy.get("district_id");
+            if (v != null) copy.put("area_district_id", v);
+        }
+        if (!copy.containsKey("area_taluka_id")) {
+            Object v = copy.containsKey("talukaId") ? copy.get("talukaId") : copy.get("taluka_id");
+            if (v != null) copy.put("area_taluka_id", v);
+        }
         Object owner = copy.get("owner");
         if (owner instanceof Map<?, ?> o) {
             if (o.get("member") != null) copy.put("owner_member", o.get("member"));
@@ -52,7 +66,7 @@ public final class CrmUnitSchemas {
         for (String key : copy.keySet().toArray(new String[0])) {
             if (copy.get(key) instanceof String s) {
                 String trimmed = s.trim();
-                if (trimmed.isEmpty()) copy.remove(key); else copy.put(key, trimmed);
+                if (trimmed.isEmpty() && !AREA_KEYS.contains(key)) copy.remove(key); else copy.put(key, trimmed);
             }
         }
         if (copy.get("owner_phone") instanceof String phone) copy.put("owner_phone", phone.replaceAll("[\\s-]", ""));

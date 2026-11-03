@@ -190,7 +190,10 @@ public class LazyTables {
         "CREATE INDEX IF NOT EXISTS community_centers_path ON community_centers (path text_pattern_ops)",
         "CREATE UNIQUE INDEX IF NOT EXISTS community_centers_unit_name ON community_centers ((COALESCE(parent_id, '')), lower(name), level) WHERE level IS NOT NULL",
         "CREATE TABLE IF NOT EXISTS crm_unit_members (member_id TEXT PRIMARY KEY, unit_id TEXT NOT NULL, unit_role TEXT NOT NULL DEFAULT 'owner', created_at TIMESTAMPTZ NOT NULL DEFAULT now())",
-        "CREATE UNIQUE INDEX IF NOT EXISTS crm_unit_members_one_owner ON crm_unit_members (unit_id) WHERE unit_role = 'owner'"};
+        "CREATE UNIQUE INDEX IF NOT EXISTS crm_unit_members_one_owner ON crm_unit_members (unit_id) WHERE unit_role = 'owner'",
+        // migration 019: the place of a district or taluka unit
+        "ALTER TABLE community_centers ADD COLUMN IF NOT EXISTS area_district_id TEXT",
+        "ALTER TABLE community_centers ADD COLUMN IF NOT EXISTS area_taluka_id TEXT"};
 
     /** Migration 016: officer mentor profiles (member_id NULL = added by an admin) and students' guidance requests, one open per member. */
     static final String[] OFFICER_TABLES = {

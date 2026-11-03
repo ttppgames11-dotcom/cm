@@ -15,8 +15,9 @@ public class CrmUnitRepository {
     static final int MAX_LIST = 500;
 
     private static final String SELECT = """
-        SELECT c.*, m.name AS owner_name, m.phone AS owner_phone
-        FROM community_centers c LEFT JOIN members m ON m.id = c.owner_id""";
+        SELECT c.*, m.name AS owner_name, m.phone AS owner_phone, d.name AS area_district_name, t.name AS area_taluka_name
+        FROM community_centers c LEFT JOIN members m ON m.id = c.owner_id
+        LEFT JOIN districts d ON d.id = c.area_district_id LEFT JOIN talukas t ON t.id = c.area_taluka_id""";
 
     private static final String LADDER_ORDER =
         "CASE c.level WHEN 'state' THEN 1 WHEN 'branch' THEN 2 WHEN 'division' THEN 3 WHEN 'district' THEN 4 ELSE 5 END, c.name";
@@ -82,10 +83,11 @@ public class CrmUnitRepository {
     public int insert(Map<String, Object> u) {
         return jdbc.update("""
             INSERT INTO community_centers (id, name, level, parent_id, path, owner_id, state, division, district, taluka,
-              address, created_by, status, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', now())""",
+              address, created_by, status, updated_at, area_district_id, area_taluka_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', now(), ?, ?)""",
             u.get("id"), u.get("name"), u.get("level"), u.get("parent_id"), u.get("path"), u.get("owner_id"),
-            u.get("state"), u.get("division"), u.get("district"), u.get("taluka"), u.get("address"), u.get("created_by"));
+            u.get("state"), u.get("division"), u.get("district"), u.get("taluka"), u.get("address"), u.get("created_by"),
+            u.get("area_district_id"), u.get("area_taluka_id"));
     }
 
     /** Renames and/or changes the address; null leaves a value as it is. Also sets the unit's own geography name. */
@@ -174,5 +176,22 @@ public class CrmUnitRepository {
 
     public int unlinkStaff(String memberId, String unitId) {
         return jdbc.update("DELETE FROM crm_unit_members WHERE member_id = ? AND unit_id = ? AND unit_role = 'staff'", memberId, unitId);
+    }
+
+    // ------------------------------------------------------------------ places (migration 019)
+
+    /** Sets the place of a unit; null clears a column. */
+    public int updateArea(String unitId, String districtId, String talukaId) {
+        return jdbc.update("UPDATE community_centers SET area_district_id = ?, area_taluka_id = ?, updated_at = now() "
+            + "WHERE id = ? AND level IS NOT NULL", districtId, talukaId, unitId);
+    }
+
+    public boolean districtExists(String districtId) {
+        return Boolean.TRUE.equals(jdbc.queryForObject("SELECT EXISTS (SELECT 1 FROM districts WHERE id = ?)", Boolean.class, districtId));
+    }
+
+    /** The district id a taluka belongs to, or empty when there is no such taluka. */
+    public Optional<String> talukaDistrict(String talukaId) {
+        return jdbc.queryForList("SELECT district_id FROM talukas WHERE id = ?", String.class, talukaId).stream().findFirst();
     }
 }
