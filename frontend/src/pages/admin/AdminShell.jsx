@@ -22,6 +22,10 @@ import { BLOOD_GROUPS, STATE_LABELS, timeAgo } from '../community/bloodHelp';
 import { unreadBadge, NOTIFICATIONS_CHANGED } from '../member/notificationList';
 import { STATE_LABELS as JOB_STATE_LABELS } from '../jobs/jobsHelp';
 import { Applicants as JobApplicants } from '../jobs/JobsPortalPage';
+import {
+  PROFILE_STATUSES as SPEAKER_PROFILE_STATUSES, REQUEST_STATUSES as SPEAKER_REQUEST_STATUSES, statusInfo as speakerStatusInfo
+} from '../culture/speakersHelp';
+import SpeakerApplyModal from '../culture/SpeakerApplyModal';
 import BloodHelpFullReport from './reports/BloodHelpFullReport';
 import TicketFullReport from './reports/TicketFullReport';
 import EventsFullReport from './reports/EventsFullReport';
@@ -91,6 +95,7 @@ const NAV_GROUPS = [
     { path: '/admin/tickets', label: 'Complaints', icon: '🎫' },
     { path: '/admin/seva', label: 'Blood Helpdesk', icon: '🩸' },
     { path: '/admin/jobs', label: 'Jobs (नोकरी)', icon: '💼' },
+    { path: '/admin/speakers', label: 'Speakers (वक्ते)', icon: '🎙️' },
     { path: '/admin/reports', label: 'Reports Overview', icon: '📊' }
   ]},
   { id: 'system', label: 'System', icon: '🔒', items: [
@@ -682,6 +687,7 @@ export default function AdminShell() {
               <Route path="/tickets" element={<TicketsView data={data} toast={toast$} />} />
               <Route path="/seva" element={<BloodView toast={toast$} />} />
               <Route path="/jobs" element={<JobsView toast={toast$} />} />
+              <Route path="/speakers" element={<SpeakersView toast={toast$} />} />
               <Route path="/reports" element={<ReportsView data={data} />} />
               <Route path="/analytics" element={<ReportsView data={data} />} />
               <Route path="/approvals" element={<ApprovalsView data={data} />} />
@@ -2281,6 +2287,131 @@ function JobsView({ toast }) {
           <div style={{ fontWeight: 900, color: T.ink }}>अर्ज: {(jobs.find(j => j.id === openId) || {}).title}</div>
           <JobApplicants jobId={openId} onChanged={load} />
         </Card>
+      )}
+    </>
+  );
+}
+
+function SpeakersView({ toast }) {
+  const [speakers, setSpeakers] = useState([]);
+  const [pending, setPending] = useState(0);
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [status, setStatus] = useState('all');
+  const [busy, setBusy] = useState('');
+  const [adding, setAdding] = useState(false);
+
+  const load = useCallback(async () => {
+    try {
+      const [res, reqs] = await Promise.all([apiClient.adminGetSpeakers(), apiClient.adminGetSpeakerRequests()]);
+      setSpeakers(res.speakers || []);
+      setPending(res.pending || 0);
+      setRequests(reqs);
+      setLoadError('');
+    } catch (err) {
+      setLoadError(err.message || 'वक्ते लोड करता आले नाहीत');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const run = async (id, call) => {
+    setBusy(id);
+    try {
+      const res = await call();
+      toast(res.message || 'झाले', 'success');
+      await load();
+    } catch (err) {
+      toast(err.message, 'error');
+      await load();
+    } finally {
+      setBusy('');
+    }
+  };
+
+  const act = (s, action) => {
+    if (action === 'reject') {
+      const reason = window.prompt(`"${s.name}" नामंजूर करण्याचे कारण (ऐच्छिक):`, '');
+      if (reason === null) return;
+      return run(s.id, () => apiClient.adminSpeakerAction(s.id, reason.trim() ? { action, reason: reason.trim() } : { action }));
+    }
+    if (action === 'link') {
+      const member = window.prompt(`"${s.name}" यांचे सदस्य खाते जोडा: सदस्य आयडी किंवा मोबाईल नंबर`, '');
+      if (!member || !member.trim()) return;
+      return run(s.id, () => apiClient.adminSpeakerAction(s.id, { action, member: member.trim() }));
+    }
+    return run(s.id, () => apiClient.adminSpeakerAction(s.id, { action }));
+  };
+
+  const statusTone = { pending: 'saffron', approved: 'green', rejected: 'red' };
+  const shown = speakers.filter(s => status === 'all' || s.status === status);
+  const openRequests = requests.filter(r => r.status === 'new').length;
+
+  return (
+    <>
+      <SectionTitle subtitle={`${pending} मंजुरीच्या प्रतीक्षेत • ${speakers.length} एकूण वक्ते`}>🎙️ वक्ते व मार्गदर्शक</SectionTitle>
+      {loadError && <Card style={{ borderColor: '#FCA5A5', color: T.red, marginBottom: 14 }}>{loadError}</Card>}
+      <Card style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 14 }}>
+        <div style={{ minWidth: 180 }}>
+          <Select label="स्थिती" value={status} onChange={e => setStatus(e.target.value)}
+            options={[{ value: 'all', label: 'सर्व' }, ...SPEAKER_PROFILE_STATUSES.map(s => ({ value: s.value, label: s.label }))]} />
+        </div>
+        <Btn onClick={() => setAdding(true)}>＋ वक्ता जोडा (खाते नसलेले)</Btn>
+      </Card>
+
+      <Card>
+        {loading ? <div style={{ color: T.muted }}>लोड होत आहे...</div> : (
+          <Table
+            headers={['नाव', 'प्रकार', 'शहर', 'मोबाईल', 'खाते', 'स्थिती', 'दृश्यता', 'कृती']}
+            rows={shown.map(s => [
+              <div key="n"><strong>{s.name}</strong><div style={{ fontSize: 12, color: T.muted }}>{s.topics}</div></div>,
+              s.category,
+              s.city,
+              s.phone,
+              s.has_account ? <Badge key="a" tone="green">{s.member_id}</Badge> : <Badge key="a" tone="gray">खाते नाही</Badge>,
+              <Badge key="s" tone={statusTone[s.status] || 'gray'}>{speakerStatusInfo(SPEAKER_PROFILE_STATUSES, s.status).label}</Badge>,
+              s.hidden ? <Badge key="h" tone="red">लपवलेले</Badge> : <Badge key="h" tone="green">दिसते</Badge>,
+              <div key="c" style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {s.status !== 'approved' && <Btn variant="success" disabled={busy === s.id} onClick={() => act(s, 'approve')}>मंजूर</Btn>}
+                {s.status !== 'rejected' && <Btn variant="danger" disabled={busy === s.id} onClick={() => act(s, 'reject')}>नामंजूर</Btn>}
+                <Btn variant="plain" disabled={busy === s.id} onClick={() => act(s, s.hidden ? 'unhide' : 'hide')}>{s.hidden ? 'दाखवा' : 'लपवा'}</Btn>
+                {!s.has_account && <Btn variant="plain" disabled={busy === s.id} onClick={() => act(s, 'link')}>खाते जोडा</Btn>}
+              </div>
+            ])}
+          />
+        )}
+      </Card>
+
+      <SectionTitle subtitle={`${openRequests} उत्तराच्या प्रतीक्षेत • वक्त्यांना फोन करून उत्तर द्या`}>📨 विनंत्या (खाते नसलेले वक्ते)</SectionTitle>
+      <Card>
+        {loading ? <div style={{ color: T.muted }}>लोड होत आहे...</div> : requests.length === 0 ? (
+          <div style={{ color: T.muted }}>अजून विनंत्या नाहीत.</div>
+        ) : (
+          <Table
+            headers={['वक्ते', 'आयोजक', 'प्रकार', 'तपशील', 'स्थिती', 'कृती']}
+            rows={requests.map(r => [
+              <div key="s"><strong>{r.speaker?.name}</strong><div style={{ fontSize: 12, color: T.muted }}>{r.speaker?.phone}</div></div>,
+              <div key="o">{r.organiser?.name}<div style={{ fontSize: 12, color: T.muted }}>{r.organiser?.phone}</div></div>,
+              r.kind === 'talk' ? '🎙️ व्याख्यान' : '🧭 मार्गदर्शन',
+              r.kind === 'talk' ? `${r.event_date} · ${r.place}${r.audience ? ` · ${r.audience} श्रोते` : ''}` : r.topic,
+              <span key="st">{speakerStatusInfo(SPEAKER_REQUEST_STATUSES, r.status).icon} {speakerStatusInfo(SPEAKER_REQUEST_STATUSES, r.status).label}</span>,
+              r.status === 'new' ? (
+                <div key="c" style={{ display: 'flex', gap: 6 }}>
+                  <Btn variant="success" disabled={busy === r.id} onClick={() => run(r.id, () => apiClient.answerSpeakerRequest(r.id, 'accept'))}>स्वीकारा</Btn>
+                  <Btn variant="danger" disabled={busy === r.id} onClick={() => run(r.id, () => apiClient.answerSpeakerRequest(r.id, 'decline'))}>नाकारा</Btn>
+                </div>
+              ) : '—'
+            ])}
+          />
+        )}
+      </Card>
+
+      {adding && (
+        <SpeakerApplyModal initial={null} heading="＋ वक्ता जोडा (त्यांच्या परवानगीने)" onClose={() => setAdding(false)}
+          save={(payload) => apiClient.adminAddSpeaker(payload)} onSaved={load} />
       )}
     </>
   );

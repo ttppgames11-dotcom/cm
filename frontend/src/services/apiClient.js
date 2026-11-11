@@ -277,16 +277,49 @@ export const apiClient = {
     return await fetchJson('/officers', { method: 'POST', body: JSON.stringify(data) });
   },
 
-  // Speakers API
-  getSpeakers: async () => {
-    const res = await fetchJson('/speakers');
-    return res.data?.speakers || res.speakers || res.data || [];
+  // Speakers and mentors (params: category, city, search; empty values skipped)
+  getSpeakers: async (params = {}) => {
+    const clean = Object.fromEntries(Object.entries(params).filter(([, v]) => v != null && String(v).trim() !== ''));
+    const qs = new URLSearchParams(clean).toString();
+    const res = await fetchJson(`/speakers${qs ? '?' + qs : ''}`);
+    return res.speakers || [];
   },
-  addSpeaker: async (data) => {
+  getMySpeaker: async () => {
+    const res = await fetchJson('/speakers/mine');
+    return res.speaker || null;
+  },
+  applySpeaker: async (data) => {
     return await fetchJson('/speakers', { method: 'POST', body: JSON.stringify(data) });
   },
-  bookSpeaker: async (data) => {
-    return await fetchJson('/speakers/book', { method: 'POST', body: JSON.stringify(data) });
+  updateMySpeaker: async (data) => {
+    return await fetchJson('/speakers/mine', { method: 'PUT', body: JSON.stringify(data) });
+  },
+  sendSpeakerRequest: async (id, data) => {
+    return await fetchJson(`/speakers/${encodeURIComponent(id)}/requests`, { method: 'POST', body: JSON.stringify(data) });
+  },
+  getMySpeakerRequests: async () => {
+    const res = await fetchJson('/speakers/requests/mine');
+    return res.requests || [];
+  },
+  getIncomingSpeakerRequests: async () => {
+    const res = await fetchJson('/speakers/requests/incoming');
+    return res.requests || [];
+  },
+  answerSpeakerRequest: async (id, action) => {
+    return await fetchJson(`/speakers/requests/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ action }) });
+  },
+  adminGetSpeakers: async () => {
+    return await fetchJson('/admin/speakers');
+  },
+  adminAddSpeaker: async (data) => {
+    return await fetchJson('/admin/speakers', { method: 'POST', body: JSON.stringify(data) });
+  },
+  adminSpeakerAction: async (id, data) => {
+    return await fetchJson(`/admin/speakers/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+  adminGetSpeakerRequests: async () => {
+    const res = await fetchJson('/admin/speakers/requests');
+    return res.requests || [];
   },
 
   // Organizations API
