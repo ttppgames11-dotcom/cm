@@ -22,6 +22,11 @@ import { BLOOD_GROUPS, STATE_LABELS, timeAgo } from '../community/bloodHelp';
 import { unreadBadge, NOTIFICATIONS_CHANGED } from '../member/notificationList';
 import { STATE_LABELS as JOB_STATE_LABELS } from '../jobs/jobsHelp';
 import { Applicants as JobApplicants } from '../jobs/JobsPortalPage';
+import {
+  SERVICES as OFFICER_SERVICES, EXAMS as OFFICER_EXAMS, STAGES as OFFICER_STAGES, PROFILE_STATUSES as OFFICER_PROFILE_STATUSES,
+  REQUEST_STATUSES as OFFICER_REQUEST_STATUSES, label as officerLabel, statusInfo as officerStatusInfo
+} from '../governance/officersHelp';
+import OfficerApplyModal from '../governance/OfficerApplyModal';
 import BloodHelpFullReport from './reports/BloodHelpFullReport';
 import TicketFullReport from './reports/TicketFullReport';
 import EventsFullReport from './reports/EventsFullReport';
@@ -91,6 +96,7 @@ const NAV_GROUPS = [
     { path: '/admin/tickets', label: 'Complaints', icon: '🎫' },
     { path: '/admin/seva', label: 'Blood Helpdesk', icon: '🩸' },
     { path: '/admin/jobs', label: 'Jobs (नोकरी)', icon: '💼' },
+    { path: '/admin/officers', label: 'Officers (अधिकारी)', icon: '⭐' },
     { path: '/admin/reports', label: 'Reports Overview', icon: '📊' }
   ]},
   { id: 'system', label: 'System', icon: '🔒', items: [
@@ -682,6 +688,7 @@ export default function AdminShell() {
               <Route path="/tickets" element={<TicketsView data={data} toast={toast$} />} />
               <Route path="/seva" element={<BloodView toast={toast$} />} />
               <Route path="/jobs" element={<JobsView toast={toast$} />} />
+              <Route path="/officers" element={<OfficersView toast={toast$} />} />
               <Route path="/reports" element={<ReportsView data={data} />} />
               <Route path="/analytics" element={<ReportsView data={data} />} />
               <Route path="/approvals" element={<ApprovalsView data={data} />} />
@@ -2281,6 +2288,131 @@ function JobsView({ toast }) {
           <div style={{ fontWeight: 900, color: T.ink }}>अर्ज: {(jobs.find(j => j.id === openId) || {}).title}</div>
           <JobApplicants jobId={openId} onChanged={load} />
         </Card>
+      )}
+    </>
+  );
+}
+
+function OfficersView({ toast }) {
+  const [officers, setOfficers] = useState([]);
+  const [pending, setPending] = useState(0);
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [status, setStatus] = useState('all');
+  const [busy, setBusy] = useState('');
+  const [adding, setAdding] = useState(false);
+
+  const load = useCallback(async () => {
+    try {
+      const [res, reqs] = await Promise.all([apiClient.adminGetOfficers(), apiClient.adminGetOfficerRequests()]);
+      setOfficers(res.officers || []);
+      setPending(res.pending || 0);
+      setRequests(reqs);
+      setLoadError('');
+    } catch (err) {
+      setLoadError(err.message || 'अधिकारी लोड करता आले नाहीत');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const run = async (id, call) => {
+    setBusy(id);
+    try {
+      const res = await call();
+      toast(res.message || 'झाले', 'success');
+    } catch (err) {
+      toast(err.message, 'error');
+    } finally {
+      await load();
+      setBusy('');
+    }
+  };
+
+  const act = (o, action) => {
+    if (action === 'reject') {
+      const reason = window.prompt(`"${o.name}" नामंजूर करण्याचे कारण (ऐच्छिक):`, '');
+      if (reason === null) return;
+      return run(o.id, () => apiClient.adminOfficerAction(o.id, reason.trim() ? { action, reason: reason.trim() } : { action }));
+    }
+    if (action === 'link') {
+      const member = window.prompt(`"${o.name}" यांचे सदस्य खाते जोडा: सदस्य आयडी किंवा मोबाईल नंबर`, '');
+      if (!member || !member.trim()) return;
+      return run(o.id, () => apiClient.adminOfficerAction(o.id, { action, member: member.trim() }));
+    }
+    return run(o.id, () => apiClient.adminOfficerAction(o.id, { action }));
+  };
+
+  const statusTone = { pending: 'saffron', approved: 'green', rejected: 'red' };
+  const shown = officers.filter(o => status === 'all' || o.status === status);
+  const openRequests = requests.filter(r => r.status === 'new').length;
+
+  return (
+    <>
+      <SectionTitle subtitle={`${pending} मंजुरीच्या प्रतीक्षेत • ${officers.length} एकूण अधिकारी • मंजूर करण्यापूर्वी ते खरे अधिकारी असल्याची खात्री करा`}>⭐ अधिकारी मार्गदर्शक</SectionTitle>
+      {loadError && <Card style={{ borderColor: '#FCA5A5', color: T.red, marginBottom: 14 }}>{loadError}</Card>}
+      <Card style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 14 }}>
+        <div style={{ minWidth: 180 }}>
+          <Select label="स्थिती" value={status} onChange={e => setStatus(e.target.value)}
+            options={[{ value: 'all', label: 'सर्व' }, ...OFFICER_PROFILE_STATUSES.map(s => ({ value: s.value, label: s.label }))]} />
+        </div>
+        <Btn onClick={() => setAdding(true)}>＋ अधिकारी जोडा (खाते नसलेले)</Btn>
+      </Card>
+
+      <Card>
+        {loading ? <div style={{ color: T.muted }}>लोड होत आहे...</div> : (
+          <Table
+            headers={['नाव / सेवा', 'पद / विभाग', 'मोबाईल', 'खाते', 'स्थिती', 'विनंत्या', 'दृश्यता', 'कृती']}
+            rows={shown.map(o => [
+              <div key="n"><strong>{o.name}</strong><div style={{ fontSize: 12, color: T.muted }}>{officerLabel(OFFICER_SERVICES, o.service)}{o.batch_year ? ` · ${o.batch_year}` : ''}</div></div>,
+              <div key="p">{o.post}<div style={{ fontSize: 12, color: T.muted }}>{[o.department, o.city].filter(Boolean).join(', ')}</div></div>,
+              o.phone,
+              o.has_account ? <Badge key="a" tone="green">{o.member_id}</Badge> : <Badge key="a" tone="gray">खाते नाही</Badge>,
+              <Badge key="s" tone={statusTone[o.status] || 'gray'}>{officerStatusInfo(OFFICER_PROFILE_STATUSES, o.status).label}</Badge>,
+              o.accepting ? <Badge key="r" tone="green">🟢 चालू</Badge> : <Badge key="r" tone="saffron">⏸️ बंद</Badge>,
+              o.hidden ? <Badge key="h" tone="red">लपवलेले</Badge> : <Badge key="h" tone="green">दिसते</Badge>,
+              <div key="c" style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {o.status !== 'approved' && <Btn variant="success" disabled={busy === o.id} onClick={() => act(o, 'approve')}>मंजूर</Btn>}
+                {o.status !== 'rejected' && <Btn variant="danger" disabled={busy === o.id} onClick={() => act(o, 'reject')}>नामंजूर</Btn>}
+                <Btn variant="plain" disabled={busy === o.id} onClick={() => act(o, o.hidden ? 'unhide' : 'hide')}>{o.hidden ? 'दाखवा' : 'लपवा'}</Btn>
+                {!o.has_account && <Btn variant="plain" disabled={busy === o.id} onClick={() => act(o, o.accepting ? 'pause' : 'resume')}>{o.accepting ? 'विनंत्या बंद' : 'विनंत्या चालू'}</Btn>}
+                {!o.has_account && <Btn variant="plain" disabled={busy === o.id} onClick={() => act(o, 'link')}>खाते जोडा</Btn>}
+              </div>
+            ])}
+          />
+        )}
+      </Card>
+
+      <SectionTitle subtitle={`${openRequests} उत्तराच्या प्रतीक्षेत • अधिकाऱ्यांना फोन करून उत्तर द्या`}>📨 विनंत्या (खाते नसलेले अधिकारी)</SectionTitle>
+      <Card>
+        {loading ? <div style={{ color: T.muted }}>लोड होत आहे...</div> : requests.length === 0 ? (
+          <div style={{ color: T.muted }}>अजून विनंत्या नाहीत.</div>
+        ) : (
+          <Table
+            headers={['अधिकारी', 'विद्यार्थी', 'परीक्षा / टप्पा', 'प्रश्न', 'स्थिती', 'कृती']}
+            rows={requests.map(r => [
+              <div key="o"><strong>{r.officer?.name}</strong><div style={{ fontSize: 12, color: T.muted }}>{r.officer?.phone}</div></div>,
+              <div key="s">{r.student?.name}<div style={{ fontSize: 12, color: T.muted }}>{r.student?.phone}</div></div>,
+              `${officerLabel(OFFICER_EXAMS, r.exam)} · ${officerLabel(OFFICER_STAGES, r.stage)}`,
+              r.question,
+              <span key="st">{officerStatusInfo(OFFICER_REQUEST_STATUSES, r.status).icon} {officerStatusInfo(OFFICER_REQUEST_STATUSES, r.status).label}</span>,
+              r.status === 'new' ? (
+                <div key="c" style={{ display: 'flex', gap: 6 }}>
+                  <Btn variant="success" disabled={busy === r.id} onClick={() => run(r.id, () => apiClient.answerOfficerRequest(r.id, 'accept'))}>स्वीकारा</Btn>
+                  <Btn variant="danger" disabled={busy === r.id} onClick={() => run(r.id, () => apiClient.answerOfficerRequest(r.id, 'decline'))}>नाकारा</Btn>
+                </div>
+              ) : '—'
+            ])}
+          />
+        )}
+      </Card>
+
+      {adding && (
+        <OfficerApplyModal initial={null} heading="＋ अधिकारी जोडा (त्यांच्या परवानगीने)" onClose={() => setAdding(false)}
+          save={(payload) => apiClient.adminAddOfficer(payload)} onSaved={load} />
       )}
     </>
   );

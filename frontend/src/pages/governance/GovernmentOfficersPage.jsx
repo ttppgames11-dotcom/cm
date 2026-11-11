@@ -1,905 +1,460 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import apiClient from '../../services/apiClient';
+import {
+  SERVICES, SERVICE_STATUSES, EXAMS, STAGES, MODES, REQUEST_STATUSES, PROFILE_STATUSES, label, statusInfo, examList,
+  requestButton, officerQuery
+} from './officersHelp';
+import OfficerApplyModal from './OfficerApplyModal';
+import OfficerRequestModal from './OfficerRequestModal';
 
-const officersData = [
-  {
-    id: 1,
-    service: 'IAS',
-    name: 'श्री. तुकाराम मुंढे',
-    image: '/assets/images/officers/officer_tukaram_mundhe_real.jpg',
-    cadre: 'भारतीय प्रशासकीय सेवा (IAS - 2005)',
-    designation: 'सचिव, महाराष्ट्र शासन',
-    location: 'मंत्रालय, मुंबई',
-    department: 'प्रशासकीय सुधारणा व सार्वजनिक आरोग्य',
-    category: 'IAS अधिकारी',
-    icon: '🏛️',
-    contribution: 'कडक शिस्त, पारदर्शक कारभार, गैरप्रकारांवर आळा आणि जनतेभिमुख डिजिटल प्रशासनाची यशस्वी अंमलबजावणी.'
-  },
-  {
-    id: 2,
-    service: 'IPS',
-    name: 'श्री. विश्वास नांगरे पाटील',
-    image: '/assets/images/officers/officer_vishwas_face.jpg',
-    cadre: 'भारतीय पोलीस सेवा (IPS - 1997)',
-    designation: 'अपर पोलीस महासंचालक (ADGP)',
-    location: 'महाराष्ट्र राज्य पोलीस मुख्यालय, मुंबई',
-    department: 'गृह विभाग व कायदा सुव्यवस्था',
-    category: 'IPS अधिकारी',
-    icon: '⭐',
-    contribution: '२६/११ मुंबई हल्ल्यातील असीम शौर्य (राष्ट्रपती पोलीस शौर्य पदक), सायबर सुरक्षा आणि युवा पिढीसाठी प्रेरणादायी व्याख्याने.'
-  },
-  {
-    id: 3,
-    service: 'IAS',
-    name: 'सौ. अश्विनी भिडे',
-    image: '/assets/images/officers/officer_ashwini_bhide_face.jpg',
-    cadre: 'भारतीय प्रशासकीय सेवा (IAS - 1995)',
-    designation: 'व्यवस्थापकीय संचालक, मुंबई मेट्रो रेल कॉर्पोरेशन',
-    location: 'मुंबई, महाराष्ट्र',
-    department: 'नगर विकास व मेट्रो पायाभूत सुविधा',
-    category: 'IAS अधिकारी',
-    icon: '🚇',
-    contribution: 'मुंबई मेट्रो लाईन ३ (अंडरग्राउंड कुलाबा-वांद्रे-सीप्झ) प्रकल्पाचे धडाडीने व वेळेत यशस्वी नियोजन व अंमलबजावणी.'
-  },
-  {
-    id: 4,
-    service: 'IAS',
-    name: 'सौ. सुजाता सौनिक',
-    image: '/assets/images/officers/officer_sujata.jpg',
-    cadre: 'भारतीय प्रशासकीय सेवा (IAS - 1987)',
-    designation: 'मुख्य सचिव, महाराष्ट्र शासन',
-    location: 'मंत्रालय, मुंबई',
-    department: 'सामान्य प्रशासन व राज्य कारभार',
-    category: 'IAS अधिकारी',
-    icon: '🏛️',
-    contribution: 'महाराष्ट्राच्या पहिल्या महिला मुख्य सचिव, आरोग्य, वित्त आणि प्रशासकीय सुधारणा क्षेत्रातील ३ दशकांहून अधिक निष्कलंक सेवा.'
-  },
-  {
-    id: 5,
-    service: 'IAS',
-    name: 'श्री. महेश झगडे',
-    image: '/assets/images/officers/officer_mahesh_face.jpg',
-    cadre: 'भारतीय प्रशासकीय सेवा (IAS - निवृत्त)',
-    designation: 'माजी आयुक्त, अन्न व औषध प्रशासन (FDA) व परिवहन',
-    location: 'पुणे / मुंबई, महाराष्ट्र',
-    department: 'अन्न व औषध प्रशासन / महसूल',
-    category: 'IAS अधिकारी',
-    icon: '⚖️',
-    contribution: 'गुटखा व भेसळयुक्त औषधांवर ऐतिहासिक बंदी, पारदर्शक आरटीओ सेवा आणि सामान्य नागरिकांसाठी निर्भीड प्रशासकीय लढा.'
-  },
-  {
-    id: 6,
-    service: 'IPS',
-    name: 'शहीद हेमंत करकरे',
-    image: '/assets/images/officers/officer_karkare.jpg',
-    cadre: 'भारतीय पोलीस सेवा (IPS - 1982)',
-    designation: 'माजी प्रमुख, दहशतवाद विरोधी पथक (ATS - मरणोत्तर अशोक चक्र)',
-    location: 'मुंबई, महाराष्ट्र',
-    department: 'दहशतवाद विरोधी पथक व गृह विभाग',
-    category: 'IPS अधिकारी',
-    icon: '🎖️',
-    contribution: '२६/११ मुंबई दहशतवादी हल्ल्यात देशाचे रक्षण करताना सर्वोच्च बलिदान, आंतरराष्ट्रीय स्तरावर सन्मानित कर्तव्यदक्ष अधिकारी.'
-  },
-  {
-    id: 7,
-    service: 'IPS',
-    name: 'श्री. संदीप कर्णिक',
-    image: '/assets/images/officers/officer_sandeep_face.jpg',
-    cadre: 'भारतीय पोलीस सेवा (IPS - 2004)',
-    designation: 'पोलीस आयुक्त (Commissioner of Police)',
-    location: 'नाशिक शहर / महाराष्ट्र पोलीस',
-    department: 'गृह व कायदा सुव्यवस्था',
-    category: 'IPS अधिकारी',
-    icon: '🛡️',
-    contribution: 'नागरी सुरक्षा, अत्याधुनिक सीसीटीव्ही नियंत्रण कक्ष, सायबर क्राईम सेलचे बळकटीकरण आणि गतिमान पोलीस यंत्रणा.'
-  },
-  {
-    id: 8,
-    service: 'IPS',
-    name: 'श्री. संजय बर्वे',
-    image: '/assets/images/officers/officer_sanjay_barve.jpg',
-    cadre: 'भारतीय पोलीस सेवा (IPS - 1987)',
-    designation: 'माजी पोलीस आयुक्त, बृहन्मुंबई',
-    location: 'मुंबई, महाराष्ट्र',
-    department: 'गृह विभाग व पोलीस प्रशासन',
-    category: 'IPS अधिकारी',
-    icon: '⭐',
-    contribution: 'मुंबई शहराची सुरक्षितता, अत्याधुनिक फॉरेन्सिक प्रणाली व पोलीस ठाण्यांचे डिजिटलायझेशन करण्यात मोलाचा वाटा.'
-  },
-  {
-    id: 9,
-    service: 'IPS',
-    name: 'डॉ. सत्यपाल सिंह',
-    image: '/assets/images/officers/officer_satyapal_singh.jpg',
-    cadre: 'भारतीय पोलीस सेवा (IPS - 1980)',
-    designation: 'माजी पोलीस आयुक्त (मुंबई व पुणे)',
-    location: 'महाराष्ट्र / नवी दिल्ली',
-    department: 'गृह मंत्रालय व कायदा प्रशासन',
-    category: 'IPS अधिकारी',
-    icon: '🎖️',
-    contribution: 'अंडरवर्ल्ड गुन्हेगारीचे उच्चाटन, पोलीस दलातील मानवी हक्क जागृती आणि शिक्षण क्षेत्रातील उल्लेखनीय कार्य.'
-  },
-  {
-    id: 10,
-    service: 'IPS',
-    name: 'श्री. अहमद जावेद',
-    image: '/assets/images/officers/officer_ahmed_javed.jpg',
-    cadre: 'भारतीय पोलीस सेवा (IPS - 1980)',
-    designation: 'माजी पोलीस आयुक्त, मुंबई व माजी राजदूत',
-    location: 'मुंबई / परराष्ट्र मंत्रालय',
-    department: 'पोलीस व आंतरराष्ट्रीय मुत्सद्देगिरी',
-    category: 'IPS अधिकारी',
-    icon: '🌐',
-    contribution: 'मुंबई शहरातील सण-उत्सवांचे शांततापूर्ण नियोजन, उच्च दर्जाची कायदा व सुव्यवस्था आणि परदेशात भारताचे प्रतिनिधित्व.'
-  },
-  {
-    id: 11,
-    service: 'IPS',
-    name: 'श्री. सुबोध कुमार जायसवाल',
-    image: '/assets/images/officers/officer_subodh_jaiswal.jpg',
-    cadre: 'भारतीय पोलीस सेवा (IPS - 1985)',
-    designation: 'माजी महासंचालक (DGP महाराष्ट्र) व माजी संचालक (CBI)',
-    location: 'मुंबई / नवी दिल्ली',
-    department: 'केंद्रीय अन्वेषण ब्युरो (CBI) व राज्य पोलीस',
-    category: 'IPS अधिकारी',
-    icon: '🔍',
-    contribution: 'तेलगी मुद्रांक घोटाळा तपास, गुप्तचर विभाग (R&AW) मधील अतिमहत्त्वाची कामगिरी आणि सीबीआयचे पारदर्शक नेतृत्व.'
-  },
-  {
-    id: 12,
-    service: 'IPS',
-    name: 'सौ. रूपा डी. मौदगिल',
-    image: '/assets/images/officers/officer_roopa_face.jpg',
-    cadre: 'भारतीय पोलीस सेवा (IPS - 2000)',
-    designation: 'पोलीस महानिरीक्षक (Inspector General of Police)',
-    location: 'पोलीस मुख्यालय',
-    department: 'गृह व पोलीस संशोधन',
-    category: 'IPS अधिकारी',
-    icon: '🛡️',
-    contribution: 'तुरुंगातील व्हीआयपी गैरव्यवहारांचा पर्दाफाश, सायबर गुन्हे अन्वेषण आणि निर्भिड जनसेवा (राष्ट्रपती पदक सन्मानित).'
-  },
-  {
-    id: 13,
-    service: 'IPS',
-    name: 'डॉ. किरण बेदी',
-    image: '/assets/images/officers/officer_kiran_bedi.jpg',
-    cadre: 'भारतीय पोलीस सेवा (भारतातील पहिल्या महिला IPS - 1972)',
-    designation: 'माजी पोलीस महासंचालक व माजी नायब राज्यपाल',
-    location: 'नवी दिल्ली / पुद्दुचेरी',
-    department: 'पोलीस सुधारणा व प्रशासन',
-    category: 'IPS अधिकारी',
-    icon: '🇮🇳',
-    contribution: 'तिहार जेल सुधारणा (रॅमन मॅगसेसे पुरस्कार), वाहतूक शिस्त आणि महिला सबलीकरणाच्या अग्रदूत.'
-  },
-  {
-    id: 14,
-    service: 'IPS',
-    name: 'श्री. शिवदीप लांडे',
-    image: '/assets/images/officers/officer_shivdeep_lande.jpg',
-    cadre: 'भारतीय पोलीस सेवा (IPS - 2006)',
-    designation: 'पोलीस महानिरीक्षक (IGP)',
-    location: 'महाराष्ट्र / बिहार',
-    department: 'गुन्हे अन्वेषण व अमली पदार्थ विरोधी दल (ANC)',
-    category: 'IPS अधिकारी',
-    icon: '⚡',
-    contribution: 'अमली पदार्थ माफियांचे कंबरडे मोडणे, महिला छेडछाड विरोधी मोहीम आणि युवकांचे अत्यंत लोकप्रिय कर्तव्यदक्ष पोलीस अधिकारी.'
-  },
-  {
-    id: 15,
-    service: 'केंद्र शासन',
-    name: 'श्री. अजित डोवाल',
-    image: '/assets/images/officers/officer_doval.jpg',
-    cadre: 'भारतीय पोलीस सेवा (IPS - 1968 / कीर्ती चक्र)',
-    designation: 'राष्ट्रीय सुरक्षा सल्लागार (NSA), भारत सरकार',
-    location: 'पंतप्रधान कार्यालय (PMO), नवी दिल्ली',
-    department: 'राष्ट्रीय सुरक्षा परिषद',
-    category: 'केंद्र शासन',
-    icon: '🛡️',
-    contribution: 'भारताच्या सामरिक सुरक्षेचे शिल्पकार, सर्जिकल स्ट्राईक व बालाकोट मोहिमांचे धोरणात्मक नियोजन आणि आंतरराष्ट्रीय मुत्सद्देगिरी.'
-  },
-  {
-    id: 16,
-    service: 'IAS',
-    name: 'सौ. टीना डाबी',
-    image: '/assets/images/officers/officer_tina_dabi.jpg',
-    cadre: 'भारतीय प्रशासकीय सेवा (IAS - 2016 UPSC Topper Rank 1)',
-    designation: 'जिल्हाधिकारी व जिल्हा दंडाधिकारी',
-    location: 'जिल्हाधिकारी कार्यालय',
-    department: 'महसूल, शिक्षण व महिला सक्षमीकरण',
-    category: 'IAS अधिकारी',
-    icon: '🌟',
-    contribution: 'मातृत्व व बाल संगोपन योजनांचा प्रभावी विस्तार, तळागाळातील लोकांचे प्रश्न प्रत्यक्ष दरबारात सोडवणे.'
-  },
-  {
-    id: 17,
-    service: 'IAS',
-    name: 'सौ. हरी चंदना दासारी',
-    image: '/assets/images/officers/officer_hari_chandana.jpg',
-    cadre: 'भारतीय प्रशासकीय सेवा (IAS - 2010)',
-    designation: 'संचालक व सहसचिव, शासन सेवा',
-    location: 'सचिवालय / नागरी प्रशासन',
-    department: 'नागरी पुनरुत्थान व शाश्वत विकास',
-    category: 'IAS अधिकारी',
-    icon: '🌱',
-    contribution: 'प्लास्टिक कचऱ्यापासून रस्ते व उद्याने निर्मिती (ग्रीन इनोव्हेशन), महिला स्वयंरोजगार निर्मितीमध्ये राष्ट्रीय सन्मान.'
-  },
-  {
-    id: 18,
-    service: 'IAS',
-    name: 'श्री. सुप्रिया कुमार रॉय',
-    image: '/assets/images/officers/officer_ias_admin.jpg',
-    cadre: 'भारतीय प्रशासकीय सेवा (IAS)',
-    designation: 'विभागीय आयुक्त / सचिव',
-    location: 'प्रशासकीय भवन',
-    department: 'सामान्य प्रशासन व माहिती तंत्रज्ञान',
-    category: 'IAS अधिकारी',
-    icon: '💻',
-    contribution: 'ई-ऑफिस सिस्टीम, सरकारी कार्यालयांचे पेपरलेस कामकाज आणि नागरिक सेवा हमी कायद्याची काटेकोर अंमलबजावणी.'
-  },
-  {
-    id: 19,
-    service: 'IFS',
-    name: 'श्री. आनंद रेड्डी',
-    image: '/assets/images/officers/officer_ifs_forest.jpg',
-    cadre: 'भारतीय वन सेवा (IFS - 2008)',
-    designation: 'मुख्य वनसंरक्षक व क्षेत्र संचालक',
-    location: 'सह्याद्री व्याघ्र प्रकल्प, महाराष्ट्र',
-    department: 'पर्यावरण, वने व वन्यजीव संवर्धन',
-    category: 'IFS अधिकारी',
-    icon: '🐅',
-    contribution: 'वाघ व बिबट्या संवर्धन प्रकल्प, जंगलातील वणवे रोखण्यासाठी आधुनिक सॅटेलाइट यंत्रणा आणि वनपर्यटन विकास.'
-  },
-  {
-    id: 20,
-    service: 'IPS',
-    name: 'श्री. के. विजय कुमार',
-    image: '/assets/images/officers/officer_vijay_kumar_face.jpg',
-    cadre: 'भारतीय पोलीस सेवा (IPS - 1975)',
-    designation: 'माजी महासंचालक (DGP, CRPF) व सुरक्षा सल्लागार',
-    location: 'नवी दिल्ली / गृह मंत्रालय',
-    department: 'केंद्रीय राखीव पोलीस दल व गृह मंत्रालय',
-    category: 'IPS अधिकारी',
-    icon: '🎖️',
-    contribution: "'ऑपरेशन कोकून' द्वारे कुख्यात वीरप्पनचा खात्मा करणाऱ्या विशेष कृती दलाचे (STF) ऐतिहासिक नेतृत्व, CRPF चे आधुनिकीकरण."
-  },
-  {
-    id: 21,
-    service: 'राज्यसेवा',
-    name: 'श्री. संग्राम जगताप',
-    image: '/assets/images/officers/officer_collector_face.jpg',
-    cadre: 'महाराष्ट्र नागरी सेवा (MPSC Class-I)',
-    designation: 'निवासी उपजिल्हाधिकारी (RDC)',
-    location: 'जिल्हाधिकारी कार्यालय, छत्रपती संभाजीनगर',
-    department: 'महसूल व जिल्हा प्रशासन',
-    category: 'राज्यसेवा अधिकारी',
-    icon: '📜',
-    contribution: '७/१२ फेरफार डिजिटल स्वाक्षरीकरण मोहीम, शेतकऱ्यांचे जमीन वाद सामोपचाराने मिटवण्यासाठी विशेष लोकअदालत.'
-  },
-  {
-    id: 22,
-    service: 'IPS',
-    name: 'सौ. अर्चना रामासुंदरम',
-    image: '/assets/images/officers/officer_archana_face.jpg',
-    cadre: 'भारतीय पोलीस सेवा (IPS - 1980 / माजी महासंचालक)',
-    designation: 'माजी महासंचालक (DGP, SSB - सशस्त्र सीमा बल)',
-    location: 'नवी दिल्ली / भारत सरकार',
-    department: 'केंद्रीय निमलष्करी दल व गृह मंत्रालय',
-    category: 'IPS अधिकारी',
-    icon: '🇮🇳',
-    contribution: 'भारतातील केंद्रीय निमलष्करी दलाचे (SSB) नेतृत्व करणाऱ्या पहिल्या महिला महासंचालक, सीबीआय अतिरिक्त संचालक म्हणून ऐतिहासिक कार्य.'
-  },
-  {
-    id: 23,
-    service: 'केंद्र शासन',
-    name: 'श्री. राजीव गौबा',
-    image: '/assets/images/officers/officer_rajiv_gauba_face.jpg',
-    cadre: 'भारतीय प्रशासकीय सेवा (IAS - 1982)',
-    designation: 'माजी कॅबिनेट सचिव (Cabinet Secretary of India)',
-    location: 'मंत्रिमंडळ सचिवालय, नवी दिल्ली',
-    department: 'पंतप्रधान कार्यालय व कॅबिनेट सचिवालय',
-    category: 'केंद्र शासन',
-    icon: '🏛️',
-    contribution: 'देशातील सर्वोच्च प्रशासकीय पद भूषविणारे ज्येष्ठ अधिकारी, आंतरराष्ट्रीय धोरणे आणि राष्ट्रीय प्रशासकीय सुधारणांचे मुख्य समन्वयक.'
-  },
-  {
-    id: 24,
-    service: 'इतर',
-    name: 'श्री. धनंजय कुलकर्णी',
-    image: '/assets/images/officers/officer_district_judge.jpg',
-    cadre: 'महाराष्ट्र उच्च न्यायिक सेवा (Higher Judicial Service)',
-    designation: 'प्रधान जिल्हा व सत्र न्यायाधीश',
-    location: 'जिल्हा व सत्र न्यायालय, कोल्हापूर',
-    department: 'विधी व न्याय विभाग',
-    category: 'इतर',
-    icon: '⚖️',
-    contribution: 'जलदगती न्यायालयांद्वारे प्रलंबित दाव्यांचा जलद निपटारा, मध्यस्थी केंद्र (Mediation Center) द्वारे हजारो वाद मिटवले.'
-  },
-  {
-    id: 25,
-    service: 'केंद्र शासन',
-    name: 'डॉ. पी. के. मिश्रा',
-    image: '/assets/images/officers/officer_pk_mishra_face.jpg',
-    cadre: 'भारतीय प्रशासकीय सेवा (IAS - 1972)',
-    designation: 'पंतप्रधानांचे प्रधान सचिव (Principal Secretary to PM)',
-    location: 'पंतप्रधान कार्यालय (PMO), नवी दिल्ली',
-    department: 'पंतप्रधान कार्यालय, भारत सरकार',
-    category: 'केंद्र शासन',
-    icon: '🇮🇳',
-    contribution: 'आपत्ती व्यवस्थापन क्षेत्रातील आंतरराष्ट्रीय सासाकावा पुरस्कार विजेते, राष्ट्रीय विकासाच्या महत्त्वाकांक्षी प्रकल्पांचे नियोजन.'
-  }
-];
-
-const categories = [
-  'सर्व अधिकारी',
-  'IAS अधिकारी',
-  'IPS अधिकारी',
-  'IFS अधिकारी',
-  'राज्यसेवा अधिकारी',
-  'केंद्र शासन',
-  'इतर'
-];
+const ORANGE = '#E65100';
+const card = { background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E8DFD8', boxShadow: '0 6px 16px rgba(0,0,0,0.04)' };
+const primary = {
+  background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)', color: '#FFFFFF', border: 'none', padding: '11px 18px',
+  borderRadius: '8px', fontWeight: 800, cursor: 'pointer', fontSize: '0.92rem'
+};
+const secondary = { background: '#F3F4F6', color: '#374151', border: 'none', padding: '9px 16px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' };
+const errorBox = { background: '#FEF2F2', color: '#B91C1C', padding: '10px 14px', borderRadius: '8px', fontSize: '0.9rem', margin: '0 0 14px' };
+const select = { padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #D7CCC8', fontSize: '0.95rem', background: '#fff' };
 
 export default function GovernmentOfficersPage() {
-  const [officersList, setOfficersList] = useState(officersData);
-  const [selectedCat, setSelectedCat] = useState('सर्व अधिकारी');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [selectedOfficer, setSelectedOfficer] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [newOfficerForm, setNewOfficerForm] = useState({ name: '', category: 'IAS अधिकारी', designation: '', postingCity: 'मंत्रालय, मुंबई', department: 'सामान्य प्रशासन', contribution: '' });
+  const { user } = useAuth();
+  const loggedIn = !!user;
+  const navigate = useNavigate();
+  const [params, setParams] = useSearchParams();
 
-  useEffect(() => {
-    apiClient.getOfficers()
-      .then(list => {
-        if (Array.isArray(list) && list.length > 0) {
-          const formatted = list.map(o => ({
-            id: o.id,
-            service: o.service || 'IAS',
-            name: o.name,
-            image: o.photo || null,
-            cadre: o.batch || o.cadre || 'भारतीय प्रशासकीय सेवा',
-            designation: o.designation || 'वरिष्ठ अधिकारी',
-            location: o.postingCity || o.location || 'महाराष्ट्र',
-            department: o.department || 'सामान्य प्रशासन',
-            category: o.category || (o.designation && o.designation.includes('पोलीस') ? 'IPS अधिकारी' : 'IAS अधिकारी'),
-            icon: o.icon || '🏛️',
-            contribution: o.contribution || 'प्रशासकीय सेवा व जनकल्याण'
-          }));
-          setOfficersList(prev => {
-            const existingNames = new Set(prev.map(p => p.name));
-            const newEntries = formatted.filter(f => !existingNames.has(f.name));
-            return [...newEntries, ...prev];
-          });
-        }
-      })
-      .catch(err => console.warn('Could not load live officers:', err.message));
-  }, []);
+  const [myOfficer, setMyOfficer] = useState(null);
+  const tabs = [
+    { id: 'all', label: '⭐ सर्व अधिकारी' },
+    ...(loggedIn ? [{ id: 'mine', label: '📋 माझ्या विनंत्या' }] : []),
+    ...(myOfficer ? [{ id: 'incoming', label: '📥 मला आलेल्या विनंत्या' }] : []),
+    ...(loggedIn ? [{ id: 'profile', label: '👤 माझे प्रोफाइल' }] : [])
+  ];
+  const wanted = params.get('tab');
+  const tab = ['mine', 'incoming', 'profile'].includes(wanted) ? wanted : 'all';
 
-  const handleAddOfficerSubmit = async (e) => {
-    e.preventDefault();
+  const [officers, setOfficers] = useState([]);
+  const [exam, setExam] = useState('all');
+  const [service, setService] = useState('all');
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [listError, setListError] = useState('');
+  const [requesting, setRequesting] = useState(null);
+  const [applying, setApplying] = useState(false);
+
+  const loginFirst = (to = '/officers') => navigate('/login?redirect=' + encodeURIComponent(to));
+  const openTab = (id) => setParams(id === 'all' ? {} : { tab: id });
+
+  // The search box is applied with the button or Enter, not on every key, so it is read from a ref (always the latest text).
+  const searchRef = useRef(search);
+  searchRef.current = search;
+
+  const loadOfficers = useCallback(async () => {
+    setLoading(true);
+    setListError('');
     try {
-      await apiClient.addOfficer({
-        name: newOfficerForm.name,
-        designation: newOfficerForm.designation,
-        department: newOfficerForm.department,
-        batch: newOfficerForm.category,
-        postingCity: newOfficerForm.postingCity
-      });
-      const added = {
-        id: 'OFF-' + Date.now(),
-        service: newOfficerForm.category.replace(' अधिकारी', ''),
-        name: newOfficerForm.name,
-        image: '/assets/images/officers/officer_tukaram.jpg',
-        cadre: newOfficerForm.category,
-        designation: newOfficerForm.designation,
-        location: newOfficerForm.postingCity,
-        department: newOfficerForm.department,
-        category: newOfficerForm.category,
-        icon: '🏛️',
-        contribution: newOfficerForm.contribution || 'प्रशासकीय सेवा'
-      };
-      setOfficersList(prev => [added, ...prev]);
-      setSubmitted(true);
+      setOfficers(await apiClient.getOfficers(officerQuery(exam, service, searchRef.current)));
     } catch (err) {
-      setSubmitted(true);
+      setListError(err.message || 'अधिकारी लोड करता आले नाहीत.');
+    } finally {
+      setLoading(false);
     }
+  }, [exam, service, user?.id]);
+
+  const loadMine = useCallback(async () => {
+    if (!user?.id) {
+      setMyOfficer(null);
+      return;
+    }
+    try {
+      setMyOfficer(await apiClient.getMyOfficer());
+    } catch {
+      setMyOfficer(null);
+    }
+  }, [user?.id]);
+
+  useEffect(() => { loadMine(); }, [loadMine]);
+  useEffect(() => { if (tab === 'all') loadOfficers(); }, [tab, loadOfficers]);
+
+  const onApplyClick = () => {
+    if (!loggedIn) return loginFirst('/officers?tab=profile');
+    if (myOfficer) return openTab('profile');
+    setApplying(true);
   };
 
-  const filtered = officersList.filter((o) => {
-    const matchCat = selectedCat === 'सर्व अधिकारी' || o.category === selectedCat;
-    const matchSearch =
-      (o.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (o.designation || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (o.department || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (o.location || '').toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCat && matchSearch;
-  });
+  const onCardButton = (officer) => {
+    const kind = requestButton(officer, loggedIn);
+    if (kind === 'login') loginFirst('/officers');
+    if (kind === 'request') setRequesting(officer);
+  };
 
   return (
     <div className="government-officers-page" style={{ background: '#FAF7F2', minHeight: '100vh', paddingBottom: '60px' }}>
       {/* Hero Banner */}
       <section style={{
-        background: 'url("/assets/images/connect-maratha-council.jpg") center 30%/cover no-repeat',
-        color: '#FFFFFF',
-        padding: '52px 20px 48px',
-        textAlign: 'center',
-        position: 'relative'
+        background: 'url("/assets/images/connect-maratha-council.jpg") center 30%/cover no-repeat', color: '#FFFFFF',
+        padding: '52px 20px 48px', textAlign: 'center', position: 'relative'
       }}>
         <div style={{ maxWidth: '980px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div style={{
-            display: 'inline-block',
-            background: 'rgba(230, 81, 0, 0.85)',
-            backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255, 213, 79, 0.6)',
-            padding: '6px 18px',
-            borderRadius: '20px',
-            fontSize: '0.88rem',
-            fontWeight: 700,
-            marginBottom: '14px',
-            color: '#FFFFFF',
+            display: 'inline-block', background: 'rgba(230, 81, 0, 0.85)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255, 213, 79, 0.6)',
+            padding: '6px 18px', borderRadius: '20px', fontSize: '0.88rem', fontWeight: 700, marginBottom: '14px', color: '#FFFFFF',
             boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
           }}>
             🚩 CONNECT मराठा — एक लढा भगव्यासाठी | सर्वधर्म समभाव
           </div>
-          <p style={{
-            fontSize: '1.25rem',
-            color: '#FFE082',
-            fontWeight: 700,
-            margin: '0 0 8px',
-            textShadow: '0 2px 10px rgba(0,0,0,0.9), 0 1px 2px rgba(0,0,0,0.95)'
-          }}>
-            समाजाच्या प्रगतीसाठी, शासन सेवेत कार्यरत
+          <p style={{ fontSize: '1.25rem', color: '#FFE082', fontWeight: 700, margin: '0 0 8px', textShadow: '0 2px 10px rgba(0,0,0,0.9), 0 1px 2px rgba(0,0,0,0.95)' }}>
+            सनदी अधिकारी स्पर्धा परीक्षा केंद्र
           </p>
-          <h1 style={{
-            fontSize: 'clamp(2rem, 5vw, 2.7rem)',
-            fontWeight: 900,
-            color: '#FFFFFF',
-            margin: '0 0 12px',
-            textShadow: '0 4px 16px rgba(0,0,0,0.95), 0 2px 4px rgba(0,0,0,0.95)'
-          }}>
-            आपले अभिमानास्पद शासकीय अधिकारी !
+          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 2.7rem)', fontWeight: 900, color: '#FFFFFF', margin: '0 0 12px', textShadow: '0 4px 16px rgba(0,0,0,0.95), 0 2px 4px rgba(0,0,0,0.95)' }}>
+            अधिकाऱ्यांकडून थेट मार्गदर्शन — MPSC / UPSC
           </h1>
-          <p style={{
-            fontSize: '1.15rem',
-            color: '#FFFFFF',
-            opacity: 0.98,
-            margin: '0 auto 24px',
-            maxWidth: '720px',
-            lineHeight: 1.6,
-            fontWeight: 500,
-            textShadow: '0 2px 10px rgba(0,0,0,0.95), 0 1px 3px rgba(0,0,0,0.95)'
-          }}>
-            प्रामाणिक सेवा, निष्ठावान नेतृत्व, समाज आणि राष्ट्रासाठी समर्पित ! || जय भवानी ! जय शिवाजी !
+          <p style={{ fontSize: '1.15rem', color: '#FFFFFF', opacity: 0.98, margin: '0 auto 24px', maxWidth: '720px', lineHeight: 1.6, fontWeight: 500, textShadow: '0 2px 10px rgba(0,0,0,0.95), 0 1px 3px rgba(0,0,0,0.95)' }}>
+            कार्यरत व निवृत्त अधिकारी स्पर्धा परीक्षेची तयारी करणाऱ्या विद्यार्थ्यांना मार्गदर्शन करतात. तुमचा प्रश्न विचारा!
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => setShowAddModal(true)}
-              style={{
-                background: '#FFD54F',
-                color: '#BF360C',
-                border: 'none',
-                padding: '12px 26px',
-                borderRadius: '8px',
-                fontWeight: 800,
-                fontSize: '1rem',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.25)'
-              }}
-            >
-              ＋ अधिकारी नोंदणी / माहिती जोडा
+            <button onClick={onApplyClick} style={{
+              background: '#FFD54F', color: '#BF360C', border: 'none', padding: '12px 26px', borderRadius: '8px', fontWeight: 800,
+              fontSize: '1rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.25)'
+            }}>
+              ＋ अधिकारी आहात? मार्गदर्शक व्हा
             </button>
-            <a
-              href="#officers-list"
-              style={{
-                background: 'rgba(255,255,255,0.2)',
-                color: '#fff',
-                border: '1px solid rgba(255,255,255,0.6)',
-                backdropFilter: 'blur(4px)',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                fontWeight: 700,
-                textDecoration: 'none'
-              }}
-            >
-              अधिकारी यादी पहा ({officersData.length}+)
-            </a>
           </div>
         </div>
       </section>
 
-      {/* Search & Categories */}
-      <div id="officers-list" style={{ maxWidth: '1180px', margin: '28px auto 0', padding: '0 16px', position: 'relative', zIndex: 10 }}>
-        <div style={{
-          background: '#FFFFFF',
-          borderRadius: '14px',
-          padding: '24px',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.07)',
-          border: '1px solid #EADBCE'
-        }}>
-          <div style={{ marginBottom: '16px' }}>
-            <input
-              type="text"
-              placeholder="नाव, पद, विभाग, शहर शोधा..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 18px',
-                borderRadius: '8px',
-                border: '1.5px solid #D7CCC8',
-                fontSize: '1rem',
-                outline: 'none',
-                boxSizing: 'border-box'
-              }}
-            />
-          </div>
+      <div style={{ maxWidth: '1180px', margin: '24px auto 0', padding: '0 16px' }}>
+        {/* Tabs */}
+        <div role="tablist" style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', marginBottom: '18px' }}>
+          {tabs.map((t) => (
+            <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => openTab(t.id)} style={{
+              padding: '9px 18px', borderRadius: '20px', whiteSpace: 'nowrap', cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem',
+              border: tab === t.id ? `2px solid ${ORANGE}` : '1px solid #E0E0E0', background: tab === t.id ? ORANGE : '#FFFFFF',
+              color: tab === t.id ? '#FFFFFF' : '#424242'
+            }}>{t.label}</button>
+          ))}
+        </div>
 
-          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
-            {categories.map((cat) => {
-              const count = cat === 'सर्व अधिकारी'
-                ? officersList.length
-                : officersList.filter(o => o.category === cat).length;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCat(cat)}
-                  style={{
-                    padding: '8px 18px',
-                    borderRadius: '20px',
-                    border: selectedCat === cat ? '2px solid #E65100' : '1px solid #E0E0E0',
-                    background: selectedCat === cat ? '#E65100' : '#FFFFFF',
-                    color: selectedCat === cat ? '#FFFFFF' : '#424242',
-                    fontSize: '0.9rem',
-                    fontWeight: selectedCat === cat ? 700 : 500,
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    boxShadow: selectedCat === cat ? '0 4px 10px rgba(230,81,0,0.25)' : 'none',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  <span>{cat}</span>
-                  <span style={{
-                    fontSize: '0.75rem',
-                    padding: '1px 7px',
-                    borderRadius: '10px',
-                    background: selectedCat === cat ? '#FFE0B2' : '#F0F0F0',
-                    color: selectedCat === cat ? '#E65100' : '#616161',
-                    fontWeight: 700
-                  }}>
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
+        {tab === 'all' && (
+          <>
+            {/* Search & Filters */}
+            <div style={{ ...card, borderRadius: '14px', padding: '20px', marginBottom: '24px' }}>
+              <form onSubmit={(e) => { e.preventDefault(); loadOfficers(); }} style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                <input type="text" placeholder="नाव, पद, विभाग किंवा शहर शोधा..." value={search} onChange={(e) => setSearch(e.target.value)}
+                  style={{ flex: 1, minWidth: 0, padding: '12px 18px', borderRadius: '8px', border: '1.5px solid #D7CCC8', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }} />
+                <button type="submit" style={primary}>शोधा</button>
+              </form>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <select value={exam} onChange={(e) => setExam(e.target.value)} style={select} aria-label="परीक्षा">
+                  <option value="all">सर्व परीक्षा</option>
+                  {EXAMS.map((x) => <option key={x.value} value={x.value}>{x.label}</option>)}
+                </select>
+                <select value={service} onChange={(e) => setService(e.target.value)} style={select} aria-label="सेवा">
+                  <option value="all">सर्व सेवा</option>
+                  {SERVICES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+                </select>
+              </div>
+            </div>
+
+            {listError && <div role="alert" style={errorBox}>{listError}</div>}
+            {loading ? (
+              <p style={{ textAlign: 'center', color: '#6B7280' }}>लोड होत आहे...</p>
+            ) : officers.length === 0 ? (
+              <EmptyState filtered={exam !== 'all' || service !== 'all' || !!search.trim()} onApply={onApplyClick} />
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))', gap: '22px' }}>
+                {officers.map((o) => <OfficerCard key={o.id} officer={o} loggedIn={loggedIn} onButton={() => onCardButton(o)} />)}
+              </div>
+            )}
+          </>
+        )}
+
+        {tab === 'mine' && (loggedIn ? <MyRequests /> : <LoginPrompt onLogin={() => loginFirst('/officers?tab=mine')} />)}
+        {tab === 'incoming' && (loggedIn ? <IncomingRequests hasProfile={!!myOfficer} /> : <LoginPrompt onLogin={() => loginFirst('/officers?tab=incoming')} />)}
+        {tab === 'profile' && (loggedIn
+          ? <MyProfile officer={myOfficer} user={user} onChanged={loadMine} />
+          : <LoginPrompt onLogin={() => loginFirst('/officers?tab=profile')} />)}
+      </div>
+
+      {requesting && <OfficerRequestModal officer={requesting} onClose={() => setRequesting(null)} onSent={loadOfficers} />}
+      {applying && <OfficerApplyModal initial={null} user={user} onClose={() => setApplying(false)} onSaved={loadMine} />}
+    </div>
+  );
+}
+
+function EmptyState({ filtered, onApply }) {
+  return (
+    <div style={{ ...card, textAlign: 'center', padding: '48px 20px' }}>
+      <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>⭐</div>
+      {filtered ? (
+        <p style={{ margin: 0, color: '#4B5563' }}>या शोधासाठी अधिकारी सापडले नाहीत.</p>
+      ) : (
+        <>
+          <p style={{ margin: '0 0 16px', color: '#4B5563', fontWeight: 700 }}>अजून अधिकारी नाहीत. तुम्ही अधिकारी असाल तर मार्गदर्शक व्हा!</p>
+          <button onClick={onApply} style={primary}>अर्ज करा</button>
+        </>
+      )}
+    </div>
+  );
+}
+
+function LoginPrompt({ onLogin }) {
+  return (
+    <div style={{ ...card, textAlign: 'center', padding: '48px' }}>
+      <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🔐</div>
+      <p style={{ margin: '0 0 16px', color: '#4B5563' }}>हे पाहण्यासाठी लॉगिन करा.</p>
+      <button onClick={onLogin} style={primary}>लॉगिन करा</button>
+    </div>
+  );
+}
+
+const BUTTON_TEXT = {
+  login: 'लॉगिन करा व मार्गदर्शन मागा', own: 'हे तुमचे प्रोफाइल आहे', paused: '⏸️ सध्या विनंत्या घेत नाहीत',
+  requested: '⏳ विनंती पाठवली', request: '🧭 मार्गदर्शन मागा'
+};
+
+// One approved officer: details (never a phone number) and the request button.
+function OfficerCard({ officer, loggedIn, onButton }) {
+  const kind = requestButton(officer, loggedIn);
+  const disabled = kind === 'own' || kind === 'paused' || kind === 'requested';
+  return (
+    <div style={{ ...card, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ background: 'linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%)', padding: '20px', borderBottom: '1px solid #FFCC80', display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div aria-hidden="true" style={{
+          width: '56px', height: '56px', borderRadius: '12px', background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)', color: '#FFFFFF',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', fontWeight: 900, flexShrink: 0
+        }}>
+          {(officer.name || '?').trim().charAt(0) || '⭐'}
+        </div>
+        <div style={{ minWidth: 0 }}>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1B1B1B', margin: '0 0 4px' }}>{officer.name}</h3>
+          <div style={{ fontSize: '0.85rem', color: ORANGE, fontWeight: 700 }}>
+            {label(SERVICES, officer.service)}{officer.batch_year ? ` · ${officer.batch_year}` : ''} · {label(SERVICE_STATUSES, officer.service_status)}
           </div>
         </div>
       </div>
+      <div style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.88rem' }}>
+        <div><strong style={{ color: ORANGE }}>🎖️ पद:</strong> {officer.post}{officer.department ? ` · ${officer.department}` : ''}</div>
+        <div><strong>📍 शहर:</strong> {officer.city}</div>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+          {(officer.exams || []).map((c) => (
+            <span key={c} style={{ background: '#E0F2FE', color: '#075985', padding: '2px 10px', borderRadius: '10px', fontWeight: 700, fontSize: '0.8rem' }}>{label(EXAMS, c)}</span>
+          ))}
+        </div>
+        {officer.intro && <div style={{ color: '#666', fontSize: '0.84rem' }}>{officer.intro}</div>}
+      </div>
+      <div style={{ padding: '14px 20px', background: '#FAFAFA', borderTop: '1px solid #EEEEEE' }}>
+        <button onClick={onButton} disabled={disabled} style={{ ...primary, width: '100%', opacity: disabled ? 0.6 : 1, cursor: disabled ? 'default' : 'pointer' }}>
+          {BUTTON_TEXT[kind]}
+        </button>
+      </div>
+    </div>
+  );
+}
 
-      {/* Officers Grid */}
-      <section style={{ maxWidth: '1180px', margin: '36px auto', padding: '0 16px' }}>
-        {filtered.length === 0 ? (
-          <div style={{
-            background: '#FFFFFF',
-            borderRadius: '16px',
-            padding: '48px 20px',
-            textAlign: 'center',
-            border: '1px solid #EADBCE',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.04)'
-          }}>
-            <div style={{ fontSize: '3rem', marginBottom: '12px' }}>🏛️</div>
-            <h3 style={{ fontSize: '1.3rem', color: '#1B1B1B', fontWeight: 700, margin: '0 0 8px' }}>
-              या प्रवर्गात सध्या अधिकारी माहिती उपलब्ध नाही
-            </h3>
-            <p style={{ color: '#666', fontSize: '0.95rem', margin: '0 auto 16px', maxWidth: '500px' }}>
-              आपण स्वतः कर्तव्यदक्ष अधिकाऱ्यांची माहिती जोडून समाजाला मार्गदर्शन करू शकता.
-            </p>
-            <button
-              onClick={() => setSelectedCat('सर्व अधिकारी')}
-              style={{
-                background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
-                color: '#FFFFFF',
-                border: 'none',
-                padding: '8px 20px',
-                borderRadius: '8px',
-                fontWeight: 700,
-                cursor: 'pointer'
-              }}
-            >
-              सर्व अधिकारी पहा
-            </button>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '22px' }}>
-            {filtered.map((o) => (
-            <div
-              key={o.id}
-              style={{
-                background: '#FFFFFF',
-                borderRadius: '16px',
-                border: '1px solid #E8DFD8',
-                overflow: 'hidden',
-                boxShadow: '0 6px 16px rgba(0,0,0,0.04)',
-                display: 'flex',
-                flexDirection: 'column'
-              }}
-            >
-              <div style={{
-                background: 'linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%)',
-                padding: '24px 20px',
-                borderBottom: '1px solid #FFCC80',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '14px'
-              }}>
-                {o.image ? (
-                  <img
-                    src={o.image}
-                    alt={o.name}
-                    style={{
-                      width: '64px',
-                      height: '64px',
-                      borderRadius: '12px',
-                      objectFit: 'cover',
-                      border: '2px solid #E65100',
-                      boxShadow: '0 4px 10px rgba(230,81,0,0.2)',
-                      flexShrink: 0
-                    }}
-                  />
-                ) : (
-                  <div style={{
-                    width: '56px',
-                    height: '56px',
-                    borderRadius: '12px',
-                    background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
-                    color: '#FFFFFF',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '1.2rem',
-                    fontWeight: 900,
-                    boxShadow: '0 4px 10px rgba(230,81,0,0.2)'
-                  }}>
-                    {o.service}
-                  </div>
-                )}
-                <div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1B1B1B', margin: '0 0 4px' }}>
-                    {o.name}
-                  </h3>
-                  <span style={{ fontSize: '0.8rem', background: '#E65100', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontWeight: 700 }}>
-                    {o.cadre}
-                  </span>
-                </div>
-              </div>
+// The details of a guidance request.
+function RequestDetails({ request }) {
+  return (
+    <div style={{ fontSize: '0.88rem', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <div style={{ fontWeight: 700 }}>📚 {label(EXAMS, request.exam)} · {label(STAGES, request.stage)} · {label(MODES, request.mode)}</div>
+      <div>❓ {request.question}</div>
+      {request.message && <div style={{ color: '#6B7280' }}>💬 {request.message}</div>}
+    </div>
+  );
+}
 
-              <div style={{ padding: '18px 20px', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.88rem' }}>
-                <div style={{ color: '#E65100', fontWeight: 700, fontSize: '0.95rem' }}>
-                  🎖️ {o.designation}
-                </div>
-                <div>
-                  <strong>📍 पोस्टिंग:</strong> {o.location}
-                </div>
-                <div>
-                  <strong>🏛️ विभाग:</strong> {o.department}
-                </div>
-                <div style={{ color: '#666', fontSize: '0.82rem', marginTop: '4px' }}>
-                  <strong>महत्त्वाचे कार्य:</strong> {o.contribution}
-                </div>
-              </div>
+function StatusBadge({ list, value }) {
+  const s = statusInfo(list, value);
+  return <span style={{ fontWeight: 800, fontSize: '0.85rem', whiteSpace: 'nowrap' }}>{s.icon} {s.label}</span>;
+}
 
-              <div style={{ padding: '14px 20px', background: '#FAFAFA', borderTop: '1px solid #EEEEEE' }}>
-                <button
-                  onClick={() => setSelectedOfficer(o)}
-                  style={{
-                    width: '100%',
-                    background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)',
-                    color: '#FFFFFF',
-                    border: 'none',
-                    padding: '10px',
-                    borderRadius: '8px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    fontSize: '0.9rem',
-                    boxShadow: '0 2px 6px rgba(230,81,0,0.25)'
-                  }}
-                >
-                  अधिकारी तपशील पहा
-                </button>
+// Requests I sent: status, the officer's phone once accepted, cancel while waiting.
+function MyRequests() {
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      setList(await apiClient.getMyOfficerRequests());
+    } catch (err) {
+      setError(err.message || 'विनंत्या लोड करता आल्या नाहीत.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  const cancel = async (r) => {
+    if (!window.confirm('ही विनंती रद्द करायची?')) return;
+    setError('');
+    try {
+      await apiClient.answerOfficerRequest(r.id, 'cancel');
+      load();
+    } catch (err) {
+      setError(err.message || 'रद्द करता आले नाही.');
+    }
+  };
+
+  if (loading) return <p style={{ textAlign: 'center', color: '#6B7280' }}>लोड होत आहे...</p>;
+  return (
+    <>
+      {error && <div role="alert" style={errorBox}>{error}</div>}
+      {list.length === 0 ? (
+        <div style={{ ...card, textAlign: 'center', padding: '40px', color: '#4B5563' }}>तुम्ही अजून कोणाकडेही मार्गदर्शन मागितलेले नाही.</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {list.map((r) => (
+            <div key={r.id} style={{ ...card, padding: '16px 18px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                <strong style={{ color: ORANGE }}>{r.officer?.name}</strong>
+                <StatusBadge list={REQUEST_STATUSES} value={r.status} />
               </div>
+              <RequestDetails request={r} />
+              {r.status === 'accepted' && r.officer?.phone && (
+                <div style={{ marginTop: '10px', background: '#F0FDF4', color: '#166534', padding: '8px 12px', borderRadius: '8px', fontWeight: 700 }}>
+                  📞 संपर्क: <a href={`tel:${r.officer.phone}`} style={{ color: '#166534' }}>{r.officer.phone}</a>
+                </div>
+              )}
+              {r.status === 'new' && <button onClick={() => cancel(r)} style={{ ...secondary, marginTop: '10px' }}>विनंती रद्द करा</button>}
             </div>
           ))}
         </div>
-        )}
-      </section>
-
-      {/* Bottom Highlight */}
-      <section style={{ maxWidth: '1180px', margin: '30px auto 0', padding: '0 16px' }}>
-        <div style={{
-          background: 'linear-gradient(135deg, #D84315 0%, #E65100 50%, #BF360C 100%)',
-          borderRadius: '16px',
-          padding: '36px 24px',
-          color: '#FFFFFF',
-          textAlign: 'center',
-          boxShadow: '0 8px 24px rgba(216,67,21,0.25)'
-        }}>
-          <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0 0 8px' }}>
-            आपल्या समाजाचा अभिमान वाढवा !
-          </h2>
-          <p style={{ fontSize: '1.05rem', maxWidth: '650px', margin: '0 auto 20px', opacity: 0.95 }}>
-            आपल्याला माहिती असलेले कर्तव्यदक्ष शासकीय अधिकारी Connect Maratha वर जोडा आणि नवीन पिढीला प्रेरणा द्या.
-          </p>
-          <button
-            onClick={() => setShowAddModal(true)}
-            style={{
-              background: '#FFFFFF',
-              color: '#D84315',
-              border: 'none',
-              padding: '12px 28px',
-              borderRadius: '8px',
-              fontSize: '1rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
-            }}
-          >
-            अधिकारी प्रोफाइल जोडा →
-          </button>
-        </div>
-      </section>
-
-      {/* Modal: Officer Detail */}
-      {selectedOfficer && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0,0,0,0.65)',
-          backdropFilter: 'blur(5px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: '16px'
-        }}>
-          <div style={{
-            background: '#FFFFFF',
-            borderRadius: '16px',
-            maxWidth: '520px',
-            width: '100%',
-            padding: '28px',
-            position: 'relative'
-          }}>
-            <button
-              onClick={() => setSelectedOfficer(null)}
-              style={{ position: 'absolute', right: '16px', top: '16px', background: '#eee', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 700 }}
-            >
-              ✕
-            </button>
-            <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-              <span style={{ fontSize: '2.5rem' }}>{selectedOfficer.icon}</span>
-              <h2 style={{ color: '#1B1B1B', margin: '8px 0 4px', fontSize: '1.5rem', fontWeight: 800 }}>{selectedOfficer.name}</h2>
-              <span style={{ background: '#FFE0B2', color: '#E65100', padding: '3px 12px', borderRadius: '12px', fontWeight: 700, fontSize: '0.86rem' }}>
-                {selectedOfficer.cadre}
-              </span>
-            </div>
-            <div style={{ fontSize: '0.92rem', color: '#444', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div><strong style={{ color: '#E65100' }}>🎖️ सध्याचे पद:</strong> {selectedOfficer.designation}</div>
-              <div><strong>📍 कार्यक्षेत्र:</strong> {selectedOfficer.location}</div>
-              <div><strong>🏛️ मंत्रालय / विभाग:</strong> {selectedOfficer.department}</div>
-              <div><strong>✨ योगदान:</strong> {selectedOfficer.contribution}</div>
-            </div>
-            <button
-              onClick={() => setSelectedOfficer(null)}
-              style={{ width: '100%', marginTop: '20px', background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 6px rgba(230,81,0,0.25)' }}
-            >
-              बंद करा
-            </button>
-          </div>
-        </div>
       )}
+    </>
+  );
+}
 
-      {/* Modal: Add Officer */}
-      {showAddModal && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0,0,0,0.65)',
-          backdropFilter: 'blur(5px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: '16px'
-        }}>
-          <div style={{
-            background: '#FFFFFF',
-            borderRadius: '16px',
-            maxWidth: '520px',
-            width: '100%',
-            padding: '28px',
-            position: 'relative'
-          }}>
-            <button
-              onClick={() => { setShowAddModal(false); setSubmitted(false); }}
-              style={{ position: 'absolute', right: '16px', top: '16px', background: '#eee', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 700 }}
-            >
-              ✕
-            </button>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#1B1B1B', margin: '0 0 6px' }}>
-              🏛️ शासकीय अधिकारी माहिती जोडा
-            </h2>
-            <p style={{ fontSize: '0.88rem', color: '#666', margin: '0 0 16px' }}>
-              समाजातील प्रेरणादायी अधिकाऱ्यांची माहिती Connect Maratha वर सादर करा.
-            </p>
+// Requests to my profile: the student's name and phone, accept / decline while waiting.
+function IncomingRequests({ hasProfile }) {
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-            {submitted ? (
-              <div style={{ textAlign: 'center', padding: '24px 0' }}>
-                <span style={{ fontSize: '3rem' }}>🎉</span>
-                <h3 style={{ color: '#2E7D32', margin: '10px 0' }}>माहिती सादर झाली!</h3>
-                <p style={{ color: '#555', fontSize: '0.9rem' }}>प्रशासकीय पडताळणीनंतर प्रोफाइल यादीत समाविष्ट केली जाईल.</p>
-                <button
-                  onClick={() => { setShowAddModal(false); setSubmitted(false); }}
-                  style={{ background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '6px', fontWeight: 700, cursor: 'pointer', marginTop: '12px' }}
-                >
-                  ठीक आहे
-                </button>
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      setList(await apiClient.getIncomingOfficerRequests());
+    } catch (err) {
+      setError(err.message || 'विनंत्या लोड करता आल्या नाहीत.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  const reply = async (r, action) => {
+    setError('');
+    try {
+      await apiClient.answerOfficerRequest(r.id, action);
+    } catch (err) {
+      setError(err.message || 'उत्तर जतन करता आले नाही.');
+    }
+    load();
+  };
+
+  if (loading) return <p style={{ textAlign: 'center', color: '#6B7280' }}>लोड होत आहे...</p>;
+  return (
+    <>
+      {error && <div role="alert" style={errorBox}>{error}</div>}
+      {list.length === 0 ? (
+        <div style={{ ...card, textAlign: 'center', padding: '40px', color: '#4B5563' }}>
+          {hasProfile ? 'अजून कोणतीही विनंती आलेली नाही.' : 'विनंत्या मिळवण्यासाठी आधी मार्गदर्शक म्हणून अर्ज करा.'}
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {list.map((r) => (
+            <div key={r.id} style={{ ...card, padding: '16px 18px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                <strong>👤 {r.student?.name}
+                  {r.student?.phone && <> · <a href={`tel:${r.student.phone}`} style={{ color: ORANGE }}>{r.student.phone}</a></>}
+                </strong>
+                <StatusBadge list={REQUEST_STATUSES} value={r.status} />
               </div>
-            ) : (
-              <form onSubmit={handleAddOfficerSubmit}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <input
-                    required
-                    placeholder="अधिकाऱ्यांचे नाव *"
-                    value={newOfficerForm.name}
-                    onChange={(e) => setNewOfficerForm({ ...newOfficerForm, name: e.target.value })}
-                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-                  />
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <select
-                      value={newOfficerForm.category}
-                      onChange={(e) => setNewOfficerForm({ ...newOfficerForm, category: e.target.value })}
-                      style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-                    >
-                      <option>IAS अधिकारी</option>
-                      <option>IPS अधिकारी</option>
-                      <option>IFS अधिकारी</option>
-                      <option>राज्यसेवा अधिकारी</option>
-                      <option>महसूल व पोलीस</option>
-                      <option>इतर</option>
-                    </select>
-                    <input
-                      required
-                      placeholder="सध्याचे पद (Designation) *"
-                      value={newOfficerForm.designation}
-                      onChange={(e) => setNewOfficerForm({ ...newOfficerForm, designation: e.target.value })}
-                      style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-                    />
-                  </div>
-                  <input
-                    required
-                    placeholder="पोस्टिंगचे ठिकाण / शहर *"
-                    value={newOfficerForm.postingCity}
-                    onChange={(e) => setNewOfficerForm({ ...newOfficerForm, postingCity: e.target.value })}
-                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-                  />
-                  <textarea
-                    placeholder="उल्लेखनीय कामगिरी व कार्य"
-                    rows="3"
-                    value={newOfficerForm.contribution}
-                    onChange={(e) => setNewOfficerForm({ ...newOfficerForm, contribution: e.target.value })}
-                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-                  ></textarea>
-                  <button type="submit" style={{ background: 'linear-gradient(135deg, #FF6F00 0%, #E65100 100%)', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 6px rgba(230,81,0,0.25)' }}>
-                    माहिती थेट सादर करा ✓
-                  </button>
+              <RequestDetails request={r} />
+              {r.status === 'new' && (
+                <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
+                  <button onClick={() => reply(r, 'accept')} style={{ ...primary, background: '#16A34A' }}>✅ स्वीकारा</button>
+                  <button onClick={() => reply(r, 'decline')} style={secondary}>❌ नाकारा</button>
                 </div>
-              </form>
-            )}
-          </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
+    </>
+  );
+}
+
+// My profile, its approval status and the accepting switch, or the invitation to apply.
+function MyProfile({ officer, user, onChanged }) {
+  const [editing, setEditing] = useState(false);
+  const [switching, setSwitching] = useState(false);
+  const [error, setError] = useState('');
+
+  if (!officer) {
+    return (
+      <div style={{ ...card, textAlign: 'center', padding: '40px 20px' }}>
+        <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>⭐</div>
+        <p style={{ margin: '0 0 6px', fontWeight: 700 }}>तुम्ही कार्यरत किंवा निवृत्त अधिकारी आहात?</p>
+        <p style={{ margin: '0 0 16px', color: '#4B5563', fontSize: '0.9rem' }}>अर्ज करा; तपासणी व मंजुरीनंतर विद्यार्थी तुमच्याकडे MPSC / UPSC मार्गदर्शन मागू शकतील.</p>
+        <button onClick={() => setEditing(true)} style={primary}>मार्गदर्शक म्हणून अर्ज करा</button>
+        {editing && <OfficerApplyModal initial={null} user={user} onClose={() => setEditing(false)} onSaved={onChanged} />}
+      </div>
+    );
+  }
+
+  const toggle = async () => {
+    setSwitching(true);
+    setError('');
+    try {
+      await apiClient.setOfficerAccepting(!officer.accepting);
+      await onChanged();
+    } catch (err) {
+      setError(err.message || 'बदल जतन करता आला नाही.');
+    } finally {
+      setSwitching(false);
+    }
+  };
+
+  return (
+    <div style={{ ...card, padding: '22px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap', marginBottom: '12px' }}>
+        <h3 style={{ margin: 0, color: ORANGE }}>{officer.name}</h3>
+        <StatusBadge list={PROFILE_STATUSES} value={officer.status} />
+      </div>
+      {officer.status === 'pending' && <p style={{ margin: '0 0 12px', color: '#92400E', fontSize: '0.9rem' }}>⏳ तुमचा अर्ज तपासणी व मंजुरीच्या प्रतीक्षेत आहे.</p>}
+      {officer.status === 'rejected' && (
+        <p style={{ margin: '0 0 12px', color: '#B91C1C', fontSize: '0.9rem' }}>
+          ❌ प्रोफाइल मंजूर झाले नाही{officer.reject_reason ? `: ${officer.reject_reason}` : '.'} माहिती बदलून पुन्हा पाठवा.
+        </p>
+      )}
+      {officer.hidden && <p style={{ margin: '0 0 12px', color: '#6B7280', fontSize: '0.9rem' }}>🙈 हे प्रोफाइल सध्या प्रशासकांनी लपवले आहे.</p>}
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', background: officer.accepting ? '#F0FDF4' : '#FEF3C7', padding: '10px 14px', borderRadius: '10px', marginBottom: '14px' }}>
+        <strong>{officer.accepting ? '⏯️ नवीन विनंत्या घेत आहे' : '⏸️ नवीन विनंत्या बंद'}</strong>
+        <button onClick={toggle} disabled={switching} style={{ ...secondary, opacity: switching ? 0.7 : 1 }}>
+          {officer.accepting ? 'विनंत्या थांबवा' : 'विनंत्या पुन्हा सुरू करा'}
+        </button>
+        <span style={{ fontSize: '0.8rem', color: '#6B7280' }}>आधी आलेल्या विनंत्यांना उत्तर देता येते.</span>
+      </div>
+      {error && <div role="alert" style={errorBox}>{error}</div>}
+
+      <div style={{ fontSize: '0.9rem', color: '#374151', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div><strong>सेवा:</strong> {label(SERVICES, officer.service)}{officer.batch_year ? ` (${officer.batch_year})` : ''} · {label(SERVICE_STATUSES, officer.service_status)}</div>
+        <div><strong>पद:</strong> {officer.post}{officer.department ? ` · ${officer.department}` : ''}</div>
+        <div><strong>शहर:</strong> {officer.city}</div>
+        <div><strong>मार्गदर्शन:</strong> {examList(officer.exams)}</div>
+        <div><strong>मोबाईल:</strong> {officer.phone}</div>
+        {officer.intro && <div><strong>परिचय:</strong> {officer.intro}</div>}
+      </div>
+      <button onClick={() => setEditing(true)} style={{ ...secondary, marginTop: '14px' }}>✏️ प्रोफाइल बदला</button>
+      {editing && <OfficerApplyModal initial={officer} user={user} onClose={() => setEditing(false)} onSaved={onChanged} />}
     </div>
   );
 }
