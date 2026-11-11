@@ -3,9 +3,9 @@
 
 const LINKS = {
   blood: '/blood-help', blood_admin: '/admin/seva', chapter: '/sangam', meeting: '/meetings',
-  job: '/jobs?tab=mine', job_application: '/jobs?tab=applied', job_alert: '/jobs'
+  job: '/jobs?tab=mine', job_application: '/jobs?tab=applied', job_alert: '/jobs', crm_unit: '/crm/units'
 };
-const ICONS = { blood: '🩸', blood_admin: '🩸', chapter: '🤝', meeting: '📅', enquiry: '📩', job: '💼', job_application: '📋', job_alert: '💼' };
+const ICONS = { blood: '🩸', blood_admin: '🩸', chapter: '🤝', meeting: '📅', enquiry: '📩', job: '💼', job_application: '📋', job_alert: '💼', crm_unit: '🏢' };
 
 // The page a notification opens, or null when it has none.
 export function notificationLink(type) {

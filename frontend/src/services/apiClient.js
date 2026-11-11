@@ -289,6 +289,28 @@ export const apiClient = {
     return await fetchJson('/speakers/book', { method: 'POST', body: JSON.stringify(data) });
   },
 
+  // CRM units API (unit ladder, owners and who sees what)
+  crmMe: async () => {
+    return await fetchJson('/crm-hierarchy/me');
+  },
+  crmListUnits: async (params = {}) => {
+    const q = new URLSearchParams(Object.entries(params).filter(([, v]) => v)).toString();
+    const res = await fetchJson(`/crm-hierarchy/units${q ? `?${q}` : ''}`);
+    return res.units || [];
+  },
+  crmGetUnit: async (id) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(id)}`);
+  },
+  crmCreateUnit: async (data) => {
+    return await fetchJson('/crm-hierarchy/units', { method: 'POST', body: JSON.stringify(data) });
+  },
+  crmUpdateUnit: async (id, data) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+  crmChangeOwner: async (id, data) => {
+    return await fetchJson(`/crm-hierarchy/units/${encodeURIComponent(id)}/owner`, { method: 'POST', body: JSON.stringify(data) });
+  },
+
   // Organizations API
   getOrganizations: async () => {
     const res = await fetchJson('/organizations');
