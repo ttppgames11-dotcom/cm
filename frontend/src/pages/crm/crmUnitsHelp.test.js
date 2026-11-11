@@ -182,3 +182,49 @@ test('rollupRow flattens one table row and fills zeros', async () => {
   assert.equal(empty.completionPct, 0);
   assert.equal(empty.levelLabel, 'शाखा');
 });
+
+test('childLevelLabel names the level below', async () => {
+  const { childLevelLabel } = await import('./crmUnitsHelp.js');
+  assert.equal(childLevelLabel('state'), 'शाखा');
+  assert.equal(childLevelLabel('branch'), 'विभाग');
+  assert.equal(childLevelLabel('division'), 'जिल्हे');
+  assert.equal(childLevelLabel('district'), 'तालुके');
+  assert.equal(childLevelLabel('taluka'), '');
+  assert.equal(childLevelLabel(undefined), '');
+});
+
+test('dashboardFor picks the dashboard of an admin, the CEO and staff', async () => {
+  const { dashboardFor } = await import('./crmUnitsHelp.js');
+  const admin = dashboardFor({ scopeKind: 'global', permissions: { readOnly: false } });
+  assert.deepEqual(admin, { key: 'admin', title: 'सर्वोच्च प्रशासक (CRM)', icon: '🛡️', color: '#ea580c', childLabel: '', readOnly: false, showRollup: true, canManageUnits: true });
+  const ceo = dashboardFor({ scopeKind: 'global', permissions: { readOnly: true } });
+  assert.deepEqual(ceo, { key: 'ceo', title: 'कार्याध्यक्ष (केवळ पाहणे)', icon: '👁️', color: '#2563eb', childLabel: '', readOnly: true, showRollup: true, canManageUnits: false });
+  const staff = dashboardFor({ scopeKind: 'staff', unit: { level: 'district' }, unitRole: 'staff', permissions: { readOnly: true } });
+  assert.deepEqual(staff, { key: 'staff', title: 'केंद्र कर्मचारी डेस्क', icon: '🧑‍💼', color: '#059669', childLabel: '', readOnly: true, showRollup: false, canManageUnits: false });
+});
+
+test('dashboardFor picks the dashboard of an owner by the level of the unit', async () => {
+  const { dashboardFor } = await import('./crmUnitsHelp.js');
+  const expected = {
+    state: ['राज्य अध्यक्ष डॅशबोर्ड', '🏛️', '#4f46e5', 'शाखा'],
+    branch: ['शाखाध्यक्ष डॅशबोर्ड', '🏢', '#c026d3', 'विभाग'],
+    division: ['विभागीय अध्यक्ष डॅशबोर्ड', '🗺️', '#7c3aed', 'जिल्हे'],
+    district: ['जिल्हा अध्यक्ष डॅशबोर्ड', '📍', '#0284c7', 'तालुके'],
+    taluka: ['तालुका अध्यक्ष डॅशबोर्ड', '🏘️', '#16a34a', '']
+  };
+  Object.entries(expected).forEach(([level, [title, icon, color, childLabel]]) => {
+    const d = dashboardFor({ scopeKind: 'unit', unit: { level }, unitRole: 'owner', permissions: { readOnly: false } });
+    assert.deepEqual(d, { key: level, title, icon, color, childLabel, readOnly: false, showRollup: false, canManageUnits: true });
+  });
+});
+
+test('dashboardFor gives nothing to people without CRM access', async () => {
+  const { dashboardFor, crmHome } = await import('./crmUnitsHelp.js');
+  assert.equal(dashboardFor({ scopeKind: 'none', permissions: { readOnly: true } }), null);
+  assert.equal(dashboardFor(null), null);
+  assert.equal(dashboardFor(undefined), null);
+  assert.equal(dashboardFor({ scopeKind: 'unit', unit: null, permissions: {} }), null);
+  assert.equal(crmHome({ scopeKind: 'unit', unit: { level: 'district' }, permissions: { readOnly: false } }), '/crm/dashboard');
+  assert.equal(crmHome({ scopeKind: 'none' }), null);
+  assert.equal(crmHome(null), null);
+});

@@ -33,6 +33,7 @@ import DonationsPage from './pages/donation/DonationsPage';
 import PeopleDirectoryPage from './pages/directory/PeopleDirectoryPage';
 import JobsPortalPage from './pages/jobs/JobsPortalPage';
 import CrmUnitsPage from './pages/crm/CrmUnitsPage';
+import CrmDashboardPage from './pages/crm/CrmDashboardPage';
 import JobDetailPage from './pages/jobs/JobDetailPage';
 import BusinessLeadsPortalPage from './pages/business/BusinessLeadsPortalPage';
 import ReferralPortalPage from './pages/member/ReferralPortalPage';
@@ -361,6 +362,7 @@ export default function App() {
 
             {/* Jobs, Education & Services */}
             <Route path="/jobs" element={<JobsPortalPage />} />
+            <Route path="/crm/dashboard" element={<CrmDashboardPage />} />
             <Route path="/crm/units" element={<CrmUnitsPage />} />
             <Route path="/jobs/:id" element={<JobDetailPage />} />
             <Route path="/education" element={<HigherEducationPortalPage />} />
