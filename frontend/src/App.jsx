@@ -399,7 +399,6 @@ export default function App() {
             {/* Role-Specific Live Enterprise CRM Suite */}
             <Route path="/crm" element={<AdminERPPage />} />
             <Route path="/crm/roles" element={<CRMRoleHubPage />} />
-            <Route path="/admin" element={<AdminERPPage />} />
             <Route path="/crm/admin" element={<AdminERPPage />} />
             <Route path="/crm/ceo" element={<AdminERPPage />} />
             <Route path="/ceo" element={<AdminERPPage />} />

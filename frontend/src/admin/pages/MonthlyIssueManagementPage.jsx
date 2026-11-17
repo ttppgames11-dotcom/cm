@@ -213,7 +213,7 @@ export default function MonthlyIssueManagementPage() {
                       <button 
                         type="button" 
                         onClick={() => handleStatusChange(issue.id, 'published')} 
-                        className="cm-btn cm-btn-outline-primary" 
+                        className="cm-btn cm-btn-secondary" 
                         style={{ padding: '6px 12px', fontSize: '0.78rem' }}
                       >
                         प्रकाशित करा

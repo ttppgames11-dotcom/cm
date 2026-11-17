@@ -190,10 +190,10 @@ export default function AdminDashboardPage() {
                   </span>
                 </div>
                 <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
-                  <Link to="/admin/designer" className="cm-btn cm-btn-outline-primary" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+                  <Link to="/admin/designer" className="cm-btn cm-btn-secondary" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
                     १०-पान डिझायनर
                   </Link>
-                  <Link to="/admin/issues" className="cm-btn cm-btn-secondary" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+                  <Link to="/admin/issues" className="cm-btn cm-btn-primary" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
                     संपादित
                   </Link>
                 </div>
