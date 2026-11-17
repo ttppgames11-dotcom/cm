@@ -143,12 +143,12 @@ export default function SubscriptionManagementPage() {
                     {sub.status === 'active' ? '● सक्रिय' : '● संपलेले'}
                   </span>
                 </td>
-                <td>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button type="button" onClick={() => handleOpenEdit(sub)} className="cm-btn cm-btn-secondary" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+                <td style={{ whiteSpace: 'nowrap' }}>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    <button type="button" onClick={() => handleOpenEdit(sub)} className="cm-btn cm-btn-primary" style={{ padding: '6px 12px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
                       संपादित
                     </button>
-                    <button type="button" onClick={() => handleDelete(sub.id, sub.subscriberName)} className="cm-btn cm-btn-danger" style={{ padding: '6px 10px', fontSize: '0.78rem' }}>
+                    <button type="button" onClick={() => handleDelete(sub.id, sub.subscriberName)} className="cm-btn cm-btn-danger" style={{ padding: '6px 10px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
                       हटवा
                     </button>
                   </div>

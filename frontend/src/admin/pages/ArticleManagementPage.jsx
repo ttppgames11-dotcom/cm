@@ -204,15 +204,15 @@ export default function ArticleManagementPage() {
                     {art.status === 'published' ? '● प्रकाशित' : art.status === 'pending' ? '● पुनरावलोकन' : '● मसुदा'}
                   </span>
                 </td>
-                <td>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button type="button" onClick={() => setPreviewArticle(art)} className="cm-btn cm-btn-secondary" style={{ padding: '6px 10px', fontSize: '0.78rem' }}>
+                <td style={{ whiteSpace: 'nowrap' }}>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    <button type="button" onClick={() => setPreviewArticle(art)} className="cm-btn cm-btn-secondary" style={{ padding: '6px 11px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
                       पहा
                     </button>
-                    <button type="button" onClick={() => handleOpenEdit(art)} className="cm-btn cm-btn-secondary" style={{ padding: '6px 10px', fontSize: '0.78rem' }}>
+                    <button type="button" onClick={() => handleOpenEdit(art)} className="cm-btn cm-btn-primary" style={{ padding: '6px 11px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
                       संपादित
                     </button>
-                    <button type="button" onClick={() => handleDelete(art.id, art.title)} className="cm-btn cm-btn-danger" style={{ padding: '6px 10px', fontSize: '0.78rem' }}>
+                    <button type="button" onClick={() => handleDelete(art.id, art.title)} className="cm-btn cm-btn-danger" style={{ padding: '6px 10px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
                       हटवा
                     </button>
                   </div>

@@ -143,12 +143,12 @@ export default function AuthorManagementPage() {
                     {auth.status === 'active' ? '● सक्रिय' : '● निष्क्रिय'}
                   </span>
                 </td>
-                <td>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button type="button" onClick={() => handleOpenEdit(auth)} className="cm-btn cm-btn-secondary" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+                <td style={{ whiteSpace: 'nowrap' }}>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    <button type="button" onClick={() => handleOpenEdit(auth)} className="cm-btn cm-btn-primary" style={{ padding: '6px 12px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
                       संपादित
                     </button>
-                    <button type="button" onClick={() => handleDelete(auth.id, auth.name)} className="cm-btn cm-btn-danger" style={{ padding: '6px 10px', fontSize: '0.78rem' }}>
+                    <button type="button" onClick={() => handleDelete(auth.id, auth.name)} className="cm-btn cm-btn-danger" style={{ padding: '6px 10px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
                       हटवा
                     </button>
                   </div>

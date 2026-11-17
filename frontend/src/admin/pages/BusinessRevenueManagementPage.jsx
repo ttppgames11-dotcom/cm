@@ -152,20 +152,20 @@ export default function BusinessRevenueManagementPage() {
                     {pkg.status === 'active' ? '● सक्रिय (Active)' : '● निष्क्रिय'}
                   </span>
                 </td>
-                <td>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button type="button" onClick={() => handleOpenEdit(pkg)} className="cm-btn cm-btn-secondary" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+                <td style={{ whiteSpace: 'nowrap' }}>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    <button type="button" onClick={() => handleOpenEdit(pkg)} className="cm-btn cm-btn-primary" style={{ padding: '6px 11px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
                       दर बदला
                     </button>
                     <button 
                       type="button" 
                       onClick={() => handleToggleStatus(pkg.id)} 
                       className="cm-btn cm-btn-secondary" 
-                      style={{ padding: '6px 10px', fontSize: '0.78rem' }}
+                      style={{ padding: '6px 10px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}
                     >
                       {pkg.status === 'active' ? 'बंद करा' : 'सुरू करा'}
                     </button>
-                    <button type="button" onClick={() => handleDelete(pkg.id, pkg.name)} className="cm-btn cm-btn-danger" style={{ padding: '6px 10px', fontSize: '0.78rem' }}>
+                    <button type="button" onClick={() => handleDelete(pkg.id, pkg.name)} className="cm-btn cm-btn-danger" style={{ padding: '6px 10px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
                       हटवा
                     </button>
                   </div>

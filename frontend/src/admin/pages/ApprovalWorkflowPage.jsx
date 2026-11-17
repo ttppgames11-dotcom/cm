@@ -119,13 +119,13 @@ export default function ApprovalWorkflowPage() {
                     {app.editorNotes}
                   </span>
                 </td>
-                <td>
-                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                <td style={{ whiteSpace: 'nowrap' }}>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                     <button 
                       type="button" 
                       onClick={() => handleStageAdvance(app.id, 'Page Assignment')} 
-                      className="cm-btn cm-btn-outline-primary" 
-                      style={{ padding: '5px 10px', fontSize: '0.76rem' }}
+                      className="cm-btn cm-btn-primary" 
+                      style={{ padding: '6px 12px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}
                     >
                       मंजूर करा ✓
                     </button>
@@ -136,7 +136,7 @@ export default function ApprovalWorkflowPage() {
                         setReviewNote(app.editorNotes || '');
                       }} 
                       className="cm-btn cm-btn-secondary" 
-                      style={{ padding: '5px 10px', fontSize: '0.76rem' }}
+                      style={{ padding: '6px 12px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}
                     >
                       अभिप्राय
                     </button>
@@ -144,7 +144,7 @@ export default function ApprovalWorkflowPage() {
                       type="button" 
                       onClick={() => handleReject(app.id)} 
                       className="cm-btn cm-btn-danger" 
-                      style={{ padding: '5px 8px', fontSize: '0.76rem' }}
+                      style={{ padding: '6px 10px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}
                     >
                       परत पाठवा
                     </button>

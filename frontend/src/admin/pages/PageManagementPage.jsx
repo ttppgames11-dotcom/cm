@@ -141,11 +141,11 @@ export default function PageManagementPage() {
                 </button>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button type="button" onClick={() => handleOpenEdit(p)} className="cm-btn cm-btn-secondary" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+              <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                <button type="button" onClick={() => handleOpenEdit(p)} className="cm-btn cm-btn-primary" style={{ padding: '6px 12px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
                   संपादित
                 </button>
-                <button type="button" onClick={() => handleDelete(p.pageNo)} className="cm-btn cm-btn-danger" style={{ padding: '6px 10px', fontSize: '0.78rem' }}>
+                <button type="button" onClick={() => handleDelete(p.pageNo)} className="cm-btn cm-btn-danger" style={{ padding: '6px 10px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
                   हटवा
                 </button>
               </div>

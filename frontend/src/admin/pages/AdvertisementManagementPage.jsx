@@ -179,12 +179,12 @@ export default function AdvertisementManagementPage() {
                     {ad.status === 'active' ? '● चालू (Active)' : '● समाप्त'}
                   </span>
                 </td>
-                <td>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button type="button" onClick={() => handleOpenEdit(ad)} className="cm-btn cm-btn-secondary" style={{ padding: '6px 10px', fontSize: '0.78rem' }}>
+                <td style={{ whiteSpace: 'nowrap' }}>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    <button type="button" onClick={() => handleOpenEdit(ad)} className="cm-btn cm-btn-primary" style={{ padding: '6px 11px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
                       संपादित
                     </button>
-                    <button type="button" onClick={() => handleDelete(ad.id, ad.title)} className="cm-btn cm-btn-danger" style={{ padding: '6px 10px', fontSize: '0.78rem' }}>
+                    <button type="button" onClick={() => handleDelete(ad.id, ad.title)} className="cm-btn cm-btn-danger" style={{ padding: '6px 10px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
                       हटवा
                     </button>
                   </div>

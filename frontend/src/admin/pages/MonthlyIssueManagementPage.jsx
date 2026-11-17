@@ -198,13 +198,13 @@ export default function MonthlyIssueManagementPage() {
                     {issue.status === 'published' ? '● प्रकाशित (LIVE)' : issue.status === 'draft' ? '● मसुदा (Draft)' : '● अर्काईव्ह'}
                   </span>
                 </td>
-                <td>
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <td style={{ whiteSpace: 'nowrap' }}>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                     <button 
                       type="button" 
                       onClick={() => handleOpenEdit(issue)} 
                       className="cm-btn cm-btn-secondary" 
-                      style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                      style={{ padding: '6px 11px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}
                     >
                       संपादित
                     </button>
@@ -213,8 +213,8 @@ export default function MonthlyIssueManagementPage() {
                       <button 
                         type="button" 
                         onClick={() => handleStatusChange(issue.id, 'published')} 
-                        className="cm-btn cm-btn-secondary" 
-                        style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                        className="cm-btn cm-btn-primary" 
+                        style={{ padding: '6px 11px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}
                       >
                         प्रकाशित करा
                       </button>
@@ -223,7 +223,7 @@ export default function MonthlyIssueManagementPage() {
                         type="button" 
                         onClick={() => handleStatusChange(issue.id, 'archived')} 
                         className="cm-btn cm-btn-secondary" 
-                        style={{ padding: '6px 12px', fontSize: '0.78rem', color: '#D97706' }}
+                        style={{ padding: '6px 11px', fontSize: '0.78rem', color: '#D94100', whiteSpace: 'nowrap' }}
                       >
                         अर्काईव्ह करा
                       </button>
@@ -233,7 +233,7 @@ export default function MonthlyIssueManagementPage() {
                       type="button" 
                       onClick={() => handleDuplicate(issue)} 
                       className="cm-btn cm-btn-secondary" 
-                      style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                      style={{ padding: '6px 11px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}
                     >
                       कॉपी
                     </button>
@@ -242,7 +242,7 @@ export default function MonthlyIssueManagementPage() {
                       type="button" 
                       onClick={() => handleDelete(issue.id, issue.title)} 
                       className="cm-btn cm-btn-danger"
-                      style={{ padding: '6px 10px', fontSize: '0.78rem' }}
+                      style={{ padding: '6px 10px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}
                     >
                       हटवा
                     </button>
