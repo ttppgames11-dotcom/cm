@@ -135,6 +135,7 @@ export default function SiteHeader({ onOpenSearch }) {
                 <div className="mega-menu-grid">
                   <div className="mega-col">
                     <div className="mega-col-title">🤝 बिझनेस संगम</div>
+                    <Link to="/magazine" onClick={handleLinkClick} style={{ color: '#EF4444', fontWeight: 800 }}>📖 कनेक्ट मराठा मॅगझिन (नवीन)</Link>
                     <Link to="/business/directory" onClick={handleLinkClick}>🏢 व्यवसाय निर्देशिका</Link>
                     <Link to="/sangam" onClick={handleLinkClick}>🤝 चॅप्टर्स व लीडरशिप</Link>
                     <Link to="/jobs" onClick={handleLinkClick}>🛠️ सेवा बुकिंग विझार्ड</Link>

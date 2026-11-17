@@ -33,6 +33,29 @@ import HigherEducationPortalPage from './pages/education/HigherEducationPortalPa
 
 // Culture, Governance, Admin
 import PhotoGalleryPage from './pages/culture/PhotoGalleryPage';
+import MagazineLandingPage from './pages/magazine/MagazineLandingPage';
+import MagazineArticlePage from './pages/magazine/MagazineArticlePage';
+import MagazineDigitalReaderPage from './pages/magazine/MagazineDigitalReaderPage';
+
+// Connect Maratha Magazine Admin Suite
+import { MagazineAdminProvider } from './admin/context/MagazineAdminContext';
+import AdminLayout from './admin/layouts/AdminLayout';
+import AdminLoginPage from './admin/pages/AdminLoginPage';
+import AdminDashboardPage from './admin/pages/AdminDashboardPage';
+import MonthlyIssueManagementPage from './admin/pages/MonthlyIssueManagementPage';
+import ArticleManagementPage from './admin/pages/ArticleManagementPage';
+import AuthorManagementPage from './admin/pages/AuthorManagementPage';
+import PageManagementPage from './admin/pages/PageManagementPage';
+import MagazineDesignerPage from './admin/pages/MagazineDesignerPage';
+import AdvertisementManagementPage from './admin/pages/AdvertisementManagementPage';
+import BusinessRevenueManagementPage from './admin/pages/BusinessRevenueManagementPage';
+import MediaLibraryPage from './admin/pages/MediaLibraryPage';
+import SubscriptionManagementPage from './admin/pages/SubscriptionManagementPage';
+import ApprovalWorkflowPage from './admin/pages/ApprovalWorkflowPage';
+import AnalyticsDashboardPage from './admin/pages/AnalyticsDashboardPage';
+import MagazineArchivePage from './admin/pages/MagazineArchivePage';
+import AdminSettingsPage from './admin/pages/AdminSettingsPage';
+
 import GovernancePage from './pages/governance/GovernancePage';
 import AdminERPPage from './pages/admin/AdminERPPage';
 import CEODashboardPage from './pages/admin/CEODashboardPage';
@@ -211,7 +234,27 @@ export default function App() {
       <AuthProvider>
         <ScopeProvider>
           <SiteContentProvider>
+            <MagazineAdminProvider>
             <Routes>
+              {/* Connect Maratha Magazine Admin Suite Routes (Independent Layout) */}
+              <Route path="/admin/login" element={<AdminLoginPage />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="dashboard" element={<AdminDashboardPage />} />
+                <Route path="issues" element={<MonthlyIssueManagementPage />} />
+                <Route path="articles" element={<ArticleManagementPage />} />
+                <Route path="authors" element={<AuthorManagementPage />} />
+                <Route path="pages" element={<PageManagementPage />} />
+                <Route path="designer" element={<MagazineDesignerPage />} />
+                <Route path="advertisements" element={<AdvertisementManagementPage />} />
+                <Route path="business" element={<BusinessRevenueManagementPage />} />
+                <Route path="media" element={<MediaLibraryPage />} />
+                <Route path="subscriptions" element={<SubscriptionManagementPage />} />
+                <Route path="approvals" element={<ApprovalWorkflowPage />} />
+                <Route path="analytics" element={<AnalyticsDashboardPage />} />
+                <Route path="archive" element={<MagazineArchivePage />} />
+                <Route path="settings" element={<AdminSettingsPage />} />
+              </Route>
           {/* Automatic Clean Redirects from legacy .html to clean React routes */}
           {legacyRedirects.map((r, i) => (
             <Route key={i} path={r.from} element={<Navigate to={r.to} replace />} />
@@ -468,11 +511,18 @@ export default function App() {
             <Route path="/helpdesk" element={<ContactPage />} />
             <Route path="/grievance" element={<ContactPage />} />
 
+            {/* Magazine & Media Portal */}
+            <Route path="/magazine" element={<MagazineLandingPage />} />
+            <Route path="/magazine/reader" element={<MagazineDigitalReaderPage />} />
+            <Route path="/magazine/article/:slug" element={<MagazineArticlePage />} />
+            <Route path="/magazine/:slug" element={<MagazineLandingPage />} />
+
             {/* Generic Article Route & Fallback */}
             <Route path="/article/:slug" element={<GenericArticlePage />} />
             <Route path="*" element={<GenericArticlePage />} />
           </Route>
         </Routes>
+            </MagazineAdminProvider>
           </SiteContentProvider>
         </ScopeProvider>
       </AuthProvider>
