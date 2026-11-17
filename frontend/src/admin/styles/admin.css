@@ -532,27 +532,36 @@ body {
 }
 
 /* Modals */
+.cm-modal-backdrop,
 .cm-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(37, 37, 37, 0.6);
-  backdrop-filter: blur(4px);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(4px) !important;
+  z-index: 10000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
-.cm-modal-box {
-  background: var(--cm-white);
-  border-radius: var(--cm-radius-lg);
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
-  width: 100%;
+.cm-modal-box,
+.cm-modal-card {
+  background: var(--cm-white) !important;
+  border-radius: var(--cm-radius-lg) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35) !important;
+  width: 100% !important;
   max-width: 650px;
-  max-height: 90vh;
-  overflow-y: auto;
-  border: 1px solid var(--cm-border-light);
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  border: 1px solid var(--cm-border-light) !important;
+  position: relative !important;
+  z-index: 10001 !important;
+  pointer-events: auto !important;
+  padding: 24px !important;
 }
 
 /* Toasts */
